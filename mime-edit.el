@@ -2054,11 +2054,8 @@ Content-Transfer-Encoding: 7bit
 		  (save-restriction
 		    (narrow-to-region beg (mime-edit-content-end))
 		    (goto-char beg)
-		    (while (re-search-forward "\\([^\r]\\)\n" nil t)
-		      (replace-match
-		       (concat (buffer-substring (match-beginning 0)
-						 (match-end 1)) "\r\n"))
-		      )))
+		    (while (re-search-forward "\\(\\=\\|[^\r]\\)\n" nil t)
+		      (replace-match "\\1\r\n"))))
 	      (goto-char beg)
 	      (mime-encode-region beg (mime-edit-content-end) encoding)
 	      (mime-edit-define-encoding encoding)

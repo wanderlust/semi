@@ -1,3 +1,18 @@
+1998-08-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-text.el (mime-text-insert-decoded-body): Specify line break
+	code type as CRLF.
+
+1998-08-10  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-normalize-body): Failed to canonicalize
+	empty lines.
+
+1998-08-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-w3.el (mime-preview-text/html): Insert dummy "\n" into end
+	of entity to avoid keymap text-property problem.
+
 1998-07-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* NEWS (Don't use "file" command to detect content of entity): New
