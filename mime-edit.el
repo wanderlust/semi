@@ -2413,15 +2413,14 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
     ))
   (if arg
       (progn
-	(setq mime-edit-pgp-processing 
-	      (nconc mime-edit-pgp-processing 
-		     (copy-sequence '(sign))))
+	(or (memq 'sign mime-edit-pgp-processing)
+	    (setq mime-edit-pgp-processing 
+		  (nconc mime-edit-pgp-processing 
+			 (copy-sequence '(sign)))))
 	(message "This message will be signed.")
 	)
-    (if (eq (car (last mime-edit-pgp-processing)) 'sign)
-	(setq mime-edit-pgp-processing 
-	      (butlast mime-edit-pgp-processing))
-      )
+    (setq mime-edit-pgp-processing 
+	  (delq 'sign mime-edit-pgp-processing))
     (message "This message will not be signed.")
     ))
 
@@ -2432,15 +2431,14 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
     ))
   (if arg
       (progn
-	(setq mime-edit-pgp-processing 
-	      (nconc mime-edit-pgp-processing 
-		     (copy-sequence '(encrypt))))
+	(or (memq 'encrypt mime-edit-set-encrypt)
+	    (setq mime-edit-pgp-processing 
+		  (nconc mime-edit-pgp-processing 
+			 (copy-sequence '(encrypt)))))
 	(message "This message will be encrypt.")
 	)
-    (if (eq (car (last mime-edit-pgp-processing)) 'encrypt)
-	(setq mime-edit-pgp-processing
-	      (butlast mime-edit-pgp-processing))
-      )
+    (setq mime-edit-pgp-processing
+	  (delq 'encrypt mime-edit-pgp-processing))
     (message "This message will not be encrypt.")
     ))
 
