@@ -1,3 +1,11 @@
+1999-11-11   Akihiro Arisawa   <ari@atesoft.advantest.co.jp>
+
+	* mime-image.el (image-normalize): Use `write-region-as-binary'.
+
+1999-11-11   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg-pgp.el, pgg-pgp5.el (verify-region): Set default umask to 077.
+
 1999-11-10   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* pgg-gpg.el (pgg-gpg-process-region): Enclose `start-process'
