@@ -32,6 +32,8 @@
 
 (require 'widget)
 
+(eval-when-compile (require 'static))
+
 (defconst mime-user-interface-product ["WEMI" (1 13 6) "Rokugò"]
   "Product name, version number and code name of MIME-kernel package.")
 
@@ -144,6 +146,8 @@
 	  (end (match-end 0)))
       (widget-convert-button 'mime-url-link beg end
 			     (buffer-substring beg end))
+      (static-unless (featurep 'xemacs)
+	(overlay-put (make-overlay beg end) 'local-map widget-keymap))
       )))
 
 (define-widget 'mime-url-link 'link
