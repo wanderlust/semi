@@ -155,21 +155,21 @@ and return parsed it. [mime-parse.el]"
 ;;; @ message parser
 ;;;
 
-(defsubst make-mime-entity-info (rcnum
+(defsubst make-mime-entity-info (reversed-number
 				 point-min point-max
 				 media-type media-subtype parameters
 				 encoding children)
-  (vector rcnum point-min point-max
+  (vector reversed-number point-min point-max
 	  media-type media-subtype parameters encoding children))
 
-(defsubst mime-entity-info-rnum (entity-info)		(aref entity-info 0))
-(defsubst mime-entity-info-point-min (entity-info)	(aref entity-info 1))
-(defsubst mime-entity-info-point-max (entity-info)	(aref entity-info 2))
-(defsubst mime-entity-info-media-type (entity-info)	(aref entity-info 3))
-(defsubst mime-entity-info-media-subtype (entity-info)	(aref entity-info 4))
-(defsubst mime-entity-info-parameters (entity-info)	(aref entity-info 5))
-(defsubst mime-entity-info-encoding (entity-info)	(aref entity-info 6))
-(defsubst mime-entity-info-children (entity-info)	(aref entity-info 7))
+(defsubst mime-entity-info-reversed-number (entity-info) (aref entity-info 0))
+(defsubst mime-entity-info-point-min (entity-info)	 (aref entity-info 1))
+(defsubst mime-entity-info-point-max (entity-info)	 (aref entity-info 2))
+(defsubst mime-entity-info-media-type (entity-info)	 (aref entity-info 3))
+(defsubst mime-entity-info-media-subtype (entity-info)	 (aref entity-info 4))
+(defsubst mime-entity-info-parameters (entity-info)	 (aref entity-info 5))
+(defsubst mime-entity-info-encoding (entity-info)	 (aref entity-info 6))
+(defsubst mime-entity-info-children (entity-info)	 (aref entity-info 7))
 
 (defsubst mime-entity-info-type/subtype (entity-info)
   (let ((type (mime-entity-info-media-type entity-info)))

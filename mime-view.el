@@ -455,7 +455,7 @@ The compressed face will be piped to this command.")
 		      )))
 	 (params (mime-entity-info-parameters content))
 	 (encoding (mime-entity-info-encoding content))
-	 (rcnum (mime-entity-info-rnum content))
+	 (rcnum (mime-entity-info-reversed-number content))
 	 he e nb ne subj)
     (set-buffer ibuf)
     (goto-char beg)
@@ -907,7 +907,7 @@ It calls following-method selected from variable
       )
     (let* ((p-beg (previous-single-property-change (point) 'mime-view-cinfo))
 	   p-end
-	   (rcnum (mime-entity-info-rnum cinfo))
+	   (rcnum (mime-entity-info-reversed-number cinfo))
 	   (len (length rcnum))
 	   )
       (cond ((null p-beg)
@@ -938,7 +938,7 @@ It calls following-method selected from variable
 				(next-single-property-change
 				 (point) 'mime-view-cinfo))
 		     (goto-char e)
-		     (let ((rc (mime-entity-info-rnum
+		     (let ((rc (mime-entity-info-reversed-number
 				(get-text-property (point)
 						   'mime-view-cinfo))))
 		       (or (equal rcnum (nthcdr (- (length rc) len) rc))
@@ -969,7 +969,7 @@ It calls following-method selected from variable
 	  (goto-char (point-min))
 	  (insert "\n")
 	  (goto-char (point-min))
-	  (let ((rcnum (mime-entity-info-rnum cinfo)) ci str)
+	  (let ((rcnum (mime-entity-info-reversed-number cinfo)) ci str)
 	    (while (progn
 		     (setq
 		      str
@@ -1054,7 +1054,7 @@ If there is no upper entity, call function `mime-preview-quit'."
       (backward-char)
       )
     (let ((r (mime-raw-reversed-entity-number-to-entity-info
-	      (cdr (mime-entity-info-rnum cinfo))
+	      (cdr (mime-entity-info-reversed-number cinfo))
 	      (get-text-property 1 'mime-view-cinfo)))
 	  point)
       (catch 'tag
