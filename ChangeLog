@@ -1,5 +1,47 @@
 1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-image.el (mime-display-image): New function; abolish
+	function `mime-preview-filter-for-image'.
+
+	* mime-image.el: Rename `mime-view-content-header-filter-hook' to
+	`mime-display-header-hook'.
+
+	* mime-view.el (mime-display-entity): Run
+	`mime-display-header-hook'.
+
+	* mime-view.el: Rename `mime-preview-text/enriched' to
+	`mime-display-text/enriched'.
+
+	* mime-text.el (mime-display-text/enriched): Renamed from
+	`mime-preview-text/enriched'.
+
+	* mime-view.el: Rename `mime-preview-text/richtext' to
+	`mime-display-text/richtext'.
+
+	* mime-text.el (mime-display-text/richtext): Renamed from
+	`mime-preview-text/richtext'.
+
+	* mime-view.el: Rename `mime-preview-text/plain' to
+	`mime-display-text/plain'.
+
+	* mime-text.el (mime-display-text/plain): Renamed from
+	`mime-preview-text/plain'.
+
+	* mime-view.el (mime-display-multipart/mixed): Renamed from
+	`mime-preview-multipart/mixed'.
+
+	* mime-view.el (mime-display-multipart/alternative): Renamed from
+	`mime-preview-multipart/alternative'.
+
+	* mime-view.el (mime-display-message/partial-button): Renamed from
+	`mime-preview-message/partial-button'.
+
+	* mime-view.el (mime-display-entity): Renamed from
+	`mime-view-display-entity'; change interface.
+	(mime-display-message): Renamed from `mime-view-display-message'.
+
+1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* README.en (Required environment): Modify for FLIM 1.4.0.
 
 1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
