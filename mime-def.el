@@ -382,6 +382,16 @@ ROT47 will be performed for Japanese text in any case."
     ))
 
 
+;;; @ RCS version
+;;;
+
+(defsubst get-version-string (id)
+  "Return a version-string from RCS ID."
+  (and (string-match ",v \\([0-9][0-9.][0-9.]+\\)" id)
+       (substring id (match-beginning 1)(match-end 1))
+       ))
+
+
 ;;; @ end
 ;;;
 
