@@ -463,13 +463,13 @@ Each elements are regexp of field-name.")
 (ctree-set-calist-strictly
  'mime-preview-condition
  '((body . visible)
-   (body-presentation-method . mime-preview-text/plain)))
+   (body-presentation-method . mime-display-text/plain)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
  '((type . nil)
    (body . visible)
-   (body-presentation-method . mime-preview-text/plain)))
+   (body-presentation-method . mime-display-text/plain)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
@@ -487,7 +487,7 @@ Each elements are regexp of field-name.")
  'mime-preview-condition
  '((type . text)(subtype . t)
    (body . visible)
-   (body-presentation-method . mime-preview-text/plain)))
+   (body-presentation-method . mime-display-text/plain)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
@@ -516,7 +516,7 @@ Each elements are regexp of field-name.")
 ;;; @@@ entity presentation
 ;;;
 
-(autoload 'mime-preview-text/plain "mime-text")
+(autoload 'mime-display-text/plain "mime-text")
 (autoload 'mime-preview-text/enriched "mime-text")
 (autoload 'mime-preview-text/richtext "mime-text")
 
