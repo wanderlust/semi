@@ -1,3 +1,16 @@
+2000-12-21  Tadashi Watanabe <watanabe@sigmaitec.co.jp>
+
+	* pgg-gpg.el (pgg-scheme-verify-region): Use a "-" as the name for
+	the file with the signed material.
+
+2000-12-21   Daiki Ueno  <ueno@unixuser.org>
+
+	* pgg-def.el (pgg-messages-coding-system): New user option.
+
+	* pgg-gpg.el (pgg-gpg-messages-coding-system): New variable.
+	(pgg-gpg-process-region): Don't use `binary-start-process'; bind
+	`coding-system-for-read' to `pgg-gpg-messages-coding-system'.
+
 2000-12-20  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
 	* SEMI: Version 1.14.0 (Iburihashi) released.
