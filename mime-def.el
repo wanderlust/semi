@@ -254,24 +254,6 @@ FUNCTION.")
 ;;; @ method selector kernel
 ;;;
 
-;;; @@ field
-;;;
-
-(defun put-fields (tp c)
-  (catch 'tag
-    (let ((r tp) f ret)
-      (while r
-	(setq f (car r))
-	(if (not (if (setq ret (assoc (car f) c))
-		     (equal (cdr ret)(cdr f))
-		   (setq c (cons f c))
-		   ))
-	    (throw 'tag 'error))
-	(setq r (cdr r))
-	))
-    c))
-
-
 ;;; @@ field unifier
 ;;;
 
