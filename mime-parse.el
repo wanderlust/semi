@@ -232,8 +232,8 @@ If is is not found, return DEFAULT-ENCODING."
 	(setq body-end (match-beginning 0))
       )
     (save-restriction
-      (narrow-to-region body-start body-end)
-      (goto-char body-start)
+      (narrow-to-region header-end body-end)
+      (goto-char header-start)
       (re-search-forward rsep nil t)
       (setq cb (match-end 0))
       (while (re-search-forward rsep nil t)
