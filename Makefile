@@ -4,7 +4,7 @@
 
 PACKAGE = emiko
 API	= 1.14
-RELEASE = 0
+RELEASE = 1
 
 FLIM_API= 1.14
 
@@ -24,7 +24,7 @@ VERSION_SPECIFIC_LISPDIR = NONE
 GOMI	= *.elc
 
 VERSION	= $(API).$(RELEASE)
-ARC_DIR = /home/tomo/public_html/comp/emacsen/lisp/semi/semi-$(API)-for-flim-$(FLIM_API)
+ARC_DIR = /home/ueno/public_html/emacs-lisp
 
 
 elc:
