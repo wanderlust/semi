@@ -124,10 +124,11 @@
 (defconst mime-edit-RCS-ID
   "$Id$")
 
-(defconst mime-edit-version (get-version-string mime-edit-RCS-ID))
+(defconst mime-edit-version `,(get-version-string mime-edit-RCS-ID))
 
 (defconst mime-edit-version-name
-  (concat "SEMI MIME-Edit " mime-edit-version))
+  `,(concat "SEMI MIME-Edit " mime-edit-version
+	    " (" semi-version-name ")"))
 
 
 ;;; @ variables
