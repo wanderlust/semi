@@ -3,8 +3,7 @@
 ;; Copyright (C) 1994,1995,1996,1997 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
-;; Version:
-;;	$Id$
+;; Version: $Id$
 ;; Keywords: text, MIME, multimedia, mail, news
 
 ;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
@@ -86,6 +85,10 @@ CHARSET.  CHARSET is SYMBOL and ENCODING is nil or STRING.
 It calls text decoder for MIME charset specified by buffer local
 variable `mime-text-decoder' and variable `mime-text-decoder-alist'."
   (mime-decode-region (point-min) (point-max) encoding)
+  (goto-char (point-min))
+  (while (search-forward "\r\n" nil t)
+    (replace-match "\n")
+    )
   (let ((text-decoder
 	 (save-excursion
 	   (set-buffer mime-raw-buffer)
