@@ -279,7 +279,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
      (int-to-string (cdr (assq 'version packet)))
      "\n"
      "public key identifier: " 
-     (cdr (assq 'public-key-identifier packet))
+     (cdr (assq 'key-identifier packet))
      "\n"
      "public key algorithm: " 
      (symbol-name (cdr (assq 'public-key-algorithm packet)))
