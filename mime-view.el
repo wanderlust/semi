@@ -44,7 +44,7 @@
 (defconst mime-view-version
   `,(get-version-string mime-view-RCS-ID))
 
-(defconst mime-view-version-name
+(defconst mime-view-version-string
   `,(concat "SEMI MIME-View " mime-view-version
 	    " (" semi-version-name ")"))
 
