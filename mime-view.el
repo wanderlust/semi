@@ -294,7 +294,7 @@ Please redefine this function if you want to change default setting."
 ;;; @@ buffer local variables
 ;;;
 
-;;; @@@ in raw buffer
+;;; @@@ in raw-buffer
 ;;;
 
 (defvar mime-raw-entity-info
@@ -324,7 +324,7 @@ message/rfc822, entity-infos of other entities are included in
 (make-variable-buffer-local 'mime-preview-buffer)
 
 
-;;; @@@ in view buffer
+;;; @@@ in preview-buffer
 ;;;
 
 (defvar mime-mother-buffer nil
@@ -673,7 +673,7 @@ The compressed face will be piped to this command.")
     (play	 "Play current entity"     mime-preview-play-current-entity)
     (extract	 "Extract current entity"  mime-preview-extract-current-entity)
     (print	 "Print current entity"    mime-preview-print-current-entity)
-    (x-face	 "Show X Face"             mime-view-display-x-face)
+    (x-face	 "Show X Face"             mime-preview-display-x-face)
     )
   "Menu for MIME Viewer")
 
@@ -1018,7 +1018,7 @@ It calls following-method selected from variable
 ;;; @@ X-Face
 ;;;
 
-(defun mime-view-display-x-face ()
+(defun mime-preview-display-x-face ()
   (interactive)
   (save-window-excursion
     (set-buffer mime-raw-buffer)
