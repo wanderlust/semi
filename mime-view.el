@@ -769,10 +769,12 @@ The compressed face will be piped to this command.")
       (run-hooks 'mime-view-content-header-filter-hook)
       )
     (let* ((situation
-	    (ctree-match-calist mime-preview-condition
-				(list* (cons 'major-mode major-mode)
-				       (cons 'encoding   encoding)
-				       content-type)))
+	    (ctree-match-calist
+	     mime-preview-condition
+	     (list* (cons 'major-mode major-mode)
+		    (cons 'encoding   encoding)
+		    (or content-type
+			(make-mime-content-type 'text 'plain)))))
 	   (message-button
 	    (cdr (assq 'message-button situation)))
 	   (body-presentation-method
