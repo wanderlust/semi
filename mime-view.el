@@ -294,7 +294,7 @@ Please redefine this function if you want to change default setting."
 ;;; @@ content header filter
 ;;;
 
-(defsubst mime-view-cut-header ()
+(defun mime-view-cut-header ()
   (goto-char (point-min))
   (while (re-search-forward mime-view-ignored-field-regexp nil t)
     (let* ((beg (match-beginning 0))
