@@ -26,6 +26,7 @@
 ;;; Code:
 
 (require 'mime-def)
+(require 'file-detect)
 
 
 ;;; @ for mime-view
