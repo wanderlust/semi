@@ -260,8 +260,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 ;;; It is based on RFC 2015 (PGP/MIME).
 
 (defun mime-method-to-decrypt-application/pgp-encrypted (start end cal)
-  (let* ((entity-number (mime-raw-point-to-entity-number start))
-	 (entity-node-id (reverse entity-number))
+  (let* ((entity-node-id (mime-raw-point-to-entity-node-id start))
 	 (rmcnum (cdr entity-node-id))
 	 (knum (car entity-node-id))
 	 (onum (if (> knum 0)
