@@ -546,21 +546,21 @@ if it is not nil.")
  '((mode . "extract")
    (method . mime-method-to-save)))
 
-(ctree-set-calist-strictly
- 'mime-acting-condition
- '((type . text)(subtype . plain)(mode . "play")
-   (method "tm-plain" nil 'file "" 'encoding 'mode 'name)
-   ))
-(ctree-set-calist-strictly
- 'mime-acting-condition
- '((type . text)(subtype . plain)(mode . "print")
-   (method "tm-plain" nil 'file "" 'encoding 'mode 'name)
-   ))
-(ctree-set-calist-strictly
- 'mime-acting-condition
- '((type . text)(subtype . html)(mode . "play")
-   (method "tm-html" nil 'file "" 'encoding 'mode 'name)
-   ))
+;; (ctree-set-calist-strictly
+;;  'mime-acting-condition
+;;  '((type . text)(subtype . plain)(mode . "play")
+;;    (method "tm-plain" nil 'file "" 'encoding 'mode 'name)
+;;    ))
+;; (ctree-set-calist-strictly
+;;  'mime-acting-condition
+;;  '((type . text)(subtype . plain)(mode . "print")
+;;    (method "tm-plain" nil 'file "" 'encoding 'mode 'name)
+;;    ))
+;; (ctree-set-calist-strictly
+;;  'mime-acting-condition
+;;  '((type . text)(subtype . html)(mode . "play")
+;;    (method "tm-html" nil 'file "" 'encoding 'mode 'name)
+;;    ))
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . text)(subtype . x-rot13-47)(mode . "play")
@@ -572,39 +572,39 @@ if it is not nil.")
    (method . mime-method-to-display-caesar)
    ))
 
-(ctree-set-calist-strictly
- 'mime-acting-condition
- '((type . audio)(subtype . basic)(mode . "play")
-   (method "tm-au" nil 'file "" 'encoding 'mode 'name)
-   ))
+;; (ctree-set-calist-strictly
+;;  'mime-acting-condition
+;;  '((type . audio)(subtype . basic)(mode . "play")
+;;    (method "tm-au" nil 'file "" 'encoding 'mode 'name)
+;;    ))
 
-(ctree-set-calist-strictly
- 'mime-acting-condition
- '((type . image)(mode . "play")
-   (method "tm-image" nil 'file "" 'encoding 'mode 'name)
-   ))
-(ctree-set-calist-strictly
- 'mime-acting-condition
- '((type . image)(mode . "print")
-   (method "tm-image" nil 'file "" 'encoding 'mode 'name)
-   ))
+;; (ctree-set-calist-strictly
+;;  'mime-acting-condition
+;;  '((type . image)(mode . "play")
+;;    (method "tm-image" nil 'file "" 'encoding 'mode 'name)
+;;    ))
+;; (ctree-set-calist-strictly
+;;  'mime-acting-condition
+;;  '((type . image)(mode . "print")
+;;    (method "tm-image" nil 'file "" 'encoding 'mode 'name)
+;;    ))
 
-(ctree-set-calist-strictly
- 'mime-acting-condition
- '((type . video)(subtype . mpeg)(mode . "play")
-   (method "tm-mpeg" nil 'file "" 'encoding 'mode 'name)
-   ))
+;; (ctree-set-calist-strictly
+;;  'mime-acting-condition
+;;  '((type . video)(subtype . mpeg)(mode . "play")
+;;    (method "tm-mpeg" nil 'file "" 'encoding 'mode 'name)
+;;    ))
 
-(ctree-set-calist-strictly
- 'mime-acting-condition
- '((type . application)(subtype . postscript)(mode . "play")
-   (method "tm-ps" nil 'file "" 'encoding 'mode 'name)
-   ))
-(ctree-set-calist-strictly
- 'mime-acting-condition
- '((type . application)(subtype . postscript)(mode . "print")
-   (method "tm-ps" nil 'file "" 'encoding 'mode 'name)
-   ))
+;; (ctree-set-calist-strictly
+;;  'mime-acting-condition
+;;  '((type . application)(subtype . postscript)(mode . "play")
+;;    (method "tm-ps" nil 'file "" 'encoding 'mode 'name)
+;;    ))
+;; (ctree-set-calist-strictly
+;;  'mime-acting-condition
+;;  '((type . application)(subtype . postscript)(mode . "print")
+;;    (method "tm-ps" nil 'file "" 'encoding 'mode 'name)
+;;    ))
 
 (ctree-set-calist-strictly
  'mime-acting-condition
