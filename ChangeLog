@@ -1,6 +1,9 @@
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el (mime-acting-condition), mime-play.el: Rename
+	`mime-display-caesar' -> `mime-method-to-display-caesar'.
+
+	* mime-view.el (mime-acting-condition), mime-play.el: Rename
 	`mime-display-message/external-ftp' ->
 	`mime-method-to-display-message/external-ftp'.
 
