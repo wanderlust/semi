@@ -1,5 +1,10 @@
 1998-10-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* README.en (Required environment): Modify for APEL 9.1 and FLIM
+	1.10.1.
+
+1998-10-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-edit.el (mime-edit-version): Enclose with
 	`eval-and-compile'.
 
