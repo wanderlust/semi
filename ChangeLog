@@ -1,3 +1,8 @@
+1997-11-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-bbdb.el, semi-setup.el: Use path-util.el instead of
+	file-detect.el.
+
 1997-11-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-def.el: Add group `mime' to `default-mime-charset'.
