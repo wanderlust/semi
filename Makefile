@@ -4,7 +4,7 @@
 
 PACKAGE = wemi
 API	= 1.12
-RELEASE = 0
+RELEASE = 1
 
 TAR	= tar
 RM	= /bin/rm -f
@@ -23,7 +23,7 @@ VERSION_SPECIFIC_LISPDIR = NONE
 GOMI	= *.elc
 
 VERSION	= $(API).$(RELEASE)
-ARC_DIR = /pub/GNU/elisp/semi/semi-$(API)-for-flim-1.12
+ARC_DIR = /pub/GNU/elisp/semi/wemi
 
 
 elc:
@@ -61,7 +61,8 @@ tar:
 	$(RM) /tmp/$(PACKAGE)-$(VERSION)/ftp.in
 	cd /tmp; $(TAR) cvzf $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION)
 	cd /tmp; $(RM) -r $(PACKAGE)-$(VERSION)
-	sed "s/VERSION/$(VERSION)/" < ftp.in | sed "s/API/$(API)/" > ftp
+	sed "s/VERSION/$(VERSION)/" < ftp.in | sed "s/API/$(API)/" \
+		| sed "s/PACKAGE/$(PACKAGE)/" > ftp
 
 release:
 	-$(RM) $(ARC_DIR)/$(PACKAGE)-$(VERSION).tar.gz

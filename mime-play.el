@@ -1,6 +1,6 @@
 ;;; mime-play.el --- Playback processing module for mime-view.el
 
-;; Copyright (C) 1994,1995,1996,1997,1998 Free Software Foundation, Inc.
+;; Copyright (C) 1994,1995,1996,1997,1998,1999 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Created: 1995/9/26 (separated from tm-view.el)
@@ -472,16 +472,7 @@ SUBTYPE is symbol to indicate subtype of media-type.")
 
 (defun mime-detect-content (entity situation)
   (let (type subtype)
-    (let ((mdata (save-excursion
-		   ;;(set-buffer (mime-entity-buffer entity))
-		   (let* ((start (mime-entity-body-start entity))
-			  (end (progn
-				 (goto-char start)
-				 (end-of-line)
-				 (point))))
-		     (mime-decode-string (buffer-substring start end)
-					 (mime-entity-encoding entity))
-		     )))
+    (let ((mdata (mime-entity-content entity))
 	  (rest mime-magic-type-alist))
       (while (not (let ((cell (car rest)))
 		    (if cell
