@@ -1,6 +1,12 @@
+1997-11-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el: Rename `mime-article/view-application/pgp' ->
+ 	`mime-process-application/pgp'.
+
+
 1997-11-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.116 (D-Dòhòji)-A was released.
+	* SEMI: Version 0.116 (D-Dòhòji) was released.-A
 
 1997-11-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
