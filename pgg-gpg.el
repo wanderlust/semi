@@ -25,6 +25,7 @@
 
 ;;; Code:
 
+(require 'mel) ; binary-to-text-funcall
 (eval-when-compile (require 'pgg))
 
 (defgroup pgg-gpg ()
@@ -78,11 +79,10 @@
 	(progn
 	  (set-default-file-modes 448)
 	  (setq process
-		(apply #'binary-start-process "*GnuPG*" errors-buffer
+		(apply #'binary-to-text-funcall
+		       pgg-gpg-messages-coding-system
+		       #'start-process "*GnuPG*" errors-buffer
 		       program args))
-	  (if (fboundp 'set-process-coding-system)
-	      (set-process-coding-system process
-					 pgg-gpg-messages-coding-system))
 	  (set-process-sentinel process #'ignore)
 	  (when passphrase
 	    (process-send-string process (concat passphrase "\n")))
