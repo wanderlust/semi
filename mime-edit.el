@@ -1148,7 +1148,7 @@ Optional argument ENCODING specifies an encoding method such as base64."
 
 (defun mime-edit-goto-tag ()
   "Search for the beginning of the tagged MIME message."
-  (let ((current (point)) multipart)
+  (let ((current (point)))
     (if (looking-at mime-edit-tag-regexp)
 	t
       ;; At first, go to the end.
