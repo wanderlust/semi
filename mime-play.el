@@ -159,7 +159,15 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
   (interactive "P")
   (let ((entity (get-text-property (point) 'mime-view-entity)))
     (if entity
-	(let ((situation (list (cons 'mode (or mode "play")))))
+	(let ((situation
+	       (get-text-property (point) 'mime-view-situation)))
+	  (or mode
+	      (setq mode "play"))
+	  (setq situation 
+		(if (assq 'mode situation)
+		    (put-alist 'mode mode (copy-alist situation))
+		  (cons (cons 'mode mode)
+			situation)))
 	  (if ignore-examples
 	      (setq situation
 		    (cons (cons 'ignore-examples ignore-examples)
