@@ -96,43 +96,6 @@
 ;;; @ method selector
 ;;;
 
-;;; @@ alist
-;;;
-
-(defun put-alist (item value alist)
-  "Modify ALIST to set VALUE to ITEM.
-If there is a pair whose car is ITEM, replace its cdr by VALUE.
-If there is not such pair, create new pair (ITEM . VALUE) and
-return new alist whose car is the new pair and cdr is ALIST.
-\[tomo's ELIS like function]"
-  (let ((pair (assoc item alist)))
-    (if pair
-	(progn
-	  (setcdr pair value)
-	  alist)
-      (cons (cons item value) alist)
-      )))
-
-(defun del-alist (item alist)
-  "If there is a pair whose key is ITEM, delete it from ALIST.
-\[tomo's ELIS emulating function]"
-  (if (equal item (car (car alist)))
-      (cdr alist)
-    (let ((pr alist)
-	  (r (cdr alist))
-	  )
-      (catch 'tag
-	(while (not (null r))
-	  (if (equal item (car (car r)))
-	      (progn
-		(rplacd pr (cdr r))
-		(throw 'tag alist)))
-	  (setq pr r)
-	  (setq r (cdr r))
-	  )
-	alist))))
-
-
 ;;; @@ field
 ;;;
 
