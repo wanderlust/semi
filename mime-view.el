@@ -1137,7 +1137,9 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
     (define-key mime-view-mode-map
       "\C-c\C-p" (function mime-preview-print-current-entity))
     (define-key mime-view-mode-map
-      "\C-c\C-t\C-h" (function mime-preview-toggle-header))
+      "\C-c\C-t\C-f" (function mime-preview-toggle-header))
+    (define-key mime-view-mode-map
+      "\C-c\C-th" (function mime-preview-toggle-header))
     (define-key mime-view-mode-map
       "\C-c\C-t\C-c" (function mime-preview-toggle-content))
     (define-key mime-view-mode-map
