@@ -423,8 +423,7 @@ enclosure を作るための操作としては以下のようなものがあります。
 <kt>C-c C-x C-q
 <kd>
 指定した region 内の tag を無効にし、その tag を文字列として利用できる
-ようにします。（現在の版ではうまく働かないことがあります。また、電子署
-名との併用に関しても不完全です）
+ようにします。
 </kl>
 
 
@@ -659,6 +658,13 @@ FUNCTION and FILE, but they will be used for PGP 5.0i or GnuPG.
 <p>
 Return function to do service <var>method</var>.
 </defun>
+
+<defun name="mime-mc-setversion">
+	    <args> version
+<p>
+Select `pgp-version' and `mc-default-scheme' if possible.  VERSION
+should be a string or a symbol.
+<defun/>
 
 
 <h2> 押釦

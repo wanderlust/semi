@@ -5,10 +5,10 @@ Copyright (C) 1998,1999 Free Software Foundation, Inc.
 
 ** PGP 5.0i and GnuPG are now supported for PGP/MIME
 
-You can select the various PGP or GnuPG commands by the new user
-option `pgp-version'.  Note that Mailcrypt 3.5.3 or later is needed
-for PGP 5.0i or GnuPG.  A user interface for editing or viewing has
-never changed.
+  You can select the various PGP or GnuPG commands by the user option
+`pgp-version' or the command `mime-mc-setversion'. Note that Mailcrypt
+3.5.3 or later is needed for PGP 5.0i or GnuPG.  A user interface for
+editing or viewing has never changed.
 
 
 ** Function `mime-play-entity'

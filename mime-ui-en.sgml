@@ -411,8 +411,7 @@ Encrypt to specified region. <cf node="PGP">
 <kt>C-c C-x C-q
 <kd>
 avoid to encode tags in specified region.  In other words, tags is
-interpreted as such string.  (In current version, it may be
-incomplete.  Maybe PGP-signature does not work for this enclosure.)
+interpreted as such string.
 </kl>
 
 
@@ -644,6 +643,13 @@ FUNCTION and FILE, but they will be used for PGP 5.0i or GnuPG.
 <p>
 Return function to do service <var>method</var>.
 </defun>
+
+<defun name="mime-mc-setversion">
+	    <args> version
+<p>
+Select `pgp-version' and `mc-default-scheme' if possible.  VERSION
+should be a string or a symbol.
+<defun/>
 
 
 <h2> Mouse button

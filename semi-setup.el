@@ -126,6 +126,10 @@ it is used as hook to set."
 	 ))
   )
 
+(if mime-setup-enable-pgp
+    (autoload 'mime-mc-setversion "mime-mc" nil t)
+  )
+
 
 ;;; @ for mime-edit
 ;;;

@@ -1,3 +1,24 @@
+1999-03-25  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* NEWS, mime-ui-en.sgml, mime-ui-ja.sgml: Update for the command
+	`mime-mc-setversion'.
+
+	* semi-setup.el (TopLevel): Autoload "mime-mc" for the command
+	`mime-mc-setversion'.
+
+	* mime-mc.el (mime-mc-pgp50-sign-region): Use "micalg=pgp-sha1"
+	instead of "micalg=pgp-md5"; use `mime-mc-pgp50-sign-parser' for
+	the parser if a detached sign is required.
+	(mime-mc-pgp50-sign-parser): New function for parsing a detached
+	sign.
+	(mime-mc-setversion): New command.
+
+	* mime-edit.el (mime-edit-preview-message): Inherit the value of
+	`mime-edit-pgp-processing' from the editing buffer to the encoding
+	buffer.
+	(mime-edit-encrypt-pgp-mime): Swap the prefix string of boundary
+	"gpg-" with "pgp-".
+
 1999-03-24  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* NEWS, README.en, mime-ui-en.sgml, mime-ui-ja.sgml: Update for

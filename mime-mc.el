@@ -57,6 +57,36 @@
 ;;; @ Generic functions
 ;;;
 
+(defun mime-mc-setversion (&optional version)
+  "Select `pgp-version' and `mc-default-scheme' if possible.
+VERSION should be a string or a symbol."
+  (interactive)
+  (let ((oldversion pgp-version)
+	(table '(("GnuPG" . gpg) ("PGP 5.0i" . pgp50) ("PGP 2.6" . pgp)
+		 ("gnupg" . gpg) ("gpg" . gpg) ("pgp5" . pgp50)
+		 ("pgp50" . pgp50) ("pgp2" . pgp) ("pgp" . pgp)
+		 ("5.0" . pgp50) ("2.6" . pgp))))
+    (if (interactive-p)
+	(setq version (completing-read
+		       (format "Select PGP version (currently %s): "
+			       (car (rassoc oldversion table)))
+		       table nil t)
+	      pgp-version (or (cdr (assoc version table))
+			      oldversion))
+      (if (stringp version)
+	  (setq pgp-version (or (cdr (assoc version table)) oldversion))
+	(if (memq version '(gpg pgp50 pgp))
+	    (setq pgp-version version)
+	  )))
+    (condition-case nil
+	(mc-setversion
+	 (cdr (assq pgp-version
+		    '((gpg . "gpg") (pgp50 . "5.0") (pgp . "2.6"))))
+	 )
+      (error nil))
+    (message "PGP version set to %s." (car (rassq pgp-version table)))
+    ))
+
 (defun mime-mc-insert-public-key (&optional userid scheme)
   (mc-insert-public-key
    userid
@@ -110,18 +140,22 @@
 	  (erase-buffer)
 	  (set-buffer obuf)
 	  (buffer-disable-undo mybuf)
+
 	  (if passwd
 	      (setq args (append '("--passphrase-fd" "0") args)))
 	  (setq args (append (list (concat "2>" stderr-tempfilename)) args))
 	  (setq args (append (list (concat "3>" status-tempfilename)) args))
 	  (setq args (append '("--status-fd" "3") args))
+
 	  (if mc-gpg-extra-args
 	      (setq args (append mc-gpg-extra-args args)))
+
 	  (mc-gpg-debug-print (format "prog is %s, args are %s"
 				      program
 				      (mapconcat '(lambda (x)
 						    (format "'%s'" x))
 						 args " ")))
+
 	  (setq proc
 		(apply 'start-process-shell-command "*GPG*" mybuf
 		       program args))
@@ -141,8 +175,10 @@
 	  (setq status (process-status proc))
 	  (setq rc (process-exit-status proc))
 	  (mc-gpg-debug-print (format "prog finished, rc=%s" rc))
+
 	  ;; Hack to force a status_notify() in Emacs 19.29
 	  (delete-process proc)
+
 	  ;; remove the annoying "yes your process has finished" message
 	  (set-buffer mybuf)
 	  (goto-char (point-max))
@@ -152,30 +188,36 @@
 	  ;; CRNL -> NL
 	  (while (search-forward "\r\n" nil t)
 	    (replace-match "\n"))
+
 	  ;; ponder process death: signal, not just rc!=0
 	  (if (or (eq 'stop status) (eq 'signal status))
 	      ;; process died
 	      (error "%s exited abnormally: '%s'" program rc) ;;is rc a string?
 	    )
+
 	  (if (= 127 rc)
 	      (error "%s could not be found" program) ;; at least on my system
 	    )
+
 	  ;; fill stderr buf
 	  (setq stderr-buf (get-buffer-create " *mailcrypt stderr temp"))
 	  (buffer-disable-undo stderr-buf)
 	  (set-buffer stderr-buf)
 	  (erase-buffer)
 	  (insert-file-contents stderr-tempfilename)
+
 	  ;; fill status buf
 	  (setq status-buf (get-buffer-create " *mailcrypt status temp"))
 	  (buffer-disable-undo status-buf)
 	  (set-buffer status-buf)
 	  (erase-buffer)
 	  (insert-file-contents status-tempfilename)
+
 	  ;; feed the parser
 	  (set-buffer mybuf)
 	  (setq parser-result (funcall parser mybuf stderr-buf status-buf rc))
 	  (mc-gpg-debug-print (format " parser returned %s" parser-result))
+
 	  ;; what did the parser tell us?
 	  (if (car parser-result)
 	      ;; yes, replace region
@@ -200,6 +242,7 @@ Content-Transfer-Encoding: 7bit
 		  (goto-char beg)
 		  (insert-buffer-substring mybuf)
 		  )))
+
 	  ;; return result
 	  (cdr parser-result)
 	  )
@@ -304,17 +347,21 @@ Content-Transfer-Encoding: 7bit
 	  (setq proc
 		(apply 'start-process-shell-command "*PGP*" mybuf program
 		       "2>&1" args))
+
 	  ;; Now hand the process to the parser, which returns the exit
 	  ;; status of the dead process and the limits of the region
 	  ;; containing the PGP results.
 	  (setq results (funcall parser proc obuf beg end mybuf passwd))
 	  (setq result  (car results))
 	  (setq rgn     (cadr results))
+
 	  ;; Hack to force a status_notify() in Emacs 19.29
 	  (set-buffer mybuf)
+
 	  ;; Hurm.  FIXME; must get better result codes.
 	  (if (stringp result)
 	      (mc-message result))
+
 	  ;; If the parser found something, migrate it to the old
 	  ;; buffer.  In particular, the parser's job is to return
 	  ;; a cons of the form ( beg . end ) delimited the result
@@ -343,14 +390,120 @@ Content-Transfer-Encoding: 7bit
 		  )
 		(set-buffer mybuf)
 		(delete-region (car rgn) (cdr rgn))))
+
 	  ;; Return nil on failure and exit code on success
 	  (if rgn result nil))
+
       ;; Cleanup even on nonlocal exit
       (if (and proc (eq 'run (process-status proc)))
 	  (interrupt-process proc))
       (set-buffer obuf)
       (or buffer (null mybuf) (kill-buffer mybuf))
       rgn)))
+
+(defun mime-mc-pgp50-sign-parser (proc oldbuf start end newbuf passwd)
+  ;; This function is a copy of `mc-pgp50-sign-parser', however it is
+  ;; modified for parsing a detached sign.
+  (let (result results rgn)
+    ;; (setenv "PGPPASSFD" "0")
+    (set-buffer newbuf)
+    (goto-char (point-max))
+    (progn
+      (unwind-protect
+	  (with-expect proc
+	    (message "Sending passphrase...")
+	    (expect-send (concat passwd "\n"))
+	    (or mc-passwd-timeout (mc-deactivate-passwd t))
+	    (expect "No files specified.  Using stdin."
+	      (message "Passphrase sent.  Signing...")
+	      (set-buffer oldbuf)
+	      (process-send-region proc start end)
+	      (set-buffer newbuf)
+	      (process-send-eof proc)
+
+	      ;; Test output of the program, looking for
+	      ;; errors.
+	      (expect-cond
+
+	       ;; OPTION 1:  Great!  The data is now signed!
+	       ("-----END PGP SIGNATURE-----"
+
+		;; Catch the exit status.
+		(setq result (process-exit-status proc))
+		(delete-process proc)
+		(message "Signing complete.")
+
+		;; Delete everything preceding the signed data.
+		(goto-char (point-max))
+		(re-search-backward
+		 ;; "-----BEGIN PGP SIGNED MESSAGE-----" nil t)
+		 "-----BEGIN PGP SIGNATURE-----" nil t)
+		(delete-region (point-min) (match-beginning 0))
+		(setq rgn (point-min))
+
+		;; Convert out CR/NL -> NL
+		(goto-char (point-min))
+		(while (search-forward "\r\n" nil t)
+		  (replace-match "\n"))
+
+		;; Delete everything after the signature.
+		(goto-char (point-min))
+		(re-search-forward
+		 "-----END PGP SIGNATURE-----\n" nil t)
+		(delete-region (match-end 0) (point-max))
+			 
+		;; Return the exit status, with the region
+		;; limits!
+		(setq rgn (cons rgn (point-max)))
+		(setq results (list result rgn)))
+			
+
+	       ;; OPTION 1.a:  The data is now signed, but is 8bit data.
+	       ("-----END PGP MESSAGE-----"
+
+		;; Catch the exit status.
+		(setq result (process-exit-status proc))
+		(delete-process proc)
+		(message "Signing complete.")
+
+		;; Delete everything preceding the signed data.
+		(goto-char (point-max))
+		(re-search-backward 
+		 "-----BEGIN PGP MESSAGE-----" nil t)
+		(delete-region (point-min) (match-beginning 0))
+		(setq rgn (point-min))
+
+		;; Convert out CR/NL -> NL
+		(goto-char (point-min))
+		(while (search-forward "\r\n" nil t)
+		  (replace-match "\n"))
+
+		;; Delete everything after the signature.
+		(goto-char (point-min))
+		(re-search-forward
+		 "-----END PGP MESSAGE-----\n" nil t)
+		(delete-region (match-end 0) (point-max))
+			 
+		;; Return the exit status, with the region
+		;; limits!
+		(setq rgn (cons rgn (point-max)))
+		(setq results (list result rgn)))
+			
+
+	       ;; OPTION 2:  Awww...bad passphrase!
+	       ("Enter pass phrase:" 
+		(mc-deactivate-passwd t)
+		(interrupt-process proc)
+		(delete-process proc)
+
+		;; Return the bad news.
+		(setq results '("Incorrect passphrase" nil)))
+
+	       ;; OPTION 3:  The program exits.
+	       (exit
+		(setq results (list 
+			       (process-exit-status proc) nil)))))))
+      results)))
 
 (defun mime-mc-pgp50-sign-region (start end &optional id unclear boundary)
   (if (not (fboundp 'mc-pgp50-sign-parser))
@@ -359,7 +512,9 @@ Content-Transfer-Encoding: 7bit
   (let ((process-environment process-environment)
 	(buffer (get-buffer-create mc-buffer-name))
 	passwd args key
-	(parser (function mc-pgp50-sign-parser))
+	(parser (if boundary
+		    (function mime-mc-pgp50-sign-parser)
+		  (function mc-pgp50-sign-parser)))
 	(pgp-path mc-pgp50-pgps-path)
 	)
     (setq key (mc-pgp50-lookup-key (or id mc-pgp50-user-id)))
@@ -389,7 +544,7 @@ Content-Transfer-Encoding: 7bit
 		(insert
 		 (format "\
 --[[multipart/signed; protocol=\"application/pgp-signature\";
- boundary=\"%s\"; micalg=pgp-md5][7bit]]\n" boundary))
+ boundary=\"%s\"; micalg=pgp-sha1][7bit]]\n" boundary))
 		))
 	  (message "Signing as %s ... Done." (car key))
 	  t)
