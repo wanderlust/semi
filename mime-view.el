@@ -703,6 +703,12 @@ Each elements are regexp of field-name.")
 
 (ctree-set-calist-strictly
  'mime-preview-condition
+ '((type . application)(subtype . emacs-lisp)(disposition-type . inline)
+   (body . visible)
+   (body-presentation-method . mime-display-application/emacs-lisp)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition
  '((type . text)(subtype . t)
    (body . visible)
    (body-presentation-method . mime-display-text/plain)))
@@ -893,6 +899,39 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	(setq default-situation
 	      (cons original-major-mode-cell default-situation)))
     (mime-display-entity start nil default-situation)))
+
+;;; stolen (and renamed) from mm-view.el.
+(defun mime-display-inline-fontify (entity mode)
+  ;; XEmacs @#$@ version of font-lock refuses to fully turn itself
+  ;; on for buffers whose name begins with " ".  That's why we use
+  ;; save-current-buffer/get-buffer-create rather than
+  ;; with-temp-buffer.
+  (let ((buffer (get-buffer-create "*fontification*")))
+    (save-current-buffer
+      (set-buffer buffer)
+      (buffer-disable-undo)
+      (erase-buffer)
+      (mime-insert-entity-content entity)
+      (funcall mode)
+      (let ((font-lock-verbose nil))
+	;; I find font-lock a bit too verbose.
+	(font-lock-fontify-buffer))
+      ;; By default, XEmacs font-lock uses non-duplicable text
+      ;; properties.  This code forces all the text properties
+      ;; to be copied along with the text.
+      (static-when (fboundp 'extent-list)
+	(map-extents (lambda (ext ignored)
+		       (set-extent-property ext 'duplicable t)
+		       nil)
+		     nil nil nil nil nil 'text-prop)))
+    (insert-buffer-substring buffer)))
+
+(defun mime-display-application/emacs-lisp (entity situation)
+  (save-restriction
+    (narrow-to-region (point-max)(point-max))
+    (mime-display-inline-fontify entity 'emacs-lisp-mode)
+    (run-hooks 'mime-text-decode-hook 'mime-display-text/plain-hook)))
+
 
 ;;; @ acting-condition
 ;;;
