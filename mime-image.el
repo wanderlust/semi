@@ -97,7 +97,12 @@
     (static-if (fboundp 'insert-image)
 	(unwind-protect
 	    (save-excursion
-	      (insert-image image)
+	      (static-if (condition-case nil
+			     (progn (insert-image '(image)) nil)
+			   (wrong-number-of-arguments t))
+		  (insert-image image "x")
+		(insert-image image))
+	      (insert "\n")
 	      (save-window-excursion
 		(set-window-buffer (selected-window)(current-buffer))
 		(sit-for 0)))
@@ -172,34 +177,12 @@
 
 (defun mime-display-image (entity situation)
   (message "Decoding image...")
-  (let ((gl (image-normalize (cdr (assq 'image-format situation))
-			     (mime-entity-content entity))))
-    (cond ((image-invalid-glyph-p gl)
-	   (setq gl nil)
-	   (message "Invalid glyph!")
-	   )
-	  ((eq (aref gl 0) 'xbm)
-	   (let ((xbm-file
-		  (make-temp-name
-		   (expand-file-name "tm" temporary-file-directory))))
-	     (with-temp-buffer
-	       (insert (aref gl 2))
-	       (write-region (point-min)(point-max) xbm-file)
-	       )
-	     (message "Decoding image...")
-	     (bitmap-insert-xbm-file xbm-file)
-	     (delete-file xbm-file)
-	     )
-	   (message "Decoding image... done")
-	   )
-	  (t
-	   (setq gl (make-glyph gl))
-	   (let ((e (make-extent (point) (point))))
-	     (set-extent-end-glyph e gl)
-	     )
-	   (message "Decoding image... done")
-	   ))
-    )
+  (let ((image (image-normalize (cdr (assq 'image-format situation))
+				(mime-entity-content entity))))
+    (if (image-invalid-glyph-p image)
+	(message "Invalid glyph!")
+      (image-insert-at-point image)
+      (message "Decoding image... done")))
   (insert "\n")
   )
 
