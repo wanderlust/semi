@@ -93,6 +93,8 @@ specified, play as it.  Default MODE is \"play\"."
 	)
       (setq ret
 	    (or (ctree-match-calist mime-user-acting-condition cal)
+		(ctree-match-calist-partially
+		 mime-user-acting-condition cal)
 		cal))
       (setq ret
 	    (or (ctree-find-calist mime-acting-condition ret
