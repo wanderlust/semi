@@ -972,7 +972,6 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
   (or preview-buffer
       (setq preview-buffer (current-buffer)))
   (let* (e nb ne nhb nbb)
-    (mime-goto-header-start-point entity)
     (in-calist-package 'mime-view)
     (or situation
 	(setq situation
