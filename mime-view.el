@@ -121,7 +121,7 @@
     ;;         'file '"access-type" '"name" '"site" '"directory"))
     ((type . "message/external-body")
      ("access-type" . "anon-ftp")
-     (method . mime-display-message/external-ftp)
+     (method . mime-method-to-display-message/external-ftp)
      )
     ((type . "message/rfc822")
      (method . mime-method-to-display-message/rfc822)

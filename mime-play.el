@@ -434,7 +434,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
     (dired dir)
     ))
 
-(defun mime-display-message/external-ftp (beg end cal)
+(defun mime-method-to-display-message/external-ftp (beg end cal)
   (let* ((site (cdr (assoc "site" cal)))
 	 (directory (cdr (assoc "directory" cal)))
 	 (name (cdr (assoc "name" cal)))
