@@ -583,7 +583,7 @@ The compressed face will be piped to this command.")
     (setq ne (point-max))
     (widen)
     (put-text-property nb ne 'mime-view-raw-buffer ibuf)
-    (put-text-property nb ne 'mime-view-entity-info entity)
+    (put-text-property nb ne 'mime-view-entity entity)
     (goto-char ne)
     ))
 
@@ -629,11 +629,11 @@ If optional argument MESSAGE-INFO is not specified,
 	(c (mime-entity-children message-info))
 	)
     (if (and (<= b position)(<= position e))
-	(or (let (co ret (sn 0))
+	(or (let (entity ret (sn 0))
 	      (catch 'tag
 		(while c
-		  (setq co (car c))
-		  (setq ret (mime-raw-point-to-entity-number position co))
+		  (setq entity (car c))
+		  (setq ret (mime-raw-point-to-entity-number position entity))
 		  (cond ((eq ret t) (throw 'tag (list sn)))
 			(ret (throw 'tag (cons sn ret)))
 			)
@@ -673,7 +673,7 @@ If optional argument MESSAGE-INFO is not specified,
 	))))
 
 (defun mime-raw-flatten-message-info (&optional message-info)
-  "Return list of entity-infos in mime-raw-buffer.
+  "Return list of entity in mime-raw-buffer.
 If optional argument MESSAGE-INFO is not specified,
 `mime-raw-message-info' is used."
   (or message-info
@@ -860,7 +860,8 @@ button-2	Move to point under the mouse cursor
 	    (setq mime-mother-buffer mother)
 	    ))
       (mime-view-define-keymap default-keymap-or-function)
-      (let ((point (next-single-property-change (point-min) 'mime-view-entity-info)))
+      (let ((point
+	     (next-single-property-change (point-min) 'mime-view-entity)))
 	(if point
 	    (goto-char point)
 	  (goto-char (point-min))
@@ -914,14 +915,14 @@ of the mother-buffer."
 It calls following-method selected from variable
 `mime-view-following-method-alist'."
   (interactive)
-  (let ((message-info (get-text-property (point-min) 'mime-view-entity-info))
+  (let ((message-info (get-text-property (point-min) 'mime-view-entity))
 	entity)
     (while (null (setq entity
-		       (get-text-property (point) 'mime-view-entity-info)))
+		       (get-text-property (point) 'mime-view-entity)))
       (backward-char)
       )
     (let* ((p-beg
-	    (previous-single-property-change (point) 'mime-view-entity-info))
+	    (previous-single-property-change (point) 'mime-view-entity))
 	   p-end
 	   (entity-node-id (mime-entity-node-id entity))
 	   (len (length entity-node-id))
@@ -929,16 +930,16 @@ It calls following-method selected from variable
       (cond ((null p-beg)
 	     (setq p-beg
 		   (if (eq (next-single-property-change (point-min)
-							'mime-view-entity-info)
+							'mime-view-entity)
 			   (point))
 		       (point)
 		     (point-min)))
 	     )
-	    ((eq (next-single-property-change p-beg 'mime-view-entity-info)
+	    ((eq (next-single-property-change p-beg 'mime-view-entity)
 		 (point))
 	     (setq p-beg (point))
 	     ))
-      (setq p-end (next-single-property-change p-beg 'mime-view-entity-info))
+      (setq p-end (next-single-property-change p-beg 'mime-view-entity))
       (cond ((null p-end)
 	     (setq p-end (point-max))
 	     )
@@ -952,11 +953,11 @@ It calls following-method selected from variable
 		 (let (e)
 		   (while (setq e
 				(next-single-property-change
-				 (point) 'mime-view-entity-info))
+				 (point) 'mime-view-entity))
 		     (goto-char e)
 		     (let ((rc (mime-entity-node-id
 				(get-text-property (point)
-						   'mime-view-entity-info))))
+						   'mime-view-entity))))
 		       (or (equal entity-node-id
 				  (nthcdr (- (length rc) len) rc))
 			   (throw 'tag nil)
@@ -1068,18 +1069,18 @@ If there is no upper entity, call function `mime-preview-quit'."
   (interactive)
   (let (cinfo)
     (while (null (setq cinfo
-		       (get-text-property (point) 'mime-view-entity-info)))
+		       (get-text-property (point) 'mime-view-entity)))
       (backward-char)
       )
     (let ((r (mime-raw-find-entity-from-node-id
 	      (cdr (mime-entity-node-id cinfo))
-	      (get-text-property 1 'mime-view-entity-info)))
+	      (get-text-property 1 'mime-view-entity)))
 	  point)
       (catch 'tag
 	(while (setq point (previous-single-property-change
-			    (point) 'mime-view-entity-info))
+			    (point) 'mime-view-entity))
 	  (goto-char point)
-	  (if (eq r (get-text-property (point) 'mime-view-entity-info))
+	  (if (eq r (get-text-property (point) 'mime-view-entity))
 	      (throw 'tag t)
 	    )
 	  )
@@ -1091,11 +1092,11 @@ If there is no upper entity, call function `mime-preview-quit'."
 If there is no previous entity, it calls function registered in
 variable `mime-view-over-to-previous-method-alist'."
   (interactive)
-  (while (null (get-text-property (point) 'mime-view-entity-info))
+  (while (null (get-text-property (point) 'mime-view-entity))
     (backward-char)
     )
   (let ((point
-	 (previous-single-property-change (point) 'mime-view-entity-info)))
+	 (previous-single-property-change (point) 'mime-view-entity)))
     (if point
 	(goto-char point)
       (let ((f (assq mime-preview-original-major-mode
@@ -1110,7 +1111,7 @@ variable `mime-view-over-to-previous-method-alist'."
 If there is no previous entity, it calls function registered in
 variable `mime-view-over-to-next-method-alist'."
   (interactive)
-  (let ((point (next-single-property-change (point) 'mime-view-entity-info)))
+  (let ((point (next-single-property-change (point) 'mime-view-entity)))
     (if point
 	(goto-char point)
       (let ((f (assq mime-preview-original-major-mode
@@ -1135,7 +1136,7 @@ If reached to (point-max), it calls function registered in variable
             (funcall (cdr f))
           ))
     (let ((point
-	   (or (next-single-property-change (point) 'mime-view-entity-info)
+	   (or (next-single-property-change (point) 'mime-view-entity)
 	       (point-max))))
       (forward-line h)
       (if (> (point) point)
@@ -1163,7 +1164,7 @@ If reached to (point-min), it calls function registered in variable
 	  (while (> (point) 1)
 	    (if (setq point
 		      (previous-single-property-change (point)
-						       'mime-view-entity-info))
+						       'mime-view-entity))
 		(throw 'tag t)
 	      )
 	    (backward-char)
