@@ -1,5 +1,17 @@
 1997-09-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-view-header-visible-p,
+	mime-view-body-visible-p, mime-view-entity-button-function,
+	mime-view-display-entity, mime-view-follow-current-entity),
+	mime-play.el (mime-display-content): Use
+	`mime-entity-info-type/subtype' instead of
+	`mime::content-info/type'.
+
+	* mime-parse.el (mime-entity-info-type/subtype): New inline
+	function.
+
+1997-09-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-view-display-entity,
 	mime-article/rcnum-to-cinfo, mime-view-follow-current-entity,
 	mime-view-move-to-upper): Use `mime::content-info/rcnum' instead
