@@ -200,7 +200,7 @@
 (luna-define-method pgg-scheme-insert-key ((scheme pgg-scheme-gpg))
   (let* ((pgg-gpg-user-id (or pgg-gpg-user-id pgg-default-user-id))
 	 (args (list "--batch" "--export" "--armor"
-		     (concat "\"" pgg-gpg-user-id "\""))))
+		     pgg-gpg-user-id)))
     (pgg-gpg-process-region (point)(point) nil pgg-gpg-program args)
     (insert-buffer-substring pgg-output-buffer)))
 
