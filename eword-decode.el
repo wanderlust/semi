@@ -213,17 +213,17 @@ If SEPARATOR is not nil, it is used as header separator."
 					  resent-sender to resent-to
 					  cc resent-cc
 					  bcc resent-bcc dcc
-					  mime-version))
+					  mime-version content-type))
 		       (let ((body (buffer-substring p end))
 			     (default-mime-charset default-charset))
 			 (delete-region p end)
 			 (insert (eword-decode-structured-field-body body))
 			 ))
 		      (t
-		       (let ((body (buffer-substring p end))
-			     (default-mime-charset default-charset))
-			 (delete-region p end)
-			 (insert (eword-decode-unstructured-field-body body))
+		       (save-restriction
+			 (narrow-to-region p end)
+			 (decode-mime-charset-region p end default-charset)
+			 (eword-decode-region p (point-max))
 			 )))))
 	  (eword-decode-region (point-min) (point-max) t)
 	  )))))
