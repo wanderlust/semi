@@ -1,3 +1,7 @@
+1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* eword-encode.el: Abolish `eword-encode-RCS-ID'.
+
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-partial.el: Rename
