@@ -823,7 +823,7 @@ Tspecials means any character that matches with it in header must be quoted.")
 	     (member (intern (car ,type-list))
 		     mime-edit-attach-at-end-type))
 	 (goto-char (point-max)))
-       ,@ body))
+     ,@ body))
 
 (defmacro mime-edit-force-text-tag (regexp)
   `(cond ((looking-at (concat "\n*\\(" ,regexp "\\)"))
@@ -1138,6 +1138,43 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	 (forward-char (cadr ret))
 	 (mime-edit-force-text-tag mime-edit-single-part-regexp))))))
 
+(defun mime-edit-guess-charset (file)
+  (with-temp-buffer
+    (let (candidates candidate eol eol-string)
+      (set-buffer-multibyte nil)
+      (insert-file-contents-as-binary file)
+      (setq candidates (detect-coding-region (point-min) (point-max)))
+      (setq candidate (if (listp candidates)
+			  (car candidates)
+			candidates))
+      (setq eol (coding-system-eol-type candidate))
+      (cond ((eq eol
+		 (static-if (featurep 'xemacs)
+		     'lf
+		   0))
+	     (setq eol-string "\n"))
+	    ((eq eol
+		 (static-if (featurep 'xemacs)
+		     'cr
+		   2))
+	     (setq eol-string "\r")))
+      (goto-char (point-min))
+      (when eol-string
+	(while (search-forward eol-string nil t)
+	  (replace-match "\r\n")))
+      (static-if (featurep 'xemacs)
+	  (setq candidate (coding-system-name (coding-system-base candidate)))
+	(setq candidate (coding-system-base candidate)))
+      ;; #### FIXME
+      (cond ((eq candidate 'undecided)
+	     (setq candidate "us-ascii"))
+	    ((eq candidate 'iso-2022-7bit)
+	     (setq candidate "iso-2022-jp"))
+	    (t
+	     (setq candidate
+		   (symbol-name (coding-system-to-mime-charset candidate)))))
+      (cons candidate (buffer-string)))))
+
 (defun mime-edit-insert-file (file &optional verbose)
   "Insert a message from a FILE.
 If VERBOSE is non-nil, it will prompt for Content-Type,
@@ -1150,7 +1187,7 @@ Content-Transfer-Encoding and Content-Disposition headers."
 	  (encoding (nth 3 guess))
 	  (disposition-type (nth 4 guess))
 	  (disposition-params (nth 5 guess))
-	  string)
+	  charset-and-string)
     (if verbose
 	(setq type    (mime-prompt-for-type type)
 	      subtype (mime-prompt-for-subtype type subtype)))
@@ -1162,38 +1199,10 @@ Content-Transfer-Encoding and Content-Disposition headers."
 	(let ((rest parameters) cell attribute value)
 	  (setq parameters "")
 	  (when (string= type "text")
-	    (with-temp-buffer
-	      (let (candidates candidate eol eol-string)
-	      (set-buffer-multibyte nil)
-	      (insert-file-contents-as-binary file)
-	      (setq candidates (detect-coding-region (point-min) (point-max)))
-	      (setq candidate (if (listp candidates)
-				  (car candidates)
-				candidates))
-	      (setq eol (coding-system-eol-type candidate))
-	      (cond ((eq eol
-			 (static-if (featurep 'xemacs)
-			     'lf
-			   0))
-		     (setq eol-string "\n"))
-		    ((eq eol
-			 (static-if (featurep 'xemacs)
-			     'cr
-			   2))
-		     (setq eol-string "\r")))
-	      (goto-char (point-min))
-	      (when eol-string
-		(while (search-forward eol-string nil t)
-		  (replace-match "\r\n")))
-	      (setq string (buffer-string))
-	      ;; ####
-	      (set-buffer-multibyte t)
-	      (erase-buffer)
-	      (insert (decode-coding-string string candidate))
-	      (setq parameters
-		    (concat parameters "; charset="
-			    (symbol-name (detect-mime-charset-region
-					  (point-min) (point-max))))))))
+	    (setq charset-and-string (mime-edit-guess-charset file))
+	    (setq parameters
+		  (concat parameters "; charset="
+			  (car charset-and-string))))
 	  (while rest
 	    (setq cell (car rest))
 	    (setq attribute (car cell))
@@ -1222,8 +1231,8 @@ Content-Transfer-Encoding and Content-Disposition headers."
     (mime-edit-insert-place
      (list type subtype)
      (mime-edit-insert-tag type subtype parameters)
-     (if string
-	 (mime-edit-insert-binary-string string encoding)
+     (if charset-and-string
+	 (mime-edit-insert-binary-string (cdr charset-and-string) encoding)
        (mime-edit-insert-binary-file file encoding)))))
 
 (defun mime-edit-insert-external ()

@@ -1052,7 +1052,7 @@ With prefix, it prompts for coding-system."
 		     (parse-colon-path path)
 		   path)))
 	fname)
-    (setq mim-view-mailcap-parsed-p t)
+    (setq mime-view-mailcap-parsed-p t)
     (with-temp-buffer
       (while fnames
 	(setq fname (car fnames))

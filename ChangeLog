@@ -1,3 +1,8 @@
+2000-11-29  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-edit.el (mime-edit-guess-charset): New function.
+	(mime-edit-insert-file): Call it.
+
 2000-10-19  Takanori Saneto  <sanewo@ba2.so-net.ne.jp>
 
 	* pgg-pgp.el (pgg-pgp-process-region): bind process-environment
