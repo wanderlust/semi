@@ -4,7 +4,7 @@
 
 PACKAGE = semi
 API	= 1.13
-RELEASE = 5
+RELEASE = 6
 
 FLIM_API= 1.13
 
@@ -60,9 +60,14 @@ tar:
 	$(RM) /tmp/$(PACKAGE)-$(VERSION)/ftp.in
 	cd /tmp; $(TAR) cvzf $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION)
 	cd /tmp; $(RM) -r $(PACKAGE)-$(VERSION)
-	sed "s/VERSION/$(VERSION)/" < ftp.in | sed "s/API/$(API)/" \
-		| sed "s/PACKAGE/$(PACKAGE)/" \
-		| sed "s/FLIM_API/$(FLIM_API)/" > ftp
+	sed -e "s/VERSION/$(VERSION)/" -e "s/API/$(API)/" \
+		-e "s/PACKAGE/$(PACKAGE)/" \
+		-e "s/FLIM_API/$(FLIM_API)/" < ftp.in > ftp
+
+invoice:
+	sed -e "s/VERSION/$(VERSION)/" -e "s/API/$(API)/" \
+		-e "s/PACKAGE/$(PACKAGE)/" \
+		-e "s/FLIM_API/$(FLIM_API)/" < ftp.in > ftp
 
 release:
 	-$(RM) $(ARC_DIR)/$(PACKAGE)-$(VERSION).tar.gz
