@@ -70,6 +70,11 @@
   :group 'mime-mc
   :type 'file)
 
+(defcustom mime-mc-shell-command-switch "-c"
+  "Switch used to have the shell execute its command line argument."
+  :group 'mime-mc
+  :type 'string)
+
 (defcustom mime-mc-omit-micalg nil
   "Non-nil value means to omit the micalg parameter for multipart/signed.
 See draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME) for more information."
@@ -271,6 +276,7 @@ optional argument COMMENT if it is specified."
   (let ((obuf (current-buffer))
 	(process-connection-type nil)
 	(shell-file-name mime-mc-shell-file-name)
+	(shell-command-switch mime-mc-shell-command-switch)
 	; other local vars
 	mybuf 
 	stderr-tempfilename stderr-buf
@@ -552,6 +558,7 @@ optional argument COMMENT if it is specified."
   (let ((obuf (current-buffer))
 	(process-connection-type nil)
 	(shell-file-name mime-mc-shell-file-name)
+	(shell-command-switch mime-mc-shell-command-switch)
 	mybuf result rgn proc results)
     (if comment
 	(setq args (cons "+comment=DUMMY" args))
