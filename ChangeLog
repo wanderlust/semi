@@ -1,3 +1,7 @@
+1998-05-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el: Change data format of mime-content-disposition.
+
 1998-05-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-parse.el: Rename 'mime/Content-Transfer-Encoding ->
