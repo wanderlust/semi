@@ -1,5 +1,16 @@
 2001-09-24   Daiki Ueno  <ueno@unixuser.org>
 
+	* mime-view.el: Require `mcharset'.
+	(mime-view-insert-text-content): Rewrite.
+	(mime-view-default-content-transfer-encoding): New function.
+	(mime-view-read-content-transfer-encoding): New function.
+	(mime-view-default-mime-charset): New function.
+	(mime-view-read-mime-charset): New function.
+	(mime-preview-toggle-display): If called with a prefix argument ask
+	user how to decode the entity.
+
+2001-09-24   Daiki Ueno  <ueno@unixuser.org>
+
 	* mime-view.el (mime-view-insert-text-content): New function.
 	(mime-view-insert-fontified-text-content): Rename from
 	`mime-display-inline-fontify'.
