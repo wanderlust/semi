@@ -122,7 +122,7 @@
 	 (oinfo (mime-article/rcnum-to-cinfo (cons '1 rcnum)
 					     mime-raw-content-info))
 	 )
-    (mime-display-content oinfo (cdr (assq 'mode cal)))
+    (mime-playback-entity oinfo (cdr (assq 'mode cal)))
     ))
 
 (set-atype 'mime-acting-condition

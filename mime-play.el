@@ -1,14 +1,13 @@
 ;;; mime-play.el --- decoder for mime-view.el
 
-;; Copyright (C) 1994,1995,1996,1997 Free Software Foundation, Inc.
+;; Copyright (C) 1994,1995,1996,1997,1998 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Created: 1995/9/26 (separated from tm-view.el)
 ;;	Renamed: 1997/2/21 from tm-play.el
-;; Version: $Id$
 ;; Keywords: MIME, multimedia, mail, news
 
-;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
+;; This file is part of SEMI (Secretariat of Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -53,7 +52,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	      )
 	  (setq mime-preview/after-decoded-position (point))
 	  (set-buffer raw-buffer)
-	  (mime-display-content cinfo mode)
+	  (mime-playback-entity cinfo mode)
 	  (if (eq (current-buffer) raw-buffer)
 	      (progn
 		(set-buffer the-buf)
@@ -61,7 +60,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 		))
 	  ))))
 
-(defun mime-display-content (cinfo &optional mode)
+(defun mime-playback-entity (cinfo &optional mode)
   (let ((beg (mime-entity-info-point-min cinfo))
 	(end (mime-entity-info-point-max cinfo))
 	(ctype (or (mime-entity-info-type/subtype cinfo) "text/plain"))
