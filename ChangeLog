@@ -1,5 +1,13 @@
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-acting-condition): Use `mime-method-to-save'
+	instead of external method "tm-file".
+
+	* mime-play.el: Rename `mime-extract-current-entity' ->
+	`mime-method-to-save'.
+
+1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* SEMI-ELS (semi-modules-to-compile): Abolish mime-file.el.
 
 	* mime-play.el (mime-extract-current-entity): New function; copied
