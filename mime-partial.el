@@ -1,13 +1,12 @@
 ;;; mime-partial.el --- Grabbing all MIME "message/partial"s.
 
-;; Copyright (C) 1995,1996,1997 Free Software Foundation, Inc.
+;; Copyright (C) 1995,1996,1997,1998 Free Software Foundation, Inc.
 
 ;; Author: OKABE Yasuo @ Kyoto University
 ;;         MORIOKA Tomohiko <morioka@jaist.ac.jp>
-;; Version: $Id$ 
 ;; Keywords: message/partial, MIME, multimedia, mail, news
 
-;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
+;; This file is part of SEMI (Suite of Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -41,7 +40,7 @@
 	(error "Fatal. Unsupported mode")
 	))))
 
-(defun mime-combine-message/partials-automatically (beg end cal)
+(defun mime-method-to-combine-message/partial-pieces (beg end cal)
   "Internal method for mime-view to combine message/partial messages
 automatically.  This function refers variable
 `mime-view-partial-message-method-alist' to select function to display
@@ -66,7 +65,7 @@ partial messages using mime-view."
     (if (or (file-exists-p full-file)
 	    (not (y-or-n-p "Merge partials?"))
 	    )
-	(mime-display-message/partial beg end cal)
+	(mime-method-to-store-message/partial beg end cal)
       (let (the-id parameters)
 	(setq subject-id (std11-field-body "Subject"))
 	(if (string-match "[0-9\n]+" subject-id)
@@ -80,12 +79,14 @@ partial messages using mime-view."
 	      (mime-view-partial-message target)
 	      (set-buffer article-buffer)
 	      (setq parameters
-		    (mime-entity-info-parameters mime-raw-content-info))
+		    (mime-entity-parameters mime-raw-message-info))
 	      (setq the-id (cdr (assoc "id" parameters)))
 	      (if (string= the-id id)
 		  (progn
-		    (mime-display-message/partial
-		     (point-min)(point-max) parameters)
+		    (mime-method-to-store-message/partial
+		     (mime-entity-point-min mime-raw-message-info)
+		     (mime-entity-point-max mime-raw-message-info)
+		     parameters)
 		    (if (file-exists-p full-file)
 			(throw 'tag nil)
 		      )

@@ -2553,10 +2553,9 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
     (goto-char (point-min))
     (let ((ctl (mime-read-Content-Type)))
       (if ctl
-	  (let ((type (car ctl))
-		(stype (car (cdr ctl)))
-		(params (cdr (cdr ctl)))
-		)
+	  (let ((type (mime-content-type-primary-type ctl))
+		(stype (mime-content-type-subtype ctl))
+		(params (mime-content-type-parameters ctl)))
 	    (cond
 	     ((and (eq type 'application)(eq stype 'pgp-signature))
 	      (delete-region (point-min)(point-max))
