@@ -1,5 +1,12 @@
 1998-06-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-view-display-message): Set up
+	`mime-raw-message-info'.
+	(mime-view-buffer): New function.
+	(mime-view-mode): Don't set up `mime-raw-message-info'.
+
+1998-06-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-edit.el (mime-charset-type-list): Use base64 for cn-gb2312
 	and gb2312.
 	(mime-edit-normalize-body): If encoding is not specified for
