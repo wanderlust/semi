@@ -1,3 +1,8 @@
+1998-06-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-entity-situation): Add information of
+	Content-Disposition.
+
 1998-06-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* MIME-View-API-ja.ol (mime-preview-buffer): Add description about
