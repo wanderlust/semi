@@ -1,5 +1,9 @@
 1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* SEMI: Version 1.13.0 (Matt-Dò)-A released.
+
+1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-play.el (mime-view-message/rfc822): Don't expect called in
 	raw-buffer.
 
