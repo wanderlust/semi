@@ -90,6 +90,8 @@ LISPDIR=%s\n" PREFIX LISPDIR))
 			 (expand-file-name SEMI_PREFIX
 					   (expand-file-name "lisp"
 							     PACKAGEDIR)))
+  (delete-file "./auto-autoloads.el")
+  (delete-file "./custom-load.el")
   )
 
 ;;; SEMI-MK ends here

@@ -1,3 +1,9 @@
+1999-10-17  Yoshiki Hayashi  <t90553@mail.ecc.u-tokyo.ac.jp>
+
+	* SEMI-MK (install-semi-package): Delte auto-autoloads.el
+	and custom-load.el
+
+
 1999-10-17  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* WEMI: Version 1.13.7 (Shimada) released.
