@@ -1,3 +1,7 @@
+1999-05-03  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* mime-view.el (unpack): Abolish unused local variable.
+
 1999-05-02  Tanaka Akira  <akr@jaist.ac.jp>
 
 	* mime-view.el (postpet-decode): Returns nil if input is invalid.

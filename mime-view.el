@@ -548,8 +548,7 @@ Each elements are regexp of field-name.")
 (put 'unpack 'lisp-indent-function 1)
 (defmacro unpack (string &rest body)
   `(let* ((*unpack*string* (string-as-unibyte ,string))
-	  (*unpack*index* 0)
-	  (*unpack*length* (length *unpack*string*)))
+	  (*unpack*index* 0))
      ,@body))
 
 (defun unpack-skip (len)
@@ -583,7 +582,7 @@ Each elements are regexp of field-name.")
 (defun postpet-decode (string)
   (condition-case nil
       (unpack string
-	(let ((res))
+	(let (res)
 	  (unpack-skip 4)
 	  (set-alist 'res 'carryingcount (unpack-long))
 	  (unpack-skip 8)
