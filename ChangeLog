@@ -1,3 +1,14 @@
+1998-06-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-preview-over-to-previous-method-alist):
+	Add DOC-string.
+	(mime-preview-over-to-next-method-alist): Add DOC-string.
+
+	* mime-view.el (mime-preview-over-to-previous-method-alist):
+	Renamed from `mime-view-over-to-previous-method-alist'.
+	(mime-preview-over-to-next-method-alist): Renamed from
+	`mime-view-over-to-next-method-alist'.
+
 1998-06-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-w3.el (mime-save-background-color): Fixed.
