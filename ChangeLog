@@ -1,3 +1,16 @@
+1999-01-24  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* Delete README.ja until it is fixed.
+
+	* mime-w3.el (url-cid): Use `mime-insert-entity-content'.
+
+	* README.ja, README.en (Required environment): Require FLIM
+	1.12.4.
+
+	* mime-w3.el (mime-w3-message-structure): New variable.
+	(mime-preview-text/html): Set up `mime-w3-message-structure'.
+	(url-cid): New function; set up as registered-protocol of url.
+
 1999-01-23  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* README.ja: Modify title.
