@@ -1,12 +1,12 @@
 ;;; mime-def.el --- definition module for SEMI
 
-;; Copyright (C) 1995,1996,1997 Free Software Foundation, Inc.
+;; Copyright (C) 1995,1996,1997,1998 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Version: $Id$
 ;; Keywords: definition, MIME, multimedia, mail, news
 
-;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
+;; This file is part of SEMI (Spadework for Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -52,7 +52,7 @@
 	     x))))
   )
 
-(defconst semi-version-name "Otomaru"
+(defconst semi-version-name "Nukaj.DN~taku-mae"
   "Version name of SEMI-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
