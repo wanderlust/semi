@@ -148,7 +148,7 @@ specified, play as it.  Default MODE is \"play\"."
     (message "External method is starting...")
     (let ((process
 	   (let ((command
-		  (mailcap-format-command
+		  (mime-format-mailcap-command
 		   method
 		   (cons (cons 'filename name) situation))))
 	     (start-process command mime-echo-buffer-name
