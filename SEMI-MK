@@ -51,7 +51,6 @@
 
 (defun install-execs ()
   (config-semi)
-  (install-files BINS	    BIN_SRC_DIR    BIN_DIR)
   (install-files METHODS METHOD_SRC_DIR METHOD_DIR nil t)
   )
 
