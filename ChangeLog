@@ -1,3 +1,112 @@
+1998-07-16  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* WEMI: Version 1.8.4 (Hara) released.
+
+1998-07-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-ui-en.sgml, mime-ui-ja.sgml (message/partial sending): New
+	section.
+
+	* mime-edit.el (mime-edit-split-blind-field-regexp): Add
+	DOC-string; change to user option.
+
+
+1998-07-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* REMI: Version 1.8.4 (Takaoka) released.
+
+1998-07-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el: Reduce `mime-acting-situation-example-list' while
+	it is bigger than `mime-acting-situation-example-list-max-size'.
+
+1998-07-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-preview-message): Use `mime-view-buffer'
+	instead of `mime-view-mode'.
+
+
+1998-07-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* REMI: Version 1.8.3 (Ecch~-Nakagawa) released.
+
+	* mime-play.el (mime-delq-null-situation): Add new optional
+	argument `ignored-value'.
+	(mime-raw-play-entity): Add new optional argument
+	`ignored-method'; add `ignore-examples' to acting-situation.
+	(mime-detect-content): Specify `ignore-examples' of
+	acting-situation as `ignore-examples' of `mime-raw-play-entity';
+	specify `mime-detect-content' as `ignored-method' of
+	`mime-raw-play-entity'.
+
+1998-07-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-preview-extract-current-entity): Change
+	interface to add `ignore-examples'.
+	(mime-preview-print-current-entity): Likewise.
+
+	* mime-play.el (mime-acting-situation-example-list-max-size): New
+	variable.
+	(mime-reduce-acting-situation-examples): New function.
+	(mime-preview-play-current-entity): Change interface to add
+	`ignore-examples'.
+	(mime-raw-play-entity): Add new optional argument
+	`ignore-examples'.  Reduce `mime-acting-situation-example-list'
+	when loading example file.
+
+
+1998-07-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* REMI: Version 1.8.2 (N~machi) released.
+
+1998-07-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-acting-situation-example-list): New variable;
+	abolish `mime-acting-situation-examples'.
+	(mime-save-acting-situation-examples): Modify for
+	`mime-acting-situation-example-list'.
+	(mime-compare-situation-with-example): New function.
+	(mime-raw-play-entity): Change algorithm to compare with
+	acting-situation-examples.
+	(mime-store-message/partial-piece): Use `mime-view-buffer' instead
+	of `mime-view-mode'.
+
+1998-07-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-preview-play-current-entity): Fix problem
+	when `mode' is omitted with non-interactive mode (maybe for button
+	dispatcher).
+
+
+1998-07-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* REMI: Version 1.8.1 (Fushiki) released.
+
+1998-07-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-ui-en.texi, mime-ui-en.sgml: New files.
+
+	* mime-ui-ja.sgml: Modify node names about MIME-Edit.
+	(file-type specification): Fix typo.
+
+1998-07-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-file-content-type-alist): Add "Standard
+	MIDI".
+
+	* mime-play.el (mime-detect-content): Fixed.
+
+1998-07-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-activate-mailcap-method): Check filename is
+	null string.
+
+1998-07-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-ui-ja.sgml, mime-ui-ja.texi: New files; delete
+	mime-view-ja.sgml and mime-view-ja.texi.
+
+
 1998-07-01  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* WEMI: Version 1.8.2 (Katahama) released.
@@ -86,7 +195,7 @@
 
 	* semi-def.el: Don't require 'browse-url.
 	Abolish `mime-browse-add-url-buttons-maybe' and `mime-browse-url'.
-	(mime-browse-url-function): New function.
+	(mime-browse-url-function): New variable.
 	(mime-add-url-buttons): Renamed from `mime-browse-add-url-button'.
 	Use `mime-browse-url-function'.
 
