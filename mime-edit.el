@@ -2724,9 +2724,16 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	      )))
 	(or not-decode-text
 	    (decode-mime-charset-region (point-min) (point-max)
-					default-mime-charset)
-	    )
-	))))
+					default-mime-charset))
+	)
+      (save-restriction
+	(std11-narrow-to-header)
+	(goto-char (point-min))
+	(while (re-search-forward mime-edit-again-ignored-field-regexp nil t)
+	  (delete-region (match-beginning 0) (1+ (std11-field-end)))
+	  ))
+      (mime-decode-header-in-buffer (not not-decode-text))
+      )))
 
 ;;;###autoload
 (defun mime-edit-again (&optional not-decode-text no-separator not-turn-on)
@@ -2742,12 +2749,6 @@ converted to MIME-Edit tags."
     )
   (mime-edit-decode-message-in-buffer nil not-decode-text)
   (goto-char (point-min))
-  (save-restriction
-    (std11-narrow-to-header)
-    (goto-char (point-min))
-    (while (re-search-forward mime-edit-again-ignored-field-regexp nil t)
-      (delete-region (match-beginning 0) (1+ (std11-field-end)))
-      ))
   (or no-separator
       (and (re-search-forward "^$")
 	   (replace-match mail-header-separator)
