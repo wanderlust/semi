@@ -115,7 +115,7 @@
 	    )
 	(if method
 	    (let ((file (make-temp-name
-			 (expand-file-name "TM" mime/tmp-dir)))
+			 (expand-file-name "TM" mime-temp-directory)))
 		  b args)
 	      (if (nth 1 method)
 		  (setq b beg)
@@ -281,8 +281,9 @@
 
 (defun mime-article/decode-message/partial (beg end cal)
   (goto-char beg)
-  (let* ((root-dir (expand-file-name
-		    (concat "m-prts-" (user-login-name)) mime/tmp-dir))
+  (let* ((root-dir
+	  (expand-file-name
+	   (concat "m-prts-" (user-login-name)) mime-temp-directory))
 	 (id (cdr (assoc "id" cal)))
 	 (number (cdr (assoc "number" cal)))
 	 (total (cdr (assoc "total" cal)))

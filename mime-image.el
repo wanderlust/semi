@@ -163,7 +163,8 @@
 	     )
 	    ((eq (aref gl 0) 'xbm)
 	     (let ((xbm-file
-		    (make-temp-name (expand-file-name "tm" mime/tmp-dir))))
+		    (make-temp-name
+		     (expand-file-name "tm" mime-temp-directory))))
 	       (insert (aref gl 2))
 	       (write-region (point-min)(point-max) xbm-file)
 	       (message "Decoding image...")
@@ -192,7 +193,8 @@
   (let* ((mode mime::preview/original-major-mode)
 	 (m (assq mode mime-view-code-converter-alist))
 	 (beg (point-min)) (end (point-max))
-	 (file-base (make-temp-name (expand-file-name "tm" mime/tmp-dir)))
+	 (file-base
+	  (make-temp-name (expand-file-name "tm" mime-temp-directory)))
 	 (ps-file (concat file-base ".ps"))
 	 (gif-file (concat file-base ".gif"))
 	 )
