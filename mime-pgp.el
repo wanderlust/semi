@@ -116,7 +116,7 @@
 ;;; @ Internal method for multipart/signed
 ;;;
 
-(defun mime-check-multipart/signed (beg end cal)
+(defun mime-method-to-verify-multipart/signed (beg end cal)
   "Internal method to check multipart/signed."
   (let* ((rcnum (reverse (mime-article/point-content-number beg)))
 	 (oinfo (mime-article/rcnum-to-cinfo (cons '1 rcnum)
@@ -127,7 +127,7 @@
 
 (set-atype 'mime-acting-condition
 	   '((type . "multipart/signed")
-	     (method . mime-check-multipart/signed)
+	     (method . mime-method-to-verify-multipart/signed)
 	     ))
 
 
