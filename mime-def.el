@@ -211,6 +211,9 @@ ROT47 will be performed for Japanese text in any case."
 ;;; @ field
 ;;;
 
+(defsubst regexp-or (&rest args)
+  (concat "\\(" (mapconcat (function identity) args "\\|") "\\)"))
+
 (defun tm:set-fields (sym field-list &optional regexp-sym)
   (or regexp-sym
       (setq regexp-sym
