@@ -2,18 +2,14 @@
 
   It is available from
 
-    ftp://ftp.m17n.org/pub/mule/semi/semi-API-for-flim-FLIM_API
+    http://www.kanji.zinbun.kyoto-u.ac.jp/~tomo/comp/emacsen/lisp/semi/semi-API-for-flim-FLIM_API
 
-or
-
-    ftp://ftp.etl.go.jp/pub/mule/semi/semi-API-for-flim-FLIM_API
-
---[[message/external-body;
-	access-type=anon-ftp;
-	site="ftp.m17n.org";
-	directory="/pub/mule/semi/semi-API-for-flim-FLIM_API";
-	name="PACKAGE-VERSION.tar.gz";
-	mode=image]]
+--[[message/external-body; access-type=URL;
+	URL*0="http://";
+	URL*1="www.kanji.zinbun.kyoto-u.ac.jp/~tomo/";
+	URL*2="comp/emacsen/lisp/";
+	URL*3="semi/semi-API-for-flim-FLIM_API/";
+	URL*4="PACKAGE-VERSION.tar.gz"]]
 Content-Type: application/octet-stream;
 	name="PACKAGE-VERSION.tar.gz";
 	type=tar;
