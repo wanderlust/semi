@@ -1142,34 +1142,15 @@ Optional argument ENCODING specifies an encoding method such as base64."
       (if (mime-editor/goto-tag)
 	  (let ((top (point)))
 	    (goto-char (match-end 0))
-	    (cond ((and (= (save-excursion
-			     (beginning-of-line)
-			     (point))
-			   (save-excursion
-			     (goto-char beg)
-			     (beginning-of-line)
-			     (point))) ;Must be on the same line.
-			(= (following-char) ?\^M)
-			)
-		   (end-of-line)
-		   (point)
-		   )
-		  ((get-text-property (point) 'invisible)
-		   (while (and (let ((p (next-property-change (point))))
-				 (and p (goto-char p))
-				 )
-			       (get-text-property (point) 'invisible)
-			       ))
-		   (point)
-		   )
-		  (t
-		   ;; Move to the end of this text.
-		   (if (re-search-forward mime-editor/tag-regexp nil 'move)
-		       ;; Don't forget a multiline tag.
-		       (goto-char (match-beginning 0))
-		     )
-		   (point)
-		   )))
+	    (if (invisible-p (point))
+		(next-visible-point (point))
+	      ;; Move to the end of this text.
+	      (if (re-search-forward mime-editor/tag-regexp nil 'move)
+		  ;; Don't forget a multiline tag.
+		  (goto-char (1- (match-beginning 0)))
+		)
+	      (point)
+	      ))
 	;; Assume the message begins with text/plain.
 	(goto-char (mime-editor/content-beginning))
 	(if (re-search-forward mime-editor/tag-regexp nil 'move)
@@ -1982,9 +1963,11 @@ Content-Transfer-Encoding: 7bit
 	    )
 	(goto-char (1+ end))
 	(or (looking-at mime-editor/beginning-tag-regexp)
+	    (eobp)
 	    (insert (mime-make-text-tag) "\n")
 	    )
 	(visible-region beg end)
+	(goto-char beg)
 	)
       (cond
        ((mime-test-content-type contype "message")
