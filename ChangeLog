@@ -1,3 +1,12 @@
+2000-07-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mime-edit.el (mime-edit-preview-message): Set up local variable
+	`mime-edit-temp-message-buffer'.
+	(mime-edit-quitting-method): Refer `mime-edit-temp-message-buffer'
+	to avoid to use `mime-entity-buffer'.
+	(Synch with latest remi-1_14)
+	(mime-edit-temp-message-buffer): Defined.
+
 2000-06-27   Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-image.el (mime-image-insert): Synch with the latest image.el.

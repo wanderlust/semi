@@ -2652,6 +2652,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 ;;;
 
 (defvar mime-edit-buffer nil) ; buffer local variable
+(defvar mime-edit-temp-message-buffer nil)
 
 (defun mime-edit-preview-message ()
   "preview editing MIME message."
@@ -2683,12 +2684,13 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
     (if (re-search-forward
 	 (concat "^" (regexp-quote separator) "$"))
 	(replace-match ""))
-    (mime-view-buffer)))
+    (mime-view-buffer)
+    (make-local-variable 'mime-edit-temp-message-buffer)
+    (setq mime-edit-temp-message-buffer buf)))
 
 (defun mime-edit-quitting-method ()
   "Quitting method for mime-view."
-  (let* ((entity (get-text-property (point-min) 'mime-view-entity))
-	 (temp (mime-buffer-entity-buffer-internal entity))
+  (let* ((temp mime-edit-temp-message-buffer)
 	 buf)
     (mime-preview-kill-buffer)
     (set-buffer temp)
