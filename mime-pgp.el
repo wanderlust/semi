@@ -58,9 +58,9 @@
 (autoload 'pgg-snarf-keys-region "pgg"
   "Snarf PGP public keys in current region." t)
 (autoload 'smime-decrypt-region "smime"
-  "S/MIME decryption of current region." t)
+  "S/MIME decryption of current region.")
 (autoload 'smime-verify-region "smime"
-  "S/MIME verification of current region." t)
+  "S/MIME verification of current region.")
 
 
 ;;; @ Internal method for multipart/signed
@@ -264,11 +264,13 @@
 	 (preview-buffer (concat "*Preview-" (buffer-name) "*"))
 	 representation-type)
     (set-buffer (get-buffer-create new-name))
-    (erase-buffer)
-    (mime-insert-entity entity)
-    (smime-decrypt-region (point-min)(point-max))
-    (delete-region (point-min)(point-max))
-    (insert-buffer smime-output-buffer)
+    (let ((inhibit-read-only t)
+	  buffer-read-only)
+      (erase-buffer)
+      (mime-insert-entity entity)
+      (smime-decrypt-region (point-min)(point-max))
+      (delete-region (point-min)(point-max))
+      (insert-buffer smime-output-buffer))
     (setq major-mode 'mime-show-message-mode)
     (save-window-excursion (mime-view-buffer nil preview-buffer mother
 					     nil 'binary))
