@@ -1,6 +1,5 @@
 [README for WEMI kernel package (English Version)]
 by MORIOKA Tomohiko <morioka@jaist.ac.jp>
-$Id$
 
 What's WEMI?
 ------------
@@ -50,18 +49,14 @@ Required environment
   nil. (Maybe non mule setting requires to modify emu.  In addition,
   it is better to use terminal-coding-system feature)
 
-  WEMI requires APEL and MEL package.  Please install them before
-  installing it.  APEL package
-  is available at:
+  WEMI requires APEL (8.2 or later) and FLIM package.  Please install
+  them before installing it.  APEL package is available at:
 
 	ftp://ftp.jaist.ac.jp/pub/GNU/elisp/apel/
 
-  and MEL package is available at:
+  and FLIM package is available at:
 
-	ftp://ftp.jaist.ac.jp/pub/GNU/elisp/mime/libs/
-
-  Notice that latest version of XEmacs may have latest version of APEL
-  and MEL, so you should not install them.
+	ftp://ftp.jaist.ac.jp/pub/GNU/elisp/flim/
 
   PGP/MIME and application/pgp require mailcrypt or tiny-pgp package.
 
@@ -94,10 +89,8 @@ Installation
 
 	/usr/local/share/emacs/19.34/site-lisp/  --- emu
 	/usr/local/share/emacs/site-lisp/apel/   --- APEL
-	/usr/local/share/emacs/site-lisp/bitmap/ --- BITMAP-MULE
-	/usr/local/share/emacs/site-lisp/mu/     --- MU
-	/usr/local/share/emacs/site-lisp/mel/    --- MEL
-	/usr/local/share/emacs/site-lisp/semi/   --- WEMI
+	/usr/local/share/emacs/site-lisp/flim/   --- FLIM
+	/usr/local/share/emacs/site-lisp/semi/   --- SEMI
 
   You can specify site-lisp directory, for example
 
@@ -118,12 +111,12 @@ Initialization
 (a) load-path
 
   If you are using Emacs or Mule, please add directory of emu, apel,
-  bitmap, mu, mel and semi to load-path.  If you install by default
-  setting, you can write subdirs.el for example:
+  flim and semi to load-path.  If you install by default setting, you
+  can write subdirs.el for example:
 
   --------------------------------------------------------------------
   (normal-top-level-add-to-load-path
-   '("apel" "bitmap" "mu" "mel" "semi"))
+   '("apel" "flim" "semi"))
   --------------------------------------------------------------------
 
   If you are using XEmacs, there are no need of setting about

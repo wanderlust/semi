@@ -4,15 +4,6 @@
 ;;;
 
 (defvar default-load-path load-path)
-;; (setq load-path (append
-;;                  (mapcar (function
-;;                           (lambda (path)
-;;                             (expand-file-name path default-directory)
-;;                             ))
-;;                          '("." "../emu" "../apel" "../bitmap-mule"
-;;                            "../mu" "../mel")
-;;                          )
-;;                  load-path))
 
 (add-to-list 'load-path
 	     (expand-file-name "../../site-lisp/apel" data-directory))
@@ -25,13 +16,22 @@
   (add-to-list 'load-path (expand-file-name "apel" LISPDIR))
   )
 
-(require 'install)
+(condition-case nil
+    (require 'install)
+  (error (error "Please install APEL 8.2 or later.")))
 (require 'cl)
 
 (add-path "bitmap-mule")
-(add-path "mel")
+(add-path "flim")
 
 (add-to-list 'load-path (expand-file-name "."))
+
+(or (module-installed-p 'calist)
+    (error "Please install APEL 8.2 or later."))
+(or (module-installed-p 'mel)
+    (error "Please install FLIM."))
+(if (module-installed-p 'tm-view)
+    (error "Please remove tm from load-path."))
 
 
 ;;; @ Please specify optional package directory if you use them.
