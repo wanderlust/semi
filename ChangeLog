@@ -1,3 +1,8 @@
+1998-05-29  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-view.el (mime-preview-scroll-down-entity): Use (not (bobp))
+	instead of (> (point) 1).
+
 1998-05-31  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-parse.el (mime-parse-multipart): fixed.
