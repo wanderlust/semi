@@ -403,7 +403,7 @@ this function is called."
     (if win
 	(progn
 	  (select-window win)
-	  (enlarge-window (- height (window-height)))
+	  (enlarge-window (max 0 (- height (window-height))))
 	  )
       (unless (and mime-echo-window-is-shared-with-bbdb
 		   (condition-case nil
