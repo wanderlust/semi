@@ -537,9 +537,13 @@ if it is not nil.")
 	(setq entries (cdr entries))
 	)))
 
-(ctree-set-calist-strictly
+;; (ctree-set-calist-strictly
+;;  'mime-acting-condition
+;;  '((type . t)(subtype . t)(mode . "extract")
+;;    (method . mime-method-to-save)))
+(ctree-set-calist-with-default
  'mime-acting-condition
- '((type . t)(subtype . t)(mode . "extract")
+ '((mode . "extract")
    (method . mime-method-to-save)))
 
 (ctree-set-calist-strictly
