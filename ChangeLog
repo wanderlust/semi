@@ -1,3 +1,8 @@
+1999-08-25  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* SEMI-CFG: Use `if' instead of `when'.
+
+
 1999-08-18  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* REMI: Version 1.13.2 (-DÒike-Ikoinomori)-A released.
