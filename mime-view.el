@@ -339,6 +339,24 @@ Please redefine this function if you want to change default setting."
 ;;; @@@ in raw buffer
 ;;;
 
+(defvar mime::article/content-info
+  "Information about structure of message.
+Please use reference function `mime::content-info/SLOT-NAME' to
+reference slot of content-info.  Their argument is only content-info.
+
+Following is a list of slots of the structure:
+
+rcnum		reversed content-number (list)
+point-min	beginning point of region in raw-buffer
+point-max	end point of region in raw-buffer
+type		media-type/subtype (string or nil)
+parameters	parameter of Content-Type field (association list)
+encoding	Content-Transfer-Encoding (string or nil)
+children	entities included in this entity (list of content-infos)
+
+If a entity includes other entities in its body, such as multipart or
+message/rfc822, content-infos of other entities are included in
+`children', so content-info become a tree.")
 (make-variable-buffer-local 'mime::article/content-info)
 
 (defvar mime::article/preview-buffer nil)
@@ -349,7 +367,6 @@ Please redefine this function if you want to change default setting."
 ;;;
 
 (make-variable-buffer-local 'mime::preview/mother-buffer)
-(make-variable-buffer-local 'mime::preview/content-list)
 
 (defvar mime::preview/article-buffer nil)
 (make-variable-buffer-local 'mime::preview/article-buffer)
@@ -427,16 +444,6 @@ The compressed face will be piped to this command.")
     mime::preview/original-major-mode))
 
 
-;;; @ data structures
-;;;
-
-;;; @@ preview-content-info
-;;;
-
-(define-structure mime::preview-content-info
-  point-min point-max buffer content-info)
-
-
 ;;; @ buffer setup
 ;;;
 
@@ -449,14 +456,12 @@ The compressed face will be piped to this command.")
   (or mime-view-redisplay
       (setq mime::article/content-info (mime-parse-message ctl encoding))
       )
-  (let ((ret (mime-view-make-preview-buffer obuf)))
-    (setq mime::article/preview-buffer (car ret))
-    ret))
+  (setq mime::article/preview-buffer (mime-view-make-preview-buffer obuf))
+  )
 
 (defun mime-view-make-preview-buffer (&optional obuf)
   (let* ((cinfo mime::article/content-info)
 	 (pcl (mime/flatten-content-info cinfo))
-	 (dest (make-list (length pcl) nil))
 	 (the-buf (current-buffer))
 	 (mode major-mode)
 	 )
@@ -470,18 +475,14 @@ The compressed face will be piped to this command.")
     (setq mime::preview/original-major-mode mode)
     (setq major-mode 'mime-view-mode)
     (setq mode-name "MIME-View")
-    (let ((drest dest))
-      (while pcl
-	(setcar drest
-		(mime-view-display-entity (car pcl) cinfo the-buf obuf))
-	(setq pcl (cdr pcl)
-	      drest (cdr drest))
-	))
+    (while pcl
+      (mime-view-display-entity (car pcl) cinfo the-buf obuf)
+      (setq pcl (cdr pcl))
+      )
     (set-buffer-modified-p nil)
     (setq buffer-read-only t)
     (set-buffer the-buf)
-    (list obuf dest)
-    ))
+    obuf))
 
 (defun mime-view-display-entity (content cinfo ibuf obuf)
   "Display entity from content-info CONTENT."
@@ -536,16 +537,12 @@ The compressed face will be piped to this command.")
 	    rcnum cinfo ctype params subj encoding)
 	   ))
     (mime-view-entity-separator-function rcnum cinfo ctype params subj)
-    (prog1
-	(progn
-	  (setq ne (point-max))
-	  (widen)
-	  (put-text-property nb ne 'mime-view-raw-buffer ibuf)
-	  (put-text-property nb ne 'mime-view-cinfo content)
-	  (mime::preview-content-info/create nb (1- ne) ibuf content)
-	  )
-      (goto-char ne)
-      )))
+    (setq ne (point-max))
+    (widen)
+    (put-text-property nb ne 'mime-view-raw-buffer ibuf)
+    (put-text-property nb ne 'mime-view-cinfo content)
+    (goto-char ne)
+    ))
 
 (defun mime-preview/display-header (beg end)
   (save-restriction
@@ -826,14 +823,13 @@ button-2	Move to point under the mouse cursor
 	(win-conf (current-window-configuration))
 	)
     (prog1
-	(switch-to-buffer (car ret))
+	(switch-to-buffer ret)
       (setq mime::preview/original-window-configuration win-conf)
       (if mother
 	  (progn
 	    (setq mime::preview/mother-buffer mother)
 	    ))
       (mime-view-define-keymap default-keymap-or-function)
-      (setq mime::preview/content-list (nth 1 ret))
       (let ((point (next-single-property-change (point-min) 'mime-view-cinfo)))
 	(if point
 	    (goto-char point)
