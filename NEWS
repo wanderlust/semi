@@ -3,6 +3,20 @@ Copyright (C) 1998 Free Software Foundation, Inc.
 
 * Changes in SEMI 1.8
 
+** Don't use "file" command to detect content of entity
+
+  Acting-method to detect content of entity was modified not to use
+"file" command.
+
+  Variable `mime-file-content-type-alist' was abolished.  Instead of
+it, new variable `mime-magic-type-alist' is available to customize.
+It is an alist of regexp about magic-number vs. corresponding
+media-types.  Each element looks like (REGEXP TYPE SUBTYPE).  REGEXP
+is a regular expression to match against the beginning of the content
+of entity.  TYPE is symbol to indicate primary type of media-type.
+SUBTYPE is symbol to indicate subtype of media-type.
+
+
 ** Abolish external X-Face viewer
 
 

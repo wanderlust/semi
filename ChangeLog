@@ -1,3 +1,14 @@
+1998-07-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS (Don't use "file" command to detect content of entity): New
+	section.
+
+	* mime-play.el (mime-magic-type-alist): New variable; abolish
+	`mime-file-content-type-alist'.
+	(mime-detect-content): New implementation (don't use "file"
+	command).
+
+
 1998-07-16  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* WEMI: Version 1.8.4 (Hara) released.

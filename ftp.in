@@ -2,23 +2,16 @@
 
   It is available from
 
-    ftp://ftp.jaist.ac.jp/pub/GNU/elisp/mime/alpha/	(Japan)
-
-or its mirrors
-
-    ftp://ftp.nis.co.jp/pub/gnu/emacs-lisp/tm/alpha/	(Japan)
-    ftp://ftp.nisiq.net/pub/gnu/emacs-lisp/tm/alpha/	(US)
-    ftp://ftp.miranova.com/pub/mime/jaist.ac.jp/alpha/	(US)
-    ftp://ftp.unicamp.br/pub/mail/mime/tm/alpha/	(Brazil)
+    ftp://ftp.jaist.ac.jp/pub/GNU/elisp/semi/
 
 --[[message/external-body;
 	access-type=anon-ftp;
 	site="ftp.jaist.ac.jp";
-	directory="/pub/GNU/elisp/mime/alpha";
-	name="semi-VERSION.tar.gz";
+	directory="/pub/GNU/elisp/semi";
+	name="PACKAGE-VERSION.tar.gz";
 	mode=image]]
 Content-Type: application/octet-stream;
-	name="semi-VERSION.tar.gz";
+	name="PACKAGE-VERSION.tar.gz";
 	type=tar;
 	conversions=gzip
 --}-<<alternative>>

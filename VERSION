@@ -61,9 +61,14 @@
 1.8.0	Toyama			$(BIY;3(B		; = JR $(B9b;3K\@~!"IY;39A@~(B
 1.8.1	Kureha			$(B8b1)(B
 1.8.2	Kosugi			$(B>.?y(B
-1.8.3	Ecch-Dþ-Daimon-A		$(B1[CfBgLg(B
+1.8.3	Ecch-Dþ-Daimon		$(B1[CfBgLg(B-A
 1.8.4	Takaoka			$(B9b2,(B		; = JR $(BI98+@~!">kC<@~(B
-:	:			:
+1.8.5	Nishi-Takaoka		$(B@>9b2,(B
+-----	Fukuoka			$(BJ!2,(B
+-----	Isurugi			$(B@PF0(B
+-----	Kurikara		$(B6fMx2@Me(B
+-----	Tsubata			$(BDEH((B
+-----	Morimoto		$(B?9K\(B
 -------	Higashi-Kanazawa	$(BEl6bBt(B
 -------	Kanazawa		$(B6bBt(B		; <=> $(BKLN&E4F;(B $(BKLE46bBt(B
 -------	Nishi-Kanazawa		$(B@>6bBt(B		; <=> $(BKLN&E4F;(B $(B?7@>6bBt(B
@@ -87,44 +92,44 @@
 
 ;;-------------------------------------------------------------------------
 ;;	East Japan Railway	$(BElF|K\N95RE4F;(B	http://www.jreast.co.jp/
-;;	T-Dòkaidò-A Line		$(BEl3$F;K\@~(B
+;;	T-Dòkaidò Line		$(BEl3$F;K\@~(B-A
 ;;-------------------------------------------------------------------------
-1.2.0	T-Dòkyò-A			$(BEl5~(B
+1.2.0	T-Dòkyò			$(BEl5~(B-A
 1.2.1	Shinbashi		$(B?766(B	; = JR $(B;3<j@~!"2#?\2l@~(B
 1.2.2	Shinagawa		$(BIJ@n(B	; = JR $(B;3<j@~!"2#?\2l@~(B
 1.2.3	Kawasaki		$(B@n:j(B	; = JR $(BFnIp@~(B
 1.2.4	Yokohama		$(B2#IM(B	; = JR $(B5~IMElKL@~!&:,4_@~!"2#?\2l@~(B
 1.3.0	Totsuka			$(B8MDM(B	; = JR $(B2#?\2l@~(B
-1.3.1	-DÒfuna-A			$(BBgA%(B	; = JR $(B:,4_@~!"2#?\2l@~(B
+1.3.1	-DÒfuna			$(BBgA%(B	; = JR $(B:,4_@~!"2#?\2l@~(B-A
 1.4.0	Fujisawa		$(BF#Bt(B	; <=> $(B>.ED5^EEE4(B $(B9>%NEg@~!"9>%NEgEEE4(B
-1.4.1	Tsujid-Dò-A			$(@DT$(BF2(B	; $(B!J!V$(@DT$(B!W(B= J90@B-4454:128b$(B!K(B
+1.4.1	Tsujid-Dò			$(@DT$(BF2(B	; $(B!J!V$(@DT$(B!W(B= J90@B-4454:128b$(B!K(B-A
 1.4.2	Chigasaki		$(B3}%v:j(B	; = JR $(BAjLO@~(B
 1.4.3	Hiratsuka		$(BJ?DM(B
-1.4.4	-DÒiso-A			$(BBg0k(B
-1.4.5	Ninomiya		$BFs5\(B
-1.4.6	K-Dòzu-A			$(B9qI\DE(B	; = JR $(B8fEB>l@~(B
-1.5.0	Kamonomiya		$B3{5\(B
-1.5.1	Odawara			$B>.ED86(B	; <=> $B>.ED5^!"H":,EP;3E4F;!"(B
-					;     $B0KF&H":,E4F;(B
-1.5.2	Hayakawa		$BAa@n(B
-1.5.3	Nebukawa		$B:,I\@n(B
-1.5.4	Manazuru		$B??Da(B
-1.6.0	Yugawara		$BEr2O86(B
+1.4.4	-DÒiso			$(BBg0k(B-A
+1.4.5	Ninomiya		$(BFs5\(B
+1.4.6	K-Dòzu			$(B9qI\DE(B	; = JR $(B8fEB>l@~(B-A
+1.5.0	Kamonomiya		$(B3{5\(B
+1.5.1	Odawara			$(B>.ED86(B	; <=> $(B>.ED5^!"H":,EP;3E4F;!"(B
+					;     $(B0KF&H":,E4F;(B
+1.5.2	Hayakawa		$(BAa@n(B
+1.5.3	Nebukawa		$(B:,I\@n(B
+1.5.4	Manazuru		$(B??Da(B
+1.6.0	Yugawara		$(BEr2O86(B
 1.7.0	Atami			$(BG.3$(B	; = JR $(B0KEl@~(B
 ;;-------------------------------------------------------------------------
 ;;	Central Japan Railway	$(BEl3$N95RE4F;(B
 ;;-------------------------------------------------------------------------
 1.7.1	Kan'nami		$(BH!Fn(B
-1.8.0	Mishima			$B;0Eg(B	; = $B0KF&H":,E4F;(B
-1.8.1	Numazu			$B>BDE(B	; = JR $(B8fEB>l@~(B
-1.8.2	Katahama		$BJRIM(B
-1.8.4	Hara			$B86(B
------	Higashi-Tagonoura	$BElED;R%N1:(B
------	Yoshiwara		$B5H86(B	; = $B3YFnE4F;(B
------	Fuji			$BIY;N(B	; = JR $B?H1d@~(B
+1.8.0	Mishima			$(B;0Eg(B	; = $(B0KF&H":,E4F;(B
+1.8.1	Numazu			$(B>BDE(B	; = JR $(B8fEB>l@~(B
+1.8.2	Katahama		$(BJRIM(B
+1.8.4	Hara			$(B86(B
+1.8.5	Higashi-Tagonoura	$(BElED;R%N1:(B
+-----	Yoshiwara		$(B5H86(B	; = $(B3YFnE4F;(B
+-----	Fuji			$(BIY;N(B	; = JR $(B?H1d@~(B
 :	:			:
 -----	Kanayama		$(B6b;3(B	; =$(B!J(BJR $(BCf1{K\@~!K(B
------	Ot-Dòbashi			$(BHxF,66(B-A
+-----	Ot-Dòbashi		$(BHxF,66(B-A
 -----	Nagoya			$(BL>8E20(B	; = JR $(B4X@>K\@~!J!&Cf1{K\@~!K(B
 :	:			:
 -----	Gifu			$(B4tIl(B	; = JR $(B9b;3K\@~(B
@@ -157,9 +162,9 @@
 1.5.0	Shimao			$(BEgHx(B
 1.6.0	Amaharashi		$(B1+@2(B
 1.8.0	Ecch-Dþ-Kokubu		$(B1[Cf9qJ,(B-A
-1.8.1	Fushiki			$(BIzLZ(B	; <=> $B%&%i%8%*%9%C%H%C%/9RO)(B
-1.8.2	N-Dòmachi-A			$(BG=D.(B
-1.8.3	Ecch-Dþ-Nakagawa-A		$(B1[CfCf@n(B
+1.8.1	Fushiki			$(BIzLZ(B	; <=> $(B%&%i%8%*%9%C%H%C%/9RO)(B
+1.8.2	N-Dòmachi			$(BG=D.(B-A
+1.8.3	Ecch-Dþ-Nakagawa		$(B1[CfCf@n(B-A
 1.8.4	Takaoka			$(B9b2,(B	; = JR $(BKLN&K\@~!">kC<@~(B
 
 
