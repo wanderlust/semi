@@ -58,7 +58,7 @@
   :group 'pgg
   :type 'boolean)
 
-(defvar pgg-messages-coding-system 'undecided
+(defvar pgg-messages-coding-system nil
   "Coding system used when reading from a PGP external process.")
 
 (defvar pgg-status-buffer " *PGG status*")
