@@ -197,12 +197,12 @@ and END to the keyring.")
 	 (setq keyserver 
 	       (or (cdr (assq 'preferred-key-server packet))
 		   pgg-default-keyserver-address))
-	 (ignore-errors (require 'url))
-	 (pgg-fetch-key
-	  (if (url-type (url-generic-parse-url keyserver))
-	      keyserver
-	    (format "http://%s:11371/pks/lookup?op=get&search=%s"
-		    keyserver key))))
+	 (ignore-errors 
+	   (pgg-fetch-key
+	    (if (url-type (url-generic-parse-url keyserver))
+		keyserver
+	      (format "http://%s:11371/pks/lookup?op=get&search=%s"
+		      keyserver key)))))
     (luna-send entity 'verify-region entity start end signature)))
 
 (defun pgg-insert-key ()
