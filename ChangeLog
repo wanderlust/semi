@@ -1,3 +1,16 @@
+1998-05-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el (make-mime-entity): Change interface and
+	data-format.
+	(mime-entity-content-type): New access function.
+	(mime-entity-media-type): New implementation.
+	(mime-entity-subtype): New implementation.
+	(mime-entity-parameters): New implementation.
+	(mime-parse-multipart): Change interface; modify for
+	'make-mime-entity.
+	(mime-parse-message): Modify for 'make-mime-entity.
+
+
 1998-05-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.4.3 (Ichiburi) released.
