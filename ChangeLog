@@ -1,5 +1,10 @@
 1998-05-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* semi-def.el: Abolish 'mime/find-file-function because it is not
+ 	used.
+
+1998-05-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* TODO (keymap-prefix): done.
 	(mailcap support): done.
 	(Change 'mime-acting-condition to condition-tree format): done.
