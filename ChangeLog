@@ -4,6 +4,7 @@
 	New constant.
 	(mime-edit-insert-partial-header): Use it.
 
+
 1997-09-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 0.112 (Tsurugi) was released.
