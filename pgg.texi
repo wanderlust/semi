@@ -98,7 +98,7 @@ application program.
 @end lisp
 
 If you want to check existence of pgg.el at runtime, instead you can
-list autoload settings for functions you want as follows.
+list autoload setting for desired functions as follows.
 
 @lisp
 (autoload 'pgg-encrypt-region "pgg"
