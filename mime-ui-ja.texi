@@ -1,13 +1,13 @@
 \input texinfo.tex
 @setfilename mime-ui-ja.info
-@settitle{SEMI 1.8 説明書}
+@settitle{SEMI 1.14 説明書}
 @titlepage
-@title SEMI 1.8 説明書
+@title SEMI 1.14 説明書
 @author 守岡 知彦 <morioka@@jaist.ac.jp>
 @subtitle 1998/07/03
 @end titlepage
 @node Top, Introduction, (dir), (dir)
-@top SEMI 1.8 説明書
+@top SEMI 1.14 説明書
 
 @ifinfo
 
@@ -653,28 +653,28 @@ body において、8bit の data を使えるように STD 11 (@ref{(mime-
 
 @defvar mime-edit-split-message
 
-Split large message if it is non-nil.
+Non-nil ならば大きなメッセージを分割して送信します。
 @end defvar
 
 
 @defvar mime-edit-message-default-max-lines
 
-Default maximum lines of a message.
+メッセージの最大行数のデフォルト値です。
 @end defvar
 
 
 @defvar mime-edit-message-max-lines-alist
 
-Alist of major-mode vs maximum lines of a message.@refill
+メジャーモード対メッセージの最大行数から成る連想リストです。@refill
 
-If it is not specified for a major-mode,
-@code{mime-edit-message-default-max-lines} is used.
+メジャーモードがここで指定されてない場合には
+@code{mime-edit-message-default-max-lines} を用います。
 @end defvar
 
 
 @defvar mime-edit-split-blind-field-regexp
 
-Regular expression to match field-name to be ignored when split sending.
+分割送信の際に無視されるフィールド名にマッチする正規表現です。
 @end defvar
 
 
@@ -684,7 +684,7 @@ Regular expression to match field-name to be ignored when split sending.
 
 
 @menu
-* PGP::                         
+* PGP::                         暗号化、署名
 * Buttons::                     押釦
 * Acting-condition configuration::  実行条件の設定
 @end menu
@@ -702,17 +702,17 @@ mime-edit では @strong{PGP/MIME} (RFC 2015) および@strong{PGP-kazu}
 
 @defvar pgg-default-scheme
 
-Version of PGP or GnuPG command to be used for encryption or sign.
-The value should be a symbol.  Allowed versions are @code{gpg},
-@code{pgp} or @code{pgp5}.@refill
+暗号化もしくは署名に用いる PGP もしくは GnuPG コマンドのバージョンです。
+値は symbol を指定します。使えるバージョンは @code{gpg}、
+@code{pgp} もしくは @code{pgp5} です。@refill
 @end defvar
 
 
 @defvar pgg-scheme
 
-Version of PGP or GnuPG command to be used for decryption or verification.
-The value should be a symbol.  Allowed versions are @code{gpg},
-@code{pgp} or @code{pgp5}.@refill
+復号もしくは検証に用いる PGP もしくは GnuPG コマンドのバージョンです。
+値は symbol を指定します。使えるバージョンは @code{gpg}、
+@code{pgp} もしくは @code{pgp5} です。@refill
 @end defvar
 
 
@@ -722,19 +722,20 @@ The value should be a symbol.  Allowed versions are @code{gpg},
 
 @defvar mime-button-face
 
-Face used for content-button or URL-button of MIME-Preview buffer.
+MIME-Preview バッファで  content-button もしくは URL-button  に用いる
+face です。
 @end defvar
 
 
 @defvar mime-button-mouse-face
 
-Face used for MIME-preview buffer mouse highlighting.
+MIME-preview バッファでマウスをハイライトする際に用いる face です。
 @end defvar
 
 
 @defvar mime-browse-url-function
 
-Function to browse URL.
+URL をブラウズする関数です。
 @end defvar
 
 
