@@ -1,0 +1,248 @@
+1999-05-17  KOSEKI Yoshinori  <kose@yk.NetLaputa.ne.jp>
+
+	* mime-pgp.el (mime-verify-application/pgp-signature): Specify the
+	name of `sig-file' explicitly for `mime-pgp-check-signature'.
+	(mime-pgp-check-signature): Accept new arg `sig-file' and feed its
+	value to the verify command.
+
+1999-05-13  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-decode-message-in-buffer): Call
+	`mime-edit-decode-single-part-in-buffer' with return value of
+	`mime-read-Content-Disposition'; don't modify the header if the
+	buffer is narrowed to a part.
+	(mime-edit-decode-single-part-in-buffer): Accept the optional arg
+	`content-disposition' and inherit it into the editing buffer.
+
+1999-05-13  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* mime-mc.el (mime-mc-pgp50-process-region,
+	mime-mc-gpg-process-region): Bind `shell-command-switch' to the
+	value of `mime-mc-shell-command-switch'.
+	(mime-mc-shell-command-switch): New user option.
+
+1999-05-12  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-decode-multipart-in-buffer): Use
+	`pgp-encrypted' or `pgp-signed' for the value of `subtype' if the
+	protocol "application/pgp-encrypted" or "application/pgp-signature"
+	is declared; attempt to decrypt the encrypted part with the new
+	function `mime-edit-decrypt-application/pgp-encrypted' and strip
+	sender, recipients and useless tags from the decrypted part.
+	(TopLevel): Autoload "mime-pgp" for the function
+	`mime-edit-decrypt-application/pgp-encrypted'.
+
+	* mime-pgp.el (mime-edit-decrypt-application/pgp-encrypted): New
+	function.
+	(mime-pgp-detect-version): Allow some leading garbage lines.
+
+1999-04-16  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-play.el (mime-show-echo-buffer): Make it returns the list of
+	window, start and end positions of inserted text; adjust a window
+	height to the value of `mime-echo-window-height' whenever this
+	function is called; bind `window-min-height' to 1 during splitting
+	a window vertically.
+
+	* mime-pgp.el (mime-pgp-fetch-key): Enclose a tcp process with
+	a temp buffer.
+	(mime-pgp-show-fetched-key-for-pgp50): Always use
+	`mime-show-echo-buffer' for displaying a fetched key; optimize its
+	window height.
+	(mime-pgp-show-fetched-key): Likewise.
+	(mime-pgp-keyserver-port): Replace "HTTP" with "HKP" in doc string.
+	(mime-verify-application/pgp-signature): Optimize a height of window
+	where some informations are displayed.
+	(mime-pgp-parse-verify-error): Likewise.
+	(mime-pgp-show-echo-buffer): New macro.
+	(mime-pgp-parse-verify-error-for-pgp): Make it to accept an arg
+	`output-buffer' and to return the list of expected key-ID, start
+	position and lines to be shown a result.
+	(mime-pgp-parse-verify-error-for-pgp50): Likewise.
+	(mime-pgp-parse-verify-error-for-gpg): Likewise.
+	(mime-pgp-parse-verify-error): Likewise.
+	(mime-pgp-check-signature): Returns a start position and lines
+	to be used for how a result should be displayed in echo window.
+	(mime-pgp-detect-version): Bug fix -- save restriction before
+	narrowing.
+
+1999-04-15  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-pgp.el (mime-add-application/pgp-keys): Use
+	`mime-insert-entity-content' and `mime-pgp-detect-version' to get
+	public keys.
+	(mime-decrypt-application/pgp-encrypted): Use
+	`mime-entity-detect-pgp-version' instead of
+	`mime-pgp-detect-version'.
+	(mime-verify-application/pgp-signature): Likewise.
+	(mime-entity-detect-pgp-version): Function to detect PGP version
+	from entity content; renamed from `mime-pgp-detect-version'.
+	(mime-pgp-detect-version): New function to detect PGP version in
+	the buffer.
+
+1999-04-13  Hirokazu FUKUI    <fukui@atesoft.advantest.co.jp>
+
+	* mime-pgp.el (mime-add-application/pgp-keys): Call
+	`buffer-substring' in entity's buffer.
+
+1999-04-15  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-mc.el (mime-mc-insert-public-key, mime-mc-encrypt-region,
+	mime-mc-traditional-sign-region, mime-mc-sign-region,
+	mime-mc-snarf-keys, mime-mc-fetch-key, mime-mc-decrypt,
+	mime-mc-verify, mime-mc-comment): Use `mime-mc-symbol'.
+	(mime-mc-symbol): New macro.
+	(mime-mc-symbol-format-alist): New variable.
+
+1999-04-14  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-insert-key): Prompt for user id if prefix
+	arg is given.
+
+	* mime-mc.el (mime-mc-insert-public-key): Fix bug - referring to
+	undefined variable.
+
+1999-04-14  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-ui-en.texi, mime-ui-ja.texi: Sync up with .sgml files.
+	* mime-ui-en.sgml, mime-ui-ja.sgml: Modify a description for
+	simplified `pgp-function-alist'.
+
+	* semi-def.el (pgp-function-alist): Simplify. Use
+	`mime-mc-encrypt-region', `mime-mc-traditional-sign-region',
+	`mime-mc-sign-region' and `mime-mc-fetch-key' for it.
+
+	* mime-mc.el (mime-mc-insert-public-key, mime-mc-snarf-keys,
+	mime-mc-decrypt, mime-mc-verify): Add doc strings.
+	(mime-mc-encrypt-region, mime-mc-traditional-sign-region,
+	mime-mc-sign-region, mime-mc-fetch-key): New functions.
+	(TopLevel): Add autoloads "mc-gpg", "mc-pgp5" and "mc-pgp" for the
+	functions `mc-gpg-fetch-key', `mc-gpg-sign-region',
+	`mc-pgp50-fetch-key', `mc-pgp50-sign-region', `mc-pgp-fetch-key'
+	and `mc-pgp-sign-region'.
+
+	* mime-pgp.el (mime-pgp-fetch-key): Kill useless buffers after
+	fetching.
+	(mime-pgp-show-fetched-key-for-pgp50, mime-pgp-show-fetched-key):
+	Show fetched key in the window of `mime-echo-buffer-name' if it is
+	alive, otherwise use `display-buffer'; minimize the window height;
+	return buffer object to be killed.
+
+1999-04-14  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-pgp.el (mime-pgp-fetch-key,
+	mime-pgp-show-fetched-key-for-pgp,
+	mime-pgp-show-fetched-key-for-pgp50,
+	mime-pgp-show-fetched-key-for-gpg): New functions.
+	(mime-pgp-show-fetched-key): New macro.
+	(mime-pgp-fetch-timeout, mime-pgp-http-proxy-server-port,
+	mime-pgp-http-proxy-server-address,
+	mime-pgp-http-proxy-url-template, mime-pgp-keyserver-port,
+	mime-pgp-keyserver-address, mime-pgp-keyserver-url-template): New
+	user options.
+	(mime-pgp-key-expected-regexp-alist,
+	mime-pgp-bad-signature-regexp-alist,
+	mime-pgp-good-signature-regexp-alist,
+	mime-pgp-default-language-alist, mime-pgp-command-alist): Change
+	the customization group to `mime-pgp'.
+	(mime-pgp): New group for customization.
+
+	* mime-mc.el (mime-mc-pgp50-process-region,
+	mime-mc-gpg-process-region): Deactivate passwd if detecting the
+	value of `micalg' is failed and `mc-passwd-timeout' is nil; remove
+	useless `progn's.
+	(mime-mc-comment-alist, mime-mc-omit-micalg,
+	mime-mc-shell-file-name): Change the customization group to
+	`mime-mc'.
+	(mime-mc): New group for customization.
+
+1999-04-14  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-mc.el (mime-mc-pgp50-sign-region, mime-mc-gpg-sign-region):
+	Return nil if an erorr has occurred during detecting the value of
+	`micalg'.
+	(mime-mc-pgp50-process-region, mime-mc-gpg-process-region): Don't
+	signal an error. Return non-nil if success, otherwise nil with
+	error message.
+
+	* mime-edit.el (mime-edit-translate-buffer): Do `undo-boundary'
+	before translating.
+
+1999-04-13  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-mc.el (mime-mc-pgp50-sign-region, mime-mc-gpg-sign-region):
+	Don't deactivate passwd during detecting the value of `micalg' even
+	if `mc-passwd-timeout' is set to nil.
+	(mime-mc-gpg-process-region): Print this function name for
+	debugging.
+
+1999-04-12  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-pgp.el (mime-pgp-check-signature): Return nil if neither bad
+	nor good.
+
+1999-04-09  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-mc.el (mime-mc-pgp-encrypt-region, mime-mc-pgp-sign-region,
+	mime-mc-process-region, mime-mc-pgp50-encrypt-region,
+	mime-mc-pgp50-sign-region, mime-mc-pgp50-process-region,
+	mime-mc-gpg-encrypt-region, mime-mc-gpg-sign-region,
+	mime-mc-gpg-process-region, mime-mc-insert-public-key): Identify
+	the version of SEMI as a comment field of ASCII armor.
+	(mime-mc-replace-comment-field): New function.
+	(mime-mc-comment): New macro.
+	(mime-mc-comment-alist): New user option.
+	(TopLevel): Require `mime-def'.
+
+1999-04-08  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-mc.el (mime-mc-pgp-sign-region): Omit the micalg parameter
+	if the value of `mime-mc-omit-micalg' is non-nil.
+	(mime-mc-pgp50-sign-region, mime-mc-gpg-sign-region): Detect and
+	cache the value of message integrity check algorithm before signing
+	and use it for the micalg parameter if the value of
+	`mime-mc-omit-micalg' is nil.
+	(mime-mc-gpg-process-region): Show boundary in
+	`mc-gpg-debug-buffer'.
+	(mime-mc-pgp-process-region, mime-mc-pgp50-process-region,
+	mime-mc-gpg-process-region): Add doc string.
+	(mime-mc-micalg-alist): New variable.
+	(mime-mc-omit-micalg): New user option.
+	(TopLevel): Require `alist' and `std11'.
+
+	* mime-pgp.el (TopLevel): Add comment that this module is based on
+	draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME) as well.
+
+1999-04-06  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-pgp.el (mime-pgp-bad-signature-post-function-pgp50-us): New
+	function.
+	(mime-verify-application/pgp-signature): Say "Checking signature..."
+	before verifying; say "Can't check signature" if public key is not
+	available.
+	(mime-pgp-parse-verify-error): Goto beginning of buffer, eval forms
+	and set window start.
+	(mime-pgp-parse-verify-error-for-pgp): Use it
+	(mime-pgp-parse-verify-error-for-pgp50): Use it.
+	(mime-pgp-parse-verify-error-for-gpg): Use it.
+	(mime-pgp-check-signature): Rewrite for detecting "BAD signature".
+	(mime-pgp-bad-signature-post-function): New macro.
+	(mime-pgp-bad-signature-regexp): New macro.
+	(mime-pgp-bad-signature-regexp-alist): New user option.
+
+	* mime-ui-en.texi, mime-ui-ja.texi: Sync up with .sgml files.
+	* mime-ui-en.sgml, mime-ui-ja.sgml (mime-mc-setversion): Use <var>,
+	</var> token in doc string.
+
+1999-04-06  Keiichi Suzuki  <keiichi@nanap.org>
+
+	* mime-pgp.el (mime-view-application/pgp): Support PGP5.X and
+	GnuPG format.
+
+1999-04-05  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-pgp.el (mime-pgp-parse-verify-error): Use
+	`with-current-buffer' instead of `save-current-buffer'.
+	(mime-pgp-check-signature): Use `with-current-buffer' instead of
+	`save-current-buffer'; add comment about PGP 5.0i.
+
