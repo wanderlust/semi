@@ -1168,9 +1168,15 @@ Content-Transfer-Encoding and Content-Disposition headers."
 				  (car candidates)
 				candidates))
 	      (setq eol (coding-system-eol-type candidate))
-	      (cond ((eq eol 'lf)
+	      (cond ((eq eol
+			 (static-if (featurep 'xemacs)
+			     'lf
+			   0))
 		     (setq eol-string "\n"))
-		    ((eq eol 'cr)
+		    ((eq eol
+			 (static-if (featurep 'xemacs)
+			     'cr
+			   2))
 		     (setq eol-string "\r")))
 	      (goto-char (point-min))
 	      (when eol-string
