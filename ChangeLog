@@ -1,3 +1,8 @@
+2002-08-28  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-user-agent-value): Add
+	`xemacs-extra-name'.
+
 2001-07-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* mime-edit.el (mime-edit-translate-body): Revert; insert

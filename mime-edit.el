@@ -644,7 +644,14 @@ If it is not specified for a `major-mode',
 				  ;; XEmacs versions earlier than 21.1.1.
 				  (format " (patch %d)" emacs-patch-level))
 				 (t ""))
-			   " (" xemacs-codename ") ("
+			   " (" xemacs-codename ")"
+			   ;; `xemacs-extra-name' has appeared in the
+			   ;; development version of XEmacs 21.5-b8.
+			   (if (and (boundp 'xemacs-extra-name)
+				    (symbol-value 'xemacs-extra-name))
+			       (concat " " (symbol-value 'xemacs-extra-name))
+			     "")
+			   " ("
 			   system-configuration ")")
 			" (" emacs-version ")"))
 	    (let ((ver (if (string-match "\\.[0-9]+$" emacs-version)
