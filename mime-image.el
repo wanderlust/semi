@@ -142,7 +142,7 @@
 	  (image png		png)
 	  ))
 
-(defvar mime-view-ps-to-gif-command "pstogif")
+;; (defvar mime-view-ps-to-gif-command "pstogif")
 
 
 ;;; @ content filter for images
