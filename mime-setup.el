@@ -27,6 +27,7 @@
 ;;; Code:
 
 (require 'semi-setup)
+(require 'alist)
 
 (autoload 'mime-edit-mode "mime-edit"
   "Minor mode for editing MIME message." t)
