@@ -54,8 +54,7 @@
   "Internal method to verify multipart/signed."
   (mime-play-entity
    (nth 1 (mime-entity-children entity)) ; entity-info of signature
-   nil
-   (cdr (assq 'mode situation)) ; play-mode
+   (list (assq 'mode situation)) ; play-mode
    ))
 
 
