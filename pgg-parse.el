@@ -1,8 +1,8 @@
 ;;; pgg-parse.el --- OpenPGP packet parsing
 
-;; Copyright (C) 1999 Daiki Ueno
+;; Copyright (C) 1999 Free Software Foundation, Inc.
 
-;; Author: Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
+;; Author: Daiki Ueno <ueno@unixuser.org>
 ;; Created: 1999/10/28
 ;; Keywords: PGP, OpenPGP, GnuPG
 
@@ -463,7 +463,7 @@
 	  (string-equal
 	   (funcall (mel-find-function 'mime-encode-string "base64")
 		    (pgg-parse-crc24-string
-		     (buffer-substring (point-min)(point-max))))
+		     (buffer-string)))
 	   checksum)
 	  (error "PGP packet checksum does not match")))))
 

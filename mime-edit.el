@@ -4,7 +4,7 @@
 
 ;; Author: UMEDA Masanobu <umerin@mse.kyutech.ac.jp>
 ;;	MORIOKA Tomohiko <tomo@kanji.zinbun.kyoto-u.ac.jp>
-;;	Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
+;;	Daiki Ueno <ueno@unixuser.org>
 ;; Created: 1994/08/21 renamed from mime.el
 ;;	Renamed: 1997/2/21 from tm-edit.el
 ;; Keywords: MIME, multimedia, multilingual, mail, news

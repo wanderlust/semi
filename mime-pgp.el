@@ -3,7 +3,7 @@
 ;; Copyright (C) 1995,1996,1997,1998,1999,2000 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <tomo@m17n.org>
-;;	Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
+;;	Daiki Ueno <ueno@unixuser.org>
 ;; Created: 1995/12/7
 ;;	Renamed: 1997/2/27 from tm-pgp.el
 ;; Keywords: PGP, security, MIME, multimedia, mail, news
@@ -42,9 +42,11 @@
 ;;	    by Kazuhiko Yamamoto <kazu@is.aist-nara.ac.jp> (1995/10;
 ;;	    expired)
 
-;;	[OpenPGP/MIME] draft-yamamoto-openpgp-mime-00.txt: "MIME
-;;	    Security with OpenPGP (OpenPGP/MIME)" by Kazuhiko YAMAMOTO
-;;	    <kazu@iijlab.net> (1998/1)
+;;	[OpenPGP/MIME] draft-ietf-openpgp-mime-02.txt: "MIME
+;;	    Security with OpenPGP" by
+;;	    John W. Noerenberg II <jwn2@qualcomm.com>,
+;;	    Dave Del Torto <ddt@cryptorights.org> and
+;;	    Michael Elkins <michael_elkins@nai.com> (2000/8)
 
 ;;; Code:
 
@@ -130,7 +132,7 @@
 ;;; @ Internal method for application/pgp-signature
 ;;;
 ;;; It is based on RFC 2015 (PGP/MIME) and
-;;; draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME).
+;;; draft-ietf-openpgp-mime-02.txt (OpenPGP/MIME).
 
 (defun mime-verify-application/pgp-signature (entity situation)
   "Internal method to check PGP/MIME signature."
@@ -170,7 +172,7 @@
 ;;; @ Internal method for application/pgp-encrypted
 ;;;
 ;;; It is based on RFC 2015 (PGP/MIME) and
-;;; draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME).
+;;; draft-ietf-openpgp-mime-02.txt (OpenPGP/MIME).
 
 (defun mime-decrypt-application/pgp-encrypted (entity situation)
   (let* ((entity-node-id (mime-entity-node-id entity))
@@ -186,7 +188,7 @@
 ;;; @ Internal method for application/pgp-keys
 ;;;
 ;;; It is based on RFC 2015 (PGP/MIME) and
-;;; draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME).
+;;; draft-ietf-openpgp-mime-02.txt (OpenPGP/MIME).
 
 (defun mime-add-application/pgp-keys (entity situation)
   (save-excursion 

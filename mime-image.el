@@ -5,7 +5,7 @@
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;;	Dan Rich <drich@morpheus.corp.sgi.com>
-;;	Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
+;;	Daiki Ueno <ueno@unixuser.org>
 ;;	Katsumi Yamaoka  <yamaoka@jpl.org>
 ;; Maintainer: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Created: 1995/12/15
