@@ -36,13 +36,6 @@
   "Caesar rotation of current region." t)
 
 
-;;; @ variables
-;;;
-
-(defvar mime/use-multi-frame
-  (and (>= emacs-major-version 19) window-system))
-
-
 ;;; @ constants
 ;;;
 
