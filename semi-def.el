@@ -55,48 +55,100 @@
 ;;; @ button
 ;;;
 
-(defcustom mime-button-face 'bold
-  "Face used for content-button or URL-button of MIME-Preview buffer."
-  :group 'mime
-  :type 'face)
+(defun mime-create-widget-button (string function)
+  (let ((start (point)))
+    (widget-create
+     'push-button
+     :action `(lambda (widget &optional event) (,function))
+     :mouse-down-action `(lambda (widget event)
+			   (let (buf point)
+			     (save-window-excursion
+			       (mouse-set-point event)
+			       (setq buf (current-buffer)
+				     point (point)))
+			     (save-excursion
+			       (set-buffer buf)
+			       (goto-char point)
+			       (,function))))
+     string)
+    (static-if (featurep 'xemacs)
+	(let ((end (point))
+	      extent)
+	  (insert "[" string "]")
+	  (while (setq extent (extent-at start nil nil extent))
+	    (set-extent-endpoints extent end (point)))
+	  (delete-region start end))))
+  (insert "\n"))
 
-(defcustom mime-button-mouse-face 'highlight
-  "Face used for MIME-preview buffer mouse highlighting."
-  :group 'mime
-  :type 'face)
+(static-when (featurep 'xemacs)
+  (defcustom mime-xpm-button-shadow-thickness 3
+    "A number of pixels should be used for the shadows on the edges of
+the buttons."
+    :group 'mime
+    :type 'integer)
+
+  (defcustom mime-xpm-button-foreground "Yellow"
+    "A color used to display the text."
+    :group 'mime
+    :type 'string)
+
+  (defcustom mime-xpm-button-background "#a0a0d0"
+    "A background color the text will be displayed upon."
+    :group 'mime
+    :type 'string)
+
+  (defun mime-create-xpm-button (string function)
+    (set-extent-properties (make-extent (point)
+					(progn
+					  (insert "[" string "]")
+					  (point)))
+			   '(invisible t intangible t))
+    (let* ((button (xpm-button-create string
+				      mime-xpm-button-shadow-thickness
+				      mime-xpm-button-foreground
+				      mime-xpm-button-background))
+	   (extent (make-extent (point) (point)))
+	   (down-glyph (make-glyph (car (cdr button))))
+	   (up-glyph (make-glyph (car button)))
+	   (down-func `(lambda (event)
+			 (interactive "e")
+			 (set-extent-begin-glyph ,extent ,down-glyph)))
+	   (up-func `(lambda (event)
+		       (interactive "e")
+		       (mouse-set-point event)
+		       (set-extent-begin-glyph ,extent ,up-glyph)
+		       (,function)))
+	   (keymap (make-sparse-keymap)))
+      (define-key keymap 'button1 down-func)
+      (define-key keymap 'button2 down-func)
+      (define-key keymap 'button1up up-func)
+      (define-key keymap 'button2up up-func)
+      (set-extent-begin-glyph extent up-glyph)
+      (set-extent-property extent 'keymap keymap))
+    (insert "\n"))
+  )
+
+(static-if (featurep 'xemacs)
+    (defcustom mime-create-button-function 'mime-create-widget-button
+      "A function called to create the content button."
+      :group 'mime
+      :type '(radio (const :tag "Widget button" mime-create-widget-button)
+		    (const :tag "Xpm button" mime-create-xpm-button)
+		    (function :tag "Other")))
+  (defcustom mime-create-button-function 'mime-create-widget-button
+    "A function called to create the content button."
+    :group 'mime
+    :type '(radio (const :tag "Widget button" mime-create-widget-button)
+		  (function :tag "Other")))
+  )
 
 (defsubst mime-insert-button (string function &optional data)
   "Insert STRING as button with callback FUNCTION and DATA."
   (save-restriction
-    (narrow-to-region (point)(point))
-    (mapcar #'(lambda (line)
-		(let ((start (point))
-		      end extent)
-		  (widget-create
-		   'push-button
-		   :action `(lambda (widget &optional event)
-			      (,function)
-			      )
-		   :mouse-down-action `(lambda (widget event)
-					 (let (buf point)
-					   (save-window-excursion
-					     (mouse-set-point event)
-					     (setq buf (current-buffer)
-						   point (point)))
-					   (save-excursion
-					     (set-buffer buf)
-					     (goto-char point)
-					     (,function)
-					     )))
-		   line)
-		  (if (featurep 'xemacs)
-		      (progn
-			(setq end (point))
-			(insert "[" line "]")
-			(while (setq extent (extent-at start nil nil extent))
-			  (set-extent-endpoints extent end (point)))
-			(delete-region start end)))
-		  (insert "\n")))
+    (narrow-to-region (point) (point))
+    (mapcar (function
+	     (lambda (line)
+	       (funcall mime-create-button-function line function)))
 	    (split-string string "\n"))))
 
 (defvar mime-button-mother-dispatcher nil)
