@@ -1,5 +1,10 @@
 1999-08-17  Katsumi Yamaoka   <yamaoka@jpl.org>
 
+	* mime-view.el (mime-preview-original-major-mode): Modify the way
+	of checking for the end of the buffer.
+
+1999-08-17  Katsumi Yamaoka   <yamaoka@jpl.org>
+
 	* mime-view.el (mime-preview-original-major-mode): Don't use
 	`get-text-property' at the end of the buffer.
 
