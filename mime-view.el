@@ -229,7 +229,9 @@ Each elements are regexp of field-name.")
 ;;; @@ entity button
 ;;;
 
-(defun mime-view-insert-entity-button (rcnum cinfo ctype params subj encoding)
+(defun mime-view-insert-entity-button (rcnum cinfo
+					     media-type media-subtype params
+					     subj encoding)
   "Insert entity-button."
   (mime-insert-button
    (let ((access-type (assoc "access-type" params))
@@ -260,12 +262,14 @@ Each elements are regexp of field-name.")
 	      (concat
 	       num " " subj
 	       (let ((rest
-		      (concat " <" ctype
+		      (format " <%s/%s%s%s>"
+			      media-type media-subtype
 			      (if charset
 				  (concat "; " charset)
-				(if encoding (concat " (" encoding ")"))
-				)
-			      ">")))
+				"")
+			      (if encoding
+				  (concat " (" encoding ")")
+				""))))
 		 (if (>= (+ (current-column)(length rest))(window-width))
 		     "\n\t")
 		 rest)))
@@ -273,21 +277,24 @@ Each elements are regexp of field-name.")
    (function mime-view-play-current-entity))
   )
 
-(defun mime-view-entity-button-function
-  (rcnum cinfo ctype params subj encoding)
+(defun mime-view-entity-button-function (rcnum cinfo
+					       media-type media-subtype
+					       params subj encoding)
   "Insert entity button conditionally.
 Please redefine this function if you want to change default setting."
   (or (null rcnum)
-      (string= ctype "application/x-selection")
-      (and (string= ctype "application/octet-stream")
-	   (let ((entity-info
-		  (mime-article/rcnum-to-cinfo (cdr rcnum) cinfo)))
-	     (and (eq (mime-entity-info-media-type entity-info)
-		      'multipart)
-		  (eq (mime-entity-info-media-subtype entity-info)
-		      'encrypted)
-		  )))
-      (mime-view-insert-entity-button rcnum cinfo ctype params subj encoding)
+      (and (eq media-type 'application)
+	   (or (eq media-subtype 'x-selection)
+	       (and (eq media-subtype 'octet-stream)
+		    (let ((entity-info
+			   (mime-article/rcnum-to-cinfo (cdr rcnum) cinfo)))
+		      (and (eq (mime-entity-info-media-type entity-info)
+			       'multipart)
+			   (eq (mime-entity-info-media-subtype entity-info)
+			       'encrypted)
+			   )))))
+      (mime-view-insert-entity-button
+       rcnum cinfo media-type media-subtype params subj encoding)
       ))
 
 
@@ -530,7 +537,8 @@ The compressed face will be piped to this command.")
     (set-buffer obuf)
     (setq nb (point))
     (narrow-to-region nb nb)
-    (mime-view-entity-button-function rcnum cinfo ctype params subj encoding)
+    (mime-view-entity-button-function
+     rcnum cinfo media-type media-subtype params subj encoding)
     (if (mime-view-header-visible-p rcnum cinfo)
 	(mime-view-display-header beg he)
       )
@@ -540,7 +548,7 @@ The compressed face will be piped to this command.")
 	(save-excursion
 	  (goto-char (point-max))
 	  (mime-view-insert-entity-button
-	   rcnum cinfo ctype params subj encoding)
+	   rcnum cinfo media-type media-subtype params subj encoding)
 	  ))
     (cond ((mime-view-body-visible-p rcnum cinfo media-type media-subtype)
 	   (mime-view-display-body he end
@@ -554,7 +562,7 @@ The compressed face will be piped to this command.")
 		)
 	   (goto-char (point-max))
 	   (mime-view-insert-entity-button
-	    rcnum cinfo ctype params subj encoding)
+	    rcnum cinfo media-type media-subtype params subj encoding)
 	   ))
     (mime-view-entity-separator-function
      rcnum cinfo media-type media-subtype params subj)
