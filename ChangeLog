@@ -1,3 +1,10 @@
+1999-12-16  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* semi-setup.el (mime-setup-decode-message-header): Comment out.
+	(mime-edit-mode-hook): Don't use
+	`mime-setup-decode-message-header'.
+	(mu-cite/pre-cite-hook): Don't use `eword-decode-header'.
+
 1999-12-14  Akihiro Arisawa  <ari@atesoft.advantest.co.jp>
 
 	* mime-view.el (mime-preview-follow-current-entity): Fetch 
