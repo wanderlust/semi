@@ -856,6 +856,7 @@ This can only handle gzipped contents."
        (as-binary-process
 	(call-process-region (point-min) (point-max) "gzip" t t
 			     nil "-cd"))
+       (decode-coding-region (point-min) (point-max) 'undecided)
        (buffer-string)))
     t)
 
