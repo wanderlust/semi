@@ -1,3 +1,138 @@
+1998-06-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-normalize-body): Abolish unused local
+	variable.
+
+1998-06-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-translate-single-part-tag): Add new
+	argument `boundary'.
+	(mime-edit-translate-region): Modify for
+	`mime-edit-translate-single-part-tag'.
+
+1998-06-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-w3.el (mime-put-keymap-region): New macro.
+	(mime-preview-text/html): Use macro `mime-put-keymap-region'.
+
+1998-06-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI-ELS (semi-modules-to-compile): Add 'mime-w3 if w3 is found.
+
+	* semi-setup.el (mime-setup-enable-inline-html): New variable; add
+	setting for mime-w3.el conditionally.
+
+	* mime-w3.el: New module.
+
+1998-06-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-preview-multipart/alternative): Fix typo.
+
+1998-06-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-x-emacs-value): Check
+ 	`enable-multibyte-characters' is bound or not.
+
+1998-06-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS (`pgp-elkins' -> `pgp-mime'): New section.
+
+	* mime-edit.el: Rename `pgp-elkins' -> `pgp-mime'.
+
+1998-06-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-sign-pgp-elkins): Abolish unused local
+	variable.
+	(mime-edit-encrypt-pgp-elkins): Abolish unused local variable.
+
+1998-06-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el (mime-parse-multipart): fixed.
+
+1998-06-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-delq-null-situation): New function.
+  	(mime-raw-play-entity): Use `mime-delq-null-situation'.
+
+1998-06-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* TODO (Better implementation for multipart/alternative): done.
+
+	* NEWS (type-subtype-score): New section.
+
+1998-06-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-raw-message-info): Modify DOC-string.
+
+	* MIME-View-API-ja.ol: Modify for SEMI 1.5.
+
+1998-06-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-touched-flag): Define by `defvar'.
+	(mime-edit-mode): Don't check `mime-edit-touched-flag' is bound or
+	not.
+
+	* mime-edit.el (mime-edit-find-inmost): Abolish unused local
+	variables.
+
+1998-06-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-text.el (mime-text-insert-decoded-body): Don't refer
+	`mime-raw-buffer'.
+
+	* mime-parse.el: Change format of `mime-entity' to add `buffer'.
+
+1998-06-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el: When it is compiled, require 'bbdb or define
+	`bbdb-buffer-name' to avoid compiler warning.
+
+	(mime-method-to-display-caesar): Abolish unused local variable.
+	
+	Use `eval-buffer' to eval contents of
+	`mime-acting-situation-examples-file'.
+
+1998-06-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-text.el: Move definition of variable
+	`mime-raw-representation-type' to mime-view.el.
+
+	* mime-view.el: Move definition of variable
+	`mime-raw-representation-type' from mime-text.el.
+	(mime-raw-message-info): Modify DOC-string.
+
+	* MIME-View-API-ja.ol: New file.
+
+1998-06-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-raw-message-info): Fix typo.
+	(mime-view-type-subtype-score-alist): New variable.
+	(mime-preview-multipart/alternative): New function; set up for
+	`mime-preview-condition'.
+	(mime-view-display-entity): Add optional argument `situation'.
+
+1998-06-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-entity): Call
+	body-presentation-method to display multipart if it is function.
+
+	* NEWS: Add news about SEMI 1.5.
+
+1998-06-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-preview-multipart/mixed): New function.
+	(mime-view-display-entity): Use `mime-preview-multipart/mixed'.
+
+1998-06-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-entity): Display entity-button
+	in body if button is invisible and body-presentation-method is not
+	found.
+
+1998-06-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* README.en (Required environment): Modify for FLIM 1.3.0.
+
 1998-06-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-play.el (mime-raw-write-region): New implementation; refer
