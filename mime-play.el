@@ -270,40 +270,14 @@
 	(cons t (mime-charset-to-coding-system default-mime-charset))
 	))
 
-(cond (running-mule-merged-emacs
-       (defun mime-article::write-region (start end file)
-	 (let ((coding-system-for-write
-		(cdr
-		 (or (assq major-mode mime-article/coding-system-alist)
-		     (assq t mime-article/coding-system-alist)
-		     ))))
-	   (write-region start end file)
-	   ))
-       )
-      ((or (boundp 'MULE)
-	   running-xemacs-with-mule)
-       (defun mime-article::write-region (start end file)
-	 (let ((file-coding-system
-		(cdr
-		 (or (assq major-mode mime-article/coding-system-alist)
-		     (assq t mime-article/coding-system-alist)
-		     ))))
-	   (write-region start end file)
-	   ))
-       )
-      ((boundp 'NEMACS)
-       (defun mime-article::write-region (start end file)
-	 (let ((kanji-fileio-code
-		(cdr
-		 (or (assq major-mode mime-article/kanji-code-alist)
-		     (assq t mime-article/kanji-code-alist)
-		     ))))
-	   (write-region start end file)
-	   ))
-       )
-      (t
-       (defalias 'mime-article::write-region 'write-region)
-       ))
+(defun mime-article::write-region (start end file)
+  (let ((coding-system-for-write
+	 (cdr
+	  (or (assq major-mode mime-article/coding-system-alist)
+	      (assq t mime-article/coding-system-alist)
+	      ))))
+    (write-region start end file)
+    ))
 
 (defun mime-article/decode-message/partial (beg end cal)
   (goto-char beg)
