@@ -1,3 +1,11 @@
+1998-11-13  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
+
+	* Sync up with `semi-1_12'.
+
+1998-11-12  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-split-ignored-field-regexp): Add "^".
+
 1998-11-10  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
 
 	* mime-edit.el (mime-content-transfer-encoding-priority-list): New
