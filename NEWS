@@ -3,6 +3,19 @@ Copyright (C) 1998 Free Software Foundation, Inc.
 
 * Changes in SEMI 1.5
 
+** type-subtype-score
+
+  Now MIME-View chooses one entity to display body in
+multipart/alternative.  In this mechanism,
+`mime-view-type-subtype-score-alist' is used to specify priority of
+each entity.
+
+  Variable `mime-view-type-subtype-score-alist' is alist of
+TYPE-SUBTYPE vs. SCORE.  TYPE-SUBTYPE is cons pair (TYPE . SUBTYPE),
+symbol TYPE or t.  TYPE and SUBTYPE are symbol.  `t' means default.
+SCORE is integer.  Larger number is larger priority.
+
+
 ** text presentation
 
   Change text presentation mechanism.  In anything older than SEMI
