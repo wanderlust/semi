@@ -52,7 +52,8 @@
 	     x))))
   )
 
-(defconst semi-version-name "Shijima")
+(defconst semi-version-name "Otomaru"
+  "Version name of SEMI-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
   "Caesar rotation of current region." t)
