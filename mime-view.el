@@ -898,7 +898,6 @@ The compressed face will be piped to this command.")
 	     ))
       (setq ne (point-max))
       (widen)
-      (put-text-property nb ne 'mime-view-raw-buffer raw-buffer)
       (put-text-property nb ne 'mime-view-entity entity)
       (goto-char ne)
       (if children
