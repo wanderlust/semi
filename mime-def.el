@@ -72,7 +72,7 @@
 			   (and mime-button-mouse-face
 				(list 'mouse-face mime-button-mouse-face))
 			   (list 'mime-button-callback func)
-			   (and data (list 'semi-data data))
+			   (and data (list 'mime-button-data data))
 			   ))
   )
 
@@ -87,7 +87,7 @@
       (setq buf (current-buffer)
 	    point (point)
 	    func (get-text-property (point) 'mime-button-callback)
-	    data (get-text-property (point) 'semi-data)
+	    data (get-text-property (point) 'mime-button-data)
 	    )
       )
     (save-excursion
