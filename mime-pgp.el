@@ -190,9 +190,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
       (kill-buffer (current-buffer))
       )
     (save-excursion
-      (mime-article/show-output-buffer)
-      )
-    (save-excursion
+      (mime-show-echo-buffer)
       (setq str (buffer-substring
 		 (save-excursion
 		   (goto-char beg)
