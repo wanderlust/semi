@@ -1,3 +1,9 @@
+1999-11-07   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-pgp.el (mime-verify-application/pgp-signature): Don't
+	scroll MIME-echo buffer, just set window starting point.
+	(mime-add-application/pgp-keys): Ditto.
+
 1999-11-06   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* pgg.el (pgg-sign-region): Add optional argument `cleartext'.
