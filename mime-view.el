@@ -1188,7 +1188,7 @@ It calls following-method selected from variable
 	      (format "%s-%s" (buffer-name) (reverse entity-node-id)))
 	     new-buf
 	     (the-buf (current-buffer))
-	     (a-buf mime-raw-buffer)
+	     (a-buf (mime-entity-buffer entity))
 	     fields)
 	(save-excursion
 	  (set-buffer (setq new-buf (get-buffer-create new-name)))
