@@ -522,6 +522,7 @@ Tspecials means any character that matches with it in header must be quoted.")
 (defconst mime-edit-mime-map (make-sparse-keymap)
   "Keymap for MIME commands.")
 
+
 ;;; @ keymap and menu
 ;;;
 
@@ -1720,6 +1721,15 @@ Content-Transfer-Encoding: 7bit
 	   "--[[application/pgp; format=mime][7bit]]\n")
 	  ))
       )))
+
+(defsubst replace-space-with-underline (str)
+  (mapconcat (function
+	      (lambda (arg)
+		(char-to-string
+		 (if (eq arg ?\ )
+		     ?_
+		   arg)))) str "")
+  )
 
 (defun mime-edit-translate-body ()
   "Encode the tagged MIME body in current buffer in MIME compliant message."
