@@ -1,12 +1,11 @@
-;;; mime-pgp.el --- mime-view internal methods for either PGP or GnuPG.
+;;; mime-pgp.el --- mime-view internal methods for PGP.
 
 ;; Copyright (C) 1995,1996,1997,1998,1999 MORIOKA Tomohiko
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
-;;         Katsumi Yamaoka  <yamaoka@jpl.org>
 ;; Created: 1995/12/7
 ;;	Renamed: 1997/2/27 from tm-pgp.el
-;; Keywords: PGP, GnuPG, security, MIME, multimedia, mail, news
+;; Keywords: PGP, security, MIME, multimedia, mail, news
 
 ;; This file is part of SEMI (Secure Emacs MIME Interface).
 
@@ -31,9 +30,9 @@
 
 ;;	[security-multipart] RFC 1847: "Security Multiparts for MIME:
 ;;	    Multipart/Signed and Multipart/Encrypted" by
-;;	    Jim Galvin <galvin@tis.com>, Sandy Murphy <sandy@tis.com>,
+;;          Jim Galvin <galvin@tis.com>, Sandy Murphy <sandy@tis.com>,
 ;;	    Steve Crocker <crocker@cybercash.com> and
-;;	    Ned Freed <ned@innosoft.com> (1995/10)
+;;          Ned Freed <ned@innosoft.com> (1995/10)
 
 ;;	[PGP/MIME] RFC 2015: "MIME Security with Pretty Good Privacy
 ;;	    (PGP)" by Michael Elkins <elkins@aero.org> (1996/6)
@@ -116,184 +115,42 @@
 ;;;
 ;;; It is based on RFC 2015 (PGP/MIME).
 
-(defvar mime-pgp-default-scheme 'pgp
-  "*Default encryption scheme to use.  See also `mime-pgp-command-alist'
-for valid schemes.")
+(defvar mime-pgp-command "pgp"
+  "*Name of the PGP command.")
 
-(defvar mime-pgp-command-alist '((gpg   . "gpg")
-				 (pgp50 . "pgp")
-				 (pgp   . "pgp"))
-  "*Alist of the corresponding schemes to the name of the commands.
-Each element looks like (SCHEME . COMMAND).  Valid SCHEMEs are:
-
-   gpg   - GnuPG.
-   pgp50 - PGP version 5.0i.
-   pgp   - PGP version 2.6.
-
-COMMAND for `pgp50' must *NOT* have a suffix, like neither \"pgpe\", \"pgpk\",
-\"pgps\" nor \"pgpv\".")
-
-(defvar mime-pgp-default-language-alist nil
-  "*Alist of the corresponding schemes to the symbols of languages.
-It should be ISO 639 2 letter language code such as en, ja, ...  Each
-element looks like (SCHEME . SYMBOL).  Also see `mime-pgp-command-alist'
-for valid SCHEMEs.")
+(defvar mime-pgp-default-language 'en
+  "*Symbol of language for pgp.
+It should be ISO 639 2 letter language code such as en, ja, ...")
 
 (defvar mime-pgp-good-signature-regexp-alist
-  '((gpg
-     (nil "Good signature from.*$")
-     )
-    (pgp50
-     (us "Good signature made .* by key:$"
-	 mime-pgp-good-signature-post-function-pgp50-us)
-     )
-    (pgp
-     (en "Good signature from user.*$")
-     ))
-  "Alist of the scheme vs corresponding languages to regexps for detecting
-``Good signature''.  The optional symbol of the post processing function
-for arranging the output message can be specified.  It will be called just
-after re-search is done successfully, and it is expected that the function
-returns a string for messaging.")
+  '((en . "Good signature from user.*$"))
+  "Alist of language vs regexp to detect ``Good signature''.")
 
 (defvar mime-pgp-key-expected-regexp-alist
-  '((gpg
-     (nil
-      "key ID \\(\\S +\\)\ngpg: Can't check signature: public key not found")
-     )
-    (pgp50
-     (us "Signature by unknown keyid: 0x\\(\\S +\\)")
-     )
-    (pgp
-     (en "Key matching expected Key ID \\(\\S +\\) not found")
-     ))
-  "Alist of the scheme vs corresponding languages to regexps for detecting
-``Key expected''.")
-
-(defmacro mime-pgp-command (&optional suffix)
-  "Return a suitable command.  SUFFIX should be either \"e\", \"k\", \"s\"
-or \"v\" for choosing a command of PGP 5.0i."
-  (` (let ((command (cdr (assq
-			  mime-pgp-default-scheme mime-pgp-command-alist))))
-       (if (and command
-		(progn
-		  (if (eq 'pgp50 mime-pgp-default-scheme)
-		      (setq command (concat command (, suffix))))
-		  (exec-installed-p command)))
-	   command
-	 (error "Please specify the valid command name for `%s'."
-		(or mime-pgp-default-scheme 'mime-pgp-default-scheme))))))
-
-(defmacro mime-pgp-default-language ()
-  "Return a symbol of language."
-  '(cond ((eq 'gpg mime-pgp-default-scheme)
-	  nil)
-	 ((eq 'pgp50 mime-pgp-default-scheme)
-	  (or (cdr (assq mime-pgp-default-scheme
-			 mime-pgp-default-language-alist))
-	      'us))
-	 (t
-	  (or (cdr (assq mime-pgp-default-scheme
-			 mime-pgp-default-language-alist))
-	      'en))))
-
-(defmacro mime-pgp-good-signature-regexp ()
-  "Return a regexp to detect ``Good signature''."
-  '(nth 1
-	(assq
-	 (mime-pgp-default-language)
-	 (cdr
-	  (assq
-	   mime-pgp-default-scheme mime-pgp-good-signature-regexp-alist)))))
-
-(defmacro mime-pgp-good-signature-post-function ()
-  "Return a post processing function for arranging the message for
-``Good signature''."
-  '(nth 2
-	(assq
-	 (mime-pgp-default-language)
-	 (cdr
-	  (assq
-	   mime-pgp-default-scheme mime-pgp-good-signature-regexp-alist)))))
-
-(defmacro mime-pgp-key-expected-regexp ()
-  "Return a regexp to detect ``Key expected''."
-  '(nth 1
-	(assq
-	 (mime-pgp-default-language)
-	 (cdr
-	  (assq
-	   mime-pgp-default-scheme mime-pgp-key-expected-regexp-alist)))))
+  '((en . "Key matching expected Key ID \\(\\S +\\) not found"))
+  "Alist of language vs regexp to detect ``Key expected''.")
 
 (defun mime-pgp-check-signature (output-buffer orig-file)
   (save-excursion
     (set-buffer output-buffer)
-    (erase-buffer)
-    (setq truncate-lines t))
-  (let* ((lang (mime-pgp-default-language))
-	 (command (mime-pgp-command "v"))
-	 (args (cond ((eq 'gpg mime-pgp-default-scheme)
-		      (list "--verify" (concat orig-file ".sig"))
-		      )
-		     ((eq 'pgp50 mime-pgp-default-scheme)
-		      (list "+batchmode=1"
-			    (format "+language=%s" lang)
-			    (concat orig-file ".sig"))
-		      )
-		     ((eq 'pgp mime-pgp-default-scheme)
-		      (list (format "+language=%s" lang) orig-file))
-		     ))
-	 (regexp (mime-pgp-good-signature-regexp))
-	 (post-function (mime-pgp-good-signature-post-function))
-	 pgp-id)
-    (if (zerop (apply 'call-process-region
-		      (point-min) (point-max) command nil output-buffer nil
-		      args))
+    (erase-buffer))
+  (let* ((lang (or mime-pgp-default-language 'en))
+	 (status (call-process-region (point-min)(point-max)
+				      mime-pgp-command
+				      nil output-buffer nil
+				      orig-file (format "+language=%s" lang)))
+	 (regexp (cdr (assq lang mime-pgp-good-signature-regexp-alist))))
+    (if (= status 0)
 	(save-excursion
 	  (set-buffer output-buffer)
 	  (goto-char (point-min))
-	  (cond
-	   ((not (stringp regexp))
-	    (message "Please specify right regexp for specified language")
-	    )
-	   ((re-search-forward regexp nil t)
-	    (message (if post-function
-			 (funcall post-function)
-		       (buffer-substring (match-beginning 0) (match-end 0))))
-	    (goto-char (point-min))
-	    )
-	   ;; PGP 5.0i always returns 0, so we should attempt to fetch.
-	   ((eq 'pgp50 mime-pgp-default-scheme)
-	    (if (not (stringp (setq regexp (mime-pgp-key-expected-regexp))))
-		(message "Please specify right regexp for specified language")
-	      (if (re-search-forward regexp nil t)
-		  (progn
-		    (setq pgp-id
-			  (concat "0x" (buffer-substring-no-properties
-					(match-beginning 1)
-					(match-end 1))))
-		    (if (and
-			 pgp-id
-			 (y-or-n-p
-			  (format "Key %s not found; attempt to fetch? "
-				  pgp-id)
-			  ))
-			(progn
-			  (funcall (pgp-function 'fetch-key) (cons nil pgp-id))
-			  (mime-pgp-check-signature mime-echo-buffer-name
-						    orig-file)
-			  )
-		      (message "Bad signature")
-		      ))
-		(message "Bad signature")
-		))
-	    )
-	   (t
-	    (message "Bad signature")
-	    ))
-	  )
-      (message "Bad signature")
-      nil)))
+	  (message
+	   (cond ((not (stringp regexp))
+		  "Please specify right regexp for specified language")
+		 ((re-search-forward regexp nil t)
+		  (buffer-substring (match-beginning 0) (match-end 0)))
+		 (t "Bad signature")))
+	  ))))
 
 (defun mime-verify-application/pgp-signature (entity situation)
   "Internal method to check PGP/MIME signature."
@@ -311,60 +168,38 @@ or \"v\" for choosing a command of PGP 5.0i."
     (mime-write-entity orig-entity orig-file)
     (save-excursion (mime-show-echo-buffer))
     (mime-write-entity-content entity sig-file)
-    (if (mime-pgp-check-signature mime-echo-buffer-name orig-file)
-	(let ((other-window-scroll-buffer mime-echo-buffer-name))
-	  (scroll-other-window
-	   (cdr (assq mime-pgp-default-scheme
-		      '((gpg . 5) (pgp50 . 1) (pgp . 10)))))
-	  )
-      (if (eq 'pgp mime-pgp-default-scheme)
+    (or (mime-pgp-check-signature mime-echo-buffer-name orig-file)
+	(let (pgp-id)
 	  (save-excursion
 	    (set-buffer mime-echo-buffer-name)
 	    (goto-char (point-min))
-	    (if (search-forward "\C-g" nil t)
-		(goto-char (match-beginning 0))
-	      (forward-line 7))
-	    (set-window-start
-	     (get-buffer-window mime-echo-buffer-name)
-	     (point))
-	    )
-	(let ((other-window-scroll-buffer mime-echo-buffer-name))
-	  (scroll-other-window
-	   (cdr (assq mime-pgp-default-scheme '((gpg . 5) (pgp50 . 1)))))
-	  ))
-      (let (pgp-id)
-	(save-excursion
-	  (set-buffer mime-echo-buffer-name)
-	  (goto-char (point-min))
-	  (let ((regexp (mime-pgp-key-expected-regexp)))
-	    (cond
-	     ((not (stringp regexp))
-	      (message "Please specify right regexp for specified language")
-	      )
-	     ((re-search-forward regexp nil t)
-	      (setq pgp-id (concat "0x" (buffer-substring-no-properties
+	    (let ((regexp (cdr (assq (or mime-pgp-default-language 'en)
+				     mime-pgp-key-expected-regexp-alist))))
+	      (cond ((not (stringp regexp))
+		     (message
+		      "Please specify right regexp for specified language")
+		     )
+		    ((re-search-forward regexp nil t)
+		     (setq pgp-id
+			   (concat "0x" (buffer-substring-no-properties
 					 (match-beginning 1)
 					 (match-end 1))))
-	      ))))
-	(if (and pgp-id
-		 (prog1
-		     (y-or-n-p
-		      (format "Key %s not found; attempt to fetch? " pgp-id))
-		   (message ""))
-		 )
-	    (progn
-	      (funcall (pgp-function 'fetch-key) (cons nil pgp-id))
-	      (mime-pgp-check-signature mime-echo-buffer-name orig-file)
-	      )
-	  )))
+		     ))))
+	  (if (and pgp-id
+		   (y-or-n-p
+		    (format "Key %s not found; attempt to fetch? " pgp-id))
+		   )
+	      (progn
+		(funcall (pgp-function 'fetch-key) (cons nil pgp-id))
+		(mime-pgp-check-signature mime-echo-buffer-name orig-file)
+		))
+	  ))
+    (let ((other-window-scroll-buffer mime-echo-buffer-name))
+      (scroll-other-window 8)
+      )
     (delete-file orig-file)
     (delete-file sig-file)
     ))
-
-(defun mime-pgp-good-signature-post-function-pgp50-us ()
-  (forward-line 2)
-  (looking-at "\\s +\\(.+\\)$")
-  (format "Good signature from %s" (match-string 1)))
 
 
 ;;; @ Internal method for application/pgp-encrypted
@@ -408,49 +243,7 @@ or \"v\" for choosing a command of PGP 5.0i."
     (kill-buffer (current-buffer))
     ))
 
-
-;;; @ Command.
-
-(defvar mime-pgp-setversion-hook nil
-  "*Hook run after the value of `mime-pgp-default-scheme' has been changed.
-It is supposed to be used for working `mc-setversion' together with the
-command `mime-pgp-setversion'.  For the purpose, it will be overridden by
-\"semi-setup\" in default.")
-
-(defun mime-pgp-setversion (&optional version)
-  "Select PGP version or GnuPG."
-  (interactive)
-  (let ((table '(("GnuPG" . gpg)   ("PGP 2.6" . pgp)   ("PGP 5.0i" . pgp50)
-		 ("gnupg" . gpg)   ("gpg"     . gpg)
-		 ("pgp"   . pgp)   ("pgp2"    . pgp)   ("pgp2.6"   . pgp)
-		 ("pgp5"  . pgp50) ("pgp5.0"  . pgp50) ("pgp50"    . pgp50)
-		 ("2.6"   . pgp)   ("5.0"     . pgp50)))
-	(msg (interactive-p)))
-    (if msg
-	(setq version
-	      (completing-read
-	       (format "Select PGP version or GnuPG (currently %s): "
-		       (car (rassq mime-pgp-default-scheme table)))
-	       table nil t)
-	      ))
-    (if (zerop (length version))
-	(setq msg (and msg "PGP version is not modified."))
-      (setq mime-pgp-default-scheme (cdr (assoc version table))
-	    msg (and msg (format "PGP version set to \"%s\"." version)))
-      (run-hooks 'mime-pgp-setversion-hook)
-      )
-    (if msg (message "%s" msg))
-    )
-  mime-pgp-default-scheme)
-
-(mime-pgp-setversion
- (cdr (assq mime-pgp-default-scheme
-	    '((gpg   . "GnuPG")
-	      (pgp50 . "PGP 5.0i")
-	      (pgp   . "PGP 2.6"))
-	    )))
-
-
+	 
 ;;; @ end
 ;;;
 

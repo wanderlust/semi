@@ -1,10 +1,9 @@
 ;;; mime-mc.el --- Mailcrypt interface for SEMI
 
-;; Copyright (C) 1996,1997,1998,1999 MORIOKA Tomohiko
+;; Copyright (C) 1996,1997,1998 MORIOKA Tomohiko
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
-;;         Katsumi Yamaoka  <yamaoka@jpl.org>
-;; Keywords: PGP, GnuPG, security, MIME, multimedia, mail, news
+;; Keywords: PGP, security, MIME, multimedia, mail, news
 
 ;; This file is part of SEMI (Secure Emacs MIME Interface).
 
@@ -26,11 +25,7 @@
 ;;; Code:
 
 (require 'mailcrypt)
-(eval-and-compile
-  (load "mc-pgp")
-  (load "mc-pgp5" t)
-  (load "mc-gpg" t)
-  )
+(eval-and-compile (load "mc-pgp"))
 
 (defun mime-mc-pgp-generic-parser (result)
   (let ((ret (mc-pgp-generic-parser result)))
@@ -109,71 +104,32 @@ Content-Transfer-Encoding: 7bit
       (or buffer (null mybuf) (kill-buffer mybuf)))))
 
 (defun mime-mc-pgp-sign-region (start end &optional id unclear boundary)
+  ;; (if (not (boundp 'mc-pgp-user-id))
+  ;;     (load "mc-pgp")
+  ;;   )
   (let ((process-environment process-environment)
 	(buffer (get-buffer-create mc-buffer-name))
+	passwd args key
 	(parser (function mc-pgp-generic-parser))
-	pgp-path key args prompt passwd hash-function)
-    (cond
-     ((eq 'mc-scheme-gpg mc-default-scheme)
-      (setq pgp-path mc-gpg-path
-	    key (mc-gpg-lookup-key (or id mc-gpg-user-id))
-	    args (delq nil
-		       (nconc
-			(if mc-gpg-comment
-			    (list "--comment" (format "%s" mc-gpg-comment)))
-			(list
-			 (if boundary
-			     "--detach-sign"
-			   (if unclear
-			       "--sign"
-			     "--clearsign"))
-			 "--armor" "--batch" "--textmode" "--verbose"
-			 "--passphrase-fd" "0" "--local-user" (cdr key))))
-	    prompt (format "GnuPG passphrase for %s (%s): "
-			   (car key) (cdr key))
-	    hash-function 'sha1)
-      (if (and boundary
-	       (string-match "^pgp-" boundary))
-	  (setq boundary
-		(concat "gpg-" (substring boundary (match-end 0))))
-	))
-     ((eq 'mc-scheme-pgp50 mc-default-scheme)
-      (setq pgp-path mc-pgp50-pgps-path
-	    key (mc-pgp50-lookup-key (or id mc-pgp50-user-id))
-	    args (delq nil
-		       (list
-			(if mc-pgp50-comment
-			    (format "+comment=%s" mc-pgp50-comment))
-			(if boundary
-			    "-fbat"
-			  "-fat")
-			"+verbose=1" "+language=us"
-			(format "+clearsig=%s" (if unclear "off" "on"))
-			"+batchmode" "-u" (cdr key)))
-	    prompt (format "PGP passphrase for %s (%s): "
-			   (car key) (cdr key))
-	    hash-function 'md5)
-      (setenv "PGPPASSFD" "0")
+	(pgp-path mc-pgp-path)
+	)
+    (setq key (mc-pgp-lookup-key (or id mc-pgp-user-id)))
+    (setq passwd
+	  (mc-activate-passwd
+	   (cdr key)
+	   (format "PGP passphrase for %s (%s): " (car key) (cdr key))))
+    (setenv "PGPPASSFD" "0")
+    (setq args
+	  (cons
+	   (if boundary
+	       "-fbast"
+	     "-fast")
+	   (list "+verbose=1" "+language=en"
+		 (format "+clearsig=%s" (if unclear "off" "on"))
+		 "+batchmode" "-u" (cdr key))))
+    (if mc-pgp-comment
+	(setq args (cons (format "+comment=%s" mc-pgp-comment) args))
       )
-     (t
-      (setq pgp-path mc-pgp-path
-	    key (mc-pgp-lookup-key (or id mc-pgp-user-id))
-	    args (delq nil
-		       (list
-			(if mc-pgp-comment
-			    (format "+comment=%s" mc-pgp-comment))
-			(if boundary
-			    "-fbast"
-			  "-fast")
-			"+verbose=1" "+language=en"
-			(format "+clearsig=%s" (if unclear "off" "on"))
-			"+batchmode" "-u" (cdr key)))
-	    prompt (format "PGP passphrase for %s (%s): "
-			   (car key) (cdr key))
-	    hash-function 'md5)
-      (setenv "PGPPASSFD" "0")
-      ))
-    (setq passwd (mc-activate-passwd (cdr key) prompt))
     (message "Signing as %s ..." (car key))
     (if (mime-mc-process-region
 	 start end passwd pgp-path args parser buffer boundary)
@@ -184,8 +140,7 @@ Content-Transfer-Encoding: 7bit
 		(insert
 		 (format "\
 --[[multipart/signed; protocol=\"application/pgp-signature\";
- boundary=\"%s\"; micalg=pgp-%s][7bit]]\n"
-			 boundary hash-function))
+ boundary=\"%s\"; micalg=pgp-md5][7bit]]\n" boundary))
 		))
 	  (message "Signing as %s ... Done." (car key))
 	  t)
@@ -194,16 +149,10 @@ Content-Transfer-Encoding: 7bit
 (defun mime-mc-pgp-encrypt-region (recipients start end &optional id sign)
   (let ((mc-pgp-always-sign (if (eq sign 'maybe)
 				mc-pgp-always-sign
-			      'never))
-	(function (cond ((eq 'mc-scheme-gpg mc-default-scheme)
-			 'mc-gpg-encrypt-region)
-			((eq 'mc-scheme-pgp50 mc-default-scheme)
-			 'mc-pgp50-encrypt-region)
-			(t
-			 'mc-pgp-encrypt-region))))
-    (funcall function
-	     (mc-split "\\([ \t\n]*,[ \t\n]*\\)+" recipients)
-	     start end id nil)
+			      'never)))
+    (mc-pgp-encrypt-region
+     (mc-split "\\([ \t\n]*,[ \t\n]*\\)+" recipients)
+     start end id nil)
     ))
 
 		
