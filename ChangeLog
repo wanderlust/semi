@@ -1,4 +1,9 @@
-1998-10-09  Katsumi Yamaoka   <yamaoka@jpl.org>
+1998-10-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI-CFG: Don't use `when' before install is required; don't
+	require cl.
+
+1998-10-08  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* SEMI-CFG: Add "custom" to load-path.
 
