@@ -1,5 +1,13 @@
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mailcap.el (mailcap-look-at-type-field): Change type and subtype
+	to symbol.
+
+	* mailcap.el (mailcap-file): New variable.
+	(mailcap-parse-file): New function.
+
+1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* README.en (What's SEMI?): Remove what does SEMI stand for.
 
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
