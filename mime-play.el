@@ -326,11 +326,6 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 ;;; @ message/partial
 ;;;
 
-(defvar mime-raw-coding-system-alist
-  `((mh-show-mode . no-conversion)
-    (t . ,(mime-charset-to-coding-system default-mime-charset)))
-  "Alist of major-mode vs. corresponding coding-system.")
-
 (defun mime-raw-write-region (start end filename)
   "Write current region into specified file.
 When called from a program, takes three arguments:
