@@ -1,5 +1,12 @@
 1998-06-22  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
 
+	* mime-edit.el (mime-content-types): Add "url" access-type and
+	"subject" parameter of "mail-server" access-type to
+	message/external-body media-type.
+	(mime-edit-define-menu-for-xemacs): Doc-string fix.
+
+1998-06-22  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+
 	* SEMI-CFG: Support run-in-place installation of BBDB and
 	Emacs/W3.
 
