@@ -1,5 +1,10 @@
 1998-05-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-parse.el: Rename 'mime/Content-Transfer-Encoding ->
+	'mime-read-Content-Transfer-Encoding.
+
+1998-05-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-raw-get-subject): Use
 	'mime-content-disposition-parameters.
 	
