@@ -26,8 +26,37 @@
 ;;; Code:
 
 (require 'std11)
-(require 'tl-misc)
 (require 'mime-def)
+
+(defmacro define-structure (name &rest slots)
+  (let ((pred (symbol-concat name '-p)))
+    (cons 'progn
+	  (nconc
+	   (list
+	    (` (defun (, pred) (obj)
+		 (and (vectorp obj)
+		      (eq (elt obj 0) '(, name))
+		      ))
+	       )
+	    (` (defun (, (symbol-concat name '/create)) (, slots)
+		 (, (cons 'vector (cons (list 'quote name) slots)))
+		 )
+	       ))
+	   (let ((i 1))
+	     (mapcar (function
+		      (lambda (slot)
+			(prog1
+			    (` (defun (, (symbol-concat name '/ slot)) (obj)
+				 (if ((, pred) obj)
+				     (elt obj (, i))
+				   ))
+			       )
+			  (setq i (+ i 1))
+			  )
+			)) slots)
+	     )
+	   (list (list 'quote name))
+	   ))))
 
 
 ;;; @ field parser
