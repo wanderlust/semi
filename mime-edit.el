@@ -2025,7 +2025,7 @@ Content-Transfer-Encoding: 7bit
 	  (or (looking-at mime-edit-beginning-tag-regexp)
 	      (eobp)
 	      (insert (mime-make-text-tag) "\n")))
-	(visible-region beg end)
+	(remove-text-properties beg end '(invisible mime-edit-invisible))
 	(goto-char beg))
       (cond
        ((mime-test-content-type contype "message")
