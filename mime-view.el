@@ -314,7 +314,7 @@ Each elements are regexp of field-name. [mime-view.el]")
 
 (defun mime-view-default-content-header-filter ()
   (mime-preview/cut-header)
-  (mime/decode-message-header)
+  (eword-decode-message-header)
   )
 
 (defvar mime-view-content-header-filter-alist nil)
@@ -1007,7 +1007,7 @@ button-2	Move to point under the mouse cursor
 		      ))
 		(setq rest (cdr rest))
 		))
-	    (mime/decode-message-header)
+	    (eword-decode-message-header)
 	    )
 	  (let ((f (cdr (assq mode mime-view-following-method-alist))))
 	    (if (functionp f)
