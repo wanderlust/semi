@@ -722,7 +722,11 @@ Each elements are regexp of field-name.")
 (defun mime-display-text/plain (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
-    (mime-insert-text-content entity)
+    (condition-case nil
+	(mime-insert-text-content entity)
+      (error (progn
+	       (message "Can't decode current entity.")
+	       (sit-for 1))))
     (run-hooks 'mime-text-decode-hook)
     (goto-char (point-max))
     (if (not (eq (char-after (1- (point))) ?\n))
