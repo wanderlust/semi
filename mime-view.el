@@ -66,6 +66,15 @@ buttom. Nil means don't scroll at all."
 		 (const :tag "On" t)
 		 (sexp :tag "Situation" 1)))
 
+(defcustom mime-view-mailcap-files
+  (let ((files '("/etc/mailcap" "/usr/etc/mailcap" "~/.mailcap")))
+    (or (member mime-mailcap-file files)
+	(setq files (cons mime-mailcap-file files)))
+    files)
+  "List of mailcap files."
+  :group 'mime-view
+  :type '(repeat file))
+
 
 ;;; @ in raw-buffer (representation space)
 ;;;
@@ -917,33 +926,39 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 (defvar mime-acting-condition nil
   "Condition-tree about how to process entity.")
 
-(defun mime-view-read-mailcap ()
-  (if (file-readable-p mime-mailcap-file)
-      (let ((entries (mime-parse-mailcap-file)))
-	(while entries
-	  (let ((entry (car entries))
-		view print shared)
-	    (while entry
-	      (let* ((field (car entry))
-		     (field-type (car field)))
-		(cond ((eq field-type 'view)  (setq view field))
-		      ((eq field-type 'print) (setq print field))
-		      ((memq field-type '(compose composetyped edit)))
-		      (t (setq shared (cons field shared))))
-		)
-	      (setq entry (cdr entry)))
-	    (setq shared (nreverse shared))
+(defun mime-view-read-mailcap-files (&optional files)
+  (or files
+      (setq files mime-view-mailcap-files))
+  (let (entries file)
+    (while files
+      (setq file (car files))
+      (if (file-readable-p file)
+	  (setq entries (append entries (mime-parse-mailcap-file file))))
+      (setq files (cdr files)))
+    (while entries
+      (let ((entry (car entries))
+	    view print shared)
+	(while entry
+	  (let* ((field (car entry))
+		 (field-type (car field)))
+	    (cond ((eq field-type 'view)  (setq view field))
+		  ((eq field-type 'print) (setq print field))
+		  ((memq field-type '(compose composetyped edit)))
+		  (t (setq shared (cons field shared))))
+	    )
+	  (setq entry (cdr entry)))
+	(setq shared (nreverse shared))
+	(ctree-set-calist-with-default
+	 'mime-acting-condition
+	 (append shared (list '(mode . "play")(cons 'method (cdr view)))))
+	(if print
 	    (ctree-set-calist-with-default
 	     'mime-acting-condition
-	     (append shared (list '(mode . "play")(cons 'method (cdr view)))))
-	    (if print
-		(ctree-set-calist-with-default
-		 'mime-acting-condition
-		 (append shared
-			 (list '(mode . "print")(cons 'method (cdr view)))))))
-	  (setq entries (cdr entries))))))
+	     (append shared
+		     (list '(mode . "print")(cons 'method (cdr view)))))))
+      (setq entries (cdr entries)))))
 
-(mime-view-read-mailcap)
+(mime-view-read-mailcap-files)
 
 (ctree-set-calist-strictly
  'mime-acting-condition
