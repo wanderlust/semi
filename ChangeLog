@@ -1,5 +1,13 @@
 1998-05-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el (mime-activate-mailcap-method): New function.
+	(mime-raw-play-entity): Use 'mime-activate-mailcap-method for
+ 	mailcap method.
+
+	* mime-view.el (mime-acting-condition): Read mailcap.
+
+1998-05-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mailcap.el: Move mailcap.el to FLIM.
 
 1998-05-02  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
@@ -70,7 +78,7 @@
 
 1998-04-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.3.2 (N-Dò)-A was released.
+	* SEMI: Version 1.3.2 (N-Dò) was released.-A
 
 	* mime-edit.el (mime-edit-mode-entity-prefix): New variable.
 	(mime-edit-mode-entity-map): New variable.
@@ -725,7 +733,7 @@
 
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae)-A was released.
+	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae) was released.-A
 
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -837,7 +845,7 @@
 
 1998-02-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae)-A was released.
+	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae) was released.-A
 
 	* SEMI-ELS: Remove mime-tar.el.
 
@@ -974,7 +982,7 @@
 
 1997-11-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.116 (D-Dòhòji)-A was released.
+	* SEMI: Version 0.116 (D-Dòhòji) was released.-A
 
 1997-11-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
