@@ -116,7 +116,7 @@
       (if (and process (eq 'run (process-status process)))
 	  (interrupt-process process)))))
 
-(luna-define-method pgg-scheme-lookup-key-string ((scheme pgg-scheme-pgp) 
+(luna-define-method pgg-scheme-lookup-key ((scheme pgg-scheme-pgp) 
 						  string &optional type)
   (let ((args (list "+batchmode" "+language=en" "-kv" string)))
     (with-current-buffer (get-buffer-create pgg-output-buffer)
@@ -154,8 +154,7 @@
 	 (passphrase
 	  (pgg-read-passphrase 
 	   (format "PGP passphrase for %s: " pgg-pgp-user-id)
-	   (luna-send scheme 'lookup-key-string 
-		      scheme pgg-pgp-user-id 'encrypt)))
+	   (pgg-scheme-lookup-key scheme pgg-pgp-user-id 'encrypt)))
 	 (args 
 	  '("+verbose=1" "+batchmode" "+language=us" "-f")))
     (pgg-pgp-process-region start end passphrase pgg-pgp-program args)
@@ -167,8 +166,7 @@
 	 (passphrase
 	  (pgg-read-passphrase 
 	   (format "PGP passphrase for %s: " pgg-pgp-user-id)
-	   (luna-send scheme 'lookup-key-string
-		      scheme pgg-pgp-user-id 'sign)))
+	   (pgg-scheme-lookup-key scheme pgg-pgp-user-id 'sign)))
 	 (args 
 	  (list (if clearsign "-fast" "-fbast")
 		"+verbose=1" "+language=us" "+batchmode"

@@ -128,12 +128,12 @@
       (if (and process (eq 'run (process-status process)))
 	  (interrupt-process process)))))
 
-(luna-define-method pgg-scheme-lookup-key-string ((scheme pgg-scheme-gpg)
-						  string &optional type)
+(luna-define-method pgg-scheme-lookup-key ((scheme pgg-scheme-gpg)
+					   string &optional type)
   (let ((args (list "--with-colons" "--no-greeting" "--batch" 
 		    (if type "--list-secret-keys" "--list-keys")
 		    string)))
-    (with-current-buffer pgg-output-buffer
+    (with-current-buffer (get-buffer-create pgg-output-buffer)
       (buffer-disable-undo)
       (erase-buffer)
       (apply #'call-process pgg-gpg-program nil t nil args)
@@ -170,8 +170,7 @@
 	 (passphrase
 	  (pgg-read-passphrase 
 	   (format "GnuPG passphrase for %s: " pgg-gpg-user-id)
-	   (luna-send scheme 'lookup-key-string 
-		      scheme pgg-gpg-user-id 'encrypt)))
+	   (pgg-scheme-lookup-key scheme pgg-gpg-user-id 'encrypt)))
 	 (args '("--batch" "--decrypt")))
     (pgg-gpg-process-region start end passphrase pgg-gpg-program args)
     (pgg-process-when-success nil)))
@@ -182,8 +181,7 @@
 	 (passphrase
 	  (pgg-read-passphrase 
 	   (format "GnuPG passphrase for %s: " pgg-gpg-user-id)
-	   (luna-send scheme 'lookup-key-string 
-		      scheme pgg-gpg-user-id 'sign)))
+	   (pgg-scheme-lookup-key scheme pgg-gpg-user-id 'sign)))
 	 (args 
 	  (list (if cleartext "--clearsign" "--detach-sign")
 		"--armor" "--batch" "--verbose" 
