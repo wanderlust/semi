@@ -1,3 +1,8 @@
+1998-06-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-text.el (mime-text-insert-decoded-body): Delete unnecessary
+	`save-restriction'.
+
 1998-06-20  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
 
 	* semi-def.el: Require 'custom.
