@@ -377,28 +377,33 @@ Each elements are regexp of field-name.")
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((body . visible)
+			   (body-presentation-method . with-filter)
 			   (body-filter . mime-view-filter-for-text/plain)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . nil)
 			   (body . visible)
+			   (body-presentation-method . with-filter)
 			   (body-filter . mime-view-filter-for-text/plain)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . text)(subtype . enriched)
 			   (body . visible)
+			   (body-presentation-method . with-filter)
 			   (body-filter
 			    . mime-view-filter-for-text/enriched)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . text)(subtype . richtext)
 			   (body . visible)
+			   (body-presentation-method . with-filter)
 			   (body-filter
 			    . mime-view-filter-for-text/richtext)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . text)(subtype . t)
 			   (body . visible)
+			   (body-presentation-method . with-filter)
 			   (body-filter . mime-view-filter-for-text/plain)))
 
 (ctree-set-calist-strictly
@@ -707,23 +712,23 @@ The compressed face will be piped to this command.")
 				       (cons 'encoding   encoding)
 				       (cons 'major-mode major-mode)
 				       params)))
-	   (body-filter (cdr (assq 'body-filter situation))))
-      (if (functionp body-filter)
-	  (save-restriction
-	    (narrow-to-region (point-max)(point-max))
-	    (insert-buffer-substring mime-raw-buffer end-of-header end)
-	    (funcall body-filter ctype params encoding)
-	    )
-	(let ((body-presentation-method 
-	       (cdr (assq 'body-presentation-method situation))))
-	  (cond ((functionp body-presentation-method)
-		 (funcall body-presentation-method situation)
-		 )
-		((and (null entity-node-id)
-		      (null (mime-entity-children message-info)))
-		 (goto-char (point-max))
-		 (mime-view-insert-entity-button entity message-info subj)
-		 ))))
+	   (body-presentation-method
+	    (cdr (assq 'body-presentation-method situation))))
+      (cond ((eq body-presentation-method 'with-filter)
+	     (let ((body-filter (cdr (assq 'body-filter situation))))
+	       (save-restriction
+		 (narrow-to-region (point-max)(point-max))
+		 (insert-buffer-substring mime-raw-buffer end-of-header end)
+		 (funcall body-filter ctype params encoding)
+		 )))
+	    ((functionp body-presentation-method)
+	     (funcall body-presentation-method situation)
+	     )
+	    ((and (null entity-node-id)
+		  (null (mime-entity-children message-info)))
+	     (goto-char (point-max))
+	     (mime-view-insert-entity-button entity message-info subj)
+	     ))
       (when (mime-view-entity-separator-visible-p entity message-info)
 	(goto-char (point-max))
 	(insert "\n"))
