@@ -1,5 +1,11 @@
 2000-12-26   Daiki Ueno  <ueno@unixuser.org>
 
+	* mime-play.el (mime-mailcap-method-messages-coding-system):
+	New user option.
+	(mime-activate-mailcap-method): Use it.
+
+2000-12-26   Daiki Ueno  <ueno@unixuser.org>
+
 	* pgg-def.el (pgg-messages-coding-system): Use `defvar' to define.
 
 	* pgg-pgp.el (pgg-pgp-messages-coding-system): Abolish.
