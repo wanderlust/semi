@@ -1,5 +1,9 @@
 2001-09-24   Daiki Ueno  <ueno@unixuser.org>
 
+	* mime-view.el (mime-display-inline-fontify): Reset the visited filename.
+
+2001-09-24   Daiki Ueno  <ueno@unixuser.org>
+
 	* mime-view.el (mime-preview-inline-fontify): New variable.
 	(mime-display-text/plain): Fontify the attached part as possible.
 	(mime-display-inline-fontify): Make the second argument MODE optional.
