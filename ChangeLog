@@ -1,5 +1,7 @@
 1998-04-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* SEMI-ELS (semi-modules-to-compile): Add 'semi-def.
+
 	* semi-setup.el: Require 'semi-def instead of 'mime-def.
 
 	* mime-view.el: Require 'semi-def.
