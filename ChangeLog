@@ -1,3 +1,9 @@
+2003-12-16  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-normalize-body): Don't use the
+	`(replace-match "\\1\r\n")' form since it may convert the unibyte
+	string into multibyte in Emacs 21.4.
+
 2003-12-14  Yoichi NAKAYAMA <yoichi@geiin.org>
 
 	* mime-play.el (mime-mailcap-method-sentinel): Restore deleting
@@ -16,7 +22,7 @@
 
 	* mime-play.el (mime-activate-mailcap-method): Don't use
 	`binary-to-text-funcall'. (Thanks to TANAKA Shingo)
-	
+
 2003-12-14  Tatsuya Kinoshita  <tats@vega.ocn.ne.jp>
 
 	* mime-edit.el (mime-charset-type-list): Add entry for iso-8859-1[45].
@@ -33,7 +39,7 @@
 
 2003-12-06  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* mime-play.el 	(mime-require-safe-directory): New function.
+	* mime-play.el (mime-require-safe-directory): New function.
 	(mime-store-message/partial-piece): Use it.
 
 2003-12-05  Katsumi Yamaoka  <yamaoka@jpl.org>
