@@ -1,3 +1,16 @@
+1999-07-30  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-pgp.el (mime-view-application/pgp): Don't set the values of
+	`mime-raw-buffer' and `mime-mother-buffer' in the preview buffer.
+
+1999-07-29  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el (mime-play-entity): Get media-type from situation
+	instead of entity; display prompt and call `mime-save-content' if
+	method is not found.
+	(mime-detect-content): Call `mime-play-entity' even if media-type
+	specification is not found in `mime-magic-type-alist'.
+
 1999-07-28  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-pgp.el (mime-add-application/pgp-keys): Decode the entity
