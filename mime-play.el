@@ -79,7 +79,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
   (let ((entity (get-text-property (point) 'mime-view-entity)))
     (if entity
 	(let ((the-buf (current-buffer))
-	      (raw-buffer (get-text-property (point) 'mime-view-raw-buffer)))
+	      (raw-buffer (mime-entity-buffer entity)))
 	  (setq mime-preview-after-decoded-position (point))
 	  (set-buffer raw-buffer)
 	  (mime-raw-play-entity entity mode)
@@ -96,23 +96,26 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 		  (order '((type . 1)
 			   (subtype . 2)
 			   (mode . 3)
-			   (major-mode . 4)))
+			   (method . 4)
+			   (major-mode . 5)
+			   (disposition-type . 6)
+			   ))
 		  a-order b-order)
 	      (if (symbolp a-t)
 		  (let ((ret (assq a-t order)))
 		    (if ret
 			(setq a-order (cdr ret))
-		      (setq a-order 5)
+		      (setq a-order 7)
 		      ))
-		(setq a-order 6)
+		(setq a-order 8)
 		)
 	      (if (symbolp b-t)
 		  (let ((ret (assq b-t order)))
 		    (if ret
 			(setq b-order (cdr ret))
-		      (setq b-order 5)
+		      (setq b-order 7)
 		      ))
-		(setq b-order 6)
+		(setq b-order 8)
 		)
 	      (if (= a-order b-order)
 		  (string< (format "%s" a-t)(format "%s" b-t))
@@ -130,65 +133,64 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
       (setq situations (cdr situations)))
     dest))
 
-(defun mime-raw-play-entity (entity &optional mode)
+(defun mime-raw-play-entity (entity &optional mode situation)
   "Play entity specified by ENTITY.
 It decodes the entity to call internal or external method.  The method
 is selected from variable `mime-acting-condition'.  If MODE is
 specified, play as it.  Default MODE is \"play\"."
-  (let ((beg (mime-entity-point-min entity))
-	(end (mime-entity-point-max entity)))
-    (let (method cal ret)
-      (setq cal (mime-entity-situation entity))
-      (if mode
-	  (setq cal (cons (cons 'mode mode) cal))
-	)
-      (setq ret
-	    (or (ctree-match-calist mime-acting-situation-examples cal)
-		(ctree-match-calist-partially mime-acting-situation-examples
-					      cal)
-		cal))
-      (setq ret
-	    (or (mime-delq-null-situation
-		 (ctree-find-calist mime-acting-condition ret
-				    mime-view-find-every-acting-situation)
-		 'method)
-		(mime-delq-null-situation
-		 (ctree-find-calist mime-acting-condition cal
-				    mime-view-find-every-acting-situation)
-		 'method)
-		))
-      (cond ((cdr ret)
-	     (setq ret (select-menu-alist
-			"Methods"
-			(mapcar (function
-				 (lambda (situation)
-				   (cons
-				    (format "%s"
-					    (cdr (assq 'method situation)))
-				    situation)))
-				ret)))
-	     (setq ret (mime-sort-situation ret))
-	     (ctree-set-calist-strictly 'mime-acting-situation-examples ret)
-	     )
-	    (t
-	     (setq ret (car ret))
-	     ))
-      (setq method (cdr (assq 'method ret)))
-      (cond ((and (symbolp method)
-		  (fboundp method))
-	     (funcall method entity ret)
-	     )
-	    ((stringp method)
-	     (mime-activate-mailcap-method beg end ret)
-	     )
-	    ((and (listp method)(stringp (car method)))
-	     (mime-activate-external-method beg end ret)
-	     )
-	    (t
-	     (mime-show-echo-buffer "No method are specified for %s\n"
-				    (mime-entity-type/subtype entity))
-	     ))
-      )))
+  (let (method ret)
+    (or situation
+	(setq situation (mime-entity-situation entity)))
+    (if mode
+	(setq situation (cons (cons 'mode mode) situation))
+      )
+    (setq ret
+	  (or (ctree-match-calist mime-acting-situation-examples situation)
+	      (ctree-match-calist-partially mime-acting-situation-examples
+					    situation)
+	      situation))
+    (setq ret
+	  (or (mime-delq-null-situation
+	       (ctree-find-calist mime-acting-condition ret
+				  mime-view-find-every-acting-situation)
+	       'method)
+	      (mime-delq-null-situation
+	       (ctree-find-calist mime-acting-condition situation
+				  mime-view-find-every-acting-situation)
+	       'method)
+	      ))
+    (cond ((cdr ret)
+	   (setq ret (select-menu-alist
+		      "Methods"
+		      (mapcar (function
+			       (lambda (situation)
+				 (cons
+				  (format "%s"
+					  (cdr (assq 'method situation)))
+				  situation)))
+			      ret)))
+	   (setq ret (mime-sort-situation ret))
+	   (ctree-set-calist-strictly 'mime-acting-situation-examples ret)
+	   )
+	  (t
+	   (setq ret (car ret))
+	   ))
+    (setq method (cdr (assq 'method ret)))
+    (cond ((and (symbolp method)
+		(fboundp method))
+	   (funcall method entity ret)
+	   )
+	  ((stringp method)
+	   (mime-activate-mailcap-method entity ret)
+	   )
+          ;; ((and (listp method)(stringp (car method)))
+          ;;  (mime-activate-external-method entity ret)
+          ;;  )
+	  (t
+	   (mime-show-echo-buffer "No method are specified for %s\n"
+				  (mime-entity-type/subtype entity))
+	   ))
+    ))
 
 
 ;;; @ external decoder
@@ -196,33 +198,31 @@ specified, play as it.  Default MODE is \"play\"."
 
 (defvar mime-mailcap-method-filename-alist nil)
 
-(defun mime-activate-mailcap-method (start end situation)
+(defun mime-activate-mailcap-method (entity situation)
   (save-excursion
     (save-restriction
-      (narrow-to-region start end)
-      (goto-char start)
-      (let ((method (cdr (assoc 'method situation)))
-	    (name (expand-file-name (mime-raw-get-filename situation)
-				    mime-temp-directory)))
-	(mime-write-decoded-region (if (re-search-forward "^$" end t)
-				       (1+ (match-end 0))
-				     (point-min))
-				   end name
-				   (cdr (assq 'encoding situation)))
-	(message "External method is starting...")
-	(let ((process
-	       (let ((command
-		      (mailcap-format-command
-		       method
-		       (cons (cons 'filename name) situation))))
-		 (start-process command mime-echo-buffer-name
-				shell-file-name shell-command-switch command)
-		 )))
-	  (set-alist 'mime-mailcap-method-filename-alist process name)
-	  (set-process-sentinel process 'mime-mailcap-method-sentinel)
-	  )
-	;;(mime-show-echo-buffer)
-	))))
+      (let ((start (mime-entity-point-min entity))
+	    (end (mime-entity-point-max entity)))
+	(narrow-to-region start end)
+	(goto-char start)
+	(let ((method (cdr (assoc 'method situation)))
+	      (name (expand-file-name (mime-raw-get-filename situation)
+				      mime-temp-directory)))
+	  (mime-write-decoded-region (mime-entity-body-start entity) end
+				     name (cdr (assq 'encoding situation)))
+	  (message "External method is starting...")
+	  (let ((process
+		 (let ((command
+			(mailcap-format-command
+			 method
+			 (cons (cons 'filename name) situation))))
+		   (start-process command mime-echo-buffer-name
+				  shell-file-name shell-command-switch command)
+		   )))
+	    (set-alist 'mime-mailcap-method-filename-alist process name)
+	    (set-process-sentinel process 'mime-mailcap-method-sentinel)
+	    )
+	  )))))
 
 (defun mime-mailcap-method-sentinel (process event)
   (let ((file (cdr (assq process mime-mailcap-method-filename-alist))))
@@ -232,60 +232,52 @@ specified, play as it.  Default MODE is \"play\"."
   (remove-alist 'mime-mailcap-method-filename-alist process)
   (message (format "%s %s" process event)))
 
-(defun mime-activate-external-method (beg end cal)
-  (save-excursion
-    (save-restriction
-      (narrow-to-region beg end)
-      (goto-char beg)
-      (let ((method (cdr (assoc 'method cal)))
-	    (name (mime-raw-get-filename cal))
-	    )
-	(if method
-	    (let ((file (make-temp-name
-			 (expand-file-name "TM" mime-temp-directory)))
-		  b args)
-	      (if (nth 1 method)
-		  (setq b beg)
-		(setq b
-		      (if (re-search-forward "^$" nil t)
-			  (1+ (match-end 0))
-			(point-min)
-			))
-		)
-	      (goto-char b)
-	      (write-region b end file)
-	      (message "External method is starting...")
-	      (setq cal (put-alist
-			 'name (replace-as-filename name) cal))
-	      (setq cal (put-alist 'file file cal))
-	      (setq args (nconc
-			  (list (car method)
-				mime-echo-buffer-name (car method)
-				)
-			  (mime-make-external-method-args
-			   cal (cdr (cdr method)))
-			  ))
-	      (apply (function start-process) args)
-	      (mime-show-echo-buffer)
-	      ))
-	))))
+;; (defun mime-activate-external-method (entity cal)
+;;   (save-excursion
+;;     (save-restriction
+;;       (let ((beg (mime-entity-point-min entity))
+;;             (end (mime-entity-point-max entity)))
+;;         (narrow-to-region beg end)
+;;         (goto-char beg)
+;;         (let ((method (cdr (assoc 'method cal)))
+;;               (name (mime-raw-get-filename cal)))
+;;           (if method
+;;               (let ((file (make-temp-name
+;;                            (expand-file-name "TM" mime-temp-directory)))
+;;                     b args)
+;;                 (if (nth 1 method)
+;;                     (setq b beg)
+;;                   (setq b (mime-entity-body-start entity)))
+;;                 (goto-char b)
+;;                 (write-region b end file)
+;;                 (message "External method is starting...")
+;;                 (setq cal (put-alist
+;;                            'name (replace-as-filename name) cal))
+;;                 (setq cal (put-alist 'file file cal))
+;;                 (setq args (nconc
+;;                             (list (car method)
+;;                                   mime-echo-buffer-name (car method))
+;;                             (mime-make-external-method-args
+;;                              cal (cdr (cdr method)))
+;;                             ))
+;;                 (apply (function start-process) args)
+;;                 (mime-show-echo-buffer)
+;;                 ))
+;;           )))))
 
-(defun mime-make-external-method-args (cal format)
-  (mapcar (function
-	   (lambda (arg)
-	     (if (stringp arg)
-		 arg
-	       (let* ((item (eval arg))
-		      (ret (cdr (assoc item cal)))
-		      )
-		 (if ret
-		     ret
-		   (if (eq item 'encoding)
-		       "7bit"
-		     ""))
-		 ))
-	     ))
-	  format))
+;; (defun mime-make-external-method-args (cal format)
+;;   (mapcar (function
+;;            (lambda (arg)
+;;              (if (stringp arg)
+;;                  arg
+;;                (let* ((item (eval arg))
+;;                       (ret (cdr (assoc item cal))))
+;;                  (or ret
+;;                      (if (eq item 'encoding)
+;;                          "7bit"
+;;                        ""))
+;;                  ))))
+;;           format))
 
 (defvar mime-echo-window-is-shared-with-bbdb t
   "*If non-nil, mime-echo window is shared with BBDB window.")
@@ -407,6 +399,56 @@ window.")
 	      (error "")))
       (re-search-forward "\n\n")
       (mime-write-decoded-region (match-end 0) end filename encoding)
+      )))
+
+
+;;; @ file detection
+;;;
+
+(defvar mime-file-content-type-alist
+  '(("JPEG"	image jpeg)
+    ("GIF"	image gif)
+    )
+  "*Alist of \"file\" output patterns vs. corresponding media-types.
+Each element looks like (REGEXP TYPE SUBTYPE).
+REGEXP is pattern for \"file\" command output.
+TYPE is symbol to indicate primary type of media-type.
+SUBTYPE is symbol to indicate subtype of media-type.")
+
+(defun mime-method-to-detect (entity situation)
+  (let ((beg (mime-entity-point-min entity))
+	(end (mime-entity-point-max entity)))
+    (goto-char beg)
+    (let* ((name (save-restriction
+		   (narrow-to-region beg end)
+		   (mime-raw-get-filename situation)
+		   ))
+	   (encoding (or (cdr (assq 'encoding situation)) "7bit"))
+	   (filename (if (and name (not (string-equal name "")))
+			 (expand-file-name name mime-temp-directory)
+		       (make-temp-name
+			(expand-file-name "EMI" mime-temp-directory)))))
+      (mime-write-decoded-region (mime-entity-body-start entity) end
+				 filename encoding)
+      (let (type subtype)
+	(with-temp-buffer
+	  (call-process "file" nil t nil filename)
+	  (goto-char (point-min))
+	  (if (search-forward (concat filename ": ") nil t)
+	      (let ((rest mime-file-content-type-alist))
+		(while (not (let ((cell (car rest)))
+			      (if (looking-at (car cell))
+				  (setq type (nth 1 cell)
+					subtype (nth 2 cell))
+				)))
+		  (setq rest (cdr rest))))))
+	(if type
+	    (mime-raw-play-entity
+	     entity "play"
+	     (put-alist 'type type
+			(put-alist 'subtype subtype
+				   (mime-entity-situation entity))))
+	  ))
       )))
 
 
