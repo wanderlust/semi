@@ -1,3 +1,10 @@
+1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-mailcap-method-filename-alist): New variable.
+	(mime-mailcap-method-sentinel): New function.
+	(mime-activate-mailcap-method): Use 'mime-mailcap-method-sentinel;
+	don't use 'mime-show-echo-buffer.
+
 1998-05-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-play.el (mime-activate-mailcap-method): Regard
