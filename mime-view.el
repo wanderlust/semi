@@ -888,7 +888,7 @@ button-2	Move to point under the mouse cursor
 	(setq rpcl (cdr rpcl))
 	))))
 
-(autoload 'mime-preview/decode-content "tm-play")
+(autoload 'mime-preview/decode-content "mime-play")
 
 (defvar mime-view-decoding-mode "play" "MIME body decoding mode")
 
