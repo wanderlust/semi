@@ -204,7 +204,7 @@ Each elements are regexp of field-name.")
 (defun mime-view-header-visible-p (rcnum cinfo)
   "Return non-nil if header of current entity is visible."
   (or (null rcnum)
-      (member (mime::content-info/type
+      (member (mime-entity-info-type/subtype
 	       (mime-article/rcnum-to-cinfo (cdr rcnum) cinfo))
 	      mime-view-childrens-header-showing-Content-Type-list)
       ))
@@ -213,7 +213,7 @@ Each elements are regexp of field-name.")
   (let (ccinfo)
     (or ctype
 	(setq ctype
-	      (mime::content-info/type
+	      (mime-entity-info-type/subtype
 	       (setq ccinfo (mime-article/rcnum-to-cinfo rcnum cinfo))
 	       ))
 	)
@@ -284,7 +284,7 @@ Please redefine this function if you want to change default setting."
   (or (null rcnum)
       (string= ctype "application/x-selection")
       (and (string= ctype "application/octet-stream")
-	   (string= (mime::content-info/type
+	   (string= (mime-entity-info-type/subtype
 		     (mime-article/rcnum-to-cinfo (cdr rcnum) cinfo))
 		    "multipart/encrypted"))
       (mime-view-insert-entity-button rcnum cinfo ctype params subj encoding)
@@ -500,7 +500,7 @@ The compressed face will be piped to this command.")
   "Display entity from content-info CONTENT."
   (let* ((beg (mime-entity-info-point-min content))
 	 (end (mime-entity-info-point-max content))
-	 (ctype (mime::content-info/type content))
+	 (ctype (mime-entity-info-type/subtype content))
 	 (params (mime::content-info/parameters content))
 	 (encoding (mime::content-info/encoding content))
 	 (rcnum (mime-entity-info-rnum content))
@@ -996,7 +996,7 @@ It calls following-method selected from variable
 				(concat "^"
 					(apply (function regexp-or) fields)
 					":") ""))))
-		     (if (string= (mime::content-info/type ci)
+		     (if (string= (mime-entity-info-type/subtype ci)
 				  "message/rfc822")
 			 nil
 		       (if str
