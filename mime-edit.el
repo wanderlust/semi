@@ -1936,9 +1936,7 @@ Content-Transfer-Encoding: 7bit
 	(cond ((string-equal contype "text/x-rot13-47")
 	       (save-excursion
 		 (forward-line)
-		 (set-mark (point))
-		 (goto-char (mime-edit-content-end))
-		 (caesar-region)
+		 (mule-caesar-region (point) (mime-edit-content-end))
 		 ))
 	      ((string-equal contype "text/enriched")
 	       (save-excursion
