@@ -138,12 +138,9 @@
     (with-temp-buffer
       (apply #'call-process pgg-gpg-program nil t nil args)
       (goto-char (point-min))
-      (if (re-search-forward "^\\(sec\\|pub\\):"  nil t)
-	  (substring
-	   (nth 3 (split-string
-		   (buffer-substring (match-end 0)
-				     (progn (end-of-line)(point)))
-		   ":")) 8)))))
+      (if (re-search-forward "^\\(sec\\|pub\\):[^:]*:[^:]*:[^:]*:\\([^:]*\\)"
+			     nil t)
+	  (substring (match-string 2) 8)))))
 
 (luna-define-method pgg-scheme-encrypt-region ((scheme pgg-scheme-gpg)
 					       start end recipients)
