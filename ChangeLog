@@ -1,3 +1,7 @@
+1998-11-12  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-split-ignored-field-regexp): Add "^".
+
 1998-11-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-bbdb.el (mime-bbdb/update-record): Use
