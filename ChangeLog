@@ -1,5 +1,10 @@
 1998-04-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* semi-def.el: Don't require 'atype; abolish function
+ 	'field-unifier-for-mode.
+
+1998-04-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-pgp.el: Use 'ctree-set-calist-strictly instead of
  	'set-atype to set up for 'mime-acting-condition.
 
