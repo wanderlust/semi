@@ -128,7 +128,7 @@
 
 (defconst mime-edit-version-name
   `,(concat "SEMI MIME-Edit " mime-edit-version
-	    " (" semi-version-name ")"))
+	    " \"" semi-version-name "\""))
 
 
 ;;; @ variables
