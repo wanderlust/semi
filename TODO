@@ -5,8 +5,6 @@
 
 ** dynamic configuration for 'mime-preview-condition
 
-** multipart/related support
-
 ** Don't use filter-model
 
   tomo (major developer of SEMI) and akr (major developer of
