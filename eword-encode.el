@@ -594,7 +594,7 @@ It refer variable `eword-field-encoding-method-alist'."
 					     (lambda (str)
 					       (and (stringp str)
 						    (string= "x-nsubject"
-							     (downcase str2))
+							     (downcase str))
 						    )))
 					    eword-field-encoding-method-alist))
 				      'iso-2022-jp-2)))
