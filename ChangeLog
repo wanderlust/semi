@@ -1,3 +1,12 @@
+2000-04-13   Daiki Ueno  <ueno@unixuser.org>
+
+	* pgg-gpg.el: Fix author's mailing address.
+	(pgg-gpg-process-region): Add --output option; set status fd to 2.
+	(pgg-gpg-possibly-cache-passphrase): New function.
+	(pgg-gpg-shell-file-name): Abolish.
+	(pgg-gpg-shell-command-switch): Abolish.
+	(pgg-scheme-lookup-key): Work on temp buffer.
+
 2000-03-01  Yoshiki Hayashi <yoshiki@xemacs.org>
 
 	* mime-image.el (mime-display-image): Don't wait for redisplay.
