@@ -1403,7 +1403,7 @@ button-2	Move to point under the mouse cursor
 			       (point) 'mime-view-entity))
 		   (goto-char e)
 		   (let ((rc (mime-entity-node-id
-			      (get-text-property (point)
+			      (get-text-property (1- (point))
 						 'mime-view-entity))))
 		     (or (equal entity-node-id
 				(nthcdr (- (length rc) len) rc))
