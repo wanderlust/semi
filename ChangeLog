@@ -1,5 +1,11 @@
 1998-06-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-pgp.el (mime-view-application/pgp): fixed.
+	(mime-verify-application/pgp-signature): Use
+	`mime-message-structure' instead of `mime-raw-message-info'.
+	(mime-decrypt-application/pgp-encrypted): Use
+	`mime-message-structure' instead of `mime-raw-message-info'.
+
 	* mime-view.el (mime-display-message): Use `mime-parse-buffer';
 	abolish variable `mime-raw-message-info'; use
 	`mime-message-structure' instead of `mime-raw-message-info'.
