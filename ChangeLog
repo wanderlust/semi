@@ -1,3 +1,9 @@
+1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mailcap.el (mailcap-look-at-type-field): Must allow
+	"implicit-wild".
+	(mailcap-look-at-field): fixed.
+
 1998-03-13  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
 
 	* README.en (Bug reports): Modify description of tm mailing list.
