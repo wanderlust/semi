@@ -421,7 +421,8 @@ mother-buffer."
 (defun mime-save-situation-examples ()
   (if (or mime-preview-situation-example-list
 	  mime-acting-situation-example-list)
-      (let ((file mime-situation-examples-file))
+      (let ((file mime-situation-examples-file)
+	    print-length print-level)
 	(with-temp-buffer
 	  (insert ";;; " (file-name-nondirectory file) "\n")
 	  (insert "\n;; This file is generated automatically by "
@@ -438,7 +439,7 @@ mother-buffer."
 	  (insert "\n;;; "
 		  (file-name-nondirectory file)
 		  " ends here.\n")
-          (static-cond
+	  (static-cond
 	   ((boundp 'buffer-file-coding-system)
 	    (setq buffer-file-coding-system
 		  mime-situation-examples-file-coding-system))
@@ -446,7 +447,7 @@ mother-buffer."
 	    (setq file-coding-system
 		  mime-situation-examples-file-coding-system)))
 	  ;; (setq buffer-file-coding-system
-          ;;       mime-situation-examples-file-coding-system)
+	  ;;       mime-situation-examples-file-coding-system)
 	  (setq buffer-file-name file)
 	  (save-buffer)))))
 
