@@ -1,3 +1,7 @@
+2002-04-16   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-edit.el (mime-file-types): Add setting of *.jpeg for image/jpeg.
+
 2002-03-06   Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-view.el (mime-view-read-charset): Remove redundant checking for
