@@ -129,14 +129,14 @@ C-c C-x C-y	insert a mail or news message.
 C-c C-x RET	insert a mail message.
 C-c C-x C-s	insert a signature file at end.
 C-c C-x t	insert a new MIME tag.
-C-c C-x a	enclose as multipart/alternative.
-C-c C-x p	enclose as multipart/parallel.
-C-c C-x m	enclose as multipart/mixed.
-C-c C-x d	enclose as multipart/digest.
-C-c C-x s	enclose as PGP signed.
-C-c C-x e	enclose as PGP encrypted.
+C-c C-m C-a	enclose as multipart/alternative.
+C-c C-m C-p	enclose as multipart/parallel.
+C-c C-m C-m	enclose as multipart/mixed.
+C-c C-m C-d	enclose as multipart/digest.
+C-c C-m C-s	enclose as PGP signed.
+C-c C-m C-e	enclose as PGP encrypted.
 C-c C-x C-k	insert PGP public key.
-C-c C-x C-p	preview editing MIME message.
+C-c C-x p	preview editing MIME message.
 ...
 
 therefore, you should type C-c C-x C-i and specify the binary file
@@ -397,27 +397,27 @@ Operations to make enclosure are following:
 <kd>
 Enclose specified region as multipart/alternative.
 </kd>
-<kt>C-c C-x C-p
+<kt>C-c C-m C-p
 <kd>
 Enclose specified region as multipart/parallel.
 </kd>
-<kt>C-c C-x C-m
+<kt>C-c C-m C-m
 <kd>
 Enclose specified region as multipart/mixed.
 </kd>
-<kt>C-c C-x C-d
+<kt>C-c C-m C-d
 <kd>
 Enclose specified region as multipart/digest.
 </kd>
-<kt>C-c C-x C-s
+<kt>C-c C-m C-s
 <kd>
 Digital-sign to specified region. <cf node="PGP">
 </kd>
-<kt>C-c C-x C-e
+<kt>C-c C-m C-e
 <kd>
 Encrypt to specified region. <cf node="PGP">
 </kd>
-<kt>C-c C-x C-q
+<kt>C-c C-m C-q
 <kd>
 avoid to encode tags in specified region.  In other words, tags is
 interpreted as such string.  (In current version, it may be
