@@ -1,3 +1,32 @@
+1998-06-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-charset-type-list): Use base64 for cn-gb2312
+	and gb2312.
+	(mime-edit-normalize-body): If encoding is not specified for
+	charset, use quoted-printable or 8bit for mime-transfer-level is 7
+	or 8.
+
+	* mime-edit.el (mime-charset-type-list): Add `shift_jis'.
+
+1998-06-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-message): Use
+	`mime-maybe-hide-echo-buffer'.
+	(mime-view-mode): Don't use `mime-maybe-hide-echo-buffer'.
+
+	* mime-view.el (mime-view-display-message): Move point to top of
+	body; run `mime-view-mode-hook'.
+	(mime-view-mode): Don't move point; don't run
+	`mime-view-mode-hook'.
+
+	* mime-view.el (mime-view-display-message): Add new optional
+	argument `default-keymap-or-function'.
+	(mime-view-mode): Modify for `mime-view-display-message'.
+
+	* mime-view.el (mime-view-display-message): Add new optional
+	argument `mother'; set to `mime-mother-buffer'.
+	(mime-view-mode): Modify for `mime-view-display-message'.
+
 1998-06-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-mc.el: Use `eval-and-compile' to load "mc-pgp".
