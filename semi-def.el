@@ -105,8 +105,6 @@
 ;;; @ for URL
 ;;;
 
-(require 'browse-url)
-
 (defcustom mime-browse-url-regexp
   (concat "\\(http\\|ftp\\|file\\|gopher\\|news\\|telnet\\|wais\\|mailto\\):"
 	  "\\(//[-a-zA-Z0-9_.]+:[0-9]*\\)?"
@@ -115,29 +113,19 @@
   :group 'mime
   :type 'regexp)
 
-(defun mime-browse-url (&optional url)
-  (if (fboundp browse-url-browser-function)
-      (if url 
-	  (funcall browse-url-browser-function url)
-	(call-interactively browse-url-browser-function))
-    (if (fboundp mime-button-mother-dispatcher)
-	(call-interactively mime-button-mother-dispatcher)
-      )))
+(defcustom mime-browse-url-function (function browse-url)
+  "*Function to browse URL."
+  :group 'mime
+  :type 'function)
 
-(defsubst mime-browse-add-url-buttons ()
+(defsubst mime-add-url-buttons ()
   "Add URL-buttons for text body."
   (goto-char (point-min))
   (while (re-search-forward mime-browse-url-regexp nil t)
     (let ((beg (match-beginning 0))
 	  (end (match-end 0)))
-      (mime-add-button beg end (function mime-browse-url)
+      (mime-add-button beg end mime-browse-url-function
 		       (list (buffer-substring beg end))))))
-
-(defun mime-browse-add-url-buttons-maybe ()
-  "Add URL-buttons if 'browse-url-browser-function is non-nil."
-  (if browse-url-browser-function
-      (mime-browse-add-url-buttons)
-    ))
 
 
 ;;; @ menu
