@@ -121,7 +121,7 @@ variable `mime-text-decoder' and variable `mime-text-decoder-alist'."
 ;;; @ content filters for mime-text
 ;;;
 
-(defun mime-preview/filter-for-text/plain (ctype params encoding)
+(defun mime-view-filter-for-text/plain (ctype params encoding)
   (mime-decode-text-body (cdr (assoc "charset" params)) encoding)
   (goto-char (point-max))
   (if (not (eq (char-after (1- (point))) ?\n))
@@ -140,7 +140,7 @@ variable `mime-text-decoder' and variable `mime-text-decoder-alist'."
   (run-hooks 'mime-view-plain-text-preview-hook)
   )
 
-(defun mime-preview/filter-for-text/richtext (ctype params encoding)
+(defun mime-view-filter-for-text/richtext (ctype params encoding)
   (let* ((charset (cdr (assoc "charset" params)))
 	 (beg (point-min))
 	 )
@@ -149,7 +149,7 @@ variable `mime-text-decoder' and variable `mime-text-decoder-alist'."
     (richtext-decode beg (point-max))
     ))
 
-(defun mime-preview/filter-for-text/enriched (ctype params encoding)
+(defun mime-view-filter-for-text/enriched (ctype params encoding)
   (let* ((charset (cdr (assoc "charset" params)))
 	 (beg (point-min))
 	 )
