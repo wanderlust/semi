@@ -458,17 +458,23 @@ Each elements are regexp of field-name.")
 ;;; @@ about message splitting
 ;;;
 
-(defvar mime-edit-split-message t
-  "*Split large message if it is non-nil.")
+(defcustom mime-edit-split-message t
+  "*Split large message if it is non-nil."
+  :group 'mime-edit
+  :type 'boolean)
 
-(defvar mime-edit-message-default-max-lines 1000
-  "*Default maximum lines of a message.")
+(defcustom mime-edit-message-default-max-lines 1000
+  "*Default maximum lines of a message."
+  :group 'mime-edit
+  :type 'integer)
 
-(defvar mime-edit-message-max-lines-alist
+(defcustom mime-edit-message-max-lines-alist
   '((news-reply-mode . 500))
   "Alist of major-mode vs maximum lines of a message.
 If it is not specified for a major-mode,
-`mime-edit-message-default-max-lines' is used.")
+`mime-edit-message-default-max-lines' is used."
+  :group 'mime-edit
+  :type 'list)
 
 (defconst mime-edit-split-ignored-field-regexp
   "\\(^Content-\\|^Subject:\\|^Mime-Version:\\)")
