@@ -1,3 +1,14 @@
+1998-01-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-image.el: Comment out setting for inline Postscript
+	feature.
+
+1998-01-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* eword-decode.el (eword-analyze-atom): New function.
+	(eword-lexical-analyze-internal): Use `eword-analyze-atom' instead
+	of `std11-analyze-atom'.
+
 1997-11-26  Thierry Emery     <Thierry.Emery@aar.alcatel-alsthom.fr>
 
 	* mime-edit.el (mime-edit-insert-text): Fix to avoid unexpected
@@ -39,7 +50,7 @@
 
 1997-11-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.116 (D-Dòhòji) was released.-A
+	* SEMI: Version 0.116 (D-Dòhòji)-A was released.
 
 1997-11-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
