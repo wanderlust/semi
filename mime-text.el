@@ -95,9 +95,9 @@
 	(while (re-search-forward mime-text-url-regexp nil t)
 	  (let ((beg (match-beginning 0))
 		(end (match-end 0)))
-	    (tm:add-button beg end
-			   (function mime-text-browse-url)
-			   (list (buffer-substring beg end))))
+	    (mime-add-button beg end
+			     (function mime-text-browse-url)
+			     (list (buffer-substring beg end))))
 	  )))
   (run-hooks 'mime-view-plain-text-preview-hook)
   )
