@@ -119,11 +119,15 @@
 ;;; @ version
 ;;;
 
-(defconst mime-edit-version-string
-  `,(concat (car mime-user-interface-version) " "
-	    (mapconcat #'number-to-string
-		       (cddr mime-user-interface-version) ".")
-	    " - \"" (cadr mime-user-interface-version) "\""))
+(eval-and-compile
+  (defconst mime-edit-version
+    (eval-when-compile
+      (concat
+       (mime-product-name mime-user-interface-product) " "
+       (mapconcat #'number-to-string
+		  (mime-product-version mime-user-interface-product) ".")
+       " - \"" (mime-product-code-name mime-user-interface-product) "\"")))
+  )
 
 
 ;;; @ variables
@@ -235,25 +239,87 @@ To insert a signature file automatically, call the function
   "*Alist of content-type, subtype, parameters and its values.")
 
 (defcustom mime-file-types
-  '(("\\.txt$"
+  '(
+
+    ;; Programming languages
+
+    ("\\.cc$"
+     "application" "octet-stream" (("type" . "C++"))
+     "7bit"
+     "attachment"	(("filename" . file))
+     )
+
+    ("\\.el$"
+     "application" "octet-stream" (("type" . "emacs-lisp"))
+     "7bit"
+     "attachment"	(("filename" . file))
+     )
+
+    ("\\.lsp$"
+     "application" "octet-stream" (("type" . "common-lisp"))
+     "7bit"
+     "attachment"	(("filename" . file))
+     )
+
+    ("\\.pl$"
+     "application" "octet-stream" (("type" . "perl"))
+     "7bit"
+     "attachment"	(("filename" . file))
+     )
+
+    ;; Text or translated text
+
+    ("\\.txt$"
      "text"	"plain"		nil
      nil
      "inline"		(("filename" . file))
      )
+
+     ;; .rc : procmail modules pm-xxxx.rc
+     ;; *rc : other resource files
+
+    ("\\.\\(rc\\|lst\\|log\\|sql\\|mak\\)$\\|\\..*rc$"
+     "text"	"plain"		nil
+     nil
+     "attachment"	(("filename" . file))
+     )
+
+    ("\\.html$"
+     "text"	"html"		nil
+     nil
+     nil		nil)
+
+    ("\\.diff$\\|\\.patch$"
+     "application" "octet-stream" (("type" . "patch"))
+     nil
+     "attachment"	(("filename" . file))
+     )
+
+    ("\\.signature"
+     "text"	"plain"		nil	nil	nil	nil)
+
+
+    ;;  Octect binary text
+
+    ("\\.doc$"				;MS Word
+     "application" "winword" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+
     ("\\.pln$"
      "text"	"plain"		nil
      nil
      "inline"		(("filename" . file))
      )
-    ("\\.html$"
-     "text"	"html"		nil
-     nil
-     nil		nil)
     ("\\.ps$"
      "application" "postscript"	nil
      "quoted-printable"
      "attachment"	(("filename" . file))
      )
+
+    ;;  Pure binary
+
     ("\\.jpg$"
      "image"	"jpeg"		nil
      "base64"
@@ -304,16 +370,6 @@ To insert a signature file automatically, call the function
      "base64"
      "attachment"	(("filename" . file))
      )
-    ("\\.el$"
-     "application" "octet-stream" (("type" . "emacs-lisp"))
-     "7bit"
-     "attachment"	(("filename" . file))
-     )
-    ("\\.lsp$"
-     "application" "octet-stream" (("type" . "common-lisp"))
-     "7bit"
-     "attachment"	(("filename" . file))
-     )
     ("\\.tar\\.gz$"
      "application" "octet-stream" (("type" . "tar+gzip"))
      "base64"
@@ -354,18 +410,9 @@ To insert a signature file automatically, call the function
      "base64"
      "attachment"	(("filename" . file))
      )
-    ("\\.diff$"
-     "application" "octet-stream" (("type" . "patch"))
-     nil
-     "attachment"	(("filename" . file))
-     )
-    ("\\.patch$"
-     "application" "octet-stream" (("type" . "patch"))
-     nil
-     "attachment"	(("filename" . file))
-     )
-    ("\\.signature"
-     "text"	"plain"		nil	nil	nil	nil)
+
+    ;; Rest
+
     (".*"
      "application" "octet-stream" nil
      nil
@@ -401,9 +448,9 @@ If encoding is nil, it is determined from its contents."
 			,@(cons
 			   '(const nil)
 			   (mapcar (lambda (cell)
-				     (list 'item (car cell))
+				     (list 'item cell)
 				     )
-				   mime-file-encoding-method-alist)))
+				   (mime-encoding-list))))
 		;; disposition-type
 		(choice :tag "Disposition-Type"
 			(item nil)
@@ -434,7 +481,7 @@ If encoding is nil, it is determined from its contents."
     (iso-2022-jp	7 "base64")
     (iso-2022-kr	7 "base64")
     (euc-kr		8 "base64")
-    (cn-gb2312		8 "base64")
+    (cn-gb		8 "base64")
     (gb2312		8 "base64")
     (cn-big5		8 "base64")
     (big5		8 "base64")
@@ -561,19 +608,19 @@ If it is not specified for a major-mode,
   "*If non-nil, insert User-Agent header field.")
 
 (defvar mime-edit-user-agent-value
-  (concat (car mime-user-interface-version)
+  (concat (mime-product-name mime-user-interface-product)
 	  "/"
 	  (mapconcat #'number-to-string
-		     (cddr mime-user-interface-version) ".")
+		     (mime-product-version mime-user-interface-product) ".")
 	  " ("
-	  (cadr mime-user-interface-version)
+	  (mime-product-code-name mime-user-interface-product)
 	  ") "
-	  (car mime-library-version)
+	  (mime-product-name mime-library-product)
 	  "/"
 	  (mapconcat #'number-to-string
-		     (cddr mime-library-version) ".")
+		     (mime-product-version mime-library-product) ".")
 	  " ("
-	  (cadr mime-library-version)
+	  (mime-product-code-name mime-library-product)
 	  ") "
 	  (if (featurep 'xemacs)
 	      (concat (if (featurep 'mule) "MULE")
@@ -618,11 +665,13 @@ inserted into message header.")
 Tspecials means any character that matches with it in header must be quoted.")
 
 (defconst mime-edit-mime-version-value
-  (concat "1.0 (generated by " mime-edit-version-string ")")
+  (eval-when-compile
+    (concat "1.0 (generated by " mime-edit-version ")"))
   "MIME version number.")
 
 (defconst mime-edit-mime-version-field-for-message/partial
-  (concat "MIME-Version: 1.0 (split by " mime-edit-version-string ")\n")
+  (eval-when-compile
+    (concat "MIME-Version: 1.0 (split by " mime-edit-version ")\n"))
   "MIME version field for message/partial.")
 
 
@@ -1108,7 +1157,7 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
   (let ((encoding
 	 (completing-read
 	  "What transfer encoding: "
-	  mime-file-encoding-method-alist nil t nil)))
+	  (mime-encoding-alist) nil t nil)))
     (mime-edit-insert-tag "audio" "basic" nil)
     (mime-edit-define-encoding encoding)
     (save-restriction
@@ -1537,7 +1586,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 	    (setq encoding
 		  (completing-read
 		   "What transfer encoding: "
-		   mime-file-encoding-method-alist nil t default)
+		   (mime-encoding-alist) nil t default)
 		  )
 	    ""))
     encoding))

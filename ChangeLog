@@ -1,3 +1,101 @@
+1998-10-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.9.1 (Kurikara) released.
+
+1998-10-14  Jari Aalto        <jari.aalto@poboxes.com>
+
+	* mime-edit.el (mime-file-types): Add some new mime types, and
+	rearrange the types to logical sections: text; octext text and
+	binary. <cf. [tm-en:1856]>
+
+1998-10-12  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* README.en: Add explanation about `VERSION_SPECIFIC_LISPDIR'.
+
+	* Makefile (install): Add new arg `VERSION_SPECIFIC_LISPDIR'.
+	(install-elc): Likewise.
+
+	* SEMI-MK (config-semi): Refer to `VERSION_SPECIFIC_LISPDIR'.
+
+	* SEMI-CFG (VERSION_SPECIFIC_LISPDIR): New variable.
+
+1998-10-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI-CFG: Abolish variable `SHELL' and `SHELLOPTION'.
+
+1998-10-08  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* SEMI-CFG: Use `add-latest-path' for adding "custom" to
+	load-path.
+
+1998-10-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI-CFG: Don't use `when' before install is required; don't
+	require cl.
+
+1998-10-08  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* SEMI-CFG: Add "custom" to load-path.
+
+
+1998-10-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.9.0 (Isurugi) released.
+
+1998-10-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* README.en (Required environment): Modify for APEL 9.1 and FLIM
+	1.10.1.
+
+1998-10-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-version): Enclose with
+	`eval-and-compile'.
+
+	* mime-edit.el (mime-edit-version): Renamed from
+	`mime-edit-version-string'; use `mime-user-interface-product',
+	`mime-product-name', `mime-product-version' and
+	`mime-product-code-name'.
+	(mime-edit-user-agent-value): Use `mime-user-interface-product',
+	`mime-library-product', `mime-product-name',
+	`mime-product-version' and `mime-product-code-name'.
+	(mime-edit-mime-version-value): Rename `mime-edit-version-string'
+	-> `mime-edit-version'.
+	(mime-edit-mime-version-field-for-message/partial): Likewise.
+
+	* mime-play.el (mime-save-acting-situation-examples): Rename
+	`mime-view-version-string' -> `mime-view-version'.
+
+	* mime-view.el (mime-view-version): Renamed from
+	`mime-view-version-string'; use `mime-user-interface-product',
+	`mime-product-name', `mime-product-version' and
+	`mime-product-code-name'.
+
+	* semi-def.el (mime-user-interface-product): New variable; abolish
+	`mime-user-interface-version'.
+
+1998-10-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-echo-window-is-shared-with-bbdb): Check bbdb
+	is install or not to define default value.
+	(mime-show-echo-buffer): New implementation about
+	`mime-echo-window-is-shared-with-bbdb'.
+
+1998-10-01  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-charset-type-list): Use `cn-gb' instead of
+	`cn-gb2312' because `cn-gb2312' is typo.
+
+1998-09-29  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-file-types): Use function
+	`mime-encoding-list' instead of variable
+	`mime-file-encoding-method-alist' to define default value.
+	(mime-edit-insert-voice): Use function `mime-encoding-alist'
+	instead of variable `mime-file-encoding-method-alist' for
+	completion.
+	(mime-prompt-for-encoding): Likewise.
+
 1998-09-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-edit.el (mime-edit-user-agent-value): Add

@@ -4,8 +4,6 @@
 
 ;;; Code:
 
-(require 'cl)
-
 (defvar default-load-path load-path)
 
 (add-to-list 'load-path
@@ -13,11 +11,17 @@
 (add-to-list 'load-path
 	     (expand-file-name "." data-directory))
 
-(when (boundp 'LISPDIR)
-  (add-to-list 'default-load-path LISPDIR)
-  (add-to-list 'load-path LISPDIR)
-  (add-to-list 'load-path (expand-file-name "apel" LISPDIR))
-  )
+(if (boundp 'LISPDIR)
+    (progn
+      (add-to-list 'default-load-path LISPDIR)
+      (add-to-list 'load-path LISPDIR)
+      (add-to-list 'load-path (expand-file-name "apel" LISPDIR))
+      ))
+
+(defvar VERSION_SPECIFIC_LISPDIR nil)
+
+(if VERSION_SPECIFIC_LISPDIR
+    (add-to-list 'load-path VERSION_SPECIFIC_LISPDIR))
 
 (condition-case nil
     (require 'install)
@@ -96,17 +100,11 @@
 ;; (add-path "w3-4.0pre.20" 'all-paths)
 
 
-;;; @ shell
+;;;
+;;; @@ Please specify CUSTOM path.
 ;;;
 
-;; Please specify shell command path.
-(setq SHELL
-      (find-if (function file-exists-p)
-	       '("/bin/sh" "/usr/bin/sh")
-	       ))
-
-;; Please specify shell command option.
-(setq SHELLOPTION "-c")
+(add-latest-path "custom")
 
 
 ;;; @ Please specify prefix of install directory.

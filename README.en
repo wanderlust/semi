@@ -40,7 +40,7 @@ Required environment
   19.14.  SEMI also does not support Emacs 19.29 to 19.34, XEmacs
   19.15 or XEmacs 20.2 without mule, but SEMI may work with them.
 
-  SEMI requires APEL (8.17 or later) and FLIM (1.9.2 or later)
+  SEMI requires APEL (9.1 or later) and FLIM (1.10.1 or later)
   package.  Please install them before installing it.  APEL package is
   available at:
 
@@ -108,6 +108,12 @@ Installation
   If `LISPDIR=...' is omitted, site-lisp directory of the specified
   emacs command is used (perhaps /usr/local/share/emacs/site-lisp or
   /usr/local/lib/xemacs/site-lisp).
+
+  If the emu modules (included in APEL package) have been installed in
+  the non-standard directory, you should specify where they will be
+  found, for example:
+
+	% make install VERSION_SPECIFIC_LISPDIR=~/elisp
 
 (c) install as a XEmacs package
 

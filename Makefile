@@ -3,7 +3,7 @@
 #
 
 PACKAGE = semi
-VERSION = 1.8.6
+VERSION = 1.9.1
 
 TAR	= tar
 RM	= /bin/rm -f
@@ -17,17 +17,20 @@ PREFIX	= NONE
 EXEC_PREFIX = NONE
 LISPDIR = NONE
 PACKAGEDIR = NONE
+VERSION_SPECIFIC_LISPDIR = NONE
 
 GOMI	= *.elc
 
 
 elc:
 	$(EMACS) $(FLAGS) -f compile-semi \
-		$(PREFIX) $(EXEC_PREFIX) $(LISPDIR)
+		$(PREFIX) $(EXEC_PREFIX) $(LISPDIR) \
+		$(VERSION_SPECIFIC_LISPDIR)
 
 install-elc:	elc
 	$(EMACS) $(FLAGS) -f install-semi \
-		$(PREFIX) $(EXEC_PREFIX) $(LISPDIR)
+		$(PREFIX) $(EXEC_PREFIX) $(LISPDIR) \
+		$(VERSION_SPECIFIC_LISPDIR)
 
 install:	install-elc
 
