@@ -28,6 +28,10 @@
 (require 'semi-def)
 (require 'mailcrypt)
 
+(eval-when-compile
+  (load "expect" t)
+  )
+
 (eval-and-compile
   (mapcar
    (function (lambda (elem) (apply 'autoload elem)))
