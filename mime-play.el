@@ -51,7 +51,7 @@
           (erase-buffer)
           (insert ";;; " (file-name-nondirectory file) "\n")
           (insert "\n;; This file is generated automatically by "
-                  mime-view-version-string "\n\n")
+                  mime-view-version "\n\n")
 	  (insert ";;; Code:\n\n")
 	  (pp `(setq mime-acting-situation-example-list
 		     ',mime-acting-situation-example-list)
