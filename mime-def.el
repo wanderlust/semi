@@ -118,9 +118,9 @@
     (fetch-key		mc-pgp-fetch-key		"mc-pgp")
     (snarf-keys		mc-snarf-keys			"mc-toplev")
     ;; for mime-edit
-    (mime-sign		tm:mc-pgp-sign-region		"mime-edit-mc")
+    (mime-sign		tm:mc-pgp-sign-region		"mime-mc")
     (traditional-sign	mc-pgp-sign-region		"mc-pgp")
-    (encrypt		tm:mc-pgp-encrypt-region	"mime-edit-mc")
+    (encrypt		tm:mc-pgp-encrypt-region	"mime-mc")
     (insert-key		mc-insert-public-key		"mc-toplev")
     )
   "Alist of service names vs. corresponding functions and its filenames.
