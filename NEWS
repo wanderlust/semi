@@ -23,6 +23,14 @@ Function `mime-play-entity' was changed to permit to run in any buffer
 any buffer.
 
 
+** Text property `mime-view-entity-{header|body}'
+
+Now mime-view put text property `mime-view-entity-header' and
+`mime-view-entity-body' in header and body of each entity.
+
+
+** Run `mime-display-header-hook' before insert "\n"
+
 
 * Changes in SEMI 1.12
 
