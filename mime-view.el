@@ -30,7 +30,6 @@
 
 (require 'cl)
 (require 'tl-atype)
-(require 'tl-misc)
 (require 'std11)
 (require 'mel)
 (require 'eword-decode)
