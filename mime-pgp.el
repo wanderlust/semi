@@ -107,7 +107,7 @@
 			  (and
 			   (search-forward "\n\n")
 			   (match-end 0)))
-	   (setq representation-type (function mime-text-decode-buffer))
+	   (setq representation-type 'binary)
 	   ))
     (setq major-mode 'mime-show-message-mode)
     (setq mime-raw-representation-type representation-type)
@@ -169,7 +169,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 		   (1- knum)
 		 (1+ knum)))
 	 (oinfo (mime-raw-find-entity-from-node-id
-		 (cons onum mother-node-id) mime-raw-message-info))
+		 (cons onum mother-node-id) mime-message-structure))
 	 (basename (expand-file-name "tm" mime-temp-directory))
 	 (orig-file (make-temp-name basename))
 	 (sig-file (concat orig-file ".sig"))
@@ -229,7 +229,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 		   (1- knum)
 		 (1+ knum)))
 	 (oinfo (mime-raw-find-entity-from-node-id
-		 (cons onum mother-node-id) mime-raw-message-info)))
+		 (cons onum mother-node-id) mime-message-structure)))
     (mime-view-application/pgp oinfo situation)
     ))
 
