@@ -1,3 +1,7 @@
+1997-11-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 0.118 (Sodani) was released.
+
 1997-11-24  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el (mime-maybe-hide-echo-buffer): bury MIME echo
@@ -29,7 +33,7 @@
 
 1997-11-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.116 (D-Dòhòji) was released.-A
+	* SEMI: Version 0.116 (D-Dòhòji)-A was released.
 
 1997-11-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
