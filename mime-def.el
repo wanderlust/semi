@@ -71,7 +71,7 @@
 			  (nconc
 			   (and mime-button-mouse-face
 				(list 'mouse-face mime-button-mouse-face))
-			   (list 'semi-callback func)
+			   (list 'mime-button-callback func)
 			   (and data (list 'semi-data data))
 			   ))
   )
@@ -86,7 +86,7 @@
       (mouse-set-point event)
       (setq buf (current-buffer)
 	    point (point)
-	    func (get-text-property (point) 'semi-callback)
+	    func (get-text-property (point) 'mime-button-callback)
 	    data (get-text-property (point) 'semi-data)
 	    )
       )
