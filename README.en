@@ -40,7 +40,7 @@ Required environment
   19.14.  SEMI also does not support Emacs 19.29 to 19.34, XEmacs
   19.15 or XEmacs 20.2 without mule, but SEMI may work with them.
 
-  SEMI requires APEL (9.11 or later) and FLIM (1.12.0 or later)
+  SEMI requires APEL (9.11 or later) and FLIM (1.12.3 or later)
   package.  Please install them before installing it.  APEL package is
   available at:
 
@@ -51,10 +51,6 @@ Required environment
 	ftp://ftp.jaist.ac.jp/pub/GNU/elisp/flim/
 
   PGP/MIME and application/pgp require mailcrypt or tiny-pgp package.
-
-  The package enriched.el is required to compose text/enriched, so if
-  you use Emacs anything 19.28 or older (including official version of
-  MULE 2.3), WYSIWYG composing for text/enriched is not available.
 
 
 Installation
