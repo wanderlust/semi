@@ -1,3 +1,9 @@
+1999-01-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-view-caesar): Select window which displays
+	current-buffer if it is not selected <to fix problem with mouse
+	operations>.
+
 1999-01-26  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-edit.el (mime-edit-decode-single-part-in-buffer): Limit the
