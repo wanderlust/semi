@@ -211,8 +211,14 @@ CVS based development
 
 	cvs@cvs.m17n.org
 
-  with your account name and UNIX style crypted password.  We hope you 
-  will join the open development.
+  with your account name and your public key for ssh.  cvsroot is
+  :ext:cvs@cvs.m17n.org:/cvs/root.
+
+  If you cannot use ssh, please send UNIX /etc/passwd style crypted
+  password.  you can commit with the cvsroot
+  :pserver:<accountname>@cvs.m17n.org:/cvs/root.
+
+  We hope you will join the open development.
 
 
 Authors
