@@ -1,5 +1,10 @@
 2000-12-19  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
+	* mime-edit.el (mime-edit-mime-version-field-for-message/partial):
+	Use `mime-encode-field-body' instead of `eword-encode-field-body'.
+
+2000-12-19  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
 	* mime-edit.el (mime-edit-translate-header): Use
 	`mime-encode-header-in-buffer' instead of `eword-encode-header'.
 	(mime-edit-encrypt-pgp-mime): Likewise.
