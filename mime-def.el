@@ -51,7 +51,7 @@
 	     x))))
   )
 
-(defconst semi-version '("Nonoichi-K,Dr(Bdaimae" 1 0 2)
+(defconst semi-version '("Himi" 1 0 2 1)
   "Version name and numbers of SEMI-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"

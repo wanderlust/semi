@@ -103,12 +103,12 @@
     ))
 
 (set-atype 'mime-acting-condition
-	   '((type . "application/pgp")
+	   '((type . application)(subtype . pgp)
 	     (method . mime-method-for-application/pgp)
 	     ))
 
 (set-atype 'mime-acting-condition
-	   '((type . "text/x-pgp")
+	   '((type . text)(subtype . x-pgp)
 	     (method . mime-method-for-application/pgp)
 	     ))
 
@@ -126,7 +126,7 @@
     ))
 
 (set-atype 'mime-acting-condition
-	   '((type . "multipart/signed")
+	   '((type . multipart)(subtype . signed)
 	     (method . mime-method-to-verify-multipart/signed)
 	     ))
 
@@ -251,7 +251,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
       )))
 
 (set-atype 'mime-acting-condition
-	   '((type . "application/pgp-signature")
+	   '((type . application)(subtype . pgp-signature)
 	     (method . mime-method-to-verify-application/pgp-signature)
 	     ))
 
@@ -277,7 +277,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
     ))
 
 (set-atype 'mime-acting-condition
-	   '((type . "application/pgp-encrypted")
+	   '((type . application)(subtype . pgp-encrypted)
 	     (method . mime-method-to-decrypt-application/pgp-encrypted)
 	     ))
 
@@ -306,7 +306,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
     ))
 
 (set-atype 'mime-acting-condition
-	   '((type . "application/pgp-keys")
+	   '((type . application)(subtype . pgp-keys)
 	     (method . mime-method-to-add-application/pgp-keys)
 	     ))
 
