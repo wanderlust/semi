@@ -153,24 +153,30 @@ message/partial, it is called `mother-buffer'.")
      (function mime-preview-play-current-entity))
     ))
 
+(defun mime-view-entity-button-visible-p (entity message-info)
+  "Return non-nil if header of ENTITY is visible.
+Please redefine this function if you want to change default setting."
+  (and (not (mime-root-entity-p entity))
+       (let ((media-type (mime-entity-media-type entity))
+	     (media-subtype (mime-entity-media-subtype entity)))
+	 (or (not (eq media-type 'application))
+	     (and (not (eq media-subtype 'x-selection))
+		  (or (not (eq media-subtype 'octet-stream))
+		      (let ((mother-entity
+			     (mime-raw-entity-parent entity message-info)))
+			(or (not (eq (mime-entity-media-type mother-entity)
+				     'multipart))
+			    (not (eq (mime-entity-media-subtype mother-entity)
+				     'encrypted)))
+			)
+		      ))))))
+
 (defun mime-view-entity-button-function (entity message-info subj)
   "Insert entity-button of ENTITY conditionally.
 Please redefine this function if you want to change default setting."
-  (let ((media-type (mime-entity-media-type entity))
-	(media-subtype (mime-entity-media-subtype entity)))
-    (or (mime-root-entity-p entity)
-	(and (eq media-type 'application)
-	     (or (eq media-subtype 'x-selection)
-		 (and (eq media-subtype 'octet-stream)
-		      (let ((mother-entity
-			     (mime-raw-entity-parent entity message-info)))
-			(and (eq (mime-entity-media-type mother-entity)
-				 'multipart)
-			     (eq (mime-entity-media-subtype mother-entity)
-				 'encrypted)
-			     )))))
-	(mime-view-insert-entity-button entity message-info subj)
-	)))
+  (if (mime-view-entity-button-visible-p entity message-info)
+      (mime-view-insert-entity-button entity message-info subj)
+    ))
 
 
 ;;; @ entity-header
