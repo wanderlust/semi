@@ -389,7 +389,7 @@ If encoding is nil, it is determined from its contents.")
 
 (defvar mime-transfer-level-string
   (mime-encoding-name mime-transfer-level 'not-omit)
-  "*A string formatted version of mime/defaul-transfer-level")
+  "A string formatted version of mime-transfer-level")
 (make-variable-buffer-local 'mime-transfer-level-string)
 
 (defun mime-make-charset-default-encoding-alist (transfer-level)
@@ -530,7 +530,7 @@ If it is not specified for a major-mode,
 ;;;
 
 (defvar mime-edit-mode-old-local-map nil)
-(defvar mime/editing-buffer nil)
+(defvar mime-edit-buffer nil)
 
 
 ;;; @ constants
@@ -2395,8 +2395,8 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
     (setq major-mode 'mime/temporary-message-mode)
     (make-local-variable 'mail-header-separator)
     (setq mail-header-separator separator)
-    (make-local-variable 'mime/editing-buffer)
-    (setq mime/editing-buffer the-buf)
+    (make-local-variable 'mime-edit-buffer)
+    (setq mime-edit-buffer the-buf)
     
     (run-hooks 'mime-edit-translate-hook)
     (mime-edit-translate-buffer)
@@ -2413,7 +2413,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	buf)
     (mime-view-kill-buffer)
     (set-buffer temp)
-    (setq buf mime/editing-buffer)
+    (setq buf mime-edit-buffer)
     (kill-buffer temp)
     (switch-to-buffer buf)
     ))
