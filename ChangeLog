@@ -1,5 +1,16 @@
 2001-09-24   Daiki Ueno  <ueno@unixuser.org>
 
+	* mime-view.el (mime-view-insert-text-content): New function.
+	(mime-view-insert-fontified-text-content): Rename from
+	`mime-display-inline-fontify'.
+	(mime-display-text/plain): Use `mime-view-insert-text-content' instead of
+	`mime-insert-text-content'.
+	(mime-display-text/richtext): Likewise.
+	(mime-display-text/enriched): Likewise.
+	(mime-display-application/emacs-lisp): Likewise.
+
+2001-09-24   Daiki Ueno  <ueno@unixuser.org>
+
 	* mime-view.el (mime-preview-toggle-display): When both "type" and
 	"*type" conditions are not specified, the entity should be regarded
 	as invisible.
