@@ -133,8 +133,8 @@
 ;;; @ variables
 ;;;
 
-(defvar mime-prefix "\C-c\C-x"
-  "*Keymap prefix for MIME commands.")
+(defvar mime-edit-prefix "\C-c\C-x"
+  "*Keymap prefix for MIME-Edit commands.")
 
 (defvar mime-ignore-preceding-spaces nil
   "*Ignore preceding white spaces if non-nil.")
@@ -594,7 +594,7 @@ Tspecials means any character that matches with it in header must be quoted.")
 	     (setq mime-edit-minor-mime-map 
 		   (make-sparse-keymap 'mime-edit-minor-mime-map))
 	     (define-key
-	       mime-edit-minor-mime-map mime-prefix mime-edit-mime-map)
+	       mime-edit-minor-mime-map mime-edit-prefix mime-edit-mime-map)
 	     ))
        (add-minor-mode 'mime-edit-mode-flag
 		       '((" MIME-Edit "  mime-transfer-level-string))
@@ -790,7 +790,7 @@ TABs at the beginning of the line are not a part of the message:
 	--[[audio/basic][base64]]...audio encoded in base64 here...
 
 User customizable variables (not documented all of them):
- mime-prefix
+ mime-edit-prefix
     Specifies a key prefix for MIME minor mode commands.
 
  mime-ignore-preceding-spaces
@@ -838,8 +838,8 @@ User customizable variables (not documented all of them):
       (use-local-map (copy-keymap (or (current-local-map)
 				      (make-sparse-keymap))))
       )
-    (if (not (lookup-key (current-local-map) mime-prefix))
-	(define-key (current-local-map) mime-prefix mime-edit-mime-map))
+    (if (not (lookup-key (current-local-map) mime-edit-prefix))
+	(define-key (current-local-map) mime-edit-prefix mime-edit-mime-map))
 
     ;; Set transfer level into mode line
     ;;
