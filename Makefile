@@ -56,6 +56,12 @@ info: emy.info
 %.info: %.texi
 	makeinfo -o $@ $<
 
+texinfmt: emy.texi
+	$(EMACS) $(TEXINFMT) emy.texi $(TEXIF)
+
+xtexinfmt: emy.texi
+	$(XEMACS) $(TEXINFMT) emy.texi $(TEXIF)
+
 clean:
 	-$(RM) $(GOMI)
 

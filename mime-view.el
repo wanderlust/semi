@@ -64,9 +64,9 @@
 
 (defcustom mime-preview-move-scroll nil
   "*Decides whether to scroll when moving to next entity.
-When t, scroll the buffer. Non-nil but not t means scroll when
-the next entity is within next-screen-context-lines from top or
-buttom. Nil means don't scroll at all."
+When t, scroll the buffer.  Non-nil but not t means scroll when
+the next entity is within `next-screen-context-lines' from top or
+buttom.  Nil means don't scroll at all."
   :group 'mime-view
   :type '(choice (const :tag "Off" nil)
 		 (const :tag "On" t)
@@ -129,9 +129,9 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
   '((mime-show-message-mode     . binary)
     (mime-temp-message-mode     . binary)
     (t                          . cooked))
-  "Alist of major-mode vs. representation-type of mime-raw-buffer.
+  "Alist of `major-mode' vs. representation-type of mime-raw-buffer.
 Each element looks like (SYMBOL . REPRESENTATION-TYPE).  SYMBOL is
-major-mode or t.  t means default.  REPRESENTATION-TYPE must be
+`major-mode' or t.  t means default.  REPRESENTATION-TYPE must be
 `binary' or `cooked'.")
 
 
@@ -170,7 +170,7 @@ message/partial, it is called `mother-buffer'.")
 ;; (make-variable-buffer-local 'mime-raw-buffer)
 
 (defvar mime-preview-original-window-configuration nil
-  "Window-configuration before mime-view-mode is called.")
+  "Window-configuration before `mime-view-mode' is called.")
 (make-variable-buffer-local 'mime-preview-original-window-configuration)
 
 (defun mime-preview-original-major-mode (&optional recursive point)
@@ -790,7 +790,7 @@ Each elements are regexp of field-name.")
 	    i (1+ i)))))
 
 (defun mime-display-detect-application/octet-stream (entity situation)
-  "Detect unknown part and display it inline.
+  "Detect unknown ENTITY and display it inline.
 This can only handle gzipped contents."
   (or (and (mime-entity-filename entity)
 	   (string-match "\\.gz$" (mime-entity-filename entity))
@@ -798,7 +798,7 @@ This can only handle gzipped contents."
       (mime-display-text/plain entity situation)))
 
 (defun mime-display-gzipped (entity situation)
-  "Ungzip gzipped part and display"
+  "Ungzip gzipped part and display."
     (insert
      (with-temp-buffer
        (insert (mime-entity-content entity))
@@ -809,7 +809,7 @@ This can only handle gzipped contents."
     t)
 
 (defun mime-preview-inline ()
-  "View part as text without code conversion"
+  "View part as text without code conversion."
   (interactive)
   (let ((inhibit-read-only t)
 	(entity (get-text-property (point) 'mime-view-entity))
@@ -894,7 +894,7 @@ With prefix, it prompts for coding-system."
 	      
 
 (defun mime-preview-type ()
-  "View part as text without code conversion"
+  "View part as text without code conversion."
   (interactive)
   (let ((inhibit-read-only t)
 	(entity (get-text-property (point) 'mime-view-entity))
@@ -1045,20 +1045,20 @@ With prefix, it prompts for coding-system."
 (defvar mime-preview-quitting-method-alist
   '((mime-show-message-mode
      . mime-preview-quitting-method-for-mime-show-message-mode))
-  "Alist of major-mode vs. quitting-method of mime-view.")
+  "Alist of `major-mode' vs. quitting-method of mime-view.")
 
 (defvar mime-preview-over-to-previous-method-alist nil
-  "Alist of major-mode vs. over-to-previous-method of mime-view.")
+  "Alist of `major-mode' vs. over-to-previous-method of mime-view.")
 
 (defvar mime-preview-over-to-next-method-alist nil
-  "Alist of major-mode vs. over-to-next-method of mime-view.")
+  "Alist of `major-mode' vs. over-to-next-method of mime-view.")
 
 
 ;;; @ following method
 ;;;
 
 (defvar mime-preview-following-method-alist nil
-  "Alist of major-mode vs. following-method of mime-view.")
+  "Alist of `major-mode' vs. following-method of mime-view.")
 
 (defvar mime-view-following-required-fields-list
   '("From"))
@@ -1069,92 +1069,92 @@ With prefix, it prompts for coding-system."
 
 (defun mime-display-entity (entity &optional situation
 				   default-situation preview-buffer)
+  "Display mime-entity ENTITY."
   (or preview-buffer
       (setq preview-buffer (current-buffer)))
-  (let (e nb ne nhb nbb)
-    (mime-goto-header-start-point entity)
-    (in-calist-package 'mime-view)
-    (or situation
-	(setq situation
-	      (or (ctree-match-calist mime-preview-condition
-				      (append (mime-entity-situation entity)
-					      default-situation))
-		  default-situation)))
-    (let ((button-is-invisible
-	   (or (eq (cdr (assq 'entity-button situation)) 'invisible)
-	       (not (mime-view-entity-button-visible-p entity))))
-	   (header-is-visible
-	    (eq (cdr (assq 'header situation)) 'visible))
-	   (header-presentation-method
-	    (or (cdr (assq 'header-presentation-method situation))
-		(cdr (assq (cdr (assq 'major-mode situation))
-			   mime-header-presentation-method-alist))))
-	   (body-is-visible
-	    (eq (cdr (assq 'body situation)) 'visible))
-	   (body-presentation-method
-	    (cdr (assq 'body-presentation-method situation)))
-	   (children (mime-entity-children entity)))
-      ;; Check if attachment is specified.
-      ;; if inline is forced or not.
-      (unless (or (eq t mime-view-force-inline-types)
-		  (memq (mime-entity-media-type entity)
-			mime-view-force-inline-types)
-		  (memq (mime-view-entity-type/subtype entity)
-			 mime-view-force-inline-types)
-		   ;; whether Content-Disposition header exists.
-		  (not (mime-entity-content-disposition entity))
-		  (eq 'inline
-		      (mime-content-disposition-type
-		       (mime-entity-content-disposition entity))))
-	;; This is attachment
-	(setq header-is-visible nil
-	      body-is-visible nil))
-      (set-buffer preview-buffer)
-      (setq nb (point))
-      (save-restriction
-	(narrow-to-region nb nb)
-	(or button-is-invisible
-	    (if (mime-view-entity-button-visible-p entity)
-		(mime-view-insert-entity-button entity
-						;; work around composite type
-						(not (or children
-							 body-is-visible)))))
-	(when header-is-visible
-	  (setq nhb (point))
-	  (if header-presentation-method
-	      (funcall header-presentation-method entity situation)
-	    (mime-insert-header entity
-				mime-view-ignored-field-list
-				mime-view-visible-field-list))
-	  (run-hooks 'mime-display-header-hook)
-	  (put-text-property nhb (point-max) 'mime-view-entity-header entity)
-	  (goto-char (point-max))
-	  (insert "\n"))
-	(setq nbb (point))
-	(cond (children)
-	      ((and body-is-visible
-		    (functionp body-presentation-method))
-	       (funcall body-presentation-method entity situation))
-	      (t
-	       (when button-is-invisible
-		 (goto-char (point-max))
-		 (mime-view-insert-entity-button entity
-						 ;; work around composite type
-						 (not (or children
-							  body-is-visible))))
-	       (or header-is-visible
-		   (progn
-		     (goto-char (point-max))
-		     (insert "\n")))))
-	(setq ne (point-max)))
-      (put-text-property nb ne 'mime-view-entity entity)
-      (put-text-property nb ne 'mime-view-situation situation)
-      (put-text-property nbb ne 'mime-view-entity-body entity)
-      (goto-char ne)
-      (if children
-	  (if (functionp body-presentation-method)
-	      (funcall body-presentation-method entity situation)
-	    (mime-display-multipart/mixed entity situation))))))
+  (in-calist-package 'mime-view)
+  (or situation
+      (setq situation
+	    (or (ctree-match-calist mime-preview-condition
+				    (append (mime-entity-situation entity)
+					    default-situation))
+		default-situation)))
+  (let ((button-is-invisible
+	 (or (eq (cdr (assq 'entity-button situation)) 'invisible)
+	     (not (mime-view-entity-button-visible-p entity))))
+	(header-is-visible
+	 (eq (cdr (assq 'header situation)) 'visible))
+	(header-presentation-method
+	 (or (cdr (assq 'header-presentation-method situation))
+	     (cdr (assq (cdr (assq 'major-mode situation))
+			mime-header-presentation-method-alist))))
+	(body-is-visible
+	 (eq (cdr (assq 'body situation)) 'visible))
+	(body-presentation-method
+	 (cdr (assq 'body-presentation-method situation)))
+	(children (mime-entity-children entity))
+	e nb ne nhb nbb)
+    ;; Check if attachment is specified.
+    ;; if inline is forced or not.
+    (unless (or (eq t mime-view-force-inline-types)
+		(memq (mime-entity-media-type entity)
+		      mime-view-force-inline-types)
+		(memq (mime-view-entity-type/subtype entity)
+		      mime-view-force-inline-types)
+		;; whether Content-Disposition header exists.
+		(not (mime-entity-content-disposition entity))
+		(eq 'inline
+		    (mime-content-disposition-type
+		     (mime-entity-content-disposition entity))))
+      ;; This is attachment
+      (setq header-is-visible nil
+	    body-is-visible nil))
+    (set-buffer preview-buffer)
+    (setq nb (point))
+    (save-restriction
+      (narrow-to-region nb nb)
+      (or button-is-invisible
+	  (if (mime-view-entity-button-visible-p entity)
+	      (mime-view-insert-entity-button entity
+					      ;; work around composite type
+					      (not (or children
+						       body-is-visible)))))
+      (when header-is-visible
+	(setq nhb (point))
+	(if header-presentation-method
+	    (funcall header-presentation-method entity situation)
+	  (mime-insert-header entity
+			      mime-view-ignored-field-list
+			      mime-view-visible-field-list))
+	(run-hooks 'mime-display-header-hook)
+	(put-text-property nhb (point-max) 'mime-view-entity-header entity)
+	(goto-char (point-max))
+	(insert "\n"))
+      (setq nbb (point))
+      (cond (children)
+	    ((and body-is-visible
+		  (functionp body-presentation-method))
+	     (funcall body-presentation-method entity situation))
+	    (t
+	     (when button-is-invisible
+	       (goto-char (point-max))
+	       (mime-view-insert-entity-button entity
+					       ;; work around composite type
+					       (not (or children
+							body-is-visible))))
+	     (or header-is-visible
+		 (progn
+		   (goto-char (point-max))
+		   (insert "\n")))))
+      (setq ne (point-max)))
+    (put-text-property nb ne 'mime-view-entity entity)
+    (put-text-property nb ne 'mime-view-situation situation)
+    (put-text-property nbb ne 'mime-view-entity-body entity)
+    (goto-char ne)
+    (if children
+	(if (functionp body-presentation-method)
+	    (funcall body-presentation-method entity situation)
+	  (mime-display-multipart/mixed entity situation)))))
 
 
 ;;; @ MIME viewer mode
@@ -1173,7 +1173,7 @@ With prefix, it prompts for coding-system."
     (raw "View text without code conversion" mime-preview-inline)
     (text "View text with code conversion" mime-preview-text)
     (type "View internally as type" mime-preview-type))
-  "Menu for MIME Viewer")
+  "Menu for MIME Viewer.")
 
 (cond ((featurep 'xemacs)
        (defvar mime-view-xemacs-popup-menu
@@ -1400,8 +1400,7 @@ C-c C-p		Decode current content as `print mode'
 a		Followup to current content.
 q		Quit
 button-2	Move to point under the mouse cursor
-        	and decode current content as `play mode'
-"
+        	and decode current content as `play mode'"
   (interactive)
   (unless mime-view-redisplay
     (save-excursion

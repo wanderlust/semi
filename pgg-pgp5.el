@@ -31,29 +31,29 @@
   "PGP 5.* interface"
   :group 'pgg)
 
-(defcustom pgg-pgp5-pgpe-program "pgpe" 
+(defcustom pgg-pgp5-pgpe-program "pgpe"
   "PGP 5.* 'pgpe' executable."
   :group 'pgg-pgp5
   :type 'string)
 
-(defcustom pgg-pgp5-pgps-program "pgps" 
+(defcustom pgg-pgp5-pgps-program "pgps"
   "PGP 5.* 'pgps' executable."
   :group 'pgg-pgp5
   :type 'string)
 
-(defcustom pgg-pgp5-pgpk-program "pgpk" 
+(defcustom pgg-pgp5-pgpk-program "pgpk"
   "PGP 5.* 'pgpk' executable."
   :group 'pgg-pgp5
   :type 'string)
 
-(defcustom pgg-pgp5-pgpv-program "pgpv" 
+(defcustom pgg-pgp5-pgpv-program "pgpv"
   "PGP 5.* 'pgpv' executable."
   :group 'pgg-pgp5
   :type 'string)
 
 (defcustom pgg-pgp5-shell-file-name "/bin/sh"
-  "File name to load inferior shells from.  Bourne shell or its equivalent
-\(not tcsh) is needed for \"2>\"."
+  "File name to load inferior shells from.
+Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
   :group 'pgg-pgp5
   :type 'string)
 
@@ -63,7 +63,7 @@
   :type 'string)
 
 (defcustom pgg-pgp5-extra-args nil
-  "Extra arguments for every PGP invocation."
+  "Extra arguments for every PGP 5.* invocation."
   :group 'pgg-pgp5
   :type 'string)
 
@@ -71,7 +71,7 @@
   (luna-define-class pgg-scheme-pgp5 (pgg-scheme)))
 
 (defvar pgg-pgp5-user-id nil
-  "GnuPG ID of your default identity.")
+  "PGP 5.* ID of your default identity.")
 
 (defvar pgg-scheme-pgp5-instance nil)
 
@@ -83,10 +83,10 @@
 
 (defun pgg-pgp5-process-region (start end passphrase program args)
   (let* ((errors-file-name
-	  (concat temporary-file-directory 
+	  (concat temporary-file-directory
 		  (make-temp-name "pgg-errors")))
-	 (args 
-	  (append args 
+	 (args
+	  (append args
 		  pgg-pgp5-extra-args
 		  (list (concat "2>" errors-file-name))))
 	 (shell-file-name pgg-pgp5-shell-file-name)
@@ -131,7 +131,7 @@
       (if (and process (eq 'run (process-status process)))
 	  (interrupt-process process)))))
 
-(luna-define-method pgg-scheme-lookup-key ((scheme pgg-scheme-pgp5) 
+(luna-define-method pgg-scheme-lookup-key ((scheme pgg-scheme-pgp5)
 						  string &optional type)
   (let ((args (list "+language=en" "-l" string)))
     (with-current-buffer (get-buffer-create pgg-output-buffer)
@@ -140,64 +140,64 @@
       (apply #'call-process pgg-pgp5-pgpk-program nil t nil args)
       (goto-char (point-min))
       (when (re-search-forward "^sec" nil t)
-	(substring 
-	 (nth 2 (split-string 
+	(substring
+	 (nth 2 (split-string
 		 (buffer-substring (match-end 0)(progn (end-of-line)(point)))))
 	 2)))))
 
-(luna-define-method pgg-scheme-encrypt-region ((scheme pgg-scheme-pgp5) 
+(luna-define-method pgg-scheme-encrypt-region ((scheme pgg-scheme-pgp5)
 					       start end recipients)
   (let* ((pgg-pgp5-user-id (or pgg-pgp5-user-id pgg-default-user-id))
-	 (args 
+	 (args
 	  `("+NoBatchInvalidKeys=off" "-fat" "+batchmode=1"
 	    ,@(if recipients
-		  (apply #'append 
-			 (mapcar (lambda (rcpt) 
-				   (list "-r" 
-					 (concat "\"" rcpt "\""))) 
+		  (apply #'append
+			 (mapcar (lambda (rcpt)
+				   (list "-r"
+					 (concat "\"" rcpt "\"")))
 				 (append recipients
 					 (if pgg-encrypt-for-me
 					     (list pgg-pgp5-user-id)))))))))
     (pgg-pgp5-process-region start end nil pgg-pgp5-pgpe-program args)
     (pgg-process-when-success nil)))
 
-(luna-define-method pgg-scheme-decrypt-region ((scheme pgg-scheme-pgp5) 
+(luna-define-method pgg-scheme-decrypt-region ((scheme pgg-scheme-pgp5)
 					       start end)
   (let* ((pgg-pgp5-user-id (or pgg-pgp5-user-id pgg-default-user-id))
 	 (passphrase
-	  (pgg-read-passphrase 
+	  (pgg-read-passphrase
 	   (format "PGP passphrase for %s: " pgg-pgp5-user-id)
 	   (pgg-scheme-lookup-key scheme pgg-pgp5-user-id 'encrypt)))
-	 (args 
+	 (args
 	  '("+verbose=1" "+batchmode=1" "+language=us" "-f")))
     (pgg-pgp5-process-region start end passphrase pgg-pgp5-pgpv-program args)
     (pgg-process-when-success nil)))
 
-(luna-define-method pgg-scheme-sign-region ((scheme pgg-scheme-pgp5) 
+(luna-define-method pgg-scheme-sign-region ((scheme pgg-scheme-pgp5)
 					    start end &optional clearsign)
   (let* ((pgg-pgp5-user-id (or pgg-pgp5-user-id pgg-default-user-id))
 	 (passphrase
-	  (pgg-read-passphrase 
+	  (pgg-read-passphrase
 	   (format "PGP passphrase for %s: " pgg-pgp5-user-id)
 	   (pgg-scheme-lookup-key scheme pgg-pgp5-user-id 'sign)))
-	 (args 
+	 (args
 	  (list (if clearsign "-fat" "-fbat")
 		"+verbose=1" "+language=us" "+batchmode=1"
 		"-u" pgg-pgp5-user-id)))
     (pgg-pgp5-process-region start end passphrase pgg-pgp5-pgps-program args)
     (pgg-process-when-success
       (when (re-search-forward "^-+BEGIN PGP SIGNATURE" nil t);XXX
-	(let ((packet 
-	       (cdr (assq 2 (pgg-parse-armor-region 
+	(let ((packet
+	       (cdr (assq 2 (pgg-parse-armor-region
 			     (progn (beginning-of-line 2)
 				    (point))
 			     (point-max))))))
 	  (if pgg-cache-passphrase
-	      (pgg-add-passphrase-cache 
+	      (pgg-add-passphrase-cache
 	       (cdr (assq 'key-identifier packet))
 	       passphrase)))))))
 
-(luna-define-method pgg-scheme-verify-region ((scheme pgg-scheme-pgp5) 
+(luna-define-method pgg-scheme-verify-region ((scheme pgg-scheme-pgp5)
 					      start end &optional signature)
   (let* ((basename (expand-file-name "pgg" temporary-file-directory))
 	 (orig-file (make-temp-name basename))
@@ -221,7 +221,7 @@
 (luna-define-method pgg-scheme-insert-key ((scheme pgg-scheme-pgp5))
   (let* ((pgg-pgp5-user-id (or pgg-pgp5-user-id pgg-default-user-id))
 	 (args
-	  (list "+verbose=1" "+batchmode=1" "+language=us" "-x" 
+	  (list "+verbose=1" "+batchmode=1" "+language=us" "-x"
 		(concat "\"" pgg-pgp5-user-id "\""))))
     (pgg-pgp5-process-region (point)(point) nil pgg-pgp5-pgpk-program args)
     (insert-buffer-substring pgg-output-buffer)))
@@ -231,8 +231,8 @@
   (let* ((pgg-pgp5-user-id (or pgg-pgp5-user-id pgg-default-user-id))
 	 (basename (expand-file-name "pgg" temporary-file-directory))
 	 (key-file (make-temp-name basename))
-	 (args 
-	  (list "+verbose=1" "+batchmode=1" "+language=us" "-a" 
+	 (args
+	  (list "+verbose=1" "+batchmode=1" "+language=us" "-a"
 		key-file)))
     (write-region-as-raw-text-CRLF start end key-file)
     (pgg-pgp5-process-region start end nil pgg-pgp5-pgpk-program args)

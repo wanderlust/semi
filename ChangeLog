@@ -1,3 +1,24 @@
+2000-02-08  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* Makefile: (texinfmt, xtexinfmt): New rule to format Texinfo
+	file with Emacs and XEmacs.
+
+2000-02-07  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-edit.el: Fix doc string.
+	* mime-view.el: Ditto.
+	* pgg-gpg.el: Ditto.
+	* pgg-parse.el: Ditto.
+	* pgg-pgp.el: Ditto.
+	* pgg-pgp5.el: Ditto.
+	* pgg.el: Ditto.
+
+2000-02-07  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-display-entity): Don't call
+	mime-goto-header-start-point.  Clean up and remove redundant
+	let clause.
+
 2000-02-07  Yoshiki Hayashi  <t90553@mail.ecc.u-tokyo.ac.jp>
 
 	* EMY 1.13.2 is released.
