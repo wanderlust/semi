@@ -1,5 +1,9 @@
 1998-05-25  Katsumi Yamaoka   <yamaoka@jpl.org>
 
+	* mime-play.el (mime-preview-play-current-entity): Don't widen.
+
+1998-05-25  Katsumi Yamaoka   <yamaoka@jpl.org>
+
 	* mime-play.el (mime-raw-play-entity): Abolish point correcting
 	procedures for VM.
 	
