@@ -505,6 +505,11 @@ If encoding is nil, it is determined from its contents."
 (make-variable-buffer-local 'mime-transfer-level-string)
 
 
+;;; @@ about content transfer encoding
+
+(defvar mime-content-transfer-encoding-priority-list
+  '(nil "8bit" "binary"))
+
 ;;; @@ about message inserting
 ;;;
 
@@ -1957,8 +1962,12 @@ Content-Transfer-Encoding: 7bit
 	    (if encoding
 		(insert "Content-Transfer-Encoding: " encoding "\n"))
 	    (eword-encode-header)
-	    ))
-	t)))
+	    )
+	  (cons (and contype
+		     (downcase contype))
+		(and encoding
+		     (downcase encoding))))
+	)))
 
 (defun mime-edit-translate-region (beg end &optional boundary multipart)
   (or boundary
@@ -1994,22 +2003,26 @@ Content-Transfer-Encoding: 7bit
 	 (t
 	  ;; It's a multipart message.
 	  (goto-char (point-min))
-	  (and (mime-edit-translate-single-part-tag boundary)
-	       (while (mime-edit-translate-single-part-tag boundary "\n")))
-	  ;; Define Content-Type as "multipart/mixed".
-	  (setq contype
-		(concat "multipart/mixed;\n boundary=\"" boundary "\""))
-	  ;; Content-Transfer-Encoding must be "7bit".
-	  ;; The following encoding can be `nil', but is
-	  ;; specified as is since there is no way that a user
-	  ;; specifies it.
-	  (setq encoding "7bit")
-	  ;; Insert the trailer.
-	  (goto-char (point-max))
-	  (insert "\n--" boundary "--\n")
-	  ))
-	(list contype encoding boundary nparts)
-	))))
+	  (let ((prio mime-content-transfer-encoding-priority-list)
+		part-info nprio)
+	    (when (setq part-info
+			(mime-edit-translate-single-part-tag boundary))
+	      (and (setq nprio (member (cdr part-info) prio))
+		   (setq prio nprio))
+	      (while (setq part-info
+			   (mime-edit-translate-single-part-tag boundary "\n"))
+		(and (setq nprio (member (cdr part-info) prio))
+		     (setq prio nprio))))
+	    ;; Define Content-Type as "multipart/mixed".
+	    (setq contype
+		  (concat "multipart/mixed;\n boundary=\"" boundary "\""))
+	    (setq encoding (car prio))
+	    ;; Insert the trailer.
+	    (goto-char (point-max))
+	    (insert "\n--" boundary "--\n")
+	    )))
+	 (list contype encoding boundary nparts)
+	 ))))
 
 (defun mime-edit-normalize-body ()
   "Normalize the body part by inserting appropriate message tags."
