@@ -79,7 +79,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
   (let ((entity (get-text-property (point) 'mime-view-entity)))
     (if entity
 	(let ((the-buf (current-buffer))
-	      (raw-buffer (get-text-property (point) 'mime-view-raw-buffer)))
+	      (raw-buffer (mime-entity-buffer entity)))
 	  (setq mime-preview-after-decoded-position (point))
 	  (set-buffer raw-buffer)
 	  (mime-raw-play-entity entity mode)
