@@ -1,3 +1,9 @@
+2001-04-19  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-bbdb.el: Load "bbdb-hooks" when the symbol function
+	`bbdb-extract-field-value' is not bound or it is set up as an
+	autoloaded function. [cf. <emacs-mime-ja:799,842,843,844,845,846>]
+
 2001-04-17  YAMASHITA Junji   <ysjj@unixuser.org>
 
 	* semi-def.el (mime-browse-url-regexp): Allow https.
