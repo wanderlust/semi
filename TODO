@@ -4,8 +4,6 @@
 
 ** Better implementation for multipart/alternative
  
-** Change 'mime-acting-condition to condition-tree format
-
 ** dynamic configuration for 'mime-preview-condition
 
 ** mailcap support
