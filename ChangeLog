@@ -1,3 +1,85 @@
+1998-05-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-raw-dired-function): Don't refer
+	'mime/use-multi-frame.
+
+	* semi-def.el: Abolish variable 'mime/use-multi-frame.
+
+	* semi-def.el (mime-insert-button): Merge arguments of two
+	'insert.
+
+	* semi-def.el: Abolish function 'get-version-string because it is
+	not used.
+
+	* TODO (Don't use filter-model): New item.
+
+	* TODO (Fix problem of dynamic configuration for
+	'mime-acting-condition): Done.
+
+	* TODO (Mother entity should modify preview-situation of
+	children): Done.
+
+1998-05-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-setup-buffers): Use
+	'mime-view-display-entity; abolish 'mime-view-display-message.
+	(mime-view-display-entity): fixed.
+
+1998-05-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-message): fixed.
+
+1998-05-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-raw-get-subject): Use
+	'mime-content-disposition-filename.
+
+	* mime-parse.el (mime-content-type-parameter): New function.
+
+	* mime-parse.el (mime-content-disposition-parameter): New
+	function.
+	(mime-content-disposition-filename): New function.
+
+1998-05-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-raw-get-original-filename): Abolish optional
+	argument 'encoding; modify for 'mime-raw-get-uu-filename.
+
+	* mime-view.el (mime-raw-get-uu-filename): Change interface; don't
+	check encoding.
+	(mime-raw-get-subject): Change interface; new implementation.
+
+1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-entity): fixed.
+
+	* mime-parse.el (mime-parse-multipart): Change interface.
+
+1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el (make-mime-entity): Add 'content-disposition.
+	(mime-entity-content-disposition): New function.
+	(mime-parse-multipart): Modify for 'make-mime-entity.
+	(mime-parse-message): Modify for 'make-mime-entity.
+
+1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-raw-play-entity): Don't use
+	'mime-entity-media-type, 'mime-entity-media-subtype and
+	'mime-entity-parameters.
+
+1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-entity): Don't use
+	'mime-entity-media-type, 'mime-entity-media-subtype and
+	'mime-entity-parameters.
+
+1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-message): Don't use
+	'mime-entity-media-type, 'mime-entity-media-subtype and
+	'mime-entity-parameters.
+
 1998-05-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-setup.el: Avoid warning message of byte-compiler.

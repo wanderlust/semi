@@ -1,11 +1,11 @@
-;;; semi-def.el --- definition module for SEMI
+;;; semi-def.el --- definition module for REMI
 
 ;; Copyright (C) 1995,1996,1997,1998 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Keywords: definition, MIME, multimedia, mail, news
 
-;; This file is part of SEMI (Spadework for Emacs MIME Interfaces).
+;; This file is part of REMI (Radical Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -34,13 +34,6 @@
 
 (autoload 'mule-caesar-region "mule-caesar"
   "Caesar rotation of current region." t)
-
-
-;;; @ variables
-;;;
-
-(defvar mime/use-multi-frame
-  (and (>= emacs-major-version 19) window-system))
 
 
 ;;; @ constants
@@ -75,21 +68,13 @@
     (add-text-properties from to (list 'mime-button-callback function))
     (and data
 	 (add-text-properties from to (list 'mime-button-data data)))
-    ;;(add-text-properties from to (list 'keymap widget-keymap))
     ))
 
 (defsubst mime-insert-button (string function &optional data)
   "Insert STRING as button with callback FUNCTION and DATA."
   (save-restriction
     (narrow-to-region (point)(point))
-    (insert (concat "[" string "]"))
-    ;; (widget-push-button-value-create
-    ;;  (widget-convert 'push-button
-    ;;                  :notify (lambda (&rest ignore)
-    ;;                            (mime-preview-play-current-entity)
-    ;;                            )
-    ;;                  string))
-    (insert "\n")
+    (insert (concat "[" string "]\n"))
     (mime-add-button (point-min)(point-max) function data)
     ))
 
@@ -105,8 +90,7 @@
 	    point (point)
 	    func (get-text-property (point) 'mime-button-callback)
 	    data (get-text-property (point) 'mime-button-data)
-	    )
-      )
+	    ))
     (save-excursion
       (set-buffer buf)
       (goto-char point)
@@ -185,8 +169,7 @@ FUNCTION.")
 
 (defmacro pgp-function (method)
   "Return function to do service METHOD."
-  `(cadr (assq ,method (symbol-value 'pgp-function-alist)))
-  )
+  `(cadr (assq ,method (symbol-value 'pgp-function-alist))))
 
 (mapcar (function
 	 (lambda (method)
@@ -260,16 +243,6 @@ FUNCTION.")
 	 (concat "^" (apply (function regexp-or) fields) ":"))
     (set sym fields)
     ))
-
-
-;;; @ RCS version
-;;;
-
-(defsubst get-version-string (id)
-  "Return a version-string from RCS ID."
-  (and (string-match ",v \\([0-9][0-9.][0-9.]+\\)" id)
-       (substring id (match-beginning 1)(match-end 1))
-       ))
 
 
 ;;; @ Other Utility

@@ -2,7 +2,7 @@
 # Makefile for SEMI kernel.
 #
 
-VERSION = 1.4.4
+VERSION = 1.4.5
 PACKAGE = semi
 
 SHELL	= /bin/sh
