@@ -550,17 +550,75 @@ Each elements are regexp of field-name.")
     (narrow-to-region (point-max)(point-max))
     (let ((contents (string-as-unibyte (mime-entity-content entity)))
 	  (p 0) l
-	  petname owner pettype from)
-      (setq p (+ p 30))
+	  petname owner pettype from
+	  carryingcount sentyear sentmonth sentday
+	  petbirthyear petbirthmonth petbirthday
+	  )
+      (setq p (+ p 4))
+      (setq carryingcount
+	    (+ (   char-int (aref contents (1+ (1+ (1+ p)))))
+	       (* 256 (char-int (aref contents (1+ (1+ p)))))
+	       (* 256 256 (char-int (aref contents (1+ p))))
+	       (* 256 256 256 (char-int (aref contents p)))
+	       )
+	    )
+      (setq p (+ p 4))
+      (setq p (+ p 8))
+      (setq sentyear
+	    (+ (   char-int (aref contents (1+ p)))
+	       (* 256 (char-int (aref contents p)))
+	       )
+	    )
+      (setq p (+ p 2))
+      (setq sentmonth
+	    (+ (   char-int (aref contents (1+ p)))
+	       (* 256 (char-int (aref contents p)))
+	       )
+	    )
+      (setq p (+ p 2))
+      (setq sentday
+	    (+ (   char-int (aref contents (1+ p)))
+	       (* 256 (char-int (aref contents p)))
+	       )
+	    )
+      (setq p (+ p 2))
+      (setq p (+ p 8))
       (setq petname (decode-mime-charset-string (substring contents (1+ p) (setq p (+ p 1 (char-int (aref contents p))))) 'shift_jis))
       (setq owner (decode-mime-charset-string (substring contents (1+ p) (setq p (+ p 1 (char-int (aref contents p))))) 'shift_jis))
       (setq pettype (substring contents p (setq p (+ p 4))))
-      (setq p (+ p 78))
+      (setq p (+ p 64))
+      (setq petbirthyear
+	    (+ (   char-int (aref contents (1+ p)))
+	       (* 256 (char-int (aref contents p)))
+	       )
+	    )
+      (setq p (+ p 2))
+      (setq petbirthmonth
+	    (+ (   char-int (aref contents (1+ p)))
+	       (* 256 (char-int (aref contents p)))
+	       )
+	    )
+      (setq p (+ p 2))
+      (setq petbirthday
+	    (+ (   char-int (aref contents (1+ p)))
+	       (* 256 (char-int (aref contents p)))
+	       )
+	    )
+      (setq p (+ p 2))
+      (setq p (+ p 8))
       (setq from (substring contents (1+ p) (setq p (+ p 1 (char-int (aref contents p))))))
       (insert "Petname: " petname "\n"
 	      "Owner: " owner "\n"
 	      "Pettype: " pettype "\n"
-	      "From: " from "\n")
+	      "From: " from "\n"
+	      "CarryingCount: " (int-to-string carryingcount) "\n"
+	      "SentYaer: " (int-to-string sentyear) "\n"
+	      "SentMonth: " (int-to-string sentmonth) "\n"
+	      "Sentday: " (int-to-string sentday) "\n"
+	      "PetbirthYear: " (int-to-string petbirthyear) "\n"
+	      "PetbirthMonth: " (int-to-string petbirthmonth) "\n"
+	      "PetbirthDay: " (int-to-string petbirthday) "\n"
+	      )
       (run-hooks 'mime-display-application/x-postpet-hook))))
 
 (defvar mime-view-announcement-for-message/partial
