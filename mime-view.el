@@ -350,7 +350,7 @@ message/partial, it is called `mother-buffer'.")
 
 (defvar mime-preview-quitting-method-alist
   '((mime-show-message-mode
-     . mime-view-quitting-method-for-mime-show-message-mode))
+     . mime-preview-quitting-method-for-mime-show-message-mode))
   "Alist of major-mode vs. quitting-method of mime-view.")
 
 (defvar mime-view-over-to-previous-method-alist nil)

@@ -289,7 +289,7 @@ window.")
 ;;; @ mail/news message
 ;;;
 
-(defun mime-view-quitting-method-for-mime-show-message-mode ()
+(defun mime-preview-quitting-method-for-mime-show-message-mode ()
   "Quitting method for mime-view.
 It is registered to variable `mime-preview-quitting-method-alist'."
   (let ((mother mime-mother-buffer)
