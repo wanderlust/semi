@@ -900,22 +900,21 @@ The compressed face will be piped to this command.")
 
 (defun mime-raw-get-subject (entity)
   (or (std11-find-field-body '("Content-Description" "Subject"))
-      (let ((ret
-	     (or
-	      (let ((ret (mime-entity-content-disposition entity)))
-		(and ret
-		     (assoc "filename"
-			    (mime-content-disposition-parameters ret))
-		     ))
-	      (let ((param (mime-content-type-parameters
-			    (mime-entity-content-type entity))))
-		(or (assoc "name" param)
-		    (assoc "x-name" param))
-		)
-	      )))
-	(if ret
-	    (std11-strip-quoted-string (cdr ret))
-	  ))
+      (let ((ret (mime-entity-content-disposition entity)))
+	(and ret
+	     (setq ret (mime-content-disposition-filename ret))
+	     (std11-strip-quoted-string ret)
+	     ))
+      (let ((ret (mime-entity-content-type entity)))
+	(and ret
+	     (setq ret
+		   (cdr
+		    (let ((param (mime-content-type-parameters ret)))
+		      (or (assoc "name" param)
+			  (assoc "x-name" param))
+		      )))
+	     (std11-strip-quoted-string ret)
+	     ))
       (if (member (mime-entity-encoding entity)
 		  mime-view-uuencode-encoding-name-list)
 	  (mime-raw-get-uu-filename))
