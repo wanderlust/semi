@@ -32,6 +32,32 @@
 
 (eval-when-compile (require 'mime-text))
 
+
+(defvar mime-acting-situation-examples nil)
+
+(defun mime-save-acting-situation-examples ()
+  (let* ((file mime-acting-situation-examples-file)
+	 (buffer (get-buffer-create " *mime-example*")))
+    (unwind-protect
+        (save-excursion
+          (set-buffer buffer)
+          (setq buffer-file-name file)
+          (erase-buffer)
+          (insert ";;; " (file-name-nondirectory file) "\n")
+          (insert "\n;; This file is generated automatically by "
+                  mime-view-version-string "\n\n")
+	  (insert ";;; Code:\n\n")
+	  (pp `(setq mime-acting-situation-examples
+		     ',mime-acting-situation-examples)
+	      (current-buffer))
+	  (insert "\n;;; "
+                  (file-name-nondirectory file)
+                  " ends here.\n")
+          (save-buffer))
+      (kill-buffer buffer))))
+
+(add-hook 'kill-emacs-hook 'mime-save-acting-situation-examples)
+
   
 ;;; @ content decoder
 ;;;
@@ -57,8 +83,6 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	    (set-buffer the-buf)
 	    (goto-char mime-preview-after-decoded-position)
 	    )))))
-
-(defvar mime-acting-situation-examples nil)
 
 (defun mime-raw-play-entity (entity-info &optional mode)
   "Play entity specified by ENTITY-INFO.
