@@ -98,17 +98,16 @@
 			      signature-file-name
 			      nil)
 	    (signature/get-signature-file-name)))))
-    (save-excursion
-      (if (file-readable-p signature)
-	  (progn
-	    (goto-char (point-max))
-	    (if (not (bolp))
-		(insert "\n"))
-	    (delete-blank-lines)
-	    (insert-file-contents signature)
-	    (set-buffer-modified-p (buffer-modified-p))
+    (if (file-readable-p signature)
+	(progn
+	  (goto-char (point-max))
+	  (if (not (bolp))
+	      (insert "\n"))
+	  (delete-blank-lines)
+	  (insert-file-contents signature)
+	  (set-buffer-modified-p (buffer-modified-p))
 					; force mode line update
-	    )))
+	  ))
     signature))
 
 (defun insert-signature (&optional arg)
