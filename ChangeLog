@@ -1,3 +1,7 @@
+2002-07-08  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* SEMI: Version 1.14.4 (Hosorogi) released.
+
 2001-08-10  Kenichi OKADA <okada@opaopa.org>
 
 	* semi-def.el (mime-browse-url-regexp): Allow nntps and ftps.
@@ -89,7 +93,7 @@
 
 2000-12-25  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
-	* SEMI: Version 1.14.2 (Daish-Dòji)-A released.
+	* SEMI: Version 1.14.2 (Daish,Dr(Bji) released.
 
 	* README.en (Required environment): Update to FLIM 1.14.2.
 
@@ -1490,7 +1494,7 @@
 
 1999-09-13  Katsumi Yamaoka   <yamaoka@jpl.org>
 
-	* WEMI: Version 1.13.6 (Rokug-Dr) released.
+	* WEMI: Version 1.13.6 (Rokug,Dr(B) released.
 
 1999-08-31  Katsumi Yamaoka   <yamaoka@jpl.org>
 
@@ -2413,7 +2417,7 @@
 
 1998-07-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* REMI: Version 1.8.3 (Ecch-D~-Nakagawa) released.
+	* REMI: Version 1.8.3 (Ecch,D~(B-Nakagawa) released.
 
 	* mime-play.el (mime-delq-null-situation): Add new optional
 	argument `ignored-value'.
@@ -2442,7 +2446,7 @@
 
 1998-07-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* REMI: Version 1.8.2 (N-Drmachi) released.
+	* REMI: Version 1.8.2 (N,Dr(Bmachi) released.
 
 1998-07-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -2563,7 +2567,7 @@
 
 1998-06-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* REMI: Version 1.8.0 (Ecch-D~-Kokubu) released.
+	* REMI: Version 1.8.0 (Ecch,D~(B-Kokubu) released.
 
 1998-06-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -3459,7 +3463,7 @@
 
 1998-06-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* WEMI: Version 1.4.6 (K-Drzu) released.
+	* WEMI: Version 1.4.6 (K,Dr(Bzu) released.
 
 1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -3608,7 +3612,7 @@
 
 1998-05-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* WEMI: Version 1.4.4 (-DRiso) released.
+	* WEMI: Version 1.4.4 (,DR(Biso) released.
 
 1998-05-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -3799,7 +3803,7 @@
 
 1998-05-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* WEMI: Version 1.4.1 (Tsujid-Dr) was released.
+	* WEMI: Version 1.4.1 (Tsujid,Dr(B) was released.
 
 	* README.en (Required environment): Modify for FLIM 1.2.0.
 
@@ -3903,7 +3907,7 @@
 
 1998-05-02  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* WEMI: Version 1.3.1 (-DRfuna) was released.
+	* WEMI: Version 1.3.1 (,DR(Bfuna) was released.
 
 1998-05-02  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -4170,7 +4174,7 @@
 
 1998-04-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* WEMI: Version 1.2.0 (T-Drkyr) was released.
+	* WEMI: Version 1.2.0 (T,Dr(Bky,Dr(B) was released.
 
 	* README.en: Modify for WEMI.
 
@@ -4638,7 +4642,7 @@
 
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.2 (Nonoichi-K-Drdaimae) was released.
+	* SEMI: Version 1.0.2 (Nonoichi-K,Dr(Bdaimae) was released.
 
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -4721,7 +4725,7 @@
 	* mime-file.el: Rename `mime-article/extract-file' ->
 	`mime-extract-current-entity'.
 
-1998-03-03  Fran-Agois Pinard   <pinard@iro.umontreal.ca>
+1998-03-03  Fran,Ag(Bois Pinard   <pinard@iro.umontreal.ca>
 
 	* mime-edit.el (mime-edit-insert-signature): Function
  	`mime-edit-insert-tag' is sometimes called with more arguments
@@ -4750,7 +4754,7 @@
 
 1998-02-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.0 (Nukaj-D~taku-mae) was released.
+	* SEMI: Version 1.0.0 (Nukaj,D~(Btaku-mae) was released.
 
 	* SEMI-ELS: Remove mime-tar.el.
 
@@ -4887,14 +4891,14 @@
 
 1997-11-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.116 (D-Drhrji) was released.
+	* SEMI: Version 0.116 (D,Dr(Bh,Dr(Bji) was released.
 
 1997-11-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el, mime-pgp.el, mime-partial.el: Rename
 	`mime::article/content-info' -> `mime-raw-content-info'.
 
-1997-11-11  Fran-Agois Pinard   <pinard@iro.umontreal.ca>
+1997-11-11  Fran,Ag(Bois Pinard   <pinard@iro.umontreal.ca>
 
 	* mime-edit.el: Modify space in prompt and removespurious trailing
 	spaces in the files. (cf. [tm-en:1507])
