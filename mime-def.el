@@ -25,7 +25,6 @@
 
 ;;; Code:
 
-(require 'cl)
 (require 'emu)
 
 (defconst semi-version-name "Hinomiko")
