@@ -207,9 +207,13 @@ If is is not found, return DEFAULT-ENCODING."
   (mime-type/subtype-string (mime-entity-media-type entity-info)
 			    (mime-entity-media-subtype entity-info)))
 
-(defun mime-parse-multipart (boundary content-type encoding node-id)
+(defun mime-parse-multipart (content-type content-disposition encoding node-id)
   (goto-char (point-min))
-  (let* ((dash-boundary   (concat "--" boundary))
+  (let* ((dash-boundary
+	  (concat "--"
+		  (std11-strip-quoted-string
+		   (cdr (assoc "boundary"
+			       (mime-content-type-parameters content-type))))))
 	 (delimiter       (concat "\n" (regexp-quote dash-boundary)))
 	 (close-delimiter (concat delimiter "--[ \t]*$"))
 	 (beg (point-min))
@@ -251,7 +255,8 @@ If is is not found, return DEFAULT-ENCODING."
       (setq children (cons ret children))
       )
     (make-mime-entity node-id beg (point-max)
-		      content-type nil encoding (nreverse children))
+		      content-type content-disposition encoding
+		      (nreverse children))
     ))
 
 (defun mime-parse-message (&optional default-ctl default-encoding node-id)
@@ -261,18 +266,16 @@ field.  Its format must be as same as return value of
 mime-{parse|read}-Content-Type."
   (let* ((content-type (or (mime-read-Content-Type) default-ctl))
 	 (content-disposition (mime-read-Content-Disposition))
-	 (encoding (mime-read-Content-Transfer-Encoding default-encoding))
-	 (boundary (assoc "boundary"
-			  (mime-content-type-parameters content-type))))
-    (cond (boundary
-	   (setq boundary (std11-strip-quoted-string (cdr boundary)))
-	   (mime-parse-multipart boundary content-type encoding node-id)
+	 (primary-type (mime-content-type-primary-type content-type))
+	 (encoding (mime-read-Content-Transfer-Encoding default-encoding)))
+    (cond ((eq primary-type 'multipart)
+	   (mime-parse-multipart content-type content-disposition encoding
+				 node-id)
 	   )
-	  ((and (eq (mime-content-type-primary-type content-type)
-		    'message)
+	  ((and (eq primary-type 'message)
 		(memq (mime-content-type-subtype content-type)
-		      '(rfc822 news))
-		)
+		      '(rfc822 news)
+		      ))
 	   (goto-char (point-min))
 	   (make-mime-entity node-id (point-min) (point-max)
 			     content-type content-disposition encoding
