@@ -435,22 +435,6 @@ Each elements are regexp of field-name. [mime-edit.el]")
 	 ))
     ))
 
-(defvar mime-editor/window-config-alist
-  '((mail-mode       . nil)
-    (mh-letter-mode  . mh-previous-window-config)
-    (news-reply-mode . (cond ((boundp 'gnus-winconf-post-news)
-			      (prog1
-				  gnus-winconf-post-news
-				(setq gnus-winconf-post-news nil)
-				))
-			     ((boundp 'gnus-prev-winconf)
-			      (prog1
-				  gnus-prev-winconf
-				(setq gnus-prev-winconf nil)
-				))
-			     ))
-    ))
-
 (defvar mime-editor/news-reply-mode-server-running nil)
 
 
@@ -2336,8 +2320,6 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	      (make-temp-name
 	       (expand-file-name "tm-draft" mime/tmp-dir))))
 	 (separator mail-header-separator)
-	 (config
-	  (eval (cdr (assq major-mode mime-editor/window-config-alist))))
 	 (id (concat "\""
 		     (replace-space-with-underline (current-time-string))
 		     "@" (system-name) "\"")))
