@@ -1,13 +1,12 @@
 ;;; mailcap.el --- mailcap parser
 
-;; Copyright (C) 1997 Free Software Foundation, Inc.
+;; Copyright (C) 1997,1998 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Created: 1997/6/27
-;; Version: $Id$
 ;; Keywords: mailcap, setting, configuration, MIME, multimedia
 
-;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
+;; This file is part of SEMI (Spadework for Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
