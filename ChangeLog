@@ -1,5 +1,7 @@
 1999-11-06   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* pgg.el (pgg-sign-region): Add optional argument `cleartext'.
+
 	* mime-ui-en.sgml, mime-ui-ja.sgml: Remove description about
 	`pgp-functions-alist' and `pgp-function'; add description about
 	`pgg-default-scheme' and `pgg-scheme'.
