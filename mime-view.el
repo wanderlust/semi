@@ -765,6 +765,12 @@ The compressed face will be piped to this command.")
     ;;   ">"        (function end-of-buffer))
     (define-key mime-view-mode-map
       "?"        (function describe-mode))
+    (define-key mime-view-mode-map
+      [tab] (function mime-view-move-to-next))
+    (define-key mime-view-mode-map
+      [delete] (function mime-view-scroll-down-entity))
+    (define-key mime-view-mode-map
+      [backspace] (function mime-view-scroll-down-entity))
     (if (functionp default)
 	(cond (running-xemacs
 	       (set-keymap-default-binding mime-view-mode-map default)
