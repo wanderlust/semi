@@ -1241,9 +1241,7 @@ keymap of MIME-View mode."
 	(setq preview-buffer
 	      (concat "*Preview-" (mime-entity-name message) "*")))
     (or original-major-mode
-	(setq original-major-mode
-	      (with-current-buffer (mime-entity-header-buffer message)
-		major-mode)))
+	(setq original-major-mode major-mode))
     (let ((inhibit-read-only t))
       (set-buffer (get-buffer-create preview-buffer))
       (widen)
