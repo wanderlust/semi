@@ -1,3 +1,8 @@
+2002-10-26  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* mime-view.el (mime-preview-find-boundary-info): Fix logic. Do not
+	refer next to next part before examining the next part.
+
 2002-08-28  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-edit.el (mime-edit-user-agent-value): Add

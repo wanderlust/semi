@@ -1473,6 +1473,8 @@ button-2	Move to point under the mouse cursor
 ;;;
 
 (defun mime-preview-find-boundary-info (&optional get-mother)
+  "Return boundary information of current part.
+If GET-MOTHER, refer boundary surrounding current part and its branches."
   (let (entity
 	p-beg p-end
 	entity-node-id len)
@@ -1503,7 +1505,6 @@ button-2	Move to point under the mouse cursor
 	   )
 	  (get-mother
 	   (save-excursion
-	     (goto-char p-end)
 	     (catch 'tag
 	       (let (e i)
 		 (while (setq e
@@ -1511,12 +1512,14 @@ button-2	Move to point under the mouse cursor
 			       (point) 'mime-view-entity))
 		   (goto-char e)
 		   (let ((rc (mime-entity-node-id
-			      (get-text-property (1- (point))
+			      (get-text-property (point)
 						 'mime-view-entity))))
 		     (or (and (>= (setq i (- (length rc) len)) 0)
 			      (equal entity-node-id (nthcdr i rc)))
 			 (throw 'tag nil)))
-		   (setq p-end e)))
+		   (setq p-end (or (next-single-property-change
+				    (point) 'mime-view-entity)
+				   (point-max)))))
 	       (setq p-end (point-max))))
 	   ))
     (vector p-beg p-end entity)))
