@@ -1,5 +1,17 @@
 1999-11-05   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* pgg-gpg.el, pgg-pgp.el, pgg-pgp5.el (snarf-keys-region):
+	Use `pgg-process-when-success'.
+
+	* pgg.el (pgg-encrypt-region): Add autoload cookie.
+	(pgg-decrypt-region): Ditto.
+	(pgg-sign-region): Ditto.
+	(pgg-verify-region): Don't modify the buffer; add autload cookie.
+	(pgg-snarf-keys-region): Add interactive spec; add autload cookie.
+	(pgg-insert-key): Add interactive spec; add autload cookie.
+
+1999-11-05   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
 	* pgg-gpg.el (pgg-gpg-shell-command-switch): New user option.
 	(pgg-gpg-process-region): Bind `shell-command-switch' to the value
 	of `pgg-gpg-shell-command-switch'.
