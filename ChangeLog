@@ -1,3 +1,15 @@
+2000-12-26   Daiki Ueno  <ueno@unixuser.org>
+
+	* pgg-def.el (pgg-messages-coding-system): Use `defvar' to define.
+
+	* pgg-pgp.el (pgg-pgp-messages-coding-system): Abolish.
+	(pgg-pgp-process-region): Use `binary-funcall' instead of
+	`binary-to-text-funcall'.
+
+	* pgg-pgp5.el (pgg-pgp5-messages-coding-system): Abolish.
+	(pgg-pgp5-process-region): Use `binary-funcall' instead of
+	`binary-to-text-funcall'.
+
 2000-12-25  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
 	* SEMI: Version 1.14.2 (Daish-Dòji)-A released.
