@@ -661,7 +661,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
  'mime-acting-condition
  '((type . application)(subtype . octet-stream)
    (mode . "play")
-   (method . mime-method-to-detect)
+   (method . mime-detect-content)
    ))
 
 (ctree-set-calist-with-default

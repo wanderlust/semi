@@ -420,7 +420,7 @@ REGEXP is pattern for \"file\" command output.
 TYPE is symbol to indicate primary type of media-type.
 SUBTYPE is symbol to indicate subtype of media-type.")
 
-(defun mime-method-to-detect (entity situation)
+(defun mime-detect-content (entity situation)
   (let ((beg (mime-entity-point-min entity))
 	(end (mime-entity-point-max entity)))
     (goto-char beg)
