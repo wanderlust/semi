@@ -781,12 +781,11 @@ Each elements are regexp of field-name.")
 (defvar mime-view-announcement-for-message/partial
   (if (and (>= emacs-major-version 19) window-system)
       "\
-\[[ This is message/partial style split message. ]]
-\[[ Please press `v' key in this buffer          ]]
-\[[ or click here by mouse button-2.             ]]"
+This is message/partial style split message.
+Please press `v' key in this buffer or click here by mouse button-2."
     "\
-\[[ This is message/partial style split message. ]]
-\[[ Please press `v' key in this buffer.         ]]"))
+This is message/partial style split message.
+Please press `v' key in this buffer."))
 
 (defun mime-display-message/partial-button (&optional entity situation)
   (save-restriction
@@ -794,10 +793,12 @@ Each elements are regexp of field-name.")
     (if (not (search-backward "\n\n" nil t))
 	(insert "\n"))
     (goto-char (point-max))
-    (narrow-to-region (point-max)(point-max))
-    (insert mime-view-announcement-for-message/partial)
-    (mime-add-button (point-min)(point-max)
-		     #'mime-preview-play-current-entity)))
+    ;;(narrow-to-region (point-max)(point-max))
+    ;;(insert mime-view-announcement-for-message/partial)
+    ;; (mime-add-button (point-min)(point-max)
+    ;;                  #'mime-preview-play-current-entity)
+    (mime-insert-button mime-view-announcement-for-message/partial
+			#'mime-preview-play-current-entity)))
 
 (defun mime-display-multipart/mixed (entity situation)
   (let ((children (mime-entity-children entity))
@@ -977,8 +978,8 @@ With prefix, it prompts for coding-system."
       (while (setq point (next-single-property-change
 			  (point) 'mime-view-entity))
 	(goto-char point)
-	(unless (get-text-property (point) 'mime-button-callback)
-	  (mime-preview-toggle-button))))))
+	(unless (get-text-property (point) 'mime-button)
+	  (mime-preview-toggle-button t))))))
 
 (defun mime-preview-unbuttonize ()
   (interactive)
@@ -988,8 +989,8 @@ With prefix, it prompts for coding-system."
       (while (setq point (next-single-property-change
 			  (point) 'mime-view-entity))
 	(goto-char point)
-	(when (get-text-property (point) 'mime-button-callback)
-	  (mime-preview-toggle-button))))))
+	(when (get-text-property (point) 'mime-button)
+	  (mime-preview-toggle-button 'hide))))))
 	  
 
 ;;; @ acting-condition
@@ -1513,7 +1514,7 @@ It calls following-method selected from variable
 				entity))
 		   (get-text-property
 		    (next-single-property-change
-		     (car position) 'mime-button-callback
+		     (car position) 'mime-button
 		     nil (point-max))
 		    'mime-view-entity-header))))
     (let* ((mode (mime-preview-original-major-mode 'recursive))
@@ -1693,7 +1694,8 @@ If reached to (point-max), it calls function registered in variable
 	  (progn (goto-char point)
 		 (recenter next-screen-context-lines))
 	(condition-case nil
-	    (scroll-up h)
+	    (let (window-pixel-scroll-increment)
+	      (scroll-up h))
 	  (end-of-buffer
 	   (goto-char (point-max))))))))
 
@@ -1717,7 +1719,8 @@ If reached to (point-min), it calls function registered in variable
 	  (progn (goto-char point)
 		 (recenter (* -1 next-screen-context-lines)))
 	(condition-case nil
-	    (scroll-down h)
+	    (let (window-pixel-scroll-increment)
+	      (scroll-down h))
 	  (beginning-of-buffer
 	   (goto-char (point-min))))))))
 
@@ -1852,9 +1855,10 @@ When prefix is given, it always displays the content."
       (delete-region (car position) (cdr position))
       (mime-display-entity entity situation))))
 
-(defun mime-preview-toggle-button (&optional show)
+(defun mime-preview-toggle-button (&optional condition)
   "Toggle display of entity button.
-When prefix is given, it always displays the content."
+When prefix is given, it always displays the content.
+If condition is 'hide, hide all buttons."
   (interactive "P")
   (let ((inhibit-read-only t)
 	(mime-view-force-inline-types t)
@@ -1865,13 +1869,14 @@ When prefix is given, it always displays the content."
 	  button-is-visible (mime-view-button-is-visible situation))
     (save-excursion
       (delete-region (car position) (cdr position))
-      (if (or show (not button-is-visible))
+      (if (or (eq condition 'hide)
+	      (and (not condition) button-is-visible))
 	  (mime-display-entity entity
 			       (put-alist '*entity-button
-					  'visible situation))
+					  'invisible situation))
 	(mime-display-entity entity
 			     (put-alist '*entity-button
-					'invisible situation))))))
+					'visible situation))))))
 
 ;;; @@ quitting
 ;;;

@@ -1,3 +1,15 @@
+2000-05-22  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el: Merge WEMY.
+	* semi-def.el: Ditto.
+
+	* mime-view.el (mime-preview-toggle-button): Force hiding
+	a button when condition is 'hide.
+	(mime-preview-buttonize): Don't toggle button.
+	(mime-preview-unbuttonize): Ditto.
+
+	* semi-def.el (mime-use-widget): New variable.
+
 2000-05-17  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* EMY 1.13.6 is released.

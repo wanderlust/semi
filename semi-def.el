@@ -25,9 +25,7 @@
 ;;; Code:
 
 (require 'poe)
-
 (eval-when-compile (require 'cl))
-
 (require 'custom)
 
 (defconst mime-user-interface-product ["EMY" (1 13 6) "Life is balance"]
@@ -35,6 +33,8 @@
 
 (autoload 'mule-caesar-region "mule-caesar"
   "Caesar rotation of current region." t)
+
+(autoload 'widget-convert-button "wid-edit")
 
 
 ;;; @ constants
@@ -59,6 +59,121 @@
   :group 'mime
   :type 'face)
 
+(defcustom mime-use-widget nil
+  "If t, use widget to display buttons."
+  :group 'mime
+  :type 'boolean)
+
+(defun mime-create-widget-button (string function)
+  "Display STRING as a widget button with the callback FUNCTION.
+Under XEmacs, the function `mime-create-xpm-button' might be identical
+to the function `mime-create-widget-button' if the feature `xpm' is not
+provided or the TTY frame is used."
+  (let ((start (point)))
+    (widget-create
+     'push-button
+     :action `(lambda (widget &optional event) (,function))
+     :mouse-down-action `(lambda (widget event)
+			   (let (buf point)
+			     (save-window-excursion
+			       (mouse-set-point event)
+			       (setq buf (current-buffer)
+				     point (point)))
+			     (save-excursion
+			       (set-buffer buf)
+			       (goto-char point)
+			       (,function))))
+     string)
+    ;; #### ???
+;;    (static-when (featurep 'xemacs)
+;;      (let ((end (point))
+;;	    extent)
+;;	(insert "[" string "]")
+;;	(while (setq extent (extent-at start nil nil extent))
+;;	  (set-extent-endpoints extent end (point)))
+;;	(delete-region start end))))
+    (add-text-properties start (point)
+			 (list 'start-open t
+			       'mime-button t)))
+  (insert "\n"))
+
+(static-when (featurep 'xemacs)
+  (defcustom mime-xpm-button-shadow-thickness 3
+    "A number of pixels should be used for the shadows on the edges of
+the buttons."
+    :group 'mime
+    :type 'integer)
+
+  (defcustom mime-xpm-button-foreground "Yellow"
+    "A color used to display the text."
+    :group 'mime
+    :type 'string)
+
+  (defcustom mime-xpm-button-background "#a0a0d0"
+    "A background color the text will be displayed upon."
+    :group 'mime
+    :type 'string)
+
+  (defvar mime-xpm-button-glyph-cache nil)
+
+  ;; #### device-on-widow-system-p must be checked at run-time.
+  (if (and (featurep 'xpm) (device-on-window-system-p))
+      (defun mime-create-xpm-button (string function)
+	"Display STRING as a XPM button with the callback FUNCTION.
+It might be identical to the function `mime-create-widget-button'
+if the feature `xpm' is not provided or the TTY frame is used."
+	(set-extent-properties (make-extent (point)
+					    (progn
+					      (insert "[" string "]")
+					      (point)))
+			       '(invisible t intangible t))
+	(let* ((spec (list string
+			   mime-xpm-button-shadow-thickness
+			   mime-xpm-button-foreground
+			   mime-xpm-button-background))
+	       (button (cdr (assoc spec mime-xpm-button-glyph-cache))))
+	  (or button
+	      (set-alist 'mime-xpm-button-glyph-cache spec
+			 (setq button (apply (function xpm-button-create)
+					     spec))))
+	  (let* ((extent (make-extent (point) (point)))
+		 (down-glyph (make-glyph (car (cdr button))))
+		 (up-glyph (make-glyph (car button)))
+		 (down-func `(lambda (event)
+			       (interactive "e")
+			       (set-extent-begin-glyph ,extent ,down-glyph)))
+		 (up-func `(lambda (event)
+			     (interactive "e")
+			     (mouse-set-point event)
+			     (set-extent-begin-glyph ,extent ,up-glyph)
+			     (,function)))
+		 (keymap (make-sparse-keymap)))
+	    (define-key keymap 'button1 down-func)
+	    (define-key keymap 'button2 down-func)
+	    (define-key keymap 'button1up up-func)
+	    (define-key keymap 'button2up up-func)
+	    (set-extent-begin-glyph extent up-glyph)
+	    (set-extent-property extent 'keymap keymap))
+	  (insert "\n")))
+    (fset 'mime-create-xpm-button 'mime-create-widget-button)))
+
+(defcustom mime-create-button-function 'mime-create-widget-button
+  "A function called to create the content button."
+  :group 'mime
+  :type (list
+	 'cons
+	 :convert-widget
+	 (function
+	  (lambda (widget)
+	    (list
+	     'radio
+	     :args
+	     (append
+	      '((const :tag "Widget button" mime-create-widget-button))
+	      (static-when (featurep 'xemacs)
+		'((const :tag "Xpm button" mime-create-xpm-button)))
+	      '((function :tag "Other"))))))))
+
 (defsubst mime-add-button (from to function &optional data)
   "Create a button between FROM and TO with callback FUNCTION and DATA."
   (and mime-button-face
@@ -66,7 +181,8 @@
   (and mime-button-mouse-face
        (put-text-property from to 'mouse-face mime-button-mouse-face))
   (add-text-properties from to (list 'mime-button-callback function
-				     'start-open t))
+				     'start-open t
+				     'mime-button t))
   (and data
        (add-text-properties from to (list 'mime-button-data data))))
 
@@ -75,11 +191,17 @@
   (unless (bolp)
     (insert "\n"))
   (save-restriction
-    (narrow-to-region (point)(point))
-    ;; One more newline to avoid concatenation of face property.
-    (insert (concat "[" string "]\n\n"))
-    (mime-add-button (point-min) (1- (point-max)) function data)
-    (delete-char -1)))
+    (narrow-to-region (point) (point))
+    (if mime-use-widget
+	(mapcar (function
+		 (lambda (line)
+		   (funcall mime-create-button-function line function)))
+		(split-string string "\n"))
+      (progn
+	;; One more newline to avoid concatenation of face property.
+	(insert (concat "[" string "]\n\n"))
+	(mime-add-button (point-min) (1- (point-max)) function data)
+	(delete-char -1)))))
 
 (defvar mime-button-mother-dispatcher nil)
 
@@ -124,8 +246,23 @@
   (while (re-search-forward mime-browse-url-regexp nil t)
     (let ((beg (match-beginning 0))
 	  (end (match-end 0)))
-      (mime-add-button beg end mime-browse-url-function
-		       (list (buffer-substring beg end))))))
+      (if mime-use-widget
+	  (progn
+	    (widget-convert-button 'mime-url-link beg end
+				   (buffer-substring beg end))
+	    (static-unless (featurep 'xemacs)
+	      (overlay-put (make-overlay beg end) 'local-map widget-keymap)))
+	(mime-add-button beg end mime-browse-url-function
+			 (list (buffer-substring beg end)))))))
+
+(define-widget 'mime-url-link 'link
+  "A link to an www page."
+  :help-echo 'widget-url-link-help-echo
+  :action 'widget-mime-url-link-action)
+
+(defun widget-mime-url-link-action (widget &optional event)
+  "Open the url specified by WIDGET."
+  (funcall mime-browse-url-function (widget-value widget)))
 
 
 ;;; @ menu
