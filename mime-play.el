@@ -264,7 +264,7 @@ window.")
 	    (narrow-to-region beg end)
 	    (mime-raw-get-filename cal)
 	    ))
-	 (encoding (cdr (assq 'encoding cal)))
+	 (encoding (or (cdr (assq 'encoding cal)) "7bit"))
 	 (filename
           (if (and name (not (string-equal name "")))
 	      (expand-file-name name
