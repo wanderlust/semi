@@ -1,5 +1,14 @@
 1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el, mime-view.el: Rename
+	`mime-method-to-display-caesar' to `mime-view-caesar'.
+
+	* mime-play.el, mime-view.el: Rename
+	`mime-method-to-display-message/external-ftp' to
+	`mime-view-message/external-ftp'.
+
+1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el, mime-partial.el, mime-play.el: Rename
 	`mime-method-to-store-message/partial' to
 	`mime-store-message/partial-piece'.
