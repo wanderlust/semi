@@ -1,59 +1,46 @@
 #
-# Makefile for WEMI.
+# Makefile for WEMI kernel.
 #
 
 PACKAGE = wemi
-VERSION = 1.8.5
+VERSION = 1.8.6
 
-SHELL	= /bin/sh
-MAKE	= make
-CC	= gcc
-CFLAGS	= -O2
 TAR	= tar
 RM	= /bin/rm -f
 CP	= /bin/cp -p
-EMACS	= emacs
 
-GOMI	= *.elc
-FLAGS   = -batch -q -no-site-file
+EMACS	= emacs
+XEMACS	= xemacs
+FLAGS   = -batch -q -no-site-file -l SEMI-MK
 
 PREFIX	= NONE
 EXEC_PREFIX = NONE
 LISPDIR = NONE
+PACKAGEDIR = NONE
+
+GOMI	= *.elc
+
 
 elc:
-	$(EMACS) $(FLAGS) -l SEMI-MK -f compile-semi \
+	$(EMACS) $(FLAGS) -f compile-semi \
 		$(PREFIX) $(EXEC_PREFIX) $(LISPDIR)
 
 install-elc:	elc
-	$(EMACS) $(FLAGS) -l SEMI-MK -f install-semi \
+	$(EMACS) $(FLAGS) -f install-semi \
 		$(PREFIX) $(EXEC_PREFIX) $(LISPDIR)
-
-
-all:	$(UTILS) $(DVI) elc
-
-tex:	ol2
-	cd doc; $(MAKE) tex
-
-dvi:	ol2
-	cd doc; $(MAKE) dvi
-
-ps:	ol2
-	cd doc; $(MAKE) ps
-
 
 install:	install-elc
 
-update-xemacs:
-	$(EMACS) $(FLAGS) -l SEMI-MK -f update-xemacs-source
+
+package:
+	$(XEMACS) $(FLAGS) -f compile-semi-package $(PACKAGEDIR)
+
+install-package:	package
+	$(XEMACS) $(FLAGS) -f install-semi-package $(PACKAGEDIR)
 
 
 clean:
 	-$(RM) $(GOMI)
-	-cd doc   && $(MAKE) clean
-	-cd gnus  && $(MAKE) clean
-	-cd mh-e  && $(MAKE) clean
-	cd ../mel && $(MAKE) clean
 
 
 tar:

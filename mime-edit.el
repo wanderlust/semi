@@ -184,18 +184,11 @@ To insert a signature file automatically, call the function
      ("plain"
       ;;("charset" "" "ISO-2022-JP" "US-ASCII" "ISO-8859-1" "ISO-8859-8")
       )
-     ("richtext"
-      ;;("charset" "" "ISO-2022-JP" "US-ASCII" "ISO-8859-1" "ISO-8859-8")
-      )
-     ("enriched"
-      ;;("charset" "" "ISO-2022-JP" "US-ASCII" "ISO-8859-1" "ISO-8859-8")
-      )
-     ("x-latex"
-      ;;("charset" "" "ISO-2022-JP" "US-ASCII" "ISO-8859-1" "ISO-8859-8")
-      )
-     ("html"
-      ;;("charset" "" "ISO-2022-JP" "US-ASCII" "ISO-8859-1" "ISO-8859-8")
-      )
+     ("enriched")
+     ("html")
+     ("css") ; rfc2318
+     ("xml") ; rfc2376
+     ("x-latex")
      ("x-rot13-47-48")
      )
     ("message"
@@ -252,10 +245,6 @@ To insert a signature file automatically, call the function
      nil
      "inline"		(("filename" . file))
      )
-    ("\\.rtf$"
-     "text"	"richtext"	nil
-     nil
-     nil		nil)
     ("\\.html$"
      "text"	"html"		nil
      nil
@@ -568,30 +557,54 @@ If it is not specified for a major-mode,
 ;;; @@ optional header fields
 ;;;
 
-(defvar mime-edit-insert-x-emacs-field t
-  "*If non-nil, insert X-Emacs header field.")
+(defvar mime-edit-insert-user-agent-field t
+  "*If non-nil, insert User-Agent header field.")
 
-(defvar mime-edit-x-emacs-value
-  (if (featurep 'xemacs)
-      (concat emacs-version (if (featurep 'mule)
-				" with mule"
-			      " without mule"))
-    (let ((ver (if (string-match "\\.[0-9]+$" emacs-version)
-		   (substring emacs-version 0 (match-beginning 0))
-		 emacs-version)))
-      (if (featurep 'mule)
-	  (if (boundp 'enable-multibyte-characters)
-	      (concat "Emacs " ver
-		      (if enable-multibyte-characters
-			  (concat ", MULE " mule-version)
-			" (with raw setting)")
-		      (if (featurep 'meadow)
-			  (concat ", " (Meadow-version))
-			))
-	    (concat "MULE " mule-version " based on Emacs " ver))
-	ver)))
-  "Body of X-Emacs field.
-If variable `mime-edit-insert-x-emacs-field' is not nil, it is
+(defvar mime-edit-user-agent-value
+  (concat (car mime-user-interface-version)
+	  "/"
+	  (mapconcat #'number-to-string
+		     (cddr mime-user-interface-version) ".")
+	  " ("
+	  (cadr mime-user-interface-version)
+	  ") "
+	  (car mime-library-version)
+	  "/"
+	  (mapconcat #'number-to-string
+		     (cddr mime-library-version) ".")
+	  " ("
+	  (cadr mime-library-version)
+	  ") "
+	  (if (featurep 'xemacs)
+	      (concat "XEmacs"
+		      (if (string-match "\\s +\\\"" emacs-version)
+			  (concat "/"
+				  (substring emacs-version 0
+					     (match-beginning 0))
+				  " (" xemacs-codename ")")
+			" (" emacs-version ")")
+		      (if (featurep 'mule) " MULE"))
+	    (let ((ver (if (string-match "\\.[0-9]+$" emacs-version)
+			   (substring emacs-version 0 (match-beginning 0))
+			 emacs-version)))
+	      (if (featurep 'mule)
+		  (if (boundp 'enable-multibyte-characters)
+		      (concat "Emacs/" ver
+			      (if enable-multibyte-characters
+				  (concat " MULE/" mule-version)
+				" (with unibyte mode)")
+			      (if (featurep 'meadow)
+				  (let ((mver (Meadow-version)))
+				    (if (string-match "^Meadow-" mver)
+					(concat " Meadow/"
+						(substring mver
+							   (match-end 0)))
+				      ))))
+		    (concat "MULE/" mule-version
+			    " (based on Emacs " ver ")"))
+		ver))))
+  "Body of User-Agent field.
+If variable `mime-edit-insert-user-agent-field' is not nil, it is
 inserted into message header.")
 
 
@@ -1005,9 +1018,8 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	    (insert "\n")
 	    (forward-char -1)
 	    ))
-      (if (and (member (cadr ret) '("enriched" "richtext"))
-	       (fboundp 'enriched-mode)
-	       )
+      (if (and (member (cadr ret) '("enriched"))
+	       (fboundp 'enriched-mode))
 	  (enriched-mode t)
 	(if (boundp 'enriched-mode)
 	    (enriched-mode -1)
@@ -1854,10 +1866,10 @@ Content-Transfer-Encoding: 7bit
       (let ((contype (car ret))		;Content-Type
 	    (encoding (nth 1 ret))	;Content-Transfer-Encoding
 	    )
-	;; Insert X-Emacs field
-	(and mime-edit-insert-x-emacs-field
-	     (or (mail-position-on-field "X-Emacs")
-		 (insert mime-edit-x-emacs-value)
+	;; Insert User-Agent field
+	(and mime-edit-insert-user-agent-field
+	     (or (mail-position-on-field "User-Agent")
+		 (insert mime-edit-user-agent-value)
 		 ))
 	;; Make primary MIME headers.
 	(or (mail-position-on-field "MIME-Version")
@@ -2509,7 +2521,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 
 (defvar mime-edit-again-ignored-field-regexp
   (concat "^\\(" "Content-.*\\|Mime-Version"
-	  (if mime-edit-insert-x-emacs-field "\\|X-Emacs")
+	  (if mime-edit-insert-user-agent-field "\\|User-Agent")
 	  "\\):")
   "Regexp for deleted header fields when `mime-edit-again' is called.")
 
