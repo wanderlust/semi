@@ -1,5 +1,19 @@
 1998-03-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-view-entity-button-visible-p): New function.
+	(mime-view-entity-button-function): Use function
+ 	`mime-view-entity-button-visible-p'.
+
+	* mime-view.el (mime-raw-entity-parent): New function.
+	(mime-view-entity-button-function): Use `mime-raw-entity-parent'.
+
+	* mime-view.el (mime-view-entity-button-function): Use
+ 	`mime-root-entity-p'.
+
+	* mime-parse.el (mime-root-entity-p): New function.
+
+1998-03-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* SEMI-CFG: Insert version check code.
 
 1998-03-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
