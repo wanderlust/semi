@@ -439,7 +439,7 @@ Each elements are regexp of field-name.")
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . message)(subtype . partial)
 			   (body-presentation-method
-			    . mime-view-insert-message/partial-button)))
+			    . mime-preview-message/partial-button)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . message)(subtype . rfc822)
@@ -488,7 +488,7 @@ if it is not nil.")
 \[[ Please press `v' key in this buffer.         ]]"
     ))
 
-(defun mime-view-insert-message/partial-button (&optional entity situation)
+(defun mime-preview-message/partial-button (&optional entity situation)
   (save-restriction
     (goto-char (point-max))
     (if (not (search-backward "\n\n" nil t))
