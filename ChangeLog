@@ -1,5 +1,8 @@
 1998-04-29  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el (mime-save-acting-situation-examples): New
+ 	function; set up for 'kill-emacs-hook.
+
 	* mime-play.el (mime-acting-situation-examples): Renamed from
  	'mime-user-acting-condition.
 
