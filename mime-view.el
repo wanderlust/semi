@@ -1110,7 +1110,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
                 (commandp func)
                 (funcall func))))
        (defvar mouse-button-2 [mouse-2])
-       (defvar mouse-button-2 [mouse-3])
+       (defvar mouse-button-3 [mouse-3])
        ))
 
 (defun mime-view-define-keymap (&optional default)
