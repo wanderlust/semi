@@ -808,8 +808,10 @@ The compressed face will be piped to this command.")
       (put-text-property nb ne 'mime-view-entity entity)
       (goto-char ne)
       (if children
-	  (mime-preview-multipart/mixed entity situation)
-	)
+	  (if (functionp body-presentation-method)
+	      (funcall body-presentation-method entity situation)
+	    (mime-preview-multipart/mixed entity situation)
+	    ))
       )))
 
 (defun mime-raw-get-uu-filename ()
