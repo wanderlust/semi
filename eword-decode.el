@@ -96,8 +96,8 @@
 
 (defconst eword-Q-encoded-text-regexp
   (concat "\\([^=?]\\|" quoted-printable-octet-regexp "\\)+"))
-(defconst eword-Q-encoding-and-encoded-text-regexp
-  (concat "\\(Q\\)\\?" eword-Q-encoded-text-regexp))
+;; (defconst eword-Q-encoding-and-encoded-text-regexp
+;;   (concat "\\(Q\\)\\?" eword-Q-encoded-text-regexp))
 
 
 ;;; @ for string
