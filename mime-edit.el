@@ -527,7 +527,10 @@ If it is not specified for a major-mode,
 		   (substring emacs-version 0 (match-beginning 0))
 		 emacs-version)))
       (if (featurep 'mule)
-	  (concat "Emacs " ver ", MULE " mule-version
+	  (concat "Emacs " ver
+		  (if enable-multibyte-characters
+		      (concat ", MULE " mule-version)
+		    " (with raw setting)")
 		  (if (featurep 'meadow)
 		      (concat ", " (Meadow-version))
 		    ))
