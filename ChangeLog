@@ -1,3 +1,9 @@
+1999-04-07  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* mime-view.el (mime-display-application/x-postpet): New function.
+	(mime-preview-condition): Set up for
+	'mime-preview-application/x-postpet.
+
 1999-03-05  Tanaka Akira  <akr@jaist.ac.jp>
 
 	* mime-edit.el (mime-edit-normalize-body): Call `enriched-encode' with

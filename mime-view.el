@@ -450,6 +450,12 @@ Each elements are regexp of field-name.")
 
 (ctree-set-calist-strictly
  'mime-preview-condition
+ '((type . application)(subtype . x-postpet)
+   (body . visible)
+   (body-presentation-method . mime-display-application/x-postpet)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition
  '((type . text)(subtype . t)
    (body . visible)
    (body-presentation-method . mime-display-text/plain)))
@@ -538,6 +544,24 @@ Each elements are regexp of field-name.")
     (mime-add-url-buttons)
     (run-hooks 'mime-display-text/x-vcard-hook)
     ))
+
+(defun mime-display-application/x-postpet (entity situation)
+  (save-restriction
+    (narrow-to-region (point-max)(point-max))
+    (let ((contents (string-as-unibyte (mime-entity-content entity)))
+	  (p 0) l
+	  petname owner pettype from)
+      (setq p (+ p 30))
+      (setq petname (decode-mime-charset-string (substring contents (1+ p) (setq p (+ p 1 (char-int (aref contents p))))) 'shift_jis))
+      (setq owner (decode-mime-charset-string (substring contents (1+ p) (setq p (+ p 1 (char-int (aref contents p))))) 'shift_jis))
+      (setq pettype (substring contents p (setq p (+ p 4))))
+      (setq p (+ p 78))
+      (setq from (substring contents (1+ p) (setq p (+ p 1 (char-int (aref contents p))))))
+      (insert "Petname: " petname "\n"
+	      "Owner: " owner "\n"
+	      "Pettype: " pettype "\n"
+	      "From: " from "\n")
+      (run-hooks 'mime-display-application/x-postpet-hook))))
 
 (defvar mime-view-announcement-for-message/partial
   (if (and (>= emacs-major-version 19) window-system)
