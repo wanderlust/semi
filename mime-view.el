@@ -806,9 +806,6 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 (defvar mime-view-over-to-previous-method-alist nil)
 (defvar mime-view-over-to-next-method-alist nil)
 
-(defvar mime-view-show-summary-method nil
-  "Alist of major-mode vs. show-summary-method.")
-
 
 ;;; @ following method
 ;;;
@@ -1013,8 +1010,6 @@ The compressed face will be piped to this command.")
       "a"        (function mime-preview-follow-current-entity))
     (define-key mime-view-mode-map
       "q"        (function mime-preview-quit))
-    (define-key mime-view-mode-map
-      "h"        (function mime-preview-show-summary))
     (define-key mime-view-mode-map
       "\C-c\C-x" (function mime-preview-kill-buffer))
     ;; (define-key mime-view-mode-map
@@ -1471,17 +1466,6 @@ It calls function registered in variable
   (interactive)
   (let ((r (assq (mime-preview-original-major-mode)
 		 mime-preview-quitting-method-alist)))
-    (if r
-	(funcall (cdr r))
-      )))
-
-(defun mime-preview-show-summary ()
-  "Show summary.
-It calls function registered in variable
-`mime-view-show-summary-method'."
-  (interactive)
-  (let ((r (assq (mime-preview-original-major-mode)
-		 mime-view-show-summary-method)))
     (if r
 	(funcall (cdr r))
       )))
