@@ -1,3 +1,12 @@
+1998-06-23  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-display-message): Use window of
+	preview-buffer or preview-buffer to display preview-buffer.
+	(mime-view-buffer): fixed.
+	(mime-view-mode): fixed.
+
+	* MIME-View-API-ja.ol: Delete MIME-View-API-ja.ol.
+
 1998-06-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* NEWS (Changes in SEMI 1.8): New chapter.
