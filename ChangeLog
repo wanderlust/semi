@@ -1,5 +1,11 @@
 1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-parse.el (mime-parse-multipart): Change interface; abolish
+	local variable 'beg and 'end.
+	(mime-parse-message): Modify for 'mime-parse-multipart.
+
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-parse.el (mime-parse-multipart): Use
 	'mime-content-type-parameter.
 
