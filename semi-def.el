@@ -1,4 +1,4 @@
-;;; semi-def.el --- definition module for SEMI
+;;; semi-def.el --- definition module for SEMI -*- coding: iso-8859-4; -*-
 
 ;; Copyright (C) 1995,1996,1997,1998,1999 Free Software Foundation, Inc.
 
@@ -30,7 +30,7 @@
 
 (require 'custom)
 
-(defconst mime-user-interface-product ["SEMI" (1 13 5) "Meih.DŽò"]
+(defconst mime-user-interface-product ["SEMI" (1 13 5) "Meihò"]
   "Product name, version number and code name of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
