@@ -1,6 +1,6 @@
 ;;; mime-pgp.el --- mime-view internal methods for PGP.
 
-;; Copyright (C) 1995,1996,1997,1998 MORIOKA Tomohiko
+;; Copyright (C) 1995,1996,1997,1998,1999 MORIOKA Tomohiko
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Created: 1995/12/7
@@ -52,8 +52,9 @@
 
 (defun mime-verify-multipart/signed (entity situation)
   "Internal method to verify multipart/signed."
-  (mime-raw-play-entity
+  (mime-play-entity
    (nth 1 (mime-entity-children entity)) ; entity-info of signature
+   nil
    (cdr (assq 'mode situation)) ; play-mode
    ))
 
@@ -67,13 +68,13 @@
 		    (get-largest-window)))
 	 (new-name
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
-	 (the-buf (current-buffer))
 	 (mother mime-preview-buffer)
 	 representation-type)
     (set-buffer (get-buffer-create new-name))
     (erase-buffer)
-    (insert-buffer-substring
-     the-buf (mime-entity-point-min entity) (mime-entity-point-max entity))
+    (insert-buffer-substring (mime-entity-buffer entity)
+			     (mime-entity-point-min entity)
+			     (mime-entity-point-max entity))
     (cond ((progn
 	     (goto-char (point-min))
 	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
@@ -156,10 +157,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 
 (defun mime-verify-application/pgp-signature (entity situation)
   "Internal method to check PGP/MIME signature."
-  (let* ((start (mime-entity-point-min entity))
-	 (end (mime-entity-point-max entity))
-	 (encoding (cdr (assq 'encoding situation)))
-	 (entity-node-id (mime-raw-point-to-entity-node-id start))
+  (let* ((entity-node-id (mime-entity-node-id entity))
 	 (mother (mime-entity-parent entity))
 	 (knum (car entity-node-id))
 	 (onum (if (> knum 0)
@@ -172,11 +170,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	 )
     (mime-write-entity orig-entity orig-file)
     (save-excursion (mime-show-echo-buffer))
-    (mime-write-decoded-region (save-excursion
-				 (goto-char start)
-				 (and (search-forward "\n\n")
-				      (match-end 0))
-				 ) end sig-file encoding)
+    (mime-write-entity-content entity sig-file)
     (or (mime-pgp-check-signature mime-echo-buffer-name orig-file)
 	(let (pgp-id)
 	  (save-excursion

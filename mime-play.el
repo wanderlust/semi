@@ -1,6 +1,6 @@
 ;;; mime-play.el --- Playback processing module for mime-view.el
 
-;; Copyright (C) 1994,1995,1996,1997,1998 Free Software Foundation, Inc.
+;; Copyright (C) 1994,1995,1996,1997,1998,1999 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Created: 1995/9/26 (separated from tm-view.el)
@@ -114,8 +114,6 @@
 ;;; @ content decoder
 ;;;
 
-(defvar mime-preview-after-decoded-position nil)
-
 (defun mime-preview-play-current-entity (&optional ignore-examples mode)
   "Play current entity.
 It decodes current entity to call internal or external method.  The
@@ -126,15 +124,8 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
   (interactive "P")
   (let ((entity (get-text-property (point) 'mime-view-entity)))
     (if entity
-	(let ((the-buf (current-buffer))
-	      (raw-buffer (mime-entity-buffer entity)))
-	  (setq mime-preview-after-decoded-position (point))
-	  (set-buffer raw-buffer)
-	  (mime-raw-play-entity entity (or mode "play") nil ignore-examples)
-	  (when (eq (current-buffer) raw-buffer)
-	    (set-buffer the-buf)
-	    (goto-char mime-preview-after-decoded-position)
-	    )))))
+	(mime-play-entity entity nil (or mode "play") ignore-examples)
+      )))
 
 (defun mime-sort-situation (situation)
   (sort situation
@@ -202,8 +193,8 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
     (cons match example)
     ))
 
-(defun mime-raw-play-entity (entity &optional mode situation ignore-examples
-				    ignored-method)
+(defun mime-play-entity (entity &optional situation mode
+				ignore-examples ignored-method)
   "Play entity specified by ENTITY.
 It decodes the entity to call internal or external method.  The method
 is selected from variable `mime-acting-condition'.  If MODE is
@@ -314,34 +305,28 @@ specified, play as it.  Default MODE is \"play\"."
 (defvar mime-mailcap-method-filename-alist nil)
 
 (defun mime-activate-mailcap-method (entity situation)
-  (save-excursion
-    (save-restriction
-      (let ((start (mime-entity-point-min entity))
-	    (end (mime-entity-point-max entity)))
-	(narrow-to-region start end)
-	(goto-char start)
-	(let ((method (cdr (assoc 'method situation)))
-	      (name (mime-entity-safe-filename entity)))
-	  (setq name
-		(if (and name (not (string= name "")))
-		    (expand-file-name name temporary-file-directory)
-		  (make-temp-name
-		   (expand-file-name "EMI" temporary-file-directory))
-		  ))
-          (mime-write-entity-content entity name)
-	  (message "External method is starting...")
-	  (let ((process
-		 (let ((command
-			(mailcap-format-command
-			 method
-			 (cons (cons 'filename name) situation))))
-		   (start-process command mime-echo-buffer-name
-				  shell-file-name shell-command-switch command)
-		   )))
-	    (set-alist 'mime-mailcap-method-filename-alist process name)
-	    (set-process-sentinel process 'mime-mailcap-method-sentinel)
-	    )
-	  )))))
+  (let ((method (cdr (assoc 'method situation)))
+	(name (mime-entity-safe-filename entity)))
+    (setq name
+	  (if (and name (not (string= name "")))
+	      (expand-file-name name temporary-file-directory)
+	    (make-temp-name
+	     (expand-file-name "EMI" temporary-file-directory))
+	    ))
+    (mime-write-entity-content entity name)
+    (message "External method is starting...")
+    (let ((process
+	   (let ((command
+		  (mailcap-format-command
+		   method
+		   (cons (cons 'filename name) situation))))
+	     (start-process command mime-echo-buffer-name
+			    shell-file-name shell-command-switch command)
+	     )))
+      (set-alist 'mime-mailcap-method-filename-alist process name)
+      (set-process-sentinel process 'mime-mailcap-method-sentinel)
+      )
+    ))
 
 (defun mime-mailcap-method-sentinel (process event)
   (let ((file (cdr (assq process mime-mailcap-method-filename-alist))))
@@ -376,7 +361,8 @@ window.")
 		   (condition-case nil
 		       (setq win (get-buffer-window bbdb-buffer-name))
 		     (error nil)))
-	(select-window (get-buffer-window mime-preview-buffer))
+	(select-window (get-buffer-window (or mime-preview-buffer
+					      (current-buffer))))
 	(setq win (split-window-vertically
 		   (- (window-height)
 		      (if (functionp mime-echo-window-height)
@@ -472,16 +458,7 @@ SUBTYPE is symbol to indicate subtype of media-type.")
 
 (defun mime-detect-content (entity situation)
   (let (type subtype)
-    (let ((mdata (save-excursion
-		   ;;(set-buffer (mime-entity-buffer entity))
-		   (let* ((start (mime-entity-body-start entity))
-			  (end (progn
-				 (goto-char start)
-				 (end-of-line)
-				 (point))))
-		     (mime-decode-string (buffer-substring start end)
-					 (mime-entity-encoding entity))
-		     )))
+    (let ((mdata (mime-entity-content entity))
 	  (rest mime-magic-type-alist))
       (while (not (let ((cell (car rest)))
 		    (if cell
@@ -492,12 +469,13 @@ SUBTYPE is symbol to indicate subtype of media-type.")
 		      t)))
 	(setq rest (cdr rest))))
     (if type
-	(mime-raw-play-entity
-	 entity nil
+	(mime-play-entity
+	 entity
 	 (put-alist 'type type
 		    (put-alist 'subtype subtype
 			       (del-alist 'method
 					  (copy-alist situation))))
+	 nil
 	 (cdr (assq 'ignore-examples situation))
 	 'mime-detect-content)
       ))
@@ -522,7 +500,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 (defun mime-view-message/rfc822 (entity situation)
   (let* ((new-name
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
-	 (mother mime-preview-buffer)
+	 (mother (current-buffer))
 	 (children (car (mime-entity-children entity))))
     (set-buffer (get-buffer-create new-name))
     (erase-buffer)

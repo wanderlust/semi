@@ -1,6 +1,36 @@
 SEMI NEWS --- history of major-changes.
-Copyright (C) 1998 Free Software Foundation, Inc.
+Copyright (C) 1998,1999 Free Software Foundation, Inc.
 
+* Changes in SEMI 1.13
+
+** Function `mime-play-entity'
+
+Function `mime-play-entity' was renamed from `mime-raw-play-entity'
+and changed interface.
+
+Current interface is:
+
+    mime-play-entity (entity &optional situation mode
+			     ignore-examples ignored-method)
+
+
+** Now acting-method must not expect to run in raw-buffer
+
+Function `mime-play-entity' was changed to permit to run in any buffer
+(may be called in preview-buffer).  So each acting-method is called in
+any buffer.
+
+
+
+* Changes in SEMI 1.12
+
+There are no user-visible changes.
+
+** New function `eliminate-top-spaces'
+
+Now mime-edit has it.
+
+
 * Changes in SEMI 1.11
 
 ** New function `mime-edit-decode-message-in-buffer'
