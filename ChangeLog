@@ -1,5 +1,10 @@
 1998-06-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el (mime-save-content): Use `mime-entity-body-start'
+	and `mime-entity-body-end'.
+
+1998-06-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-pgp.el (mime-view-application/pgp): fixed.
 	(mime-verify-application/pgp-signature): Use
 	`mime-message-structure' instead of `mime-raw-message-info'.
