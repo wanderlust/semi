@@ -1731,14 +1731,16 @@ Content-Transfer-Encoding: 7bit
 		   arg)))) str "")
   )
 
+(defun mime-edit-make-boundary ()
+  (concat mime-multipart-boundary "_"
+	  (replace-space-with-underline (current-time-string))
+	  ))
+
 (defun mime-edit-translate-body ()
   "Encode the tagged MIME body in current buffer in MIME compliant message."
   (interactive)
   (save-excursion
-    (let ((boundary
-	   (concat mime-multipart-boundary "_"
-		   (replace-space-with-underline (current-time-string))
-		   ))
+    (let ((boundary (mime-edit-make-boundary))
 	  (i 1)
 	  ret)
       (while (mime-edit-process-multipart-1
@@ -1810,11 +1812,9 @@ Content-Transfer-Encoding: 7bit
 	t)))
 
 (defun mime-edit-translate-region (beg end &optional boundary multipart)
-  (if (null boundary)
-      (setq boundary
-	    (concat mime-multipart-boundary "_"
-		    (replace-space-with-underline (current-time-string))))
-    )
+  (or boundary
+      (setq boundary (mime-edit-make-boundary))
+      )
   (save-excursion
     (save-restriction
       (narrow-to-region beg end)
