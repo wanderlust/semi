@@ -1,5 +1,11 @@
 1999-09-08  Katsumi Yamaoka   <yamaoka@jpl.org>
 
+	* mime-edit.el (mime-edit-user-agent-value): Add PGPGPG feature.
+
+	* mime-play.el (mime-show-echo-buffer): Rewrite.
+
+1999-09-08  Katsumi Yamaoka   <yamaoka@jpl.org>
+
 	* mime-play.el (mime-show-echo-buffer): Don't specify the negative
 	number to `enlarge-window'.
 
