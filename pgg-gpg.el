@@ -74,9 +74,9 @@
     (unwind-protect
 	(progn
 	  (set-default-file-modes 448)
-	  (as-binary-output-file
-	   (setq process
-		 (apply #'start-process "*GnuPG*" errors-buffer program args)))
+	  (setq process
+		(apply #'binary-start-process "*GnuPG*" errors-buffer
+		       program args))
 	  (set-process-sentinel process #'ignore)
 	  (when passphrase
 	    (process-send-string process (concat passphrase "\n")))
@@ -91,7 +91,8 @@
 	    (buffer-disable-undo)
 	    (erase-buffer)
 	    (if (file-exists-p output-file-name)
-		(insert-file-contents-as-raw-text-CRLF output-file-name))
+		(let ((coding-system-for-read 'raw-text-dos))
+		  (insert-file-contents output-file-name)))
 	    (set-buffer errors-buffer)
 	    (if (memq status '(stop signal))
 		(error "%s exited abnormally: '%s'" program exit-status))

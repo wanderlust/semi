@@ -39,9 +39,8 @@
 
 (eval-when-compile (require 'static))
 
-(require 'poem)
 (require 'pccl)
-(require 'pcustom)
+(require 'custom)
 (require 'mel)
 
 (defgroup pgg-parse ()
@@ -105,8 +104,11 @@
   "Armor headers.")
 
 (defmacro pgg-format-key-identifier (string)
-  `(upcase (apply #'format "%02x%02x%02x%02x%02x%02x%02x%02x"
-		  (string-to-int-list ,string))))
+  `(mapconcat (lambda (c) (format "%02X" (char-int c)))
+	      ,string "")
+  ;; `(upcase (apply #'format "%02x%02x%02x%02x%02x%02x%02x%02x"
+  ;;                 (string-to-int-list ,string)))
+  )
 
 (defmacro pgg-parse-time-field (bytes)
   `(list (logior (lsh (car ,bytes) 8)
@@ -127,7 +129,9 @@
 	      (forward-char ,nbytes))))
 
 (defmacro pgg-read-bytes (nbytes)
-  `(string-to-int-list (pgg-read-bytes-string ,nbytes)))
+  `(mapcar #'char-int (pgg-read-bytes-string ,nbytes))
+  ;; `(string-to-int-list (pgg-read-bytes-string ,nbytes))
+  )
 
 (defmacro pgg-read-body-string (ptag)
   `(if (nth 1 ,ptag)
@@ -135,7 +139,9 @@
      (pgg-read-bytes-string (- (point-max) (point)))))
 
 (defmacro pgg-read-body (ptag)
-  `(string-to-int-list (pgg-read-body-string ,ptag)))
+  `(mapcar #'char-int (pgg-read-body-string ,ptag))
+  ;; `(string-to-int-list (pgg-read-body-string ,ptag))
+  )
 
 (defalias 'pgg-skip-bytes 'forward-char)
 

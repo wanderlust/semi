@@ -2,9 +2,9 @@
 # Makefile for SEMI kernel.
 #
 
-PACKAGE = remi
+PACKAGE = semi
 API	= 1.14
-RELEASE = 2
+RELEASE = 0
 
 FLIM_API= 1.14
 
@@ -51,7 +51,7 @@ clean:
 
 tar:
 	cvs commit
-	sh -c 'cvs tag -RF $(PACKAGE)-`echo $(VERSION) | tr . _`; \
+	sh -c 'cvs tag -R $(PACKAGE)-`echo $(VERSION) | tr . _`; \
 	cd /tmp; \
 	cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root \
 		export -d $(PACKAGE)-$(VERSION) \

@@ -140,7 +140,7 @@ specified, play as it.  Default MODE is \"play\"."
     (message "External method is starting...")
     (let ((process
 	   (let ((command
-		  (mailcap-format-command
+		  (mime-format-mailcap-command
 		   method
 		   (cons (cons 'filename name) situation))))
 	     (start-process command mime-echo-buffer-name
@@ -345,7 +345,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	  (save-window-excursion
 	    (set-buffer full-buf)
 	    (erase-buffer)
-	    (insert-file-contents-as-binary file)
+	    (binary-insert-file-contents file)
 	    (setq major-mode 'mime-show-message-mode)
 	    (mime-view-buffer (current-buffer) nil mother)
 	    (setq pbuf (current-buffer))
@@ -390,11 +390,11 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 		    (setq file (concat root-dir "/" (int-to-string i)))
 		    (or (file-exists-p file)
 			(throw 'tag nil))
-		    (as-binary-input-file (insert-file-contents file))
+		    (binary-insert-file-contents file)
 		    (goto-char (point-max))
 		    (setq i (1+ i))))
-		(write-region-as-binary (point-min)(point-max)
-					(expand-file-name "FULL" root-dir))
+		(binary-write-region (point-min)(point-max)
+				     (expand-file-name "FULL" root-dir))
 		(let ((i 1))
 		  (while (<= i total)
 		    (let ((file (format "%s/%d" root-dir i)))

@@ -25,7 +25,7 @@
 
 ;;; Code:
 
-(require 'pcustom)
+(require 'custom)
 
 (defgroup pgg ()
   "Glue for the various PGP implementations."

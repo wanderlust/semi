@@ -27,12 +27,11 @@
 
 ;;; Code:
 
-(require 'emu)
 (require 'mime)
 (require 'semi-def)
 (require 'calist)
 (require 'alist)
-(require 'mailcap)
+(require 'mime-conf)
 
 
 ;;; @ version
@@ -828,8 +827,8 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 (defvar mime-acting-condition nil
   "Condition-tree about how to process entity.")
 
-(if (file-readable-p mailcap-file)
-    (let ((entries (mailcap-parse-file)))
+(if (file-readable-p mime-mailcap-file)
+    (let ((entries (mime-parse-mailcap-file)))
       (while entries
 	(let ((entry (car entries))
 	      view print shared)
