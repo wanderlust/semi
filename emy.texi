@@ -1,6 +1,6 @@
 \input texinfo.tex              @c -*- texinfo -*-
 
-@setfilename emy
+@setfilename emy.info
 
 @set VERSION 1.13
 
@@ -142,9 +142,10 @@ try persuading me.  Warning: `It's de facto standard' is not enough.
 Right now only differences between SEMI and EMY are documented.
 
 @menu
-* Manipulating an Entity::     Changing representation of the part
+* Manipulating an Entity::      Changing representation of the part
 * Changing Entity Button::      Where to add button indicating that entity.
 * Adding Buttons::              Where you want to see buttons.
+* How to deal with broken MUA:: Some MUA sends totally broken messages.
 @end menu
 
 @node Manipulating an Entity
@@ -256,8 +257,99 @@ Default value is:
 This means you will have buttons around message/* and
 multipart/alternative, and before application/*.
 
+@node How to deal with broken MUA
+@section Illegal MIME messages
+
+Some MUAs send totally broken MIME messages.  According to the standard,
+it's perfectly fine for EMY not to grok those message.  However, EMY
+tries to extract as much information as possible.  Here's some functions
+that might help you.
+
+Some MUAs localized to Japanese sends these strings as a filename
+parameter of Content-Disposition.
+
+@example
+=?ISO-2022-JP?B?GyRCRnxLXDhsGyhC?=
+@end example
+
+It looks like encoded-words. This usage is strictly prohibited by RFC
+2047.  Instead, you should use mechanism described in RFC 2231.
+If you really want to ``decode'' it when saving it to file, you can use
+something like this.
+
+@lisp
+(mime-add-condition
+ 'action
+ '((mode . "extract")
+   (method . mime-save-content-for-broken-message)))
+@end lisp
+
+Unfortunately, there's no easy way to customize looking of buttons.
+It's on EMY's TODO list.
+
+If you are desperate, you can redefine
+@code{mime-view-insert-entity-button}.
+
+@lisp
+(defun mime-view-insert-entity-button (entity &optional body-is-invisible)
+  "Insert entity-button of ENTITY."
+  (let ((entity-node-id (mime-entity-node-id entity))
+	(params (mime-entity-parameters entity))
+	(subject (eword-decode-string (mime-view-entity-title entity))))
+    (mime-insert-button
+     (concat
+      (let ((access-type (assoc "access-type" params))
+	    (num (or (cdr (assoc "x-part-number" params))
+		     (if (consp entity-node-id)
+			 (mapconcat (function
+				     (lambda (num)
+				       (format "%s" (1+ num))))
+				    (reverse entity-node-id) ".")
+		       "0"))))
+	(cond (access-type
+	       (let ((server (assoc "server" params)))
+		 (setq access-type (cdr access-type))
+		 (if server
+		     (format "%s %s ([%s] %s)"
+			     num subject access-type (cdr server))
+		   (let ((site (cdr (assoc "site" params)))
+			 (dir (cdr (assoc "directory" params)))
+			 (url (cdr (assoc "url" params))))
+		     (if url
+			 (format "%s %s ([%s] %s)"
+				 num subject access-type url)
+		       (format "%s %s ([%s] %s:%s)"
+			       num subject access-type site dir))))))
+	      (t
+	       (let ((media-type (mime-entity-media-type entity))
+		     (media-subtype (mime-entity-media-subtype entity))
+		     (charset (cdr (assoc "charset" params)))
+		     (encoding (mime-entity-encoding entity)))
+		 (concat
+		  num " " subject
+		  (let ((rest
+			 (format " <%s/%s%s%s>"
+				 media-type media-subtype
+				 (if charset
+				     (concat "; " charset)
+				   "")
+				 (if encoding
+				     (concat " (" encoding ")")
+				   ""))))
+		    (if (>= (+ (current-column)(length rest))(window-width))
+			"\n\t")
+		    rest))))))
+      (if body-is-invisible
+	  " ..."
+	""))
+     (function mime-preview-play-current-entity))))
+@end lisp
+
+@strong{Note:} These settings are unsupported until better way is
+implemented.
+
 @node MIME-Edit
-@chapter Composing MIME messages.
+@chapter Composing MIME messages
 
 @vindex mime-edit-attach-at-end-type (MIME-Edit)
 When you are editing MIME message, you might want to insert some part at

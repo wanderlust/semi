@@ -21,11 +21,12 @@ LISPDIR = NONE
 PACKAGEDIR = NONE
 VERSION_SPECIFIC_LISPDIR = NONE
 
-GOMI	= *.elc
+GOMI	= *.elc *.info
 
 VERSION	= $(API).$(RELEASE)
 ARC_DIR = /pub/mule/semi/semi-$(API)-for-flim-$(FLIM_API)
 
+all: elc
 
 elc:
 	$(EMACS) $(FLAGS) -f compile-semi \
@@ -44,6 +45,9 @@ package:
 install-package:	package
 	$(XEMACS) $(FLAGS) -f install-semi-package $(PACKAGEDIR)
 
+
+info:
+	makeinfo -o emy.info emy.texi
 
 clean:
 	-$(RM) $(GOMI)

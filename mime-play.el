@@ -29,6 +29,7 @@
 (require 'mime-view)
 (require 'alist)
 (require 'filename)
+(require 'eword-decode)
 
 (eval-when-compile
   (condition-case nil
@@ -484,9 +485,30 @@ window.")
     (if (file-exists-p filename)
 	(or (yes-or-no-p (format "File %s exists. Save anyway? " filename))
 	    (error "")))
-    (mime-write-entity-content entity (expand-file-name filename))
-    ))
+    (mime-write-entity-content entity (expand-file-name filename))))
 
+(defun mime-save-content-for-broken-message (entity situation)
+  (let ((name (or (and (mime-entity-filename entity)
+		       (eword-decode-string
+			(mime-entity-filename entity)))
+		  (format "%s" (mime-entity-media-type entity))))
+	(dir (if (eq t mime-save-directory)
+		 default-directory
+	       mime-save-directory))
+	filename)
+    (setq filename (read-file-name
+		    (concat "File name: (default "
+			    (file-name-nondirectory name) ") ")
+		    dir
+		    (concat (file-name-as-directory dir)
+			    (file-name-nondirectory name))))
+    (if (file-directory-p filename)
+	(setq filename (concat (file-name-as-directory filename)
+			       (file-name-nondirectory name))))
+    (if (file-exists-p filename)
+	(or (yes-or-no-p (format "File %s exists. Save anyway? " filename))
+	    (error "")))
+    (mime-write-entity-content entity (expand-file-name filename))))
 
 ;;; @ file detection
 ;;;

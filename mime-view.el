@@ -315,7 +315,7 @@ mother-buffer."
 ;;; @@@ predicate function
 ;;;
 
-;; fix flim
+;; #### fix flim
 (defun mime-view-entity-type/subtype (entity)
   (if (not (mime-entity-media-type entity))
       'text/plain
@@ -344,7 +344,7 @@ You can customize the visibility by changing `mime-view-button-place-alist'."
      ;; When previous entity exists
      (and prev-entity
 	  (or
-	   ;; Check previous eneity
+	   ;; Check previous entity
 	   ;; type/subtype
 	   (memq (cdr
 		  (assq
@@ -373,11 +373,9 @@ You can customize the visibility by changing `mime-view-button-place-alist'."
 		     (if (consp entity-node-id)
 			 (mapconcat (function
 				     (lambda (num)
-				       (format "%s" (1+ num))
-				       ))
+				       (format "%s" (1+ num))))
 				    (reverse entity-node-id) ".")
-		       "0"))
-		 ))
+		       "0"))))
 	(cond (access-type
 	       (let ((server (assoc "server" params)))
 		 (setq access-type (cdr access-type))
@@ -386,15 +384,12 @@ You can customize the visibility by changing `mime-view-button-place-alist'."
 			     num subject access-type (cdr server))
 		   (let ((site (cdr (assoc "site" params)))
 			 (dir (cdr (assoc "directory" params)))
-			 (url (cdr (assoc "url" params)))
-			 )
+			 (url (cdr (assoc "url" params))))
 		     (if url
 			 (format "%s %s ([%s] %s)"
 				 num subject access-type url)
 		       (format "%s %s ([%s] %s:%s)"
-			       num subject access-type site dir))
-		     )))
-	       )
+			       num subject access-type site dir))))))
 	      (t
 	       (let ((media-type (mime-entity-media-type entity))
 		     (media-subtype (mime-entity-media-subtype entity))
@@ -413,13 +408,11 @@ You can customize the visibility by changing `mime-view-button-place-alist'."
 				   ""))))
 		    (if (>= (+ (current-column)(length rest))(window-width))
 			"\n\t")
-		    rest)))
-	       )))
+		    rest))))))
       (if body-is-invisible
 	  " ..."
 	""))
-     (function mime-preview-play-current-entity))
-    ))
+     (function mime-preview-play-current-entity))))
 
 
 ;;; @@ entity-header
@@ -1110,21 +1103,19 @@ With prefix, it prompts for coding-system."
 	   (children (mime-entity-children entity)))
       ;; Check if attachment is specified.
       ;; if inline is forced or not.
-      (if (not (or (eq t mime-view-force-inline-types)
-		   (memq (mime-entity-media-type entity)
-			 mime-view-force-inline-types)
-		   (memq (mime-view-entity-type/subtype entity)
+      (unless (or (eq t mime-view-force-inline-types)
+		  (memq (mime-entity-media-type entity)
+			mime-view-force-inline-types)
+		  (memq (mime-view-entity-type/subtype entity)
 			 mime-view-force-inline-types)
 		   ;; whether Content-Disposition header exists.
-		   ;; #### FIXME.  This is way too ugly.
-		   (not (and
-			 (mime-entity-content-disposition entity)
-			 (not (eq 'inline
-				  (mime-content-disposition-type
-				   (mime-entity-content-disposition entity))))))))
-	  ;; This is attachment
-	  (setq header-is-visible nil
-		body-is-visible nil))
+		  (not (mime-entity-content-disposition entity))
+		  (eq 'inline
+		      (mime-content-disposition-type
+		       (mime-entity-content-disposition entity))))
+	;; This is attachment
+	(setq header-is-visible nil
+	      body-is-visible nil))
       (set-buffer preview-buffer)
       (setq nb (point))
       (save-restriction
