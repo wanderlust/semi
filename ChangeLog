@@ -1,6 +1,6 @@
 2003-12-14  Tatsuya Kinoshita  <tats@vega.ocn.ne.jp>
 
-	* mime-edit.el (mime-charset-type-list): Add entry for iso-8859-15.
+	* mime-edit.el (mime-charset-type-list): Add entry for iso-8859-1[45].
 
 2003-12-12  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
