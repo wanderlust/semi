@@ -34,7 +34,7 @@
   "Alist major-mode vs. function to view partial message for mime-partial.")
 
 ;; display Article at the cursor in Subject buffer.
-(defsubst mime-partial/preview-article (target)
+(defsubst mime-view-partial-message (target)
   (save-window-excursion
     (let ((f (assq target mime-view-partial-message-method-alist)))
       (if f
@@ -74,7 +74,7 @@
 	  (while (search-backward subject-id nil t))
 	  (catch 'tag
 	    (while t
-	      (mime-partial/preview-article target)
+	      (mime-view-partial-message target)
 	      (set-buffer article-buffer)
 	      (set-buffer mime::article/preview-buffer)
 	      (setq cinfo
