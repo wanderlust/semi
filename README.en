@@ -50,7 +50,9 @@ Required environment
 
 	ftp://ftp.jaist.ac.jp/pub/GNU/elisp/flim/
 
-  PGP/MIME and application/pgp require mailcrypt or tiny-pgp package.
+  PGP/MIME and application/pgp require Mailcrypt or tiny-pgp package.
+  In addition, if you want to use PGP 5.0i or GnuPG for PGP/MIME, it
+  is needed that the version of Mailcrypt package is 3.5.2 or later.
 
 
 Installation

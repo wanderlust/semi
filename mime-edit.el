@@ -114,6 +114,9 @@
 (require 'alist)
 (require 'invisible)
 
+;; Avoid byte-compile warning.
+(defvar mc-default-scheme)
+
 
 ;;; @ version
 ;;;
@@ -495,6 +498,7 @@ If encoding is nil, it is determined from its contents."
     (cn-big5		8 "base64")
     (big5		8 "base64")
     (shift_jis		8 "base64")
+    (tis-620		8 "base64")
     (iso-2022-jp-2	7 "base64")
     (iso-2022-int-1	7 "base64")
     ))
@@ -1861,7 +1865,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 		(mime-edit-translate-region beg end boundary))
 	       (ctype    (car ret))
 	       (encoding (nth 1 ret))
-	       (pgp-boundary (concat "pgp-" boundary)))
+	       pgp-boundary)
 	  (goto-char beg)
 	  (insert header)
 	  (insert (format "Content-Type: %s\n" ctype))
@@ -1873,6 +1877,12 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 		       recipients (point-min) (point-max) from)
 	      (throw 'mime-edit-error 'pgp-error)
 	      )
+	  (setq pgp-boundary
+		(format "%s-%s"
+			(if (eq 'mc-scheme-gpg mc-default-scheme)
+			    "gpg"
+			  "pgp")
+			boundary))
 	  (goto-char beg)
 	  (insert (format "--[[multipart/encrypted;
  boundary=\"%s\";
