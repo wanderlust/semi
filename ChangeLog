@@ -1,3 +1,7 @@
+1999-01-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el: Must require `emu'.
+
 1999-01-04  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
 
 	* mime-view.el (mime-view-insert-entity-button): Use URL if it
