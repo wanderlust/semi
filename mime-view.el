@@ -121,6 +121,10 @@
      (method . mime-article/decode-message/partial)
      (mode . "play")
      )
+    ((type . "message/external-body")
+     ("access-type" . "anon-ftp")
+     (method . mime-article/decode-message/external-ftp)
+     )
     
     ((method "metamail" t "-m" "tm" "-x" "-d" "-z" "-e" 'file)
      (mode . "play")
