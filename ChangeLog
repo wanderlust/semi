@@ -1,5 +1,13 @@
 1998-04-10  MORIOKA Tomohiko  <morioka@mousai.jaist.ac.jp>
 
+	* SEMI-ELS (semi-modules-to-compile): Delete 'mime-def,
+	'eword-encode and 'eword-decode.
+
+	* mime-def.el, eword-encode.el, eword-decode.el: Abolish
+	mime-def.el, eword-decode.el and eword-encode.el; (moved to RIME).
+
+1998-04-10  MORIOKA Tomohiko  <morioka@mousai.jaist.ac.jp>
+
 	* mime-parse.el (regexp-or): Moved from semi-def.el.
 
 	* semi-def.el: Move 'regexp-or to mime-parse.el.
