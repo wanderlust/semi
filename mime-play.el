@@ -452,7 +452,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
 
 (defun mime-display-caesar (start end cal)
   "Internal method for mime-view to display ROT13-47-48 message."
-  (let* ((cnum (mime-article/point-content-number beg))
+  (let* ((cnum (mime-article/point-content-number start))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (the-buf (current-buffer))
 	 (mother mime-view-buffer)
