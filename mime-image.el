@@ -96,7 +96,10 @@
 	    glyph)))
 
       (defun mime-image-insert (image &optional string area)
-	(let ((extent (make-extent (point) (progn (insert string)(point)))))
+	(let ((extent (make-extent (point)
+				   (progn (and string
+					       (insert string))
+					  (point)))))
 	  (set-extent-property extent 'invisible t)
 	  (set-extent-end-glyph extent image))))
   (condition-case nil
