@@ -56,7 +56,7 @@
 ;;; @ button
 ;;;
 
-(defvar tm:button-face 'bold
+(defvar mime-button-face 'bold
   "Face used for content-button or URL-button of MIME-Preview buffer.
 \[mime-def.el]")
 
@@ -65,8 +65,8 @@
 
 (defun tm:add-button (from to func &optional data)
   "Create a button between FROM and TO with callback FUNC and data DATA."
-  (and tm:button-face
-       (overlay-put (make-overlay from to) 'face tm:button-face))
+  (and mime-button-face
+       (overlay-put (make-overlay from to) 'face mime-button-face))
   (tl:add-text-properties from to
 			  (append (and tm:mouse-face
 				       (list 'mouse-face tm:mouse-face))
