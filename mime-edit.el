@@ -2589,6 +2589,12 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	  "\\):")
   "Regexp for deleted header fields when `mime-edit-again' is called.")
 
+(defsubst eliminate-top-spaces (string)
+  "Eliminate top sequence of space or tab in STRING."
+  (if (string-match "^[ \t]+" string)
+      (substring string (match-end 0))
+    string))
+
 (defun mime-edit-decode-multipart-in-buffer (content-type not-decode-text)
   (let* ((subtype (mime-content-type-subtype content-type))
 	 (boundary (mime-content-type-parameter content-type "boundary"))
