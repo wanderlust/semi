@@ -1,8 +1,25 @@
+1999-11-03  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg-pgp.el (lookup-key): New generic function.
+	(encrypt-region): Use `lookup-key'; cache passphrase if the
+	encryption is done successfully.
+	(sign-region): Likewise.
+	(decrypt-region): Use `lookup-key'.
+
+	* pgg.el (pgg-scheme): Remove all slots.
+	(pgg-decrypt-codition): Rename tag `cipher-algorithm' to
+	`symmetric-key-algorithm'.
+	(lookup-key): Add documentation to the new generic function.
+
+	* pgg-parse.el (pgg-decode-armor-region): Remove autoload cookie.
+	(pgg-armor-header-lines): New variable.
+
 1999-11-02  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* pgg.el (pgg-add-passphrase-cache): Use only four octets of the key.
+	(pgg-read-passphrase): Ditto.
 	
-	* pgg-pgp5.el (lookup-key): New generic method.
+	* pgg-pgp5.el (lookup-key): New generic function. 
 	(encrypt-region): Use `lookup-key'; cache passphrase if the
 	encryption is done successfully.
 	(sign-region): Likewise.
@@ -23,7 +40,7 @@
 	(pgg-add-passphrase-cache): New function.
 	(pgg-remove-passphrase-cache): New function.
 
-	* pgg-gpg.el (lookup-key): New generic method.
+	* pgg-gpg.el (lookup-key): New generic function.
 	(encrypt-region): Use `lookup-key'; cache passphrase if the
 	encryption has been done successfully.
 	(sign-region): Likewise.
