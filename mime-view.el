@@ -314,6 +314,16 @@ mother-buffer."
   `(eq (cdr (or (assq '*children ,situation)))
        'invisible))
 
+(defmacro mime-view-button-is-visible (situation)
+  ;; Kludge.
+  `(or (eq (or (cdr (assq '*entity-button ,situation))
+	       (cdr (assq 'entity-button ,situation)))
+	   'visible)
+       (and (not (eq (or (cdr (assq '*entity-button ,situation))
+			 (cdr (assq 'entity-button ,situation)))
+		     'invisible))
+	    (mime-view-entity-button-visible-p entity))))
+
 ;;; @ presentation of preview
 ;;;
 
@@ -916,70 +926,29 @@ With prefix, it prompts for coding-system."
 (defun mime-preview-type ()
   "View part as text without code conversion."
   (interactive)
-  (let ((inhibit-read-only t)
-	(entity (get-text-property (point) 'mime-view-entity))
-	(situation (get-text-property (point) 'mime-view-situation))
-	(mime-view-force-inline-types t)
-	start)
-    (when (and entity
-	       (not (get-text-property (point) 'mime-view-entity-header))
-	       (not (memq (mime-entity-media-type entity)
-			  '(multipart message))))
-      (setq start (or (and (not (mime-entity-parent entity))
-			   (1+ (previous-single-property-change
-				(point)
-			       'mime-view-entity-header)))
-		      (and (not (eq (point) (point-min)))
-			   (not (eq (get-text-property (1- (point))
-						       'mime-view-entity)
-				    entity))
-			   (point))
-		      (previous-single-property-change (point)
-						   'mime-view-entity)
-		      (point)))
-      (delete-region start
-		     (1-
-		      (or (next-single-property-change (point)
-						       'mime-view-entity)
-			  (point-max))))
-      (save-excursion
-	(save-restriction
-	  (narrow-to-region (point) (point))
-	  (mime-display-entity entity (if (eq (assq 'body situation)
-					      'invisible)
-					  situation
-					(put-alist 'body 'visible
-						   situation))))
-	(if (and (bolp) (eolp))
-	      (delete-char 1))))))
+  (mime-preview-toggle-content t))
 
 (defun mime-preview-buttonize ()
   (interactive)
   (save-excursion
     (goto-char (point-min))
-    (let ((inhibit-read-only t)
-	  point)
+    (let (point)
       (while (setq point (next-single-property-change
 			  (point) 'mime-view-entity))
 	(goto-char point)
 	(unless (get-text-property (point) 'mime-button-callback)
-	  (mime-view-insert-entity-button
-	   (get-text-property (point) 'mime-view-entity)))))))
+	  (mime-preview-toggle-button))))))
 
 (defun mime-preview-unbuttonize ()
   (interactive)
   (save-excursion
     (goto-char (point-min))
-    (let ((inhibit-read-only t)
-	  point)
+    (let (point)
       (while (setq point (next-single-property-change
 			  (point) 'mime-view-entity))
 	(goto-char point)
-	(if (get-text-property (point) 'mime-button-callback)
-	    (delete-region (point) (save-excursion
-				     (goto-char
-				      (next-single-property-change
-				       (point) 'mime-button-callback)))))))))
+	(when (get-text-property (point) 'mime-button-callback)
+	  (mime-preview-toggle-button))))))
 	  
 
 ;;; @ acting-condition
@@ -1099,19 +1068,12 @@ With prefix, it prompts for coding-system."
 				    (append (mime-entity-situation entity)
 					    default-situation))
 		default-situation)))
-  (let ((button-is-visible
-	 ;; Kludge.
-	 (or (eq (or (cdr (assq '*entity-button situation))
-		     (cdr (assq 'entity-button situation)))
-		 'visible)
-	     (and (not (eq (or (cdr (assq '*entity-button situation))
-			       (cdr (assq 'entity-button situation)))
-			   'invisible))
-		  (mime-view-entity-button-visible-p entity))))
+  (let ((button-is-visible (mime-view-button-is-visible situation))
 	(header-is-visible
 	 (mime-view-header-is-visible situation))
 	(header-presentation-method
-	 (or (cdr (assq 'header-presentation-method situation))
+	 (or (cdr (assq '*header-presentation-method situation))
+	     (cdr (assq 'header-presentation-method situation))
 	     (cdr (assq (cdr (assq 'major-mode situation))
 			mime-header-presentation-method-alist))))
 	(body-is-visible
@@ -1265,7 +1227,15 @@ With prefix, it prompts for coding-system."
     (define-key mime-view-mode-map
       "\C-c\C-t\C-h" (function mime-preview-toggle-header))
     (define-key mime-view-mode-map
+      "\C-c\C-th" (function mime-preview-toggle-header))
+    (define-key mime-view-mode-map
       "\C-c\C-t\C-c" (function mime-preview-toggle-content))
+    (define-key mime-view-mode-map
+      "\C-c\C-tc" (function mime-preview-toggle-content))
+    (define-key mime-view-mode-map
+      "\C-c\C-tH" (function mime-preview-toggle-all-header))
+    (define-key mime-view-mode-map
+      "\C-c\C-tb" (function mime-preview-toggle-button))
     (define-key mime-view-mode-map
       "\C-c\C-p" (function mime-preview-print-current-entity))
     (define-key mime-view-mode-map
@@ -1515,8 +1485,6 @@ It calls following-method selected from variable
       (save-excursion
 	(set-buffer (setq new-buf (get-buffer-create new-name)))
 	(erase-buffer)
-	(unless header-exists
-	  (insert ?\n))
 	;; Compatibility kludge.
 	;; FSF Emacs can only take substring of current-buffer.
 	(insert
@@ -1524,6 +1492,10 @@ It calls following-method selected from variable
 	   (set-buffer the-buf)
 	   (buffer-substring-no-properties (car position)
 					   (cdr position))))
+	(if header-exists
+	    (delete-region (goto-char (point-min))
+			   (re-search-forward "^$"))
+	  (insert "\n"))
 	(goto-char (point-min))
 	(let ((current-entity
 	       (if (and (eq (mime-entity-media-type entity) 'message)
@@ -1744,9 +1716,10 @@ If LINES is negative, scroll up LINES lines."
 						 nil (point-max)))
     (cons start end)))
 
-(defun mime-preview-toggle-header ()
-  "Toggle display of entity header."
-  (interactive)
+(defun mime-preview-toggle-header (&optional show)
+  "Toggle display of entity header.
+When prefix is given, it always displays the header."
+  (interactive "P")
   (let ((inhibit-read-only t)
 	(mime-view-force-inline-types t)
 	(position (mime-preview-entity-boundary))
@@ -1756,19 +1729,56 @@ If LINES is negative, scroll up LINES lines."
     (setq header-is-visible (mime-view-header-is-visible situation))
     (save-excursion
       (delete-region (car position) (cdr position))
-      (if header-is-visible
-	  (mime-display-entity entity
-			       (put-alist '*entity-button 'visible
-					  (put-alist '*header 'invisible
-						     situation)))
-	(mime-display-entity entity 
-			     (put-alist '*entity-button 'invisible
-					(put-alist '*header 'visible
-						   situation)))))))
+      (if (or show (not header-is-visible))
+	  (mime-display-entity
+	   entity
+	   (del-alist '*entity-button
+		      (put-alist '*header 'visible
+				 situation)))
+	(mime-display-entity
+	 entity
+	 (put-alist '*entity-button
+		    'visible
+		    (put-alist '*header 'invisible
+			       situation)))))))
 
-(defun mime-preview-toggle-content ()
-  "Toggle display of entity body."
-  (interactive)
+(defun mime-preview-toggle-all-header (&optional show)
+  "Toggle display of entity header.
+When prefix is given, it always displays the header."
+  (interactive "P")
+  (let ((inhibit-read-only t)
+	(mime-view-force-inline-types t)
+	(position (mime-preview-entity-boundary))
+	entity header-is-visible situation)
+    (setq entity (get-text-property (car position) 'mime-view-entity)
+	  situation (get-text-property (car position) 'mime-view-situation))
+    (setq header-is-visible (mime-view-header-is-visible situation))
+    (save-excursion
+      (delete-region (car position) (cdr position))
+      (if (or show (not header-is-visible))
+	  (mime-display-entity
+	   entity
+	   (del-alist '*entity-button
+		      (del-alist '*header
+				 (del-alist '*header-presentation-method
+					    situation))))
+	(mime-display-entity
+	 entity
+	 (put-alist
+	  '*entity-button
+	  'visible
+	  (put-alist
+	   '*header 'invisible
+	   (put-alist '*header-presentation-method
+		      #'(lambda (entity situation)
+			  (mime-insert-header
+			   entity nil '(".*")))
+		      situation))))))))
+
+(defun mime-preview-toggle-content (&optional show)
+  "Toggle display of entity body.
+When prefix is given, it always displays the content."
+  (interactive "P")
   (let ((inhibit-read-only t)
 	(mime-view-force-inline-types t)
 	(position (mime-preview-entity-boundary))
@@ -1778,15 +1788,44 @@ If LINES is negative, scroll up LINES lines."
     (setq situation
 	  (if (mime-entity-children entity)
 	      ;; Entity body is always invisible for composite types.
-	      (if (mime-view-children-is-invisible situation)
-		  (put-alist '*children 'visible situation)
-		(put-alist '*children 'invisible situation))
-	    (if (mime-view-body-is-visible situation)
-		(put-alist '*body 'invisible situation)
-	      (put-alist '*body 'visible situation))))
+	      (if (or show (mime-view-children-is-invisible situation))
+		  (del-alist
+		   '*entity-button
+		   (put-alist '*children 'visible situation))
+		(put-alist
+		 '*entity-button 'visible
+		 (put-alist '*children 'invisible situation)))
+	    (if (or show (not (mime-view-body-is-visible situation)))
+		(del-alist
+		 '*entity-button
+		 (put-alist '*body 'visible situation))
+	      (put-alist
+	       '*entity-button 'visible
+	       (put-alist '*body 'invisible situation)))))
     (save-excursion
       (delete-region (car position) (cdr position))
       (mime-display-entity entity situation))))
+
+(defun mime-preview-toggle-button (&optional show)
+  "Toggle display of entity button.
+When prefix is given, it always displays the content."
+  (interactive "P")
+  (let ((inhibit-read-only t)
+	(mime-view-force-inline-types t)
+	(position (mime-preview-entity-boundary))
+	entity situation button-is-visible)
+    (setq entity (get-text-property (car position) 'mime-view-entity)
+	  situation (get-text-property (car position) 'mime-view-situation)
+	  button-is-visible (mime-view-button-is-visible situation))
+    (save-excursion
+      (delete-region (car position) (cdr position))
+      (if (or show (not button-is-visible))
+	  (mime-display-entity entity
+			       (put-alist '*entity-button
+					  'visible situation))
+	(mime-display-entity entity
+			     (put-alist '*entity-button
+					'invisible situation))))))
 
 ;;; @@ quitting
 ;;;

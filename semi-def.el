@@ -30,7 +30,7 @@
 
 (require 'custom)
 
-(defconst mime-user-interface-product ["EMY" (1 13 3) "To err is human"]
+(defconst mime-user-interface-product ["EMY" (1 13 4) "Nothing comes of nothing"]
   "Product name, version number and code name of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
@@ -76,8 +76,10 @@
     (insert "\n"))
   (save-restriction
     (narrow-to-region (point)(point))
-    (insert (concat "[" string "]\n"))
-    (mime-add-button (point-min)(point-max) function data)))
+    ;; One more newline to avoid concatenation of face property.
+    (insert (concat "[" string "]\n\n"))
+    (mime-add-button (point-min) (1- (point-max)) function data)
+    (delete-char -1)))
 
 (defvar mime-button-mother-dispatcher nil)
 

@@ -1,3 +1,35 @@
+2000-02-21  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* EMY 1.13.4 is released.
+
+2000-02-20  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* semi-def.el (mime-insert-button): Insert newline to avoid
+	face property concatenation.
+
+2000-02-20  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-preview-toggle-button): New function.
+	(mime-view-define-keymap): Define C-h C-t b to
+	mime-preview-toggle-button.
+	(mime-preview-buttonize): Use it.
+	(mime-preview-unbuttonize): Ditto.
+	(mime-preview-type): Call mime-preview-toggle-body.
+
+2000-02-20  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-preview-toggle-header): Add optional
+	argument show.  When show, always displays rather than toggle.
+	(mime-preview-toggle-all-header): Ditto.
+	(mime-preview-toggle-content): Ditto.
+
+2000-02-20  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-preview-follow-current-entity):
+	Delete header and insert new one.
+	(mime-preview-toggle-header): Don't manipulate entity button.
+	(mime-preview-toggle-all-header): New function.
+
 2000-02-16  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* mime-view.el (mime-preview-quit): Fix bug which unconditionally
