@@ -895,14 +895,22 @@ button-2	Move to point under the mouse cursor
 	(setq rpcl (cdr rpcl))
 	))))
 
-(autoload 'mime-play-entity "mime-play")
+(autoload 'mime-play-entity "mime-play" "Play current entity." t)
 
 (defun mime-extract-entity ()
+  "Extract current entity into file (maybe).
+It decodes current entity to call internal or external method as
+\"extract\" mode.  The method is selected from variable
+`mime/content-decoding-condition'."
   (interactive)
   (mime-play-entity "extract")
   )
 
 (defun mime-print-entity ()
+  "Print current entity (maybe).
+It decodes current entity to call internal or external method as
+\"print\" mode.  The method is selected from variable
+`mime/content-decoding-condition'."
   (interactive)
   (mime-play-entity "print")
   )
