@@ -653,7 +653,8 @@ be the result."
       (cons (cons 'atom (car decoded)) (cdr decoded)))))
 
 (defun eword-analyze-atom (string &optional must-unfold)
-  (if (string-match std11-atom-regexp string)
+  (if (let ((enable-multibyte-characters nil))
+        (string-match std11-atom-regexp string))
       (let ((end (match-end 0)))
 	(if (and eword-decode-sticked-encoded-word
 		 (string-match eword-encoded-word-in-phrase-regexp

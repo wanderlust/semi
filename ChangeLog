@@ -1,3 +1,8 @@
+1998-04-03  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* eword-decode.el (eword-analyze-atom): Set enable-multibyte-characters
+	as nil when calling `string-match'.
+
 1998-03-23  Tanaka Akira  <akr@jaist.ac.jp>
 
 	* eword-decode.el (eword-decode-header): Set default-mime-charset when
