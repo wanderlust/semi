@@ -150,10 +150,6 @@
     (unwind-protect
 	(with-temp-buffer
 	  (mime-insert-entity orig-entity)
-	  (goto-char (point-min))
-	  (while (progn (end-of-line) (not (eobp)))
-	    (insert "\r")
-	    (forward-line 1))
 	  (setq status (pgg-verify-region (point-min)(point-max) 
 					  sig-file 'fetch))
 	  (save-excursion 

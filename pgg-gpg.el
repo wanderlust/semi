@@ -216,7 +216,9 @@
   (let ((args '("--batch" "--verify")))
     (when (stringp signature)
       (setq args (append args (list signature))))
-    (pgg-gpg-process-region start end nil pgg-gpg-program args)
+    (pgg-as-lbt start end 'CRLF
+      (pgg-gpg-process-region start end nil pgg-gpg-program args)
+      )
     (save-excursion
       (set-buffer pgg-errors-buffer)
       (goto-char (point-min))
