@@ -1,3 +1,8 @@
+1997-11-11  Fran,Ag(Bois Pinard   <pinard@iro.umontreal.ca>
+
+	* mime-edit.el: Modify space in prompt and removespurious trailing
+	spaces in the files. (cf. [tm-en:1507])
+
 1997-11-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-edit.el: Rename `mime-edit-enclose-region' ->
