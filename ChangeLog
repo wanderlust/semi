@@ -1,3 +1,9 @@
+1999-02-08  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
+
+	* mime-edit.el (mime-edit-mode-entity-map): Fix key map conflict.
+	Move `mime-edit-insert-text-file' to C-c C-x T instead of C-c C-x
+	C-T.
+
 1999-01-27  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
 
 	* Sync up with semi-1_13.
