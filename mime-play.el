@@ -420,9 +420,9 @@ It is registered to variable `mime-preview-quitting-method-alist'."
   (let* ((cnum (mime-raw-point-to-entity-number beg))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (mother mime-preview-buffer)
-	 (text-decoder
-	  (cdr (or (assq major-mode mime-text-decoder-alist)
-		   (assq t mime-text-decoder-alist))))
+	 (representation-type
+	  (cdr (or (assq major-mode mime-raw-representation-type-alist)
+		   (assq t mime-raw-representation-type-alist))))
 	 str)
     (setq str (buffer-substring beg end))
     (switch-to-buffer new-name)
@@ -433,7 +433,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	(delete-region (point-min) (match-end 0))
       )
     (setq major-mode 'mime-show-message-mode)
-    (setq mime-text-decoder text-decoder)
+    (setq mime-raw-representation-type representation-type)
     (mime-view-mode mother)
     ))
 
@@ -445,15 +445,17 @@ It is registered to variable `mime-preview-quitting-method-alist'."
   "Write current region into specified file.
 When called from a program, takes three arguments:
 START, END and FILENAME.  START and END are buffer positions.
-It refer `mime-raw-buffer-coding-system-alist' to choose coding-system
-to write."
-  (let ((coding-system-for-write
-	 (cdr
-	  (or (assq major-mode mime-raw-buffer-coding-system-alist)
-	      (assq t mime-raw-buffer-coding-system-alist)
-	      ))))
-    (write-region start end filename)
-    ))
+It refer `mime-raw-representation-type' or `major-mode
+mime-raw-representation-type-alist'.  If it is `binary', region is
+saved as binary.  Otherwise the region is saved by `write-region'."
+  (let ((presentation-type
+	 (or mime-raw-representation-type
+	     (cdr (or (assq major-mode mime-raw-representation-type-alist)
+		      (assq t mime-raw-representation-type-alist))))))
+    (if (eq presentation-type 'binary)
+	(write-region-as-binary start end filename)
+      (write-region start end filename)
+      )))
 
 (defun mime-method-to-store-message/partial (beg end cal)
   (goto-char beg)
@@ -606,14 +608,14 @@ to write."
 
 (defun mime-method-to-display-caesar (start end cal)
   "Internal method for mime-view to display ROT13-47-48 message."
-  (let* ((cnum (mime-raw-point-to-entity-number start))
+  (let* ((entity (mime-raw-find-entity-from-point start))
+	 (cnum (reverse (mime-entity-node-id entity)))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (the-buf (current-buffer))
 	 (mother mime-preview-buffer)
 	 (charset (cdr (assoc "charset" cal)))
 	 (encoding (cdr (assq 'encoding cal)))
-	 (mode major-mode)
-	 )
+	 (mode major-mode))
     (let ((pwin (or (get-buffer-window mother)
 		    (get-largest-window)))
 	  (buf (get-buffer-create new-name))
@@ -624,16 +626,7 @@ to write."
       )
     (setq buffer-read-only nil)
     (erase-buffer)
-    (insert-buffer-substring the-buf start end)
-    (goto-char (point-min))
-    (if (re-search-forward "^\n" nil t)
-	(delete-region (point-min) (match-end 0))
-      )
-    (let ((m (cdr (or (assq mode mime-text-decoder-alist)
-		      (assq t mime-text-decoder-alist)))))
-      (and (functionp m)
-	   (funcall m charset encoding)
-	   ))
+    (mime-text-insert-decoded-body entity)
     (mule-caesar-region (point-min) (point-max))
     (set-buffer-modified-p nil)
     (set-buffer mother)
