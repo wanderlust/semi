@@ -208,31 +208,14 @@
 	(mime-pgp-check-signature): Use `with-current-buffer' instead of
 	`save-current-buffer'; add comment about PGP 5.0i.
 
+
+1999-05-12  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* SEMI: Version 1.13.4 (Terai) released.
+
 1999-04-06  Shuhei KOBAYASHI  <shuhei@aqua.ocn.ne.jp>
 
 	* mime-edit.el (mime-delete-field): Use `std11-field-end'.
-
-1999-04-05  Katsumi Yamaoka   <yamaoka@jpl.org>
-
-	* mime-pgp.el (mime-pgp-parse-verify-error-for-pgp,
-	mime-pgp-parse-verify-error-for-pgp50,
-	mime-pgp-parse-verify-error-for-gpg): New functions.
-	(mime-verify-application/pgp-signature): Use one of them.
-	(mime-pgp-parse-verify-error): New macro.
-	(mime-pgp-check-signature): Returns nil if verify failed under PGP
-	5.0i.
-
-1999-04-05  Katsumi Yamaoka   <yamaoka@jpl.org>
-
-	* mime-pgp.el (mime-pgp-detect-version): New function.
-	(mime-verify-application/pgp-signature): Use it.
-	(mime-decrypt-application/pgp-encrypted): Use it.
-	(TopLevel): Require `std11'.
-
-	* mime-mc.el (mime-mc-gpg-sign-region): Remove ("--passphrase-fd"
-	"0") from the list of arguments.
-	(mime-mc-shell-file-name): New user option.
-	(mime-mc-pgp50-process-region, mime-mc-gpg-process-region): Use it.
 
 1999-03-30  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
 
@@ -243,89 +226,6 @@
 
 	* mime-view.el (mime-preview-follow-current-entity): Don't copy
 	header if current entity is root.
-
-1999-03-26  Katsumi Yamaoka   <yamaoka@jpl.org>
-
-	* mime-mc.el: Load "expect", if it exists, at the compile time.
-
-1999-03-25  Katsumi Yamaoka   <yamaoka@jpl.org>
-
-	* NEWS, mime-ui-en.sgml, mime-ui-ja.sgml: Update for the command
-	`mime-mc-setversion'.
-
-	* semi-setup.el (TopLevel): Autoload "mime-mc" for the command
-	`mime-mc-setversion'.
-
-	* mime-mc.el (mime-mc-pgp50-sign-region): Use "micalg=pgp-sha1"
-	instead of "micalg=pgp-md5"; use `mime-mc-pgp50-sign-parser' for
-	the parser if a detached sign is required.
-	(mime-mc-pgp50-sign-parser): New function for parsing a detached
-	sign.
-	(mime-mc-setversion): New command.
-
-	* mime-edit.el (mime-edit-preview-message): Inherit the value of
-	`mime-edit-pgp-processing' from the editing buffer to the encoding
-	buffer.
-	(mime-edit-encrypt-pgp-mime): Swap the prefix string of boundary
-	"gpg-" with "pgp-".
-
-1999-03-24  Katsumi Yamaoka   <yamaoka@jpl.org>
-
-	* NEWS, README.en, mime-ui-en.sgml, mime-ui-ja.sgml: Update for
-	PGP 5.0i and GnuPG support.
-
-	* semi-def.el (TopLevel): Autoload "mc-pgp5" and "mc-gpg".
-	(pgp-function): Modify for extended `pgp-function-alist'.
-	(pgp-function-alist): Extend for supporting PGP 5.0i and GnuPG.
-	(pgp-version): New user option.
-
-	* mime-pgp.el (mime-pgp-good-signature-post-function-pgp50-us): New
-	function.
-
-	(mime-verify-application/pgp-signature): Support PGP 5.0i and
-	GnuPG.
-	(mime-pgp-check-signature): Likewise.
-
-	(mime-pgp-key-expected-regexp,
-	mime-pgp-good-signature-post-function,
-	mime-pgp-good-signature-regexp, mime-pgp-default-language,
-	mime-pgp-command): New macros.
-
-	(mime-pgp-key-expected-regexp-alist): Use `defcustom'; extend for
-	supporting PGP 5.0i and GnuPG.
-	(mime-pgp-good-signature-regexp-alist): Likewise.
-
-	(mime-pgp-default-language-alist, mime-pgp-command-alist): New
-	user options.
-	(mime-pgp-default-language): Abolish variable. Move to
-	`mime-pgp-default-language-alist'.
-	(mime-pgp-command): Abolish variable. Move to
-	`mime-pgp-command-alist'
-
-	(TopLevel): Require `semi-def' explicitly for referring to the
-	value of `pgp-version'.
-
-	* mime-mc.el (mime-mc-pgp-encrypt-region): Load "mc-pgp" if the
-	function `mc-pgp-encrypt-region' does not exist.
-	(mime-mc-pgp-sign-region): Load "mc-pgp" if the function
-	`mc-pgp-generic-parser' does not exist.
-
-	(mime-mc-pgp50-encrypt-region, mime-mc-pgp50-sign-region,
-	mime-mc-pgp50-process-region, mime-mc-gpg-encrypt-region,
-	mime-mc-gpg-sign-region, mime-mc-gpg-process-region,
-	mime-mc-snarf-keys, mime-mc-decrypt, mime-mc-verify,
-	mime-mc-insert-public-key): New functions.
-
-	(mime-mc-pgp-generic-parser): Abolish function.
-	(TopLevel): Autoload or load some modules if they are needed
-	instead of to load "mc-pgp" first; define some variables for
-	avoiding byte-compile warnings; require `semi-def' explicitly for
-	referring to the value of `pgp-version'.
-
-	* mime-edit.el (mime-edit-encrypt-pgp-mime): Use "gpg" for the
-	prefix string of boundary if GnuPG is used.
-	(TopLevel): Require `semi-def' explicitly for referring to the
-	value of `pgp-version'.
 
 1999-03-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -486,7 +386,7 @@
 
 1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.13.0 (Matt.DŽò) released.
+	* SEMI: Version 1.13.0 (Matt-Dò)-A released.
 
 1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -984,7 +884,7 @@
 
 1998-07-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* REMI: Version 1.8.3 (EcchŽþ-Nakagawa) released.
+	* REMI: Version 1.8.3 (Ecch-Dþ-Nakagawa)-A released.
 
 	* mime-play.el (mime-delq-null-situation): Add new optional
 	argument `ignored-value'.
@@ -1013,7 +913,7 @@
 
 1998-07-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* REMI: Version 1.8.2 (NŽòmachi) released.
+	* REMI: Version 1.8.2 (N-Dòmachi)-A released.
 
 1998-07-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -1132,7 +1032,7 @@
 
 1998-06-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* REMI: Version 1.8.0 (EcchŽþ-Kokubu) released.
+	* REMI: Version 1.8.0 (Ecch-Dþ-Kokubu)-A released.
 
 1998-06-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -1968,7 +1868,7 @@
 
 1998-06-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.5.0 (Nishi-NyŽþzen) released.
+	* SEMI: Version 1.5.0 (Nishi-Ny-Dþzen)-A released.
 
 	* README.en (Required environment): Modify for FLIM 1.3.0.
 
@@ -2020,7 +1920,7 @@
 
 1998-06-01  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.4.6 (NyŽþzen) released.
+	* SEMI: Version 1.4.6 (Ny-Dþzen)-A released.
 
 1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -2233,7 +2133,7 @@
 
 1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.4.4 (EcchŽþ-Miyazaki) released.
+	* SEMI: Version 1.4.4 (Ecch-Dþ-Miyazaki)-A released.
 
 	* mime-play.el (mime-mailcap-method-filename-alist): New variable.
 	(mime-mailcap-method-sentinel): New function.
@@ -2359,7 +2259,7 @@
 
 1998-05-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.4.1 (ŽÒmi) released.
+	* SEMI: Version 1.4.1 (-DÒmi)-A released.
 
 	* README.en (Required environment): Modify for FLIM 1.2.0.
 
@@ -2519,7 +2419,7 @@
 
 1998-04-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.3.2 (NŽò) was released.
+	* SEMI: Version 1.3.2 (N-Dò)-A was released.
 
 	* mime-edit.el (mime-edit-mode-entity-prefix): New variable.
 	(mime-edit-mode-entity-map): New variable.
@@ -3174,7 +3074,7 @@
 
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.2 (Nonoichi-KŽòdaimae) was released.
+	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae)-A was released.
 
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -3257,7 +3157,7 @@
 	* mime-file.el: Rename `mime-article/extract-file' ->
 	`mime-extract-current-entity'.
 
-1998-03-03  Fran.AŽçois Pinard   <pinard@iro.umontreal.ca>
+1998-03-03  François Pinard   <pinard@iro.umontreal.ca>
 
 	* mime-edit.el (mime-edit-insert-signature): Function
  	`mime-edit-insert-tag' is sometimes called with more arguments
@@ -3286,7 +3186,7 @@
 
 1998-02-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.0 (Nukaj.DŽþtaku-mae) was released.
+	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae)-A was released.
 
 	* SEMI-ELS: Remove mime-tar.el.
 
@@ -3423,14 +3323,14 @@
 
 1997-11-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.116 (DŽòhŽòji) was released.
+	* SEMI: Version 0.116 (D-Dòhòji)-A was released.
 
 1997-11-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el, mime-pgp.el, mime-partial.el: Rename
 	`mime::article/content-info' -> `mime-raw-content-info'.
 
-1997-11-11  Fran.AŽçois Pinard   <pinard@iro.umontreal.ca>
+1997-11-11  François Pinard   <pinard@iro.umontreal.ca>
 
 	* mime-edit.el: Modify space in prompt and removespurious trailing
 	spaces in the files. (cf. [tm-en:1507])
