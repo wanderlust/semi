@@ -136,15 +136,9 @@ It decodes the entity to call internal or external method.  The method
 is selected from variable `mime-acting-condition'.  If MODE is
 specified, play as it.  Default MODE is \"play\"."
   (let ((beg (mime-entity-point-min entity-info))
-	(end (mime-entity-point-max entity-info))
-	(content-type (mime-entity-content-type entity-info))
-	(encoding (mime-entity-encoding entity-info)))
-    (or content-type
-	(setq content-type (make-mime-content-type 'text 'plain)))
+	(end (mime-entity-point-max entity-info)))
     (let (method cal ret)
-      (setq cal (list* (cons 'major-mode major-mode)
-		       (cons 'encoding encoding)
-		       content-type))
+      (setq cal (mime-entity-situation entity-info))
       (if mode
 	  (setq cal (cons (cons 'mode mode) cal))
 	)
@@ -191,12 +185,9 @@ specified, play as it.  Default MODE is \"play\"."
 	     (mime-activate-external-method beg end ret)
 	     )
 	    (t
-	     (mime-show-echo-buffer
-	      "No method are specified for %s\n"
-	      (mime-type/subtype-string
-	       (mime-content-type-primary-type content-type)
-	       (mime-content-type-subtype content-type))
-	      )))
+	     (mime-show-echo-buffer "No method are specified for %s\n"
+				    (mime-entity-type/subtype entity-info))
+	     ))
       )))
 
 
