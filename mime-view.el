@@ -683,7 +683,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . message)(subtype . rfc822)(mode . "play")
-   (method . mime-method-to-display-message/rfc822)
+   (method . mime-view-message/rfc822)
    ))
 (ctree-set-calist-strictly
  'mime-acting-condition

@@ -472,7 +472,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
     (pop-to-buffer mother)
     ))
 
-(defun mime-method-to-display-message/rfc822 (entity cal)
+(defun mime-view-message/rfc822 (entity cal)
   (let* ((beg (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))
 	 (cnum (mime-raw-point-to-entity-number beg))
