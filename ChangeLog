@@ -1,5 +1,22 @@
 1998-03-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-image.el: Set up for `mime-preview-condition' instead of
+	`mime-view-body-visible-condition' and
+	`mime-view-content-filter-alist'.
+
+	* mime-view.el (mime-preview-condition): New variable.
+	(mime-view-body-visible-p): Use `mime-preview-condition' instead
+	of `mime-view-body-visible-condition'; abolish variable
+	`mime-view-body-visible-condition'.
+	(mime-view-insert-message/partial-button): Add argument
+	`situation'.
+	(mime-view-display-entity): Use `mime-preview-condition' instead
+	of `mime-view-content-filter-alist'; don't hard-coding for
+	`message/partial-button'; abolish variable
+	`mime-view-content-filter-alist'.
+
+1998-03-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-play.el: Require 'mime-text when compiling.
 
 1998-03-21  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
