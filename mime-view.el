@@ -688,10 +688,6 @@ The compressed face will be piped to this command.")
 
 (defvar mime-view-uuencode-encoding-name-list '("x-uue" "x-uuencode"))
 
-(defvar mime-raw-buffer-coding-system-alist
-  `((t . ,(mime-charset-to-coding-system default-mime-charset)))
-  "Alist of major-mode vs. corresponding coding-system of `mime-raw-buffer'.")
-
 
 ;;; @ buffer setup
 ;;;
