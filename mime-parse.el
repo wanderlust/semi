@@ -45,6 +45,9 @@ which are string or symbol."
 (defsubst regexp-* (regexp)
   (concat regexp "*"))
 
+(defsubst regexp-or (&rest args)
+  (concat "\\(" (mapconcat (function identity) args "\\|") "\\)"))
+
 (defconst rfc822/quoted-pair-regexp "\\\\.")
 (defconst rfc822/qtext-regexp
   (concat "[^" (char-list-to-string std11-non-qtext-char-list) "]"))
