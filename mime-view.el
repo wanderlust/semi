@@ -131,9 +131,10 @@ mother-buffer."
 	(mime-preview-original-major-mode recursive)
 	)
     (cdr (assq 'major-mode
-	       (get-text-property (or point (if (eobp)
-						(1- (point-max))
-					      (point)))
+	       (get-text-property (or point
+				      (if (> (point) (buffer-size))
+					  (max (1- (point-max)) (point-min))
+					(point)))
 				  'mime-view-situation)))))
 
 
