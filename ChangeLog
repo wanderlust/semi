@@ -1,5 +1,15 @@
 2000-12-27  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
+	* mime-view.el (mime-view-mailcap-files): New user option.
+	(mime-view-read-mailcap-files): Renamed from
+	`mime-view-read-mailcap'; read `mime-view-mailcap-files'.
+
+	* mime-view.el (mime-view-read-situation-examples-file): New
+	function; don't occur error.
+	(mime-view-read-mailcap): New function.
+
+2000-12-27  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
 	* mime-play.el (mime-play-messages-coding-system): Renamed from
 	`mime-mailcap-method-messages-coding-system'.
 
