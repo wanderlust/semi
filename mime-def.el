@@ -126,6 +126,33 @@
 	(intern (concat (symbol-name cs) "-" (symbol-name lbt)))
       cs)))
 
+(defun charsets-to-mime-charset (charsets)
+  "Return MIME charset from list of charset CHARSETS.
+This function refers variable `charsets-mime-charset-alist'
+and `default-mime-charset'. [emu.el]"
+  (if charsets
+      (or (catch 'tag
+	    (let ((rest charsets-mime-charset-alist)
+		  cell csl)
+	      (while (setq cell (car rest))
+		(if (catch 'not-subset
+		      (let ((set1 charsets)
+			    (set2 (car cell))
+			    obj)
+			(while set1
+			  (setq obj (car set1))
+			  (or (memq obj set2)
+			      (throw 'not-subset nil)
+			      )
+			  (setq set1 (cdr set1))
+			  )
+			t))
+		    (throw 'tag (cdr cell))
+		  )
+		(setq rest (cdr rest))
+		)))
+	  default-mime-charset)))
+
 (defun detect-mime-charset-region (start end)
   "Return MIME charset for region between START and END."
   (charsets-to-mime-charset
