@@ -1,5 +1,17 @@
 1998-06-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-w3.el (mime-save-background-color): Fixed.
+
+	* mime-view.el (mime-acting-condition): Set up
+	`mime-method-to-detect' for application/octet-stream in "play"
+	mode.
+
+	* mime-play.el (mime-file-type-regexp-type-subtype-alist): New
+	variable.
+	(mime-method-to-detect): New function.
+
+1998-06-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-play.el (mime-sort-situation): Modify for
 	Content-Disposition information.
 
