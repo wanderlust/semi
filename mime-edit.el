@@ -2172,8 +2172,7 @@ Content-Transfer-Encoding: 7bit
     (goto-char (point-min))
     (while (re-search-forward regexp nil t)
       (delete-region (match-beginning 0)
-		     (progn (forward-line 1) (point)))
-      )))
+		     (1+ (std11-field-end))))))
 
 
 ;;;
