@@ -1823,26 +1823,15 @@ Content-Transfer-Encoding: 7bit
 	  (while (progn (end-of-line) (not (eobp)))
 	    (insert "\r")
 	    (forward-line 1))
-	  (or (prog1 (smime-sign-buffer)
-		(push nil buffer-undo-list)
-		(ignore-errors (undo)))
+	  (or (smime-sign-buffer)
 	      (throw 'mime-edit-error 'pgp-error)))
 	(goto-char beg)
-	(insert (format "--[[multipart/signed;
- boundary=\"%s\"; micalg=sha1;
- protocol=\"application/pkcs7-signature\"][7bit]]
---%s
-" smime-boundary smime-boundary))
-	(goto-char (point-max))
-	(insert (format "\n--%s
-Content-Type: application/pkcs7-signature; name=\"smime.p7s\"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename=\"smime.p7s\"
-Content-Description: S/MIME Cryptographic Signature
-
-"  smime-boundary))
-	(goto-char (point-max))
-	(insert (format "\n--%s--\n" smime-boundary))))))
+	(if (re-search-forward "^Content-Type:\\s-*" nil t)
+	    (let* ((start (match-beginning 0))
+		   (body (buffer-substring (match-end 0) (std11-field-end))))
+	      (delete-region start (line-beginning-position 2))
+	      (goto-char beg)
+	      (insert "--[[" body "][7bit]]\n")))))))
 
 (defun mime-edit-encrypt-smime (beg end boundary)
   (save-excursion
@@ -1864,9 +1853,12 @@ Content-Description: S/MIME Cryptographic Signature
 	(or (smime-encrypt-buffer)
 	    (throw 'mime-edit-error 'pgp-error))
 	(goto-char beg)
-	(insert "--[[application/pkcs7-mime; name=\"smime.p7m\"
-Content-Disposition: attachment; filename=\"smime.p7m\"
-Content-Description: S/MIME Encrypted Message][base64]]\n")))))
+	(if (re-search-forward "^Content-Type:\\s-*" nil t)
+	    (let* ((start (match-beginning 0))
+		   (body (buffer-substring (match-end 0) (std11-field-end))))
+	      (delete-region start (line-beginning-position 2))
+	      (goto-char beg)
+	      (insert "--[[" body "]]\n")))))))
 
 (defsubst replace-space-with-underline (str)
   (mapconcat (function
