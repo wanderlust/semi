@@ -1498,7 +1498,8 @@ If reached to (point-max), it calls function registered in variable
 	  (progn (goto-char point)
 		 (recenter next-screen-context-lines))
 	(condition-case nil
-	    (scroll-up h)
+	    (let (window-pixel-scroll-increment)
+	      (scroll-up h))
 	  (end-of-buffer
 	   (goto-char (point-max)))))
       )))
@@ -1523,7 +1524,8 @@ If reached to (point-min), it calls function registered in variable
 	  (progn (goto-char point)
 		 (recenter (* -1 next-screen-context-lines)))
 	(condition-case nil
-	    (scroll-down h)
+	    (let (window-pixel-scroll-increment)
+	      (scroll-down h))
 	  (beginning-of-buffer
 	   (goto-char (point-min)))))
       )))

@@ -1,3 +1,11 @@
+2000-04-13  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-view.el (mime-preview-scroll-down-entity): Bind
+	`window-pixel-scroll-increment' to nil while scrolling for
+	canceling a backlash and a modeline erosion.  It may work under
+	XEmacs 21.2.20 and later.
+	(mime-preview-scroll-up-entity): Likewise.
+
 2000-01-16  Keiichi Suzuki  <keiichi@nanap.org>
 
 	* mime-w3.el (mime-preview-text/html): Don't get root entity from
