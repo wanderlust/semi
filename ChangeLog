@@ -1,3 +1,8 @@
+2000-02-17  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-display-entity): Find
+	`header-presentation-method' only if `header-is-visible'.
+
 2000-02-10  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-view.el (mime-display-entity): Don't use
