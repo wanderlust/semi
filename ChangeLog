@@ -1,3 +1,30 @@
+1998-03-22  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* eword-decode.el (eword-after-encoded-word-regexp): New constant.
+	eword-encoded-text-in-phrase-regexp: New constant.
+	eword-encoded-word-in-phrase-regexp: New constant.
+	eword-after-encoded-word-in-phrase-regexp: New constant.
+	eword-encoded-text-in-comment-regexp: New constant.
+	eword-encoded-word-in-comment-regexp: New constant.
+	eword-after-encoded-word-in-comment-regexp: New constant.
+	eword-encoded-text-in-quoted-string-regexp: New constant.
+	eword-encoded-word-in-quoted-string-regexp: New constant.
+	eword-after-encoded-word-in-quoted-string-regexp: New constant.
+	eword-decode-sticked-encoded-word: Update DOC-STRING.
+	eword-decode-quoted-encoded-word: Update DOC-STRING.
+	eword-decode-first-encoded-words: Add argument eword-regexp.
+	eword-decode-comment-string: Use `eword-encoded-word-in-comment-regexp'
+	and `eword-after-encoded-word-in-comment-regexp'.
+	eword-decode-quoted-string : Use
+	`eword-encoded-word-in-quoted-string-regexp' and
+	`eword-after-encoded-word-in-quoted-string-regexp'.
+	eword-decode-unstructured-string: Use `eword-encoded-word-regexp' and
+	`eword-after-encoded-word-regexp'.
+	eword-analyze-encoded-word: Use `eword-encoded-word-in-phrase-regexp'
+	and `eword-after-encoded-word-in-phrase-regexp'
+	eword-lexical-analyze: Add `default-mime-charset' and `must-unfold' to
+	key of cache.
+ 
 1998-03-21  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
 
 	* eword-decode.el (eword-lexical-analyze-internal): Fixed return
