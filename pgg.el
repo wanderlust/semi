@@ -198,6 +198,7 @@ and END to the keyring.")
 	       (or (cdr (assq 'preferred-key-server packet))
 		   pgg-default-keyserver-address))
 	 (ignore-errors 
+	   (require 'url)
 	   (pgg-fetch-key
 	    (if (url-type (url-generic-parse-url keyserver))
 		keyserver
