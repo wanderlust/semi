@@ -466,14 +466,16 @@ Each elements are regexp of field-name.")
     (insert (mime-entity-content entity))
     (goto-char (point-min))
     (while (re-search-forward
-            "\\(;ENCODING=QUOTED-PRINTABLE:\\)\\(\\(=[0-9A-F][0-9A-F]\\|=\r\n\\|[^\r\n]\\)*\\)"
+            "\\(;\\(encoding=\\)quoted-printable:\\)\\(\\(=[0-9A-F][0-9A-F]\\|=\r\n\\|[^\r\n]\\)*\\)"
             nil t)
       (replace-match
-       (string-as-multibyte
-        (mime-decode-string
-         (decode-coding-string
-          (buffer-substring (match-beginning 2) (match-end 2)) 'raw-text-dos)
-         "quoted-printable"))
+       (concat
+        (buffer-substring (match-beginning 1) (match-end 1))
+        (string-as-multibyte
+         (mime-decode-string
+          (decode-coding-string
+           (buffer-substring (match-beginning 3) (match-end 3)) 'raw-text-dos)
+          "quoted-printable")))
        t t))
     (decode-coding-region (point-min) (point-max) 'undecided)
     (goto-char (point-max))
