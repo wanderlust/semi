@@ -1139,12 +1139,28 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
       "e"        (function mime-preview-extract-current-entity))
     (define-key mime-view-mode-map
       "\C-c\C-p" (function mime-preview-print-current-entity))
+
     (define-key mime-view-mode-map
       "\C-c\C-t\C-f" (function mime-preview-toggle-header))
     (define-key mime-view-mode-map
       "\C-c\C-th" (function mime-preview-toggle-header))
     (define-key mime-view-mode-map
       "\C-c\C-t\C-c" (function mime-preview-toggle-content))
+
+    (define-key mime-view-mode-map
+      "\C-c\C-v\C-f" (function mime-preview-show-header))
+    (define-key mime-view-mode-map
+      "\C-c\C-vh" (function mime-preview-show-header))
+    (define-key mime-view-mode-map
+      "\C-c\C-v\C-c" (function mime-preview-show-content))
+
+    (define-key mime-view-mode-map
+      "\C-c\C-d\C-f" (function mime-preview-hide-header))
+    (define-key mime-view-mode-map
+      "\C-c\C-dh" (function mime-preview-hide-header))
+    (define-key mime-view-mode-map
+      "\C-c\C-d\C-c" (function mime-preview-hide-content))
+
     (define-key mime-view-mode-map
       "a"        (function mime-preview-follow-current-entity))
     (define-key mime-view-mode-map
@@ -1686,20 +1702,26 @@ If LINES is negative, scroll up LINES lines."
 ;;; @@ display
 ;;;
 
-(defun mime-preview-toggle-header ()
-  (interactive)
+(defun mime-preview-toggle-display (type &optional display)
   (let ((situation (mime-preview-find-boundary-info))
+	(sym (intern (concat "*" (symbol-name type))))
 	entity p-beg p-end)
     (setq p-beg (aref situation 0)
 	  p-end (aref situation 1)
 	  entity (aref situation 2)
 	  situation (get-text-property p-beg 'mime-view-situation))
-    (let ((cell (assq '*header situation)))
-      (if (null cell)
-	  (setq cell (assq 'header situation)))
-      (if (eq (cdr cell) 'visible)
-	  (setq situation (put-alist '*header 'invisible situation))
-	(setq situation (put-alist '*header 'visible situation))))
+    (cond ((eq display 'invisible)
+	   (setq display nil))
+	  (display)
+	  (t
+	   (setq display
+		 (eq (cdr (or (assq sym situation)
+			      (assq type situation)))
+		     'invisible))))
+    (setq situation (put-alist sym (if display
+				       'visible
+				     'invisible)
+			       situation))
     (save-excursion
       (let ((inhibit-read-only t))
 	(delete-region p-beg p-end)
@@ -1710,30 +1732,29 @@ If LINES is negative, scroll up LINES lines."
 	(add-to-list 'mime-preview-situation-example-list
 		     (cons situation 0))))))
 
-(defun mime-preview-toggle-content ()
+(defun mime-preview-toggle-header (&optional force-visible)
+  (interactive "P")
+  (mime-preview-toggle-display 'header force-visible))
+
+(defun mime-preview-toggle-content (&optional force-visible)
+  (interactive "P")
+  (mime-preview-toggle-display 'body force-visible))
+
+(defun mime-preview-show-header ()
   (interactive)
-  (let ((situation (mime-preview-find-boundary-info))
-	entity p-beg p-end)
-    (setq p-beg (aref situation 0)
-	  p-end (aref situation 1)
-	  entity (aref situation 2)
-	  situation (get-text-property p-beg 'mime-view-situation))
-    (let ((cell (assq '*body situation)))
-      (if (null cell)
-	  (setq cell (assq 'body situation)))
-      (if (eq (cdr cell) 'visible)
-	  (setq situation (put-alist '*body 'invisible situation))
-	(setq situation (put-alist '*body 'visible situation))))
-    (save-excursion
-      (let ((inhibit-read-only t))
-	(delete-region p-beg p-end)
-	(mime-display-entity entity situation)
-	))
-    (let ((ret (assoc situation mime-preview-situation-example-list)))
-      (if ret
-	  (setcdr ret (1+ (cdr ret)))
-	(add-to-list 'mime-preview-situation-example-list
-		     (cons situation 0))))))
+  (mime-preview-toggle-display 'header 'visible))
+
+(defun mime-preview-show-content ()
+  (interactive)
+  (mime-preview-toggle-display 'body 'visible))
+
+(defun mime-preview-hide-header ()
+  (interactive)
+  (mime-preview-toggle-display 'header 'invisible))
+
+(defun mime-preview-hide-content ()
+  (interactive)
+  (mime-preview-toggle-display 'body 'invisible))
 
     
 ;;; @@ quitting
