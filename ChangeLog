@@ -1,5 +1,11 @@
 1999-09-29  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* mime-play.el (mime-preview-play-current-entity): Use
+	text-property `mime-view-situation' as the initial value of
+	acting-situation to add major-mode.
+
+1999-09-29  MORIOKA Tomohiko  <tomo@m17n.org>
+
 	* mime-edit.el (mime-content-types): Delete text/x-rot13-47-48 in
 	default definition. [cf. <tm-ja:4904>, <tm-ja:4907>]
 
