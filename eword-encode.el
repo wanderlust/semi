@@ -584,6 +584,21 @@ encoded-word.  ASCII token is not encoded."
     (if (and str (string-match eword-encoded-word-regexp str))
 	str)))
 
+(defsubst eword-find-field-encoding-method (field-name)
+  (setq field-name (downcase field-name))
+  (let ((alist eword-field-encoding-method-alist))
+    (catch 'found
+      (while alist
+	(let* ((pair (car alist))
+	       (str (car pair)))
+	  (if (and (stringp str)
+		   (string= field-name (downcase str)))
+	      (throw 'found (cdr pair))
+	    ))
+	(setq alist (cdr alist)))
+      (cdr (assq t eword-field-encoding-method-alist))
+      )))
+
 (defun eword-encode-header (&optional code-conversion)
   "Encode header fields to network representation, such as MIME encoded-word.
 
@@ -600,33 +615,22 @@ It refer variable `eword-field-encoding-method-alist'."
 	  (setq field-name (buffer-substring beg (1- (match-end 0))))
 	  (setq end (std11-field-end))
 	  (and (find-non-ascii-charset-region beg end)
-	       (let ((ret (or (let ((fname  (downcase field-name)))
-				(assoc-if
-				 (function
-				  (lambda (str)
-				    (and (stringp str)
-					 (string= fname (downcase str))
-					 )))
-				 eword-field-encoding-method-alist))
-			      (assq t eword-field-encoding-method-alist)
-			      )))
-		 (if ret
-		     (let ((method (cdr ret)))
-		       (cond ((eq method 'mime)
-			      (let ((field
-				     (buffer-substring-no-properties beg end)
-				     ))
-				(delete-region beg end)
-				(insert (eword-encode-field field))
-				))
-			     (code-conversion
-			      (let ((cs
-				     (or (mime-charset-to-coding-system
-					  method)
-					 default-cs)))
-				(encode-coding-region beg end cs)
-				)))
-		       ))
+	       (let ((method (eword-find-field-encoding-method
+			      (downcase field-name))))
+		 (cond ((eq method 'mime)
+			(let ((field
+			       (buffer-substring-no-properties beg end)
+			       ))
+			  (delete-region beg end)
+			  (insert (eword-encode-field field))
+			  ))
+		       (code-conversion
+			(let ((cs
+			       (or (mime-charset-to-coding-system
+				    method)
+				   default-cs)))
+			  (encode-coding-region beg end cs)
+			  )))
 		 ))
 	  ))
       (and eword-generate-X-Nsubject
