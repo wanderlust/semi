@@ -263,8 +263,7 @@ or \"v\" for choosing a command of PGP 5.0i."
 	      )))
 
 (defun mime-pgp-check-signature (output-buffer orig-file)
-  (save-current-buffer
-    (set-buffer output-buffer)
+  (with-current-buffer output-buffer
     (erase-buffer)
     (setq truncate-lines t))
   (let* ((lang (mime-pgp-default-language))
@@ -287,8 +286,7 @@ or \"v\" for choosing a command of PGP 5.0i."
     (if (zerop (apply 'call-process-region
 		      (point-min) (point-max) command nil output-buffer nil
 		      args))
-	(save-current-buffer
-	  (set-buffer output-buffer)
+	(with-current-buffer output-buffer
 	  (goto-char (point-min))
 	  (cond
 	   ((not (stringp regexp))
@@ -302,6 +300,8 @@ or \"v\" for choosing a command of PGP 5.0i."
 	    )
 	   (t
 	    (message "Bad signature")
+	    ;; PGP 5.0i always returns 0 status, so returns nil
+	    ;; in order for attempt to fetch key.
 	    (not (eq 'pgp50 pgp-version))
 	    ))
 	  )
@@ -309,8 +309,7 @@ or \"v\" for choosing a command of PGP 5.0i."
       nil)))
 
 (defmacro mime-pgp-parse-verify-error (&rest forms)
-  (` (save-current-buffer
-       (set-buffer mime-echo-buffer-name)
+  (` (with-current-buffer mime-echo-buffer-name
        (goto-char (point-min))
        (prog1
 	   (let ((regexp (mime-pgp-key-expected-regexp)))

@@ -1,3 +1,10 @@
+1999-04-05  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-pgp.el (mime-pgp-parse-verify-error): Use
+	`with-current-buffer' instead of `save-current-buffer'.
+	(mime-pgp-check-signature): Use `with-current-buffer' instead of
+	`save-current-buffer'; add comment about PGP 5.0i.
+
 1999-04-06  Shuhei KOBAYASHI  <shuhei@aqua.ocn.ne.jp>
 
 	* mime-edit.el (mime-delete-field): Use `std11-field-end'.
