@@ -1,3 +1,139 @@
+1998-06-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* REMI: Version 1.6.0 (Amaharashi) released.
+
+	* mime-w3.el (mime-save-background-color): New macro.
+	(mime-preview-text/html): Use `mime-save-background-color'.
+
+1998-06-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el: Abolish variable `mime-edit-signing-type' and
+	`mime-edit-encrypting-type'.
+	(mime-edit-process-multipart-1): Separate "signed" to "pgp-signed"
+	and "kazu-signed"; separate "encrypted" to "pgp-encrypted" and
+	"kazu-encrypted".
+	(mime-edit-enclose-signed-region): Renamed from
+	`mime-edit-enclose-pgp-signed-region'.
+	(mime-edit-enclose-pgp-encrypted-region): Renamed from
+	`mime-edit-enclose-encrypted-region'.
+	(mime-edit-enclose-kazu-signed-region): New function.
+	(mime-edit-enclose-kazu-encrypted-region): New function.
+	(mime-edit-set-sign): Don't refer `mime-edit-signing-type'.
+	(mime-edit-set-encrypt): Don't refer `mime-edit-encrypting-type'.
+
+1998-06-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-sign-pgp-kazu): Abolish unused local
+	variable.
+	(mime-edit-encrypt-pgp-kazu): Abolish unused local variables.
+
+1998-06-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el (mime-method-for-application/pgp): Change interface.
+	(mime-method-to-verify-multipart/signed): Change interface.
+	(mime-method-to-verify-application/pgp-signature): Change
+	interface.
+	(mime-method-to-decrypt-application/pgp-encrypted): Change
+	interface.
+	(mime-method-to-add-application/pgp-keys): Change interface.
+
+	* mime-partial.el (mime-method-to-combine-message/partial-pieces):
+	Change interface.
+
+	* mime-play.el (mime-raw-play-entity): Change interface of
+	internal-method.
+	(mime-method-to-save): Change interface.
+	(mime-method-to-display-message/rfc822): Change interface.
+	(mime-method-to-store-message/partial): Change interface.
+	(mime-method-to-display-message/external-ftp): Change interface.
+	(mime-method-to-display-caesar): Change interface.
+
+1998-06-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-normalize-body): Use
+	`mime-charset-type-list' directly; abolish local variable
+	`mime-edit-charset-default-encoding-alist' and function
+	`mime-make-charset-default-encoding-alist'.
+	(mime-edit-toggle-transfer-level): Don't set up
+	`mime-edit-charset-default-encoding-alist'.
+
+1998-06-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-message): Set up
+	`mime-raw-message-info'.
+	(mime-view-buffer): New function.
+	(mime-view-mode): Don't set up `mime-raw-message-info'.
+
+1998-06-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-charset-type-list): Use base64 for cn-gb2312
+	and gb2312.
+	(mime-edit-normalize-body): If encoding is not specified for
+	charset, use quoted-printable or 8bit for mime-transfer-level is 7
+	or 8.
+
+	* mime-edit.el (mime-charset-type-list): Add `shift_jis'.
+
+1998-06-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-message): Use
+	`mime-maybe-hide-echo-buffer'.
+	(mime-view-mode): Don't use `mime-maybe-hide-echo-buffer'.
+
+	* mime-view.el (mime-view-display-message): Move point to top of
+	body; run `mime-view-mode-hook'.
+	(mime-view-mode): Don't move point; don't run
+	`mime-view-mode-hook'.
+
+	* mime-view.el (mime-view-display-message): Add new optional
+	argument `default-keymap-or-function'.
+	(mime-view-mode): Modify for `mime-view-display-message'.
+
+	* mime-view.el (mime-view-display-message): Add new optional
+	argument `mother'; set to `mime-mother-buffer'.
+	(mime-view-mode): Modify for `mime-view-display-message'.
+
+1998-06-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-mc.el: Use `eval-and-compile' to load "mc-pgp".
+
+	* mime-view.el (mime-preview-multipart/mixed): Modify for
+	`mime-view-display-entity'; don't refer `mime-raw-buffer'.
+	(mime-preview-multipart/alternative): Modify for
+	`mime-view-display-entity'; don't refer `mime-raw-buffer'.
+	(mime-view-display-entity): Change interface to abolish argument
+	for raw-buffer; don't refer `mime-raw-buffer'.
+	(mime-view-display-message): Abolish variable
+	`mime-preview-original-major-mode'; modify for
+	`mime-view-display-entity'.
+	(mime-preview-original-major-mode): New implementation; add
+	optional argument `recursive'.
+	(mime-preview-follow-current-entity): Modify for
+	`mime-preview-original-major-mode'.
+	(mime-preview-move-to-next): Use function
+	`mime-preview-original-major-mode'.
+	(mime-preview-scroll-up-entity): Use function
+	`mime-preview-original-major-mode'.
+	(mime-preview-scroll-down-entity): Use function
+	`mime-preview-original-major-mode'.
+	(mime-preview-quit): Use function
+	`mime-preview-original-major-mode'.
+	(mime-preview-show-summary): Use function
+	`mime-preview-original-major-mode'.
+
+	* mime-view.el (mime-view-display-message): New function; abolish
+	function `mime-view-setup-buffers'.
+	(mime-view-mode): Use `mime-view-display-message'.
+
+1998-06-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-raw-play-entity): Use
+	`mime-entity-situation'.
+
+	* mime-view.el (mime-entity-situation): New function.
+	(mime-preview-multipart/alternative): Use `mime-entity-situation'.
+	(mime-view-display-entity): Use `mime-entity-situation'.
+
 1998-06-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-edit.el (mime-edit-enclose-region-internal): Abolish unused

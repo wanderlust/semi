@@ -76,13 +76,13 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
   (interactive)
   (or mode
       (setq mode "play"))
-  (let ((entity-info (get-text-property (point) 'mime-view-entity)))
-    (if entity-info
+  (let ((entity (get-text-property (point) 'mime-view-entity)))
+    (if entity
 	(let ((the-buf (current-buffer))
 	      (raw-buffer (get-text-property (point) 'mime-view-raw-buffer)))
 	  (setq mime-preview-after-decoded-position (point))
 	  (set-buffer raw-buffer)
-	  (mime-raw-play-entity entity-info mode)
+	  (mime-raw-play-entity entity mode)
 	  (when (eq (current-buffer) raw-buffer)
 	    (set-buffer the-buf)
 	    (goto-char mime-preview-after-decoded-position)
@@ -130,21 +130,15 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
       (setq situations (cdr situations)))
     dest))
 
-(defun mime-raw-play-entity (entity-info &optional mode)
-  "Play entity specified by ENTITY-INFO.
+(defun mime-raw-play-entity (entity &optional mode)
+  "Play entity specified by ENTITY.
 It decodes the entity to call internal or external method.  The method
 is selected from variable `mime-acting-condition'.  If MODE is
 specified, play as it.  Default MODE is \"play\"."
-  (let ((beg (mime-entity-point-min entity-info))
-	(end (mime-entity-point-max entity-info))
-	(content-type (mime-entity-content-type entity-info))
-	(encoding (mime-entity-encoding entity-info)))
-    (or content-type
-	(setq content-type (make-mime-content-type 'text 'plain)))
+  (let ((beg (mime-entity-point-min entity))
+	(end (mime-entity-point-max entity)))
     (let (method cal ret)
-      (setq cal (list* (cons 'major-mode major-mode)
-		       (cons 'encoding encoding)
-		       content-type))
+      (setq cal (mime-entity-situation entity))
       (if mode
 	  (setq cal (cons (cons 'mode mode) cal))
 	)
@@ -182,7 +176,7 @@ specified, play as it.  Default MODE is \"play\"."
       (setq method (cdr (assq 'method ret)))
       (cond ((and (symbolp method)
 		  (fboundp method))
-	     (funcall method beg end ret)
+	     (funcall method entity ret)
 	     )
 	    ((stringp method)
 	     (mime-activate-mailcap-method beg end ret)
@@ -191,12 +185,9 @@ specified, play as it.  Default MODE is \"play\"."
 	     (mime-activate-external-method beg end ret)
 	     )
 	    (t
-	     (mime-show-echo-buffer
-	      "No method are specified for %s\n"
-	      (mime-type/subtype-string
-	       (mime-content-type-primary-type content-type)
-	       (mime-content-type-subtype content-type))
-	      )))
+	     (mime-show-echo-buffer "No method are specified for %s\n"
+				    (mime-entity-type/subtype entity))
+	     ))
       )))
 
 
@@ -387,36 +378,36 @@ window.")
 ;;; @ file extraction
 ;;;
 
-(defun mime-method-to-save (beg end cal)
-  (goto-char beg)
-  (let* ((name
-	  (save-restriction
-	    (narrow-to-region beg end)
-	    (mime-raw-get-filename cal)
-	    ))
-	 (encoding (or (cdr (assq 'encoding cal)) "7bit"))
-	 (filename
-          (if (and name (not (string-equal name "")))
-	      (expand-file-name name
-				(save-window-excursion
-				  (call-interactively
-				   (function
-				    (lambda (dir)
-				      (interactive "DDirectory: ")
-				      dir)))))
-	    (save-window-excursion
-	      (call-interactively
-	       (function
-		(lambda (file)
-		  (interactive "FFilename: ")
-		  (expand-file-name file)))))))
-	 )
-    (if (file-exists-p filename)
-        (or (yes-or-no-p (format "File %s exists. Save anyway? " filename))
-            (error "")))
-    (re-search-forward "\n\n")
-    (mime-write-decoded-region (match-end 0) end filename encoding)
-    ))
+(defun mime-method-to-save (entity cal)
+  (let ((beg (mime-entity-point-min entity))
+	(end (mime-entity-point-max entity)))
+    (goto-char beg)
+    (let* ((name (save-restriction
+		   (narrow-to-region beg end)
+		   (mime-raw-get-filename cal)
+		   ))
+	   (encoding (or (cdr (assq 'encoding cal)) "7bit"))
+	   (filename (if (and name (not (string-equal name "")))
+			 (expand-file-name name
+					   (save-window-excursion
+					     (call-interactively
+					      (function
+					       (lambda (dir)
+						 (interactive "DDirectory: ")
+						 dir)))))
+		       (save-window-excursion
+			 (call-interactively
+			  (function
+			   (lambda (file)
+			     (interactive "FFilename: ")
+			     (expand-file-name file)))))))
+	   )
+      (if (file-exists-p filename)
+	  (or (yes-or-no-p (format "File %s exists. Save anyway? " filename))
+	      (error "")))
+      (re-search-forward "\n\n")
+      (mime-write-decoded-region (match-end 0) end filename encoding)
+      )))
 
 
 ;;; @ mail/news message
@@ -434,8 +425,10 @@ It is registered to variable `mime-preview-quitting-method-alist'."
     (pop-to-buffer mother)
     ))
 
-(defun mime-method-to-display-message/rfc822 (beg end cal)
-  (let* ((cnum (mime-raw-point-to-entity-number beg))
+(defun mime-method-to-display-message/rfc822 (entity cal)
+  (let* ((beg (mime-entity-point-min entity))
+	 (end (mime-entity-point-max entity))
+	 (cnum (mime-raw-point-to-entity-number beg))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (mother mime-preview-buffer)
 	 (representation-type
@@ -475,8 +468,8 @@ saved as binary.  Otherwise the region is saved by `write-region'."
       (write-region start end filename)
       )))
 
-(defun mime-method-to-store-message/partial (beg end cal)
-  (goto-char beg)
+(defun mime-method-to-store-message/partial (entity cal)
+  (goto-char (mime-entity-point-min entity))
   (let* ((root-dir
 	  (expand-file-name
 	   (concat "m-prts-" (user-login-name)) mime-temp-directory))
@@ -485,7 +478,7 @@ saved as binary.  Otherwise the region is saved by `write-region'."
 	 (total (cdr (assoc "total" cal)))
 	 file
 	 (mother mime-preview-buffer)
-         )
+	 )
     (or (file-exists-p root-dir)
 	(make-directory root-dir)
 	)
@@ -516,7 +509,7 @@ saved as binary.  Otherwise the region is saved by `write-region'."
       (re-search-forward "^$")
       (goto-char (1+ (match-end 0)))
       (setq file (concat root-dir "/" number))
-      (mime-raw-write-region (point) end file)
+      (mime-raw-write-region (point) (mime-entity-point-max entity) file)
       (let ((total-file (concat root-dir "/CT")))
 	(setq total
 	      (if total
@@ -561,8 +554,8 @@ saved as binary.  Otherwise the region is saved by `write-region'."
 		    (setq i (1+ i))
 		    ))
 		(as-binary-output-file
-                 (write-region (point-min)(point-max)
-                               (expand-file-name "FULL" root-dir)))
+		 (write-region (point-min)(point-max)
+			       (expand-file-name "FULL" root-dir)))
 		(let ((i 1))
 		  (while (<= i total)
 		    (let ((file (format "%s/%d" root-dir i)))
@@ -607,13 +600,11 @@ saved as binary.  Otherwise the region is saved by `write-region'."
     (dired dir)
     ))
 
-(defun mime-method-to-display-message/external-ftp (beg end cal)
+(defun mime-method-to-display-message/external-ftp (entity cal)
   (let* ((site (cdr (assoc "site" cal)))
 	 (directory (cdr (assoc "directory" cal)))
 	 (name (cdr (assoc "name" cal)))
-	 ;;(mode (cdr (assoc "mode" cal)))
-	 (pathname (concat "/anonymous@" site ":" directory))
-	 )
+	 (pathname (concat "/anonymous@" site ":" directory)))
     (message (concat "Accessing " (expand-file-name name pathname) "..."))
     (funcall mime-raw-dired-function pathname)
     (goto-char (point-min))
@@ -624,10 +615,9 @@ saved as binary.  Otherwise the region is saved by `write-region'."
 ;;; @ rot13-47
 ;;;
 
-(defun mime-method-to-display-caesar (start end cal)
+(defun mime-method-to-display-caesar (entity situation)
   "Internal method for mime-view to display ROT13-47-48 message."
-  (let* ((entity (mime-raw-find-entity-from-point start))
-	 (new-name (format "%s-%s" (buffer-name)
+  (let* ((new-name (format "%s-%s" (buffer-name)
 			   (mime-entity-number entity)))
 	 (mother mime-preview-buffer))
     (let ((pwin (or (get-buffer-window mother)
