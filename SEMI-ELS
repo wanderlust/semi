@@ -8,7 +8,7 @@
 	mime-def
 	eword-decode eword-encode
 	mime-parse mime-view mime-text mime-play mime-partial
-	mime-tar mime-file mime-ftp
+	mime-tar mime-file
 	mime-edit
 	semi-setup))
 
