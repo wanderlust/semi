@@ -1,3 +1,8 @@
+1998-06-22  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+
+	* SEMI-CFG: Support run-in-place installation of BBDB and
+	Emacs/W3.
+
 1998-06-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el: Don't require `std11'.
