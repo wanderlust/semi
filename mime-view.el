@@ -820,12 +820,17 @@ The compressed face will be piped to this command.")
     (run-hooks 'mime-view-define-keymap-hook)
     ))
 
-(defsubst mime-hide-echo-buffer ()
-  "Hide mime-echo buffer."
-  (let ((win (get-buffer-window mime-echo-buffer-name)))
-    (if win
-	(delete-window win)
-      )))
+(defsubst mime-maybe-hide-echo-buffer ()
+  "Clear mime-echo buffer and delete window for it."
+  (let ((buf (get-buffer mime-echo-buffer-name)))
+    (if buf
+	(save-excursion
+	  (set-buffer buf)
+	  (erase-buffer)
+	  (let ((win (get-buffer-window buf)))
+	    (if win
+		(delete-window win)
+	      ))))))
 
 (defun mime-view-mode (&optional mother ctl encoding ibuf obuf
 				 default-keymap-or-function)
@@ -853,13 +858,7 @@ button-2	Move to point under the mouse cursor
         	and decode current content as `play mode'
 "
   (interactive)
-  (let ((buf (get-buffer mime-echo-buffer-name)))
-    (if buf
-	(save-excursion
-	  (set-buffer buf)
-	  (erase-buffer)
-	  (mime-hide-echo-buffer)
-	  )))
+  (mime-maybe-hide-echo-buffer)
   (let ((ret (mime-view-setup-buffers ctl encoding ibuf obuf))
 	(win-conf (current-window-configuration))
 	)
