@@ -1642,6 +1642,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 (defun mime-edit-translate-buffer ()
   "Encode the tagged MIME message in current buffer in MIME compliant message."
   (interactive)
+  (undo-boundary)
   (if (catch 'mime-edit-error
 	(save-excursion
 	  (run-hooks 'mime-edit-translate-buffer-hook)
@@ -1814,7 +1815,9 @@ Content-Transfer-Encoding: 7bit
 	     (or (string-equal value "")
 		 (progn
 		   (setq header (concat header name ": " value "\n")
-			 recipients (cons value recipients))
+			 recipients (if recipients
+					(concat recipients " ," value)
+				      value))
 		   ))))
       (setq names (cdr names)
 	    values (cdr values))
@@ -1830,7 +1833,7 @@ Content-Transfer-Encoding: 7bit
           (setq from (aref ret 0)
                 recipients (aref ret 1)
                 header (aref ret 2))
-          )
+	  )
         (narrow-to-region beg end)
         (let* ((ret
                 (mime-edit-translate-region beg end boundary))
@@ -1844,8 +1847,18 @@ Content-Transfer-Encoding: 7bit
               (insert (format "Content-Transfer-Encoding: %s\n" encoding))
             )
           (insert "\n")
-	  (or (let ((pgg-default-user-id (or from pgg-default-user-id)))
-		(pgg-encrypt-region (point-min) (point-max) recipients))
+	  (or (let ((pgg-default-user-id 
+		     (if from
+			 (nth 1 (std11-extract-address-components from))
+		       pgg-default-user-id)))
+		(pgg-encrypt-region 
+		 (point-min) (point-max) 
+		 (mapcar (lambda (recipient)
+			   (nth 1 (std11-extract-address-components
+				   recipient)))
+			 (split-string recipients 
+				       "\\([ \t\n]*,[ \t\n]*\\)+")))
+		)
 	      (throw 'mime-edit-error 'pgp-error)
 	      )
 	  (delete-region (point-min)(point-max))
