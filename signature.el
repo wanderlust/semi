@@ -1,11 +1,20 @@
 ;;;
-;;; $Id$
-;;; Modified by Yasuo OKABE 1994/08/01
-;;; 
+;;; signature.el --- signature utility for GNU Emacs
+;;;
+;;; Copyright (C) 1995 Free Software Foundation, Inc.
+;;; Copyright (C) 1994,1995 MORIOKA Tomohiko
+;;; Copyright (C) 1994 OKABE Yasuo
+;;;
+;;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;;;         OKABE Yasuo <okabe@kudpc.kyoto-u.ac.jp> (1994/08/01)
+;;; Version:
+;;;	$Id$
+;;; Keywords: mail, news, signature
+;;;
+;;; This file is part of tm (Tools for MIME).
+;;;
 
-(provide 'signature)
-
-(require 'tl-header)
+(require 'tl-822)
 
 (defvar signature-insert-at-eof nil
   "*Insert signature at the end of file if non-nil.")
@@ -32,7 +41,7 @@
       (while r
 	(setq cell (car r))
 	(setq b (car cell))
-	(if (setq f (message/get-field-body (car b)))
+	(if (setq f (rfc822/get-field-body (car b)))
 	    (cond ((listp (cdr b))
 		   (let ((r (cdr b)))
 		     (while r
@@ -84,7 +93,8 @@
 		(insert "\n"))
 	    (delete-blank-lines)
 	    (insert-file-contents signature)
-	    (set-buffer-modified-p (buffer-modified-p)) ; force mode line update
+	    (set-buffer-modified-p (buffer-modified-p))
+					; force mode line update
 	    )))))
 
 (defun insert-signature (&optional arg)
@@ -96,3 +106,9 @@ named <signature-file-name>-DISTRIBUTION interactively."
   (if signature-insert-at-eof
 	(call-interactively 'signature/insert-signature-at-eof)
     (call-interactively 'signature/insert-signature-at-point)))
+
+
+;;; @ end
+;;;
+
+(provide 'signature)
