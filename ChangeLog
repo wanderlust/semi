@@ -1,3 +1,9 @@
+1999-11-26   Nakagawa, Makoto  <Makoto.Nakagawa@jp.compaq.com>
+
+	* mime-edit.el (mime-edit-sign-pgp-mime): Regard
+	`pgg-default-user-id' as more preferrable if it's specified.
+	(mime-edit-encrypt-pgp-mime): Ditto.
+
 1999-11-22   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* semi-def.el (mime-user-interface-product): Bump up to
