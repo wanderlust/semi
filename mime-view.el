@@ -751,11 +751,7 @@ The compressed face will be piped to this command.")
       )
     (save-restriction
       (narrow-to-region start end)
-      (setq subj
-	    (eword-decode-string
-	     (mime-raw-get-subject
-	      (mime-content-type-parameters content-type)
-	      encoding)))
+      (setq subj (eword-decode-string (mime-raw-get-subject message-info)))
       )
     (set-buffer obuf)
     (setq nb (point))
@@ -830,11 +826,7 @@ The compressed face will be piped to this command.")
       )
     (save-restriction
       (narrow-to-region start end)
-      (setq subj
-	    (eword-decode-string
-	     (mime-raw-get-subject
-	      (mime-content-type-parameters content-type)
-	      encoding)))
+      (setq subj (eword-decode-string (mime-raw-get-subject entity)))
       )
     (let* ((situation
 	    (ctree-match-calist mime-preview-condition
@@ -899,33 +891,34 @@ The compressed face will be piped to this command.")
 	  (setq children (cdr children))
 	  )))))
 
-(defun mime-raw-get-uu-filename (param &optional encoding)
-  (if (member (or encoding
-		  (cdr (assq 'encoding param))
-		  )
-	      mime-view-uuencode-encoding-name-list)
-      (save-excursion
-	(or (if (re-search-forward "^begin [0-9]+ " nil t)
-		(if (looking-at ".+$")
-		    (buffer-substring (match-beginning 0)(match-end 0))
-		  ))
-	    ""))
-    ))
+(defun mime-raw-get-uu-filename ()
+  (save-excursion
+    (if (re-search-forward "^begin [0-9]+ " nil t)
+	(if (looking-at ".+$")
+	    (buffer-substring (match-beginning 0)(match-end 0))
+	  ))))
 
-(defun mime-raw-get-subject (param &optional encoding)
+(defun mime-raw-get-subject (entity)
   (or (std11-find-field-body '("Content-Description" "Subject"))
-      (let (ret)
-	(if (or (and (setq ret (mime-read-Content-Disposition))
-		     (setq ret
-			   (assoc "filename"
-				  (mime-content-disposition-parameters ret)))
-		     )
-		(setq ret (assoc "name" param))
-		(setq ret (assoc "x-name" param))
+      (let ((ret
+	     (or
+	      (let ((ret (mime-entity-content-disposition entity)))
+		(and ret
+		     (assoc "filename"
+			    (mime-content-disposition-parameters ret))
+		     ))
+	      (let ((param (mime-content-type-parameters
+			    (mime-entity-content-type entity))))
+		(or (assoc "name" param)
+		    (assoc "x-name" param))
 		)
+	      )))
+	(if ret
 	    (std11-strip-quoted-string (cdr ret))
 	  ))
-      (mime-raw-get-uu-filename param encoding)
+      (if (member (mime-entity-encoding entity)
+		  mime-view-uuencode-encoding-name-list)
+	  (mime-raw-get-uu-filename))
       ""))
 
 
