@@ -1,3 +1,9 @@
+2003-05-02  Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-play.el (mime-activate-mailcap-method): Check the existance
+	of the temporary file.
+	[cf. <Wanderlust:11835>]
+
 2003-04-05  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* mime-view.el (mime-preview-toggle-display): Use boundary with

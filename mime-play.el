@@ -139,7 +139,20 @@ specified, play as it.  Default MODE is \"play\"."
 	      (expand-file-name name temporary-file-directory)
 	    (make-temp-name
 	     (expand-file-name "EMI" temporary-file-directory))))
-    (mime-write-entity-content entity name)
+    (if (and (not (featurep 'xemacs))
+	     (>= emacs-major-version 21))
+	;; For security reason, assert the 7th argument of
+	;; `write-region' to be 'excl to guarantee that the file is
+	;; created atomically.  Unfortunately, this feature is not yet
+	;; supported in Emacs 20 or XEmacs.
+	(let ((coding-system-for-write 'binary)
+	      jka-compr-compression-info-list jam-zcat-filename-list)
+	  (write-region (mime-entity-content entity) nil name
+			nil nil nil 'excl))
+      (if (file-exists-p name)
+	  (signal 'file-already-exists
+		  (list "Failed to create temporary file" name))
+	(mime-write-entity-content entity name)))
     (message "External method is starting...")
     (let ((process
 	   (let ((command
