@@ -66,28 +66,34 @@
   (save-restriction
     (narrow-to-region (point)(point))
     (mapcar #'(lambda (line)
-		(widget-create
-		 'push-button
-		 :action `(lambda (widget &optional event)
-			    (,function)
-			    )
-		 :mouse-down-action `(lambda (widget event)
-				       (let (buf point)
-					 (save-window-excursion
-					   (mouse-set-point event)
-					   (setq buf (current-buffer)
-						 point (point)))
-					 (save-excursion
-					   (set-buffer buf)
-					   (goto-char point)
-					   (,function)
-					   )))
-		 line)
-		(insert "\n")
-		)
-	    (split-string string "\n"))
-    ;;(mime-add-button (point-min)(point-max) function data)
-    ))
+		(let ((start (point))
+		      end extent)
+		  (widget-create
+		   'push-button
+		   :action `(lambda (widget &optional event)
+			      (,function)
+			      )
+		   :mouse-down-action `(lambda (widget event)
+					 (let (buf point)
+					   (save-window-excursion
+					     (mouse-set-point event)
+					     (setq buf (current-buffer)
+						   point (point)))
+					   (save-excursion
+					     (set-buffer buf)
+					     (goto-char point)
+					     (,function)
+					     )))
+		   line)
+		  (if (featurep 'xemacs)
+		      (progn
+			(setq end (point))
+			(insert (concat "[" line "]"))
+			(while (setq extent (extent-at start nil nil extent))
+			  (set-extent-endpoints extent end (point)))
+			(delete-region start end)))
+		  (insert "\n")))
+	    (split-string string "\n"))))
 
 (defvar mime-button-mother-dispatcher nil)
 
