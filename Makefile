@@ -3,7 +3,7 @@
 #
 
 PACKAGE = wemi
-VERSION = 1.9.0
+VERSION = 1.9.1
 
 TAR	= tar
 RM	= /bin/rm -f
