@@ -1,3 +1,7 @@
+1999-08-18  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* REMI: Version 1.13.2 (-DÒike-Ikoinomori)-A released.
+
 1999-08-17  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-view.el (mime-preview-original-major-mode): Modify the way
@@ -10,8 +14,8 @@
 
 1999-08-02  MORIOKA Tomohiko  <tomo@m17n.org>
 
-	* mime-view.el (mime-preview-follow-current-entity):
-	Don't use `mime-entity-buffer'.
+	* mime-view.el (mime-preview-follow-current-entity): Don't use
+	`mime-entity-buffer'.
 
 1999-05-17  KOSEKI Yoshinori  <kose@yk.NetLaputa.ne.jp>
 
