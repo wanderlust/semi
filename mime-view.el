@@ -380,13 +380,15 @@ mother-buffer."
 	  (insert "\n;;; "
 		  (file-name-nondirectory file)
 		  " ends here.\n")
-	  (static-cond
-	   ((boundp 'buffer-file-coding-system)
-	    (setq buffer-file-coding-system
-		  mime-situation-examples-file-coding-system))
-	   ((boundp 'file-coding-system)
-	    (setq file-coding-system
-		  mime-situation-examples-file-coding-system)))
+          (setq buffer-file-coding-system
+		mime-situation-examples-file-coding-system)
+          ;; (static-cond
+          ;;  ((boundp 'buffer-file-coding-system)
+          ;;   (setq buffer-file-coding-system
+          ;;         mime-situation-examples-file-coding-system))
+          ;;  ((boundp 'file-coding-system)
+          ;;   (setq file-coding-system
+          ;;         mime-situation-examples-file-coding-system)))
 	  (setq buffer-file-name file)
 	  (save-buffer)))))
 
@@ -1791,12 +1793,15 @@ It calls function registered in variable
       (with-temp-buffer
 	(insert-file-contents file)
 	(setq mime-situation-examples-file-coding-system
-	      (static-cond
-	       ((boundp 'buffer-file-coding-system)
-		(symbol-value 'buffer-file-coding-system))
-	       ((boundp 'file-coding-system)
-		(symbol-value 'file-coding-system))
-	       (t nil)))
+              (and (boundp 'buffer-file-coding-system)
+		   buffer-file-coding-system)
+	      ;; (static-cond
+              ;;  ((boundp 'buffer-file-coding-system)
+              ;;   (symbol-value 'buffer-file-coding-system))
+              ;;  ((boundp 'file-coding-system)
+              ;;   (symbol-value 'file-coding-system))
+              ;;  (t nil))
+	      )
 	(eval-buffer)
 	;; format check
 	(condition-case nil
