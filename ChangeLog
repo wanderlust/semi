@@ -1,5 +1,13 @@
 1998-10-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* NEWS (Changes in SEMI 1.10): New section.
+
+	* NEWS (Changes in SEMI 1.9): New section.
+
+	* NEWS (User-Agent field): New subsection.
+
+1998-10-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-play.el (mime-view-caesar): Use `mime-insert-text-content'
 	instead of `mime-text-insert-decoded-body'.
 
