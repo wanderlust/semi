@@ -142,6 +142,23 @@ such as a version of Net$cape)."
 ;;; @ for region
 ;;;
 
+(defvar eword-decode-before-ewords-regexp "\\=\\|^\\|[ \t]"
+  "Regexp that matches before encoded words.
+This value must not contain grouping construct.
+Default value is \"\\\\\\==\\\\|^\\\\|[ \\t]\".
+Another useful (but not RFC2047 compliant) value is \"\".")
+
+(defvar eword-decode-between-ewords-regexp "\\(\n?[ \t]\\)+"
+  "Regexp that matches between encoded words.
+This value must contain exactly one grouping construct.
+Default value is \"\\\\(\\n?[ \\t]\\\\)+\".
+Another useful (but not RFC2047 compliant) value is \"\\\\(\\n?[ \\t]\\\\)*\".")
+
+(defvar eword-decode-after-ewords-regexp "[ \t]\\|$"
+  "Regexp that matches after encoded words.
+Default value is \"[ \\t]\\\\|$\".
+Another useful (but not RFC2047 compliant) value is \"\".")
+
 (defun eword-decode-region (start end &optional unfolding must-unfold)
   "Decode MIME encoded-words in region between START and END.
 
@@ -158,20 +175,36 @@ such as a version of Net$cape)."
 	  (eword-decode-unfold)
 	)
       (goto-char (point-min))
-      (while (re-search-forward (concat "\\(" eword-encoded-word-regexp "\\)"
-                                        "\\(\n?[ \t]\\)+"
-                                        "\\(" eword-encoded-word-regexp "\\)")
-                                nil t)
-	(replace-match "\\1\\6")
-        (goto-char (point-min))
-	)
-      (while (re-search-forward eword-encoded-word-regexp nil t)
-	(insert (eword-decode-encoded-word
-		 (prog1
-		     (buffer-substring (match-beginning 0) (match-end 0))
-		   (delete-region (match-beginning 0) (match-end 0))
-		   ) must-unfold))
-	)
+      (let (b e ew dw)
+	(while 
+	    (re-search-forward
+	      (concat "\\(" eword-decode-before-ewords-regexp "\\)"
+		      "\\(" eword-encoded-word-regexp "\\)"
+		      "\\(" eword-decode-after-ewords-regexp "\\)") nil t)
+	  (setq b (match-beginning 2))
+	  (setq e (match-end 2))
+	  (setq ew (buffer-substring (match-beginning 2) (match-end 2)))
+	  (setq dw (eword-decode-encoded-word ew must-unfold))
+	  (if (not (string= ew dw))
+	      (progn
+		(goto-char e)
+		(delete-region b e)
+		(insert dw)
+		(while
+		    (and
+		     (looking-at
+		       (concat eword-decode-between-ewords-regexp
+			       "\\(" eword-encoded-word-regexp "\\)"
+			       "\\(" eword-decode-after-ewords-regexp "\\)"))
+		     (progn
+		       (setq b (match-beginning 0))
+		       (setq e (match-end 2))
+		       (setq ew (buffer-substring (match-beginning 2) e))
+		       (setq dw (eword-decode-encoded-word ew must-unfold))
+		       (not (string= ew dw))))
+		  (goto-char e)
+		  (delete-region b e)
+		  (insert dw))))))
       )))
 
 
