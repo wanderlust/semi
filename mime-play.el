@@ -394,6 +394,37 @@
       )))
 
 
+;;; @ message/external-body
+;;;
+
+(defvar mime-article/dired-function
+  (if mime/use-multi-frame
+      (function dired-other-frame)
+    (function mime-article/dired-function-for-one-frame)
+    ))
+
+(defun mime-article/dired-function-for-one-frame (dir)
+  (let ((win (or (get-buffer-window mime::article/preview-buffer)
+		 (get-largest-window))))
+    (select-window win)
+    (dired dir)
+    ))
+
+(defun mime-article/decode-message/external-ftp (beg end cal)
+  (let* ((access-type (cdr (assoc "access-type" cal)))
+	 (site (cdr (assoc "site" cal)))
+	 (directory (cdr (assoc "directory" cal)))
+	 (name (cdr (assoc "name" cal)))
+	 (mode (cdr (assoc "mode" cal)))
+	 (pathname (concat "/anonymous@" site ":" directory))
+	 )
+    (message (concat "Accessing " (expand-file-name name pathname) "..."))
+    (funcall mime-article/dired-function pathname)
+    (goto-char (point-min))
+    (search-forward name)
+    ))
+
+
 ;;; @ rot13-47
 ;;;
 
