@@ -826,7 +826,7 @@ The compressed face will be piped to this command.")
 	   mime-view-ignored-field-list mime-view-visible-field-list
 	   (save-excursion
 	     (set-buffer raw-buffer)
-	     (if (eq (cdr (assq major-mode mime-raw-representation-type))
+	     (if (eq (cdr (assq major-mode mime-raw-representation-type-alist))
 		     'binary)
 		 default-mime-charset)
 	     )))
