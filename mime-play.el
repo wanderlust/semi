@@ -66,7 +66,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	(end (mime-entity-info-point-max cinfo))
 	(ctype (or (mime-entity-info-type/subtype cinfo) "text/plain"))
 	(params (mime-entity-info-parameters cinfo))
-	(encoding (mime::content-info/encoding cinfo))
+	(encoding (mime-entity-info-encoding cinfo))
 	)
     ;; Check for VM
     (if (< beg (point-min))
