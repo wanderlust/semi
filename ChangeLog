@@ -1,5 +1,15 @@
 1999-11-05   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* mime-pgp.el (mime-verify-application/pgp-signature): Copy the
+	messages in PGG buffers to MIME-echo buffer instead of binding
+	`pgg-output-buffer'.
+	(mime-add-application/pgp-keys): Likewise.
+
+	* pgg-gpg.el (verify-region): Fill errors buffer whether
+	verification has succeeded or not.
+
+1999-11-05   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
 	* pgg-gpg.el, pgg-pgp.el, pgg-pgp5.el (snarf-keys-region):
 	Use `pgg-process-when-success'.
 
