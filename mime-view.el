@@ -359,34 +359,37 @@ mother-buffer."
   
 (defvar mime-acting-situation-example-list nil)
 (defvar mime-acting-situation-example-list-max-size 16)
+(defvar mime-situation-examples-file-coding-system nil)
 
 (defun mime-save-situation-examples ()
   (if (or mime-preview-situation-example-list
 	  mime-acting-situation-example-list)
-      (let* ((file mime-situation-examples-file)
-	     (buffer (get-buffer-create " *mime-example*")))
-	(unwind-protect
-	    (save-excursion
-	      (set-buffer buffer)
-	      (setq buffer-file-name file)
-	      (erase-buffer)
-	      (insert ";;; " (file-name-nondirectory file) "\n")
-	      (insert "\n;; This file is generated automatically by "
-		      mime-view-version "\n\n")
-	      (insert ";;; Code:\n\n")
-	      (if mime-preview-situation-example-list
-		  (pp `(setq mime-preview-situation-example-list
-			     ',mime-preview-situation-example-list)
-		      (current-buffer)))
-	      (if mime-acting-situation-example-list
-		  (pp `(setq mime-acting-situation-example-list
-			     ',mime-acting-situation-example-list)
-		      (current-buffer)))
-	      (insert "\n;;; "
-		      (file-name-nondirectory file)
-		      " ends here.\n")
-	      (save-buffer))
-	  (kill-buffer buffer)))))
+      (let ((file mime-situation-examples-file))
+	(with-temp-buffer
+	  (insert ";;; " (file-name-nondirectory file) "\n")
+	  (insert "\n;; This file is generated automatically by "
+		  mime-view-version "\n\n")
+	  (insert ";;; Code:\n\n")
+	  (if mime-preview-situation-example-list
+	      (pp `(setq mime-preview-situation-example-list
+			 ',mime-preview-situation-example-list)
+		  (current-buffer)))
+	  (if mime-acting-situation-example-list
+	      (pp `(setq mime-acting-situation-example-list
+			 ',mime-acting-situation-example-list)
+		  (current-buffer)))
+	  (insert "\n;;; "
+		  (file-name-nondirectory file)
+		  " ends here.\n")
+	  (static-cond
+	   ((boundp 'buffer-file-coding-system)
+	    (setq buffer-file-coding-system
+		  mime-situation-examples-file-coding-system))
+	   ((boundp 'file-coding-system)
+	    (setq file-coding-system
+		  mime-situation-examples-file-coding-system)))
+	  (setq buffer-file-name file)
+	  (save-buffer)))))
 
 (add-hook 'kill-emacs-hook 'mime-save-situation-examples)
 
@@ -1766,6 +1769,13 @@ It calls function registered in variable
 	    (set-buffer buffer)
 	    (erase-buffer)
 	    (insert-file-contents file)
+	    (setq mime-situation-examples-file-coding-system
+		  (static-cond
+		   ((boundp 'buffer-file-coding-system)
+		    (symbol-value 'buffer-file-coding-system))
+		   ((boundp 'file-coding-system)
+		    (symbol-value 'file-coding-system))
+		   (t nil)))
 	    (eval-buffer)
 	    ;; format check
 	    (condition-case nil
