@@ -1,6 +1,6 @@
 ;;; semi-setup.el --- setup file for MIME-View.
 
-;; Copyright (C) 1994,1995,1996,1997,1998 Free Software Foundation, Inc.
+;; Copyright (C) 1994,1995,1996,1997,1998,1999 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Keywords: mail, news, MIME, multimedia, multilingual, encoded-word
@@ -85,7 +85,7 @@ it is used as hook to set."
 ;; for PGP
 (defvar mime-setup-enable-pgp
   (module-installed-p 'mailcrypt)
-  "*If it is non-nil, semi-setup sets uf to use mime-pgp.")
+  "*If it is non-nil, semi-setup sets up to use mime-pgp.")
 
 (if mime-setup-enable-pgp
     (eval-after-load "mime-view"

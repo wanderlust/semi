@@ -168,39 +168,79 @@
 ;;; @ PGP
 ;;;
 
+(defcustom pgp-version 'pgp
+  "Version of PGP or GnuPG command to be used for encryption or sign.
+The value should be a symbol.  Allowed versions are:
+
+  gpg   - GnuPG.
+  pgp50 - PGP version 5.0i.
+  pgp   - PGP version 2.6."
+  :group 'mime
+  :type '(radio (choice-item :tag "GnuPG" gpg)
+		(choice-item :tag "PGP 5.0i" pgp50)
+		(choice-item :tag "PGP 2.6" pgp)))
+
 (defvar pgp-function-alist
   '(
     ;; for mime-pgp
-    (verify		mc-verify			"mc-toplev")
-    (decrypt		mc-decrypt			"mc-toplev")
-    (fetch-key		mc-pgp-fetch-key		"mc-pgp")
-    (snarf-keys		mc-snarf-keys			"mc-toplev")
+    (verify		mime-mc-verify			"mime-mc")
+    (decrypt		mime-mc-decrypt			"mime-mc")
+    (fetch-key		mc-pgp-fetch-key		"mc-pgp"
+			mc-pgp50-fetch-key		"mc-pgp5"
+			mc-gpg-fetch-key		"mc-gpg")
+    (snarf-keys		mime-mc-snarf-keys		"mime-mc")
     ;; for mime-edit
-    (mime-sign		mime-mc-pgp-sign-region		"mime-mc")
-    (traditional-sign	mc-pgp-sign-region		"mc-pgp")
-    (encrypt		mime-mc-pgp-encrypt-region	"mime-mc")
-    (insert-key		mc-insert-public-key		"mc-toplev")
+    (mime-sign		mime-mc-pgp-sign-region		"mime-mc"
+			mime-mc-pgp50-sign-region	"mime-mc"
+			mime-mc-gpg-sign-region		"mime-mc")
+    (traditional-sign	mc-pgp-sign-region		"mc-pgp"
+			mc-pgp50-sign-region		"mc-pgp5"
+			mc-gpg-sign-region		"mc-gpg")
+    (encrypt		mime-mc-pgp-encrypt-region	"mime-mc"
+			mime-mc-pgp50-encrypt-region	"mime-mc"
+			mime-mc-gpg-encrypt-region	"mime-mc")
+    (insert-key		mime-mc-insert-public-key	"mime-mc")
     )
   "Alist of service names vs. corresponding functions and its filenames.
-Each element looks like (SERVICE FUNCTION FILE).
+Each element looks like:
 
-SERVICE is a symbol of PGP processing.  It allows `verify', `decrypt',
-`fetch-key', `snarf-keys', `mime-sign', `traditional-sign', `encrypt'
-or `insert-key'.
+\(SERVICE FUNCTION FILE [PGP5_FUNCTION PGP5_FILE [GPG_FUNCTION GPG_FILE]]).
 
-Function is a symbol of function to do specified SERVICE.
+SERVICE is a symbol of PGP2, PGP5 or GnuPG processing.  It allows `verify',
+`decrypt', `fetch-key', `snarf-keys', `mime-sign', `traditional-sign',
+`encrypt' or `insert-key'.
+
+FUNCTION is a symbol of function to do specified SERVICE.
 
 FILE is string of filename which has definition of corresponding
-FUNCTION.")
+FUNCTION.
+
+PGP5_FUNCTION, PGP5_FILE, GPG_FUNCTION and GPG_FILE are similar to
+FUNCTION and FILE, but they will be used for PGP 5.0i or GnuPG.")
 
 (defmacro pgp-function (method)
   "Return function to do service METHOD."
-  `(cadr (assq ,method (symbol-value 'pgp-function-alist))))
+  `(let ((elem (assq ,method (symbol-value 'pgp-function-alist))))
+     (cond ((eq 'gpg pgp-version)
+	    (if (> (length elem) 3)
+		(nth 5 elem)
+	      (nth 1 elem))
+	    )
+	   ((eq 'pgp50 pgp-version)
+	    (if (> (length elem) 3)
+		(nth 3 elem)
+	      (nth 1 elem))
+	    )
+	   (t
+	    (nth 1 elem)
+	    ))))
 
 (mapcar (function
-	 (lambda (method)
-	   (autoload (cadr method)(nth 2 method))
-	   ))
+	 (lambda (elem)
+	   (setq elem (cdr elem))
+	   (while elem
+	     (autoload (car elem) (nth 1 elem))
+	     (setq elem (nthcdr 2 elem)))))
 	pgp-function-alist)
 
 

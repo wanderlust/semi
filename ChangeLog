@@ -1,3 +1,61 @@
+1999-03-24  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* NEWS, README.en, mime-ui-en.sgml, mime-ui-ja.sgml: Update for
+	PGP 5.0i and GnuPG support.
+
+	* semi-def.el (TopLevel): Autoload "mc-pgp5" and "mc-gpg".
+	(pgp-function): Modify for extended `pgp-function-alist'.
+	(pgp-function-alist): Extend for supporting PGP 5.0i and GnuPG.
+	(pgp-version): New user option.
+
+	* mime-pgp.el (mime-pgp-good-signature-post-function-pgp50-us): New
+	function.
+
+	(mime-verify-application/pgp-signature): Support PGP 5.0i and
+	GnuPG.
+	(mime-pgp-check-signature): Likewise.
+
+	(mime-pgp-key-expected-regexp,
+	mime-pgp-good-signature-post-function,
+	mime-pgp-good-signature-regexp, mime-pgp-default-language,
+	mime-pgp-command): New macros.
+
+	(mime-pgp-key-expected-regexp-alist): Use `defcustom'; extend for
+	supporting PGP 5.0i and GnuPG.
+	(mime-pgp-good-signature-regexp-alist): Likewise.
+
+	(mime-pgp-default-language-alist, mime-pgp-command-alist): New
+	user options.
+	(mime-pgp-default-language): Abolish variable. Move to
+	`mime-pgp-default-language-alist'.
+	(mime-pgp-command): Abolish variable. Move to
+	`mime-pgp-command-alist'
+
+	(TopLevel): Require `semi-def' explicitly for referring to the
+	value of `pgp-version'.
+
+	* mime-mc.el (mime-mc-pgp-encrypt-region): Load "mc-pgp" if the
+	function `mc-pgp-encrypt-region' does not exist.
+	(mime-mc-pgp-sign-region): Load "mc-pgp" if the function
+	`mc-pgp-generic-parser' does not exist.
+
+	(mime-mc-pgp50-encrypt-region, mime-mc-pgp50-sign-region,
+	mime-mc-pgp50-process-region, mime-mc-gpg-encrypt-region,
+	mime-mc-gpg-sign-region, mime-mc-gpg-process-region,
+	mime-mc-snarf-keys, mime-mc-decrypt, mime-mc-verify,
+	mime-mc-insert-public-key): New functions.
+
+	(mime-mc-pgp-generic-parser): Abolish function.
+	(TopLevel): Autoload or load some modules if they are needed
+	instead of to load "mc-pgp" first; define some variables for
+	avoiding byte-compile warnings; require `semi-def' explicitly for
+	referring to the value of `pgp-version'.
+
+	* mime-edit.el (mime-edit-encrypt-pgp-mime): Use "gpg" for the
+	prefix string of boundary if GnuPG is used.
+	(TopLevel): Require `semi-def' explicitly for referring to the
+	value of `pgp-version'.
+
 1999-03-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-edit.el (mime-charset-type-list): Add `tis-620'.
