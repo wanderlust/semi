@@ -1,3 +1,8 @@
+1999-05-21  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-pgp.el (mime-pgp-fetch-key): Returns nil if the fetched key
+	is discarded.
+
 1999-05-17  KOSEKI Yoshinori  <kose@yk.NetLaputa.ne.jp>
 
 	* mime-pgp.el (mime-verify-application/pgp-signature): Specify the
