@@ -1,5 +1,11 @@
 1998-06-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-edit.el (mime-edit-sign-pgp-kazu): Abolish unused local
+	variable.
+	(mime-edit-encrypt-pgp-kazu): Abolish unused local variables.
+
+1998-06-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-pgp.el (mime-method-for-application/pgp): Change interface.
 	(mime-method-to-verify-multipart/signed): Change interface.
 	(mime-method-to-verify-application/pgp-signature): Change
