@@ -1,6 +1,6 @@
 ;;; mime-w3.el --- mime-view content filter for text
 
-;; Copyright (C) 1994,1995,1996,1997,1998 Free Software Foundation, Inc.
+;; Copyright (C) 1994,1995,1996,1997,1998,1999 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Keywords: HTML, MIME, multimedia, mail, news
@@ -43,7 +43,12 @@
 	   ))
     (cons 'progn body)))
 
+(defvar mime-w3-message-structure nil)
+
 (defun mime-preview-text/html (entity situation)
+  (setq mime-w3-message-structure
+	(with-current-buffer (mime-entity-buffer entity)
+	  mime-message-structure))
   (goto-char (point-max))
   (let ((p (point)))
     (insert "\n")
@@ -56,6 +61,19 @@
        (w3-region p (point-max))
        (mime-put-keymap-region p (point-max) w3-mode-map)
        ))))
+
+(defun url-cid (url &optional proxy-info)
+  (let ((entity
+	 (mime-find-entity-from-content-id (mime-uri-parse-cid url)
+					   mime-w3-message-structure)))
+    (when entity
+      (mime-insert-entity-content entity)
+      (setq url-current-mime-type (mime-entity-type/subtype entity))
+      )))
+
+(url-register-protocol "cid"
+		       'url-cid
+		       'url-identity-expander)
 
 
 ;;; @ end

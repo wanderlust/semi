@@ -1,3 +1,73 @@
+1999-01-24  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* WEMI: Version 1.13.1 (Abekawa) released.
+
+1999-01-24  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* TODO (Don't expect raw-buffer): New item.
+	(lazy generating of situations from mime-entity information): New
+	item.
+
+	* TODO (Don't use filter-model): finished.
+
+	* TODO (multipart/related support): virtually finished.
+
+1999-01-24  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* Delete README.ja until it is fixed.
+
+	* mime-w3.el (url-cid): Use `mime-insert-entity-content'.
+
+	* README.ja, README.en (Required environment): Require FLIM
+	1.12.4.
+
+	* mime-w3.el (mime-w3-message-structure): New variable.
+	(mime-preview-text/html): Set up `mime-w3-message-structure'.
+	(url-cid): New function; set up as registered-protocol of url.
+
+1999-01-23  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* README.ja: Modify title.
+
+	* README.ja: Add notice about translation.
+
+	* README.ja, README.en (Required environment): Require FLIM
+	1.12.3; delete description about enriched.el because anything
+	older than Emacs 19.28 are not supported.
+
+	* mime-pgp.el (mime-view-application/pgp): Don't expect called in
+	raw-buffer; use `mime-insert-entity'.
+
+	* mime-play.el (mime-view-message/rfc822): Use
+	`mime-insert-entity'.
+
+1999-01-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS (Function `mime-play-entity'): Sync with latest
+	specification.
+
+	* mime-pgp.el (mime-verify-multipart/signed): Modify for interface
+	change of `mime-play-entity'.
+
+	* mime-play.el (mime-preview-play-current-entity): Modify for
+	interface change of `mime-play-entity'.
+	(mime-play-entity): Change interface; abolish optional arguments
+	`mode' and `ignore-example'.
+	(mime-detect-content): Modify for interface change of
+	`mime-play-entity'.
+
+	* mime-view.el (mime-entity-situation): Add new optional argument
+	`situation'; it is preferred to attributes of entity.
+
+1999-01-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-version): Don't use `eval-when-compile'
+	to avoid to break product-code-name.
+
+	* mime-edit.el (mime-edit-version): Don't use `eval-when-compile'
+	to avoid to break product-code-name.
+
+
 1999-01-21  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* WEMI: Version 1.13.0 (Shizuoka) released.

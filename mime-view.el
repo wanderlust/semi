@@ -39,11 +39,10 @@
 ;;;
 
 (defconst mime-view-version
-  (eval-when-compile
-    (concat (mime-product-name mime-user-interface-product) " MIME-View "
-	    (mapconcat #'number-to-string
-		       (mime-product-version mime-user-interface-product) ".")
-	    " (" (mime-product-code-name mime-user-interface-product) ")")))
+  (concat (mime-product-name mime-user-interface-product) " MIME-View "
+	  (mapconcat #'number-to-string
+		     (mime-product-version mime-user-interface-product) ".")
+	  " (" (mime-product-code-name mime-user-interface-product) ")"))
 
 
 ;;; @ variables
@@ -140,37 +139,87 @@ mother-buffer."
 ;;; @ entity information
 ;;;
 
-(defun mime-entity-situation (entity)
+(defun mime-entity-situation (entity &optional situation)
   "Return situation of ENTITY."
-  (append (or (mime-entity-content-type entity)
-	      (make-mime-content-type 'text 'plain))
-	  (let ((d (mime-entity-content-disposition entity)))
-	    (cons (cons 'disposition-type
-			(mime-content-disposition-type d))
-		  (mapcar (function
-			   (lambda (param)
-			     (let ((name (car param)))
-			       (cons (cond ((string= name "filename")
-					    'filename)
-					   ((string= name "creation-date")
-					    'creation-date)
-					   ((string= name "modification-date")
-					    'modification-date)
-					   ((string= name "read-date")
-					    'read-date)
-					   ((string= name "size")
-					    'size)
-					   (t (cons 'disposition (car param))))
-				     (cdr param)))))
-			  (mime-content-disposition-parameters d))
-		  ))
-	  (list (cons 'encoding (mime-entity-encoding entity))
-		(cons 'major-mode
-		      (save-excursion
-			(set-buffer (mime-entity-buffer entity))
-			major-mode)))
-	  ))
+  (let (rest param name)
+    ;; Content-Type
+    (unless (assq 'type situation)
+      (setq rest (or (mime-entity-content-type entity)
+		     (make-mime-content-type 'text 'plain))
+	    situation (cons (car rest) situation)
+	    rest (cdr rest))
+      )
+    (unless (assq 'subtype situation)
+      (or rest
+	  (setq rest (or (cdr (mime-entity-content-type entity))
+			 '((subtype . plain)))))
+      (setq situation (cons (car rest) situation)
+	    rest (cdr rest))
+      )
+    (while rest
+      (setq param (car rest))
+      (or (assoc (car param) situation)
+	  (setq situation (cons param situation)))
+      (setq rest (cdr rest)))
+    
+    ;; Content-Disposition
+    (setq rest nil)
+    (unless (assq 'disposition-type situation)
+      (setq rest (mime-entity-content-disposition entity))
+      (if rest
+	  (setq situation (cons (cons 'disposition-type
+				      (mime-content-disposition-type rest))
+				situation)
+		rest (mime-content-disposition-parameters rest))
+	))
+    (while rest
+      (setq param (car rest)
+	    name (car param))
+      (if (cond ((string= name "filename")
+		 (if (assq 'filename situation)
+		     nil
+		   (setq name 'filename)))
+		((string= name "creation-date")
+		 (if (assq 'creation-date situation)
+		     nil
+		   (setq name 'creation-date)))
+		((string= name "modification-date")
+		 (if (assq 'modification-date situation)
+		     nil
+		   (setq name 'modification-date)))
+		((string= name "read-date")
+		 (if (assq 'read-date situation)
+		     nil
+		   (setq name 'read-date)))
+		((string= name "size")
+		 (if (assq 'size situation)
+		     nil
+		   (setq name 'size)))
+		(t (setq name (cons 'disposition name))
+		   (if (assoc name situation)
+		       nil
+		     name)))
+	  (setq situation
+		(cons (cons name (cdr param))
+		      situation)))
+      (setq rest (cdr rest)))
+    
+    ;; Content-Transfer-Encoding
+    (or (assq 'encoding situation)
+	(setq situation
+	      (cons (cons 'encoding (or (mime-entity-encoding entity)
+					"7bit"))
+		    situation)))
 
+    ;; major-mode
+    (or (assq 'major-mode situation)
+	(setq situation
+	      (cons (cons 'major-mode
+			  (with-current-buffer (mime-entity-buffer entity)
+			    major-mode))
+		    situation)))
+    
+    situation))
 
 (defun mime-view-entity-title (entity)
   (or (mime-read-field 'Content-Description entity)

@@ -124,8 +124,13 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
   (interactive "P")
   (let ((entity (get-text-property (point) 'mime-view-entity)))
     (if entity
-	(mime-play-entity entity nil (or mode "play") ignore-examples)
-      )))
+	(let ((situation (list (cons 'mode (or mode "play")))))
+	  (if ignore-examples
+	      (setq situation
+		    (cons (cons 'ignore-examples ignore-examples)
+			  situation)))
+	  (mime-play-entity entity situation)
+	  ))))
 
 (defun mime-sort-situation (situation)
   (sort situation
@@ -193,29 +198,19 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
     (cons match example)
     ))
 
-(defun mime-play-entity (entity &optional situation mode
-				ignore-examples ignored-method)
+(defun mime-play-entity (entity &optional situation ignored-method)
   "Play entity specified by ENTITY.
 It decodes the entity to call internal or external method.  The method
 is selected from variable `mime-acting-condition'.  If MODE is
 specified, play as it.  Default MODE is \"play\"."
   (let (method ret)
-    (or situation
-	(setq situation (mime-entity-situation entity)))
-    (if mode
-	(setq situation (cons (cons 'mode mode) situation))
-      )
-    (if ignore-examples
-	(or (assq 'ignore-examples situation)
-	    (setq situation
-		  (cons (cons 'ignore-examples ignore-examples) situation)))
-      )
     (setq ret
 	  (mime-delq-null-situation
-	   (ctree-find-calist mime-acting-condition situation
+	   (ctree-find-calist mime-acting-condition
+			      (mime-entity-situation entity situation)
 			      mime-view-find-every-acting-situation)
 	   'method ignored-method))
-    (or ignore-examples
+    (or (assq 'ignore-examples situation)
 	(if (cdr ret)
 	    (let ((rest ret)
 		  (max-score 0)
@@ -475,8 +470,6 @@ SUBTYPE is symbol to indicate subtype of media-type.")
 		    (put-alist 'subtype subtype
 			       (del-alist 'method
 					  (copy-alist situation))))
-	 nil
-	 (cdr (assq 'ignore-examples situation))
 	 'mime-detect-content)
       ))
   )
@@ -504,9 +497,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	 (children (car (mime-entity-children entity))))
     (set-buffer (get-buffer-create new-name))
     (erase-buffer)
-    (insert-buffer-substring (mime-entity-buffer children)
-			     (mime-entity-point-min children)
-			     (mime-entity-point-max children))
+    (mime-insert-entity children)
     (setq mime-message-structure children)
     (setq major-mode 'mime-show-message-mode)
     (mime-view-buffer (current-buffer) nil mother
