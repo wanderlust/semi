@@ -206,8 +206,13 @@ specified, play as it.  Default MODE is \"play\"."
 	(narrow-to-region start end)
 	(goto-char start)
 	(let ((method (cdr (assoc 'method situation)))
-	      (name (expand-file-name (mime-raw-get-filename situation)
-				      mime-temp-directory)))
+	      (name (mime-entity-safe-filename entity)))
+	  (setq name
+		(if name
+		    (expand-file-name name mime-temp-directory)
+		  (make-temp-name
+		   (expand-file-name "EMI" mime-temp-directory))
+		  ))
 	  (mime-write-decoded-region (mime-entity-body-start entity) end
 				     name (cdr (assq 'encoding situation)))
 	  (message "External method is starting...")
@@ -231,53 +236,6 @@ specified, play as it.  Default MODE is \"play\"."
       ))
   (remove-alist 'mime-mailcap-method-filename-alist process)
   (message (format "%s %s" process event)))
-
-;; (defun mime-activate-external-method (entity cal)
-;;   (save-excursion
-;;     (save-restriction
-;;       (let ((beg (mime-entity-point-min entity))
-;;             (end (mime-entity-point-max entity)))
-;;         (narrow-to-region beg end)
-;;         (goto-char beg)
-;;         (let ((method (cdr (assoc 'method cal)))
-;;               (name (mime-raw-get-filename cal)))
-;;           (if method
-;;               (let ((file (make-temp-name
-;;                            (expand-file-name "TM" mime-temp-directory)))
-;;                     b args)
-;;                 (if (nth 1 method)
-;;                     (setq b beg)
-;;                   (setq b (mime-entity-body-start entity)))
-;;                 (goto-char b)
-;;                 (write-region b end file)
-;;                 (message "External method is starting...")
-;;                 (setq cal (put-alist
-;;                            'name (replace-as-filename name) cal))
-;;                 (setq cal (put-alist 'file file cal))
-;;                 (setq args (nconc
-;;                             (list (car method)
-;;                                   mime-echo-buffer-name (car method))
-;;                             (mime-make-external-method-args
-;;                              cal (cdr (cdr method)))
-;;                             ))
-;;                 (apply (function start-process) args)
-;;                 (mime-show-echo-buffer)
-;;                 ))
-;;           )))))
-
-;; (defun mime-make-external-method-args (cal format)
-;;   (mapcar (function
-;;            (lambda (arg)
-;;              (if (stringp arg)
-;;                  arg
-;;                (let* ((item (eval arg))
-;;                       (ret (cdr (assoc item cal))))
-;;                  (or ret
-;;                      (if (eq item 'encoding)
-;;                          "7bit"
-;;                        ""))
-;;                  ))))
-;;           format))
 
 (defvar mime-echo-window-is-shared-with-bbdb t
   "*If non-nil, mime-echo window is shared with BBDB window.")
@@ -336,47 +294,27 @@ window.")
   (concat (regexp-* mime-view-file-name-char-regexp)
 	  "\\(\\." mime-view-file-name-char-regexp "+\\)*"))
 
-(defun mime-raw-get-original-filename (param)
-  (or (if (member (cdr (assq 'encoding param))
-		  mime-view-uuencode-encoding-name-list)
-	  (mime-raw-get-uu-filename))
-      (let (ret)
-	(or (if (or (and (setq ret (mime-read-Content-Disposition))
-			 (setq ret
-			       (assoc
-				"filename"
-				(mime-content-disposition-parameters ret)))
-			 )
-		    (setq ret (assoc "name" param))
-		    (setq ret (assoc "x-name" param))
-		    )
-		(std11-strip-quoted-string (cdr ret))
-	      )
-	    (if (setq ret
-		      (std11-find-field-body '("Content-Description"
-					       "Subject")))
-		(if (or (string-match mime-view-file-name-regexp-1 ret)
-			(string-match mime-view-file-name-regexp-2 ret))
-		    (substring ret (match-beginning 0)(match-end 0))
-		  ))
-	    ))
-      ))
-
-(defun mime-raw-get-filename (param)
-  (replace-as-filename (mime-raw-get-original-filename param))
-  )
+(defun mime-entity-safe-filename (entity)
+  (replace-as-filename
+   (or (mime-entity-filename entity)
+       (let ((ret (or (mime-entity-read-field entity 'Content-Description)
+		      (mime-entity-read-field entity 'Subject))))
+	 (if (or (string-match mime-view-file-name-regexp-1 ret)
+		 (string-match mime-view-file-name-regexp-2 ret))
+	     (substring ret (match-beginning 0)(match-end 0))
+	   )))))
 
 
 ;;; @ file extraction
 ;;;
 
-(defun mime-method-to-save (entity cal)
+(defun mime-save-content (entity cal)
   (let ((beg (mime-entity-point-min entity))
 	(end (mime-entity-point-max entity)))
     (goto-char beg)
     (let* ((name (save-restriction
 		   (narrow-to-region beg end)
-		   (mime-raw-get-filename cal)
+		   (mime-entity-safe-filename entity)
 		   ))
 	   (encoding (or (cdr (assq 'encoding cal)) "7bit"))
 	   (filename (if (and name (not (string-equal name "")))
@@ -415,13 +353,13 @@ REGEXP is pattern for \"file\" command output.
 TYPE is symbol to indicate primary type of media-type.
 SUBTYPE is symbol to indicate subtype of media-type.")
 
-(defun mime-method-to-detect (entity situation)
+(defun mime-detect-content (entity situation)
   (let ((beg (mime-entity-point-min entity))
 	(end (mime-entity-point-max entity)))
     (goto-char beg)
     (let* ((name (save-restriction
 		   (narrow-to-region beg end)
-		   (mime-raw-get-filename situation)
+		   (mime-entity-safe-filename entity)
 		   ))
 	   (encoding (or (cdr (assq 'encoding situation)) "7bit"))
 	   (filename (if (and name (not (string-equal name "")))
@@ -467,7 +405,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
     (pop-to-buffer mother)
     ))
 
-(defun mime-method-to-display-message/rfc822 (entity cal)
+(defun mime-view-message/rfc822 (entity cal)
   (let* ((beg (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))
 	 (cnum (mime-raw-point-to-entity-number beg))
@@ -510,7 +448,7 @@ saved as binary.  Otherwise the region is saved by `write-region'."
       (write-region start end filename)
       )))
 
-(defun mime-method-to-store-message/partial (entity cal)
+(defun mime-store-message/partial-piece (entity cal)
   (goto-char (mime-entity-point-min entity))
   (let* ((root-dir
 	  (expand-file-name
@@ -642,7 +580,7 @@ saved as binary.  Otherwise the region is saved by `write-region'."
     (dired dir)
     ))
 
-(defun mime-method-to-display-message/external-ftp (entity cal)
+(defun mime-view-message/external-ftp (entity cal)
   (let* ((site (cdr (assoc "site" cal)))
 	 (directory (cdr (assoc "directory" cal)))
 	 (name (cdr (assoc "name" cal)))
@@ -657,7 +595,7 @@ saved as binary.  Otherwise the region is saved by `write-region'."
 ;;; @ rot13-47
 ;;;
 
-(defun mime-method-to-display-caesar (entity situation)
+(defun mime-view-caesar (entity situation)
   "Internal method for mime-view to display ROT13-47-48 message."
   (let* ((new-name (format "%s-%s" (buffer-name)
 			   (mime-entity-number entity)))

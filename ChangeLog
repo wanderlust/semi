@@ -1,3 +1,184 @@
+1998-06-19  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* WEMI: Version 1.7.0 (Atami) released.
+
+1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el, mime-view.el, semi-def.el: Rename
+	`mime-module-version' to `mime-user-interface-version'.
+
+	* mime-parse.el, SEMI-ELS: Move mime-parse.el to FLIM layer.
+
+1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* semi-setup.el (call-after-loaded): Moved from semi-def.el.
+
+	* semi-def.el: Move `call-after-loaded' to semi-setup.el.
+
+1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-insert-entity-button): Change interface.
+
+1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-entity-filename): Moved from mime-play.el.
+	(mime-view-entity-title): Use `mime-entity-filename'.
+
+	* mime-play.el: Move `mime-entity-filename' to mime-view.el.
+
+1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-entity-filename): New function; abolish
+	`mime-raw-get-original-filename'.
+	(mime-entity-safe-filename): New function; abolish
+	`mime-raw-get-filename'.
+	(mime-activate-mailcap-method): Use `mime-entity-safe-filename'.
+	(mime-save-content): Use `mime-entity-safe-filename'.
+	(mime-detect-content): Use `mime-entity-safe-filename'.
+
+	* mime-view.el (mime-entity-uu-filename): New function; abolish
+	`mime-raw-get-uu-filename'.
+
+1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-entity-title): Renamed from
+	`mime-raw-get-subject'; use `mime-entity-read-field'.
+
+1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS (Changes in SEMI 1.7): New chapter.
+	(Changes in SEMI 1.6): Add description of entity-detection.
+
+1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el: Rename `mime-view-following-method-alist' to
+	`mime-preview-following-method-alist'.
+
+1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* semi-setup.el, mime-pgp.el: Rename
+	`mime-method-to-add-application/pgp-keys' to
+	`mime-add-application/pgp-keys'.
+
+	* semi-setup.el, mime-pgp.el: Rename
+	`mime-method-to-decrypt-application/pgp-encrypted' to
+	`mime-decrypt-application/pgp-encrypted'.
+
+	* semi-setup.el, mime-pgp.el: Rename
+	`mime-method-to-verify-application/pgp-signature' to
+	`mime-verify-application/pgp-signature'.
+
+	* semi-setup.el, mime-pgp.el: Rename
+	`mime-method-to-verify-multipart/signed' to
+	`mime-verify-multipart/signed'.
+
+	* semi-setup.el, mime-pgp.el: Rename
+	`mime-method-for-application/pgp' to `mime-view-application/pgp'.
+
+	* SEMI-naming.ol: New file.
+
+1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-partial.el: Rename
+	`mime-method-to-combine-message/partial-pieces' to
+	`mime-combine-message/partial-pieces-automatically'.
+
+1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el, mime-view.el: Rename
+	`mime-method-to-display-caesar' to `mime-view-caesar'.
+
+	* mime-play.el, mime-view.el: Rename
+	`mime-method-to-display-message/external-ftp' to
+	`mime-view-message/external-ftp'.
+
+1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el, mime-partial.el, mime-play.el: Rename
+	`mime-method-to-store-message/partial' to
+	`mime-store-message/partial-piece'.
+
+1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el, mime-view.el: Rename
+	`mime-method-to-display-message/rfc822' to
+	`mime-view-message/rfc822'.
+
+1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el, mime-view.el: Rename `mime-method-to-detect' to
+	`mime-detect-content'.
+
+1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-display-entity): Abolish body-filter support.
+
+	* mime-play.el, mime-view.el: Rename `mime-method-to-save' to
+	`mime-save-content'.
+
+1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-activate-mailcap-method): Fixed.
+
+1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-image.el (mime-display-image): New function; abolish
+	function `mime-preview-filter-for-image'.
+
+	* mime-image.el: Rename `mime-view-content-header-filter-hook' to
+	`mime-display-header-hook'.
+
+	* mime-view.el (mime-display-entity): Run
+	`mime-display-header-hook'.
+
+	* mime-text.el, mime-view.el: Rename `mime-preview-text/enriched'
+	to `mime-display-text/enriched'.
+
+	* mime-text.el, mime-view.el: Rename `mime-preview-text/richtext'
+	to `mime-display-text/richtext'.
+
+	* mime-text.el, mime-view.el: Rename `mime-preview-text/plain' to
+	`mime-display-text/plain'.
+
+	* mime-view.el (mime-display-multipart/mixed): Renamed from
+	`mime-preview-multipart/mixed'.
+
+	* mime-view.el (mime-display-multipart/alternative): Renamed from
+	`mime-preview-multipart/alternative'.
+
+	* mime-view.el (mime-display-message/partial-button): Renamed from
+	`mime-preview-message/partial-button'.
+
+	* mime-view.el (mime-display-entity): Renamed from
+	`mime-view-display-entity'; change interface.
+	(mime-display-message): Renamed from `mime-view-display-message'.
+
+1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* README.en (Required environment): Modify for FLIM 1.4.0.
+
+1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el: Move function `mime-entity-number' to FLIM layer.
+
+1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-header-presentation-method-alist): New
+	variable; abolish variable
+	`mime-view-content-header-filter-alist'; abolish function
+	`mime-view-cut-header'; abolish variable
+	`mime-view-ignored-field-regexp'.
+	(mime-view-display-entity): Use
+	`mime-header-presentation-method-alist'.
+
+	* mime-parse.el: Move definition of structure `mime-entity' to
+	FLIM layer.
+
+1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el: Change order of `mime-entity'.
+
+
 1998-06-16  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* WEMI: Version 1.6.0 (Yugawara) released.

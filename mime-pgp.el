@@ -41,19 +41,28 @@
 ;;	    by Kazuhiko Yamamoto <kazu@is.aist-nara.ac.jp> (1995/10;
 ;;	    expired)
 
-;;  PGP/MIME and PGP-kazu may be contrary to each other.  You should
-;;  decide which you support (Maybe you should not use PGP-kazu).
-
 ;;; Code:
 
 (require 'mime-play)
+
+
+;;; @ Internal method for multipart/signed
+;;;
+;;; It is based on RFC 1847 (security-multipart).
+
+(defun mime-verify-multipart/signed (entity situation)
+  "Internal method to verify multipart/signed."
+  (mime-raw-play-entity
+   (nth 1 (mime-entity-children entity)) ; entity-info of signature
+   (cdr (assq 'mode situation)) ; play-mode
+   ))
 
 
 ;;; @ internal method for application/pgp
 ;;;
 ;;; It is based on draft-kazu-pgp-mime-00.txt (PGP-kazu).
 
-(defun mime-method-for-application/pgp (entity cal)
+(defun mime-view-application/pgp (entity situation)
   (let* ((start (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))
 	 (entity-number (mime-raw-point-to-entity-number start))
@@ -107,18 +116,6 @@
     ))
 
 
-;;; @ Internal method for multipart/signed
-;;;
-;;; It is based on RFC 1847 (security-multipart).
-
-(defun mime-method-to-verify-multipart/signed (entity cal)
-  "Internal method to verify multipart/signed."
-  (mime-raw-play-entity
-   (nth 1 (mime-entity-children entity)) ; entity-info of signature
-   (cdr (assq 'mode cal)) ; play-mode
-   ))
-
-
 ;;; @ Internal method for application/pgp-signature
 ;;;
 ;;; It is based on RFC 2015 (PGP/MIME).
@@ -160,11 +157,11 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 		 (t "Bad signature")))
 	  ))))
 
-(defun mime-method-to-verify-application/pgp-signature (entity cal)
+(defun mime-verify-application/pgp-signature (entity situation)
   "Internal method to check PGP/MIME signature."
   (let* ((start (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))
-	 (encoding (cdr (assq 'encoding cal)))
+	 (encoding (cdr (assq 'encoding situation)))
 	 (entity-node-id (mime-raw-point-to-entity-node-id start))
 	 (mother-node-id (cdr entity-node-id))
 	 (knum (car entity-node-id))
@@ -224,7 +221,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 ;;;
 ;;; It is based on RFC 2015 (PGP/MIME).
 
-(defun mime-method-to-decrypt-application/pgp-encrypted (entity cal)
+(defun mime-decrypt-application/pgp-encrypted (entity situation)
   (let* ((entity-node-id (mime-entity-node-id entity))
 	 (mother-node-id (cdr entity-node-id))
 	 (knum (car entity-node-id))
@@ -233,7 +230,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 		 (1+ knum)))
 	 (oinfo (mime-raw-find-entity-from-node-id
 		 (cons onum mother-node-id) mime-raw-message-info)))
-    (mime-method-for-application/pgp oinfo cal)
+    (mime-view-application/pgp oinfo situation)
     ))
 
 
@@ -241,12 +238,12 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 ;;;
 ;;; It is based on RFC 2015 (PGP/MIME).
 
-(defun mime-method-to-add-application/pgp-keys (entity cal)
+(defun mime-add-application/pgp-keys (entity situation)
   (let* ((start (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))
 	 (entity-number (mime-raw-point-to-entity-number start))
 	 (new-name (format "%s-%s" (buffer-name) entity-number))
-	 (encoding (cdr (assq 'encoding cal)))
+	 (encoding (cdr (assq 'encoding situation)))
 	 str)
     (setq str (buffer-substring start end))
     (switch-to-buffer new-name)

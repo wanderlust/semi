@@ -6,9 +6,7 @@
 
 (setq semi-modules-to-compile
       '(signature
-	semi-def
-	mime-parse mime-view mime-text mime-play mime-partial
-	mime-edit
+	semi-def mime-view mime-text mime-play mime-partial mime-edit
 	semi-setup mail-mime-setup))
 
 (setq semi-modules-not-to-compile nil)
