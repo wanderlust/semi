@@ -22,7 +22,7 @@ VERSION_SPECIFIC_LISPDIR = NONE
 GOMI	= *.elc
 
 VERSION	= $(API).$(RELEASE)
-ARC_DIR = /pub/mule/semi/semi-$(API)-for-flim-1.12
+ARC_DIR = /pub/mule/semi/semi-$(API)-for-flim-1.13
 
 
 elc:
