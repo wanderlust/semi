@@ -236,7 +236,7 @@ displaying the record corresponding to the sender of the current message."
     (define-key mime-view-mode-map ";" 'mime-bbdb/edit-notes)
     (define-key mime-view-mode-map ":" 'mime-bbdb/show-sender)))
 
-(add-hook 'mime-view-define-keymap-hook 'mime-bbdb/define-keys)
+(add-hook 'mime-view-mode-hook 'mime-bbdb/define-keys)
 
 
 ;;; @ for signature.el
