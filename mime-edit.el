@@ -983,7 +983,7 @@ Charset is automatically obtained from the `charsets-mime-charset-alist'."
 		 )
 	    (enriched-mode t)
 	  (if (boundp 'enriched-mode)
-	      (enriched-mode nil)
+	      (enriched-mode -1)
 	    ))))))
 
 (defun mime-edit-insert-file (file &optional verbose)
