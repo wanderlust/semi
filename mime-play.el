@@ -257,7 +257,7 @@
 	(delete-region (point-min) (match-end 0))
       )
     (setq major-mode 'mime/show-message-mode)
-    (setq mime-raw::text-decoder text-decoder)
+    (setq mime-text-decoder text-decoder)
     (mime-view-mode mother)
     ))
 
