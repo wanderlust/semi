@@ -2698,7 +2698,8 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 			 )))
     ))
 
-(defun mime-edit-decode-single-part-in-buffer (content-type not-decode-text)
+(defun mime-edit-decode-single-part-in-buffer
+  (content-type not-decode-text &optional content-disposition)
   (let* ((type (mime-content-type-primary-type content-type))
 	 (subtype (mime-content-type-subtype content-type))
 	 (ctype (format "%s/%s" type subtype))
@@ -2725,7 +2726,38 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	 encoded
 	 (limit (save-excursion
 		  (if (search-forward "\n\n" nil t)
-		      (1- (point))))))
+		      (1- (point)))))
+	 (disposition-type
+	  (mime-content-disposition-type content-disposition))
+	 (disposition-str
+	  (if disposition-type
+	      (let ((bytes (+ 21 (length (format "%s" disposition-type)))))
+		(mapconcat (function
+			    (lambda (attr)
+			      (let* ((str (concat
+					   (car attr)
+					   "="
+					   (if (string-equal "filename"
+							     (car attr))
+					       (std11-wrap-as-quoted-string
+						(cdr attr))
+					     (cdr attr))))
+				     (bs (length str)))
+				(setq bytes (+ bytes bs 2))
+				(if (< bytes 76)
+				    (concat "; " str)
+				  (setq bytes (+ bs 1))
+				  (concat ";\n " str)
+				  )
+				)))
+			   (mime-content-disposition-parameters
+			    content-disposition)
+			   ""))))
+	 )
+    (if disposition-type
+	(setq pstr (format "%s\nContent-Disposition: %s%s"
+			   pstr disposition-type disposition-str))
+      )
     (save-excursion
       (if (re-search-forward
 	   "^Content-Transfer-Encoding:" limit t)
@@ -2749,14 +2781,14 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 			      encoding nil)
 			)))))))
     (if (or encoded (not not-decode-text))
- 	(progn
- 	  (save-excursion
- 	    (goto-char (point-min))
- 	    (while (re-search-forward "\r\n" nil t)
- 	      (replace-match "\n")
- 	      ))
- 	  (decode-mime-charset-region (point-min)(point-max)
- 				      (or charset default-mime-charset))
+	(progn
+	  (save-excursion
+	    (goto-char (point-min))
+	    (while (re-search-forward "\r\n" nil t)
+	      (replace-match "\n")
+	      ))
+	  (decode-mime-charset-region (point-min)(point-max)
+				      (or charset default-mime-charset))
 	  ))
     (let ((he (if (re-search-forward "^$" nil t)
 		  (match-end 0)
@@ -2800,19 +2832,24 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	      (mime-edit-decode-multipart-in-buffer ctl not-decode-text)
 	      )
 	     (t
-	      (mime-edit-decode-single-part-in-buffer ctl not-decode-text)
+	      (mime-edit-decode-single-part-in-buffer
+	       ctl not-decode-text (mime-read-Content-Disposition))
 	      )))
 	(or not-decode-text
 	    (decode-mime-charset-region (point-min) (point-max)
 					default-mime-charset))
 	)
-      (save-restriction
-	(std11-narrow-to-header)
-	(goto-char (point-min))
-	(while (re-search-forward mime-edit-again-ignored-field-regexp nil t)
-	  (delete-region (match-beginning 0) (1+ (std11-field-end)))
-	  ))
-      (mime-decode-header-in-buffer (not not-decode-text))
+      (if (= (point-min) 1)
+	  (progn
+	    (save-restriction
+	      (std11-narrow-to-header)
+	      (goto-char (point-min))
+	      (while (re-search-forward
+		      mime-edit-again-ignored-field-regexp nil t)
+		(delete-region (match-beginning 0) (1+ (std11-field-end)))
+		))
+	    (mime-decode-header-in-buffer (not not-decode-text))
+	    ))
       )))
 
 ;;;###autoload
