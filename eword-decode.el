@@ -36,6 +36,10 @@
 (require 'mel)
 (require 'mime-def)
 
+(defgroup eword-decode nil
+  "Encoded-word decoding"
+  :group 'mime)
+
 
 ;;; @ version
 ;;;
@@ -180,6 +184,23 @@ such as a version of Net$cape)."
 ;;; @ for message header
 ;;;
 
+(defcustom eword-decode-ignored-field-list
+  '(newsgroups message-id path)
+  "*List of field-names to be ignored when decoding.
+Each field name must be symbol."
+  :group 'eword-decode
+  :type '(repeat symbol))
+
+(defcustom eword-decode-structured-field-list
+  '(reply-to resent-reply-to from resent-from sender resent-sender
+	     to resent-to cc resent-cc bcc resent-bcc dcc
+	     mime-version content-type content-transfer-encoding
+	     content-disposition)
+  "*List of field-names to decode as structured field.
+Each field name must be symbol."
+  :group 'eword-decode
+  :type '(repeat symbol))
+
 (defun eword-decode-header (&optional code-conversion separator)
   "Decode MIME encoded-words in header fields.
 If CODE-CONVERSION is nil, it decodes only encoded-words.  If it is
@@ -205,21 +226,18 @@ If SEPARATOR is not nil, it is used as header separator."
 		      field-name (intern
 				  (downcase (buffer-substring beg (1- p))))
 		      end (std11-field-end))
-		(cond ((memq field-name '(newsgroups message-id path))
+		(cond ((memq field-name eword-decode-ignored-field-list)
+		       ;; Don't decode
 		       )
-		      ((memq field-name '(reply-to
-					  from sender
-					  resent-reply-to resent-from
-					  resent-sender to resent-to
-					  cc resent-cc
-					  bcc resent-bcc dcc
-					  mime-version content-type))
+		      ((memq field-name eword-decode-structured-field-list)
+		       ;; Decode as structured field
 		       (let ((body (buffer-substring p end))
 			     (default-mime-charset default-charset))
 			 (delete-region p end)
 			 (insert (eword-decode-structured-field-body body))
 			 ))
 		      (t
+		       ;; Decode as unstructured field
 		       (save-restriction
 			 (narrow-to-region p end)
 			 (decode-mime-charset-region p end default-charset)
