@@ -28,6 +28,9 @@
 (require 'cl)
 (require 'emu)
 
+(autoload 'mule-caesar-region "mule-caesar"
+  "Caesar rotation of current region." t)
+
 
 ;;; @ variables
 ;;;
