@@ -381,8 +381,8 @@ characters encoded as encoded-words or invalid \"raw\" format.
       (setq ret (eword-lexical-analyze-internal key must-unfold))
       (setq eword-lexical-analyze-cache
 	    (cons (cons key ret)
-		  (last* eword-lexical-analyze-cache
-			 eword-lexical-analyze-cache-max)))
+		  (last eword-lexical-analyze-cache
+			eword-lexical-analyze-cache-max)))
       ret)))
 
 (defun eword-decode-structured-field-body (string &optional must-unfold)
