@@ -1,5 +1,28 @@
 1999-07-28  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* mime-view.el (mime-view-entity-title): Use
+	`mime-entity-read-field' instead of `mime-read-field'.
+	(mime-display-message): Use `major-mode' of
+	mime-entity-header-buffer as the default value of
+	original-major-mode.
+
+	* mime-play.el (mime-entity-safe-filename): Use
+	`mime-entity-read-field' instead of `mime-read-field'.
+	(mime-view-message/rfc822): New implementation.
+
+	* mime-pgp.el (mime-add-application/pgp-keys): Use
+	`mime-entity-number' instead of `mime-raw-point-to-entity-number'.
+
+	* mime-partial.el
+	(mime-combine-message/partial-pieces-automatically): Use
+	`mime-entity-read-field' instead of `mime-read-field'.
+
+	* mime-bbdb.el (mime-bbdb/update-record): Use
+	`mime-entity-read-field' instead of `mime-read-field'; use
+	`mime-entity-fetch-field' instead of `mime-fetch-field'.
+
+1999-07-28  MORIOKA Tomohiko  <tomo@m17n.org>
+
 	* mime-view.el (mime-raw-find-entity-from-point): Deleted.
 	(mime-raw-buffer): Deleted.
 	(mime-preview-original-major-mode): Add new optional argument

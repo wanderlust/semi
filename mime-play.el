@@ -431,8 +431,8 @@ window.")
   (let ((filename
 	 (or (mime-entity-filename entity)
 	     (let ((subj
-		    (or (mime-read-field 'Content-Description entity)
-			(mime-read-field 'Subject entity))))
+		    (or (mime-entity-read-field entity 'Content-Description)
+			(mime-entity-read-field entity 'Subject))))
 	       (if (and subj
 			(or (string-match mime-view-file-name-regexp-1 subj)
 			    (string-match mime-view-file-name-regexp-2 subj)))
@@ -533,15 +533,18 @@ It is registered to variable `mime-preview-quitting-method-alist'."
   (let* ((new-name
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
 	 (mother (current-buffer))
-	 (children (car (mime-entity-children entity))))
-    (set-buffer (get-buffer-create new-name))
-    (erase-buffer)
-    (mime-insert-entity children)
-    (setq mime-message-structure children)
-    (setq major-mode 'mime-show-message-mode)
-    (mime-view-buffer (current-buffer) nil mother
-		      nil (if (mime-entity-cooked-p entity) 'cooked))
-    ))
+	 (children (car (mime-entity-children entity)))
+	 (preview-buffer
+	  (mime-display-message
+	   children new-name mother nil
+	   (cdr (assq 'major-mode
+		      (get-text-property (point) 'mime-view-situation))))))
+    (or (get-buffer-window preview-buffer)
+	(let ((m-win (get-buffer-window mother)))
+	  (if m-win
+	      (set-window-buffer m-win preview-buffer)
+	    (switch-to-buffer preview-buffer)
+	    )))))
 
 
 ;;; @ message/partial
