@@ -2577,7 +2577,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	  "\\):")
   "Regexp for deleted header fields when `mime-edit-again' is called.")
 
-(defun mime-edit-decode-buffer (not-decode-text)
+(defun mime-edit-decode-message-in-buffer (&optional not-decode-text)
   (save-excursion
     (goto-char (point-min))
     (let ((ctl (mime-read-Content-Type)))
@@ -2619,7 +2619,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 			    )
 			  (save-restriction
 			    (narrow-to-region beg end)
-			    (mime-edit-decode-buffer not-decode-text)
+			    (mime-edit-decode-message-in-buffer not-decode-text)
 			    (goto-char (point-max))
 			    ))))
 		    ))
@@ -2730,7 +2730,7 @@ converted to MIME-Edit tags."
        nil t)
       (replace-match "\n\n")
     )
-  (mime-edit-decode-buffer not-decode-text)
+  (mime-edit-decode-message-in-buffer not-decode-text)
   (goto-char (point-min))
   (save-restriction
     (std11-narrow-to-header)
