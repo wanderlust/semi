@@ -1,8 +1,11 @@
 1998-06-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI-CFG:
-	    - Modify for FLIM 1.5.0.
-	    - Don't signal error if tm is found in load-path.
+	* mime-view.el: Don't require `mime-parse'.
+
+1998-06-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI-CFG: - Modify for FLIM 1.5.0.
+		    - Don't signal error if tm is found in load-path.
 
 1998-06-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
