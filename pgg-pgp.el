@@ -111,12 +111,32 @@
       )
     ))
 
+(luna-define-method lookup-key ((scheme pgg-scheme-pgp) string)
+  (let ((args (list "+batchmode" "+language=en" "-kv" string)))
+    (pgg-pgp-process-region (point)(point) nil
+			    pgg-pgp-program args)
+    (with-current-buffer pgg-output-buffer
+      (goto-char (point-min))
+      (cond
+       ((re-search-forward "^pub\\s +[0-9]+/" nil t);PGP 2.*
+	(buffer-substring (point)(+ 8 (point))))
+       ((re-search-forward "^Type" nil t);PGP 6.*
+	(beginning-of-line 2)
+	(substring 
+	 (nth 2 (split-string 
+		 (buffer-substring (point)
+				   (progn (end-of-line) (point)))
+		 ))
+	 2))))
+    ))
+
 (luna-define-method encrypt-region ((scheme pgg-scheme-pgp) 
 				    start end recipients)
   (let* ((pgg-pgp-user-id pgg-default-user-id)
 	 (passphrase
 	  (pgg-read-passphrase 
-	   (format "PGP passphrase for %s: " pgg-pgp-user-id)))
+	   (format "PGP passphrase for %s: " pgg-pgp-user-id)
+	   (luna-send scheme 'lookup-key scheme pgg-pgp-user-id)))
 	 (args 
 	  `("+encrypttoself=off +verbose=1" "+batchmode"
 	    "+language=us" "-fate"
@@ -126,8 +146,14 @@
     (pgg-pgp-process-region start end passphrase 
 			    pgg-pgp-program args)
     (with-current-buffer pgg-output-buffer
-      (when (zerop (buffer-size))
-	(insert-buffer-substring pgg-errors-buffer)))
+      (if (zerop (buffer-size))
+	  (insert-buffer-substring pgg-errors-buffer)
+	(let ((packet 
+	       (cdr (assq 1 (pgg-parse-armor-region 
+			     (point-min)(point-max))))))
+	  (pgg-add-passphrase-cache 
+	   (cdr (assq 'key-identifier packet))
+	   passphrase))))
     ))
 
 (luna-define-method decrypt-region ((scheme pgg-scheme-pgp) 
@@ -135,7 +161,8 @@
   (let* ((pgg-pgp-user-id pgg-default-user-id)
 	 (passphrase
 	  (pgg-read-passphrase 
-	   (format "PGP passphrase for %s: " pgg-pgp-user-id)))
+	   (format "PGP passphrase for %s: " pgg-pgp-user-id)
+	   (luna-send scheme 'lookup-key scheme pgg-pgp-user-id)))
 	 (args 
 	  '("+verbose=1" "+batchmode" "+language=us" "-f")))
     (pgg-pgp-process-region start end passphrase 
@@ -150,15 +177,22 @@
   (let* ((pgg-pgp-user-id pgg-default-user-id)
 	 (passphrase
 	  (pgg-read-passphrase 
-	   (format "PGP passphrase for %s: " pgg-pgp-user-id)))
+	   (format "PGP passphrase for %s: " pgg-pgp-user-id)
+	   (luna-send scheme 'lookup-key scheme pgg-pgp-user-id)))
 	 (args 
 	  (list "-fbast" "+verbose=1" "+language=us" "+batchmode"
 		"-u" pgg-pgp-user-id)))
     (pgg-pgp-process-region start end passphrase 
 			     pgg-pgp-program args)
     (with-current-buffer pgg-output-buffer
-      (when (zerop (buffer-size))
-	(insert-buffer-substring pgg-errors-buffer)))
+      (if (zerop (buffer-size))
+	  (insert-buffer-substring pgg-errors-buffer)
+	(let ((packet 
+	       (cdr (assq 2 (pgg-parse-armor-region 
+			     (point-min)(point-max))))))
+	  (pgg-add-passphrase-cache 
+	   (cdr (assq 'key-identifier packet))
+	   passphrase))))
     ))
 
 (luna-define-method verify-region ((scheme pgg-scheme-pgp) 
