@@ -1,3 +1,11 @@
+2000-02-18  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-view-define-keymap): Change binding of
+	`mime-preview-toggle-content' from C-c C-t C-b to C-c C-t C-c.
+	(mime-preview-toggle-content): Renamed from
+	`mime-preview-toggle-body'.
+
+
 2000-02-17  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* REMI: Version 1.14.0 (Uragawara) released.
