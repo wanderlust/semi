@@ -1,3 +1,8 @@
+1999-04-15  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-pgp.el (mime-add-application/pgp-keys): Use
+	`mime-insert-entity-content' to get public keys.
+
 1999-04-13  Hirokazu FUKUI    <fukui@atesoft.advantest.co.jp>
 
 	* mime-pgp.el (mime-add-application/pgp-keys): Call
