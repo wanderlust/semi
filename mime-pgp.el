@@ -136,15 +136,13 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 (defun mime-pgp-check-signature (output-buffer orig-file)
   (save-excursion
     (set-buffer output-buffer)
-    (erase-buffer)
-    )
+    (erase-buffer))
   (let* ((lang (or mime-pgp-default-language 'en))
 	 (status (call-process-region (point-min)(point-max)
 				      mime-pgp-command
 				      nil output-buffer nil
 				      orig-file (format "+language=%s" lang)))
-	 (regexp (cdr (assq lang mime-pgp-good-signature-regexp-alist)))
-	 )
+	 (regexp (cdr (assq lang mime-pgp-good-signature-regexp-alist))))
     (if (= status 0)
 	(save-excursion
 	  (set-buffer output-buffer)
@@ -153,13 +151,11 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	   (cond ((not (stringp regexp))
 		  "Please specify right regexp for specified language")
 		 ((re-search-forward regexp nil t)
-		  (buffer-substring (match-beginning 0) (match-end 0))
-		  )
-		 (t
-		  "Bad signature")))
+		  (buffer-substring (match-beginning 0) (match-end 0)))
+		 (t "Bad signature")))
 	  ))))
 
-(defun mime-article/check-pgp-signature (beg end cal)
+(defun mime-pgp-check-application/pgp-signature (beg end cal)
   "Internal method to check PGP/MIME signature."
   (let* ((encoding (cdr (assq 'encoding cal)))
 	 (cnum (mime-article/point-content-number beg))
@@ -203,8 +199,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	)
       (mime-decode-region (point-min)(point-max) encoding)
       (as-binary-output-file (write-region (point-min)(point-max) sig-file))
-      (or (mime-pgp-check-signature
-	   mime-echo-buffer-name orig-file)
+      (or (mime-pgp-check-signature mime-echo-buffer-name orig-file)
 	  (let (pgp-id)
 	    (save-excursion
 	      (set-buffer mime-echo-buffer-name)
@@ -227,8 +222,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 		     )
 		(progn
 		  (funcall (pgp-function 'fetch-key) (cons nil pgp-id))
-		  (mime-pgp-check-signature
-		   mime-echo-buffer-name orig-file)
+		  (mime-pgp-check-signature mime-echo-buffer-name orig-file)
 		  ))
 	    ))
       (let ((other-window-scroll-buffer mime-echo-buffer-name))
@@ -241,7 +235,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 
 (set-atype 'mime-acting-condition
 	   '((type . "application/pgp-signature")
-	     (method . mime-article/check-pgp-signature)
+	     (method . mime-pgp-check-application/pgp-signature)
 	     ))
 
 
