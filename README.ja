@@ -198,15 +198,15 @@ SEMI とは?
 CVS に基づいた開発
 ==================
 
-  SEMI の開発版のソースは、CVS の pserver でアクセスすることができます。
-  チェックアウトするためには、最初に以下の操作を行なって下さい。
+ SEMI の開発版のソースは、CVS の pserver でアクセスすることができます。
+ チェックアウトするためには、最初に以下の操作を行なって下さい。
 
-  % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root login
-  CVS password: [CR] # 空文字列
+ % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root login
+ CVS password: [CR] # 空文字列
 
-  以後は次の操作によって、最新の SEMI のソースを取得することができます。
+ 以後は次の操作によって、最新の SEMI のソースを取得することができます。
 
-  % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout -r semi-1_14 semi
+ % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout -r semi-1_14 semi
 
  もしあなたが CVS に基づいた開発に参加したいと思うならば、以下のアドレスに、
  あなたのアカウント名と ssh の public key を添えたメールを送信してください。
