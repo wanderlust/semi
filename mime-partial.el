@@ -44,7 +44,6 @@
 (defun mime-article/grab-message/partials (beg end cal)
   (interactive)
   (let* ((id (cdr (assoc "id" cal)))
-	 (mother mime::article/preview-buffer)
 	 (target (cdr (assq 'major-mode cal)))
 	 (article-buffer (buffer-name (current-buffer)))
 	 (subject-buf (eval (cdr (assq 'summary-buffer-exp cal))))
