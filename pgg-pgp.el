@@ -182,15 +182,10 @@
 	 (args 
 	  (list (if clearsign "-fast" "-fbast")
 		"+verbose=1" "+language=us" "+batchmode"
-		"-u" pgg-pgp-user-id))
-	 (inhibit-read-only t)
-	 buffer-read-only)
-    (pgg-as-lbt start end 'CRLF
-      (pgg-pgp-process-region start end passphrase 
-			      pgg-pgp-program args)
-      )
+		"-u" pgg-pgp-user-id)))
+    (pgg-pgp-process-region start end passphrase 
+			    pgg-pgp-program args)
     (pgg-process-when-success
-      (pgg-convert-lbt-region (point-min)(point-max) 'LF)
       (goto-char (point-min))
       (when (re-search-forward "^-+BEGIN PGP" nil t);XXX
 	(let ((packet 

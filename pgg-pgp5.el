@@ -196,12 +196,9 @@
 	  (list (if clearsign "-fat" "-fbat")
 		"+verbose=1" "+language=us" "+batchmode=1"
 		"-u" pgg-pgp5-user-id)))
-    (pgg-as-lbt start end 'CRLF
-      (pgg-pgp5-process-region start end passphrase 
-			       pgg-pgp5-pgps-program args)
-      )
+    (pgg-pgp5-process-region start end passphrase 
+			     pgg-pgp5-pgps-program args)
     (pgg-process-when-success
-      (pgg-convert-lbt-region (point-min)(point-max) 'LF)
       (when (re-search-forward "^-+BEGIN PGP SIGNATURE" nil t);XXX
 	(let ((packet 
 	       (cdr (assq 2 (pgg-parse-armor-region 
