@@ -676,24 +676,6 @@ The compressed face will be piped to this command.")
       )
     dest))
 
-(defun mime-preview/point-pcinfo (p &optional pcl)
-  (or pcl
-      (setq pcl mime::preview/content-list)
-      )
-  (catch 'tag
-    (let ((r pcl) cell)
-      (while r
-	(setq cell (car r))
-	(if (and (<= (mime::preview-content-info/point-min cell) p)
-		 (<= p (mime::preview-content-info/point-max cell))
-		 )
-	    (throw 'tag cell)
-	  )
-	(setq r (cdr r))
-	))
-    (car (last pcl))
-    ))
-
 
 ;;; @ MIME viewer mode
 ;;;
