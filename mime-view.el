@@ -535,7 +535,7 @@ The compressed face will be piped to this command.")
 	   rcnum cinfo ctype params subj encoding)
 	  ))
     (cond ((mime-view-body-visible-p rcnum cinfo ctype)
-	   (mime-preview/display-body he end
+	   (mime-view-display-body he end
 				      rcnum cinfo ctype params subj encoding)
 	   )
 	  ((equal ctype "message/partial")
@@ -569,8 +569,7 @@ The compressed face will be piped to this command.")
     (run-hooks 'mime-view-content-header-filter-hook)
     ))
 
-(defun mime-preview/display-body (beg end
-				      rcnum cinfo ctype params subj encoding)
+(defun mime-view-display-body (beg end rcnum cinfo ctype params subj encoding)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
     (insert-buffer-substring mime-raw-buffer beg end)
