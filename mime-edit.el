@@ -7,7 +7,7 @@
 ;;; Author: UMEDA Masanobu <umerin@mse.kyutech.ac.jp>
 ;;;         MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;;; Maintainer: MORIOKA Tomohiko <morioka@jaist.ac.jp>
-;;; Created: 1994/08/21 renamed from mime.el by UMEDA Masanobu;
+;;; Created: 1994/08/21 renamed from UMEDA Masanobu's mime.el
 ;;;          1996/05/24 renamed from tm-edit.el
 ;;; Version: $Revision$
 ;;; Keywords: mail, news, MIME, multimedia, multilingual
