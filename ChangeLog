@@ -1,3 +1,16 @@
+1998-04-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.3.2 (N-Dò) was released.-A
+
+	* mime-edit.el (mime-edit-mode-entity-prefix): New variable.
+	(mime-edit-mode-entity-map): New variable.
+	(mime-edit-mode-enclosure-prefix): New variable.
+	(mime-edit-mode-enclosure-map): New variable.
+	(mime-edit-mode-map): Use 'mime-edit-mode-entity-map and
+ 	'mime-edit-mode-enclosure-map.
+
+	* mime-view.el (mime-acting-condition): Fix setting.
+
 1998-04-24  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-play.el (mime-raw-play-entity): Use 'ctree-match-calist
