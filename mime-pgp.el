@@ -204,46 +204,45 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
       (kill-buffer (current-buffer))
       )
     (save-excursion (mime-show-echo-buffer))
-    (save-excursion
-      (let ((p-min (save-excursion
-		     (goto-char start)
-		     (and (search-forward "\n\n")
-			  (match-end 0))
-		     )))
-	(mime-write-decoded-region p-min end sig-file encoding)
-	)
-      (or (mime-pgp-check-signature mime-echo-buffer-name orig-file)
-	  (let (pgp-id)
-	    (save-excursion
-	      (set-buffer mime-echo-buffer-name)
-	      (goto-char (point-min))
-	      (let ((regexp (cdr (assq (or mime-pgp-default-language 'en)
-				       mime-pgp-key-expected-regexp-alist))))
-		(cond ((not (stringp regexp))
-		       (message
-			"Please specify right regexp for specified language")
-		       )
-		      ((re-search-forward regexp nil t)
-		       (setq pgp-id
-			     (concat "0x" (buffer-substring-no-properties
-					   (match-beginning 1)
-					   (match-end 1))))
-		       ))))
-	    (if (and pgp-id
-		     (y-or-n-p
-		      (format "Key %s not found; attempt to fetch? " pgp-id))
+    (let ((p-min (save-excursion
+		   (goto-char start)
+		   (and (search-forward "\n\n")
+			(match-end 0))
+		   )))
+      (mime-write-decoded-region p-min end sig-file encoding)
+      )
+    (or (mime-pgp-check-signature mime-echo-buffer-name orig-file)
+	(let (pgp-id)
+	  (save-excursion
+	    (set-buffer mime-echo-buffer-name)
+	    (goto-char (point-min))
+	    (let ((regexp (cdr (assq (or mime-pgp-default-language 'en)
+				     mime-pgp-key-expected-regexp-alist))))
+	      (cond ((not (stringp regexp))
+		     (message
+		      "Please specify right regexp for specified language")
 		     )
-		(progn
-		  (funcall (pgp-function 'fetch-key) (cons nil pgp-id))
-		  (mime-pgp-check-signature mime-echo-buffer-name orig-file)
-		  ))
-	    ))
-      (let ((other-window-scroll-buffer mime-echo-buffer-name))
-	(scroll-other-window 8)
-	)
-      (delete-file orig-file)
-      (delete-file sig-file)
-      )))
+		    ((re-search-forward regexp nil t)
+		     (setq pgp-id
+			   (concat "0x" (buffer-substring-no-properties
+					 (match-beginning 1)
+					 (match-end 1))))
+		     ))))
+	  (if (and pgp-id
+		   (y-or-n-p
+		    (format "Key %s not found; attempt to fetch? " pgp-id))
+		   )
+	      (progn
+		(funcall (pgp-function 'fetch-key) (cons nil pgp-id))
+		(mime-pgp-check-signature mime-echo-buffer-name orig-file)
+		))
+	  ))
+    (let ((other-window-scroll-buffer mime-echo-buffer-name))
+      (scroll-other-window 8)
+      )
+    (delete-file orig-file)
+    (delete-file sig-file)
+    ))
 
 (set-atype 'mime-acting-condition
 	   '((type . application)(subtype . pgp-signature)
