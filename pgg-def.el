@@ -1,8 +1,8 @@
 ;;; pgg-def.el --- functions/macros for defining PGG functions
 
-;; Copyright (C) 1999 Daiki Ueno
+;; Copyright (C) 1999 Free Software Foundation, Inc.
 
-;; Author: Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
+;; Author: Daiki Ueno <ueno@unixuser.org>
 ;; Created: 1999/11/02
 ;; Keywords: PGP, OpenPGP, GnuPG
 
@@ -57,6 +57,11 @@
   "If t, cache passphrase."
   :group 'pgg
   :type 'boolean)
+
+(defcustom pgg-messages-coding-system 'undecided
+  "Coding system used when reading from a PGP external process."
+  :group 'pgg
+  :type 'coding-system)
 
 (defvar pgg-status-buffer " *PGG status*")
 (defvar pgg-errors-buffer " *PGG errors*")
