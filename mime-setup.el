@@ -30,8 +30,8 @@
 
 (autoload 'mime-edit-mode "mime-edit"
   "Minor mode for editing MIME message." t)
-(autoload 'eword-decode-message-header "eword-decode"
-  "Decode MIME encoded-words in message header." t)
+(autoload 'eword-decode-header "eword-decode"
+  "Decode MIME encoded-words in header fields." t)
 
 (defun mime-setup-decode-message-header ()
   (save-excursion
@@ -45,7 +45,7 @@
 	   (match-beginning 0)
 	 (point-max)
 	 ))
-      (eword-decode-message-header)
+      (eword-decode-header)
       (set-buffer-modified-p nil)
       )))
 
@@ -88,13 +88,13 @@
 ;;; @ for mu-cite
 ;;;
 
-(add-hook 'mu-cite/pre-cite-hook 'eword-decode-message-header)
+(add-hook 'mu-cite/pre-cite-hook 'eword-decode-header)
 
 
 ;;; @ for mail-mode, RMAIL and VM
 ;;;
 
-(add-hook 'mail-setup-hook 'eword-decode-message-header)
+(add-hook 'mail-setup-hook 'eword-decode-header)
 (add-hook 'mail-setup-hook 'mime-edit-mode 'append)
 (add-hook 'mail-send-hook  'mime-edit-maybe-translate)
 (set-alist 'mime-edit-split-message-sender-alist
