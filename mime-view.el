@@ -475,7 +475,7 @@ Each elements are regexp of field-name.")
  'mime-preview-condition
  '((type . text)(subtype . enriched)
    (body . visible)
-   (body-presentation-method . mime-preview-text/enriched)))
+   (body-presentation-method . mime-display-text/enriched)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
@@ -517,7 +517,7 @@ Each elements are regexp of field-name.")
 ;;;
 
 (autoload 'mime-display-text/plain "mime-text")
-(autoload 'mime-preview-text/enriched "mime-text")
+(autoload 'mime-display-text/enriched "mime-text")
 (autoload 'mime-display-text/richtext "mime-text")
 
 (defvar mime-view-announcement-for-message/partial
