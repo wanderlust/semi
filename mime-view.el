@@ -111,14 +111,9 @@
      (mode "play" "print")
      )
     ((type . "application/octet-stream")
-     (method "tm-file"  nil 'file 'type 'encoding 'mode 'name)
-     (mode "play" "print")
+     (method . mime-method-to-save)(mode "play" "print")
      )
-    
-    ;;((type . "message/external-body")
-    ;; (method "xterm" nil
-    ;;	       "-e" "showexternal"
-    ;;         'file '"access-type" '"name" '"site" '"directory"))
+
     ((type . "message/external-body")
      ("access-type" . "anon-ftp")
      (method . mime-method-to-display-message/external-ftp)
@@ -135,9 +130,7 @@
     ((method "metamail" t "-m" "tm" "-x" "-d" "-z" "-e" 'file)
      (mode . "play")
      )
-    ((method "tm-file"  nil 'file 'type 'encoding 'mode 'name)
-     (mode . "extract")
-     )
+    ((method . mime-method-to-save)(mode . "extract"))
     ))
 
 (defvar mime-view-childrens-header-showing-Content-Type-list
