@@ -1,3 +1,10 @@
+1998-04-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el: Abolish function 'mime-view-body-visible-p and
+ 	'mime-view-entity-separator-visible-p.
+	(mime-view-display-entity): Don't use
+ 	'mime-view-entity-separator-visible-p.
+
 1998-04-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el (mime-preview-condition): Specify
