@@ -134,33 +134,53 @@
 ;;; @ variables
 ;;;
 
-(defvar mime-ignore-preceding-spaces nil
-  "*Ignore preceding white spaces if non-nil.")
+(defgroup mime-edit nil
+  "MIME edit mode"
+  :group 'mime)
 
-(defvar mime-ignore-trailing-spaces nil
-  "*Ignore trailing white spaces if non-nil.")
+(defcustom mime-ignore-preceding-spaces nil
+  "*Ignore preceding white spaces if non-nil."
+  :group 'mime-edit
+  :type 'boolean)
 
-(defvar mime-ignore-same-text-tag t
+(defcustom mime-ignore-trailing-spaces nil
+  "*Ignore trailing white spaces if non-nil."
+  :group 'mime-edit
+  :type 'boolean)
+
+(defcustom mime-ignore-same-text-tag t
   "*Ignore preceding text content-type tag that is same with new one.
-If non-nil, the text tag is not inserted unless something different.")
+If non-nil, the text tag is not inserted unless something different."
+  :group 'mime-edit
+  :type 'boolean)
 
-(defvar mime-auto-hide-body t
-  "*Hide non-textual body encoded in base64 after insertion if non-nil.")
+(defcustom mime-auto-hide-body t
+  "*Hide non-textual body encoded in base64 after insertion if non-nil."
+  :group 'mime-edit
+  :type 'boolean)
 
-(defvar mime-edit-voice-recorder
+(defcustom mime-edit-voice-recorder
   (function mime-edit-voice-recorder-for-sun)
-  "*Function to record a voice message and encode it.")
+  "*Function to record a voice message and encode it."
+  :group 'mime-edit
+  :type 'function)
 
-(defvar mime-edit-mode-hook nil
-  "*Hook called when enter MIME mode.")
+(defcustom mime-edit-mode-hook nil
+  "*Hook called when enter MIME mode."
+  :group 'mime-edit
+  :type 'hook)
 
-(defvar mime-edit-translate-hook nil
+(defcustom mime-edit-translate-hook nil
   "*Hook called before translating into a MIME compliant message.
 To insert a signature file automatically, call the function
-`mime-edit-insert-signature' from this hook.")
+`mime-edit-insert-signature' from this hook."
+  :group 'mime-edit
+  :type 'hook)
 
-(defvar mime-edit-exit-hook nil
-  "*Hook called when exit MIME mode.")
+(defcustom mime-edit-exit-hook nil
+  "*Hook called when exit MIME mode."
+  :group 'mime-edit
+  :type 'hook)
 
 (defvar mime-content-types
   '(("text"
