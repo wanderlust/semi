@@ -218,7 +218,8 @@ Please redefine this function if you want to change default setting."
 	   (or (eq media-subtype 'x-selection)
 	       (and (eq media-subtype 'octet-stream)
 		    (let ((entity-info
-			   (mime-raw-rcnum-to-cinfo (cdr rcnum) cinfo)))
+			   (mime-raw-reversed-entity-number-to-entity-info
+			    (cdr rcnum) cinfo)))
 		      (and (eq (mime-entity-info-media-type entity-info)
 			       'multipart)
 			   (eq (mime-entity-info-media-subtype entity-info)
@@ -601,9 +602,12 @@ If optional argument MESSAGE-INFO is not specified,
 		  )))
 	    t))))
 
-(defsubst mime-raw-rcnum-to-cinfo (rnum &optional cinfo)
-  (mime-raw-entity-number-to-entity-info (reverse rnum) cinfo)
-  )
+(defsubst mime-raw-reversed-entity-number-to-entity-info
+  (entity-number &optional message-info)
+  "Return entity-info from REVERSED-ENTITY-NUMBER in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (mime-raw-entity-number-to-entity-info (reverse entity-number) message-info))
 
 (defun mime-raw-entity-number-to-entity-info (entity-number
 					      &optional message-info)
@@ -644,7 +648,8 @@ If optional argument MESSAGE-INFO is not specified,
   "Return non-nil if header of current entity is visible."
   (or (null rcnum)
       (member (mime-entity-info-type/subtype
-	       (mime-raw-rcnum-to-cinfo (cdr rcnum) cinfo))
+	       (mime-raw-reversed-entity-number-to-entity-info
+		(cdr rcnum) cinfo))
 	      mime-view-childrens-header-showing-Content-Type-list)
       ))
 
@@ -657,7 +662,9 @@ If optional argument MESSAGE-INFO is not specified,
     (and (member ctype mime-view-visible-media-type-list)
 	 (if (and (eq media-type 'application)
 		  (eq media-subtype 'octet-stream))
-	     (let ((ccinfo (mime-raw-rcnum-to-cinfo rcnum cinfo)))
+	     (let ((ccinfo
+		    (mime-raw-reversed-entity-number-to-entity-info
+		     rcnum cinfo)))
 	       (member (mime-entity-info-encoding ccinfo)
 		       '(nil "7bit" "8bit"))
 	       )
@@ -964,19 +971,23 @@ It calls following-method selected from variable
 	  (goto-char (point-min))
 	  (let ((rcnum (mime-entity-info-rnum cinfo)) ci str)
 	    (while (progn
-		     (setq str
-			   (save-excursion
-			     (set-buffer a-buf)
-			     (setq ci (mime-raw-rcnum-to-cinfo rcnum))
-			     (save-restriction
-			       (narrow-to-region
-				(mime-entity-info-point-min ci)
-				(mime-entity-info-point-max ci)
-				)
-			       (std11-header-string-except
-				(concat "^"
-					(apply (function regexp-or) fields)
-					":") ""))))
+		     (setq
+		      str
+		      (save-excursion
+			(set-buffer a-buf)
+			(setq
+			 ci
+			 (mime-raw-reversed-entity-number-to-entity-info
+			  rcnum))
+			(save-restriction
+			  (narrow-to-region
+			   (mime-entity-info-point-min ci)
+			   (mime-entity-info-point-max ci)
+			   )
+			  (std11-header-string-except
+			   (concat "^"
+				   (apply (function regexp-or) fields)
+				   ":") ""))))
 		     (if (and
 			  (eq (mime-entity-info-media-type ci) 'message)
 			  (eq (mime-entity-info-media-subtype ci) 'rfc822))
@@ -1042,7 +1053,7 @@ If there is no upper entity, call function `mime-preview-quit'."
     (while (null (setq cinfo (get-text-property (point) 'mime-view-cinfo)))
       (backward-char)
       )
-    (let ((r (mime-raw-rcnum-to-cinfo
+    (let ((r (mime-raw-reversed-entity-number-to-entity-info
 	      (cdr (mime-entity-info-rnum cinfo))
 	      (get-text-property 1 'mime-view-cinfo)))
 	  point)
