@@ -2740,7 +2740,11 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 ;;;
 
 (provide 'mime-edit)
+(provide 'tm-edit)
 
-(run-hooks 'mime-edit-load-hook)
+(if (boundp 'mime-edit-load-hook)
+    (run-hooks 'mime-edit-load-hook)
+  (run-hooks 'tm-edit-load-hook)
+  )
 
 ;;; mime-edit.el ends here
