@@ -3,6 +3,7 @@
 ;; Copyright (C) 1995,1996,1997,1998,1999 MORIOKA Tomohiko
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;;         Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
 ;; Created: 1995/12/7
 ;;	Renamed: 1997/2/27 from tm-pgp.el
 ;; Keywords: PGP, security, MIME, multimedia, mail, news
@@ -44,6 +45,8 @@
 ;;; Code:
 
 (require 'mime-play)
+(require 'pgg-def)
+(require 'pgg-parse)
 
 
 ;;; @ Internal method for multipart/signed
@@ -68,6 +71,7 @@
 	 (new-name
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
 	 (mother (current-buffer))
+	 (preview-buffer (concat "*Preview-" (buffer-name) "*"))
 	 representation-type)
     (set-buffer (get-buffer-create new-name))
     (erase-buffer)
@@ -75,7 +79,8 @@
     (cond ((progn
 	     (goto-char (point-min))
 	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
-	   (funcall (pgp-function 'verify))
+	   (funcall (pgp-function 'verify)
+		    (point-min)(point-max))
 	   (goto-char (point-min))
 	   (delete-region
 	    (point-min)
@@ -96,18 +101,16 @@
 	  ((progn
 	     (goto-char (point-min))
 	     (re-search-forward "^-+BEGIN PGP MESSAGE-+$" nil t))
-	   (as-binary-process (funcall (pgp-function 'decrypt)))
-	   (goto-char (point-min))
-	   (delete-region (point-min)
-			  (and
-			   (search-forward "\n\n")
-			   (match-end 0)))
+	   (funcall (pgp-function 'decrypt)
+		    (point-min)(point-max))
+	   (delete-region (point-min)(point-max))
+	   (insert-buffer pgg-output-buffer)
 	   (setq representation-type 'binary)
 	   ))
     (setq major-mode 'mime-show-message-mode)
-    (save-window-excursion (mime-view-buffer nil nil mother
+    (save-window-excursion (mime-view-buffer nil preview-buffer mother
 					     nil representation-type))
-    (set-window-buffer p-win mime-preview-buffer)
+    (set-window-buffer p-win preview-buffer)
     ))
 
 
@@ -162,43 +165,87 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 		 (1+ knum)))
 	 (orig-entity (nth onum (mime-entity-children mother)))
 	 (basename (expand-file-name "tm" temporary-file-directory))
-	 (orig-file (make-temp-name basename))
-	 (sig-file (concat orig-file ".sig"))
+	 (sig-file (concat (make-temp-name basename) ".asc"))
 	 )
-    (mime-write-entity orig-entity orig-file)
     (save-excursion (mime-show-echo-buffer))
     (mime-write-entity-content entity sig-file)
-    (or (mime-pgp-check-signature mime-echo-buffer-name sig-file orig-file)
-	(let (pgp-id)
-	  (save-excursion
-	    (set-buffer mime-echo-buffer-name)
-	    (goto-char (point-min))
-	    (let ((regexp (cdr (assq (or mime-pgp-default-language 'en)
-				     mime-pgp-key-expected-regexp-alist))))
-	      (cond ((not (stringp regexp))
-		     (message
-		      "Please specify right regexp for specified language")
-		     )
-		    ((re-search-forward regexp nil t)
-		     (setq pgp-id
-			   (concat "0x" (buffer-substring-no-properties
-					 (match-beginning 1)
-					 (match-end 1))))
-		     ))))
-	  (if (and pgp-id
-		   (y-or-n-p
-		    (format "Key %s not found; attempt to fetch? " pgp-id))
-		   )
-	      (progn
-		(funcall (pgp-function 'fetch-key) (cons nil pgp-id))
-		(mime-pgp-check-signature mime-echo-buffer-name orig-file)
-		))
-	  ))
-    (let ((other-window-scroll-buffer mime-echo-buffer-name))
-      (scroll-other-window 8)
-      )
-    (delete-file orig-file)
+    (with-temp-buffer
+      (mime-insert-entity orig-entity)
+      (goto-char (point-min))
+      (while (progn (end-of-line) (not (eobp)))
+	(insert "\r")
+	(forward-line 1))
+      (let ((pgg-output-buffer mime-echo-buffer-name))
+	(funcall (pgp-function 'verify) 
+		 (point-min)(point-max) sig-file)))
     (delete-file sig-file)
+    ))
+
+(defun mime-display-application/pgp-signature (entity situation)
+  (let ((packet
+	 (cdr (assq 2 (pgg-parse-armor (mime-entity-content entity)))))
+	field)
+    (insert 
+     "version: " 
+     (int-to-string (cdr (assq 'version packet)))
+     "\n"
+     "signature type: "
+     (cdr (assq 'signature-type packet))
+     "\n"
+     (if (setq field (cdr (assq 'hash-algorithm packet)))
+	 (concat "hash algorithm: " (symbol-name field) "\n")
+       "")
+     (if (setq field (cdr (assq 'public-key-algorithm packet)))
+	 (concat "public key algorithm: " (symbol-name field) "\n")
+       "")
+     (if (setq field (cdr (assq 'key-identifier packet)))
+	 (concat "key identifier: " field "\n")
+       "")
+     (if (setq field (cdr (assq 'creation-time packet)))
+	 (concat "creation time: " (current-time-string field) "\n")
+       "")
+     (if (setq field (cdr (assq 'signature-expiry packet)))
+	 (concat "signature exipiration time: "
+		 (current-time-string field) "\n")
+       "")
+     (if (setq field (cdr (assq 'key-expiry packet)))
+	 (concat "key exipiration time: " (current-time-string field) "\n")
+       "")
+     (if (setq field (cdr (assq 'trust-level packet)))
+	 (concat "trust level: " (int-to-string field) "\n")
+       "")
+     (if (setq field (cdr (assq 'preferred-symmetric-key-algorithm packet)))
+	 (concat "preferred symmetric algorithm: " 
+		 (symbol-name field) "\n")
+       "")
+     (if (setq field (cdr (assq 'preferred-hash-algorithm packet)))
+	 (concat "preferred hash algorithm: " 
+		 (symbol-name field) "\n")
+       "")
+     (if (setq field (cdr (assq 'exportability packet)))
+	 (concat "signature exportable: " 
+		 (if (< 0 field) "yes" "no") "\n")
+       "")
+     (if (setq field (cdr (assq 'revocability packet)))
+	 (concat "signature revocable: "
+		 (if (< 0 field) "yes" "no") "\n")
+       "")
+     (if (setq field (cdr (assq 'policy-url packet)))
+	 (concat "policy URL: " field "\n")
+       "")
+     (if (setq field 
+	       (delq nil (mapcar 
+			  (function (lambda (nn) 
+				      (and (eq (car nn) 'notation) nn)))
+			  packet)))
+	 (concat "notations:\n" 
+		 (mapconcat (lambda (nn)
+			      (concat " " (cadr nn) ": " (cddr nn)))
+			    field "\n")
+		 "\n")
+       ""))
+    (mime-add-url-buttons)
+    (run-hooks 'mime-display-application/pgp-signature-hook)
     ))
 
 
@@ -217,14 +264,36 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
     (mime-view-application/pgp orig-entity situation)
     ))
 
+(defun mime-display-application/pgp-encrypted (entity situation)
+  (let* ((entity-node-id (mime-entity-node-id entity))
+	 (mother (mime-entity-parent entity))
+	 (knum (car entity-node-id))
+	 (onum (if (> knum 0)
+		   (1- knum)
+		 (1+ knum)))
+	 (orig-entity (nth onum (mime-entity-children mother)))
+	 (packet (cdr (assq 1 (pgg-parse-armor 
+			       (mime-entity-content orig-entity))))))
+    (insert 
+     "version: " 
+     (int-to-string (cdr (assq 'version packet)))
+     "\n"
+     "public key identifier: " 
+     (cdr (assq 'public-key-identifier packet))
+     "\n"
+     "public key algorithm: " 
+     (symbol-name (cdr (assq 'public-key-algorithm packet)))
+     "\n\n")
+    (run-hooks 'mime-display-application/pgp-encrypted-hook)
+    ))
 
 ;;; @ Internal method for application/pgp-keys
 ;;;
 ;;; It is based on RFC 2015 (PGP/MIME).
 
 (defun mime-add-application/pgp-keys (entity situation)
-  (let* ((start (mime-entity-point-min entity))
-	 (end (mime-entity-point-max entity))
+  (let* ((start (mime-entity-header-start-point entity))
+	 (end (mime-entity-body-end-point entity))
 	 (entity-number (mime-entity-number entity))
 	 (new-name (format "%s-%s" (buffer-name) entity-number))
 	 (encoding (cdr (assq 'encoding situation)))
@@ -239,11 +308,32 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	(delete-region (point-min) (match-end 0))
       )
     (mime-decode-region (point-min)(point-max) encoding)
-    (funcall (pgp-function 'snarf-keys))
+    (funcall (pgp-function 'snarf-keys)
+	     (point-min)(point-max))
     (kill-buffer (current-buffer))
     ))
 
-	 
+(defun mime-display-application/pgp-keys (entity situation)
+  (let ((packet
+	 (cdr (assq 6 (pgg-parse-armor (mime-entity-content entity)))))
+	field)
+    (insert 
+     "version: " 
+     (int-to-string (cdr (assq 'version packet)))
+     "\n"
+     "creation time: " 
+     (current-time-string (cdr (assq 'creation-time packet)))
+     "\n"
+     "public key algorithm: " 
+     (symbol-name (cdr (assq 'public-key-algorithm packet)))
+     "\n"
+     (if (setq field (cdr (assq 'key-expiry packet)))
+	 (concat "key exipiration time: " (current-time-string field) "\n")
+       ""))
+    (run-hooks 'mime-display-application/pgp-keys-hook)
+    ))
+
+
 ;;; @ end
 ;;;
 
