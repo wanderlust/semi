@@ -204,11 +204,11 @@
 	(goto-char beg)
 	(save-excursion
 	  (while (re-search-forward mime-tar-file-search-regexp end t)
-	    (tm:add-button (point)
-			   (progn
-			     (end-of-line)
-			     (point))
-			   'mime-tar-view-file)
+	    (mime-add-button (point)
+			     (progn
+			       (end-of-line)
+			       (point))
+			     'mime-tar-view-file)
 	    ))
 	)))
 
