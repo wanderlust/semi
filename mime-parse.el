@@ -205,7 +205,9 @@ If is is not found, return DEFAULT-ENCODING."
   (mime-type/subtype-string (mime-entity-media-type entity-info)
 			    (mime-entity-media-subtype entity-info)))
 
-(defun mime-parse-multipart (content-type content-disposition encoding node-id)
+(defun mime-parse-multipart (header-start header-end body-start body-end
+					  content-type content-disposition
+					  encoding node-id)
   (goto-char (point-min))
   (let* ((dash-boundary
 	  (concat "--"
@@ -213,13 +215,13 @@ If is is not found, return DEFAULT-ENCODING."
 		   (mime-content-type-parameter content-type "boundary"))))
 	 (delimiter       (concat "\n" (regexp-quote dash-boundary)))
 	 (close-delimiter (concat delimiter "--[ \t]*$"))
-	 (beg (point-min))
-	 (end (progn
-		(goto-char (point-max))
-		(if (re-search-backward close-delimiter nil t)
-		    (match-beginning 0)
-		  (point-max)
-		  )))
+	 ;;(beg (point-min))
+         ;;(end (progn
+         ;;        (goto-char (point-max))
+         ;;        (if (re-search-backward close-delimiter nil t)
+         ;;            (match-beginning 0)
+         ;;          (point-max)
+         ;;          )))
 	 (rsep (concat delimiter "[ \t]*\n"))
 	 (dc-ctl
 	  (if (eq (mime-content-type-subtype content-type) 'digest)
@@ -227,9 +229,15 @@ If is is not found, return DEFAULT-ENCODING."
 	    (make-mime-content-type 'text 'plain)
 	    ))
 	 cb ce ret ncb children (i 0))
+    (goto-char body-end)
+    (if (re-search-backward close-delimiter nil t)
+	(setq body-end (match-beginning 0))
+      )
     (save-restriction
-      (narrow-to-region beg end)
-      (goto-char beg)
+      ;;(narrow-to-region beg end)
+      (narrow-to-region body-start body-end)
+      ;;(goto-char beg)
+      (goto-char body-start)
       (re-search-forward rsep nil t)
       (setq cb (match-end 0))
       (while (re-search-forward rsep nil t)
@@ -251,7 +259,10 @@ If is is not found, return DEFAULT-ENCODING."
 	)
       (setq children (cons ret children))
       )
-    (make-mime-entity node-id beg (point-max)
+    ;; (make-mime-entity node-id beg (point-max)
+    ;;                   content-type content-disposition encoding
+    ;;                   (nreverse children))
+    (make-mime-entity node-id header-start body-end
 		      content-type content-disposition encoding
 		      (nreverse children))
     ))
@@ -294,7 +305,9 @@ mime-{parse|read}-Content-Type."
 	    primary-type (mime-content-type-primary-type content-type))
       )
     (cond ((eq primary-type 'multipart)
-	   (mime-parse-multipart content-type content-disposition encoding
+	   (mime-parse-multipart header-start header-end
+				 body-start body-end
+				 content-type content-disposition encoding
 				 node-id)
 	   )
 	  ((and (eq primary-type 'message)
