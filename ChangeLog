@@ -1,5 +1,18 @@
 1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el (mime-entity-filename): New function; abolish
+	`mime-raw-get-original-filename'.
+	(mime-entity-safe-filename): New function; abolish
+	`mime-raw-get-filename'.
+	(mime-activate-mailcap-method): Use `mime-entity-safe-filename'.
+	(mime-save-content): Use `mime-entity-safe-filename'.
+	(mime-detect-content): Use `mime-entity-safe-filename'.
+
+	* mime-view.el (mime-entity-uu-filename): New function; abolish
+	`mime-raw-get-uu-filename'.
+
+1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-view-entity-title): Renamed from
 	`mime-raw-get-subject'; use `mime-entity-read-field'.
 
