@@ -1,3 +1,13 @@
+1998-11-18  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
+
+	* mime-edit.el (mime-content-transfer-encoding-priority-list): New
+	variable.
+	(mime-edit-translate-single-part-tag): Change return value to
+	`nil' or a cons which include content-type and encoding.
+	(mime-edit-translate-region): Generate `encodeing' from
+	return value of `mime-edit-translate-single-part-tag'.
+
+
 1998-11-16  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* WEMI: Version 1.11.0 (Okitsu) released.
