@@ -1,5 +1,8 @@
 2000-02-09  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* mime-view.el (mime-preview-find-boundary-info): Use <last point>
+	- 1 instead of <last point> to get `mime-view-entity' property.
+
 	* mime-view.el (mime-preview-follow-current-entity): Fix problem
 	in multipart entity.
 
