@@ -2,7 +2,7 @@
 # Makefile for WEMI.
 #
 
-VERSION = 1.4.0
+VERSION = 1.4.1
 
 SHELL	= /bin/sh
 MAKE	= make
