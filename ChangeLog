@@ -1,3 +1,7 @@
+2000-12-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* Makefile (tar): Use `cvs tag -R' instead of `cvs tag -RF'.
+
 2000-12-15  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
 	* smime.el (smime-process-region): Don't use `as-binary-process'.
