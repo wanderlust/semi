@@ -61,9 +61,7 @@ network-code.
 
 If method is nil, this field will not be encoded.")
 
-(defvar eword-generate-X-Nsubject
-  (and (boundp 'mime/use-X-Nsubject)
-       mime/use-X-Nsubject)
+(defvar eword-generate-X-Nsubject nil
   "*If it is not nil, X-Nsubject field is generated
 when Subject field is encoded by `eword-encode-message-header'.")
 
