@@ -180,9 +180,6 @@ If is is not found, return DEFAULT-ENCODING."
 ;;; @ message parser
 ;;;
 
-(defsubst mime-entity-number (entity)
-  (reverse (mime-entity-node-id entity)))
-
 (defalias 'mime-entity-point-min 'mime-entity-header-start)
 (defalias 'mime-entity-point-max 'mime-entity-body-end)
 
