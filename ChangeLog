@@ -1,5 +1,11 @@
 1999-12-08   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* smime.el (smime-x509-hash): Use `call-process' instead of
+	`call-process-region'.
+	(smime-x509-subject): Ditto.
+
+1999-12-08   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
 	* SEMI-ELS (semi-modules-to-compile): Add smime.el.
 
 	* smime.el: New file.
@@ -8,7 +14,7 @@
 
 	* mime-edit.el (mime-edit-decode-message-in-buffer): Don't decode
 	the message header twice.
-	
+
 1999-11-30   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* pgg.el (pgg-remove-passphrase-cache): Add checking whether
