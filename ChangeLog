@@ -1,3 +1,17 @@
+1999-11-01  Tanaka Akira  <akr@jaist.ac.jp>
+	* mime-view.el (mime-display-application/x-postpet): New function.
+	(mime-preview-condition): Set up for
+	'mime-preview-application/x-postpet.
+	(unpack): New macro.	
+	(unpack-skip): New function.
+	(unpack-fixed): New function.
+	(unpack-byte): New function.
+	(unpack-short): New function.
+	(unpack-long): New function.
+	(unpack-string): New function.
+	(unpack-string-sjis): New function.
+	(postpet-decode): New function.
+
 1999-10-17  Yoshiki Hayashi  <t90553@mail.ecc.u-tokyo.ac.jp>
 
 	* SEMI-MK (install-semi-package): Delte auto-autoloads.el

@@ -453,6 +453,12 @@ Each elements are regexp of field-name.")
 
 (ctree-set-calist-strictly
  'mime-preview-condition
+ '((type . application)(subtype . x-postpet)
+   (body . visible)
+   (body-presentation-method . mime-display-application/x-postpet)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition
  '((type . text)(subtype . t)
    (body . visible)
    (body-presentation-method . mime-display-text/plain)))
@@ -516,6 +522,105 @@ Each elements are regexp of field-name.")
       (remove-text-properties beg (point-max) '(face nil))
       (enriched-decode beg (point-max))
       )))
+
+(put 'unpack 'lisp-indent-function 1)
+(defmacro unpack (string &rest body)
+  `(let* ((*unpack*string* (string-as-unibyte ,string))
+	  (*unpack*index* 0))
+     ,@body))
+
+(defun unpack-skip (len)
+  (setq *unpack*index* (+ len *unpack*index*)))
+
+(defun unpack-fixed (len)
+  (prog1
+      (substring *unpack*string* *unpack*index* (+ *unpack*index* len))
+    (unpack-skip len)))
+
+(defun unpack-byte ()
+  (char-int (aref (unpack-fixed 1) 0)))
+
+(defun unpack-short ()
+  (let* ((b0 (unpack-byte))
+	 (b1 (unpack-byte)))
+    (+ (* 256 b0) b1)))
+
+(defun unpack-long ()
+  (let* ((s0 (unpack-short))
+	 (s1 (unpack-short)))
+    (+ (* 65536 s0) s1)))
+
+(defun unpack-string ()
+  (let ((len (unpack-byte)))
+    (unpack-fixed len)))
+
+(defun unpack-string-sjis ()
+  (decode-mime-charset-string (unpack-string) 'shift_jis))
+
+(defun postpet-decode (string)
+  (condition-case nil
+      (unpack string
+	(let (res)
+	  (unpack-skip 4)
+	  (set-alist 'res 'carryingcount (unpack-long))
+	  (unpack-skip 8)
+	  (set-alist 'res 'sentyear (unpack-short))
+	  (set-alist 'res 'sentmonth (unpack-short))
+	  (set-alist 'res 'sentday (unpack-short))
+	  (unpack-skip 8)
+	  (set-alist 'res 'petname (unpack-string-sjis))
+	  (set-alist 'res 'owner (unpack-string-sjis))
+	  (set-alist 'res 'pettype (unpack-fixed 4))
+	  (set-alist 'res 'health (unpack-short))
+	  (unpack-skip 2)
+	  (set-alist 'res 'sex (unpack-long))
+	  (unpack-skip 1)
+	  (set-alist 'res 'brain (unpack-byte))
+	  (unpack-skip 39)
+	  (set-alist 'res 'happiness (unpack-byte))
+	  (unpack-skip 14)
+	  (set-alist 'res 'petbirthyear (unpack-short))
+	  (set-alist 'res 'petbirthmonth (unpack-short))
+	  (set-alist 'res 'petbirthday (unpack-short))
+	  (unpack-skip 8)
+	  (set-alist 'res 'from (unpack-string))
+	  (unpack-skip 5)
+	  (unpack-skip 160)
+	  (unpack-skip 4)
+	  (unpack-skip 8)
+	  (unpack-skip 8)
+	  (unpack-skip 26)
+	  (set-alist 'res 'treasure (unpack-short))
+	  (set-alist 'res 'money (unpack-long))
+	  res))
+    (error nil)))
+
+(defun mime-display-application/x-postpet (entity situation)
+  (save-restriction
+    (narrow-to-region (point-max)(point-max))
+    (let ((pet (postpet-decode (mime-entity-content entity))))
+      (if pet
+	  (insert "Petname: " (cdr (assq 'petname pet)) "\n"
+		  "Owner: " (cdr (assq 'owner pet)) "\n"
+		  "Pettype: " (cdr (assq 'pettype pet)) "\n"
+		  "From: " (cdr (assq 'from pet)) "\n"
+		  "CarryingCount: " (int-to-string (cdr (assq 'carryingcount pet))) "\n"
+		  "SentYear: " (int-to-string (cdr (assq 'sentyear pet))) "\n"
+		  "SentMonth: " (int-to-string (cdr (assq 'sentmonth pet))) "\n"
+		  "SentDay: " (int-to-string (cdr (assq 'sentday pet))) "\n"
+		  "PetbirthYear: " (int-to-string (cdr (assq 'petbirthyear pet))) "\n"
+		  "PetbirthMonth: " (int-to-string (cdr (assq 'petbirthmonth pet))) "\n"
+		  "PetbirthDay: " (int-to-string (cdr (assq 'petbirthday pet))) "\n"
+		  "Health: " (int-to-string (cdr (assq 'health pet))) "\n"
+		  "Sex: " (int-to-string (cdr (assq 'sex pet))) "\n"
+		  "Brain: " (int-to-string (cdr (assq 'brain pet))) "\n"
+		  "Happiness: " (int-to-string (cdr (assq 'happiness pet))) "\n"
+		  "Treasure: " (int-to-string (cdr (assq 'treasure pet))) "\n"
+		  "Money: " (int-to-string (cdr (assq 'money pet))) "\n"
+		  )
+	(insert "Invalid format\n"))
+      (run-hooks 'mime-display-application/x-postpet-hook))))
+
 
 (defvar mime-view-announcement-for-message/partial
   (if (and (>= emacs-major-version 19) window-system)
