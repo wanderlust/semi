@@ -68,7 +68,7 @@ partial messages using mime-view."
 	    (not (y-or-n-p "Merge partials?"))
 	    )
 	(mime-article/decode-message/partial beg end cal)
-      (let (cinfo the-id parameters)
+      (let (the-id parameters)
 	(setq subject-id (std11-field-body "Subject"))
 	(if (string-match "[0-9\n]+" subject-id)
 	    (setq subject-id (substring subject-id 0 (match-beginning 0)))
@@ -80,15 +80,11 @@ partial messages using mime-view."
 	    (while t
 	      (mime-view-partial-message target)
 	      (set-buffer article-buffer)
-	      (set-buffer mime::article/preview-buffer)
-	      (setq cinfo
-		    (mime::preview-content-info/content-info
-		     (car mime::preview/content-list)))
-	      (setq parameters (mime::content-info/parameters cinfo))
+	      (setq parameters (mime::content-info/parameters
+				mime::article/content-info))
 	      (setq the-id (cdr (assoc "id" parameters)))
-	      (if (equal the-id id)
+	      (if (string= the-id id)
 		  (progn
-		    (set-buffer article-buffer)
 		    (mime-article/decode-message/partial
 		     (point-min)(point-max) parameters)
 		    (if (file-exists-p full-file)
