@@ -47,7 +47,7 @@
 ;;;
 ;;; It is based on draft-kazu-pgp-mime-00.txt
 
-(defun mime-process-application/pgp (beg end cal)
+(defun mime-method-for-application/pgp (beg end cal)
   (let* ((cnum (mime-article/point-content-number beg))
 	 (p-win (or (get-buffer-window mime-view-buffer)
 		    (get-largest-window)))
@@ -104,12 +104,12 @@
 
 (set-atype 'mime-acting-condition
 	   '((type . "application/pgp")
-	     (method . mime-process-application/pgp)
+	     (method . mime-method-for-application/pgp)
 	     ))
 
 (set-atype 'mime-acting-condition
 	   '((type . "text/x-pgp")
-	     (method . mime-process-application/pgp)
+	     (method . mime-method-for-application/pgp)
 	     ))
 
 
@@ -273,7 +273,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	 (obeg (mime-entity-info-point-min oinfo))
 	 (oend (mime-entity-info-point-max oinfo))
 	 )
-    (mime-process-application/pgp obeg oend cal)
+    (mime-method-for-application/pgp obeg oend cal)
     ))
 
 (set-atype 'mime-acting-condition
