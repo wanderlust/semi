@@ -209,20 +209,16 @@ Each elements are regexp of field-name.")
 	      mime-view-childrens-header-showing-Content-Type-list)
       ))
 
-(defun mime-view-body-visible-p (rcnum cinfo &optional ctype)
-  (let (ccinfo)
-    (or ctype
-	(setq ctype
-	      (mime-entity-info-type/subtype
-	       (setq ccinfo (mime-article/rcnum-to-cinfo rcnum cinfo))
-	       ))
-	)
+(defun mime-view-body-visible-p (rcnum cinfo media-type media-subtype)
+  (let ((ctype (if media-type
+		   (if media-subtype
+		       (format "%s/%s" media-type media-subtype)
+		     (symbol-name media-type)
+		     ))))
     (and (member ctype mime-view-visible-media-type-list)
-	 (if (string-equal ctype "application/octet-stream")
-	     (progn
-	       (or ccinfo
-		   (setq ccinfo (mime-article/rcnum-to-cinfo rcnum cinfo))
-		   )
+	 (if (and (eq media-type 'application)
+		  (eq media-subtype 'octet-stream))
+	     (let ((ccinfo (mime-article/rcnum-to-cinfo rcnum cinfo)))
 	       (member (mime-entity-info-encoding ccinfo)
 		       '(nil "7bit" "8bit"))
 	       )
@@ -341,11 +337,13 @@ function.  t means default media-type.")
 ;;; @@ entity separator
 ;;;
 
-(defun mime-view-entity-separator-function (rcnum cinfo ctype params subj)
+(defun mime-view-entity-separator-function (rcnum cinfo
+						  media-type media-subtype
+						  params subj)
   "Insert entity separator conditionally.
 Please redefine this function if you want to change default setting."
   (or (mime-view-header-visible-p rcnum cinfo)
-      (mime-view-body-visible-p rcnum cinfo ctype)
+      (mime-view-body-visible-p rcnum cinfo media-type media-subtype)
       (progn
 	(goto-char (point-max))
 	(insert "\n")
@@ -544,7 +542,7 @@ The compressed face will be piped to this command.")
 	  (mime-view-insert-entity-button
 	   rcnum cinfo ctype params subj encoding)
 	  ))
-    (cond ((mime-view-body-visible-p rcnum cinfo ctype)
+    (cond ((mime-view-body-visible-p rcnum cinfo media-type media-subtype)
 	   (mime-view-display-body he end
 				      rcnum cinfo ctype params subj encoding)
 	   )
@@ -558,7 +556,8 @@ The compressed face will be piped to this command.")
 	   (mime-view-insert-entity-button
 	    rcnum cinfo ctype params subj encoding)
 	   ))
-    (mime-view-entity-separator-function rcnum cinfo ctype params subj)
+    (mime-view-entity-separator-function
+     rcnum cinfo media-type media-subtype params subj)
     (setq ne (point-max))
     (widen)
     (put-text-property nb ne 'mime-view-raw-buffer ibuf)
