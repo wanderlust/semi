@@ -1388,7 +1388,7 @@ Nil if no such parameter."
 	;; Change value
 	(concat (substring ctype 0 (match-beginning 1))
 		parameter "=" value
-		(substring contype (match-end 1))
+		(substring ctype (match-end 1))
 		opt-fields)
       (concat ctype "; " parameter "=" value opt-fields)
       )))

@@ -99,10 +99,15 @@ For framepop users: If empty, `framepop-banish' is used instead.")
     (progn
       ;; (require 'bbdb-hooks) ; not provided.
       ;; (or (fboundp 'bbdb-extract-field-value) ; defined as autoload
-      (or (fboundp 'bbdb-header-start)
-          (load "bbdb-hooks"))
+
+      ;; almost BBDB functions are autoloaded.
+      ;; (or (fboundp 'bbdb-header-start)
+      (or (and (fboundp 'bbdb-extract-field-value)
+	       (not (eq 'autoload (car-safe (symbol-function
+					     'bbdb-extract-field-value)))))
+	  (load "bbdb-hooks"))
       (fset 'tm:bbdb-extract-field-value
-            (symbol-function 'bbdb-extract-field-value))
+	    (symbol-function 'bbdb-extract-field-value))
       (defun bbdb-extract-field-value (field)
         (let ((value (tm:bbdb-extract-field-value field)))
           (and value

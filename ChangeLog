@@ -7,6 +7,20 @@
 	`mime-setup-enable-inline-html', `mime-setup-enable-vcard', and
 	`mime-setup-enable-pgp' until when `mime-view' is loaded.
 
+2001-08-10  Kenichi OKADA <okada@opaopa.org>
+
+	* semi-def.el (mime-browse-url-regexp): Allow nntps and ftps.
+
+2001-06-12  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* mime-view.el (mime-display-multipart/related): When "start"
+	parameter specifies part, treat the part as root.
+
+2001-06-12  Akihiro Arisawa  <ari@mbf.sphere.ne.jp>
+
+	* mime-view.el (mime-display-multipart/related): New function; set up
+	for `mime-preview-condition'.
+
 2001-06-02   Daiki Ueno  <ueno@unixuser.org>
 
 	* pgg.texi (Registering backend): New section.
@@ -46,6 +60,25 @@
 	* smime.el: Removed.
 
 	* SEMI-ELS (semi-modules-to-compile): Don't compile smime.el.
+
+2001-04-19  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-bbdb.el: Load "bbdb-hooks" when the symbol function
+	`bbdb-extract-field-value' is not bound or it is set up as an
+	autoloaded function. [cf. <emacs-mime-ja:799,842,843,844,845,846>]
+
+2001-04-17  YAMASHITA Junji   <ysjj@unixuser.org>
+
+	* semi-def.el (mime-browse-url-regexp): Allow https.
+
+2001-03-06  Hiroya Murata     <lapis-lazuli@pop06.odn.ne.jp>
+
+	* mime-edit.el (mime-edit-set-parameter): Get rid of the duplicated
+	optional fields.
+
+2000-12-28  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-view.el: Revert to use `static'.
 
 2000-12-26   Daiki Ueno  <ueno@unixuser.org>
 

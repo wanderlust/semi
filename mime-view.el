@@ -33,6 +33,8 @@
 (require 'alist)
 (require 'mime-conf)
 
+(eval-when-compile (require 'static))
+
 
 ;;; @ version
 ;;;
@@ -355,14 +357,14 @@ mother-buffer."
       (with-temp-buffer
 	(insert-file-contents file)
 	(setq mime-situation-examples-file-coding-system
-              (and (boundp 'buffer-file-coding-system)
-		   buffer-file-coding-system)
-	      ;; (static-cond
-              ;;  ((boundp 'buffer-file-coding-system)
-              ;;   (symbol-value 'buffer-file-coding-system))
-              ;;  ((boundp 'file-coding-system)
-              ;;   (symbol-value 'file-coding-system))
-              ;;  (t nil))
+              (static-cond
+	       ((boundp 'buffer-file-coding-system)
+		(symbol-value 'buffer-file-coding-system))
+	       ((boundp 'file-coding-system)
+		(symbol-value 'file-coding-system))
+	       (t nil))
+	      ;; (and (boundp 'buffer-file-coding-system)
+              ;;      buffer-file-coding-system)
 	      )
 	(condition-case error
 	    (eval-buffer)
@@ -414,15 +416,15 @@ mother-buffer."
 	  (insert "\n;;; "
 		  (file-name-nondirectory file)
 		  " ends here.\n")
-	  (setq buffer-file-coding-system
-		mime-situation-examples-file-coding-system)
-          ;; (static-cond
-          ;;  ((boundp 'buffer-file-coding-system)
-          ;;   (setq buffer-file-coding-system
-          ;;         mime-situation-examples-file-coding-system))
-          ;;  ((boundp 'file-coding-system)
-          ;;   (setq file-coding-system
-          ;;         mime-situation-examples-file-coding-system)))
+          (static-cond
+	   ((boundp 'buffer-file-coding-system)
+	    (setq buffer-file-coding-system
+		  mime-situation-examples-file-coding-system))
+	   ((boundp 'file-coding-system)
+	    (setq file-coding-system
+		  mime-situation-examples-file-coding-system)))
+	  ;; (setq buffer-file-coding-system
+          ;;       mime-situation-examples-file-coding-system)
 	  (setq buffer-file-name file)
 	  (save-buffer)))))
 
@@ -713,6 +715,12 @@ Each elements are regexp of field-name.")
 
 (ctree-set-calist-strictly
  'mime-preview-condition
+ '((type . multipart)(subtype . related)
+   (body . visible)
+   (body-presentation-method . mime-display-multipart/related)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition
  '((type . multipart)(subtype . t)
    (body . visible)
    (body-presentation-method . mime-display-multipart/mixed)))
@@ -869,6 +877,22 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	    situations (cdr situations)
 	    i (1+ i)))))
 
+(defun mime-display-multipart/related (entity situation)
+  (let* ((param-start (mime-parse-msg-id
+		       (std11-lexical-analyze
+			(cdr (assoc "start"
+				    (mime-content-type-parameters
+				     (mime-entity-content-type entity)))))))
+	 (start (or (and param-start (mime-find-entity-from-content-id
+				      param-start
+				      entity))
+		    (car (mime-entity-children entity))))
+	 (original-major-mode-cell (assq 'major-mode situation))
+	 (default-situation (cdr (assq 'childrens-situation situation))))
+    (if original-major-mode-cell
+	(setq default-situation
+	      (cons original-major-mode-cell default-situation)))
+    (mime-display-entity start nil default-situation)))
 
 ;;; @ acting-condition
 ;;;
