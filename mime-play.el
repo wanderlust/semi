@@ -35,6 +35,8 @@
 ;;; @ content decoder
 ;;;
 
+(defvar mime-view-decoding-mode "play" "MIME body decoding mode")
+
 (defvar mime-preview/after-decoded-position nil)
 
 (defun mime-play-entity (&optional mode)
