@@ -536,6 +536,8 @@ The compressed face will be piped to this command.")
 	(progn
 	  (setq ne (point-max))
 	  (widen)
+	  (put-text-property nb ne 'mime-view-raw-buffer ibuf)
+	  (put-text-property nb ne 'mime-view-cinfo content)
 	  (mime::preview-content-info/create nb (1- ne) ibuf content)
 	  )
       (goto-char ne)
