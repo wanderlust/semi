@@ -27,7 +27,7 @@
 (eval-when-compile (require 'static))
 (require 'custom)
 
-(defconst mime-user-interface-product ["WEMI" (1 14 3) "Kanaya"]
+(defconst mime-user-interface-product ["WEMI" (1 14 4) "Kikugawa"]
   "Product name, version number and code name of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
