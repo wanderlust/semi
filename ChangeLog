@@ -1,5 +1,13 @@
 1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-text.el (mime-text-insert-decoded-body): New function;
+	abolish 'mime-text-decode-body.
+	(mime-preview-text/plain): Use 'mime-text-insert-decoded-body.
+	(mime-preview-text/richtext): Use 'mime-text-insert-decoded-body.
+	(mime-preview-text/enriched): Use 'mime-text-insert-decoded-body.
+
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-preview-condition): Set up for
 	'mime-preview-text/enriched instead of
 	'mime-preview-filter-for-text/enriched.
