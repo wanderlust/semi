@@ -228,7 +228,8 @@ and END to the keyring.")
 	 status)
     (and (stringp key)
 	 (setq key (concat "0x" (pgg-truncate-key-identifier key)))
-	 (null (pgg-lookup-key-string key))
+	 (null (let ((pgg-scheme scheme))
+		 (pgg-lookup-key-string key)))
 	 (or fetch (interactive-p))
 	 (y-or-n-p (format "Key %s not found; attempt to fetch? " key))
 	 (setq keyserver 
@@ -349,6 +350,33 @@ and END to the keyring.")
 
 (defun pgg-remove-passphrase-cache (key)
   (unintern key pgg-passphrase-cache))
+
+(defmacro pgg-convert-lbt-region (start end lbt)
+  `(let ((pgg-conversion-end (set-marker (make-marker) ,end)))
+     (goto-char ,start)
+     (case ,lbt
+       (CRLF
+	(while (progn 
+		 (end-of-line) 
+		 (> (marker-position pgg-conversion-end) (point)))
+	  (insert "\r")
+	  (forward-line 1)))
+       (LF
+	(while (re-search-forward "\r$" pgg-conversion-end t)
+	  (replace-match ""))))
+     ))
+
+(put 'pgg-as-lbt 'lisp-indent-function 3)
+
+(defmacro pgg-as-lbt (start end lbt &rest body)
+  `(let ((inhibit-read-only t)
+	 buffer-read-only
+	 buffer-undo-list)
+     (pgg-convert-lbt-region ,start ,end ,lbt)
+     (let ((,end (point)))
+       ,@body)
+     (push nil buffer-undo-list)
+     (undo)))
 
 
 ;;; @ postprocess macros
