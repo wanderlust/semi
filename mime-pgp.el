@@ -41,9 +41,6 @@
 ;;	    by Kazuhiko Yamamoto <kazu@is.aist-nara.ac.jp> (1995/10;
 ;;	    expired)
 
-;;  PGP/MIME and PGP-kazu may be contrary to each other.  You should
-;;  decide which you support (Maybe you should not use PGP-kazu).
-
 ;;; Code:
 
 (require 'mime-play)
@@ -111,7 +108,7 @@
 ;;;
 ;;; It is based on RFC 1847 (security-multipart).
 
-(defun mime-method-to-verify-multipart/signed (entity cal)
+(defun mime-verify-multipart/signed (entity cal)
   "Internal method to verify multipart/signed."
   (mime-raw-play-entity
    (nth 1 (mime-entity-children entity)) ; entity-info of signature
