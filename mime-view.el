@@ -984,10 +984,6 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	   (eq (cdr (or (assq '*header situation)
 			(assq 'header situation)))
 	       'visible))
-	  (header-presentation-method
-	   (or (cdr (assq 'header-presentation-method situation))
-	       (cdr (assq (cdr (assq 'major-mode situation))
-			  mime-header-presentation-method-alist))))
 	  (body-presentation-method
 	   (cdr (assq 'body-presentation-method situation)))
 	  (children (mime-entity-children entity)))
@@ -999,18 +995,21 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	  (mime-view-insert-entity-button entity)
           ;;   )
 	  )
-      (when header-is-visible
-	(setq nhb (point))
-	(if header-presentation-method
-	    (funcall header-presentation-method entity situation)
-	  (mime-insert-header entity
-			      mime-view-ignored-field-list
-			      mime-view-visible-field-list))
-	(run-hooks 'mime-display-header-hook)
-	(put-text-property nhb (point-max) 'mime-view-entity-header entity)
-	(goto-char (point-max))
-	(insert "\n")
-	)
+      (if header-is-visible
+	  (let ((header-presentation-method
+		 (or (cdr (assq 'header-presentation-method situation))
+		     (cdr (assq (cdr (assq 'major-mode situation))
+				mime-header-presentation-method-alist)))))
+	    (setq nhb (point))
+	    (if header-presentation-method
+		(funcall header-presentation-method entity situation)
+	      (mime-insert-header entity
+				  mime-view-ignored-field-list
+				  mime-view-visible-field-list))
+	    (run-hooks 'mime-display-header-hook)
+	    (put-text-property nhb (point-max) 'mime-view-entity-header entity)
+	    (goto-char (point-max))
+	    (insert "\n")))
       (setq nbb (point))
       (cond (children)
             ((functionp body-presentation-method)
