@@ -295,6 +295,40 @@ it is used as hook to set."
     ))
 
 
+(defvar mime-condition-type-alist
+  '((preview . mime-preview-condition)
+    (action . mime-acting-condition)))
+
+(defvar mime-condition-mode-alist
+  '((with-default . ctree-set-calist-with-default)
+    (t . ctree-set-calist-strictly)))
+
+(defun mime-add-condition (target-type condition &optional mode file)
+  "Add CONDITION to database specified by TARGET-TYPE.
+TARGET-TYPE must be 'preview or 'action.  
+If optional argument MODE is 'strict or nil (omitted), CONDITION is
+added strictly.
+If optional argument MODE is 'with-default, CONDITION is added with
+default rule.
+If optional argument FILE is specified, it is loaded when CONDITION is
+activate."
+  (let ((sym (cdr (assq target-type mime-condition-type-alist))))
+    (if sym
+	(let ((func (cdr (assq mode mime-condition-mode-alist))))
+	  (if (fboundp func)
+	      (progn
+		(funcall func sym condition)
+		(if file
+		    (let ((method (cdr (assq 'method condition))))
+		      (autoload method file)
+		      ))
+		)
+	    (error "Function for mode `%s' is not found." mode)
+	    ))
+      (error "Variable for target-type `%s' is not found." target-type)
+      )))
+
+
 ;;; @ end
 ;;;
 
