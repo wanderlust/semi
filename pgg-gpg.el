@@ -150,11 +150,6 @@
 (luna-define-method encrypt-region ((scheme pgg-scheme-gpg) 
 				    start end recipients)
   (let* ((pgg-gpg-user-id pgg-default-user-id)
-	 (passphrase
-	  (pgg-read-passphrase 
-	   (format "GnuPG passphrase for %s: " pgg-gpg-user-id)
-	   (luna-send scheme 'lookup-key-string
-		      scheme pgg-gpg-user-id 'encrypt)))
 	 (args 
 	  `("--batch" "--armor" "--always-trust" "--encrypt"
 	    ,@(if recipients
@@ -164,17 +159,10 @@
 					 (concat "\"" rcpt "\""))) 
 				 recipients))))))
     (pgg-as-lbt start end 'CRLF
-      (pgg-gpg-process-region start end passphrase 
-			      pgg-gpg-program args)
+      (pgg-gpg-process-region start end pgg-gpg-program args)
       )
     (pgg-process-when-success
-      (pgg-convert-lbt-region (point-min)(point-max) 'LF)
-      (let ((packet 
-	     (cdr (assq 1 (pgg-parse-armor-region 
-			   (point-min)(point-max))))))
-	(pgg-add-passphrase-cache 
-	 (cdr (assq 'key-identifier packet))
-	 passphrase)))
+      (pgg-convert-lbt-region (point-min)(point-max) 'LF))
     ))
 
 (luna-define-method decrypt-region ((scheme pgg-scheme-gpg) 
