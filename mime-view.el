@@ -977,14 +977,18 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	    (buffer-disable-undo)
 	    (kill-all-local-variables)
 	    (mime-view-insert-text-content entity situation)
-	    (cond (mode
-		   (funcall mode))
-		  ((setq filename (mime-entity-filename entity))
-		   (let ((buffer-file-name
-			  (expand-file-name (file-name-nondirectory filename)
-					    temporary-file-directory)))
-		     (set-auto-mode))))
 	    (require 'font-lock)
+	    ;; Inhibit font-lock this time (*-mode-hook might run
+	    ;; `turn-on-font-lock') so that jit-lock may not turn off
+	    ;; font-lock immediately after this.
+	    (let ((font-lock-mode t))
+	      (cond (mode
+		     (funcall mode))
+		    ((setq filename (mime-entity-filename entity))
+		     (let ((buffer-file-name
+			    (expand-file-name (file-name-nondirectory filename)
+					      temporary-file-directory)))
+		       (set-auto-mode)))))
 	    (let ((font-lock-verbose nil))
 	      ;; I find font-lock a bit too verbose.
 	      (font-lock-fontify-buffer)

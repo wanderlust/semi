@@ -1,3 +1,9 @@
+2004-10-21  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* mime-view.el (mime-view-insert-fontified-text-content): Inhibit
+	font-lock when running the major-mode function instead of forcing
+	execution of jit-lock.
+
 2004-10-21  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* mime-view.el (mime-view-insert-fontified-text-content): Use
