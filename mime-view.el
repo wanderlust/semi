@@ -339,47 +339,85 @@ Each elements are regexp of field-name.")
 ;;; @@@ predicate function
 ;;;
 
-(defvar mime-view-body-visible-condition
-  '(type
-    (nil)
-    (text)
-    (application subtype
-		 (octet-stream encoding
-			       (nil)
-			       ("7bit")
-			       ("8bit"))
-		 (pgp)
-		 (x-latex)
-		 (x-selection)
-		 (x-comment))
-    (message subtype
-	     (delivery-status)))
-  "Condition-tree to be able to display body of entity.")
+(defvar mime-preview-condition nil
+  "Condition-tree about how to display entity.")
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . application)(subtype . octet-stream)
+			   (encoding . nil)
+			   (body . visible)))
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . application)(subtype . octet-stream)
+			   (encoding . "7bit")
+			   (body . visible)))
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . application)(subtype . octet-stream)
+			   (encoding . "8bit")
+			   (body . visible)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . application)(subtype . pgp)
+			   (body . visible)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . application)(subtype . x-latex)
+			   (body . visible)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . application)(subtype . x-selection)
+			   (body . visible)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . application)(subtype . x-comment)
+			   (body . visible)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . message)(subtype . delivery-status)
+			   (body . visible)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((body . visible)
+			   (body-filter . mime-view-filter-for-text/plain)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . nil)
+			   (body . visible)
+			   (body-filter . mime-view-filter-for-text/plain)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . text)(subtype . enriched)
+			   (body . visible)
+			   (body-filter
+			    . mime-view-filter-for-text/enriched)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . text)(subtype . richtext)
+			   (body . visible)
+			   (body-filter
+			    . mime-view-filter-for-text/richtext)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . text)(subtype . t)
+			   (body . visible)
+			   (body-filter . mime-view-filter-for-text/plain)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . message)(subtype . partial)
+			   (body-presentation-method
+			    . mime-view-insert-message/partial-button)))
 
 (defun mime-view-body-visible-p (entity message-info)
   "Return non-nil if body of ENTITY is visible."
-  (ctree-match-calist
-   mime-view-body-visible-condition
-   (list* (cons 'type (mime-entity-media-type entity))
-	  (cons 'subtype (mime-entity-media-subtype entity))
-	  (cons 'encoding (mime-entity-encoding entity))
-	  (cons 'major-mode major-mode)
-	  (mime-entity-parameters entity))))
+  (ctree-match-calist mime-preview-condition
+		      (list* (cons 'type (mime-entity-media-type entity))
+			     (cons 'subtype (mime-entity-media-subtype entity))
+			     (cons 'encoding (mime-entity-encoding entity))
+			     (cons 'major-mode major-mode)
+			     (mime-entity-parameters entity))))
 
 
 ;;; @@@ entity filter
 ;;;
-
-(defvar mime-view-content-filter-alist
-  '(("text/enriched" . mime-view-filter-for-text/enriched)
-    ("text/richtext" . mime-view-filter-for-text/richtext)
-    (t . mime-view-filter-for-text/plain)
-    )
-  "Alist of media-types vs. corresponding MIME-preview filter functions.
-Each element looks like (TYPE/SUBTYPE . FUNCTION) or (t . FUNCTION).
-TYPE/SUBTYPE is a string of media-type and FUNCTION is a filter
-function.  t means default media-type.")
-
 
 (autoload 'mime-view-filter-for-text/plain "mime-text")
 (autoload 'mime-view-filter-for-text/enriched "mime-text")
@@ -412,7 +450,7 @@ if it is not nil.")
 \[[ Please press `v' key in this buffer.         ]]"
     ))
 
-(defun mime-view-insert-message/partial-button ()
+(defun mime-view-insert-message/partial-button (&optional situation)
   (save-restriction
     (goto-char (point-max))
     (if (not (search-backward "\n\n" nil t))
@@ -662,27 +700,34 @@ The compressed face will be piped to this command.")
 	  (goto-char (point-max))
 	  (mime-view-insert-entity-button entity message-info subj)
 	  ))
-    (cond ((mime-view-body-visible-p entity message-info)
-	   (save-restriction
-	     (narrow-to-region (point-max)(point-max))
-	     (insert-buffer-substring mime-raw-buffer end-of-header end)
-	     (let ((f (cdr (or (assoc ctype mime-view-content-filter-alist)
-			       (assq t mime-view-content-filter-alist)))))
-	       (and (functionp f)
-		    (funcall f ctype params encoding))
-	       )))
-	  ((and (eq media-type 'message)(eq media-subtype 'partial))
-	   (mime-view-insert-message/partial-button)
-	   )
-	  ((and (null entity-node-id)
-		(null (mime-entity-children message-info))
-		)
-	   (goto-char (point-max))
-	   (mime-view-insert-entity-button entity message-info subj)
-	   ))
-    (when (mime-view-entity-separator-visible-p entity message-info)
-      (goto-char (point-max))
-      (insert "\n"))
+    (let* ((situation
+	    (ctree-match-calist mime-preview-condition
+				(list* (cons 'type       media-type)
+				       (cons 'subtype    media-subtype)
+				       (cons 'encoding   encoding)
+				       (cons 'major-mode major-mode)
+				       params)))
+	   (body-filter (cdr (assq 'body-filter situation)))
+	   (body-presentation-method 
+	    (cdr (assq 'body-presentation-method situation))))
+      (cond ((functionp body-filter)
+	     (save-restriction
+	       (narrow-to-region (point-max)(point-max))
+	       (insert-buffer-substring mime-raw-buffer end-of-header end)
+	       (funcall body-filter ctype params encoding)
+	       ))
+	    ((functionp body-presentation-method)
+	     (funcall body-presentation-method situation)
+	     )
+	    ((and (null entity-node-id)
+		  (null (mime-entity-children message-info)))
+	     (goto-char (point-max))
+	     (mime-view-insert-entity-button entity message-info subj)
+	     ))
+      (when (mime-view-entity-separator-visible-p entity message-info)
+	(goto-char (point-max))
+	(insert "\n"))
+      )
     (setq ne (point-max))
     (widen)
     (put-text-property nb ne 'mime-view-raw-buffer ibuf)
