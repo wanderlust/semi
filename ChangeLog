@@ -1,5 +1,10 @@
 2000-02-10  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* mime-view.el (mime-preview-follow-current-entity): Use
+	`mime-view-entity-body' to find body.
+
+2000-02-10  MORIOKA Tomohiko  <tomo@m17n.org>
+
 	* mime-view.el (mime-preview-find-boundary-info): Fix problem when
 	entity is in boundary of mother entity.
 	(mime-preview-follow-current-entity): Check header information of
