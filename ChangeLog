@@ -1,3 +1,8 @@
+2004-02-12  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-image.el (mime-display-image): Ignore errors about image
+	decoding.
+
 2004-02-06  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* mime-image.el (mime-image-normalize-xbm-buffer): Add missing
