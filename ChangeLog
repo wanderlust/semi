@@ -1,5 +1,9 @@
 1998-03-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* NEWS: Modify about `mime-preview-condition'.
+
+1998-03-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-image.el: Set up for `mime-preview-condition' instead of
 	`mime-view-body-visible-condition' and
 	`mime-view-content-filter-alist'.
