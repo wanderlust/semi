@@ -642,6 +642,11 @@ If it is not specified for a major-mode,
 	  " ("
 	  (mime-product-code-name mime-library-product)
 	  ") "
+	  (condition-case nil
+	      (progn
+		(require 'apel-ver)
+		(concat (apel-version) " "))
+	    (file-error nil))
 	  (if (featurep 'xemacs)
 	      (concat (cond ((featurep 'utf-2000)
 			     (concat "UTF-2000-MULE/" utf-2000-version))
@@ -1765,9 +1770,9 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 	  )
 	(insert "\n")
 	(or (let ((pgg-default-user-id 
-		     (if from
-			 (nth 1 (std11-extract-address-components from))
-		       pgg-default-user-id)))
+		   (if (and from (not pgg-default-user-id))
+		       (nth 1 (std11-extract-address-components from))
+		     pgg-default-user-id)))
 	      (pgg-sign-region (point-min)(point-max)))
 	    (throw 'mime-edit-error 'pgp-error)
 	    )
@@ -1855,7 +1860,7 @@ Content-Transfer-Encoding: 7bit
           (insert "\n")
 	  (eword-encode-header)
 	  (or (let ((pgg-default-user-id 
-		     (if from
+		     (if (and from (not pgg-default-user-id))
 			 (nth 1 (std11-extract-address-components from))
 		       pgg-default-user-id)))
 		(pgg-encrypt-region 
