@@ -1,5 +1,12 @@
 1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-display-entity): Abolish body-filter support.
+
+	* mime-play.el, mime-view.el: Rename `mime-method-to-save' to
+	`mime-save-content'.
+
+1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-play.el (mime-activate-mailcap-method): Fixed.
 
 1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
@@ -13,23 +20,14 @@
 	* mime-view.el (mime-display-entity): Run
 	`mime-display-header-hook'.
 
-	* mime-view.el: Rename `mime-preview-text/enriched' to
-	`mime-display-text/enriched'.
+	* mime-text.el, mime-view.el: Rename `mime-preview-text/enriched'
+	to `mime-display-text/enriched'.
 
-	* mime-text.el (mime-display-text/enriched): Renamed from
-	`mime-preview-text/enriched'.
+	* mime-text.el, mime-view.el: Rename `mime-preview-text/richtext'
+	to `mime-display-text/richtext'.
 
-	* mime-view.el: Rename `mime-preview-text/richtext' to
-	`mime-display-text/richtext'.
-
-	* mime-text.el (mime-display-text/richtext): Renamed from
-	`mime-preview-text/richtext'.
-
-	* mime-view.el: Rename `mime-preview-text/plain' to
+	* mime-text.el, mime-view.el: Rename `mime-preview-text/plain' to
 	`mime-display-text/plain'.
-
-	* mime-text.el (mime-display-text/plain): Renamed from
-	`mime-preview-text/plain'.
 
 	* mime-view.el (mime-display-multipart/mixed): Renamed from
 	`mime-preview-multipart/mixed'.
