@@ -424,11 +424,10 @@ Each elements are regexp of field-name.")
 			    . mime-preview-filter-for-text/enriched)))
 
 (ctree-set-calist-strictly
- 'mime-preview-condition '((type . text)(subtype . richtext)
-			   (body . visible)
-			   (body-presentation-method . with-filter)
-			   (body-filter
-			    . mime-preview-filter-for-text/richtext)))
+ 'mime-preview-condition
+ '((type . text)(subtype . richtext)
+   (body . visible)
+   (body-presentation-method . mime-preview-text/richtext)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
@@ -459,7 +458,7 @@ Each elements are regexp of field-name.")
 
 (autoload 'mime-preview-text/plain "mime-text")
 (autoload 'mime-preview-filter-for-text/enriched "mime-text")
-(autoload 'mime-preview-filter-for-text/richtext "mime-text")
+(autoload 'mime-preview-text/richtext "mime-text")
 
 (defvar mime-text-decoder-alist
   '((mime-show-message-mode	. mime-text-decode-buffer)
