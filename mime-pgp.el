@@ -6,7 +6,7 @@
 ;; Created: 1995/12/7
 ;;	Renamed: 1997/2/27 from tm-pgp.el
 ;; Version: $Id$
-;; Keywords: mail, news, MIME, multimedia, PGP, security
+;; Keywords: PGP, security, MIME, multimedia, mail, news
 
 ;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
 
@@ -282,7 +282,6 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	 (mother mime::article/preview-buffer)
 	 (charset (cdr (assoc "charset" cal)))
 	 (encoding (cdr (assq 'encoding cal)))
-	 (mode major-mode)
 	 str)
     (setq str (buffer-substring beg end))
     (switch-to-buffer new-name)
