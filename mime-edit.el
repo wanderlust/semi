@@ -1600,7 +1600,7 @@ Optional DELIMITER specifies parameter delimiter (';' by default)."
 
 (defun mime-prompt-for-parameter (parameter)
   "Ask for PARAMETER.
-Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
+Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
   (let* ((prompt (car parameter))
 	 (choices (mapcar (function
 			   (lambda (e)
