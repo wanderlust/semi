@@ -97,6 +97,13 @@
   :group 'pgg-parse
   :type 'boolean)
 
+(defvar pgg-armor-header-lines
+  '("^-----BEGIN PGP MESSAGE\\(, PART [0-9]+\\(/[0-9]+\\)?\\)?-----\r?$"
+    "^-----BEGIN PGP PUBLIC KEY BLOCK-----\r?$"
+    "^-----BEGIN PGP PRIVATE KEY BLOCK-----\r?$"
+    "^-----BEGIN PGP SIGNATURE-----\r?$")
+  "Armor headers")
+
 (defmacro pgg-format-key-identifier (string)
   `(upcase (apply #'format "%02x%02x%02x%02x%02x%02x%02x%02x"
 		  (string-to-int-list ,string))))
@@ -472,7 +479,6 @@
 			checksum)
 	  (error "PGP packet checksum does not match.")))))
 
-;;;###autoload
 (defun pgg-decode-armor-region (start end)
   (save-restriction
     (narrow-to-region start end)
