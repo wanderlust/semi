@@ -1,4 +1,4 @@
-;;; mime-setup.el --- setup file for tm viewer and composer.
+;;; mime-setup.el --- setup file for MIME viewer and composer.
 
 ;; Copyright (C) 1995,1996,1997 Free Software Foundation, Inc.
 
@@ -29,8 +29,9 @@
 (require 'semi-setup)
 (require 'alist)
 
-(autoload 'mime-edit-mode "mime-edit"
-  "Minor mode for editing MIME message." t)
+(autoload 'turn-on-mime-edit "mime-edit"
+  "Unconditionally turn on MIME-Edit minor mode." t)
+
 (autoload 'eword-decode-header "eword-decode"
   "Decode MIME encoded-words in header fields." t)
 
@@ -96,7 +97,7 @@
 ;;;
 
 (add-hook 'mail-setup-hook 'eword-decode-header)
-(add-hook 'mail-setup-hook 'mime-edit-mode 'append)
+(add-hook 'mail-setup-hook 'turn-on-mime-edit 'append)
 (add-hook 'mail-send-hook  'mime-edit-maybe-translate)
 (set-alist 'mime-edit-split-message-sender-alist
            'mail-mode (function
@@ -109,7 +110,7 @@
 ;;;
 
 (defun mime-setup-mh-draft-setting ()
-  (mime-edit-mode)
+  (turn-on-mime-edit)
   (make-local-variable 'mail-header-separator)
   (setq mail-header-separator "--------")
   (save-excursion
@@ -144,7 +145,7 @@
 
 (or (boundp 'epoch::version)
     (progn
-      (add-hook 'message-setup-hook  'mime-edit-mode)
+      (add-hook 'message-setup-hook  'turn-on-mime-edit)
       (add-hook 'message-setup-hook  'message-maybe-setup-default-charset)
       (add-hook 'message-send-hook   'mime-edit-maybe-translate)
       (add-hook 'message-header-hook 'eword-encode-header)
