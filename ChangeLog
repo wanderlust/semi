@@ -1,3 +1,8 @@
+1999-04-30 Shigeru OKUMURA <sokumura@jaist.ac.jp>
+	
+	* mime-edit.el (mime-edit-use-long-mime-charset-comment):
+	new variable for switch long comment mime-charset-comment
+
 1999-04-29  Shigeru OKUMURA <sokumura@jaist.ac.jp>
 
 	* mime-view.el (mime-dsiplay-application/x-postpet):
