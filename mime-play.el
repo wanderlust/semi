@@ -139,7 +139,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	      (setq cal (put-alist 'file file cal))
 	      (setq args (nconc
 			  (list (car method)
-				mime/output-buffer-name (car method)
+				mime-echo-buffer-name (car method)
 				)
 			  (mime-article/make-method-args cal
 							 (cdr (cdr method)))
@@ -167,19 +167,19 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	  format))
 
 (defun mime-article/show-output-buffer (&rest forms)
-  (get-buffer-create mime/output-buffer-name)
+  (get-buffer-create mime-echo-buffer-name)
   (let ((the-win (selected-window))
-	(win (get-buffer-window mime/output-buffer-name))
+	(win (get-buffer-window mime-echo-buffer-name))
 	)
     (or win
 	(if (and mime/output-buffer-window-is-shared-with-bbdb
 		 (boundp 'bbdb-buffer-name)
 		 (setq win (get-buffer-window bbdb-buffer-name))
 		 )
-	    (set-window-buffer win mime/output-buffer-name)
+	    (set-window-buffer win mime-echo-buffer-name)
 	  (select-window (get-buffer-window mime-view-buffer))
 	  (setq win (split-window-vertically (/ (* (window-height) 3) 4)))
-	  (set-window-buffer win mime/output-buffer-name)
+	  (set-window-buffer win mime-echo-buffer-name)
 	  ))
     (select-window win)
     (goto-char (point-max))
