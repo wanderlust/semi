@@ -1,3 +1,13 @@
+1999-07-27  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* NEWS (Don't expect raw-buffer): New subsection.
+	(Now acting-method must not expect to run in raw-buffer): Changed
+	as a subsubsection of subsection `Don't expect raw-buffer'.
+	(Don't refer variable `mime-raw-buffer'): New subsubsection.
+	(Don't refer variable `mime-preview-buffer'): New subsubsection.
+
+	* NEWS (Requires FLIM 1.13 API): New subsection.
+
 1999-07-23  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* README.en (Required environment): Change required FLIM to
