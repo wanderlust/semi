@@ -3,7 +3,7 @@
 #
 
 PACKAGE = semi
-VERSION = 1.8.6
+VERSION = 1.9.0
 
 TAR	= tar
 RM	= /bin/rm -f
