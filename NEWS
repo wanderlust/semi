@@ -54,7 +54,7 @@ is following:
   Conditions about preview generation are unified to
 'mime-preview-condition.  Namely other variables, such as
 'mime-view-visible-media-type-list, 'mime-view-content-filter-alist,
-were abolished.
+'mime-view-image-converter-alist were abolished.
 
   Preview-situation is generated from entity information, running
 environment and 'mime-preview-condition.  These elements are checked
@@ -73,6 +73,8 @@ pre-defined:
 If 'body-presentation-method is 'with-filter, 'body-filter is used to
 specify body-filter function.  If 'body-presentation-method is
 function, it is called to generate presentation of entity body.
+
+Body-filter function 'mime-view-filter-for-image refers 'image-format.
 
 Setting for message/partial button is specified by
 'mime-preview-condition instead of hard-coding.
