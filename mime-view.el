@@ -119,6 +119,14 @@ message/partial, it is called `mother-buffer'.")
   "Window-configuration before mime-view-mode is called.")
 (make-variable-buffer-local 'mime-preview-original-window-configuration)
 
+(defface mime-view-error-message-face '((((class color))
+					 (:foreground "Red"))
+					(t
+					 (:underline t)))
+  "Error message face in MIME-View mode."
+  :group 'mime-view
+  :group 'face)
+
 (defun mime-preview-original-major-mode (&optional recursive)
   "Return major-mode of original buffer.
 If optional argument RECURSIVE is non-nil and current buffer has
@@ -782,8 +790,9 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 
 If you'd like to debug this error.
 Please set non-nil to `debug-on-error'.\n\n" err))
-			  (put-text-property start (point)
-					     'face 'font-lock-warning-face)
+			  (put-text-property
+			   start (point)
+			   'face 'mime-view-error-message-face)
 			))))
 	     )
 	    (t
