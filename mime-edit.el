@@ -2090,9 +2090,7 @@ Content-Transfer-Encoding: 7bit
 	;; encoded.
 	(let* ((encoding "base64")	;Encode in BASE64 by default.
 	       (beg (mime-edit-content-beginning))
-	       (end (mime-edit-content-end))
-	       (body (buffer-substring beg end))
-	       )
+	       (end (mime-edit-content-end)))
 	  (mime-encode-region beg end encoding)
 	  (mime-edit-define-encoding encoding))
 	(forward-line 1)
