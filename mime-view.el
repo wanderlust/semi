@@ -52,13 +52,11 @@
   "MIME view mode"
   :group 'mime)
 
-(defcustom mime-view-find-every-acting-situation t
-  "*Find every available acting-situation if non-nil."
-  :group 'mime-view
-  :type 'boolean)
+(defvar mime-view-find-every-situations t
+  "*Find every available situations if non-nil.")
 
-(defcustom mime-acting-situation-examples-file "~/.mime-example"
-  "*File name of example about acting-situation demonstrated by user."
+(defcustom mime-situation-examples-file "~/.mime-example"
+  "*File name of situation-examples demonstrated by user."
   :group 'mime-view
   :type 'file)
 
@@ -297,7 +295,7 @@ mother-buffer."
     (setq ret
 	  (mime-delq-null-situation
 	   (ctree-find-calist condition entity-situation
-			      mime-view-find-every-acting-situation)
+			      mime-view-find-every-situations)
 	   'method ignored-method))
     (or (assq 'ignore-examples entity-situation)
 	(if (cdr ret)
@@ -364,30 +362,38 @@ mother-buffer."
 (defvar mime-preview-situation-example-list nil)
 (defvar mime-acting-situation-example-list nil)
 
+(defvar mime-preview-situation-example-list-max-size 16)
 (defvar mime-acting-situation-example-list-max-size 16)
 
-(defun mime-save-acting-situation-examples ()
-  (let* ((file mime-acting-situation-examples-file)
-	 (buffer (get-buffer-create " *mime-example*")))
-    (unwind-protect
-        (save-excursion
-          (set-buffer buffer)
-          (setq buffer-file-name file)
-          (erase-buffer)
-          (insert ";;; " (file-name-nondirectory file) "\n")
-          (insert "\n;; This file is generated automatically by "
-                  mime-view-version "\n\n")
-	  (insert ";;; Code:\n\n")
-	  (pp `(setq mime-acting-situation-example-list
-		     ',mime-acting-situation-example-list)
-	      (current-buffer))
-	  (insert "\n;;; "
-                  (file-name-nondirectory file)
-                  " ends here.\n")
-          (save-buffer))
-      (kill-buffer buffer))))
+(defun mime-save-situation-examples ()
+  (if (or mime-preview-situation-example-list
+	  mime-acting-situation-example-list)
+      (let* ((file mime-situation-examples-file)
+	     (buffer (get-buffer-create " *mime-example*")))
+	(unwind-protect
+	    (save-excursion
+	      (set-buffer buffer)
+	      (setq buffer-file-name file)
+	      (erase-buffer)
+	      (insert ";;; " (file-name-nondirectory file) "\n")
+	      (insert "\n;; This file is generated automatically by "
+		      mime-view-version "\n\n")
+	      (insert ";;; Code:\n\n")
+	      (if mime-preview-situation-example-list
+		  (pp `(setq mime-preview-situation-example-list
+			     ',mime-preview-situation-example-list)
+		      (current-buffer)))
+	      (if mime-acting-situation-example-list
+		  (pp `(setq mime-acting-situation-example-list
+			     ',mime-acting-situation-example-list)
+		      (current-buffer)))
+	      (insert "\n;;; "
+		      (file-name-nondirectory file)
+		      " ends here.\n")
+	      (save-buffer))
+	  (kill-buffer buffer)))))
 
-(add-hook 'kill-emacs-hook 'mime-save-acting-situation-examples)
+(add-hook 'kill-emacs-hook 'mime-save-situation-examples)
 
 (defun mime-reduce-acting-situation-examples ()
   (let ((len (length mime-acting-situation-example-list))
@@ -1701,7 +1707,7 @@ It calls function registered in variable
 
 (provide 'mime-view)
 
-(let* ((file mime-acting-situation-examples-file)
+(let* ((file mime-situation-examples-file)
        (buffer (get-buffer-create " *mime-example*")))
   (if (file-readable-p file)
       (unwind-protect
