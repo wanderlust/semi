@@ -54,17 +54,18 @@
 
 (defsubst mailcap-look-at-type-field ()
   (let ((type (mailcap-look-at-token)))
-    (if (and type 
-	     (eq (char-after (point)) ?/)
-	     )
-	(progn
-	  (forward-char)
-	  (let ((subtype (mailcap-look-at-token)))
-	    (if subtype
-		(cons (cons 'type (intern type))
-		      (unless (string= subtype "*")
-			(list (cons 'subtype (intern subtype)))
-			))))))))
+    (if type
+	(if (eq (char-after (point)) ?/)
+	    (progn
+	      (forward-char)
+	      (let ((subtype (mailcap-look-at-token)))
+		(if subtype
+		    (cons (cons 'type (intern type))
+			  (unless (string= subtype "*")
+			    (list (cons 'subtype (intern subtype)))
+			    )))))
+	  (list (cons 'type (intern type)))
+	  ))))
 
 
 ;;; @ field separator
@@ -111,9 +112,9 @@
 (defsubst mailcap-look-at-field ()
   (let ((token (mailcap-look-at-token)))
     (if token
-	(if (eq (char-after (point)) ?=)
+	(if (looking-at "[ \t]*=[ \t]*")
 	    (let ((value (progn
-			   (forward-char)
+			   (goto-char (match-end 0))
 			   (mailcap-look-at-mtext))))
 	      (if value
 		  (cons token value)
