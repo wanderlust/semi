@@ -543,37 +543,65 @@ Tspecials means any character that matches with it in header must be quoted.")
 (defvar mime-edit-mode-flag nil)
 (make-variable-buffer-local 'mime-edit-mode-flag)
 
-(defvar mime-edit-prefix "\C-c\C-x"
-  "*Keymap prefix for MIME-Edit commands.")
+(defvar mime-edit-mode-map (make-sparse-keymap)
+  "Keymap for MIME-Edit mode commands.")
 
-(defvar mime-edit-map (make-sparse-keymap)
-  "Keymap for MIME commands.")
+(define-key mime-edit-mode-map
+  "\C-c\C-x\C-t"	'mime-edit-insert-text)
+(define-key mime-edit-mode-map
+  "\C-c\C-x\C-i"	'mime-edit-insert-file)
+(define-key mime-edit-mode-map
+  "\C-c\C-x\C-e"	'mime-edit-insert-external)
+(define-key mime-edit-mode-map
+  "\C-c\C-x\C-v"	'mime-edit-insert-voice)
+(define-key mime-edit-mode-map
+  "\C-c\C-x\C-y"	'mime-edit-insert-message)
+(define-key mime-edit-mode-map
+  "\C-c\C-x\C-m"	'mime-edit-insert-mail)
+(define-key mime-edit-mode-map
+  "\C-c\C-x\C-w"	'mime-edit-insert-signature)
+(define-key mime-edit-mode-map
+  "\C-c\C-x\C-s"	'mime-edit-insert-signature)
+(define-key mime-edit-mode-map
+  "\C-c\C-x\C-k"	'mime-edit-insert-key)
+(define-key mime-edit-mode-map
+  "\C-c\C-xt"		'mime-edit-insert-tag)
 
-(define-key mime-edit-map "\C-t"	'mime-edit-insert-text)
-(define-key mime-edit-map "\C-i"	'mime-edit-insert-file)
-(define-key mime-edit-map "\C-e"	'mime-edit-insert-external)
-(define-key mime-edit-map "\C-v"	'mime-edit-insert-voice)
-(define-key mime-edit-map "\C-y"	'mime-edit-insert-message)
-(define-key mime-edit-map "\C-m"	'mime-edit-insert-mail)
-(define-key mime-edit-map "\C-w"	'mime-edit-insert-signature)
-(define-key mime-edit-map "\C-s"	'mime-edit-insert-signature)
-(define-key mime-edit-map "\C-k"	'mime-edit-insert-key)
-(define-key mime-edit-map "t"		'mime-edit-insert-tag)
-(define-key mime-edit-map "a"		'mime-edit-enclose-alternative-region)
-(define-key mime-edit-map "p"		'mime-edit-enclose-parallel-region)
-(define-key mime-edit-map "m"		'mime-edit-enclose-mixed-region)
-(define-key mime-edit-map "d"		'mime-edit-enclose-digest-region)
-(define-key mime-edit-map "s"		'mime-edit-enclose-signed-region)
-(define-key mime-edit-map "e"		'mime-edit-enclose-encrypted-region)
-(define-key mime-edit-map "q"		'mime-edit-enclose-quote-region)
-(define-key mime-edit-map "7"		'mime-edit-set-transfer-level-7bit)
-(define-key mime-edit-map "8"		'mime-edit-set-transfer-level-8bit)
-(define-key mime-edit-map "/"		'mime-edit-set-split)
-(define-key mime-edit-map "v"		'mime-edit-set-sign)
-(define-key mime-edit-map "h"		'mime-edit-set-encrypt)
-(define-key mime-edit-map "\C-p"	'mime-edit-preview-message)
-(define-key mime-edit-map "\C-z"	'mime-edit-exit)
-(define-key mime-edit-map "?"		'mime-edit-help)
+(define-key mime-edit-mode-map
+  "\C-c\C-m\C-a"	'mime-edit-enclose-alternative-region)
+(define-key mime-edit-mode-map
+  "\C-c\C-m\C-p"	'mime-edit-enclose-parallel-region)
+(define-key mime-edit-mode-map
+  "\C-c\C-m\C-m"	'mime-edit-enclose-mixed-region)
+(define-key mime-edit-mode-map
+  "\C-c\C-m\C-d"	'mime-edit-enclose-digest-region)
+(define-key mime-edit-mode-map
+  "\C-c\C-m\C-s"	'mime-edit-enclose-signed-region)
+(define-key mime-edit-mode-map
+  "\C-c\C-m\C-e"	'mime-edit-enclose-encrypted-region)
+(define-key mime-edit-mode-map
+  "\C-c\C-m\C-q"	'mime-edit-enclose-quote-region)
+
+(define-key mime-edit-mode-map
+  "\C-c\C-x7"		'mime-edit-set-transfer-level-7bit)
+(define-key mime-edit-mode-map
+  "\C-c\C-x8"		'mime-edit-set-transfer-level-8bit)
+(define-key mime-edit-mode-map
+  "\C-c\C-x/"		'mime-edit-set-split)
+(define-key mime-edit-mode-map
+  "\C-c\C-xs"		'mime-edit-set-sign)
+(define-key mime-edit-mode-map
+  "\C-c\C-xv"		'mime-edit-set-sign)
+(define-key mime-edit-mode-map
+  "\C-c\C-xe"		'mime-edit-set-encrypt)
+(define-key mime-edit-mode-map
+  "\C-c\C-xh"		'mime-edit-set-encrypt)
+(define-key mime-edit-mode-map
+  "\C-c\C-x\C-p"	'mime-edit-preview-message)
+(define-key mime-edit-mode-map
+  "\C-c\C-x\C-z"	'mime-edit-exit)
+(define-key mime-edit-mode-map
+  "\C-c\C-x?"		'mime-edit-help)
 
 (defconst mime-edit-menu-title "MIME-Edit")
 
@@ -603,10 +631,6 @@ Tspecials means any character that matches with it in header must be quoted.")
     (level	"Toggle transfer-level"	mime-edit-toggle-transfer-level)
     )
   "MIME-edit menubar entry.")
-
-(defvar mime-edit-mode-map (make-sparse-keymap)
-  "Keymap for MIME-Edit mode commands.")
-(define-key mime-edit-mode-map mime-edit-prefix mime-edit-map)
 
 (cond (running-xemacs
        ;; modified by Pekka Marjola <pema@iki.fi>
