@@ -553,60 +553,89 @@ Each elements are regexp of field-name.")
 	  petname owner pettype from
 	  carryingcount sentyear sentmonth sentday
 	  petbirthyear petbirthmonth petbirthday
+	  brain health happiness sex treasure money
 	  )
+      
       (setq p (+ p 4))
+      
       (setq carryingcount
-	    (+ (   char-int (aref contents (1+ (1+ (1+ p)))))
-	       (* 256 (char-int (aref contents (1+ (1+ p)))))
+	    (+ (char-int (aref contents (+ 3 p)))
+	       (* 256 (char-int (aref contents (+ 2 p))))
 	       (* 256 256 (char-int (aref contents (1+ p))))
-	       (* 256 256 256 (char-int (aref contents p)))
-	       )
-	    )
+	       (* 256 256 256 (char-int (aref contents p)))))
       (setq p (+ p 4))
+      
       (setq p (+ p 8))
+            
       (setq sentyear
-	    (+ (   char-int (aref contents (1+ p)))
-	       (* 256 (char-int (aref contents p)))
-	       )
-	    )
+	    (+ (char-int (aref contents (1+ p)))
+	       (* 256 (char-int (aref contents p)))))
       (setq p (+ p 2))
+      
       (setq sentmonth
-	    (+ (   char-int (aref contents (1+ p)))
-	       (* 256 (char-int (aref contents p)))
-	       )
-	    )
+	    (+ (char-int (aref contents (1+ p)))
+	       (* 256 (char-int (aref contents p)))))
       (setq p (+ p 2))
+      
       (setq sentday
-	    (+ (   char-int (aref contents (1+ p)))
-	       (* 256 (char-int (aref contents p)))
-	       )
-	    )
+	    (+ (char-int (aref contents (1+ p)))
+	       (* 256 (char-int (aref contents p)))))
       (setq p (+ p 2))
+      
       (setq p (+ p 8))
+      
       (setq petname (decode-mime-charset-string (substring contents (1+ p) (setq p (+ p 1 (char-int (aref contents p))))) 'shift_jis))
       (setq owner (decode-mime-charset-string (substring contents (1+ p) (setq p (+ p 1 (char-int (aref contents p))))) 'shift_jis))
       (setq pettype (substring contents p (setq p (+ p 4))))
-      (setq p (+ p 64))
+      
+;;      (setq p (+ p 1))
+;;      (setq health (char-int (aref contents p)))
+      ;; 2 byte
+      (setq health (+ (char-int (aref contents (1+ p)))
+		      (* 256 (char-int (aref contents p)))))
+      (setq p (+ p 1))
+      
+      (setq p (+ p 2))
+      (setq p (+ p 4))
+      (setq sex (char-int (aref contents p)))
+
+      (setq p (+ p 2))
+      (setq brain (char-int (aref contents p)))
+      (setq p (+ p 40))
+      (setq happiness (char-int (aref contents p)))
+      (setq p (+ p 15))
+      
       (setq petbirthyear
-	    (+ (   char-int (aref contents (1+ p)))
-	       (* 256 (char-int (aref contents p)))
-	       )
-	    )
+	    (+ (char-int (aref contents (1+ p)))
+	       (* 256 (char-int (aref contents p)))))
       (setq p (+ p 2))
+      
       (setq petbirthmonth
-	    (+ (   char-int (aref contents (1+ p)))
-	       (* 256 (char-int (aref contents p)))
-	       )
-	    )
+	    (+ (char-int (aref contents (1+ p)))
+	       (* 256 (char-int (aref contents p)))))
       (setq p (+ p 2))
+      
       (setq petbirthday
-	    (+ (   char-int (aref contents (1+ p)))
-	       (* 256 (char-int (aref contents p)))
-	       )
-	    )
+	    (+ (char-int (aref contents (1+ p)))
+	       (* 256 (char-int (aref contents p)))))
       (setq p (+ p 2))
+      
       (setq p (+ p 8))
       (setq from (substring contents (1+ p) (setq p (+ p 1 (char-int (aref contents p))))))
+      (setq p (+ p 5))
+      (setq p (+ p 160))      
+      (setq p (+ p 4))
+      (setq p (+ p 8))
+      
+      (setq p (+ p 8))
+      (setq p (+ p 26))
+      (setq p (+ p 1))
+      (setq treasure (char-int (aref contents p)))
+      (setq p (+ p 1))
+      (setq money (+ (char-int (aref contents (+ 3 p)))
+		      (* 256 (char-int (aref contents (+ 2 p))))
+		      (* 256 256 (char-int (aref contents (1+ p))))
+		      (* 256 256 256 (char-int (aref contents p)))))
       (insert "Petname: " petname "\n"
 	      "Owner: " owner "\n"
 	      "Pettype: " pettype "\n"
@@ -618,6 +647,12 @@ Each elements are regexp of field-name.")
 	      "PetbirthYear: " (int-to-string petbirthyear) "\n"
 	      "PetbirthMonth: " (int-to-string petbirthmonth) "\n"
 	      "PetbirthDay: " (int-to-string petbirthday) "\n"
+	      "Health: " (int-to-string health) "\n"
+	      "Sex: " (int-to-string sex) "\n"
+	      "Brain: " (int-to-string brain) "\n"
+	      "Happiness: " (int-to-string happiness) "\n"
+	      "Treasure: " (int-to-string treasure) "\n"
+	      "Money: " (int-to-string money) "\n"
 	      )
       (run-hooks 'mime-display-application/x-postpet-hook))))
 

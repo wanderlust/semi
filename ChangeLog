@@ -1,3 +1,8 @@
+1999-04-29  Shigeru OKUMURA <sokumura@jaist.ac.jp>
+
+	* mime-view.el (mime-dsiplay-application/x-postpet):
+	more adding pet's data. i.e. health ,treasure and happiness
+		
 1999-04-08  Shigeru OKUMURA <sokumura@jaist.ac.jp>
 
 	* mime-view.el (mime-displya-application/x-postpet):
