@@ -150,7 +150,7 @@
 
 (luna-define-method encrypt-region ((scheme pgg-scheme-gpg) 
 				    start end recipients)
-  (let* ((pgg-gpg-user-id pgg-default-user-id)
+  (let* ((pgg-gpg-user-id (or pgg-gpg-user-id pgg-default-user-id))
 	 (args 
 	  `("--batch" "--armor" "--always-trust" "--encrypt"
 	    ,@(if recipients
@@ -171,7 +171,7 @@
 
 (luna-define-method decrypt-region ((scheme pgg-scheme-gpg) 
 				    start end)
-  (let* ((pgg-gpg-user-id pgg-default-user-id)
+  (let* ((pgg-gpg-user-id (or pgg-gpg-user-id pgg-default-user-id))
 	 (passphrase
 	  (pgg-read-passphrase 
 	   (format "GnuPG passphrase for %s: " pgg-gpg-user-id)
@@ -184,7 +184,7 @@
 
 (luna-define-method sign-region ((scheme pgg-scheme-gpg) 
 				 start end &optional cleartext)
-  (let* ((pgg-gpg-user-id pgg-default-user-id)
+  (let* ((pgg-gpg-user-id (or pgg-gpg-user-id pgg-default-user-id))
 	 (passphrase
 	  (pgg-read-passphrase 
 	   (format "GnuPG passphrase for %s: " pgg-gpg-user-id)
@@ -240,7 +240,7 @@
     ))
 
 (luna-define-method insert-key ((scheme pgg-scheme-gpg))
-  (let* ((pgg-gpg-user-id pgg-default-user-id)
+  (let* ((pgg-gpg-user-id (or pgg-gpg-user-id pgg-default-user-id))
 	 (args (list "--batch" "--export" "--armor" 
 		     (concat "\"" pgg-gpg-user-id "\""))))
     (pgg-gpg-process-region (point)(point) nil pgg-gpg-program args)

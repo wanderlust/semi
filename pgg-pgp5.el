@@ -153,7 +153,7 @@
 
 (luna-define-method encrypt-region ((scheme pgg-scheme-pgp5) 
 				    start end recipients)
-  (let* ((pgg-pgp5-user-id pgg-default-user-id)
+  (let* ((pgg-pgp5-user-id (or pgg-pgp5-user-id pgg-default-user-id))
 	 (args 
 	  `("+NoBatchInvalidKeys=off" "-fat" "+batchmode=1"
 	    ,@(if recipients
@@ -172,7 +172,7 @@
 
 (luna-define-method decrypt-region ((scheme pgg-scheme-pgp5) 
 				    start end)
-  (let* ((pgg-pgp5-user-id pgg-default-user-id)
+  (let* ((pgg-pgp5-user-id (or pgg-pgp5-user-id pgg-default-user-id))
 	 (passphrase
 	  (pgg-read-passphrase 
 	   (format "PGP passphrase for %s: " pgg-pgp5-user-id)
@@ -187,7 +187,7 @@
 
 (luna-define-method sign-region ((scheme pgg-scheme-pgp5) 
 				 start end &optional clearsign)
-  (let* ((pgg-pgp5-user-id pgg-default-user-id)
+  (let* ((pgg-pgp5-user-id (or pgg-pgp5-user-id pgg-default-user-id))
 	 (passphrase
 	  (pgg-read-passphrase 
 	   (format "PGP passphrase for %s: " pgg-pgp5-user-id)
@@ -236,7 +236,7 @@
     ))
 
 (luna-define-method insert-key ((scheme pgg-scheme-pgp5))
-  (let* ((pgg-pgp5-user-id pgg-default-user-id)
+  (let* ((pgg-pgp5-user-id (or pgg-pgp5-user-id pgg-default-user-id))
 	 (args
 	  (list "+verbose=1" "+batchmode=1" "+language=us" "-x" 
 		(concat "\"" pgg-pgp5-user-id "\""))))
@@ -247,7 +247,7 @@
 
 (luna-define-method snarf-keys-region ((scheme pgg-scheme-pgp5)
 				       start end)
-  (let* ((pgg-pgp5-user-id pgg-default-user-id)
+  (let* ((pgg-pgp5-user-id (or pgg-pgp5-user-id pgg-default-user-id))
 	 (basename (expand-file-name "pgg" temporary-file-directory))
 	 (key-file (make-temp-name basename))
 	 (args 

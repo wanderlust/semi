@@ -142,7 +142,7 @@
 
 (luna-define-method encrypt-region ((scheme pgg-scheme-pgp) 
 				    start end recipients)
-  (let* ((pgg-pgp-user-id pgg-default-user-id)
+  (let* ((pgg-pgp-user-id (or pgg-pgp-user-id pgg-default-user-id))
 	 (args 
 	  `("+encrypttoself=off +verbose=1" "+batchmode"
 	    "+language=us" "-fate"
@@ -159,7 +159,7 @@
 
 (luna-define-method decrypt-region ((scheme pgg-scheme-pgp) 
 				    start end)
-  (let* ((pgg-pgp-user-id pgg-default-user-id)
+  (let* ((pgg-pgp-user-id (or pgg-pgp-user-id pgg-default-user-id))
 	 (passphrase
 	  (pgg-read-passphrase 
 	   (format "PGP passphrase for %s: " pgg-pgp-user-id)
@@ -174,7 +174,7 @@
 
 (luna-define-method sign-region ((scheme pgg-scheme-pgp) 
 				 start end &optional clearsign)
-  (let* ((pgg-pgp-user-id pgg-default-user-id)
+  (let* ((pgg-pgp-user-id (or pgg-pgp-user-id pgg-default-user-id))
 	 (passphrase
 	  (pgg-read-passphrase 
 	   (format "PGP passphrase for %s: " pgg-pgp-user-id)
@@ -234,7 +234,7 @@
     ))
 
 (luna-define-method insert-key ((scheme pgg-scheme-pgp))
-  (let* ((pgg-pgp-user-id pgg-default-user-id)
+  (let* ((pgg-pgp-user-id (or pgg-pgp-user-id pgg-default-user-id))
 	 (args
 	  (list "+verbose=1" "+batchmode" "+language=us" "-kxaf" 
 		(concat "\"" pgg-pgp-user-id "\""))))
@@ -245,7 +245,7 @@
 
 (luna-define-method snarf-keys-region ((scheme pgg-scheme-pgp)
 				       start end)
-  (let* ((pgg-pgp-user-id pgg-default-user-id)
+  (let* ((pgg-pgp-user-id (or pgg-pgp-user-id pgg-default-user-id))
 	 (basename (expand-file-name "pgg" temporary-file-directory))
 	 (key-file (make-temp-name basename))
 	 (args 
