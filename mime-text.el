@@ -46,7 +46,8 @@ SITUATION.  It must be symbol."
 				   (or (mime-content-type-parameter
 					(mime-entity-content-type entity)
 					"charset")
-				       default-mime-charset))
+				       default-mime-charset)
+				   'CRLF)
        )))
   (run-hooks 'mime-text-decode-hook)
   )
