@@ -1799,8 +1799,8 @@ It calls function registered in variable
   (let ((r (assq (mime-preview-original-major-mode)
 		 mime-preview-quitting-method-alist)))
     (if r
-	(funcall (cdr r)))
-    (kill-buffer (current-buffer))))
+	(funcall (cdr r))
+      (kill-buffer (current-buffer)))))
 
 (defun mime-preview-kill-buffer ()
   (interactive)
