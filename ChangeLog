@@ -1,5 +1,7 @@
 1998-05-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* WEMI: Version 1.4.2 (Chigasaki) released.
+
 	* mime-view.el (mime-preview-move-to-previous): Must regard
 	previous entity separated by null property region.
 	(mime-preview-move-to-next): Must regard next entity separated by
