@@ -302,11 +302,6 @@ buffer です。MIME 書面は entity を単位とする木構造ですが、この
 	       可能性があるからである。 
 
 
-[buffer 局所変数] mime-preview-original-major-mode
-
-	対応する mime-raw-buffer における major-mode を示す。
-
-
 [buffer 局所変数] mime-preview-original-window-configuration
 
 	mime-preview-buffer を作る前の window-configuration を収める。
