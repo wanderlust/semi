@@ -714,38 +714,6 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
   '("From"))
 
 
-;;; @ X-Face
-;;;
-
-;; hack from Gnus 5.0.4.
-
-(defvar mime-view-x-face-to-pbm-command
-  "{ echo '/* Width=48, Height=48 */'; uncompface; } | icontopbm")
-
-(defvar mime-view-x-face-command
-  (concat mime-view-x-face-to-pbm-command
-	  " | xv -quit -")
-  "String to be executed to display an X-Face field.
-The command will be executed in a sub-shell asynchronously.
-The compressed face will be piped to this command.")
-
-(defun mime-view-x-face-function ()
-  "Function to display X-Face field. You can redefine to customize."
-  ;; 1995/10/12 (c.f. tm-eng:130)
-  ;;	fixed by Eric Ding <ericding@San-Jose.ate.slb.com>
-  (save-restriction
-    (narrow-to-region (point-min) (re-search-forward "^$" nil t))
-    ;; end
-    (goto-char (point-min))
-    (if (re-search-forward "^X-Face:[ \t]*" nil t)
-	(let ((beg (match-end 0))
-	      (end (std11-field-end))
-	      )
-	  (call-process-region beg end "sh" nil 0 nil
-			       "-c" mime-view-x-face-command)
-	  ))))
-
-
 ;;; @ buffer setup
 ;;;
 
@@ -835,7 +803,6 @@ The compressed face will be piped to this command.")
     (play	 "Play current entity"     mime-preview-play-current-entity)
     (extract	 "Extract current entity"  mime-preview-extract-current-entity)
     (print	 "Print current entity"    mime-preview-print-current-entity)
-    (x-face	 "Show X Face"             mime-preview-display-x-face)
     )
   "Menu for MIME Viewer")
 
@@ -1197,17 +1164,6 @@ It calls following-method selected from variable
 	      mode))
 	    ))
 	))))
-
-
-;;; @@ X-Face
-;;;
-
-(defun mime-preview-display-x-face ()
-  (interactive)
-  (save-window-excursion
-    (set-buffer mime-raw-buffer)
-    (mime-view-x-face-function)
-    ))
 
 
 ;;; @@ moving
