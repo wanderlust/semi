@@ -79,7 +79,8 @@
 	 process status exit-status)
     (when pgg-gpg-messages-locale
       (setq process-environment (copy-sequence process-environment))
-      (setenv "LC_ALL" pgg-gpg-messages-locale))
+      (setenv "LC_ALL" pgg-gpg-messages-locale)
+      (setenv "LANGUAGE" pgg-gpg-messages-locale))
     (with-current-buffer (get-buffer-create errors-buffer)
       (buffer-disable-undo)
       (erase-buffer))
