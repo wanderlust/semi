@@ -1,10 +1,15 @@
-1998-06-08  MORIOKA Tomohiko  <morioka@mousai.jaist.ac.jp>
+1998-06-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-delq-null-situation): New function.
+  	(mime-raw-play-entity): Use `mime-delq-null-situation'.
+
+1998-06-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* TODO (Better implementation for multipart/alternative): done.
 
 	* NEWS (type-subtype-score): New section.
 
-1998-06-07  MORIOKA Tomohiko  <morioka@mousai.jaist.ac.jp>
+1998-06-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el (mime-raw-message-info): Modify DOC-string.
 
