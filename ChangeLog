@@ -1,5 +1,15 @@
 1998-06-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* MIME-View-API-ja.ol (entity): Add description of
+ 	`mime-entity-number'.
+
+	* mime-play.el (mime-method-to-display-caesar): Use
+ 	`mime-entity-number'.
+
+	* mime-parse.el (mime-entity-number): New function.
+
+1998-06-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* MIME-View-API-ja.ol (entity-button): Modify description of
 	`mime-view-insert-entity-button'.
 
@@ -173,7 +183,7 @@
 
 1998-06-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.5.0 (Nishi-Ny-Dþzen)-A released.
+	* SEMI: Version 1.5.0 (Nishi-Ny-Dþzen) released.-A
 
 	* README.en (Required environment): Modify for FLIM 1.3.0.
 
@@ -225,7 +235,7 @@
 
 1998-06-01  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.4.6 (Ny-Dþzen)-A released.
+	* SEMI: Version 1.4.6 (Ny-Dþzen) released.-A
 
 1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -438,7 +448,7 @@
 
 1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.4.4 (Ecch-Dþ-Miyazaki)-A released.
+	* SEMI: Version 1.4.4 (Ecch-Dþ-Miyazaki) released.-A
 
 	* mime-play.el (mime-mailcap-method-filename-alist): New variable.
 	(mime-mailcap-method-sentinel): New function.
@@ -564,7 +574,7 @@
 
 1998-05-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.4.1 (-DÒmi)-A released.
+	* SEMI: Version 1.4.1 (-DÒmi) released.-A
 
 	* README.en (Required environment): Modify for FLIM 1.2.0.
 
@@ -724,7 +734,7 @@
 
 1998-04-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.3.2 (N-Dò)-A was released.
+	* SEMI: Version 1.3.2 (N-Dò) was released.-A
 
 	* mime-edit.el (mime-edit-mode-entity-prefix): New variable.
 	(mime-edit-mode-entity-map): New variable.
@@ -1379,7 +1389,7 @@
 
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae)-A was released.
+	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae) was released.-A
 
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -1491,7 +1501,7 @@
 
 1998-02-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae)-A was released.
+	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae) was released.-A
 
 	* SEMI-ELS: Remove mime-tar.el.
 
@@ -1628,7 +1638,7 @@
 
 1997-11-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.116 (D-Dòhòji)-A was released.
+	* SEMI: Version 0.116 (D-Dòhòji) was released.-A
 
 1997-11-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
