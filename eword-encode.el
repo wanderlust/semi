@@ -28,7 +28,7 @@
 (require 'mel)
 (require 'std11)
 (require 'mime-def)
-(require 'tl-list)
+(require 'cl)
 
 
 ;;; @ version
@@ -547,14 +547,14 @@ It refer variable `eword-field-encoding-method-alist'."
 	  (setq field-name (buffer-substring beg (1- (match-end 0))))
 	  (setq end (std11-field-end))
 	  (and (find-non-ascii-charset-region beg end)
-	       (let ((ret (or (ASSOC (downcase field-name)
-				     eword-field-encoding-method-alist
-				     :test (function
-					    (lambda (str1 str2)
-					      (and (stringp str2)
-						   (string= str1
-							    (downcase str2))
-						   ))))
+	       (let ((ret (or (let ((fname  (downcase field-name)))
+				(assoc-if
+				 (function
+				  (lambda (str)
+				    (and (stringp str)
+					 (string= fname (downcase str2))
+					 )))
+				 eword-field-encoding-method-alist))
 			      (assq t eword-field-encoding-method-alist)
 			      )))
 		 (if ret
@@ -588,16 +588,14 @@ It refer variable `eword-field-encoding-method-alist'."
 			   (setq str
 				 (encode-mime-charset-string
 				  str
-				  (or (cdr (ASSOC
-					    "x-nsubject"
-					    eword-field-encoding-method-alist
-					    :test
+				  (or (cdr (assoc-if
 					    (function
-					     (lambda (str1 str2)
-					       (and (stringp str2)
-						    (string= str1
+					     (lambda (str)
+					       (and (stringp str)
+						    (string= "x-nsubject"
 							     (downcase str2))
-						    )))))
+						    )))
+					    eword-field-encoding-method-alist))
 				      'iso-2022-jp-2)))
 			 )
 		       (insert (concat "\nX-Nsubject: " str))
