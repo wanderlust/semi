@@ -1,3 +1,8 @@
+1999-11-30  Tsukamoto Tetsuo  <czkmt@remus.dti.ne.jp>
+
+	* mime-edit.el (mime-edit-decode-message-in-buffer): Don't decode
+	the message header twice.
+	
 1999-11-30   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* pgg.el (pgg-remove-passphrase-cache): Add checking whether

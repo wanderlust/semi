@@ -2907,7 +2907,6 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 		))
 	    (mime-decode-header-in-buffer (not not-decode-text))
 	    ))
-      (mime-decode-header-in-buffer (not not-decode-text))
       )))
 
 ;;;###autoload
