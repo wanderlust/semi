@@ -1847,6 +1847,7 @@ Content-Transfer-Encoding: 7bit
               (insert (format "Content-Transfer-Encoding: %s\n" encoding))
             )
           (insert "\n")
+	  (eword-encode-header)
 	  (or (let ((pgg-default-user-id 
 		     (if from
 			 (nth 1 (std11-extract-address-components from))
