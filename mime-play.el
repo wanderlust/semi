@@ -140,15 +140,15 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 			  (list (car method)
 				mime-echo-buffer-name (car method)
 				)
-			  (mime-article/make-method-args cal
-							 (cdr (cdr method)))
+			  (mime-make-external-method-args
+			   cal (cdr (cdr method)))
 			  ))
 	      (apply (function start-process) args)
 	      (mime-show-echo-buffer)
 	      ))
 	))))
 
-(defun mime-article/make-method-args (cal format)
+(defun mime-make-external-method-args (cal format)
   (mapcar (function
 	   (lambda (arg)
 	     (if (stringp arg)
