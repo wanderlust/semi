@@ -1,3 +1,8 @@
+1998-08-10  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-normalize-body): Failed to canonicalize
+	empty lines.
+
 1998-08-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-w3.el (mime-preview-text/html): Insert dummy "\n" into end
