@@ -387,6 +387,14 @@ Each elements are regexp of field-name.")
 			   (body . visible)))
 
 (ctree-set-calist-strictly
+ 'mime-preview-condition '((type . message)(subtype . rfc822)
+			   (childrens-situation (header . visible))))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . message)(subtype . news)
+			   (childrens-situation (header . visible))))
+
+(ctree-set-calist-strictly
  'mime-preview-condition '((body . visible)
 			   (body-presentation-method . with-filter)
 			   (body-filter . mime-preview-filter-for-text/plain)))
@@ -723,19 +731,22 @@ The compressed face will be piped to this command.")
 	     (goto-char (point-max))
 	     (mime-view-insert-entity-button message-info message-info subj)
 	     ))
-      )
-    (setq ne (point-max))
-    (widen)
-    (put-text-property nb ne 'mime-view-raw-buffer ibuf)
-    (put-text-property nb ne 'mime-view-entity message-info)
-    (goto-char ne)
-    (let ((children (mime-entity-children message-info)))
-      (while children
-	(mime-view-display-entity (car children) message-info ibuf obuf)
-	(setq children (cdr children))
-	))))
+      (setq ne (point-max))
+      (widen)
+      (put-text-property nb ne 'mime-view-raw-buffer ibuf)
+      (put-text-property nb ne 'mime-view-entity message-info)
+      (goto-char ne)
+      (let ((children (mime-entity-children message-info))
+	    (default-situation
+	     (cdr (assq 'childrens-situation situation))))
+	(while children
+	  (mime-view-display-entity (car children) message-info ibuf obuf
+				    default-situation)
+	  (setq children (cdr children))
+	  )))))
 
-(defun mime-view-display-entity (entity message-info ibuf obuf)
+(defun mime-view-display-entity (entity message-info ibuf obuf
+					default-situation)
   (let* ((start (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))
 	 (media-type (mime-entity-media-type entity))
@@ -763,27 +774,30 @@ The compressed face will be piped to this command.")
     (if (mime-view-entity-button-visible-p entity message-info)
 	(mime-view-insert-entity-button entity message-info subj)
       )
-    (if (mime-view-header-visible-p entity message-info)
-	(save-restriction
-	  (narrow-to-region (point)(point))
-	  (insert-buffer-substring mime-raw-buffer start end-of-header)
-	  (let ((f (cdr (assq mime-preview-original-major-mode
-			      mime-view-content-header-filter-alist))))
-	    (if (functionp f)
-		(funcall f)
-	      (mime-view-default-content-header-filter)
-	      ))
-	  (run-hooks 'mime-view-content-header-filter-hook)
-	  ))
     (let* ((situation
 	    (ctree-match-calist mime-preview-condition
 				(list* (cons 'type       media-type)
 				       (cons 'subtype    media-subtype)
 				       (cons 'encoding   encoding)
 				       (cons 'major-mode major-mode)
-				       params)))
+				       (append params
+					       default-situation))))
+	   (header-is-visible
+	    (cdr (assq 'header situation)))
 	   (body-presentation-method
 	    (cdr (assq 'body-presentation-method situation))))
+      (if header-is-visible
+	  (save-restriction
+	    (narrow-to-region (point)(point))
+	    (insert-buffer-substring mime-raw-buffer start end-of-header)
+	    (let ((f (cdr (assq mime-preview-original-major-mode
+				mime-view-content-header-filter-alist))))
+	      (if (functionp f)
+		  (funcall f)
+		(mime-view-default-content-header-filter)
+		))
+	    (run-hooks 'mime-view-content-header-filter-hook)
+	    ))
       (cond ((eq body-presentation-method 'with-filter)
 	     (let ((body-filter (cdr (assq 'body-filter situation))))
 	       (save-restriction
@@ -797,17 +811,19 @@ The compressed face will be piped to this command.")
       (when (mime-view-entity-separator-visible-p entity message-info)
 	(goto-char (point-max))
 	(insert "\n"))
-      )
-    (setq ne (point-max))
-    (widen)
-    (put-text-property nb ne 'mime-view-raw-buffer ibuf)
-    (put-text-property nb ne 'mime-view-entity entity)
-    (goto-char ne)
-    (let ((children (mime-entity-children entity)))
-      (while children
-	(mime-view-display-entity (car children) message-info ibuf obuf)
-	(setq children (cdr children))
-	))))
+      (setq ne (point-max))
+      (widen)
+      (put-text-property nb ne 'mime-view-raw-buffer ibuf)
+      (put-text-property nb ne 'mime-view-entity entity)
+      (goto-char ne)
+      (let ((children (mime-entity-children entity))
+	    (default-situation
+	      (cdr (assq 'childrens-situation situation))))
+	(while children
+	  (mime-view-display-entity (car children) message-info ibuf obuf
+				    default-situation)
+	  (setq children (cdr children))
+	  )))))
 
 (defun mime-raw-get-uu-filename (param &optional encoding)
   (if (member (or encoding
