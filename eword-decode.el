@@ -39,8 +39,7 @@
   "Encoded-word decoding"
   :group 'mime)
 
-(defconst eword-decode-version
-  `,(mapconcat #'number-to-string (cddr mime-module-version) "."))
+(defconst eword-decode-version "1.2.2")
 
 
 ;;; @ MIME encoded-word definition
