@@ -48,7 +48,9 @@
 ;;; @ constants
 ;;;
 
-(defconst mime/output-buffer-name "*MIME-out*")
+(defconst mime-echo-buffer-name "*MIME-echo*"
+  "Name of buffer to display MIME-playing information.")
+
 (defconst mime/temp-buffer-name " *MIME-temp*")
 
 
