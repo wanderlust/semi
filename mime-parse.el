@@ -28,16 +28,6 @@
 (require 'std11)
 (require 'mime-def)
 
-(defsubst symbol-concat (&rest args)
-  "Return a symbol whose name is concatenation of arguments ARGS
-which are string or symbol."
-  (intern (mapconcat (function
-		      (lambda (s)
-			(cond ((symbolp s) (symbol-name s))
-			      ((stringp s) s)
-			      )))
-		     args "")))
-
 
 ;;; @ field parser
 ;;;
