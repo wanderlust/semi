@@ -200,13 +200,13 @@ mother-buffer."
     situation))
 
 (defsubst mime-delq-null-situation (situations field
-					       &optional ignored-value)
+					       &rest ignored-values)
   (let (dest)
     (while situations
       (let* ((situation (car situations))
 	     (cell (assq field situation)))
 	(if cell
-	    (or (eq (cdr cell) ignored-value)
+	    (or (memq (cdr cell) ignored-values)
 		(setq dest (cons situation dest))
 		)))
       (setq situations (cdr situations)))
@@ -275,7 +275,8 @@ mother-buffer."
 	  (ctree-find-calist condition entity-situation
 			     every-situations))
     (if required-name
-	(setq ret (mime-delq-null-situation ret required-name ignored-value)))
+	(setq ret (mime-delq-null-situation ret required-name
+					    ignored-value t)))
     (or (assq 'ignore-examples entity-situation)
 	(if (cdr ret)
 	    (let ((rest ret)
@@ -1464,8 +1465,7 @@ It calls following-method selected from variable
 	       (if (and (eq (mime-entity-media-type entity) 'message)
 			(eq (mime-entity-media-subtype entity) 'rfc822))
 		   (car (mime-entity-children entity))
-		 entity))
-	      str)
+		 entity)))
 	  (while (and current-entity
 		      (if (and (eq (mime-entity-media-type
 				    current-entity) 'message)
