@@ -238,7 +238,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 ;;;
 ;;; It is based on RFC 2015 (PGP/MIME).
 
-(defun mime-method-to-add-application/pgp-keys (entity situation)
+(defun mime-add-application/pgp-keys (entity situation)
   (let* ((start (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))
 	 (entity-number (mime-raw-point-to-entity-number start))

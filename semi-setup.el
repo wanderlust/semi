@@ -108,7 +108,7 @@
 	 (mime-add-condition
 	  'action
 	  '((type . application)(subtype . pgp-keys)
-	    (method . mime-method-to-add-application/pgp-keys))
+	    (method . mime-add-application/pgp-keys))
 	  'strict "mime-pgp")
 	 ))
   )
