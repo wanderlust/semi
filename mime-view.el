@@ -524,7 +524,7 @@ The compressed face will be piped to this command.")
     (narrow-to-region nb nb)
     (mime-view-entity-button-function rcnum cinfo ctype params subj encoding)
     (if (mime-view-header-visible-p rcnum cinfo)
-	(mime-preview/display-header beg he)
+	(mime-view-display-header beg he)
       )
     (if (and (null rcnum)
 	     (member
@@ -556,7 +556,7 @@ The compressed face will be piped to this command.")
     (goto-char ne)
     ))
 
-(defun mime-preview/display-header (beg end)
+(defun mime-view-display-header (beg end)
   (save-restriction
     (narrow-to-region (point)(point))
     (insert-buffer-substring mime-raw-buffer beg end)
