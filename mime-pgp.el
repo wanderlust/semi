@@ -175,9 +175,22 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
       (while (progn (end-of-line) (not (eobp)))
 	(insert "\r")
 	(forward-line 1))
-      (let ((pgg-output-buffer mime-echo-buffer-name))
-	(funcall (pgp-function 'verify) 
-		 (point-min)(point-max) sig-file)))
+      (let ((packet 
+	     (cdr (assq 2 (pgg-parse-armor (mime-entity-content entity)))))
+	    (pgg-output-buffer mime-echo-buffer-name)
+	    key)
+	(cond
+	 ((or (null (setq key (cdr (assq 'key-identifier packet))))
+	      (funcall (pgp-function 'lookup-key)
+		       (setq key (concat "0x" (pgg-truncate-key-identifier key)))))
+	  (funcall (pgp-function 'verify) 
+		   (point-min)(point-max) sig-file)
+	  )
+	 ((y-or-n-p
+	   (format "Key %s not found; attempt to fetch? " key))
+	  (mime-pgp-fetch-key 
+	   key (cdr (assq 'preferred-key-server packet)))
+	  ))))
     (delete-file sig-file)
     ))
 
@@ -332,6 +345,45 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
        ""))
     (run-hooks 'mime-display-application/pgp-keys-hook)
     ))
+
+
+;;; @ Internal method for fetching a public key
+;;;
+
+(defcustom mime-pgp-keyserver-url-template "/pks/lookup?op=get&search=%s"
+  "The URL to pass to the keyserver."
+  :group 'mime-pgp
+  :type 'string)
+
+(defcustom mime-pgp-keyserver-protocol "http"
+  "Protocol name of keyserver."
+  :group 'mime-pgp
+  :type 'string)
+
+(defcustom mime-pgp-keyserver-address "pgp.nic.ad.jp"
+  "Host name of keyserver."
+  :group 'mime-pgp
+  :type 'string)
+
+(defcustom mime-pgp-keyserver-port 11371
+  "Port on which the keyserver's HKP daemon lives."
+  :group 'mime-pgp
+  :type 'integer)
+
+(defun mime-pgp-fetch-key (string &optional url)
+  "Attempt to fetch a key for addition to PGP or GnuPG keyring.
+Interactively, prompt for string matching key to fetch.
+
+Return t if we think we were successful; nil otherwise.  Note that nil
+is not necessarily an error, since we may have merely fired off an Email
+request for the key."
+  (let ((url (or url 
+		 (concat mime-pgp-keyserver-protocol "://"
+			 mime-pgp-keyserver-address ":"
+			 mime-pgp-keyserver-port
+			 (format mime-pgp-keyserver-url-template
+				 string)))))
+    (pgg-fetch-key url)))
 
 
 ;;; @ end
