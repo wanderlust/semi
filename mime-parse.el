@@ -38,13 +38,13 @@
 (defsubst regexp-or (&rest args)
   (concat "\\(" (mapconcat (function identity) args "\\|") "\\)"))
 
-(defconst rfc822/quoted-pair-regexp "\\\\.")
+(defconst std11-quoted-pair-regexp "\\\\.")
 (defconst rfc822/qtext-regexp
   (concat "[^" (char-list-to-string std11-non-qtext-char-list) "]"))
 (defconst rfc822/quoted-string-regexp
   (concat "\""
 	  (regexp-*
-	   (regexp-or rfc822/qtext-regexp rfc822/quoted-pair-regexp)
+	   (regexp-or rfc822/qtext-regexp std11-quoted-pair-regexp)
 	   )
 	  "\""))
 
