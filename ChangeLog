@@ -1,5 +1,10 @@
 1998-05-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el (mime-activate-mailcap-method): Regard
+	'mime-temp-directory.
+
+1998-05-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-parse.el (make-mime-entity): Change interface and
 	data-format.
 	(mime-entity-content-type): New access function.
