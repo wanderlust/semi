@@ -1,5 +1,9 @@
 1999-07-27  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* SEMI: Version 1.13.5 (Meih-Dò)-A released.
+
+1999-07-27  MORIOKA Tomohiko  <tomo@m17n.org>
+
 	* NEWS (Don't expect raw-buffer): New subsection.
 	(Now acting-method must not expect to run in raw-buffer): Changed
 	as a subsubsection of subsection `Don't expect raw-buffer'.
