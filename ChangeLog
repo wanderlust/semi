@@ -1,5 +1,12 @@
 2000-12-28  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
+	* mime-view.el (mime-view-read-situation-examples-file): Don't try
+	to read situation-examples-file is it is nil.
+	(mime-situation-examples-file): Avoid to read
+	situation-examples-file at compile time.
+
+2000-12-28  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
 	* mime-view.el (mime-view-read-situation-examples-file): Display
 	warning. [cf. <emacs-mime-ja:680>]
 
