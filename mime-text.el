@@ -101,7 +101,7 @@ SITUATION.  It must be symbol."
 ;;; @ content filters for mime-text
 ;;;
 
-(defun mime-preview-text/plain (entity situation)
+(defun mime-display-text/plain (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
     (mime-text-insert-decoded-body entity)
@@ -110,7 +110,7 @@ SITUATION.  It must be symbol."
 	(insert "\n")
       )
     (mime-text-add-url-buttons)
-    (run-hooks 'mime-preview-text/plain-hook)
+    (run-hooks 'mime-display-text/plain-hook)
     ))
 
 (defun mime-preview-text/richtext (entity situation)
