@@ -47,8 +47,10 @@
 
 (defun mime-preview-text/html (entity situation)
   (setq mime-w3-message-structure
-	(with-current-buffer (mime-entity-buffer entity)
-	  mime-message-structure))
+	(let ((ent entity))
+	  (while (not (mime-root-entity-p ent))
+	    (setq ent (mime-entity-parent ent)))
+	  ent))
   (goto-char (point-max))
   (let ((p (point)))
     (insert "\n")
