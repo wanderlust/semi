@@ -124,34 +124,34 @@
       cs)))
 
 (defun detect-mime-charset-region (start end)
-  "Return MIME charset for region between START and END. [emu-e20.el]"
+  "Return MIME charset for region between START and END."
   (charsets-to-mime-charset
    (find-charset-string (buffer-substring start end))
    ))
 
 (defun encode-mime-charset-region (start end charset)
-  "Encode the text between START and END as MIME CHARSET. [emu-e20.el]"
+  "Encode the text between START and END as MIME CHARSET."
   (let ((cs (mime-charset-to-coding-system charset)))
     (if cs
 	(encode-coding-region start end cs)
       )))
 
 (defun decode-mime-charset-region (start end charset)
-  "Decode the text between START and END as MIME CHARSET. [emu-e20.el]"
+  "Decode the text between START and END as MIME CHARSET."
   (let ((cs (mime-charset-to-coding-system charset)))
     (if cs
 	(decode-coding-region start end cs)
       )))
 
 (defun encode-mime-charset-string (string charset)
-  "Encode the STRING as MIME CHARSET. [emu-e20.el]"
+  "Encode the STRING as MIME CHARSET."
   (let ((cs (mime-charset-to-coding-system charset)))
     (if cs
 	(encode-coding-string string cs)
       string)))
 
 (defun decode-mime-charset-string (string charset)
-  "Decode the STRING as MIME CHARSET. [emu-e20.el]"
+  "Decode the STRING as MIME CHARSET."
   (let ((cs (mime-charset-to-coding-system charset)))
     (if cs
 	(decode-coding-string string cs)
