@@ -491,9 +491,13 @@ if it is not nil.")
 
 (ctree-set-calist-strictly
  'mime-acting-condition
- '((type . text)(subtype . t)(mode . "play")
+ '((type . t)(subtype . t)(mode . "play")
    (method "metamail" t "-m" "tm" "-x" "-d" "-z" "-e" 'file)
    ))
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . t)(subtype . t)(mode . "extract")
+   (method . mime-method-to-save)))
 
 (ctree-set-calist-strictly
  'mime-acting-condition
@@ -565,11 +569,6 @@ if it is not nil.")
  '((type . message)(subtype . partial)(mode . "play")
    (method . mime-method-to-store-message/partial)
    ))
-
-(ctree-set-calist-strictly
- 'mime-acting-condition
- '((mode . "extract")
-   (method . mime-method-to-save)))
 
 (ctree-set-calist-strictly
  'mime-acting-condition
