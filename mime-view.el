@@ -32,6 +32,7 @@
 (require 'calist)
 (require 'alist)
 (require 'mime-conf)
+(require 'mcharset)
 
 (eval-when-compile (require 'static))
 
@@ -907,16 +908,13 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
     (mime-display-entity start nil default-situation)))
 
 (defun mime-view-insert-text-content (entity situation)
-  (if (eq last-command 'universal-coding-system-argument)
-      (insert
-       (decode-coding-string
-	(mime-decode-string
-	 (mime-entity-body entity)
-	 (or (cdr (assq 'encoding situation))
-	     (mime-entity-encoding entity)
-	     "7bit"))
-	coding-system-for-read))
-    (mime-insert-text-content entity)))
+  (insert
+   (decode-mime-charset-string
+    (mime-decode-string
+     (mime-entity-body entity)
+     (mime-view-default-content-transfer-encoding entity situation))
+    (mime-view-default-mime-charset entity situation)
+    'CRLF)))
 
 ;;; stolen (and renamed) from mm-view.el.
 (defun mime-view-insert-fontified-text-content (entity situation
@@ -1718,10 +1716,54 @@ If LINES is negative, scroll up LINES lines."
 ;;; @@ display
 ;;;
 
+(defun mime-view-default-content-transfer-encoding (entity situation)
+  (or (cdr (assq '*encoding situation))
+      (cdr (assq 'encoding situation))
+      (mime-entity-encoding entity)
+      "7bit"))
+
+(defun mime-view-read-content-transfer-encoding (entity situation)
+  (let* ((default-encoding
+	   (mime-view-default-content-transfer-encoding entity situation))
+	 (encoding
+	  (completing-read
+	   "Content Transfer Encoding: "
+	   (mime-encoding-alist) nil t default-encoding)))
+    (unless (or (string= encoding "")
+		(string= encoding default-encoding))
+      encoding)))
+
+(defun mime-view-default-mime-charset (entity situation)
+  (or (cdr (assq '*mime-charset situation))
+      (static-if (fboundp 'coding-system-to-mime-charset)
+	  ;; might be specified by `universal-coding-system-argument'.
+	  (and coding-system-for-read
+	       (coding-system-to-mime-charset coding-system-for-read)))
+      (mime-content-type-parameter
+       (mime-entity-content-type entity)
+       "charset")
+      default-mime-charset))
+
+(defun mime-view-read-mime-charset (entity situation)
+  (static-if (featurep 'mule)
+      (let* ((default-mime-charset
+	       (mime-view-default-mime-charset entity situation))
+	     (mime-charset
+	      (intern (completing-read "MIME-charset: "
+				       (mapcar
+					(lambda (sym)
+					  (list (symbol-name sym)))
+					(mime-charset-list))
+				       nil t
+				       (symbol-name default-mime-charset)))))
+	(unless (eq mime-charset default-mime-charset)
+	  mime-charset))
+    default-mime-charset))
+
 (defun mime-preview-toggle-display (type &optional display)
   (let ((situation (mime-preview-find-boundary-info))
 	(sym (intern (concat "*" (symbol-name type))))
-	entity p-beg p-end)
+	entity p-beg p-end encoding mime-charset)
     (setq p-beg (aref situation 0)
 	  p-end (aref situation 1)
 	  entity (aref situation 2)
@@ -1738,6 +1780,13 @@ If LINES is negative, scroll up LINES lines."
 				       'visible
 				     'invisible)
 			       situation))
+    (when (and current-prefix-arg
+	       (eq (cdr (assq sym situation)) 'visible))
+      (if (setq encoding (mime-view-read-content-transfer-encoding
+			  entity situation))
+	  (put-alist '*encoding encoding situation))
+      (if (setq mime-charset (mime-view-read-mime-charset entity situation))
+	  (put-alist '*mime-charset mime-charset situation)))
     (save-excursion
       (let ((inhibit-read-only t))
 	(delete-region p-beg p-end)
