@@ -30,6 +30,11 @@
 (require 'mime-def)
 (require 'cl)
 
+(defsubst find-non-ascii-charset-string (string)
+  "Return a list of charsets in the STRING except ascii."
+  (delq 'ascii (find-charset-string string))
+  )
+
 
 ;;; @ version
 ;;;
