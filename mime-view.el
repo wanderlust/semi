@@ -31,7 +31,6 @@
 (require 'mel)
 (require 'eword-decode)
 (require 'mime-parse)
-(require 'mime-text)
 (require 'calist)
 
 
@@ -291,19 +290,6 @@ Please redefine this function if you want to change default setting."
   (eword-decode-header)
   )
 
-(defun mime-view-display-header (beg end)
-  (save-restriction
-    (narrow-to-region (point)(point))
-    (insert-buffer-substring mime-raw-buffer beg end)
-    (let ((f (cdr (assq mime-preview-original-major-mode
-			mime-view-content-header-filter-alist))))
-      (if (functionp f)
-	  (funcall f)
-	(mime-view-default-content-header-filter)
-	))
-    (run-hooks 'mime-view-content-header-filter-hook)
-    ))
-
 ;;; @@@ entity field cutter
 ;;;
 
@@ -400,18 +386,26 @@ Each element looks like (TYPE/SUBTYPE . FUNCTION) or (t . FUNCTION).
 TYPE/SUBTYPE is a string of media-type and FUNCTION is a filter
 function.  t means default media-type.")
 
-(defun mime-view-display-body (start end entity message-info subj)
-  (save-restriction
-    (narrow-to-region (point-max)(point-max))
-    (insert-buffer-substring mime-raw-buffer start end)
-    (let* ((ctype (mime-entity-type/subtype entity))
-	   (params (mime-entity-parameters entity))
-	   (encoding (mime-entity-encoding entity))
-	   (f (cdr (or (assoc ctype mime-view-content-filter-alist)
-		       (assq t mime-view-content-filter-alist)))))
-      (and (functionp f)
-	   (funcall f ctype params encoding))
-      )))
+
+(autoload 'mime-view-filter-for-text/plain "mime-text")
+(autoload 'mime-view-filter-for-text/enriched "mime-text")
+(autoload 'mime-view-filter-for-text/richtext "mime-text")
+
+(defvar mime-text-decoder-alist
+  '((mime-show-message-mode	. mime-text-decode-buffer)
+    (mime-temp-message-mode	. mime-text-decode-buffer)
+    (t				. mime-text-decode-buffer-maybe)
+    )
+  "Alist of major-mode vs. mime-text-decoder.
+Each element looks like (SYMBOL . FUNCTION).  SYMBOL is major-mode or
+t.  t means default.
+
+Specification of FUNCTION is described in DOC-string of variable
+`mime-text-decoder'.
+
+This value is overridden by buffer local variable `mime-text-decoder'
+if it is not nil.")
+
 
 (defvar mime-view-announcement-for-message/partial
   (if (and (>= emacs-major-version 19) window-system)
@@ -441,15 +435,10 @@ function.  t means default media-type.")
 ;;; @@ entity separator
 ;;;
 
-(defun mime-view-entity-separator-function (entity message-info)
-  "Insert entity-separator of ENTITY conditionally.
-Please redefine this function if you want to change default setting."
-  (or (mime-view-header-visible-p entity message-info)
-      (mime-view-body-visible-p entity message-info)
-      (progn
-	(goto-char (point-max))
-	(insert "\n")
-	)))
+(defun mime-view-entity-separator-visible-p (entity message-info)
+  "Return non-nil if separator is needed for ENTITY."
+  (and (not (mime-view-header-visible-p entity message-info))
+       (not (mime-view-body-visible-p entity message-info))))
 
 
 ;;; @ acting-condition
@@ -627,7 +616,7 @@ The compressed face will be piped to this command.")
 
 (defun mime-view-display-entity (entity message-info ibuf obuf)
   "Display ENTITY."
-  (let* ((beg (mime-entity-point-min entity))
+  (let* ((start (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))
 	 (media-type (mime-entity-media-type entity))
 	 (media-subtype (mime-entity-media-subtype entity))
@@ -639,17 +628,17 @@ The compressed face will be piped to this command.")
 	 (params (mime-entity-parameters entity))
 	 (encoding (mime-entity-encoding entity))
 	 (entity-node-id (mime-entity-node-id entity))
-	 he e nb ne subj)
+	 end-of-header e nb ne subj)
     (set-buffer ibuf)
-    (goto-char beg)
-    (setq he (if (re-search-forward "^$" nil t)
-		 (1+ (match-end 0))
-	       end))
-    (if (> he end)
-	(setq he end)
+    (goto-char start)
+    (setq end-of-header (if (re-search-forward "^$" nil t)
+			    (1+ (match-end 0))
+			  end))
+    (if (> end-of-header end)
+	(setq end-of-header end)
       )
     (save-restriction
-      (narrow-to-region beg end)
+      (narrow-to-region start end)
       (setq subj
 	    (eword-decode-string
 	     (mime-raw-get-subject params encoding)))
@@ -661,8 +650,17 @@ The compressed face will be piped to this command.")
 	(mime-view-insert-entity-button entity message-info subj)
       )
     (if (mime-view-header-visible-p entity message-info)
-	(mime-view-display-header beg he)
-      )
+	(save-restriction
+	  (narrow-to-region (point)(point))
+	  (insert-buffer-substring mime-raw-buffer start end-of-header)
+	  (let ((f (cdr (assq mime-preview-original-major-mode
+			      mime-view-content-header-filter-alist))))
+	    (if (functionp f)
+		(funcall f)
+	      (mime-view-default-content-header-filter)
+	      ))
+	  (run-hooks 'mime-view-content-header-filter-hook)
+	  ))
     (if (and (mime-root-entity-p entity)
 	     (member
 	      ctype mime-view-content-button-visible-ctype-list))
@@ -671,8 +669,14 @@ The compressed face will be piped to this command.")
 	  (mime-view-insert-entity-button entity message-info subj)
 	  ))
     (cond ((mime-view-body-visible-p entity message-info)
-	   (mime-view-display-body he end entity message-info subj)
-	   )
+	   (save-restriction
+	     (narrow-to-region (point-max)(point-max))
+	     (insert-buffer-substring mime-raw-buffer end-of-header end)
+	     (let ((f (cdr (or (assoc ctype mime-view-content-filter-alist)
+			       (assq t mime-view-content-filter-alist)))))
+	       (and (functionp f)
+		    (funcall f ctype params encoding))
+	       )))
 	  ((and (eq media-type 'message)(eq media-subtype 'partial))
 	   (mime-view-insert-message/partial-button)
 	   )
@@ -682,7 +686,9 @@ The compressed face will be piped to this command.")
 	   (goto-char (point-max))
 	   (mime-view-insert-entity-button entity message-info subj)
 	   ))
-    (mime-view-entity-separator-function entity message-info)
+    (when (mime-view-entity-separator-visible-p entity message-info)
+      (goto-char (point-max))
+      (insert "\n"))
     (setq ne (point-max))
     (widen)
     (put-text-property nb ne 'mime-view-raw-buffer ibuf)
