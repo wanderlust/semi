@@ -1,3 +1,12 @@
+1998-04-10  MORIOKA Tomohiko  <morioka@mousai.jaist.ac.jp>
+
+	* mime-parse.el (regexp-or): Moved from semi-def.el.
+
+	* semi-def.el: Move 'regexp-or to mime-parse.el.
+	Move 'eliminate-top-spaces to mime-def.el.
+
+	* mime-def.el (eliminate-top-spaces): Moved from semi-def.el.
+
 1998-04-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI-ELS (semi-modules-to-compile): Add 'semi-def.
