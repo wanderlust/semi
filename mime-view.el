@@ -189,6 +189,7 @@ If optional argument MESSAGE-INFO is not specified,
 	    (setq children (cdr children)))
 	  message-info))))
 
+
 (defsubst mime-entity-parent (entity &optional message-info)
   "Return mother entity of ENTITY.
 If optional argument MESSAGE-INFO is not specified,
@@ -210,6 +211,39 @@ If optional argument MESSAGE-INFO is not specified,
 			(set-buffer (mime-entity-buffer entity))
 			major-mode)))
 	  ))
+
+
+(defvar mime-view-uuencode-encoding-name-list '("x-uue" "x-uuencode"))
+
+(defun mime-raw-get-uu-filename ()
+  (save-excursion
+    (if (re-search-forward "^begin [0-9]+ " nil t)
+	(if (looking-at ".+$")
+	    (buffer-substring (match-beginning 0)(match-end 0))
+	  ))))
+
+(defun mime-raw-get-subject (entity)
+  (or (std11-find-field-body '("Content-Description" "Subject"))
+      (let ((ret (mime-entity-content-disposition entity)))
+	(and ret
+	     (setq ret (mime-content-disposition-filename ret))
+	     (std11-strip-quoted-string ret)
+	     ))
+      (let ((ret (mime-entity-content-type entity)))
+	(and ret
+	     (setq ret
+		   (cdr
+		    (let ((param (mime-content-type-parameters ret)))
+		      (or (assoc "name" param)
+			  (assoc "x-name" param))
+		      )))
+	     (std11-strip-quoted-string ret)
+	     ))
+      (if (member (mime-entity-encoding entity)
+		  mime-view-uuencode-encoding-name-list)
+	  (mime-raw-get-uu-filename))
+      ""))
+
 
 (defsubst mime-raw-point-to-entity-node-id (point &optional message-info)
   "Return entity-node-id from POINT in mime-raw-buffer.
@@ -788,52 +822,8 @@ The compressed face will be piped to this command.")
 	  ))))
 
 
-;;; @ miscellaneous
-;;;
-
-(defvar mime-view-uuencode-encoding-name-list '("x-uue" "x-uuencode"))
-
-
 ;;; @ buffer setup
 ;;;
-
-(defvar mime-view-redisplay nil)
-
-(defun mime-view-setup-buffers (&optional ctl encoding ibuf obuf)
-  (if ibuf
-      (progn
-	(get-buffer ibuf)
-	(set-buffer ibuf)
-	))
-  (or mime-view-redisplay
-      (setq mime-raw-message-info (mime-parse-message ctl encoding))
-      )
-  (let ((message-info mime-raw-message-info)
-	(the-buf (current-buffer))
-	(mode major-mode))
-    (or obuf
-	(setq obuf (concat "*Preview-" (buffer-name the-buf) "*")))
-    (set-buffer (get-buffer-create obuf))
-    (let ((inhibit-read-only t))
-      ;;(setq buffer-read-only nil)
-      (widen)
-      (erase-buffer)
-      (setq mime-raw-buffer the-buf)
-      (setq mime-preview-original-major-mode mode)
-      (setq major-mode 'mime-view-mode)
-      (setq mode-name "MIME-View")
-      (mime-view-display-entity message-info message-info
-				the-buf obuf
-				'((entity-button . invisible)
-				  (header . visible)
-				  ))
-      (set-buffer-modified-p nil)
-      )
-    (setq buffer-read-only t)
-    (set-buffer the-buf)
-    )
-  (setq mime-preview-buffer obuf)
-  )
 
 (defun mime-view-display-entity (entity message-info ibuf obuf
 					default-situation
@@ -919,34 +909,34 @@ The compressed face will be piped to this command.")
 	    ))
       )))
 
-(defun mime-raw-get-uu-filename ()
-  (save-excursion
-    (if (re-search-forward "^begin [0-9]+ " nil t)
-	(if (looking-at ".+$")
-	    (buffer-substring (match-beginning 0)(match-end 0))
-	  ))))
-
-(defun mime-raw-get-subject (entity)
-  (or (std11-find-field-body '("Content-Description" "Subject"))
-      (let ((ret (mime-entity-content-disposition entity)))
-	(and ret
-	     (setq ret (mime-content-disposition-filename ret))
-	     (std11-strip-quoted-string ret)
-	     ))
-      (let ((ret (mime-entity-content-type entity)))
-	(and ret
-	     (setq ret
-		   (cdr
-		    (let ((param (mime-content-type-parameters ret)))
-		      (or (assoc "name" param)
-			  (assoc "x-name" param))
-		      )))
-	     (std11-strip-quoted-string ret)
-	     ))
-      (if (member (mime-entity-encoding entity)
-		  mime-view-uuencode-encoding-name-list)
-	  (mime-raw-get-uu-filename))
-      ""))
+(defun mime-view-display-message (message &optional preview-buffer)
+  (let ((win-conf (current-window-configuration))
+	(raw-buffer (mime-entity-buffer message))
+	(mode major-mode))
+    (or preview-buffer
+	(setq preview-buffer
+	      (concat "*Preview-" (buffer-name raw-buffer) "*")))
+    (let ((inhibit-read-only t))
+      (set-buffer (get-buffer-create preview-buffer))
+      (widen)
+      (erase-buffer)
+      (setq mime-raw-buffer raw-buffer)
+      (setq mime-preview-original-major-mode mode)
+      (setq mime-preview-original-window-configuration win-conf)
+      (setq major-mode 'mime-view-mode)
+      (setq mode-name "MIME-View")
+      (mime-view-display-entity message message
+				raw-buffer preview-buffer
+				'((entity-button . invisible)
+				  (header . visible)
+				  ))
+      (set-buffer-modified-p nil)
+      )
+    (setq buffer-read-only t)
+    (set-buffer raw-buffer)
+    )
+  (switch-to-buffer (setq mime-preview-buffer preview-buffer))
+  )
 
 
 ;;; @ MIME viewer mode
@@ -1085,6 +1075,8 @@ The compressed face will be piped to this command.")
 	  (bury-buffer buf)
 	  ))))
 
+(defvar mime-view-redisplay nil)
+
 (defun mime-view-mode (&optional mother ctl encoding ibuf obuf
 				 default-keymap-or-function)
   "Major mode for viewing MIME message.
@@ -1112,12 +1104,16 @@ button-2	Move to point under the mouse cursor
 "
   (interactive)
   (mime-maybe-hide-echo-buffer)
-  (let ((ret (mime-view-setup-buffers ctl encoding ibuf obuf))
-	(win-conf (current-window-configuration))
-	)
+  (let ((message
+	 (save-excursion
+	   (if ibuf
+	       (set-buffer ibuf)
+	     )
+	   (or mime-view-redisplay
+	       (setq mime-raw-message-info (mime-parse-message ctl encoding))
+	       ))))
     (prog1
-	(switch-to-buffer ret)
-      (setq mime-preview-original-window-configuration win-conf)
+	(mime-view-display-message message obuf)
       (if mother
 	  (progn
 	    (setq mime-mother-buffer mother)
