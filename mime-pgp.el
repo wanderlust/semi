@@ -106,24 +106,20 @@
 	    (point-max))
 	   (goto-char (point-min))
 	   (while (re-search-forward "^- -" nil t)
-	     (replace-match "-")
-	     )
+	     (replace-match "-"))
 	   (setq representation-type (if (mime-entity-cooked-p entity)
-					 'cooked))
-	   )
+					 'cooked)))
 	  ((progn
 	     (goto-char (point-min))
 	     (re-search-forward "^-+BEGIN PGP MESSAGE-+$" nil t))
 	   (pgg-decrypt-region (point-min)(point-max))
 	   (delete-region (point-min)(point-max))
 	   (insert-buffer pgg-output-buffer)
-	   (setq representation-type 'binary)
-	   ))
+	   (setq representation-type 'binary)))
     (setq major-mode 'mime-show-message-mode)
     (save-window-excursion (mime-view-buffer nil preview-buffer mother
 					     nil representation-type))
-    (set-window-buffer p-win preview-buffer)
-    ))
+    (set-window-buffer p-win preview-buffer)))
 
 
 ;;; @ Internal method for application/pgp-signature
@@ -148,8 +144,7 @@
       (set-buffer mime-echo-buffer-name)
       (set-window-start 
        (get-buffer-window mime-echo-buffer-name)
-       (point-max))
-      )
+       (point-max)))
     (mime-write-entity-content entity sig-file)
     (unwind-protect
 	(with-temp-buffer
@@ -164,8 +159,7 @@
 	    (set-buffer mime-echo-buffer-name)
 	    (insert-buffer-substring (if status pgg-output-buffer
 				       pgg-errors-buffer))))
-      (delete-file sig-file))
-    ))
+      (delete-file sig-file))))
 
 
 ;;; @ Internal method for application/pgp-encrypted
@@ -181,8 +175,7 @@
 		   (1- knum)
 		 (1+ knum)))
 	 (orig-entity (nth onum (mime-entity-children mother))))
-    (mime-view-application/pgp orig-entity situation)
-    ))
+    (mime-view-application/pgp orig-entity situation)))
 
 
 ;;; @ Internal method for application/pgp-keys
@@ -196,8 +189,7 @@
     (set-buffer mime-echo-buffer-name)
     (set-window-start 
      (get-buffer-window mime-echo-buffer-name)
-     (point-max))
-    )
+     (point-max)))
   (with-temp-buffer
     (mime-insert-entity-content entity)
     (mime-decode-region (point-min) (point-max)
@@ -206,8 +198,7 @@
       (save-excursion 
 	(set-buffer mime-echo-buffer-name)
 	(insert-buffer-substring (if status pgg-output-buffer
-				   pgg-errors-buffer)))
-      )))
+				   pgg-errors-buffer))))))
 
 
 ;;; @ Internal method for application/pkcs7-signature
@@ -231,8 +222,7 @@
       (set-buffer mime-echo-buffer-name)
       (set-window-start 
        (get-buffer-window mime-echo-buffer-name)
-       (point-max))
-      )
+       (point-max)))
     (mime-write-entity entity sig-file)
     (unwind-protect
 	(with-temp-buffer
@@ -247,35 +237,34 @@
 	    (set-buffer mime-echo-buffer-name)
 	    (insert-buffer-substring (if status smime-output-buffer
 				       smime-errors-buffer))))
-      (delete-file sig-file))
-    ))
+      (delete-file sig-file))))
 
 
 ;;; @ Internal method for application/pkcs7-mime
 ;;;
 ;;; It is based on RFC 2633 (S/MIME version 3).
 
-(defun mime-decrypt-application/pkcs7-mime (entity situation)
+(defun mime-view-application/pkcs7-mime (entity situation)
   (let* ((p-win (or (get-buffer-window (current-buffer))
 		    (get-largest-window)))
 	 (new-name
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
 	 (mother (current-buffer))
-	 (preview-buffer (concat "*Preview-" (buffer-name) "*"))
-	 representation-type)
-    (set-buffer (get-buffer-create new-name))
-    (let ((inhibit-read-only t)
-	  buffer-read-only)
-      (erase-buffer)
-      (mime-insert-entity entity)
-      (smime-decrypt-region (point-min)(point-max))
-      (delete-region (point-min)(point-max))
-      (insert-buffer smime-output-buffer))
-    (setq major-mode 'mime-show-message-mode)
-    (save-window-excursion (mime-view-buffer nil preview-buffer mother
-					     nil 'binary))
-    (set-window-buffer p-win preview-buffer)
-    ))
+	 (preview-buffer (concat "*Preview-" (buffer-name) "*")))
+    (when (memq (or (cdr (assq 'smime-type situation)) enveloped-data)
+		'(enveloped-data signed-data))
+      (set-buffer (get-buffer-create new-name))
+      (let ((inhibit-read-only t)
+	    buffer-read-only)
+	(erase-buffer)
+	(mime-insert-entity entity)
+	(smime-decrypt-region (point-min)(point-max))
+	(delete-region (point-min)(point-max))
+	(insert-buffer smime-output-buffer))
+      (setq major-mode 'mime-show-message-mode)
+      (save-window-excursion (mime-view-buffer nil preview-buffer mother
+					       nil 'binary))
+      (set-window-buffer p-win preview-buffer))))
 
 
 ;;; @ end
