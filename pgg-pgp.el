@@ -203,8 +203,14 @@
 				   start end &optional signature)
   (let* ((basename (expand-file-name "pgg" temporary-file-directory))
 	 (orig-file (make-temp-name basename))
-	 (args '("+verbose=1" "+batchmode" "+language=us")))
-    (write-region-as-binary start end orig-file)
+	 (args '("+verbose=1" "+batchmode" "+language=us"))
+	 (orig-mode (default-file-modes)))
+    (unwind-protect
+	(progn
+	  (set-default-file-modes 448)
+	  (write-region-as-binary start end orig-file)
+	  )
+      (set-default-file-modes orig-mode))
     (when (stringp signature)
       (copy-file signature (setq signature (concat orig-file ".asc")))
       (setq args (append args (list signature orig-file)))
