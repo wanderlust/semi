@@ -1,5 +1,17 @@
 1999-11-04  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* mime-edit.el (mime-edit-set-sign): Preserve last status of
+	`mime-edit-pgp-processing'.
+	(mime-edit-set-encrypt): Ditto.
+	(mime-edit-pgp-enclose-buffer): Process
+	`mime-edit-pgp-enclose-buffer' consequently.
+
+	* pgg-parse.el (pgg-decode-packets): Don't use
+	`mime-encode-string'.
+	(pgg-ignore-packet-checksum): Default to t.
+
+1999-11-04  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
 	* pgg.el: Rename the field name `cipher-algorithm' to
 	`symmetric-key-algorithm'.
 	(pgg-verify-condition): Fix documentation.
