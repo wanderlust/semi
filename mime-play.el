@@ -61,12 +61,12 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 It decodes the entity to call internal or external method.  The method
 is selected from variable `mime-acting-condition'.  If MODE is
 specified, play as it.  Default MODE is \"play\"."
-  (let ((beg (mime-entity-info-point-min entity-info))
-	(end (mime-entity-info-point-max entity-info))
-	(c-type (mime-entity-info-media-type entity-info))
-	(c-subtype (mime-entity-info-media-subtype entity-info))
-	(params (mime-entity-info-parameters entity-info))
-	(encoding (mime-entity-info-encoding entity-info))
+  (let ((beg (mime-entity-point-min entity-info))
+	(end (mime-entity-point-max entity-info))
+	(c-type (mime-entity-media-type entity-info))
+	(c-subtype (mime-entity-media-subtype entity-info))
+	(params (mime-entity-parameters entity-info))
+	(encoding (mime-entity-encoding entity-info))
 	)
     (or c-type
 	(setq c-type 'text

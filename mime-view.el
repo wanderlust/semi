@@ -51,7 +51,7 @@
 
 (defvar mime-raw-message-info
   "Information about structure of message.
-Please use reference function `mime-entity-info-SLOT' to get value of
+Please use reference function `mime-entity-SLOT' to get value of
 SLOT.
 
 Following is a list of slots of the structure:
@@ -104,8 +104,8 @@ message/partial, it is called `mother-buffer'.")
 
 (defun mime-view-insert-entity-button (entity message-info subj)
   "Insert entity-button of ENTITY."
-  (let ((entity-node-id (mime-entity-info-node-id entity))
-	(params (mime-entity-info-parameters entity)))
+  (let ((entity-node-id (mime-entity-node-id entity))
+	(params (mime-entity-parameters entity)))
     (mime-insert-button
      (let ((access-type (assoc "access-type" params))
 	   (num (or (cdr (assoc "x-part-number" params))
@@ -131,10 +131,10 @@ message/partial, it is called `mother-buffer'.")
 		  )))
 	    )
 	   (t
-	    (let ((media-type (mime-entity-info-media-type entity))
-		  (media-subtype (mime-entity-info-media-subtype entity))
+	    (let ((media-type (mime-entity-media-type entity))
+		  (media-subtype (mime-entity-media-subtype entity))
 		  (charset (cdr (assoc "charset" params)))
-		  (encoding (mime-entity-info-encoding entity)))
+		  (encoding (mime-entity-encoding entity)))
 	      (concat
 	       num " " subj
 	       (let ((rest
@@ -156,9 +156,9 @@ message/partial, it is called `mother-buffer'.")
 (defun mime-view-entity-button-function (entity message-info subj)
   "Insert entity-button of ENTITY conditionally.
 Please redefine this function if you want to change default setting."
-  (let ((entity-node-id (mime-entity-info-node-id entity))
-	(media-type (mime-entity-info-media-type entity))
-	(media-subtype (mime-entity-info-media-subtype entity)))
+  (let ((entity-node-id (mime-entity-node-id entity))
+	(media-type (mime-entity-media-type entity))
+	(media-subtype (mime-entity-media-subtype entity)))
     (or (null entity-node-id)
 	(and (eq media-type 'application)
 	     (or (eq media-subtype 'x-selection)
@@ -166,9 +166,9 @@ Please redefine this function if you want to change default setting."
 		      (let ((mother-entity
 			     (mime-raw-entity-node-id-to-entity-info
 			      (cdr entity-node-id) message-info)))
-			(and (eq (mime-entity-info-media-type mother-entity)
+			(and (eq (mime-entity-media-type mother-entity)
 				 'multipart)
-			     (eq (mime-entity-info-media-subtype mother-entity)
+			     (eq (mime-entity-media-subtype mother-entity)
 				 'encrypted)
 			     )))))
 	(mime-view-insert-entity-button entity message-info subj)
@@ -186,9 +186,9 @@ Please redefine this function if you want to change default setting."
 
 (defun mime-view-header-visible-p (entity message-info)
   "Return non-nil if header of ENTITY is visible."
-  (let ((entity-node-id (mime-entity-info-node-id entity)))
+  (let ((entity-node-id (mime-entity-node-id entity)))
     (or (null entity-node-id)
-	(member (mime-entity-info-type/subtype
+	(member (mime-entity-type/subtype
 		 (mime-raw-entity-node-id-to-entity-info
 		  (cdr entity-node-id) message-info))
 		mime-view-childrens-header-showing-Content-Type-list)
@@ -279,13 +279,13 @@ Each elements are string of TYPE/SUBTYPE, e.g. \"text/plain\".")
 
 (defun mime-view-body-visible-p (entity message-info)
   "Return non-nil if body of ENTITY is visible."
-  (let ((media-type (mime-entity-info-media-type entity))
-	(media-subtype (mime-entity-info-media-subtype entity))
-	(ctype (mime-entity-info-type/subtype entity)))
+  (let ((media-type (mime-entity-media-type entity))
+	(media-subtype (mime-entity-media-subtype entity))
+	(ctype (mime-entity-type/subtype entity)))
     (and (member ctype mime-view-visible-media-type-list)
 	 (if (and (eq media-type 'application)
 		  (eq media-subtype 'octet-stream))
-	     (member (mime-entity-info-encoding entity-info)
+	     (member (mime-entity-encoding entity-info)
 		     '(nil "7bit" "8bit"))
 	   t))))
 
@@ -526,18 +526,18 @@ The compressed face will be piped to this command.")
 
 (defun mime-view-display-entity (entity message-info ibuf obuf)
   "Display ENTITY."
-  (let* ((beg (mime-entity-info-point-min entity))
-	 (end (mime-entity-info-point-max entity))
-	 (media-type (mime-entity-info-media-type entity))
-	 (media-subtype (mime-entity-info-media-subtype entity))
+  (let* ((beg (mime-entity-point-min entity))
+	 (end (mime-entity-point-max entity))
+	 (media-type (mime-entity-media-type entity))
+	 (media-subtype (mime-entity-media-subtype entity))
 	 (ctype (if media-type
 		    (if media-subtype
 			(format "%s/%s" media-type media-subtype)
 		      (symbol-name media-type)
 		      )))
-	 (params (mime-entity-info-parameters entity))
-	 (encoding (mime-entity-info-encoding entity))
-	 (entity-node-id (mime-entity-info-node-id entity))
+	 (params (mime-entity-parameters entity))
+	 (encoding (mime-entity-encoding entity))
+	 (entity-node-id (mime-entity-node-id entity))
 	 he e nb ne subj)
     (set-buffer ibuf)
     (goto-char beg)
@@ -576,7 +576,7 @@ The compressed face will be piped to this command.")
 	   (mime-view-insert-message/partial-button)
 	   )
 	  ((and (null entity-node-id)
-		(null (mime-entity-info-children message-info))
+		(null (mime-entity-children message-info))
 		)
 	   (goto-char (point-max))
 	   (mime-view-insert-entity-button entity message-info subj)
@@ -626,9 +626,9 @@ If optional argument MESSAGE-INFO is not specified,
 `mime-raw-message-info' is used."
   (or message-info
       (setq message-info mime-raw-message-info))
-  (let ((b (mime-entity-info-point-min message-info))
-	(e (mime-entity-info-point-max message-info))
-	(c (mime-entity-info-children message-info))
+  (let ((b (mime-entity-point-min message-info))
+	(e (mime-entity-point-max message-info))
+	(c (mime-entity-children message-info))
 	)
     (if (and (<= b position)(<= position e))
 	(or (let (co ret (sn 0))
@@ -670,7 +670,7 @@ If optional argument MESSAGE-INFO is not specified,
     (let ((sn (car entity-number)))
       (if (null sn)
 	  message-info
-	(let ((rc (nth sn (mime-entity-info-children message-info))))
+	(let ((rc (nth sn (mime-entity-children message-info))))
 	  (if rc
 	      (mime-raw-entity-number-to-entity-info (cdr entity-number) rc)
 	    ))
@@ -683,7 +683,7 @@ If optional argument MESSAGE-INFO is not specified,
   (or message-info
       (setq message-info mime-raw-message-info))
   (let ((dest (list message-info))
-	(rcl (mime-entity-info-children message-info)))
+	(rcl (mime-entity-children message-info)))
     (while rcl
       (setq dest (nconc dest (mime-raw-flatten-message-info (car rcl))))
       (setq rcl (cdr rcl)))
@@ -927,7 +927,7 @@ It calls following-method selected from variable
     (let* ((p-beg
 	    (previous-single-property-change (point) 'mime-view-entity-info))
 	   p-end
-	   (entity-node-id (mime-entity-info-node-id entity))
+	   (entity-node-id (mime-entity-node-id entity))
 	   (len (length entity-node-id))
 	   )
       (cond ((null p-beg)
@@ -958,7 +958,7 @@ It calls following-method selected from variable
 				(next-single-property-change
 				 (point) 'mime-view-entity-info))
 		     (goto-char e)
-		     (let ((rc (mime-entity-info-node-id
+		     (let ((rc (mime-entity-node-id
 				(get-text-property (point)
 						   'mime-view-entity-info))))
 		       (or (equal entity-node-id
@@ -991,7 +991,7 @@ It calls following-method selected from variable
 	  (goto-char (point-min))
 	  (insert "\n")
 	  (goto-char (point-min))
-	  (let ((entity-node-id (mime-entity-info-node-id entity)) ci str)
+	  (let ((entity-node-id (mime-entity-node-id entity)) ci str)
 	    (while (progn
 		     (setq
 		      str
@@ -1003,16 +1003,16 @@ It calls following-method selected from variable
 			  entity-node-id))
 			(save-restriction
 			  (narrow-to-region
-			   (mime-entity-info-point-min ci)
-			   (mime-entity-info-point-max ci)
+			   (mime-entity-point-min ci)
+			   (mime-entity-point-max ci)
 			   )
 			  (std11-header-string-except
 			   (concat "^"
 				   (apply (function regexp-or) fields)
 				   ":") ""))))
 		     (if (and
-			  (eq (mime-entity-info-media-type ci) 'message)
-			  (eq (mime-entity-info-media-subtype ci) 'rfc822))
+			  (eq (mime-entity-media-type ci) 'message)
+			  (eq (mime-entity-media-subtype ci) 'rfc822))
 			 nil
 		       (if str
 			   (insert str)
@@ -1077,7 +1077,7 @@ If there is no upper entity, call function `mime-preview-quit'."
       (backward-char)
       )
     (let ((r (mime-raw-entity-node-id-to-entity-info
-	      (cdr (mime-entity-info-node-id cinfo))
+	      (cdr (mime-entity-node-id cinfo))
 	      (get-text-property 1 'mime-view-entity-info)))
 	  point)
       (catch 'tag

@@ -79,7 +79,7 @@ partial messages using mime-view."
 	      (mime-view-partial-message target)
 	      (set-buffer article-buffer)
 	      (setq parameters
-		    (mime-entity-info-parameters mime-raw-message-info))
+		    (mime-entity-parameters mime-raw-message-info))
 	      (setq the-id (cdr (assoc "id" parameters)))
 	      (if (string= the-id id)
 		  (progn

@@ -155,26 +155,26 @@ and return parsed it. [mime-parse.el]"
 ;;; @ message parser
 ;;;
 
-(defsubst make-mime-entity-info (node-id
-				 point-min point-max
-				 media-type media-subtype parameters
-				 encoding children)
+(defsubst make-mime-entity (node-id
+			    point-min point-max
+			    media-type media-subtype parameters
+			    encoding children)
   (vector node-id point-min point-max
 	  media-type media-subtype parameters encoding children))
 
-(defsubst mime-entity-info-node-id (entity-info)       (aref entity-info 0))
-(defsubst mime-entity-info-point-min (entity-info)     (aref entity-info 1))
-(defsubst mime-entity-info-point-max (entity-info)     (aref entity-info 2))
-(defsubst mime-entity-info-media-type (entity-info)    (aref entity-info 3))
-(defsubst mime-entity-info-media-subtype (entity-info) (aref entity-info 4))
-(defsubst mime-entity-info-parameters (entity-info)    (aref entity-info 5))
-(defsubst mime-entity-info-encoding (entity-info)      (aref entity-info 6))
-(defsubst mime-entity-info-children (entity-info)      (aref entity-info 7))
+(defsubst mime-entity-node-id (entity-info)       (aref entity-info 0))
+(defsubst mime-entity-point-min (entity-info)     (aref entity-info 1))
+(defsubst mime-entity-point-max (entity-info)     (aref entity-info 2))
+(defsubst mime-entity-media-type (entity-info)    (aref entity-info 3))
+(defsubst mime-entity-media-subtype (entity-info) (aref entity-info 4))
+(defsubst mime-entity-parameters (entity-info)    (aref entity-info 5))
+(defsubst mime-entity-encoding (entity-info)      (aref entity-info 6))
+(defsubst mime-entity-children (entity-info)      (aref entity-info 7))
 
-(defsubst mime-entity-info-type/subtype (entity-info)
-  (let ((type (mime-entity-info-media-type entity-info)))
+(defsubst mime-entity-type/subtype (entity-info)
+  (let ((type (mime-entity-media-type entity-info)))
     (if type
-	(let ((subtype (mime-entity-info-media-subtype entity-info)))
+	(let ((subtype (mime-entity-media-subtype entity-info)))
 	  (if subtype
 	      (format "%s/%s" type subtype)
 	    (symbol-name type))))))
@@ -211,7 +211,7 @@ and return parsed it. [mime-parse.el]"
 	  (setq ret (mime-parse-message dc-ctl "7bit" (cons i rcnum)))
 	  )
 	(setq children (cons ret children))
-	(goto-char (mime-entity-info-point-max ret))
+	(goto-char (mime-entity-point-max ret))
 	(goto-char (setq cb ncb))
 	(setq i (1+ i))
 	)
@@ -222,9 +222,9 @@ and return parsed it. [mime-parse.el]"
 	)
       (setq children (cons ret children))
       )
-    (make-mime-entity-info rcnum beg (point-max)
-			   primtype subtype params encoding
-			   (nreverse children))
+    (make-mime-entity rcnum beg (point-max)
+		      primtype subtype params encoding
+		      (nreverse children))
     ))
 
 (defun mime-parse-message (&optional default-ctl default-encoding rcnum)
@@ -249,24 +249,23 @@ mime-{parse|read}-Content-Type."
 		  (memq subtype '(rfc822 news))
 		  )
 	     (goto-char (point-min))
-	     (make-mime-entity-info rcnum
-				    (point-min) (point-max)
-				    primtype subtype params encoding
-				    (save-restriction
-				      (narrow-to-region
-				       (if (re-search-forward "^$" nil t)
-					   (1+ (match-end 0))
-					 (point-min)
-					 )
-				       (point-max))
-				      (list (mime-parse-message
-					     nil nil (cons 0 rcnum)))
-				      ))
+	     (make-mime-entity rcnum (point-min) (point-max)
+			       primtype subtype params encoding
+			       (save-restriction
+				 (narrow-to-region
+				  (if (re-search-forward "^$" nil t)
+				      (1+ (match-end 0))
+				    (point-min)
+				    )
+				  (point-max))
+				 (list (mime-parse-message
+					nil nil (cons 0 rcnum)))
+				 ))
 	     )
 	    (t 
-	     (make-mime-entity-info rcnum (point-min) (point-max)
-				    primtype subtype params encoding
-				    nil)
+	     (make-mime-entity rcnum (point-min) (point-max)
+			       primtype subtype params encoding
+			       nil)
 	     ))
       )))
 
