@@ -120,7 +120,7 @@
 (luna-define-generic decrypt-region (scheme start end)
   "Decrypt the current region between START and END.")
 
-(luna-define-generic sign-region (scheme start end)
+(luna-define-generic sign-region (scheme start end &optional cleartext)
   "Make detached signature from text between START and END.")
 
 (luna-define-generic verify-region (scheme start end &optional signature)
@@ -137,6 +137,8 @@ and END to the keyring.")
 ;;; @ interface functions
 ;;;
 
+(defvar pgg-fetch-key-function (function pgg-fetch-key-with-w3))
+
 (defmacro pgg-make-scheme (scheme)
   `(progn
      (require (intern (format "pgg-%s" ,scheme)))
@@ -147,8 +149,18 @@ and END to the keyring.")
   (interactive
    (list (region-beginning)(region-end)
 	 (split-string (read-string "Recipients: ") "[ \t,]+")))
-  (let ((entity (pgg-make-scheme pgg-default-scheme)))
-    (luna-send entity 'encrypt-region entity start end rcpts)))
+  (let* ((entity (pgg-make-scheme pgg-default-scheme))
+	 (status (luna-send entity 'encrypt-region 
+			    entity start end rcpts)))
+    (when (interactive-p)
+      (if status
+	  (progn
+	    (delete-region start end)
+	    (insert-buffer-substring pgg-output-buffer))
+	(with-output-to-temp-buffer pgg-echo-buffer
+	  (set-buffer standard-output)
+	  (insert-buffer-substring pgg-errors-buffer))))
+    status))
 
 (defun pgg-decrypt-region (start end)
   (interactive "r")
@@ -161,24 +173,44 @@ and END to the keyring.")
 			   (ctree-match-calist pgg-decrypt-condition
 					       packet))))
 	      pgg-default-scheme))
-	 (entity (pgg-make-scheme scheme)))
-    (luna-send entity 'decrypt-region entity start end)))
+	 (entity (pgg-make-scheme scheme))
+	 (status (luna-send entity 'decrypt-region entity start end)))
+    (when (interactive-p)
+      (if status
+	  (progn
+	    (delete-region start end)
+	    (insert-buffer-substring pgg-output-buffer))
+	(with-output-to-temp-buffer pgg-echo-buffer
+	  (set-buffer standard-output)
+	  (insert-buffer-substring pgg-errors-buffer))))
+    status))
 
 (defun pgg-sign-region (start end)
   (interactive "r")
-  (let ((entity (pgg-make-scheme pgg-default-scheme)))
-    (luna-send entity 'sign-region entity start end)))
+  (let* ((entity (pgg-make-scheme pgg-default-scheme))
+	 (status (luna-send entity 'sign-region 
+			    entity start end (interactive-p))))
+    (when (interactive-p)
+      (if status
+	  (progn
+	    (delete-region start end)
+	    (insert-buffer-substring pgg-output-buffer))
+	(with-output-to-temp-buffer pgg-echo-buffer
+	  (set-buffer standard-output)
+	  (insert-buffer-substring pgg-errors-buffer))))
+    status))
 
 (defun pgg-verify-region (start end &optional signature fetch)
   (interactive "r")
   (let* ((packet
-	  (with-temp-buffer
-	    (buffer-disable-undo)
-	    (set-buffer-multibyte nil)
-	    (insert-file-contents signature)
-	    (cdr (assq 2 (pgg-decode-armor-region (point-min)(point-max))))
-	    ))
-	 (scheme
+	  (if (null signature) nil
+	    (with-temp-buffer
+	      (buffer-disable-undo)
+	      (set-buffer-multibyte nil)
+	      (insert-file-contents signature)
+	      (cdr (assq 2 (pgg-decode-armor-region (point-min)(point-max))))
+	      )))
+	 (scheme 
 	  (or pgg-scheme
 	      (cdr (assq 'scheme
 			 (progn
@@ -188,23 +220,28 @@ and END to the keyring.")
 	      pgg-default-scheme))
 	 (entity (pgg-make-scheme scheme))
 	 (key (cdr (assq 'key-identifier packet)))
-	 keyserver)
+	 keyserver
+	 status)
     (and (stringp key)
 	 (setq key (concat "0x" (pgg-truncate-key-identifier key)))
 	 (null (pgg-lookup-key-string key))
-	 fetch
+	 (or fetch (interactive-p))
 	 (y-or-n-p (format "Key %s not found; attempt to fetch? " key))
 	 (setq keyserver 
 	       (or (cdr (assq 'preferred-key-server packet))
 		   pgg-default-keyserver-address))
-	 (ignore-errors 
-	   (require 'url)
-	   (pgg-fetch-key
-	    (if (url-type (url-generic-parse-url keyserver))
-		keyserver
-	      (format "http://%s:11371/pks/lookup?op=get&search=%s"
-		      keyserver key)))))
-    (luna-send entity 'verify-region entity start end signature)))
+	 (pgg-fetch-key keyserver key))
+    (setq status (luna-send entity 'verify-region 
+			    entity start end signature))
+    (when (interactive-p)
+      (if status
+	  (progn
+	    (delete-region start end)
+	    (insert-buffer-substring pgg-output-buffer))
+	(with-output-to-temp-buffer pgg-echo-buffer
+	  (set-buffer standard-output)
+	  (insert-buffer-substring pgg-errors-buffer))))
+    status))
 
 (defun pgg-insert-key ()
   (let ((entity (pgg-make-scheme (or pgg-scheme pgg-default-scheme))))
@@ -218,35 +255,46 @@ and END to the keyring.")
   (let ((entity (pgg-make-scheme (or pgg-scheme pgg-default-scheme))))
     (luna-send entity 'lookup-key-string entity string type)))
 
-(defun pgg-fetch-key (url)
-  "Attempt to fetch a key for addition to PGP or GnuPG keyring.
+(defvar pgg-insert-url-function  (function pgg-insert-url-with-w3))
 
-Return t if we think we were successful; nil otherwise.  Note that nil
-is not necessarily an error, since we may have merely fired off an Email
-request for the key."
+(defun pgg-insert-url-with-w3 (url)
   (require 'w3)
   (require 'url)
+  (let (buffer-file-name)
+    (url-insert-file-contents url)))
+
+(defvar pgg-insert-url-extra-arguments nil)
+(defvar pgg-insert-url-program nil)
+
+(defun pgg-insert-url-with-program (url)
+  (let ((args (copy-sequence pgg-insert-url-extra-arguments))
+	process)
+    (setq process 
+	  (apply #'call-process pgg-insert-url-program nil t
+		 (nconc args (list url))))))
+
+(defun pgg-fetch-key (keyserver key)
+  "Attempt to fetch a key for addition to PGP or GnuPG keyring."
   (with-current-buffer (get-buffer-create pgg-output-buffer)
     (buffer-disable-undo)
     (erase-buffer)
-    (let ((proto (url-type (url-generic-parse-url url)))
-	  buffer-file-name)
-      (unless (memq (intern proto) '(http finger))
-	(insert (format "Protocol %s is not supported.\n" proto)))
-      (url-insert-file-contents url)
-      (if (re-search-forward "^-+BEGIN" nil 'last)
-	  (progn
-	    (delete-region (point-min) (match-beginning 0))
-	    (when (re-search-forward "^-+END" nil t)
-	      (delete-region (progn (end-of-line) (point))
-			     (point-max)))
-	    (insert "\n")
-	    (with-temp-buffer
-	      (insert-buffer-substring pgg-output-buffer)
-	      (pgg-snarf-keys-region (point-min)(point-max))))
-	(erase-buffer)
-	(insert "Cannot retrieve public key from URL (" url ")\n")))
-    ))
+    (let ((proto (if (string-match "^[a-zA-Z\\+\\.\\\\-]+:" keyserver)
+		     (substring keyserver 0 (1- (match-end 0))))))
+      (save-excursion
+	(funcall pgg-insert-url-function
+		 (if proto keyserver
+		   (format "http://%s:11371/pks/lookup?op=get&search=%s"
+			   keyserver key))))
+      (when (re-search-forward "^-+BEGIN" nil 'last)
+	(delete-region (point-min) (match-beginning 0))
+	(when (re-search-forward "^-+END" nil t)
+	  (delete-region (progn (end-of-line) (point))
+			 (point-max)))
+	(insert "\n")
+	(with-temp-buffer
+	  (insert-buffer-substring pgg-output-buffer)
+	  (pgg-snarf-keys-region (point-min)(point-max))))
+      )))
 
 
 ;;; @ utility functions
@@ -278,6 +326,16 @@ request for the key."
 
 (defun pgg-remove-passphrase-cache (key)
   (unintern key pgg-passphrase-cache))
+
+
+;;; @ postprocess macros
+;;;
+
+(put 'pgg-process-when-success 'lisp-indent-function 0)
+
+(defmacro pgg-process-when-success (&rest body)
+  `(with-current-buffer pgg-output-buffer
+     (if (zerop (buffer-size)) nil ,@body t)))
 
 (provide 'pgg)
 
