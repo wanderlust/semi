@@ -277,7 +277,7 @@ FUNCTION.")
       )))
 
 (defun field-unify (a b)
-  (let ((sym (intern (concat "field-unifier-for-" (symbol-value (car a))))))
+  (let ((sym (intern (concat "field-unifier-for-" (symbol-name (car a))))))
     (or (fboundp sym)
 	(setq sym (function field-unifier-for-default))
 	)
