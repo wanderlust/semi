@@ -1,5 +1,15 @@
 1999-11-02  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* pgg.el (pgg-add-passphrase-cache): Use only four octets of the key.
+	
+	* pgg-pgp5.el (lookup-key): New generic method.
+	(encrypt-region): Use `lookup-key'; cache passphrase if the
+	encryption is done successfully.
+	(sign-region): Likewise.
+	(decrypt-region): Use `lookup-key'.
+
+1999-11-02  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
 	* pgg-parse.el
 	(pgg-parse-public-key-encrypted-session-key-packet):
 	Rename tag `public-key-identifier' to `key-identifier'.
