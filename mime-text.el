@@ -45,7 +45,7 @@ raw-buffer.")
 ;;;
 
 (defvar mime-text-decoder-alist
-  '((mime/show-message-mode	. mime-text-decode-buffer)
+  '((mime-show-message-mode	. mime-text-decode-buffer)
     (mime-temp-message-mode	. mime-text-decode-buffer)
     (t				. mime-text-decode-buffer-maybe)
     )
