@@ -28,7 +28,6 @@
 ;;; Code:
 
 (require 'mime-view)
-(require 'tl-atype)
 
   
 ;;; @ content decoder
@@ -93,6 +92,78 @@
       )
     ))
 
+
+;;; @ method selector
+;;;
+
+;;; @@ alist
+;;;
+
+(defun put-alist (item value alist)
+  "Modify ALIST to set VALUE to ITEM.
+If there is a pair whose car is ITEM, replace its cdr by VALUE.
+If there is not such pair, create new pair (ITEM . VALUE) and
+return new alist whose car is the new pair and cdr is ALIST.
+\[tomo's ELIS like function]"
+  (let ((pair (assoc item alist)))
+    (if pair
+	(progn
+	  (setcdr pair value)
+	  alist)
+      (cons (cons item value) alist)
+      )))
+
+(defun del-alist (item alist)
+  "If there is a pair whose key is ITEM, delete it from ALIST.
+\[tomo's ELIS emulating function]"
+  (if (equal item (car (car alist)))
+      (cdr alist)
+    (let ((pr alist)
+	  (r (cdr alist))
+	  )
+      (catch 'tag
+	(while (not (null r))
+	  (if (equal item (car (car r)))
+	      (progn
+		(rplacd pr (cdr r))
+		(throw 'tag alist)))
+	  (setq pr r)
+	  (setq r (cdr r))
+	  )
+	alist))))
+
+
+;;; @@ field
+;;;
+
+(defun put-fields (tp c)
+  (catch 'tag
+    (let ((r tp) f ret)
+      (while r
+	(setq f (car r))
+	(if (not (if (setq ret (assoc (car f) c))
+		     (equal (cdr ret)(cdr f))
+		   (setq c (cons f c))
+		   ))
+	    (throw 'tag 'error))
+	(setq r (cdr r))
+	))
+    c))
+
+
+;;; @@ field unifier
+;;;
+
+(defun field-unifier-for-default (a b)
+  (let ((ret
+	 (cond ((equal a b)    a)
+	       ((null (cdr b)) a)
+	       ((null (cdr a)) b)
+	       )))
+    (if ret
+	(list nil ret nil)
+      )))
+
 (defun field-unifier-for-mode (a b)
   (let ((va (cdr a)))
     (if (if (consp va)
@@ -101,6 +172,140 @@
 	  )
 	(list nil b nil)
       )))
+
+(defun field-unify (a b)
+  (let ((sym (intern (concat "field-unifier-for-" (intern (car a))))))
+    (if (not (fboundp sym))
+	(setq sym (function field-unifier-for-default))
+      )
+    (funcall sym a b)
+    ))
+
+
+;;; @@ type unifier
+;;;
+
+(defun assoc-unify (class instance)
+  (catch 'tag
+    (let ((cla (copy-alist class))
+	  (ins (copy-alist instance))
+	  (r class)
+	  cell aret ret prev rest)
+      (while r
+	(setq cell (car r))
+	(setq aret (assoc (car cell) ins))
+	(if aret
+	    (if (setq ret (field-unify cell aret))
+		(progn
+		  (if (car ret)
+		      (setq prev (put-alist (car (car ret))
+					    (cdr (car ret))
+					    prev))
+		    )
+		  (if (nth 2 ret)
+		      (setq rest (put-alist (car (nth 2 ret))
+					    (cdr (nth 2 ret))
+					    rest))
+		    )
+		  (setq cla (put-alist (car cell)(cdr (nth 1 ret)) cla))
+		  (setq ins (del-alist (car cell) ins))
+		  )
+	      (throw 'tag nil)
+	      ))
+	(setq r (cdr r))
+	)
+      (setq r (copy-alist ins))
+      (while r
+	(setq cell (car r))
+	(setq aret (assoc (car cell) cla))
+	(if aret
+	    (if (setq ret (field-unify cell aret))
+		(progn
+		  (if (car ret)
+		      (setq prev (put-alist (car (car ret))
+					    (cdr (car ret))
+					    prev))
+		    )
+		  (if (nth 2 ret)
+		      (setq rest (put-alist (car (nth 2 ret))
+					    (cdr (nth 2 ret))
+					    rest))
+		    )
+		  (setq cla (del-alist (car cell) cla))
+		  (setq ins (put-alist (car cell)(cdr (nth 1 ret)) ins))
+		  )
+	      (throw 'tag nil)
+	      ))
+	(setq r (cdr r))
+	)
+      (list prev (append cla ins) rest)
+      )))
+
+(defun get-unified-alist (db al)
+  (let ((r db) ret)
+    (catch 'tag
+      (while r
+	(if (setq ret (nth 1 (assoc-unify (car r) al)))
+	    (throw 'tag ret)
+	  )
+	(setq r (cdr r))
+	))))
+
+(defun delete-atype (atl al)
+  (let* ((r atl) ret oal)
+    (setq oal
+	  (catch 'tag
+	    (while r
+	      (if (setq ret (nth 1 (assoc-unify (car r) al)))
+		  (throw 'tag (car r))
+		)
+	      (setq r (cdr r))
+	      )))
+    (delete oal atl)
+    ))
+
+(defun remove-atype (sym al)
+  (and (boundp sym)
+       (set sym (delete-atype (eval sym) al))
+       ))
+
+(defun replace-atype (atl old-al new-al)
+  (let* ((r atl) ret oal)
+    (if (catch 'tag
+	  (while r
+	    (if (setq ret (nth 1 (assoc-unify (car r) old-al)))
+		(throw 'tag (rplaca r new-al))
+	      )
+	    (setq r (cdr r))
+	    ))
+	atl)))
+
+(defun set-atype (sym al &rest options)
+  (if (null (boundp sym))
+      (set sym al)
+    (let* ((replacement (memq 'replacement options))
+	   (ignore-fields (car (cdr (memq 'ignore options))))
+	   (remove (or (car (cdr (memq 'remove options)))
+		       (let ((ral (copy-alist al)))
+			 (mapcar (function
+				  (lambda (type)
+				    (setq ral (del-alist type ral))
+				    ))
+				 ignore-fields)
+			 ral)))
+	   )
+      (set sym
+	   (or (if replacement
+		   (replace-atype (eval sym) remove al)
+		 )
+	       (cons al
+		     (delete-atype (eval sym) remove)
+		     )
+	       )))))
+
+
+;;; @@ main selector
+;;;
 
 (defun mime/get-content-decoding-alist (al)
   (get-unified-alist mime/content-decoding-condition al)
