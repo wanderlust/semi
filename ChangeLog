@@ -1,5 +1,14 @@
 1998-11-13  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
 
+	* Sync up with `semi-vcard'.
+
+* 1998-11-12  Tanaka Akira  <akr@jaist.ac.jp>
+
+        * mime-view.el: (mime-display-text/x-vcard): Fix multibyteness
+	problem.
+
+1998-11-13  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
+
 	* Sync up with `semi-1_12'.
 
 1998-11-12  Katsumi Yamaoka   <yamaoka@jpl.org>
