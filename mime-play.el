@@ -338,8 +338,9 @@ window.")
 ;;;
 
 (defvar mime-file-content-type-alist
-  '(("JPEG"	image jpeg)
-    ("GIF"	image gif)
+  '(("JPEG"		image jpeg)
+    ("GIF"		image gif)
+    ("Standard MIDI"	audio midi)
     )
   "*Alist of \"file\" output patterns vs. corresponding media-types.
 Each element looks like (REGEXP TYPE SUBTYPE).
