@@ -1397,7 +1397,7 @@ button-2	Move to point under the mouse cursor
 	   (save-excursion
 	     (goto-char p-end)
 	     (catch 'tag
-	       (let (e)
+	       (let (e i)
 		 (while (setq e
 			      (next-single-property-change
 			       (point) 'mime-view-entity))
@@ -1405,8 +1405,8 @@ button-2	Move to point under the mouse cursor
 		   (let ((rc (mime-entity-node-id
 			      (get-text-property (1- (point))
 						 'mime-view-entity))))
-		     (or (equal entity-node-id
-				(nthcdr (- (length rc) len) rc))
+		     (or (and (>= (setq i (- (length rc) len)) 0)
+			      (equal entity-node-id (nthcdr i rc)))
 			 (throw 'tag nil)))
 		   (setq p-end e)))
 	       (setq p-end (point-max))))
@@ -1453,11 +1453,17 @@ It calls following-method selected from variable
     (setq p-beg (aref entity 0)
 	  p-end (aref entity 1)
 	  entity (aref entity 2))
-    (setq ph-end
-	  (next-single-property-change p-beg 'mime-view-entity-header))
-    (if (or (null ph-end)
-	    (> ph-end p-end))
-	(setq ph-end p-end))
+    (let ((situation (get-text-property (point) 'mime-view-situation)))
+      (if (eq (cdr (or (assq '*header situation)
+		       (assq 'header situation)))
+	      'visible)
+	  (progn
+	    (setq ph-end
+		  (next-single-property-change p-beg 'mime-view-entity-header))
+	    (if (or (null ph-end)
+		    (> ph-end p-end))
+		(setq ph-end p-end)))
+	(setq ph-end p-beg)))
     (let* ((mode (mime-preview-original-major-mode 'recursive))
 	   (entity-node-id (mime-entity-node-id entity))
 	   (new-name
