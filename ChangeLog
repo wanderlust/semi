@@ -1,3 +1,9 @@
+1999-12-14  Akihiro Arisawa  <ari@atesoft.advantest.co.jp>
+
+	* mime-view.el (mime-preview-follow-current-entity): Fetch 
+	field of `mime-view-following-required-fields-list' from parent entity
+	if it is not exist in current entity.
+
 1999-12-13  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* README.en: Update fot the recent ML address and ftp site.
