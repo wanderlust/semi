@@ -6,6 +6,8 @@ PACKAGE = remi
 API	= 1.13
 RELEASE = 1
 
+FLIM_API= 1.13
+
 TAR	= tar
 RM	= /bin/rm -f
 CP	= /bin/cp -p
@@ -22,7 +24,7 @@ VERSION_SPECIFIC_LISPDIR = NONE
 GOMI	= *.elc
 
 VERSION	= $(API).$(RELEASE)
-ARC_DIR = /pub/mule/semi/semi-$(API)-for-flim-1.13
+ARC_DIR = /pub/mule/semi/semi-$(API)-for-flim-$(FLIM_API)
 
 
 elc:
@@ -59,7 +61,8 @@ tar:
 	cd /tmp; $(TAR) cvzf $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION)
 	cd /tmp; $(RM) -r $(PACKAGE)-$(VERSION)
 	sed "s/VERSION/$(VERSION)/" < ftp.in | sed "s/API/$(API)/" \
-		| sed "s/PACKAGE/$(PACKAGE)/" > ftp
+		| sed "s/PACKAGE/$(PACKAGE)/" \
+		| sed "s/FLIM_API/$(FLIM_API)/" > ftp
 
 release:
 	-$(RM) $(ARC_DIR)/$(PACKAGE)-$(VERSION).tar.gz
