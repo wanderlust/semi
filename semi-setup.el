@@ -25,6 +25,11 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (require 'mime-view)
+  )
+
+
 ;;; @ Utility
 ;;;
 
