@@ -1,5 +1,23 @@
 1999-01-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* NEWS (Function `mime-play-entity'): Sync with latest
+	specification.
+
+	* mime-pgp.el (mime-verify-multipart/signed): Modify for interface
+	change of `mime-play-entity'.
+
+	* mime-play.el (mime-preview-play-current-entity): Modify for
+	interface change of `mime-play-entity'.
+	(mime-play-entity): Change interface; abolish optional arguments
+	`mode' and `ignore-example'.
+	(mime-detect-content): Modify for interface change of
+	`mime-play-entity'.
+
+	* mime-view.el (mime-entity-situation): Add new optional argument
+	`situation'; it is preferred to attributes of entity.
+
+1999-01-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-view-version): Don't use `eval-when-compile'
 	to avoid to break product-code-name.
 
