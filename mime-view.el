@@ -406,15 +406,15 @@ Each elements are regexp of field-name.")
 			   (body . visible)))
 
 (ctree-set-calist-strictly
- 'mime-preview-condition '((body . visible)
-			   (body-presentation-method . with-filter)
-			   (body-filter . mime-preview-filter-for-text/plain)))
+ 'mime-preview-condition
+ '((body . visible)
+   (body-presentation-method . mime-preview-text/plain)))
 
 (ctree-set-calist-strictly
- 'mime-preview-condition '((type . nil)
-			   (body . visible)
-			   (body-presentation-method . with-filter)
-			   (body-filter . mime-preview-filter-for-text/plain)))
+ 'mime-preview-condition
+ '((type . nil)
+   (body . visible)
+   (body-presentation-method . mime-preview-text/plain)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . text)(subtype . enriched)
@@ -431,10 +431,10 @@ Each elements are regexp of field-name.")
 			    . mime-preview-filter-for-text/richtext)))
 
 (ctree-set-calist-strictly
- 'mime-preview-condition '((type . text)(subtype . t)
-			   (body . visible)
-			   (body-presentation-method . with-filter)
-			   (body-filter . mime-preview-filter-for-text/plain)))
+ 'mime-preview-condition
+ '((type . text)(subtype . t)
+   (body . visible)
+   (body-presentation-method . mime-preview-text/plain)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . message)(subtype . partial)
@@ -457,7 +457,7 @@ Each elements are regexp of field-name.")
 ;;; @@@ entity filter
 ;;;
 
-(autoload 'mime-preview-filter-for-text/plain "mime-text")
+(autoload 'mime-preview-text/plain "mime-text")
 (autoload 'mime-preview-filter-for-text/enriched "mime-text")
 (autoload 'mime-preview-filter-for-text/richtext "mime-text")
 
@@ -488,7 +488,7 @@ if it is not nil.")
 \[[ Please press `v' key in this buffer.         ]]"
     ))
 
-(defun mime-view-insert-message/partial-button (&optional situation)
+(defun mime-view-insert-message/partial-button (&optional entity situation)
   (save-restriction
     (goto-char (point-max))
     (if (not (search-backward "\n\n" nil t))
@@ -801,7 +801,7 @@ The compressed face will be piped to this command.")
 		 (funcall body-filter situation)
 		 )))
 	    ((functionp body-presentation-method)
-	     (funcall body-presentation-method situation)
+	     (funcall body-presentation-method entity situation)
 	     ))
       (or header-is-visible
 	  body-presentation-method
