@@ -5,16 +5,16 @@ Copyright (C) 1998 Free Software Foundation, Inc.
 
 ** Abolish variable `mime-temp-directory'
 
-FLIM 1.11 API uses `temporary-file-directory' instead of
-`mime-temp-directory'.  So environment variable "MIME_TMP_DIR" and
-"TM_TMP_DIR" are not effective to specify temporary directory of FLIM
-and SEMI.
+  FLIM 1.11 and SEMI 1.10 use variable `temporary-file-directory'
+instead of `mime-temp-directory'.  So environment variable
+"MIME_TMP_DIR" and "TM_TMP_DIR" are not effective to specify temporary
+directory of FLIM and SEMI.
 
 
 ** Abolish function `mime-text-insert-decoded-body'
 
-  SEMI 1.9 uses `mime-insert-text-content' of FLIM 1.11 API instead of
-`mime-text-insert-decoded-body'.
+  SEMI 1.10 uses function `mime-insert-text-content' of FLIM 1.11 API
+instead of `mime-text-insert-decoded-body'.
 
   Now `mime-view-caesar' does not run `mime-text-decode-hook'.
 
