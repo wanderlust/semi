@@ -1,6 +1,15 @@
 SEMI NEWS --- history of major-changes.
 Copyright (C) 1998 Free Software Foundation, Inc.
 
+* Changes in SEMI 1.12
+
+There are no user-visible changes.
+
+** New function `eliminate-top-spaces'
+
+Now mime-edit has it.
+
+
 * Changes in SEMI 1.11
 
 ** New function `mime-edit-decode-message-in-buffer'
