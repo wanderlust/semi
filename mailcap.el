@@ -117,9 +117,9 @@
 			   (goto-char (match-end 0))
 			   (mailcap-look-at-mtext))))
 	      (if value
-		  (cons token value)
+		  (cons (intern token) value)
 		))
-	  (list token)
+	  (list (intern token))
 	  ))))
 
 
