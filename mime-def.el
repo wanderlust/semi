@@ -89,6 +89,21 @@
     ;;(add-text-properties from to (list 'keymap widget-keymap))
     ))
 
+(defsubst mime-insert-button (string function &optional data)
+  "Insert STRING as button with callback FUNCTION and DATA."
+  (save-restriction
+    (narrow-to-region (point)(point))
+    (insert (concat "[" string "]"))
+    ;; (widget-push-button-value-create
+    ;;  (widget-convert 'push-button
+    ;;                  :notify (lambda (&rest ignore)
+    ;;                            (mime-view-play-current-entity)
+    ;;                            )
+    ;;                  string))
+    (insert "\n")
+    (mime-add-button (point-min)(point-max) function data)
+    ))
+
 (defvar mime-button-mother-dispatcher nil)
 
 (defun mime-button-dispatcher (event)
