@@ -1,3 +1,7 @@
+1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae)-A was released.
+
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-pgp.el: Rename `mime-pgp-add-keys' ->
