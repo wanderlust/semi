@@ -57,11 +57,10 @@
 ;;;
 
 (defvar mime-button-face 'bold
-  "Face used for content-button or URL-button of MIME-Preview buffer.
-\[mime-def.el]")
+  "Face used for content-button or URL-button of MIME-Preview buffer.")
 
 (defvar mime-button-mouse-face 'highlight
-  "Face used for MIME-preview buffer mouse highlighting. [mime-def.el]")
+  "Face used for MIME-preview buffer mouse highlighting.")
 
 (defun tm:add-button (from to func &optional data)
   "Create a button between FROM and TO with callback FUNC and data DATA."
@@ -76,7 +75,7 @@
 			   ))
   )
 
-(defvar tm:mother-button-dispatcher nil)
+(defvar mime-button-mother-dispatcher nil)
 
 (defun tm:button-dispatcher (event)
   "Select the button under point."
@@ -95,8 +94,8 @@
       (goto-char point)
       (if func
 	  (apply func data)
-	(if (fboundp tm:mother-button-dispatcher)
-	    (funcall tm:mother-button-dispatcher event)
+	(if (fboundp mime-button-mother-dispatcher)
+	    (funcall mime-button-mother-dispatcher event)
 	  )
 	))))
 
