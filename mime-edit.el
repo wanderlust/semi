@@ -738,7 +738,7 @@ Tspecials means any character that matches with it in header must be quoted.")
   (concat "MIME-Version:"
 	  (mime-encode-field-body
 	   (concat " 1.0 (split by " mime-edit-version ")\n")
-	   "MIME-Version:"))
+	   "MIME-Version"))
   "MIME version field for message/partial.")
 
 
