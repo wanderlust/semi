@@ -4,7 +4,7 @@
 
 PACKAGE = remi
 API	= 1.13
-RELEASE = 0
+RELEASE = 1
 
 TAR	= tar
 RM	= /bin/rm -f
