@@ -344,7 +344,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
       (re-search-forward "^$")
       (goto-char (1+ (match-end 0)))
       (setq file (concat root-dir "/" number))
-      (mime-article::write-region (point) (point-max) file)
+      (mime-article::write-region (point) end file)
       (let ((total-file (concat root-dir "/CT")))
 	(setq total
 	      (if total
