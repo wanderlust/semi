@@ -237,12 +237,12 @@ as a version of Net$cape)."
             (condition-case err
                 (eword-decode-encoded-text charset encoding text must-unfold)
               (error
-               (and (tl:add-text-properties
-		     0 (length word)
-		     (and eword-warning-face
-			  (list 'face eword-warning-face))
-		     word)
-                    word)))
+               (and
+		(add-text-properties 0 (length word)
+				     (and eword-warning-face
+					  (list 'face eword-warning-face))
+				     word)
+		word)))
             ))
       word))
 
