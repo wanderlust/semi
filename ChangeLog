@@ -1,3 +1,8 @@
+1998-06-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-w3.el (mime-save-background-color): New macro.
+	(mime-preview-text/html): Use `mime-save-background-color'.
+
 1998-06-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-edit.el: Abolish variable `mime-edit-signing-type' and
