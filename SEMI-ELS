@@ -5,9 +5,8 @@
 
 (setq semi-modules-to-compile
       '(signature
-	mime-def
-	eword-decode eword-encode
-	mime-parse mime-view mime-text mime-play mime-partial
+	mime-def eword-decode eword-encode mime-parse
+	semi-def mime-view mime-text mime-play mime-partial
 	mime-edit
 	semi-setup mail-mime-setup))
 
