@@ -101,10 +101,27 @@ armor output."
 			       (choice-item :tag "PGP 2.6" pgp))
 		       (string :tag "Comment"))))
 
+(defvar mime-mc-symbol-format-alist
+  '((comment		. "mc-%s-comment")
+    (fetch-key		. "mc-%s-fetch-key")
+    (insert-key		. "mc-%s-insert-public-key")
+    (mime-encrypt	. "mime-mc-%s-encrypt-region")
+    (mime-sign		. "mime-mc-%s-sign-region")
+    (scheme		. "mc-scheme-%s")
+    (traditional-sign	. "mc-%s-sign-region")
+    )
+  "Alist of service names and corresponding format strings.")
+
+(defmacro mime-mc-symbol (service)
+  (` (intern
+      (format (cdr (assq (, service) mime-mc-symbol-format-alist))
+	      pgp-version))))
+
 (defmacro mime-mc-comment ()
   "Return a string of the comment field."
   '(or (cdr (assq pgp-version mime-mc-comment-alist))
-       (symbol-value (intern (format "mc-%s-comment" pgp-version)))))
+       (symbol-value (mime-mc-symbol 'comment))
+       ))
 
 
 ;;; @ Internal variable
@@ -183,14 +200,14 @@ VERSION should be a string or a symbol."
 (defun mime-mc-verify ()
   "Verify a message in the current buffer. Exact behavior depends on
 current major mode."
-  (let ((mc-default-scheme (intern (format "mc-scheme-%s" pgp-version))))
+  (let ((mc-default-scheme (mime-mc-symbol 'scheme)))
     (mc-verify)
     ))
 
 (defun mime-mc-decrypt ()
   "Decrypt a message in the current buffer. Exact behavior depends on
 current major mode."
-  (let ((mc-default-scheme (intern (format "mc-scheme-%s" pgp-version))))
+  (let ((mc-default-scheme (mime-mc-symbol 'scheme)))
     (mc-decrypt)
     ))
 
@@ -205,39 +222,36 @@ both, may be nil.
 Return t if we think we were successful; nil otherwise.  Note that nil
 is not necessarily an error, since we may have merely fired off an Email
 request for the key."
-  (funcall (intern (format "mc-%s-fetch-key" pgp-version)) id)
+  (funcall (mime-mc-symbol 'fetch-key) id)
   )
 
 (defun mime-mc-snarf-keys ()
   "Add all public keys in the buffer to your keyring."
-  (let ((mc-default-scheme (intern (format "mc-scheme-%s" pgp-version))))
+  (let ((mc-default-scheme (mime-mc-symbol 'scheme)))
     (mc-snarf-keys)
     ))
 
 (defun mime-mc-sign-region (start end &optional id unclear boundary)
-  (funcall (intern (format "mime-mc-%s-sign-region" pgp-version))
-	   start end id unclear boundary)
+  (funcall (mime-mc-symbol 'mime-sign) start end id unclear boundary)
   )
 
 (defun mime-mc-traditional-sign-region (start end &optional id unclear)
-  (funcall (intern (format "mc-%s-sign-region" pgp-version))
-	   start end id unclear)
+  (funcall (mime-mc-symbol 'traditional-sign) start end id unclear)
   )
 
 (defun mime-mc-encrypt-region (recipients start end &optional id sign)
-  (funcall (intern (format "mime-mc-%s-encrypt-region" pgp-version))
-	   recipients start end id sign)
+  (funcall (mime-mc-symbol 'mime-encrypt) recipients start end id sign)
   )
 
 (defun mime-mc-insert-public-key (&optional userid)
   "Insert your public key at point."
-  (or (fboundp (intern (format "mc-%s-insert-public-key" pgp-version)))
+  (or (fboundp (mime-mc-symbol 'insert-key))
       (load (concat "mc-" (cdr (assq pgp-version '((gpg . "gpg")
 						   (pgp50 . "pgp5")
 						   (pgp . "pgp")))))))
-  (let ((comment (mime-mc-comment))
-	(mc-comment (intern (format "mc-%s-comment" pgp-version)))
-	(scheme (intern (format "mc-scheme-%s" pgp-version))))
+  (let ((mc-comment (mime-mc-symbol 'comment))
+	(comment (mime-mc-comment))
+	(scheme (mime-mc-symbol 'scheme)))
     (eval (` (let (((, mc-comment) (if (, comment) "DUMMY")))
 	       (mc-insert-public-key (, userid) (quote (, scheme)))
 	       )))
