@@ -18,13 +18,13 @@
 0.115	Hinomiko		$(BF|8f;R(B
 0.115.1	Oyanagi			$(B>.Lx(B
 0.115.2	Inokuchi		$(B0f8}(B
-0.116	D-Dòhòji			$(BF;K!;{(B-A
+0.116	D-Dòhòji-A			$(BF;K!;{(B
 0.118	Sodani			$(BA>C+(B
 0.118.1	Shijima			$(B;M==K|(B
 0.118.2	Otomaru			$(B254](B
-1.0.0	Nukaj-Dþtaku-mae		$(B3[=;BpA0(B-A
+1.0.0	Nukaj-Dþtaku-mae-A		$(B3[=;BpA0(B
 1.0.1	Magae			$(BGOBX(B
-1.0.2	Nonoichi-K-Dòdaimae	$(BLn!9;T9)BgA0(B-A
+1.0.2	Nonoichi-K-Dòdaimae-A	$(BLn!9;T9)BgA0(B
 1.1.0	Nonoichi		$(BLn!9;T(B
 1.1.1	Oshino			$(B2!Ln(B
 1.1.2	Shin-Nishikanazawa	$(B?7@>6bBt(B	; <=> JR $(B@>6bBt(B
@@ -36,7 +36,7 @@
 ;;	Hokuriku Line		$(BKLN&K\@~(B
 ;; -------------------------------------------------------------------------
 1.2.2	Naoetsu			$(BD>9>DE(B		; = JR $(B?.1[K\@~(B
--------	Tanihama		$(BC+IM(B
+1.2.3	Tanihama		$(BC+IM(B
 -------	Arimagawa		$(BM-4V@n(B
 :	:			:
 -------	Takaoka			$(B9b2,(B		; = JR $(BI98+@~!">kC<@~(B
@@ -48,7 +48,7 @@
 :	:			:
 -------	Tsuruga			$(BFX2l(B		; = JR $(B>.IM@~(B
 -------	Shin-Hikida		$(B?7I%ED(B
--------	-DÒmi-Shiotsu		$(B6a9>1vDE(B	; = JR $(B8P@>@~(B-A
+-------	-DÒmi-Shiotsu-A		$(B6a9>1vDE(B	; = JR $(B8P@>@~(B
 -------	Yogo			$(BM>8b(B
 -------	Kinomoto		$(BLZ%NK\(B
 -------	Takatsuki		$(B9b7n(B
@@ -64,9 +64,9 @@
 
 ;; -------------------------------------------------------------------------
 ;;	JR		$(B!JElF|K\N95RE4F;!K(B
-;;	T-Dòkaidò Line	$(BEl3$F;K\@~(B-A
+;;	T-Dòkaidò-A Line	$(BEl3$F;K\@~(B
 ;; -------------------------------------------------------------------------
-1.2.0	T-Dòkyò		$(BEl5~(B-A
+1.2.0	T-Dòkyò-A		$(BEl5~(B
 1.2.1	Shinbashi	$(B?766(B
 -----	Shinagawa	$(BIJ@n(B
 -----	Kawasaki	$(B@n:j(B
@@ -79,7 +79,7 @@
 -----	Kan'nami	$(BH!Fn(B
 :	:		:
 -----	Kanayama	$(B6b;3(B	; =$(B!J(BJR $(BCf1{K\@~!K(B
------	Ot-Dòbashi	$(BHxF,66(B-A
+-----	Ot-Dòbashi-A	$(BHxF,66(B
 -----	Nagoya		$(BL>8E20(B	; = JR $(B4X@>K\@~!J!&Cf1{K\@~!K(B
 :	:		:
 -----	Samegai		$(B@C%v0f(B
@@ -91,13 +91,13 @@
 -----	Kusatsu		$(BApDE(B	; = JR $(BApDE@~(B
 :	:		:
 -----	Yamashina	$(B;32J(B	; = JR $(B8P@>@~(B
------	Ky-Dòto		$(B5~ET(B	; = JR $(BF`NI@~!&;31"K\@~(B-A
+-----	Ky-Dòto-A		$(B5~ET(B	; = JR $(BF`NI@~!&;31"K\@~(B
 				;   <=> $(B6aE4(B $(B5~ET@~!"5~ET;T8rDL6I(B $(B1(4]@~(B
 :	:		:
------	-DÒsaka		$(BBg:e(B	; = JR $(BBg:e4D>u@~(B <=> JR $(BEl@>@~(B $(BKL?7CO(B-A
+-----	-DÒsaka-A		$(BBg:e(B	; = JR $(BBg:e4D>u@~(B <=> JR $(BEl@>@~(B $(BKL?7CO(B
 				;   <=> $(BBg:e;T8rDL6I!":e?@!":e5^(B $(BG_ED(B
 :	:		:
------	K-Dòbe		$(B?@8M(B	; = JR $(B;3M[K\@~(B-A
+-----	K-Dòbe-A		$(B?@8M(B	; = JR $(B;3M[K\@~(B
 
 
 [etc.]
@@ -106,9 +106,9 @@
 ;; JR / $(B8P@>@~(B
 ;; JR/ Kosei Line
 ;; -------------------------------------------------------------------------
--------	(-DÒmi-Shiotsu)		($(B6a9>1vDE(B)	; = JR $(BKLN&K\@~(B-A
+-------	(-DÒmi-Shiotsu)-A		($(B6a9>1vDE(B)	; = JR $(BKLN&K\@~(B
 :	:			:
--------	Nishi--DÒtsu		$(B@>BgDE(B-A
+-------	Nishi--DÒtsu-A		$(B@>BgDE(B
 	(Yamashina)		($(B;32J(B)		; = JR $(BEl3$F;K\@~(B
 
 ;; -------------------------------------------------------------------------
@@ -118,8 +118,8 @@
 -------	Himi			$(BI98+(B
 -------	Shimao			$(BEgHx(B
 -------	Amaharashi		$(B1+@2(B
--------	Ecch-Dþ-Kokubu		$(B1[Cf9qJ,(B-A
+-------	Ecch-Dþ-Kokubu-A		$(B1[Cf9qJ,(B
 -------	Fushiki			$(BIzLZ(B
 -------	Noumachi		$(BG=D.(B
--------	Ecch-Dþ-Nakagawa		$(B1[CfCf@n(B-A
+-------	Ecch-Dþ-Nakagawa-A		$(B1[CfCf@n(B
 	(Takaoka)		($(B9b2,(B)		; = JR $(BKLN&K\@~!">kC<@~(B
