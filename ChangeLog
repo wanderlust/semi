@@ -1,5 +1,9 @@
 2000-02-17  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* REMI: Version 1.14.0 (Uragawara) released.
+
+2000-02-17  MORIOKA Tomohiko  <tomo@m17n.org>
+
 	* mime-view.el (mime-view-define-keymap): Add new binding
 	`mime-preview-toggle-body' for C-c C-t C-b.
 	(mime-preview-toggle-body): New command.

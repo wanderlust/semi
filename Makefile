@@ -2,9 +2,9 @@
 # Makefile for SEMI kernel.
 #
 
-PACKAGE = semi
-API	= 1.13
-RELEASE = 7
+PACKAGE = remi
+API	= 1.14
+RELEASE = 0
 
 FLIM_API= 1.13
 
