@@ -1,3 +1,29 @@
+2000-12-17  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* postpet.el: Require `mime'.
+
+	* pgg-parse.el (pgg-format-key-identifier): Don't use
+	`string-to-int-list'.
+	(pgg-read-bytes): Likewise.
+	(pgg-read-body): Likewise.
+
+2000-12-16  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* smime.el: Require `raw-io'.
+	(smime-process-region): Use `binary-start-process-shell-command'.
+
+	* pgg-pgp5.el (pgg-pgp5-process-region): Use
+	`binary-start-process-shell-command'.
+
+	* pgg-pgp.el (pgg-pgp-process-region): Use
+	`binary-start-process-shell-command'.
+
+	* pgg-gpg.el (pgg-gpg-process-region): Use `binary-start-process'.
+
+2000-12-15  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* pgg-def.el: Require `custom' instead of `pcustom'.
+
 2000-12-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* Makefile (tar): Use `cvs tag -R' instead of `cvs tag -RF'.
