@@ -652,16 +652,6 @@ Return function to do service <var>method</var>.
 <h2> 押釦
 <node> Buttons
 <p>
-<defvar name="mime-button-face">
-<p>
-Face used for content-button or URL-button of MIME-Preview buffer.
-</defvar>
-
-<defvar name="mime-button-mouse-face">
-<p>
-Face used for MIME-preview buffer mouse highlighting.
-</defvar>
-
 <defvar name="mime-browse-url-function">
 <p>
 Function to browse URL.

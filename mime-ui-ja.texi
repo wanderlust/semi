@@ -727,18 +727,6 @@ Return function to do service @var{method}.
 @node Buttons, Acting-condition configuration, PGP, Various
 @section 押釦
 
-@defvar mime-button-face
-
-Face used for content-button or URL-button of MIME-Preview buffer.
-@end defvar
-
-
-@defvar mime-button-mouse-face
-
-Face used for MIME-preview buffer mouse highlighting.
-@end defvar
-
-
 @defvar mime-browse-url-function
 
 Function to browse URL.
