@@ -114,16 +114,19 @@
 		 (format  (nth 2 rule)))
 	     (if (image-inline-p format)
 		 (let ((type/subtype (mime-type/subtype-string type subtype)))
-		   (set-alist 'mime-view-content-filter-alist
-			      type/subtype #'mime-view-filter-for-image)
+                   ;; (set-alist 'mime-view-content-filter-alist
+                   ;;            type/subtype #'mime-view-filter-for-image)
 		   (set-alist 'mime-view-image-converter-alist
 			      type/subtype format)
                    ;; (add-to-list
                    ;;  'mime-view-visible-media-type-list
                    ;;  ctype)
 		   (ctree-set-calist-strictly
-		    'mime-view-body-visible-condition
-		    (list (cons 'type type)(cons 'subtype subtype)))
+		    'mime-preview-condition
+		    (list (cons 'type type)(cons 'subtype subtype)
+			  '(body . visible)
+			  (cons 'body-filter
+				#'mime-view-filter-for-image)))
 		   )
 	       ))))
 	'((image jpeg		jpeg)
@@ -137,7 +140,7 @@
 	  (image x-mag		mag)
 	  (image png		png)
 	  ))
-	   
+
 (defvar mime-view-ps-to-gif-command "pstogif")
 
 
