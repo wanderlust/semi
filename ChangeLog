@@ -1,7 +1,16 @@
+1998-10-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI-CFG: Abolish variable `SHELL' and `SHELLOPTION'.
+
 1998-10-08  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* SEMI-CFG: Use `add-latest-path' for adding "custom" to
 	load-path.
+
+1998-10-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI-CFG: Don't use `when' before install is required; don't
+	require cl.
 
 1998-10-08  Katsumi Yamaoka   <yamaoka@jpl.org>
 
