@@ -44,6 +44,19 @@
 	    " (" (cadr mime-module-version) ")"))
 
 
+;;; @ variables
+;;;
+
+(defgroup mime-view nil
+  "MIME view mode"
+  :group 'mime)
+
+(defcustom mime-view-find-every-acting-situation nil
+  "*Find every available acting-situation if non-nil."
+  :group 'mime-view
+  :type 'boolean)
+
+
 ;;; @ buffer local variables
 ;;;
 
