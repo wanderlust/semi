@@ -33,6 +33,8 @@
 (require 'alist)
 (require 'mime-conf)
 
+(eval-when-compile (require 'static))
+
 
 ;;; @ version
 ;;;
@@ -377,14 +379,14 @@ mother-buffer."
       (with-temp-buffer
 	(insert-file-contents file)
 	(setq mime-situation-examples-file-coding-system
-              (and (boundp 'buffer-file-coding-system)
-		   buffer-file-coding-system)
-	      ;; (static-cond
-              ;;  ((boundp 'buffer-file-coding-system)
-              ;;   (symbol-value 'buffer-file-coding-system))
-              ;;  ((boundp 'file-coding-system)
-              ;;   (symbol-value 'file-coding-system))
-              ;;  (t nil))
+              (static-cond
+	       ((boundp 'buffer-file-coding-system)
+		(symbol-value 'buffer-file-coding-system))
+	       ((boundp 'file-coding-system)
+		(symbol-value 'file-coding-system))
+	       (t nil))
+	      ;; (and (boundp 'buffer-file-coding-system)
+              ;;      buffer-file-coding-system)
 	      )
 	(condition-case error
 	    (eval-buffer)
@@ -436,15 +438,15 @@ mother-buffer."
 	  (insert "\n;;; "
 		  (file-name-nondirectory file)
 		  " ends here.\n")
-	  (setq buffer-file-coding-system
-		mime-situation-examples-file-coding-system)
-          ;; (static-cond
-          ;;  ((boundp 'buffer-file-coding-system)
-          ;;   (setq buffer-file-coding-system
-          ;;         mime-situation-examples-file-coding-system))
-          ;;  ((boundp 'file-coding-system)
-          ;;   (setq file-coding-system
-          ;;         mime-situation-examples-file-coding-system)))
+          (static-cond
+	   ((boundp 'buffer-file-coding-system)
+	    (setq buffer-file-coding-system
+		  mime-situation-examples-file-coding-system))
+	   ((boundp 'file-coding-system)
+	    (setq file-coding-system
+		  mime-situation-examples-file-coding-system)))
+	  ;; (setq buffer-file-coding-system
+          ;;       mime-situation-examples-file-coding-system)
 	  (setq buffer-file-name file)
 	  (save-buffer)))))
 
