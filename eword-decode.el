@@ -630,12 +630,16 @@ be the result."
   (std11-analyze-domain-literal string))
 
 (defun eword-analyze-comment (string &optional must-unfold)
-  (let ((p (std11-check-enclosure string ?\( ?\) t)))
-    (if p
-	(cons (cons 'comment
-		    (eword-decode-comment-string (substring string 0 p)))
-	      (substring string p))
-      )))
+  (let ((len (length string)))
+    (if (and (< 0 len) (eq (aref string 0) ?\())
+	(let ((p 0))
+	  (while (and p (< p len) (eq (aref string p) ?\())
+	    (setq p (std11-check-enclosure string ?\( ?\) t p)))
+	  (setq p (or p len))
+	  (cons (cons 'comment
+		      (eword-decode-comment-string (substring string 0 p)))
+		(substring string p)))
+      nil)))
 
 (defun eword-analyze-spaces (string &optional must-unfold)
   (std11-analyze-spaces string))

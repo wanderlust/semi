@@ -1,3 +1,8 @@
+1998-04-04  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* eword-decode.el (eword-analyze-comment): Swallow series of comments
+	and unterminated comment.
+
 1998-04-03  Tanaka Akira  <akr@jaist.ac.jp>
 
 	* eword-decode.el (eword-analyze-atom): Set enable-multibyte-characters
