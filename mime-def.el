@@ -53,23 +53,6 @@
 (defconst mime/temp-buffer-name " *MIME-temp*")
 
 
-;;; @ charset and encoding
-;;;
-
-(defun mime/make-charset-default-encoding-alist (transfer-level)
-  (mapcar (function
-	   (lambda (charset-type)
-	     (let ((charset  (upcase (symbol-name (car charset-type))))
-		   (type     (nth 1 charset-type))
-		   (encoding (nth 2 charset-type))
-		   )
-	       (if (<= type transfer-level)
-		   (cons charset (mime/encoding-name type))
-		 (cons charset encoding)
-		 ))))
-	  mime-charset-type-list))
-
-
 ;;; @ button
 ;;;
 
