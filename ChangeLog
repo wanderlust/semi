@@ -1,3 +1,10 @@
+2004-09-15  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* mime-view.el (mime-preview-follow-current-entity): Avoid error
+	on null entity.
+	(mime-preview-find-boundary-info): Ditto.
+	Avoid error at the beginning of buffer.
+
 2004-08-28  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* pgg-pgp5.el (pgg-scheme-verify-region): `let*' -> `let'.

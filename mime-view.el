@@ -1478,11 +1478,13 @@ If WITH-CHILDREN, refer boundary surrounding current part and its branches."
   (let (entity
 	p-beg p-end
 	entity-node-id len)
-    (while (null (setq entity
-		       (get-text-property (point) 'mime-view-entity)))
+    (while (and
+	    (null (setq entity
+			(get-text-property (point) 'mime-view-entity)))
+	    (> (point) (point-min)))
       (backward-char))
     (setq p-beg (previous-single-property-change (point) 'mime-view-entity))
-    (setq entity-node-id (mime-entity-node-id entity))
+    (setq entity-node-id (and entity (mime-entity-node-id entity)))
     (setq len (length entity-node-id))
     (cond ((null p-beg)
 	   (setq p-beg
@@ -1558,13 +1560,13 @@ It decodes current entity to call internal or external method as
 It calls following-method selected from variable
 `mime-preview-following-method-alist'."
   (interactive)
-  (let ((entity (mime-preview-find-boundary-info t))
-	p-beg p-end
-	pb-beg)
-    (setq p-beg (aref entity 0)
-	  p-end (aref entity 1)
-	  entity (aref entity 2))
-    (if (get-text-property p-beg 'mime-view-entity-body)
+  (let* ((boundary-info (mime-preview-find-boundary-info t))
+	 (p-beg (aref boundary-info 0))
+	 (p-end (aref boundary-info 1))
+	 (entity (aref boundary-info 2))
+	 pb-beg)
+    (if (or (get-text-property p-beg 'mime-view-entity-body)
+	    (null entity))
 	(setq pb-beg p-beg)
       (setq pb-beg
 	    (next-single-property-change
@@ -1572,7 +1574,7 @@ It calls following-method selected from variable
 	     (or (next-single-property-change p-beg 'mime-view-entity)
 		 p-end))))
     (let* ((mode (mime-preview-original-major-mode 'recursive))
-	   (entity-node-id (mime-entity-node-id entity))
+	   (entity-node-id (and entity (mime-entity-node-id entity)))
 	   (new-name
 	    (format "%s-%s" (buffer-name) (reverse entity-node-id)))
 	   new-buf
@@ -1585,7 +1587,8 @@ It calls following-method selected from variable
 	(insert-buffer-substring the-buf pb-beg p-end)
 	(goto-char (point-min))
 	(let ((current-entity
-	       (if (and (eq (mime-entity-media-type entity) 'message)
+	       (if (and entity
+			(eq (mime-entity-media-type entity) 'message)
 			(eq (mime-entity-media-subtype entity) 'rfc822))
 		   (car (mime-entity-children entity))
 		 entity)))
