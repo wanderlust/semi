@@ -1,3 +1,8 @@
+1999-10-17  Yoshiki Hayashi  <t90553@mail.ecc.u-tokyo.ac.jp>
+
+	* SEMI-MK (install-semi-package): Delte auto-autoloads.el
+	and custom-load.el
+
 1999-10-16  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* SEMI: Version 1.13.7 (Awazu) released.
