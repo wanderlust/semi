@@ -908,33 +908,6 @@ The compressed face will be piped to this command.")
 	    ))
       )))
 
-(defun mime-view-display-message (message &optional preview-buffer)
-  (let ((win-conf (current-window-configuration))
-	(raw-buffer (mime-entity-buffer message)))
-    (or preview-buffer
-	(setq preview-buffer
-	      (concat "*Preview-" (buffer-name raw-buffer) "*")))
-    (let ((inhibit-read-only t))
-      (set-buffer (get-buffer-create preview-buffer))
-      (widen)
-      (erase-buffer)
-      (setq mime-raw-buffer raw-buffer)
-      (setq mime-preview-original-window-configuration win-conf)
-      (setq major-mode 'mime-view-mode)
-      (setq mode-name "MIME-View")
-      (mime-view-display-entity message message
-				preview-buffer
-				'((entity-button . invisible)
-				  (header . visible)
-				  ))
-      (set-buffer-modified-p nil)
-      )
-    (setq buffer-read-only t)
-    (set-buffer raw-buffer)
-    )
-  (switch-to-buffer (setq mime-preview-buffer preview-buffer))
-  )
-
 
 ;;; @ MIME viewer mode
 ;;;
@@ -1074,6 +1047,36 @@ The compressed face will be piped to this command.")
 
 (defvar mime-view-redisplay nil)
 
+(defun mime-view-display-message (message &optional preview-buffer mother)
+  (let ((win-conf (current-window-configuration))
+	(raw-buffer (mime-entity-buffer message)))
+    (or preview-buffer
+	(setq preview-buffer
+	      (concat "*Preview-" (buffer-name raw-buffer) "*")))
+    (let ((inhibit-read-only t))
+      (set-buffer (get-buffer-create preview-buffer))
+      (widen)
+      (erase-buffer)
+      (setq mime-raw-buffer raw-buffer)
+      (if mother
+	  (setq mime-mother-buffer mother)
+	)
+      (setq mime-preview-original-window-configuration win-conf)
+      (setq major-mode 'mime-view-mode)
+      (setq mode-name "MIME-View")
+      (mime-view-display-entity message message
+				preview-buffer
+				'((entity-button . invisible)
+				  (header . visible)
+				  ))
+      (set-buffer-modified-p nil)
+      )
+    (setq buffer-read-only t)
+    (set-buffer raw-buffer)
+    )
+  (switch-to-buffer (setq mime-preview-buffer preview-buffer))
+  )
+
 (defun mime-view-mode (&optional mother ctl encoding raw-buffer obuf
 				 default-keymap-or-function)
   "Major mode for viewing MIME message.
@@ -1110,11 +1113,7 @@ button-2	Move to point under the mouse cursor
 	       (setq mime-raw-message-info (mime-parse-message ctl encoding))
 	       ))))
     (prog1
-	(mime-view-display-message message obuf)
-      (if mother
-	  (progn
-	    (setq mime-mother-buffer mother)
-	    ))
+	(mime-view-display-message message obuf mother)
       (mime-view-define-keymap default-keymap-or-function)
       (let ((point
 	     (next-single-property-change (point-min) 'mime-view-entity)))
