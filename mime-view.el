@@ -958,6 +958,24 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
        (defvar mouse-button-2 'button2)
        )
       (t
+       (defvar mime-view-popup-menu 
+         (let ((menu (make-sparse-keymap mime-view-menu-title)))
+           (nconc menu
+                  (mapcar (function
+                           (lambda (item)
+                             (list (intern (nth 1 item)) 'menu-item 
+                                   (nth 1 item)(nth 2 item))
+                             ))
+                          mime-view-menu-list))))
+       (defun mime-view-popup-menu (event)
+         "Popup the menu in the MIME Viewer buffer"
+         (interactive "@e")
+         (let ((menu mime-view-popup-menu) events func)
+           (setq events (x-popup-menu t menu))
+           (and events
+                (setq func (lookup-key menu (apply #'vector events)))
+                (commandp func)
+                (funcall func))))
        (defvar mouse-button-2 [mouse-2])
        ))
 
@@ -1027,6 +1045,8 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	     mouse-button-3 (function mime-view-xemacs-popup-menu))
 	   )
 	  ((>= emacs-major-version 19)
+	   (define-key mime-view-mode-map
+             mouse-button-3 (function mime-view-popup-menu))
 	   (define-key mime-view-mode-map [menu-bar mime-view]
 	     (cons mime-view-menu-title
 		   (make-sparse-keymap mime-view-menu-title)))
