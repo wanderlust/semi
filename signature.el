@@ -131,7 +131,7 @@ It is inserted at the end of file if signature-insert-at-eof in non-nil,
 and otherwise at the current point.  A prefix argument enables user to
 specify a file named <signature-file-name>-DISTRIBUTION interactively."
   (interactive "P")
-  (let ((signature
+  (let ((signature-file-name
          (expand-file-name
           (or (and signature-use-bbdb
                    (signature/get-sigtype-from-bbdb arg))
@@ -139,8 +139,8 @@ specify a file named <signature-file-name>-DISTRIBUTION interactively."
                    (signature/get-sigtype-interactively))
               (signature/get-signature-file-name))
           )))
-    (or (file-readable-p signature)
-        (error "Cannot open signature file: %s" signature))
+    (or (file-readable-p signature-file-name)
+        (error "Cannot open signature file: %s" signature-file-name))
     (if signature-insert-at-eof
         (progn
           (goto-char (point-max))
@@ -148,9 +148,9 @@ specify a file named <signature-file-name>-DISTRIBUTION interactively."
           (or signature-delete-blank-lines-at-eof (delete-blank-lines))
           ))
     (run-hooks 'signature-insert-hook)
-    (insert-file-contents signature)
+    (insert-file-contents signature-file-name)
     (force-mode-line-update)
-    signature))
+    signature-file-name))
 
 
 ;;; @ end
