@@ -1,3 +1,8 @@
+2000-01-16  Keiichi Suzuki  <keiichi@nanap.org>
+
+	* mime-w3.el (mime-preview-text/html): Don't get root entity from
+	`mime-entity-buffer'.
+
 2000-01-05  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* Makefile, README.en: Update for the new CVS server.
