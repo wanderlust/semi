@@ -467,10 +467,11 @@ Please press `v' key in this buffer."
 MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
   :group 'mime-view
   :type '(repeat (cons (choice :tag "Media-Type"
-			       (item :tag "Type/Subtype"
-				     (cons symbol symbol))
-			       (item :tag "Type" symbol)
-			       (item :tag "Default" t))
+			       (cons :tag "Type/Subtype"
+				     (symbol :tag "Primary-type")
+				     (symbol :tag "Subtype"))
+			       (symbol :tag "Type")
+			       (const :tag "Default" t))
 		       integer)))
 
 (defun mime-display-multipart/alternative (entity situation)
