@@ -2149,16 +2149,12 @@ a recording host instead of local host."
   (save-excursion
     (goto-char beg)
     (let ((current (point))
-	  exist-prev-tag)
-      (save-excursion
-	(if (mime-editor/goto-tag)
-	    (or (eq current (match-beginning 0))
-		(setq exist-prev-tag t)
-		)))
+	  need-new-line)
+      (or (bolp)
+	  (setq need-new-line t))
       (save-restriction
 	(narrow-to-region beg end)
-	(goto-char beg)
-        (if exist-prev-tag
+	(if need-new-line
 	    (insert "\n")
 	  )
 	(insert (format "--<<%s>>-{\n" type))
