@@ -159,12 +159,17 @@ local variable `mime-text-decoder' and variable
       (richtext-decode beg (point-max))
       )))
 
-(defun mime-preview-filter-for-text/enriched (situation)
-  (let ((beg (point-min)))
-    (remove-text-properties beg (point-max) '(face nil))
-    (mime-text-decode-body situation)
-    (enriched-decode beg (point-max))
-    ))
+(defun mime-preview-text/enriched (entity situation)
+  (save-restriction
+    (narrow-to-region (point-max)(point-max))
+    (insert-buffer-substring mime-raw-buffer
+			     (mime-entity-body-start entity)
+			     (mime-entity-body-end entity))
+    (let ((beg (point-min)))
+      (remove-text-properties beg (point-max) '(face nil))
+      (mime-text-decode-body situation)
+      (enriched-decode beg (point-max))
+      )))
 
 
 ;;; @ end
