@@ -2937,7 +2937,8 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 			(setq encoded t
 			      encoding nil)
 			)))))))
-    (if (or encoded (not not-decode-text))
+    (if (and (eq type 'text)
+	     (or encoded (not not-decode-text)))
  	(progn
  	  (save-excursion
  	    (goto-char (point-min))
