@@ -116,7 +116,7 @@
 	 0))
 
 (defmacro pgg-byte-after (&optional pos)
-  `(char-int (char-after ,pos)))
+  `(char-int (char-after ,(or pos `(point)))))
 
 (defmacro pgg-read-byte ()
   `(char-int (char-after (prog1 (point) (forward-char)))))
