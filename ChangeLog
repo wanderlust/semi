@@ -1,5 +1,25 @@
 1999-11-06   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* mime-ui-en.sgml, mime-ui-ja.sgml: Remove description about
+	`pgp-functions-alist' and `pgp-function'; add description about
+	`pgg-default-scheme' and `pgg-scheme'.
+
+	* NEWS (PGP 5.0i and GnuPG are now supported for PGP/MIME):
+	New section.
+
+	* pgg-gpg.el, pgg-pgp.el, pgg-pgp5.el (encrypt-region): Add
+	sender's user id to the recipients list if `pgg-encrypt-for-me' is
+	specified.
+
+	* pgg-def.el (pgg-encrypt-for-me): New user option.
+
+	* mime-edit.el:
+	(mime-edit-decode-multipart-in-buffer): Sync up with semi-pgpgpg_20.
+	(mime-edit-decode-message-in-buffer): Ditto.
+	(mime-edit-decode-single-part-in-buffer): Ditto.
+
+1999-11-06   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
 	* pgg.el (pgg-verify-region): Bind `pgg-scheme' in the predicate
 	of whether to fetch signer's public key.
 	(pgg-convert-lbt-region): New macro.
