@@ -901,21 +901,18 @@ button-2	Move to point under the mouse cursor
 
 (defun mime-view-play-content ()
   (interactive)
-  (let ((mime-view-decoding-mode "play"))
-    (mime-preview/decode-content)
-    ))
+  (mime-preview/decode-content "play")
+  )
 
 (defun mime-view-extract-content ()
   (interactive)
-  (let ((mime-view-decoding-mode "extract"))
-    (mime-preview/decode-content)
-    ))
+  (mime-preview/decode-content "extract")
+  )
 
 (defun mime-view-print-content ()
   (interactive)
-  (let ((mime-view-decoding-mode "print"))
-    (mime-preview/decode-content)
-    ))
+  (mime-preview/decode-content "print")
+  )
 
 (defun mime-view-follow-content ()
   (interactive)
