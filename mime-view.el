@@ -37,7 +37,7 @@
 (require 'tm-ew-d)
 (require 'tm-def)
 (require 'tm-parse)
-(require 'tm-text)
+(require 'mime-text)
 
 
 ;;; @ version
