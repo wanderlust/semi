@@ -508,11 +508,11 @@ such as a version of Net$cape)."
       (setq max-column fill-column))
   (let ((c start-column)
 	(tokens (eword-lexical-analyze string must-unfold))
-	(result ""))
-    (while tokens
-      (let* ((token (car tokens))
-	     (type (car token)))
-	(setq tokens (cdr tokens))
+	(result "")
+	token)
+    (while (and (setq token (car tokens))
+		(setq tokens (cdr tokens)))
+      (let* ((type (car token)))
 	(if (eq type 'spaces)
 	    (let* ((next-token (car tokens))
 		   (next-str (eword-decode-token next-token))
@@ -529,7 +529,9 @@ such as a version of Net$cape)."
 	    (setq result (concat result str)
 		  c (+ c (string-width str)))
 	    ))))
-    result))
+    (if token
+	(concat result (eword-decode-token token))
+      result)))
 
 (defun eword-decode-and-unfold-structured-field (string)
   "Decode and unfold STRING as structured field body.
