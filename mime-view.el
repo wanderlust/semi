@@ -264,17 +264,17 @@ Please redefine this function if you want to change default setting."
 ;;; @@@ predicate function
 ;;;
 
-(defvar mime-view-childrens-header-showing-Content-Type-list
-  '("message/rfc822" "message/news"))
+;; (defvar mime-view-childrens-header-showing-Content-Type-list
+;;   '("message/rfc822" "message/news"))
 
-(defun mime-view-header-visible-p (entity message-info)
-  "Return non-nil if header of ENTITY is visible."
-  (let ((entity-node-id (mime-entity-node-id entity)))
-    (member (mime-entity-type/subtype
-	     (mime-raw-find-entity-from-node-id
-	      (cdr entity-node-id) message-info))
-	    mime-view-childrens-header-showing-Content-Type-list)
-    ))
+;; (defun mime-view-header-visible-p (entity message-info)
+;;   "Return non-nil if header of ENTITY is visible."
+;;   (let ((entity-node-id (mime-entity-node-id entity)))
+;;     (member (mime-entity-type/subtype
+;;              (mime-raw-find-entity-from-node-id
+;;               (cdr entity-node-id) message-info))
+;;             mime-view-childrens-header-showing-Content-Type-list)
+;;     ))
 
 ;;; @@@ entity header filter
 ;;;
@@ -1138,14 +1138,14 @@ It calls following-method selected from variable
 	  (erase-buffer)
 	  (insert-buffer-substring the-buf p-beg p-end)
 	  (goto-char (point-min))
-	  (if (mime-view-header-visible-p entity message-info)
-	      (delete-region (goto-char (point-min))
-			     (if (re-search-forward "^$" nil t)
-				 (match-end 0)
-			       (point-min)))
-	    )
-	  (goto-char (point-min))
-	  (insert "\n")
+          ;; (if (mime-view-header-visible-p entity message-info)
+          ;;     (delete-region (goto-char (point-min))
+          ;;                    (if (re-search-forward "^$" nil t)
+          ;;                        (match-end 0)
+          ;;                      (point-min)))
+          ;;   )
+	  ;;(goto-char (point-min))
+	  ;;(insert "\n")
 	  (goto-char (point-min))
 	  (let ((entity-node-id (mime-entity-node-id entity)) ci str)
 	    (while (progn
