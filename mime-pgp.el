@@ -139,7 +139,13 @@
 	 (basename (expand-file-name "tm" temporary-file-directory))
 	 (sig-file (concat (make-temp-name basename) ".asc"))
 	 status)
-    (save-excursion (mime-show-echo-buffer))
+    (save-excursion 
+      (mime-show-echo-buffer)
+      (set-buffer mime-echo-buffer-name)
+      (set-window-start 
+       (get-buffer-window mime-echo-buffer-name)
+       (point-max))
+      )
     (mime-write-entity-content entity sig-file)
     (unwind-protect
 	(with-temp-buffer
@@ -155,9 +161,6 @@
 	    (insert-buffer-substring (if status pgg-output-buffer
 				       pgg-errors-buffer))))
       (delete-file sig-file))
-    (let ((other-window-scroll-buffer mime-echo-buffer-name))
-      (scroll-other-window 8)
-      )
     ))
 
 
@@ -184,7 +187,13 @@
 ;;; draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME).
 
 (defun mime-add-application/pgp-keys (entity situation)
-  (save-excursion (mime-show-echo-buffer))
+  (save-excursion 
+    (mime-show-echo-buffer)
+    (set-buffer mime-echo-buffer-name)
+    (set-window-start 
+     (get-buffer-window mime-echo-buffer-name)
+     (point-max))
+    )
   (with-temp-buffer
     (mime-insert-entity-content entity)
     (mime-decode-region (point-min) (point-max)
@@ -194,10 +203,7 @@
 	(set-buffer mime-echo-buffer-name)
 	(insert-buffer-substring (if status pgg-output-buffer
 				   pgg-errors-buffer)))
-      ))
-  (let ((other-window-scroll-buffer mime-echo-buffer-name))
-    (scroll-other-window 8)
-    ))
+      )))
 
 
 ;;; @ end
