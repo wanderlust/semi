@@ -1,5 +1,8 @@
 2000-02-21   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* pgg.el (pgg-temp-buffer-show-function): Use
+	`shrink-window-if-larger-than-buffer'.
+
 	* pgg-gpg.el (pgg-gpg-process-region): Fix cleanup form.
 
 	* pgg-pgp.el (pgg-pgp-process-region): Ditto.
