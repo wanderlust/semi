@@ -1,3 +1,8 @@
+1999-04-13  Hirokazu FUKUI    <fukui@atesoft.advantest.co.jp>
+
+	* mime-pgp.el (mime-add-application/pgp-keys): Call
+	`buffer-substring' in entity's buffer.
+
 1999-04-15  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-mc.el (mime-mc-insert-public-key, mime-mc-encrypt-region,

@@ -492,11 +492,15 @@ key-ID if it is found."
 (defun mime-add-application/pgp-keys (entity situation)
   (let* ((start (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))
-	 (entity-number (mime-raw-point-to-entity-number start))
-	 (new-name (format "%s-%s" (buffer-name) entity-number))
+	 (entity-number (mime-raw-point-to-entity-number start entity))
+	 (new-name (format "%s-%s"
+			   (buffer-name (mime-entity-buffer entity))
+			   entity-number))
 	 (encoding (cdr (assq 'encoding situation)))
 	 str)
-    (setq str (buffer-substring start end))
+    (setq str (save-excursion
+		(set-buffer (mime-entity-buffer entity))
+		(buffer-substring start end)))
     (switch-to-buffer new-name)
     (setq buffer-read-only nil)
     (erase-buffer)
