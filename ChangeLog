@@ -1,5 +1,21 @@
 1998-06-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-edit.el: Abolish variable `mime-edit-signing-type' and
+	`mime-edit-encrypting-type'.
+	(mime-edit-process-multipart-1): Separate "signed" to "pgp-signed"
+	and "kazu-signed"; separate "encrypted" to "pgp-encrypted" and
+	"kazu-encrypted".
+	(mime-edit-enclose-signed-region): Renamed from
+	`mime-edit-enclose-pgp-signed-region'.
+	(mime-edit-enclose-pgp-encrypted-region): Renamed from
+	`mime-edit-enclose-encrypted-region'.
+	(mime-edit-enclose-kazu-signed-region): New function.
+	(mime-edit-enclose-kazu-encrypted-region): New function.
+	(mime-edit-set-sign): Don't refer `mime-edit-signing-type'.
+	(mime-edit-set-encrypt): Don't refer `mime-edit-encrypting-type'.
+
+1998-06-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-edit.el (mime-edit-sign-pgp-kazu): Abolish unused local
 	variable.
 	(mime-edit-encrypt-pgp-kazu): Abolish unused local variables.
