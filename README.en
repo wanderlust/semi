@@ -152,6 +152,13 @@ Mailing lists
 	tm-en-help@chamonix.jaist.ac.jp	(English)
 	tm-ja-help@chamonix.jaist.ac.jp	(Japanese)
 
+  Notice that you should not send mail to author(s), such as
+  morioka@jaist.ac.jp, directly.  Because your problem may occur in
+  other environments (if not, it might be your problem, not bug of
+  SEMI).  We should discuss in the tm mailing lists.  Anyway
+  direct-mail for authors might be ignored.  Please send mail to the
+  tm mailing lists.
+
 
 CVS based development
 =====================
@@ -197,7 +204,7 @@ Other authors
     Hisashi Miyashita <himi@bird.scphys.kyoto-u.ac.jp>
     Kazuhiro Ohta <ohta@ele.cst.nihon-u.ac.jp>
     Alexandre Oliva <oliva@dcc.unicamp.br>
-    Fran.ANgois Pinard <pinard@iro.umontreal.ca>
+    Fran-Agois Pinard <pinard@iro.umontreal.ca>
     Artur Pioro <artur@flugor.if.uj.edu.pl>
     Dan Rich <drich@morpheus.corp.sgi.com>
         (contribute to evolve mime-image.el with XEmacs)
