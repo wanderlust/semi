@@ -30,17 +30,15 @@ This file documents SEMI, a MIME user interface for GNU Emacs.
 SEMI is a package for GNU Emacs to provide features related with MIME
 user interface.@refill
 
-SEMI が提供する MIME user interface は MIME-View と MIME-Edit からなりま
-す。@refill
+SEMI provides two user interfaces: MIME-View and MIME-Edit.@refill
 
  
-MIME-View は MIME や STD 11 および『地域化された RFC 822』message を表示
-したり、操作したりするための user interface の中核です。@refill
+MIME-View is a kernel of user interface to display or operate MIME
+messages, STD 11 messages or ``localized RFC 822'' messages.@refill
 
-MIME-Edit は MIME message を生成するための user interface です。@refill
+MIME-Edit is a user interface to compose MIME messages.@refill
 
-各 MUA でこれらの機能を利用することにより、高度な MIME 機能を利用するこ
-とができます。
+Each MUA can use powerful MIME features to combine these features.
 
 
 @node MIME-View, MIME-Edit, Introduction, Top
