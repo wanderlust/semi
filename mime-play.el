@@ -500,7 +500,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 (defun mime-view-message/rfc822 (entity situation)
   (let* ((new-name
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
-	 (mother mime-preview-buffer)
+	 (mother (current-buffer))
 	 (children (car (mime-entity-children entity))))
     (set-buffer (get-buffer-create new-name))
     (erase-buffer)
