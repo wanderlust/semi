@@ -619,7 +619,7 @@ Each elements are regexp of field-name.")
 (defun mime-display-application/x-postpet (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
-    (let ((pet (postpet-decode (string-as-unibyte (mime-entity-content entity)))))
+    (let ((pet (postpet-decode (mime-entity-content entity))))
       (insert "Petname: " (cdr (assq 'petname pet)) "\n"
 	      "Owner: " (cdr (assq 'owner pet)) "\n"
 	      "Pettype: " (cdr (assq 'pettype pet)) "\n"
