@@ -361,14 +361,9 @@ or \"v\" for choosing a command of PGP 5.0i."
 					  (match-end 0))))
 	     (goto-char (point-min))
 	     )
-	    ;; PGP 5.0i always returns 0 status.
-	    ((eq 'pgp50 pgp-version)
-	     (message "Can't check signature")
+	    (t
 	     ;; Returns nil in order for attempt to fetch key.
 	     nil
-	     )
-	    (t
-	     (message "Can't check signature")
 	     )))))
 
 (defmacro mime-pgp-parse-verify-error (&rest forms)
