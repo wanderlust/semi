@@ -1142,7 +1142,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
     (define-key mime-view-mode-map
       "\C-c\C-t\C-h" (function mime-preview-toggle-header))
     (define-key mime-view-mode-map
-      "\C-c\C-t\C-b" (function mime-preview-toggle-body))
+      "\C-c\C-t\C-c" (function mime-preview-toggle-content))
     (define-key mime-view-mode-map
       "a"        (function mime-preview-follow-current-entity))
     (define-key mime-view-mode-map
@@ -1709,7 +1709,7 @@ If LINES is negative, scroll up LINES lines."
 	(add-to-list 'mime-preview-situation-example-list
 		     (cons situation 0))))))
 
-(defun mime-preview-toggle-body ()
+(defun mime-preview-toggle-content ()
   (interactive)
   (let ((situation (mime-preview-find-boundary-info))
 	entity p-beg p-end)
