@@ -124,12 +124,10 @@ which are string or symbol."
 	(cons ctype (nreverse dest))
 	)))
 
-(defconst mime::dtype-regexp (concat "^" mime-disposition-type-regexp))
-
 (defun mime-parse-Content-Disposition (string)
   "Parse STRING as field-body of Content-Disposition field."
   (setq string (std11-unfold-string string))
-  (if (string-match mime::dtype-regexp string)
+  (if (string-match `,(concat "^" mime-disposition-type-regexp) string)
       (let* ((e (match-end 0))
 	     (ctype (downcase (substring string 0 e)))
 	     ret dest)
