@@ -355,7 +355,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	 (total (cdr (assoc "total" cal)))
 	 file
 	 (mother (current-buffer))
-	 orig-modes (default-file-modes))
+	 (orig-modes (default-file-modes)))
     (or (file-exists-p root-dir)
 	(unwind-protect
 	    (progn

@@ -1,3 +1,8 @@
+2003-12-05  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* mime-play.el (mime-store-message/partial-piece): Fix
+	mis-designed parenthesis in the `let' form.
+
 2001-11-27  Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-w3.el: Don't use `url-register-protocol' if it is not
