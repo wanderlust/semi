@@ -230,33 +230,17 @@ request for the key."
   )
 
 (defun mime-mc-insert-public-key (&optional userid)
-  "Insert your public key at point. With one prefix arg, prompts for
-user id to use."
-  (let ((not-loaded (not (fboundp (intern (format "mc-%s-insert-public-key"
-						  pgp-version)))))
-	(comment (mime-mc-comment))
+  "Insert your public key at point."
+  (or (fboundp (intern (format "mc-%s-insert-public-key" pgp-version)))
+      (load (concat "mc-" (cdr (assq pgp-version '((gpg . "gpg")
+						   (pgp50 . "pgp5")
+						   (pgp . "pgp")))))))
+  (let ((comment (mime-mc-comment))
+	(mc-comment (intern (format "mc-%s-comment" pgp-version)))
 	(scheme (intern (format "mc-scheme-%s" pgp-version))))
-    (cond ((eq 'gpg pgp-version)
-	   (if not-loaded
-	       (load "mc-gpg")
-	     )
-	   (let ((mc-gpg-comment (if comment "DUMMY")))
-	     (mc-insert-public-key userid scheme))
-	   )
-	  ((eq 'pgp50 pgp-version)
-	   (if not-loaded
-	       (load "mc-pgp5")
-	     )
-	   (let ((mc-pgp50-comment (if comment "DUMMY")))
-	     (mc-insert-public-key userid scheme))
-	   )
-	  (t
-	   (if not-loaded
-	       (load "mc-pgp")
-	     )
-	   (let ((mc-pgp-comment (if comment "DUMMY")))
-	     (mc-insert-public-key userid scheme))
-	   ))
+    (eval (` (let (((, mc-comment) (if (, comment) "DUMMY")))
+	       (mc-insert-public-key (, userid) (quote (, scheme)))
+	       )))
     (if comment
 	(mime-mc-replace-comment-field comment)
       )))

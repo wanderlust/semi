@@ -1,5 +1,13 @@
 1999-04-14  Katsumi Yamaoka   <yamaoka@jpl.org>
 
+	* mime-edit.el (mime-edit-insert-key): Prompt for user id if prefix
+	arg is given.
+
+	* mime-mc.el (mime-mc-insert-public-key): Fix bug - referring to
+	undefined variable.
+
+1999-04-14  Katsumi Yamaoka   <yamaoka@jpl.org>
+
 	* mime-ui-en.texi, mime-ui-ja.texi: Sync up with .sgml files.
 	* mime-ui-en.sgml, mime-ui-ja.sgml: Modify a description for
 	simplified `pgp-function-alist'.

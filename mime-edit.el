@@ -2304,12 +2304,14 @@ and insert data encoded as ENCODING."
   (mime-edit-enclose-region-internal 'kazu-encrypted beg end)
   )
 
-(defun mime-edit-insert-key (&optional arg)
-  "Insert a pgp public key."
-  (interactive "P")
+(defun mime-edit-insert-key (&optional userid)
+  "Insert a pgp public key. With prefix arg, prompts for user id to use."
+  (interactive (if current-prefix-arg
+		   (list (read-string "User ID: "))
+		 ))
   (mime-edit-insert-tag "application" "pgp-keys")
   (mime-edit-define-encoding "7bit")
-  (funcall (pgp-function 'insert-key))
+  (funcall (pgp-function 'insert-key) userid)
   )
 
 
