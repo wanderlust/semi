@@ -1,5 +1,11 @@
 1998-06-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* NEWS (Changes in SEMI 1.6): New chapter.
+
+	* TODO (multipart/related support): New item.
+
+1998-06-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* NEWS: Add description about mime-w3.el.
 
 1998-06-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
