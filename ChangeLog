@@ -1,3 +1,7 @@
+2000-12-27  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-play.el (mime-activate-mailcap-method): Fix typo.
+
 2000-12-26   Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-play.el (mime-mailcap-method-messages-coding-system):
