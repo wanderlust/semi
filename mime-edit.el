@@ -1762,15 +1762,11 @@ Content-Transfer-Encoding: 7bit
 	      (insert (format "Content-Transfer-Encoding: %s\n" encoding))
 	    )
 	  (insert "\n")
-	  (or (let ((program-coding-system-alist
-		     (cons (cons (cons nil ".*pgp.*")
-				 (cons *noconv* *noconv*))
-			   program-coding-system-alist))
-		    )
-		(mc-pgp-encrypt-region
-		 (mc-split "\\([ \t\n]*,[ \t\n]*\\)+" recipients)
-		 beg (point-max))
-		)
+	  (or (as-binary-process
+	       (mc-pgp-encrypt-region
+		(mc-split "\\([ \t\n]*,[ \t\n]*\\)+" recipients)
+		beg (point-max))
+	       )
 	      (throw 'mime-editor/error 'pgp-error)
 	      )
 	  (goto-char beg)
