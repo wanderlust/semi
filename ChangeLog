@@ -1,3 +1,13 @@
+1998-05-25  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-play.el (mime-raw-play-entity): Abolish point correcting
+	procedures for VM.
+
+1998-05-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* README.en (Mailing lists): Add notice about direct-mail for
+	authors.
+
 1998-05-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-play.el (mime-raw-dired-function): Don't refer
