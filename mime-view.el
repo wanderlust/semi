@@ -724,14 +724,7 @@ Each elements are regexp of field-name.")
       (enriched-decode beg (point-max)))))
 
 (defvar mime-view-announcement-for-message/partial
-  (if (and (>= emacs-major-version 19) window-system)
-      "\
-\[[ This is message/partial style split message. ]]
-\[[ Please press `v' key in this buffer          ]]
-\[[ or click here by mouse button-2.             ]]"
-    "\
-\[[ This is message/partial style split message. ]]
-\[[ Please press `v' key in this buffer.         ]]"))
+  "This is message/partial style split message.")
 
 (defun mime-display-message/partial-button (&optional entity situation)
   (save-restriction
@@ -739,10 +732,8 @@ Each elements are regexp of field-name.")
     (if (not (search-backward "\n\n" nil t))
 	(insert "\n"))
     (goto-char (point-max))
-    (narrow-to-region (point-max)(point-max))
-    (insert mime-view-announcement-for-message/partial)
-    (mime-add-button (point-min)(point-max)
-		     #'mime-preview-play-current-entity)))
+    (mime-insert-button mime-view-announcement-for-message/partial
+			#'mime-preview-play-current-entity)))
 
 (defun mime-display-multipart/mixed (entity situation)
   (let ((children (mime-entity-children entity))
