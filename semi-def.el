@@ -36,6 +36,7 @@
 (autoload 'mule-caesar-region "mule-caesar"
   "Caesar rotation of current region." t)
 
+(autoload 'widget-convert-button "wid-edit")
 
 ;;; @ constants
 ;;;
@@ -49,56 +50,20 @@
 ;;; @ button
 ;;;
 
-(defcustom mime-button-face 'bold
-  "Face used for content-button or URL-button of MIME-Preview buffer."
-  :group 'mime
-  :type 'face)
+(define-widget 'mime-button 'push-button
+  "Widget for MIME button."
+  :action 'mime-button-action)
 
-(defcustom mime-button-mouse-face 'highlight
-  "Face used for MIME-preview buffer mouse highlighting."
-  :group 'mime
-  :type 'face)
-
-(defsubst mime-add-button (from to function &optional data)
-  "Create a button between FROM and TO with callback FUNCTION and DATA."
-  (and mime-button-face
-       (put-text-property from to 'face mime-button-face))
-  (and mime-button-mouse-face
-       (put-text-property from to 'mouse-face mime-button-mouse-face))
-  (put-text-property from to 'mime-button-callback function)
-  (and data
-       (put-text-property from to 'mime-button-data data))
-  )
-
+(defun mime-button-action (widget &optional event)
+  (let ((function (widget-get widget :mime-callback))
+	(data (widget-get widget :mime-data)))
+    (when function
+      (funcall function data))))
+    
 (defsubst mime-insert-button (string function &optional data)
   "Insert STRING as button with callback FUNCTION and DATA."
-  (save-restriction
-    (narrow-to-region (point)(point))
-    (insert (concat "[" string "]\n"))
-    (mime-add-button (point-min)(point-max) function data)
-    ))
-
-(defvar mime-button-mother-dispatcher nil)
-
-(defun mime-button-dispatcher (event)
-  "Select the button under point."
-  (interactive "e")
-  (let (buf point func data)
-    (save-window-excursion
-      (mouse-set-point event)
-      (setq buf (current-buffer)
-	    point (point)
-	    func (get-text-property (point) 'mime-button-callback)
-	    data (get-text-property (point) 'mime-button-data)
-	    ))
-    (save-excursion
-      (set-buffer buf)
-      (goto-char point)
-      (if func
-	  (apply func data)
-	(if (fboundp mime-button-mother-dispatcher)
-	    (funcall mime-button-mother-dispatcher event)
-	  )))))
+  (widget-create 'mime-button :mime-callback function :mime-data data string)
+  (insert "\n"))
 
 
 ;;; @ for URL
@@ -121,10 +86,8 @@
   "Add URL-buttons for text body."
   (goto-char (point-min))
   (while (re-search-forward mime-browse-url-regexp nil t)
-    (let ((beg (match-beginning 0))
-	  (end (match-end 0)))
-      (mime-add-button beg end mime-browse-url-function
-		       (list (buffer-substring beg end))))))
+    (widget-convert-button 'url-link (match-beginning 0)(match-end 0)
+			   (match-string-no-properties 0))))
 
 
 ;;; @ menu
@@ -142,26 +105,19 @@
 			       (vector (car cell)
 				       `(progn
 					  (setq ret ',(cdr cell))
-					  (throw 'exit nil)
-					  )
-				       t)
-			       ))
-			    menu-alist)
-		    ))
+					  (throw 'exit nil))
+				       t)))
+			    menu-alist)))
 	    (recursive-edit)
 	    ret))
       (defun select-menu-alist (title menu-alist)
 	(x-popup-menu
 	 (list '(1 1) (selected-window))
-	 (list title (cons title menu-alist))
-	 ))
-      )
+	 (list title (cons title menu-alist)))))
   (defun select-menu-alist (title menu-alist)
     (cdr
      (assoc (completing-read (concat title " : ") menu-alist)
-	    menu-alist)
-     ))
-  )
+	    menu-alist))))
 
 
 ;;; @ Other Utility
@@ -193,13 +149,9 @@ activate."
 		(funcall func sym condition)
 		(if file
 		    (let ((method (cdr (assq 'method condition))))
-		      (autoload method file)
-		      ))
-		)
-	    (error "Function for mode `%s' is not found." mode)
-	    ))
-      (error "Variable for target-type `%s' is not found." target-type)
-      )))
+		      (autoload method file))))
+	    (error "Function for mode `%s' is not found." mode)))
+      (error "Variable for target-type `%s' is not found." target-type))))
 
 
 ;;; @ end

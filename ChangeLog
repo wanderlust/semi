@@ -1,3 +1,21 @@
+2000-09-12   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-view.el (widget-keymap): Declare.
+	(mime-view-maybe-inherit-widget-keymap): New function.
+	(mime-view-define-keymap-hook): Add
+	`mime-view-maybe-inherit-widget-keymap'.
+
+	* semi-def.el: Add setting for `widget-convert-button' to
+	autoload "wid-edit".
+	(mime-button-mother-dispatcher): Abolish.
+	(mime-button-dispatcher): Abolish.
+	(mime-add-button): Abolish.
+	(mime-button-action): New function.
+	(mime-button): New widget.
+	(mime-add-url-buttons): Rewrite with `url-link' widget.
+	(mime-button-face): Abolish.
+	(mime-button-mouse-face): Abolish.
+
 2000-08-28   Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-view.el (mime-display-entity): Call `mime-add-url-buttons'.
