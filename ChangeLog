@@ -1,3 +1,9 @@
+1999-07-22  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el
+	(mime-preview-quitting-method-for-mime-show-message-mode): Don't
+	refer `mime-raw-buffer'.
+
 1999-07-21  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-play.el (mime-store-message/partial-piece): Don't refer
