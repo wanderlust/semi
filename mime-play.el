@@ -294,25 +294,6 @@ window.")
   (concat (regexp-* mime-view-file-name-char-regexp)
 	  "\\(\\." mime-view-file-name-char-regexp "+\\)*"))
 
-(defun mime-entity-filename (entity)
-  (or (mime-entity-uu-filename entity)
-      (let ((ret (mime-entity-content-disposition entity)))
-	(and ret
-	     (setq ret (mime-content-disposition-filename ret))
-	     (std11-strip-quoted-string ret)
-	     ))
-      (let ((ret (mime-entity-content-type entity)))
-	(and ret
-	     (setq ret
-		   (cdr
-		    (let ((param (mime-content-type-parameters ret)))
-		      (or (assoc "name" param)
-			  (assoc "x-name" param))
-		      )))
-	     (std11-strip-quoted-string ret)
-	     ))
-      ))
-
 (defun mime-entity-safe-filename (entity)
   (replace-as-filename
    (or (mime-entity-filename entity)
