@@ -723,7 +723,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 ;;; @ following method
 ;;;
 
-(defvar mime-view-following-method-alist nil
+(defvar mime-preview-following-method-alist nil
   "Alist of major-mode vs. following-method of mime-view.")
 
 (defvar mime-view-following-required-fields-list
@@ -1105,7 +1105,7 @@ It decodes current entity to call internal or external method as
 (defun mime-preview-follow-current-entity ()
   "Write follow message to current entity.
 It calls following-method selected from variable
-`mime-view-following-method-alist'."
+`mime-preview-following-method-alist'."
   (interactive)
   (let (entity)
     (while (null (setq entity
@@ -1220,7 +1220,7 @@ It calls following-method selected from variable
 	      ))
 	  (eword-decode-header)
 	  )
-	(let ((f (cdr (assq mode mime-view-following-method-alist))))
+	(let ((f (cdr (assq mode mime-preview-following-method-alist))))
 	  (if (functionp f)
 	      (funcall f new-buf)
 	    (message
