@@ -497,9 +497,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	 (children (car (mime-entity-children entity))))
     (set-buffer (get-buffer-create new-name))
     (erase-buffer)
-    (insert-buffer-substring (mime-entity-buffer children)
-			     (mime-entity-point-min children)
-			     (mime-entity-point-max children))
+    (mime-insert-entity children)
     (setq mime-message-structure children)
     (setq major-mode 'mime-show-message-mode)
     (mime-view-buffer (current-buffer) nil mother
