@@ -1,3 +1,8 @@
+1999-02-26  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* SEMI-MK (install-semi-package): Install mime-setup.el(c).
+	(compile-semi-package): Compile mime-setup.el as well.
+
 1999-02-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-edit.el (mime-content-types): Add definition of
