@@ -1,3 +1,16 @@
+1999-11-20   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-edit.el (mime-edit-sign-pgp-mime): Bind
+	`pgg-default-user-id' to the canonical address of From field.
+
+	* pgg-def.el (pgg-cache-passphrase): New user option.
+
+	* pgg.el (pgg-read-passphrase): Refer `pgg-cache-passphrase'.
+	(pgg-remove-passphrase-cache): Fill cached passphrase with `_'.
+
+	* pgg-gpg.el, pgg-pgp.el, pgg-pgp5.el (sign-region): Refer
+	`pgg-cache-passphrase'.
+
 1999-11-17  Katsumi Yamaoka <yamaoka@jpl.org>
 
 	* mime-image.el (mime-display-image): Use
