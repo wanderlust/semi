@@ -27,7 +27,6 @@
 
 ;;; Code:
 
-(require 'emu)
 (require 'mime)
 (require 'semi-def)
 (require 'calist)
@@ -1089,6 +1088,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	 (set-buffer (event-buffer event))
 	 (popup-menu 'mime-view-xemacs-popup-menu))
        (defvar mouse-button-2 'button2)
+       (defvar mouse-button-3 'button3)
        )
       (t
        (defvar mime-view-popup-menu 
@@ -1110,6 +1110,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
                 (commandp func)
                 (funcall func))))
        (defvar mouse-button-2 [mouse-2])
+       (defvar mouse-button-2 [mouse-3])
        ))
 
 (defun mime-view-define-keymap (&optional default)
