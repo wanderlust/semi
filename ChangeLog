@@ -1,5 +1,13 @@
 2000-02-17  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* mime-view.el (mime-preview-condition): Add default setting of
+	multipart; declare body of message/partial, message/rfc822 and
+	message/news are visible.
+	(mime-display-entity): Check `*body' or `body' property of
+	situation.
+
+2000-02-17  MORIOKA Tomohiko  <tomo@m17n.org>
+
 	* mime-view.el (mime-display-entity): Find
 	`header-presentation-method' only if `header-is-visible'.
 
