@@ -39,6 +39,15 @@ value were ignored.  On the other hand,
 `request-partial-message-method' is required to return structure of
 message at current summary line.  Format of it is mime-entity.
 
+
+** User-Agent field
+
+  MIME-Edit inserts User-Agent field instaed of X-Emacs field if
+`mime-edit-insert-user-agent-field' is not nil.  Contents of
+User-Agent is specified by mime-edit-user-agent-value'.
+
+  X-Emacs related features were abolished.
+
 
 * Changes in SEMI 1.7
 
