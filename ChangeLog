@@ -1,5 +1,15 @@
 2000-09-13   Daiki Ueno  <ueno@unixuser.org>
 
+	* mime-play.el (mime-play-entity): Pass easymenu-style menu to
+	`mime-popup-menu-select'.
+
+	* semi-def.el (mime-popup-menu-popup): Rename from `mime-menu-popup'.
+	(mime-popup-menu-select): Rename from `select-menu-alist'.
+	(mime-popup-menu-select) [XEmacs]: Use `get-popup-menu-response'.
+	(mime-popup-menu-bogus-filter-constructor): Abolish argument `name'.
+
+2000-09-13   Daiki Ueno  <ueno@unixuser.org>
+
 	* mime-view.el (mime-view-xemacs-popup-menu): Abolish.
 	(mime-view-menu-title): Abolish.
 	(mime-view-menu-list): Rewrite in easymenu-style.
