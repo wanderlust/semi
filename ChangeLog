@@ -1,5 +1,26 @@
 1998-06-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-pgp.el (mime-method-for-application/pgp): Change interface.
+	(mime-method-to-verify-multipart/signed): Change interface.
+	(mime-method-to-verify-application/pgp-signature): Change
+	interface.
+	(mime-method-to-decrypt-application/pgp-encrypted): Change
+	interface.
+	(mime-method-to-add-application/pgp-keys): Change interface.
+
+	* mime-partial.el (mime-method-to-combine-message/partial-pieces):
+	Change interface.
+
+	* mime-play.el (mime-raw-play-entity): Change interface of
+	internal-method.
+	(mime-method-to-save): Change interface.
+	(mime-method-to-display-message/rfc822): Change interface.
+	(mime-method-to-store-message/partial): Change interface.
+	(mime-method-to-display-message/external-ftp): Change interface.
+	(mime-method-to-display-caesar): Change interface.
+
+1998-06-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-edit.el (mime-edit-normalize-body): Use
 	`mime-charset-type-list' directly; abolish local variable
 	`mime-edit-charset-default-encoding-alist' and function
