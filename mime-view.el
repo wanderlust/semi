@@ -52,9 +52,6 @@
   "MIME view mode"
   :group 'mime)
 
-(defvar mime-view-find-every-situations t
-  "*Find every available situations if non-nil.")
-
 (defcustom mime-situation-examples-file "~/.mime-example"
   "*File name of situation-examples demonstrated by user."
   :group 'mime-view
