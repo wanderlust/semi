@@ -104,7 +104,6 @@
 
 (defun mime-preview/filter-for-text/richtext (ctype params encoding)
   (let* ((mode mime::preview/original-major-mode)
-	 (m (assq mode mime-text-decoder-alist))
 	 (charset (cdr (assoc "charset" params)))
 	 (beg (point-min))
 	 )
@@ -115,7 +114,6 @@
 
 (defun mime-preview/filter-for-text/enriched (ctype params encoding)
   (let* ((mode mime::preview/original-major-mode)
-	 (m (assq mode mime-text-decoder-alist))
 	 (charset (cdr (assoc "charset" params)))
 	 (beg (point-min))
 	 )
