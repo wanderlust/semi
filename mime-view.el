@@ -1449,21 +1449,17 @@ It calls following-method selected from variable
   (interactive)
   (let ((entity (mime-preview-find-boundary-info t))
 	p-beg p-end
-	ph-end)
+	pb-beg)
     (setq p-beg (aref entity 0)
 	  p-end (aref entity 1)
 	  entity (aref entity 2))
-    (let ((situation (get-text-property (point) 'mime-view-situation)))
-      (if (eq (cdr (or (assq '*header situation)
-		       (assq 'header situation)))
-	      'visible)
-	  (progn
-	    (setq ph-end
-		  (next-single-property-change p-beg 'mime-view-entity-header))
-	    (if (or (null ph-end)
-		    (> ph-end p-end))
-		(setq ph-end p-end)))
-	(setq ph-end p-beg)))
+    (if (get-text-property p-beg 'mime-view-entity-body)
+	(setq pb-beg p-beg)
+      (setq pb-beg
+	    (next-single-property-change
+	     p-beg 'mime-view-entity-body nil
+	     (or (next-single-property-change p-beg 'mime-view-entity)
+		 p-end))))
     (let* ((mode (mime-preview-original-major-mode 'recursive))
 	   (entity-node-id (mime-entity-node-id entity))
 	   (new-name
@@ -1474,10 +1470,8 @@ It calls following-method selected from variable
       (save-excursion
 	(set-buffer (setq new-buf (get-buffer-create new-name)))
 	(erase-buffer)
-	(insert-buffer-substring the-buf ph-end p-end)
-	(when (= ph-end p-beg)
-	  (goto-char (point-min))
-	  (insert ?\n))
+	(insert ?\n)
+	(insert-buffer-substring the-buf pb-beg p-end)
 	(goto-char (point-min))
 	(let ((current-entity
 	       (if (and (eq (mime-entity-media-type entity) 'message)
