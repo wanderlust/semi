@@ -25,16 +25,6 @@
 
 ;;; Code:
 
-;;; @ for XEmacs
-;;;
-
-(defvar running-xemacs (string-match "XEmacs" emacs-version))
-
-(if running-xemacs
-    (require 'overlay)
-  )
-
-
 ;;; @ variables
 ;;;
 
@@ -60,8 +50,122 @@
 (defconst mime/temp-buffer-name " *MIME-temp*")
 
 
+;;; @ definitions about MIME
+;;;
+
+(defconst mime/tspecials "][\000-\040()<>@,\;:\\\"/?.=")
+(defconst mime/token-regexp (concat "[^" mime/tspecials "]+"))
+(defconst mime-charset-regexp mime/token-regexp)
+
+(defconst mime/content-type-subtype-regexp
+  (concat mime/token-regexp "/" mime/token-regexp))
+
+(defconst mime/disposition-type-regexp mime/token-regexp)
+
+
+;;; @ MIME charset
+;;;
+
+(defvar charsets-mime-charset-alist
+  '(((ascii)						. us-ascii)
+    ((ascii latin-iso8859-1)				. iso-8859-1)
+    ((ascii latin-iso8859-2)				. iso-8859-2)
+    ((ascii latin-iso8859-3)				. iso-8859-3)
+    ((ascii latin-iso8859-4)				. iso-8859-4)
+;;; ((ascii cyrillic-iso8859-5)				. iso-8859-5)
+    ((ascii cyrillic-iso8859-5)				. koi8-r)
+    ((ascii arabic-iso8859-6)				. iso-8859-6)
+    ((ascii greek-iso8859-7)				. iso-8859-7)
+    ((ascii hebrew-iso8859-8)				. iso-8859-8)
+    ((ascii latin-iso8859-9)				. iso-8859-9)
+    ((ascii latin-jisx0201
+	    japanese-jisx0208-1978 japanese-jisx0208)	. iso-2022-jp)
+    ((ascii korean-ksc5601)				. euc-kr)
+    ((ascii chinese-gb2312)				. cn-gb-2312)
+    ((ascii chinese-big5-1 chinese-big5-2)		. cn-big5)
+    ((ascii latin-iso8859-1 greek-iso8859-7
+	    latin-jisx0201 japanese-jisx0208-1978
+	    chinese-gb2312 japanese-jisx0208
+	    korean-ksc5601 japanese-jisx0212)		. iso-2022-jp-2)
+    ((ascii latin-iso8859-1 greek-iso8859-7
+	    latin-jisx0201 japanese-jisx0208-1978
+	    chinese-gb2312 japanese-jisx0208
+	    korean-ksc5601 japanese-jisx0212
+	    chinese-cns11643-1 chinese-cns11643-2)	. iso-2022-int-1)
+    ((ascii latin-iso8859-1 latin-iso8859-2
+	    cyrillic-iso8859-5 greek-iso8859-7
+	    latin-jisx0201 japanese-jisx0208-1978
+	    chinese-gb2312 japanese-jisx0208
+	    korean-ksc5601 japanese-jisx0212
+	    chinese-cns11643-1 chinese-cns11643-2
+	    chinese-cns11643-3 chinese-cns11643-4
+	    chinese-cns11643-5 chinese-cns11643-6
+	    chinese-cns11643-7)				. iso-2022-cjk)
+    ))
+
+(defvar default-mime-charset 'x-ctext)
+
+(defvar mime-charset-coding-system-alist
+  '((x-ctext		. ctext)
+    (gb2312		. cn-gb-2312)
+    (iso-2022-jp-2	. iso-2022-ss2-7)
+    ))
+
+(defun mime-charset-to-coding-system (charset &optional lbt)
+  (if (stringp charset)
+      (setq charset (intern (downcase charset)))
+    )
+  (let ((cs
+	 (or (cdr (assq charset mime-charset-coding-system-alist))
+	     (and (coding-system-p charset) charset)
+	     )))
+    (if lbt
+	(intern (concat (symbol-name cs) "-" (symbol-name lbt)))
+      cs)))
+
+(defun detect-mime-charset-region (start end)
+  "Return MIME charset for region between START and END. [emu-e20.el]"
+  (charsets-to-mime-charset
+   (find-charset-string (buffer-substring start end))
+   ))
+
+(defun encode-mime-charset-region (start end charset)
+  "Encode the text between START and END as MIME CHARSET. [emu-e20.el]"
+  (let ((cs (mime-charset-to-coding-system charset)))
+    (if cs
+	(encode-coding-region start end cs)
+      )))
+
+(defun decode-mime-charset-region (start end charset)
+  "Decode the text between START and END as MIME CHARSET. [emu-e20.el]"
+  (let ((cs (mime-charset-to-coding-system charset)))
+    (if cs
+	(decode-coding-region start end cs)
+      )))
+
+(defun encode-mime-charset-string (string charset)
+  "Encode the STRING as MIME CHARSET. [emu-e20.el]"
+  (let ((cs (mime-charset-to-coding-system charset)))
+    (if cs
+	(encode-coding-string string cs)
+      string)))
+
+(defun decode-mime-charset-string (string charset)
+  "Decode the STRING as MIME CHARSET. [emu-e20.el]"
+  (let ((cs (mime-charset-to-coding-system charset)))
+    (if cs
+	(decode-coding-string string cs)
+      string)))
+
+
 ;;; @ button
 ;;;
+
+(defvar running-xemacs (string-match "XEmacs" emacs-version))
+
+(if running-xemacs
+    (require 'overlay)
+  )
 
 (defvar mime-button-face 'bold
   "Face used for content-button or URL-button of MIME-Preview buffer.")
@@ -145,19 +249,6 @@ FUNCTION.")
 	   (autoload (second method)(third method))
 	   ))
 	pgp-function-alist)
-
-
-;;; @ definitions about MIME
-;;;
-
-(defconst mime/tspecials "][\000-\040()<>@,\;:\\\"/?.=")
-(defconst mime/token-regexp (concat "[^" mime/tspecials "]+"))
-(defconst mime-charset-regexp mime/token-regexp)
-
-(defconst mime/content-type-subtype-regexp
-  (concat mime/token-regexp "/" mime/token-regexp))
-
-(defconst mime/disposition-type-regexp mime/token-regexp)
 
 
 ;;; @ rot13-47
