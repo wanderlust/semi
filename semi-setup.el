@@ -78,6 +78,8 @@ it is used as hook to set."
     )))
 
 
+(defvar running-xemacs (string-match "XEmacs" emacs-version))
+
 ;; for image/* and X-Face
 (defvar mime-setup-enable-inline-image
   (and window-system
