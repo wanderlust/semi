@@ -991,10 +991,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 		       (set-auto-mode)))))
 	    (let ((font-lock-verbose nil))
 	      ;; I find font-lock a bit too verbose.
-	      (font-lock-fontify-buffer)
-	      (when (and (boundp 'jit-lock-mode)
-			 jit-lock-mode)
-		(jit-lock-fontify-now)))
+	      (font-lock-fontify-buffer))
 	    ;; By default, XEmacs font-lock uses non-duplicable text
 	    ;; properties.  This code forces all the text properties
 	    ;; to be copied along with the text.
