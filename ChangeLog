@@ -1,3 +1,7 @@
+2000-10-16  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* EMY 1.13.9 is released.
+
 2000-10-13  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* mime-edit.el (mime-edit-force-text-tag): New macro.
