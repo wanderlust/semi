@@ -1,3 +1,7 @@
+1998-03-13  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+
+	* README.en (Bug reports): Modify description of tm mailing list.
+
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el, mime-play.el: Rename
