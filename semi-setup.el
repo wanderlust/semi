@@ -83,8 +83,7 @@ it is used as hook to set."
 
 
 ;; for PGP
-(defvar mime-setup-enable-pgp
-  (module-installed-p 'mailcrypt)
+(defvar mime-setup-enable-pgp t
   "*If it is non-nil, semi-setup sets uf to use mime-pgp.")
 
 (if mime-setup-enable-pgp
@@ -106,6 +105,33 @@ it is used as hook to set."
 		    (method . mime-verify-multipart/signed))
 	  'strict "mime-pgp")
 	 
+	 (autoload 'mime-display-application/pgp-signature "mime-pgp")
+
+	 (ctree-set-calist-strictly
+	  'mime-preview-condition 
+	  '((type . application)(subtype . pgp-signature)
+	    (body . visible)
+	    (body-presentation-method 
+	     . mime-display-application/pgp-signature)))
+
+	 (autoload 'mime-display-application/pgp-encrypted "mime-pgp")
+
+	 (ctree-set-calist-strictly
+	  'mime-preview-condition 
+	  '((type . application)(subtype . pgp-encrypted)
+	    (body . visible)
+	    (body-presentation-method 
+	     . mime-display-application/pgp-encrypted)))
+
+	 (autoload 'mime-display-application/pgp-keys "mime-pgp")
+
+	 (ctree-set-calist-strictly
+	  'mime-preview-condition 
+	  '((type . application)(subtype . pgp-keys)
+	    (body . visible)
+	    (body-presentation-method 
+	     . mime-display-application/pgp-keys)))
+
 	 (mime-add-condition
 	  'action
 	  '((type . application)(subtype . pgp-signature)
