@@ -37,14 +37,15 @@ What's SEMI?
 Required environment
 --------------------
 
-  SEMI supports XEmacs 20.2 or later with mule, and Emacs/mule (mule
-  merged EMACS; it will become Emacs 20.1).
+  SEMI supports XEmacs 20.2 or later with mule, and Emacs 20.
 
-  SEMI does not support EMACS 19.28 or later, XEmacs 19.14 or later,
-  XEmacs 20.1 or later without mule, but SEMI may work with them.
+  SEMI does not support anything older than Emacs 19.28 or XEmacs
+  19.14.  SEMI also does not support Emacs 19.29 to 19.34, XEmacs
+  19.15 or XEmacs 20.2 without mule, but SEMI may work with them.
 
-  If you use EMACS/mule, please use the latest version (GNU MULE
-  19.34.94-zeta or later).
+  If you use Emacs 20, don't set `enable-multibyte-characters' to
+  nil. (Maybe non mule setting requires to modify emu.  In addition,
+  it is better to use terminal-coding-system feature)
 
   SEMI requires APEL and MEL package.  Please install them before
   installing it.  APEL package
@@ -105,7 +106,7 @@ Installation
 
   You can specify other optional settings by editing the file
   semi/SEMI-CFG.  Please read semi/README.en and comments in
-  semi/TM-CFG.
+  semi/SEMI-CFG.
 
 
 Initialization
