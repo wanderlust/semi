@@ -51,7 +51,7 @@
 (define-calist-field-match-method 'signature-version
   #'pgg-field-match-method-with-containment)
 
-(define-calist-field-match-method 'cipher-algorithm
+(define-calist-field-match-method 'symmetric-key-algorithm
   #'pgg-field-match-method-with-containment)
 
 (define-calist-field-match-method 'public-key-algorithm
@@ -60,44 +60,44 @@
 (define-calist-field-match-method 'hash-algorithm
   #'pgg-field-match-method-with-containment)
 
-(defvar pgg-verify-codition nil
-  "Condition-tree about how to display entity.")
+(defvar pgg-verify-condition nil
+  "Condition-tree about which PGP implementation is used for verifying.")
 
-(defvar pgg-decrypt-codition nil
-  "Condition-tree about how to display entity.")
+(defvar pgg-decrypt-condition nil
+  "Condition-tree about which PGP implementation is used for decrypting.")
 
 (ctree-set-calist-strictly
- 'pgg-verify-codition
+ 'pgg-verify-condition
  '((signature-version 3)(public-key-algorithm RSA)(hash-algorithm MD5)
    (scheme . pgp)))
 
 (ctree-set-calist-strictly
- 'pgg-decrypt-codition
+ 'pgg-decrypt-condition
  '((public-key-algorithm RSA)(symmetric-key-algorithm IDEA)
    (scheme . pgp)))
 
 (ctree-set-calist-strictly
- 'pgg-verify-codition
+ 'pgg-verify-condition
  '((signature-version 3 4)
    (public-key-algorithm RSA ELG DSA)
    (hash-algorithm MD5 SHA1 RIPEMD160)
    (scheme . pgp5)))
 
 (ctree-set-calist-strictly
- 'pgg-decrypt-codition
+ 'pgg-decrypt-condition
  '((public-key-algorithm RSA ELG DSA)
    (symmetric-key-algorithm 3DES CAST5 IDEA)
    (scheme . pgp5)))
 
 (ctree-set-calist-strictly
- 'pgg-verify-codition
+ 'pgg-verify-condition
  '((signature-version 3 4)
    (public-key-algorithm ELG-E DSA ELG)
    (hash-algorithm MD5 SHA1 RIPEMD160)
    (scheme . gpg)))
 
 (ctree-set-calist-strictly
- 'pgg-decrypt-codition
+ 'pgg-decrypt-condition
  '((public-key-algorithm ELG-E DSA ELG)
    (symmetric-key-algorithm 3DES CAST5 BLOWFISH TWOFISH)
    (scheme . gpg)))
@@ -158,7 +158,7 @@ and END to the keyring.")
 	      (cdr (assq 'scheme
 			 (progn
 			   (in-calist-package 'pgg)
-			   (ctree-match-calist pgg-decrypt-codition
+			   (ctree-match-calist pgg-decrypt-condition
 					       packet))))
 	      pgg-default-scheme))
 	 (entity (pgg-make-scheme scheme)))
@@ -183,7 +183,7 @@ and END to the keyring.")
 	      (cdr (assq 'scheme
 			 (progn
 			   (in-calist-package 'pgg)
-			   (ctree-match-calist pgg-verify-codition
+			   (ctree-match-calist pgg-verify-condition
 					       packet))))
 	      pgg-default-scheme))
 	 (entity (pgg-make-scheme scheme))
