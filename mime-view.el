@@ -335,6 +335,21 @@ Each elements are regexp of field-name.")
 ;;; @@@ predicate function
 ;;;
 
+(defun mime-calist::field-match-method-as-default-rule (calist
+							field-type field-value)
+  (let ((s-field (assq field-type calist)))
+    (cond ((null s-field)
+	   (cons (cons field-type field-value) calist)
+	   )
+	  (t calist))))
+
+(define-calist-field-match-method
+  'header #'mime-calist::field-match-method-as-default-rule)
+
+(define-calist-field-match-method
+  'body #'mime-calist::field-match-method-as-default-rule)
+
+
 (defvar mime-preview-condition nil
   "Condition-tree about how to display entity.")
 
