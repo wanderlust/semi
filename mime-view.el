@@ -94,6 +94,18 @@ message/rfc822, `mime-entity' structures of them are included in
   "MIME-preview buffer corresponding with the (raw) buffer.")
 (make-variable-buffer-local 'mime-preview-buffer)
 
+(defvar mime-raw-representation-type-alist
+  '((mime-show-message-mode     . binary)
+    (mime-temp-message-mode     . binary)
+    (t                          . cooked)
+    )
+  "Alist of major-mode vs. representation-type of mime-raw-buffer.
+Each element looks like (SYMBOL . REPRESENTATION-TYPE).  SYMBOL is
+major-mode or t.  t means default.  REPRESENTATION-TYPE must be
+`binary' or `cooked'.
+This value is overridden by buffer local variable
+`mime-raw-representation-type' if it is not nil.")
+
 
 ;;; @@ in preview-buffer
 ;;;
@@ -280,21 +292,6 @@ Please redefine this function if you want to change default setting."
 ;;; @@ entity-header
 ;;;
 
-;;; @@@ predicate function
-;;;
-
-;; (defvar mime-view-childrens-header-showing-Content-Type-list
-;;   '("message/rfc822" "message/news"))
-
-;; (defun mime-view-header-visible-p (entity message-info)
-;;   "Return non-nil if header of ENTITY is visible."
-;;   (let ((entity-node-id (mime-entity-node-id entity)))
-;;     (member (mime-entity-type/subtype
-;;              (mime-raw-find-entity-from-node-id
-;;               (cdr entity-node-id) message-info))
-;;             mime-view-childrens-header-showing-Content-Type-list)
-;;     ))
-
 ;;; @@@ entity header filter
 ;;;
 
@@ -452,25 +449,12 @@ Each elements are regexp of field-name.")
 						(entity-button . invisible))))
 
 
-;;; @@@ entity filter
+;;; @@@ entity presentation
 ;;;
 
 (autoload 'mime-preview-text/plain "mime-text")
 (autoload 'mime-preview-text/enriched "mime-text")
 (autoload 'mime-preview-text/richtext "mime-text")
-
-(defvar mime-raw-representation-type-alist
-  '((mime-show-message-mode     . binary)
-    (mime-temp-message-mode     . binary)
-    (t                          . cooked)
-    )
-  "Alist of major-mode vs. representation-type of mime-raw-buffer.
-Each element looks like (SYMBOL . REPRESENTATION-TYPE).  SYMBOL is
-major-mode or t.  t means default.  REPRESENTATION-TYPE must be
-`binary' or `cooked'.
-This value is overridden by buffer local variable
-`mime-raw-representation-type' if it is not nil.")
-
 
 (defvar mime-view-announcement-for-message/partial
   (if (and (>= emacs-major-version 19) window-system)
@@ -495,6 +479,17 @@ This value is overridden by buffer local variable
     (mime-add-button (point-min)(point-max)
 		     #'mime-preview-play-current-entity)
     ))
+
+(defun mime-preview-multipart/mixed (entity situation)
+  (let ((children (mime-entity-children entity))
+	(default-situation
+	  (cdr (assq 'childrens-situation situation))))
+    (while children
+      (mime-view-display-entity (car children) message-info
+				mime-raw-buffer (current-buffer)
+				default-situation)
+      (setq children (cdr children))
+      )))
 
 
 ;;; @ acting-condition
@@ -764,7 +759,8 @@ The compressed face will be piped to this command.")
 	   (header-is-visible
 	    (eq (cdr (assq 'header situation)) 'visible))
 	   (body-presentation-method
-	    (cdr (assq 'body-presentation-method situation))))
+	    (cdr (assq 'body-presentation-method situation)))
+	   (children (mime-entity-children entity)))
       (set-buffer obuf)
       (setq nb (point))
       (narrow-to-region nb nb)
@@ -791,6 +787,7 @@ The compressed face will be piped to this command.")
 		 (insert-buffer-substring mime-raw-buffer end-of-header end)
 		 (funcall body-filter situation)
 		 )))
+	    (children)
 	    ((functionp body-presentation-method)
 	     (funcall body-presentation-method entity situation)
 	     )
@@ -810,14 +807,10 @@ The compressed face will be piped to this command.")
       (put-text-property nb ne 'mime-view-raw-buffer ibuf)
       (put-text-property nb ne 'mime-view-entity entity)
       (goto-char ne)
-      (let ((children (mime-entity-children entity))
-	    (default-situation
-	      (cdr (assq 'childrens-situation situation))))
-	(while children
-	  (mime-view-display-entity (car children) message-info ibuf obuf
-				    default-situation)
-	  (setq children (cdr children))
-	  )))))
+      (if children
+	  (mime-preview-multipart/mixed entity situation)
+	)
+      )))
 
 (defun mime-raw-get-uu-filename ()
   (save-excursion
