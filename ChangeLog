@@ -1,5 +1,12 @@
 1998-06-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-view-entity-button-visible-p): Change
+	interface.
+	(mime-view-display-entity): Modify for
+	`mime-view-entity-button-visible-p'.
+
+1998-06-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* MIME-View-API-ja.ol: Add description of `mime-entity-parent' and
 	abolish description `mime-raw-entity-parent'.
 
