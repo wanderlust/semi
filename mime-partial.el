@@ -40,7 +40,7 @@
 	(error "Fatal. Unsupported mode")
 	))))
 
-(defun mime-method-to-combine-message/partial-pieces (entity cal)
+(defun mime-combine-message/partial-pieces-automatically (entity cal)
   "Internal method for mime-view to combine message/partial messages
 automatically.  This function refers variable
 `mime-view-partial-message-method-alist' to select function to display
