@@ -67,29 +67,6 @@
 ;;; @ in raw-buffer (representation space)
 ;;;
 
-(defvar mime-raw-message-info nil
-  "Information about structure of message.
-Please use reference function `mime-entity-SLOT' to get value of SLOT.
-
-Following is a list of slots of the structure:
-
-buffer			buffer includes this entity (buffer).
-node-id			node-id (list of integers)
-header-start		minimum point of header in raw-buffer
-header-end		maximum point of header in raw-buffer
-body-start		minimum point of body in raw-buffer
-body-end		maximum point of body in raw-buffer
-content-type		content-type (content-type)
-content-disposition	content-disposition (content-disposition)
-encoding		Content-Transfer-Encoding (string or nil)
-children		entities included in this entity (list of entity)
-
-If an entity includes other entities in its body, such as multipart or
-message/rfc822, `mime-entity' structures of them are included in
-`children', so the `mime-entity' structure become a tree.")
-(make-variable-buffer-local 'mime-raw-message-info)
-
-
 (defvar mime-preview-buffer nil
   "MIME-preview buffer corresponding with the (raw) buffer.")
 (make-variable-buffer-local 'mime-preview-buffer)
@@ -122,15 +99,15 @@ This value is overridden by buffer local variable
 					     &optional message-info)
   "Return entity from ENTITY-NODE-ID in mime-raw-buffer.
 If optional argument MESSAGE-INFO is not specified,
-`mime-raw-message-info' is used."
+`mime-message-structure' is used."
   (mime-raw-find-entity-from-number (reverse entity-node-id) message-info))
 
 (defun mime-raw-find-entity-from-number (entity-number &optional message-info)
   "Return entity from ENTITY-NUMBER in mime-raw-buffer.
 If optional argument MESSAGE-INFO is not specified,
-`mime-raw-message-info' is used."
+`mime-message-structure' is used."
   (or message-info
-      (setq message-info mime-raw-message-info))
+      (setq message-info mime-message-structure))
   (if (eq entity-number t)
       message-info
     (let ((sn (car entity-number)))
@@ -145,9 +122,9 @@ If optional argument MESSAGE-INFO is not specified,
 (defun mime-raw-find-entity-from-point (point &optional message-info)
   "Return entity from POINT in mime-raw-buffer.
 If optional argument MESSAGE-INFO is not specified,
-`mime-raw-message-info' is used."
+`mime-message-structure' is used."
   (or message-info
-      (setq message-info mime-raw-message-info))
+      (setq message-info mime-message-structure))
   (if (and (<= (mime-entity-point-min message-info) point)
 	   (<= point (mime-entity-point-max message-info)))
       (let ((children (mime-entity-children message-info)))
@@ -202,13 +179,13 @@ mother-buffer."
 (defsubst mime-entity-parent (entity &optional message-info)
   "Return mother entity of ENTITY.
 If optional argument MESSAGE-INFO is not specified,
-`mime-raw-message-info' in buffer of ENTITY is used."
+`mime-message-structure' in buffer of ENTITY is used."
   (mime-raw-find-entity-from-node-id
    (cdr (mime-entity-node-id entity))
    (or message-info
        (save-excursion
 	 (set-buffer (mime-entity-buffer entity))
-	 mime-raw-message-info))))
+	 mime-message-structure))))
 
 (defun mime-entity-situation (entity)
   "Return situation of ENTITY."
@@ -285,21 +262,21 @@ If optional argument MESSAGE-INFO is not specified,
 (defsubst mime-raw-point-to-entity-node-id (point &optional message-info)
   "Return entity-node-id from POINT in mime-raw-buffer.
 If optional argument MESSAGE-INFO is not specified,
-`mime-raw-message-info' is used."
+`mime-message-structure' is used."
   (mime-entity-node-id (mime-raw-find-entity-from-point point message-info)))
 
 (defsubst mime-raw-point-to-entity-number (point &optional message-info)
   "Return entity-number from POINT in mime-raw-buffer.
 If optional argument MESSAGE-INFO is not specified,
-`mime-raw-message-info' is used."
+`mime-message-structure' is used."
   (mime-entity-number (mime-raw-find-entity-from-point point message-info)))
 
 (defun mime-raw-flatten-message-info (&optional message-info)
   "Return list of entity in mime-raw-buffer.
 If optional argument MESSAGE-INFO is not specified,
-`mime-raw-message-info' is used."
+`mime-message-structure' is used."
   (or message-info
-      (setq message-info mime-raw-message-info))
+      (setq message-info mime-message-structure))
   (let ((dest (list message-info))
 	(rcl (mime-entity-children message-info)))
     (while rcl
@@ -994,7 +971,7 @@ The compressed face will be piped to this command.")
 	(setq preview-buffer
 	      (concat "*Preview-" (buffer-name raw-buffer) "*")))
     (set-buffer raw-buffer)
-    (setq mime-raw-message-info (mime-parse-message))
+    (mime-parse-buffer)
     (setq mime-preview-buffer preview-buffer)
     (let ((inhibit-read-only t))
       (switch-to-buffer preview-buffer)
