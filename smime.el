@@ -150,10 +150,9 @@
   (with-current-buffer (get-buffer-create smime-output-buffer)
     (buffer-disable-undo)
     (erase-buffer)
-    (insert-file-contents cert-file)
-    (apply #'call-process-region
-	   (point-min)(point-max) (car smime-x509-program)
-	   t t nil (cons "-hash" (cdr smime-x509-program)))
+    (apply #'call-process (car smime-x509-program) nil t nil 
+	   (append (cdr smime-x509-program) 
+		   (list "-hash" "-in" cert-file)))
     (if (zerop (buffer-size)) nil
       (buffer-substring (point-min) (1- (point-max))))))
 
@@ -161,10 +160,9 @@
   (with-current-buffer (get-buffer-create smime-output-buffer)
     (buffer-disable-undo)
     (erase-buffer)
-    (insert-file-contents cert-file)
-    (apply #'call-process-region
-	   (point-min)(point-max) (car smime-x509-program)
-	   t t nil (cons "-subject" (cdr smime-x509-program)))
+    (apply #'call-process (car smime-x509-program) nil t nil 
+	   (append (cdr smime-x509-program)
+		   (list "-subject" "-in" cert-file)))
     (if (zerop (buffer-size)) nil
       (goto-char (point-min))
       (when (re-search-forward "^subject=" nil t)
