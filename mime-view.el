@@ -128,7 +128,7 @@
      (mode . "play")
      )
     ((type . "message/partial")
-     (method . mime-display-message/partial)
+     (method . mime-method-to-store-message/partial)
      (mode . "play")
      )
     
