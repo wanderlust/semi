@@ -1,3 +1,26 @@
+1998-06-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el: When it is compiled, require 'bbdb or define
+	`bbdb-buffer-name' to avoid compiler warning.
+
+	(mime-method-to-display-caesar): Abolish unused local variable;
+	avoid problem of `mime-text-insert-decoded-body'.
+	
+	Use `eval-buffer' to eval contents of
+	`mime-acting-situation-examples-file'.
+
+1998-06-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-text.el: Move definition of variable
+	`mime-raw-representation-type' to mime-view.el.
+
+	* mime-view.el: Move definition of variable
+	`mime-raw-representation-type' from mime-text.el.
+	(mime-raw-message-info): Modify DOC-string.
+
+	* MIME-View-API-ja.ol: New file.
+
+
 1998-06-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.5.1 (Ikuji) released.
