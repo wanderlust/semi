@@ -1,3 +1,8 @@
+2000-05-16   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-image.el (mime-image-create) [XEmacs]: Don't call
+	`make-image-instance' directly.
+
 2000-05-02   Daiki Ueno  <ueno@unixuser.org>
 
 	* pgg-gpg.el (pgg-scheme-encrypt-region): Don't quote recipient;

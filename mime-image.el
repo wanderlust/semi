@@ -85,16 +85,15 @@
 	    (insert file-or-data)
 	    (setq file-or-data
 		  (mime-image-normalize-xbm-buffer (current-buffer)))))
-	(let ((instance
-	       (make-image-instance
+	(let ((glyph
+	       (make-glyph
 		(if (and type (mime-image-type-available-p type))
 		    (vconcat
 		     (list type (if data-p :data :file) file-or-data)
 		     props)
-		  file-or-data)
-		nil nil 'noerror)))
-	  (if (nothing-image-instance-p instance) nil
-	    (make-glyph instance))))
+		  file-or-data))))
+	  (if (nothing-image-instance-p (glyph-image-instance glyph)) nil
+	    glyph)))
 
       (defun mime-image-insert (image string &optional area)
 	(let ((extent (make-extent (point) (progn (insert string)(point)))))
