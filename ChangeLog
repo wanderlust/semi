@@ -1,5 +1,15 @@
 1997-07-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-parse.el: Constant `mime::ctype-regexp' was abolished.
+
+	* mime-parse.el: Constant `mime::dtype-regexp' was abolished.
+
+	* mime-parse.el, mime-def.el: `mime/disposition-type-regexp' ->
+	`mime-disposition-type-regexp'.
+
+
+1997-07-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* SEMI: Version 0.96 (Kaga-Ichinomiya) was released.
 
 1997-07-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
