@@ -532,17 +532,19 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 (defun mime-view-message/rfc822 (entity situation)
   (let* ((new-name
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
-	 (new-pbuf (get-buffer-create new-name))
 	 (mother (current-buffer))
-	 (children (car (mime-entity-children entity))))
-    (with-current-buffer new-pbuf
-      (erase-buffer))
-    (mime-display-entity
-     children nil
-     (list (assq 'major-mode
-		 (get-text-property (point)
-				    'mime-view-situation)))
-     new-pbuf)))
+	 (children (car (mime-entity-children entity)))
+	 (preview-buffer
+	  (mime-display-message
+	   children new-name mother nil
+	   (cdr (assq 'major-mode
+		      (get-text-property (point) 'mime-view-situation))))))
+    (or (get-buffer-window preview-buffer)
+	(let ((m-win (get-buffer-window mother)))
+	  (if m-win
+	      (set-window-buffer m-win preview-buffer)
+	    (switch-to-buffer preview-buffer)
+	    )))))
 
 
 ;;; @ message/partial
