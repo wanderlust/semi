@@ -117,7 +117,8 @@ specified, play as it.  Default MODE is \"play\"."
 	)
       (setq ret
 	    (or (ctree-match-calist mime-acting-situation-examples cal)
-		(ctree-match-calist-partially mime-acting-situation-examples cal)
+		(ctree-match-calist-partially mime-acting-situation-examples
+					      cal)
 		cal))
       (setq ret
 	    (or (ctree-find-calist mime-acting-condition ret
@@ -135,6 +136,36 @@ specified, play as it.  Default MODE is \"play\"."
 					    (cdr (assq 'method situation)))
 				    situation)))
 				ret)))
+	     (setq ret
+		   (sort ret
+			 #'(lambda (a b)
+			     (let ((a-t (car a))
+				   (b-t (car b))
+				   (order '((type . 1)
+					    (subtype . 2)
+					    (mode . 3)
+					    (major-mode . 4)))
+				   a-order b-order)
+			       (if (symbolp a-t)
+				   (let ((ret (assq a-t order)))
+				     (if ret
+					 (setq a-order (cdr ret))
+				       (setq a-order 5)
+				       ))
+				 (setq a-order 6)
+				 )
+			       (if (symbolp b-t)
+				   (let ((ret (assq b-t order)))
+				     (if ret
+					 (setq b-order (cdr ret))
+				       (setq b-order 5)
+				       ))
+				 (setq b-order 6)
+				 )
+			       (if (= a-order b-order)
+				   (string< (format "%s" a-t)(format "%s" b-t))
+				 (< a-order b-order))
+			       ))))
 	     (ctree-set-calist-strictly 'mime-acting-situation-examples ret)
 	     )
 	    (t
@@ -586,7 +617,11 @@ to write."
 	    (set-buffer buffer)
 	    (erase-buffer)
 	    (insert-file-contents file)
-	    (eval-current-buffer))
+	    (eval-current-buffer)
+	    ;; format check
+	    (or (eq (car mime-acting-situation-examples) 'type)
+		(setq mime-acting-situation-examples nil))
+	    )
 	(kill-buffer buffer))))
 
 ;;; mime-play.el ends here
