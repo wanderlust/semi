@@ -25,7 +25,7 @@
 ;;; Code:
 
 (require 'poe)
-(eval-when-compile (require 'cl))
+(eval-when-compile (require 'static))
 (require 'custom)
 
 (defconst mime-user-interface-product ["EMY" (1 13 6) "Life is balance"]
@@ -132,11 +132,15 @@ if the TTY frame is used."
 	;; `device-on-widow-system-p' must be checked at run-time.
 	(if (device-on-window-system-p)
 	    (progn
-	      (set-extent-properties (make-extent (point)
-						  (progn
-						    (insert "[" string "]")
-						    (point)))
-				     '(invisible t intangible t))
+	      (let ((old-point (point)))
+		(set-extent-properties (make-extent (point)
+						    (progn
+						      (insert "[" string "]")
+						      (point)))
+				       '(invisible t intangible t
+						   start-open t))
+		(add-text-properties old-point (point)
+				     '(mime-button t start-open t)))
 	      (let* ((spec (list string
 				 mime-xpm-button-shadow-thickness
 				 mime-xpm-button-foreground
@@ -280,11 +284,14 @@ if the TTY frame is used."
 ;;; @ menu
 ;;;
 
-(if window-system
-    (if (featurep 'xemacs)
-	(defun select-menu-alist (title menu-alist)
+(static-if (featurep 'xemacs)
+    (defun select-menu-alist (title menu-alist)
+      ;; XEmacs can have both X and tty frames at the same time with
+      ;; gnuclient.
+      (if (device-on-window-system-p)
 	  (let (ret)
 	    (popup-menu
+	     ;; list* is CL function, but CL is a part of XEmacs.
 	     (list* title
 		    "---"
 		    (mapcar (function
@@ -296,15 +303,19 @@ if the TTY frame is used."
 				       t)))
 			    menu-alist)))
 	    (recursive-edit)
-	    ret))
+	    ret)
+	(cdr
+	 (assoc (completing-read (concat title " : ") menu-alist)
+		menu-alist))))
+  (if window-system
       (defun select-menu-alist (title menu-alist)
 	(x-popup-menu
 	 (list '(1 1) (selected-window))
-	 (list title (cons title menu-alist)))))
-  (defun select-menu-alist (title menu-alist)
-    (cdr
-     (assoc (completing-read (concat title " : ") menu-alist)
-	    menu-alist))))
+	 (list title (cons title menu-alist))))
+    (defun select-menu-alist (title menu-alist)
+      (cdr
+       (assoc (completing-read (concat title " : ") menu-alist)
+	      menu-alist)))))
 
 
 ;;; @ Other Utility

@@ -1,3 +1,18 @@
+2000-06-15  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mail-mime-setup.el: Don't touch mail-signature.
+	* semi-setup.el (mime-setup-enable-inline-image): Don't check
+	window-system under XEmacs.
+	* semi-def.el (select-menu-alist): Use device-on-window-system-p
+	under XEmacs.
+
+2000-06-14  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-view-unbuttonize): Remove invisible text
+	following XPM buttons.
+	* semi-def.el (mime-create-xpm-buttton): Make an extent start-open.
+	Put mime-button text-property for buttonize and unbuttonize.
+
 2000-06-13  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* mime-edit.el (mime-transfer-level): Defcustomize.

@@ -71,7 +71,7 @@ EMY is a MIME interface for Emacs. EMY provides SEMI API, which
 is specified in a separate document.
 @c @xref{(semi-api)Top}.
 
-This manual correspond to EMY version @value{VERSION}.
+This manual corresponds to EMY version @value{VERSION}.
 @end ifnottex
 
 @menu
@@ -225,8 +225,8 @@ Before EMY 1.13.6, you need W- variants of SEMI to show buttons using
 widgets.  From now on, you only need to set @code{mime-use-widget}
 to @code{t}.
 
-Information of a part is displayed in buttons.  What will be shown is
-already defined.
+A button is a place where information about a given part is displayed.
+Its contents is already defined.
 
 [You should be able to customize button with format string.
  This might be implemented in later versions.  If you

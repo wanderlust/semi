@@ -45,17 +45,7 @@
            'mail-mode (function
                        (lambda ()
                          (interactive)
-                         (funcall send-mail-function)
-                         )))
-
-
-;;; @ for signature
-;;;
-
-(if mime-setup-use-signature
-    (setq mail-signature nil)
-  )
-
+                         (funcall send-mail-function))))
 
 ;;; @ end
 ;;;

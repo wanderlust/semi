@@ -999,6 +999,13 @@ With prefix, it prompts for coding-system."
 			  (point) 'mime-view-entity))
 	(goto-char point)
 	(when (get-text-property (point) 'mime-button)
+	  ;; Remove invisible text following XPM buttons.
+	  (static-if (featurep 'xemacs)
+	      (let ((extent (extent-at (point) nil 'invisible))
+		    (inhibit-read-only t))
+		(if extent
+		    (delete-region (extent-start-position extent)
+				   (extent-end-position extent)))))
 	  (mime-preview-toggle-button 'hide))))))
 	  
 
