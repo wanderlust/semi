@@ -184,25 +184,28 @@ If is is not found, return DEFAULT-ENCODING."
 
 (defsubst make-mime-entity (node-id
 			    point-min point-max
-			    media-type media-subtype parameters
-			    encoding children)
+			    content-type encoding children)
   (vector node-id point-min point-max
-	  media-type media-subtype parameters encoding children))
+	  content-type encoding children))
 
 (defsubst mime-entity-node-id (entity-info)       (aref entity-info 0))
 (defsubst mime-entity-point-min (entity-info)     (aref entity-info 1))
 (defsubst mime-entity-point-max (entity-info)     (aref entity-info 2))
-(defsubst mime-entity-media-type (entity-info)    (aref entity-info 3))
-(defsubst mime-entity-media-subtype (entity-info) (aref entity-info 4))
-(defsubst mime-entity-parameters (entity-info)    (aref entity-info 5))
-(defsubst mime-entity-encoding (entity-info)      (aref entity-info 6))
-(defsubst mime-entity-children (entity-info)      (aref entity-info 7))
+(defsubst mime-entity-content-type (entity-info)  (aref entity-info 3))
+(defsubst mime-entity-encoding (entity-info)      (aref entity-info 4))
+(defsubst mime-entity-children (entity-info)      (aref entity-info 5))
 
+(defsubst mime-entity-media-type (entity)
+  (mime-content-type-primary-type (mime-entity-content-type entity)))
+(defsubst mime-entity-media-subtype (entity)
+  (mime-content-type-subtype (mime-entity-content-type entity)))
+(defsubst mime-entity-parameters (entity)
+  (mime-content-type-parameters (mime-entity-content-type entity)))
 (defsubst mime-entity-type/subtype (entity-info)
   (mime-type/subtype-string (mime-entity-media-type entity-info)
 			    (mime-entity-media-subtype entity-info)))
 
-(defun mime-parse-multipart (boundary primtype subtype params encoding rcnum)
+(defun mime-parse-multipart (boundary content-type encoding node-id)
   (goto-char (point-min))
   (let* ((dash-boundary   (concat "--" boundary))
 	 (delimiter       (concat "\n" (regexp-quote dash-boundary)))
@@ -216,7 +219,7 @@ If is is not found, return DEFAULT-ENCODING."
 		  )))
 	 (rsep (concat delimiter "[ \t]*\n"))
 	 (dc-ctl
-	  (if (eq subtype 'digest)
+	  (if (eq (mime-content-type-subtype content-type) 'digest)
 	      (make-mime-content-type 'message 'rfc822)
 	    (make-mime-content-type 'text 'plain)
 	    ))
@@ -231,7 +234,7 @@ If is is not found, return DEFAULT-ENCODING."
 	(setq ncb (match-end 0))
 	(save-restriction
 	  (narrow-to-region cb ce)
-	  (setq ret (mime-parse-message dc-ctl "7bit" (cons i rcnum)))
+	  (setq ret (mime-parse-message dc-ctl "7bit" (cons i node-id)))
 	  )
 	(setq children (cons ret children))
 	(goto-char (mime-entity-point-max ret))
@@ -241,55 +244,51 @@ If is is not found, return DEFAULT-ENCODING."
       (setq ce (point-max))
       (save-restriction
 	(narrow-to-region cb ce)
-	(setq ret (mime-parse-message dc-ctl "7bit" (cons i rcnum)))
+	(setq ret (mime-parse-message dc-ctl "7bit" (cons i node-id)))
 	)
       (setq children (cons ret children))
       )
-    (make-mime-entity rcnum beg (point-max)
-		      primtype subtype params encoding
-		      (nreverse children))
+    (make-mime-entity node-id beg (point-max)
+		      content-type encoding (nreverse children))
     ))
 
-(defun mime-parse-message (&optional default-ctl default-encoding rcnum)
+(defun mime-parse-message (&optional default-ctl default-encoding node-id)
   "Parse current-buffer as a MIME message.
 DEFAULT-CTL is used when an entity does not have valid Content-Type
 field.  Its format must be as same as return value of
 mime-{parse|read}-Content-Type."
-  (setq default-ctl (or (mime-read-Content-Type) default-ctl))
-  (let ((primtype (mime-content-type-primary-type default-ctl))
-	(subtype (mime-content-type-subtype default-ctl))
-	(params (mime-content-type-parameters default-ctl))
-	(encoding (mime-read-Content-Transfer-Encoding default-encoding)))
-    (let ((boundary (assoc "boundary" params)))
-      (cond (boundary
-	     (setq boundary (std11-strip-quoted-string (cdr boundary)))
-	     (mime-parse-multipart
-	      boundary
-	      primtype subtype params encoding rcnum)
-	     )
-	    ((and (eq primtype 'message)
-		  (memq subtype '(rfc822 news))
-		  )
-	     (goto-char (point-min))
-	     (make-mime-entity rcnum (point-min) (point-max)
-			       primtype subtype params encoding
-			       (save-restriction
-				 (narrow-to-region
-				  (if (re-search-forward "^$" nil t)
-				      (1+ (match-end 0))
-				    (point-min)
-				    )
-				  (point-max))
-				 (list (mime-parse-message
-					nil nil (cons 0 rcnum)))
-				 ))
-	     )
-	    (t 
-	     (make-mime-entity rcnum (point-min) (point-max)
-			       primtype subtype params encoding
-			       nil)
-	     ))
-      )))
+  (let* ((content-type (or (mime-read-Content-Type) default-ctl))
+	 (encoding (mime-read-Content-Transfer-Encoding default-encoding))
+	 (boundary (assoc "boundary"
+			  (mime-content-type-parameters content-type))))
+    (cond (boundary
+	   (setq boundary (std11-strip-quoted-string (cdr boundary)))
+	   (mime-parse-multipart boundary content-type encoding node-id)
+	   )
+	  ((and (eq (mime-content-type-primary-type content-type)
+		    'message)
+		(memq (mime-content-type-subtype content-type)
+		      '(rfc822 news))
+		)
+	   (goto-char (point-min))
+	   (make-mime-entity node-id (point-min) (point-max)
+			     content-type encoding
+			     (save-restriction
+			       (narrow-to-region
+				(if (re-search-forward "^$" nil t)
+				    (1+ (match-end 0))
+				  (point-min)
+				  )
+				(point-max))
+			       (list (mime-parse-message
+				      nil nil (cons 0 node-id)))
+			       ))
+	   )
+	  (t 
+	   (make-mime-entity node-id (point-min) (point-max)
+			     content-type encoding nil)
+	   ))
+    ))
 
 
 ;;; @ utilities
