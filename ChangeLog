@@ -1,5 +1,12 @@
 2001-09-25   Daiki Ueno  <ueno@unixuser.org>
 
+	* mime-view.el (mime-view-entity-content): New function.
+	(mime-view-insert-text-content): Try to display compressed contents.
+	(mime-view-filter-text-content): New function.
+	(mime-view-automatic-conversion): New variable.
+
+2001-09-25   Daiki Ueno  <ueno@unixuser.org>
+
 	* mime-view.el (mime-view-insert-fontified-text-content): Don't use
 	`set-visited-filename'; set `buffer-file-name' temporarily.
 
