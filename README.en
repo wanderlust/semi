@@ -44,15 +44,15 @@ Required environment
   19.14.  WEMI also does not support Emacs 19.29 to 19.34, XEmacs
   19.15 or XEmacs 20.2 without mule, but WEMI may work with them.
 
-  SEMI requires APEL (9.20 or later) and FLIM (1.12.5 or later)
+  SEMI requires APEL (9.20 or later) and FLIM (1.13.1 or later)
   package.  Please install them before installing it.  APEL package is
   available at:
 
-	ftp://ftp.jaist.ac.jp/pub/GNU/elisp/apel/
+	ftp://ftp.etl.go.jp/pub/mule/apel/
 
   and FLIM package is available at:
 
-	ftp://ftp.jaist.ac.jp/pub/GNU/elisp/flim/
+	ftp://ftp.etl.go.jp/pub/mule/flim/flim-1.13/
 
   PGP/MIME and application/pgp require mailcrypt or tiny-pgp package.
 

@@ -4,7 +4,9 @@
 
 PACKAGE = wemi
 API	= 1.13
-RELEASE = 4
+RELEASE = 5
+
+FLIM_API= 1.13
 
 TAR	= tar
 RM	= /bin/rm -f
@@ -15,7 +17,6 @@ XEMACS	= xemacs
 FLAGS   = -batch -q -no-site-file -l SEMI-MK
 
 PREFIX	= NONE
-EXEC_PREFIX = NONE
 LISPDIR = NONE
 PACKAGEDIR = NONE
 VERSION_SPECIFIC_LISPDIR = NONE
@@ -28,13 +29,11 @@ ARC_DIR = /pub/elisp/wemi
 
 elc:
 	$(EMACS) $(FLAGS) -f compile-semi \
-		$(PREFIX) $(EXEC_PREFIX) $(LISPDIR) \
-		$(VERSION_SPECIFIC_LISPDIR)
+		$(PREFIX) $(LISPDIR) $(VERSION_SPECIFIC_LISPDIR)
 
 install-elc:	elc
 	$(EMACS) $(FLAGS) -f install-semi \
-		$(PREFIX) $(EXEC_PREFIX) $(LISPDIR) \
-		$(VERSION_SPECIFIC_LISPDIR)
+		$(PREFIX) $(LISPDIR) $(VERSION_SPECIFIC_LISPDIR)
 
 install:	install-elc
 
@@ -62,7 +61,8 @@ tar:
 	cd /tmp; $(TAR) cvzf $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION)
 	cd /tmp; $(RM) -r $(PACKAGE)-$(VERSION)
 	sed "s/VERSION/$(VERSION)/" < ftp.in | sed "s/API/$(API)/" \
-		| sed "s/PACKAGE/$(PACKAGE)/" > ftp
+		| sed "s/PACKAGE/$(PACKAGE)/" \
+		| sed "s/FLIM_API/$(FLIM_API)/" > ftp
 
 release:
 	-$(RM) $(ARC_DIR)/$(PACKAGE)-$(VERSION).tar.gz

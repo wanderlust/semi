@@ -1,11 +1,11 @@
-;;; semi-def.el --- definition module for WEMI
+;;; semi-def.el --- definition module for WEMI -*- coding: iso-8859-4; -*-
 
 ;; Copyright (C) 1995,1996,1997,1998,1999 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <tomo@m17n.org>
 ;; Keywords: definition, MIME, multimedia, mail, news
 
-;; This file is part of WEMI (Widget based Emacs MIME Interfaces).
+;; This file is part of WEMI (Widget based Emacs MIME Implementation).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
