@@ -30,70 +30,49 @@
 ;;; @ buffer local variables in raw-buffer
 ;;;
 
-(defvar mime-text-decoder nil
-  "Function to decode text in current buffer.
-Interface of the function is (CHARSET &optional ENCODING).
-CHARSET is symbol of MIME charset and ENCODING is value of
-Content-Transfer-Encoding.
-
+(defvar mime-raw-representation-type nil
+  "Representation-type of mime-raw-buffer.
+It must be nil, `binary' or `cooked'.
+If it is nil, `mime-raw-representation-type-alist' is used as default
+value.
 Notice that this variable is usually used as buffer local variable in
 raw-buffer.")
 
-(make-variable-buffer-local 'mime-text-decoder)
+(make-variable-buffer-local 'mime-raw-representation-type)
 
 
 ;;; @ code conversion
 ;;;
 
-(defun mime-text-decode-buffer (charset &optional encoding)
-  "Decode text of current buffer as CHARSET.
-It code-converts current buffer from network representation specified
-by MIME CHARSET to internal code.  CHARSET is symbol of MIME charset.
-See also variable `mime-charset-coding-system-alist'."
-  (decode-mime-charset-region (point-min)(point-max)
-			      (or charset default-mime-charset))
-  )
-
-(defun mime-text-decode-buffer-maybe (charset &optional encoding)
-  "Decode text of current buffer as CHARSET if ENCODING is actual encoding.
-It code-converts current buffer from network representation specified
-by MIME CHARSET to internal code if ENCODING is not nil, \"7bit\",
-\"8bit\" or \"binary\".  CHARSET is symbol of MIME charset.
-See also variable `mime-charset-coding-system-alist'."
-  (or (member encoding '(nil "7bit" "8bit" "binary"))
-      (mime-text-decode-buffer charset)
-      ))
-
-(defun mime-text-insert-decoded-body (entity situation)
+(defun mime-text-insert-decoded-body (entity)
   "Insert text body of ENTITY in SITUATION.
 It decodes MIME-encoding then code-converts as MIME-charset.
 MIME-encoding is value of field 'encoding of SITUATION.  It must be
 'nil or string.  MIME-charset is value of field \"charset\" of
-SITUATION.  It must be symbol.
-This function calls text-decoder for MIME-charset specified by buffer
-local variable `mime-text-decoder' and variable
-`mime-text-decoder-alist'."
-  (insert-buffer-substring mime-raw-buffer
-			   (mime-entity-body-start entity)
-			   (mime-entity-body-end entity))
-  (let ((encoding (cdr (assq 'encoding situation))))
-    (mime-decode-region (point-min) (point-max) encoding)
-    (goto-char (point-min))
-    (while (search-forward "\r\n" nil t)
-      (replace-match "\n")
-      )
-    (let ((text-decoder
-	   (save-excursion
-	     (set-buffer mime-raw-buffer)
-	     (or mime-text-decoder
-		 (cdr (or (assq major-mode mime-text-decoder-alist)
-			  (assq t mime-text-decoder-alist)))
-		 ))))
-      (and (functionp text-decoder)
-	   (funcall text-decoder (cdr (assoc "charset" situation)) encoding)
-	   ))
-    (run-hooks 'mime-text-decode-hook)
-    ))
+SITUATION.  It must be symbol."
+  (let ((presentation-type
+	 (save-excursion
+	   (set-buffer mime-raw-buffer)
+	   (or mime-raw-representation-type
+	       (cdr (or (assq major-mode mime-raw-representation-type-alist)
+			(assq t mime-raw-representation-type-alist)))
+	       ))))
+    (save-restriction
+      (insert-buffer-substring mime-raw-buffer
+			       (mime-entity-body-start entity)
+			       (mime-entity-body-end entity))
+      (let ((encoding (mime-entity-encoding entity)))
+	(mime-decode-region (point-min) (point-max) encoding)
+	(if (or (eq presentation-type 'binary)
+		(not (member encoding '(nil "7bit" "8bit" "binary"))))
+	    (decode-mime-charset-region (point-min)(point-max)
+					(or (mime-content-type-parameter
+					     (mime-entity-content-type entity)
+					     "charset")
+					    default-mime-charset))
+	  ))))
+  (run-hooks 'mime-text-decode-hook)
+  )
 
 
 ;;; @ for URL
@@ -138,7 +117,7 @@ local variable `mime-text-decoder' and variable
 (defun mime-preview-text/plain (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
-    (mime-text-insert-decoded-body entity situation)
+    (mime-text-insert-decoded-body entity)
     (goto-char (point-max))
     (if (not (eq (char-after (1- (point))) ?\n))
 	(insert "\n")
@@ -150,7 +129,7 @@ local variable `mime-text-decoder' and variable
 (defun mime-preview-text/richtext (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
-    (mime-text-insert-decoded-body entity situation)
+    (mime-text-insert-decoded-body entity)
     (let ((beg (point-min)))
       (remove-text-properties beg (point-max) '(face nil))
       (richtext-decode beg (point-max))
@@ -159,7 +138,7 @@ local variable `mime-text-decoder' and variable
 (defun mime-preview-text/enriched (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
-    (mime-text-insert-decoded-body entity situation)
+    (mime-text-insert-decoded-body entity)
     (let ((beg (point-min)))
       (remove-text-properties beg (point-max) '(face nil))
       (enriched-decode beg (point-max))
