@@ -1,3 +1,10 @@
+1998-07-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-file-content-type-alist): Add "Standard
+	MIDI".
+
+	* mime-play.el (mime-detect-content): Fixed.
+
 1998-07-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-play.el (mime-activate-mailcap-method): Check filename is
