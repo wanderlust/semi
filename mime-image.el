@@ -7,7 +7,6 @@
 ;;	Dan Rich <drich@morpheus.corp.sgi.com>
 ;;	Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
 ;;	Katsumi Yamaoka  <yamaoka@jpl.org>
-;; Maintainer: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Created: 1995/12/15
 ;;	Renamed: 1997/2/21 from tm-image.el
 
@@ -190,15 +189,20 @@
 
 (defun mime-display-image (entity situation)
   (message "Decoding image...")
-  (let ((format (cdr (assq 'image-format situation)))
-	image)
-    (setq image (mime-image-create (mime-entity-content entity) format 'data))
-    (if (null image)
-	(message "Invalid glyph!")
-      (save-excursion
-	(mime-image-insert image)
-	(insert "\n")
-	(message "Decoding image...done")))))
+  (condition-case err
+      (let ((format (cdr (assq 'image-format situation)))
+	    image)
+	(setq image
+	      (mime-image-create (mime-entity-content entity)
+				 format 'data))
+	(if (null image)
+	    (message "Invalid glyph!")
+	  (save-excursion
+	    (mime-image-insert image)
+	    (insert "\n")
+	    (message "Decoding image...done"))))
+    (error nil err)))
+
 
 ;;; @ end
 ;;;
