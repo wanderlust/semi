@@ -46,6 +46,9 @@ If t, it means current directory."
 (defvar mime-play-find-every-situations t
   "*Find every available situations if non-nil.")
 
+(defvar mime-play-message-coding-system nil
+  "Coding system to be used for external MIME playback method.")
+
 
 ;;; @ content decoder
 ;;;
@@ -135,9 +138,6 @@ specified, play as it.  Default MODE is \"play\"."
 
 (defvar mime-mailcap-method-filename-alist nil)
 
-(defvar mime-mailcap-method-messages-coding-system 'undecided
-  "Coding system for an external mailcap method.")
-
 (defun mime-activate-mailcap-method (entity situation)
   (let ((method (cdr (assoc 'method situation)))
 	(name (mime-entity-safe-filename entity)))
@@ -145,8 +145,7 @@ specified, play as it.  Default MODE is \"play\"."
 	  (if (and name (not (string= name "")))
 	      (expand-file-name name temporary-file-directory)
 	    (make-temp-name
-	     (expand-file-name "EMI" temporary-file-directory))
-	    ))
+	     (expand-file-name "EMI" temporary-file-directory))))
     (mime-write-entity-content entity name)
     (message "External method is starting...")
     (let ((process
@@ -155,7 +154,7 @@ specified, play as it.  Default MODE is \"play\"."
 		   method
 		   (cons (cons 'filename name) situation))))
 	     (binary-to-text-funcall
-	      mime-mailcap-method-messages-coding-system
+	      mime-play-message-coding-system
 	      #'start-process command mime-echo-buffer-name
 	      shell-file-name shell-command-switch command))))
       (set-alist 'mime-mailcap-method-filename-alist process name)
