@@ -1,3 +1,14 @@
+1998-03-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el, mime-pgp.el: Rename `mime-display-content' ->
+	`mime-playback-entity'.
+
+	* mime-file.el (mime-extract-current-entity): Use
+	`mime-write-decoded-region'.
+
+	* mime-file.el: Rename `mime-article/extract-file' ->
+	`mime-extract-current-entity'.
+
 1998-03-03  François Pinard   <pinard@iro.umontreal.ca>
 
 	* mime-edit.el (mime-edit-insert-signature): Function
@@ -27,7 +38,7 @@
 
 1998-02-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae) was released.-A
+	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae)-A was released.
 
 	* SEMI-ELS: Remove mime-tar.el.
 
@@ -164,7 +175,7 @@
 
 1997-11-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.116 (D-Dòhòji) was released.-A
+	* SEMI: Version 0.116 (D-Dòhòji)-A was released.
 
 1997-11-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
