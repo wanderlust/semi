@@ -1,5 +1,21 @@
 2000-01-16  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* mime-play.el (mime-acting-situation-example-list): Moved to
+	mime-view.el.
+	(mime-acting-situation-example-list-max-size): Likewise.
+	(mime-save-acting-situation-examples): Likewise.
+	(mime-reduce-acting-situation-examples): Likewise.
+
+	* mime-view.el (mime-preview-situation-example-list): New
+	variable.
+	(mime-acting-situation-example-list): Moved from mime-play.el.
+	(mime-acting-situation-example-list-max-size): Likewise.
+	(mime-save-acting-situation-examples): Likewise.
+	(mime-reduce-acting-situation-examples): Likewise.
+	(mime-view-load-hook): Abolished.
+
+2000-01-16  MORIOKA Tomohiko  <tomo@m17n.org>
+
 	* mime-play.el (mime-play-entity): Use `mime-unify-situations'.
 
 	* mime-view.el (mime-unify-situations): New function.
