@@ -18,7 +18,7 @@
 
 (condition-case nil
     (require 'install)
-  (error (error "Please install APEL.")))
+  (error (error "Please install APEL 8.2 or later.")))
 (require 'cl)
 
 (add-path "bitmap-mule")
@@ -27,9 +27,9 @@
 (add-to-list 'load-path (expand-file-name "."))
 
 (or (module-installed-p 'calist)
-    (error "Please install latest APEL."))
+    (error "Please install APEL 8.2 or later."))
 (or (module-installed-p 'mel)
-    (error "Please install RIME."))
+    (error "Please install FLIM."))
 (if (module-installed-p 'tm-view)
     (error "Please remove tm from load-path."))
 
