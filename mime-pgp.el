@@ -102,7 +102,7 @@
 	   ))
     (setq major-mode 'mime/show-message-mode)
     (setq mime::article/code-converter code-converter)
-    (save-window-excursion (mime/viewer-mode mother))
+    (save-window-excursion (mime-view-mode mother))
     (set-window-buffer p-win mime::article/preview-buffer)
     ))
 
