@@ -577,7 +577,7 @@ The compressed face will be piped to this command.")
 ;;; @ entity information
 ;;;
 
-(defun mime-raw-point-content-number (p &optional cinfo)
+(defun mime-raw-point-to-entity-number (p &optional cinfo)
   (or cinfo
       (setq cinfo mime-raw-entity-info)
       )
@@ -590,7 +590,7 @@ The compressed face will be piped to this command.")
 	      (catch 'tag
 		(while c
 		  (setq co (car c))
-		  (setq ret (mime-raw-point-content-number p co))
+		  (setq ret (mime-raw-point-to-entity-number p co))
 		  (cond ((eq ret t) (throw 'tag (list sn)))
 			(ret (throw 'tag (cons sn ret)))
 			)
