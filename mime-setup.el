@@ -28,7 +28,7 @@
 
 (require 'semi-setup)
 
-(autoload 'mime/editor-mode "tm-edit"
+(autoload 'mime-edit-mode "mime-edit"
   "Minor mode for editing MIME message." t)
 (autoload 'mime/decode-message-header "tm-ew-d"
   "Decode MIME encoded-words in message header." t)
@@ -49,7 +49,7 @@
       (set-buffer-modified-p nil)
       )))
 
-(add-hook 'mime/editor-mode-hook 'mime-setup-decode-message-header)
+(add-hook 'mime-edit-mode-hook 'mime-setup-decode-message-header)
 
 
 ;;; @ variables
@@ -78,7 +78,7 @@
 (if mime-setup-use-signature
     (progn
       (autoload 'insert-signature "signature" "Insert signature" t)
-      (add-hook 'mime/editor-mode-hook 'mime-setup-set-signature-key)
+      (add-hook 'mime-edit-mode-hook 'mime-setup-set-signature-key)
       (setq gnus-signature-file nil)
       (setq mail-signature nil)
       (setq message-signature nil)
@@ -95,9 +95,9 @@
 ;;;
 
 (add-hook 'mail-setup-hook 'mime/decode-message-header)
-(add-hook 'mail-setup-hook 'mime/editor-mode 'append)
-(add-hook 'mail-send-hook  'mime-editor/maybe-translate)
-(set-alist 'mime-editor/split-message-sender-alist
+(add-hook 'mail-setup-hook 'mime-edit-mode 'append)
+(add-hook 'mail-send-hook  'mime-edit-maybe-translate)
+(set-alist 'mime-edit-split-message-sender-alist
            'mail-mode (function
                        (lambda ()
                          (interactive)
@@ -108,7 +108,7 @@
 ;;;
 
 (defun mime-setup-mh-draft-setting ()
-  (mime/editor-mode)
+  (mime-edit-mode)
   (make-local-variable 'mail-header-separator)
   (setq mail-header-separator "--------")
   (save-excursion
@@ -122,7 +122,7 @@
     ))
 
 (add-hook 'mh-letter-mode-hook 'mime-setup-mh-draft-setting t)
-(add-hook 'mh-before-send-letter-hook 'mime-editor/maybe-translate)
+(add-hook 'mh-before-send-letter-hook 'mime-edit-maybe-translate)
 
 
 ;;; @ for message (September Gnus 0.58 or later)
@@ -143,9 +143,9 @@
 
 (or (boundp 'epoch::version)
     (progn
-      (add-hook 'message-setup-hook 'mime/editor-mode)
+      (add-hook 'message-setup-hook 'mime-edit-mode)
       (add-hook 'message-setup-hook 'message-maybe-setup-default-charset)
-      (add-hook 'message-send-hook  'mime-editor/maybe-translate)
+      (add-hook 'message-send-hook  'mime-edit-maybe-translate)
       (add-hook 'message-header-hook 'mime/encode-message-header)
       
       (call-after-loaded
