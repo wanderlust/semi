@@ -29,7 +29,7 @@
 (require 'mel)
 (require 'std11)
 (require 'mime-def)
-(require 'cl)
+(require 'eword-decode)
 
 
 ;;; @ version
