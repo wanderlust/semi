@@ -503,7 +503,7 @@ The compressed face will be piped to this command.")
     (save-restriction
       (narrow-to-region beg end)
       (setq subj
-	    (mime-eword/decode-string
+	    (eword-decode-string
 	     (mime-article/get-subject params encoding)))
       )
     (set-buffer obuf)
