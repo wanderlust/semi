@@ -1,3 +1,38 @@
+2000-01-24   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-image.el	[Emacs21]: Require `image' when compiling.
+	(image-normalize): Use `create-image' with 3rd arg `data-p'.
+	 (create-image): Advice it to accept 3rd arg `data-p'.
+
+	* pgg-pgp.el. pgg-pgp5.el
+	(pgg-scheme-verify-region): Don't send buffer contents.
+
+	* mime-pgp.el (mime-view-application/pkcs7-mime): Rename from
+	`mime-decrypt-application/pkcs7-mime'; handle `smime-type'
+	parameter; abolish local variable `representation-type'.
+
+	* semi-setup.el: Rename `mime-decrypt-application/pkcs7-mime' to
+	`mime-view-application/pkcs7-mime'.
+
+2000-01-11  Nakagawa, Makoto  <Makoto.Nakagawa@jp.compaq.com>
+
+	* pgg-pgp.el, pgg-pgp5.el
+	(pgg-scheme-lookup-key-string): Fix number of arguments against
+	call-process.
+
+2000-01-18   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg.el,pgp-gpg.el,pgg-pgp.el,pgg-pgp5.el
+	(pgg-scheme-lookup-key-string,pgg-scheme-encrypt-region,
+	pgg-scheme-decrypt-region,pgg-scheme-sign-region,
+	pgg-scheme-verify-region,pgg-scheme-insert-key,
+	pgg-scheme-snarf-keys-region): Prepend `pgg-scheme' to each symbol.
+
+	* pgg.el
+	(pgg-encrypt-region,pgg-decrypt-region,pgg-sign-region,
+	pgg-verify-region,pgg-insert-key,pgg-snarf-keys-region,
+	pgg-lookup-key-string): Don't use `luna-send'.
+
 2000-01-05  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* Makefile, README.en: Update for the new CVS server.
