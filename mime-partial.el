@@ -1,13 +1,12 @@
 ;;; mime-partial.el --- Grabbing all MIME "message/partial"s.
 
-;; Copyright (C) 1995,1996,1997 Free Software Foundation, Inc.
+;; Copyright (C) 1995,1996,1997,1998 Free Software Foundation, Inc.
 
 ;; Author: OKABE Yasuo @ Kyoto University
 ;;         MORIOKA Tomohiko <morioka@jaist.ac.jp>
-;; Version: $Id$ 
 ;; Keywords: message/partial, MIME, multimedia, mail, news
 
-;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
+;; This file is part of SEMI (Suite of Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
