@@ -239,25 +239,87 @@ To insert a signature file automatically, call the function
   "*Alist of content-type, subtype, parameters and its values.")
 
 (defcustom mime-file-types
-  '(("\\.txt$"
+  '(
+
+    ;; Programming languages
+
+    ("\\.cc$"
+     "application" "octet-stream" (("type" . "C++"))
+     "7bit"
+     "attachment"	(("filename" . file))
+     )
+
+    ("\\.el$"
+     "application" "octet-stream" (("type" . "emacs-lisp"))
+     "7bit"
+     "attachment"	(("filename" . file))
+     )
+
+    ("\\.lsp$"
+     "application" "octet-stream" (("type" . "common-lisp"))
+     "7bit"
+     "attachment"	(("filename" . file))
+     )
+
+    ("\\.pl$"
+     "application" "octet-stream" (("type" . "perl"))
+     "7bit"
+     "attachment"	(("filename" . file))
+     )
+
+    ;; Text or translated text
+
+    ("\\.txt$"
      "text"	"plain"		nil
      nil
      "inline"		(("filename" . file))
      )
+
+     ;; .rc : procmail modules pm-xxxx.rc
+     ;; *rc : other resource files
+
+    ("\\.\\(rc\\|lst\\|log\\|sql\\|mak\\)$\\|\\..*rc$"
+     "text"	"plain"		nil
+     nil
+     "attachment"	(("filename" . file))
+     )
+
+    ("\\.html$"
+     "text"	"html"		nil
+     nil
+     nil		nil)
+
+    ("\\.diff$\\|\\.patch$"
+     "application" "octet-stream" (("type" . "patch"))
+     nil
+     "attachment"	(("filename" . file))
+     )
+
+    ("\\.signature"
+     "text"	"plain"		nil	nil	nil	nil)
+
+
+    ;;  Octect binary text
+
+    ("\\.doc$"				;MS Word
+     "application" "winword" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+
     ("\\.pln$"
      "text"	"plain"		nil
      nil
      "inline"		(("filename" . file))
      )
-    ("\\.html$"
-     "text"	"html"		nil
-     nil
-     nil		nil)
     ("\\.ps$"
      "application" "postscript"	nil
      "quoted-printable"
      "attachment"	(("filename" . file))
      )
+
+    ;;  Pure binary
+
     ("\\.jpg$"
      "image"	"jpeg"		nil
      "base64"
@@ -308,16 +370,6 @@ To insert a signature file automatically, call the function
      "base64"
      "attachment"	(("filename" . file))
      )
-    ("\\.el$"
-     "application" "octet-stream" (("type" . "emacs-lisp"))
-     "7bit"
-     "attachment"	(("filename" . file))
-     )
-    ("\\.lsp$"
-     "application" "octet-stream" (("type" . "common-lisp"))
-     "7bit"
-     "attachment"	(("filename" . file))
-     )
     ("\\.tar\\.gz$"
      "application" "octet-stream" (("type" . "tar+gzip"))
      "base64"
@@ -358,18 +410,9 @@ To insert a signature file automatically, call the function
      "base64"
      "attachment"	(("filename" . file))
      )
-    ("\\.diff$"
-     "application" "octet-stream" (("type" . "patch"))
-     nil
-     "attachment"	(("filename" . file))
-     )
-    ("\\.patch$"
-     "application" "octet-stream" (("type" . "patch"))
-     nil
-     "attachment"	(("filename" . file))
-     )
-    ("\\.signature"
-     "text"	"plain"		nil	nil	nil	nil)
+
+    ;; Rest
+
     (".*"
      "application" "octet-stream" nil
      nil
