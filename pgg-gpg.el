@@ -278,4 +278,3 @@
 (provide 'pgg-gpg)
 
 ;;; pgg-gpg.el ends here
-

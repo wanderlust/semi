@@ -4,7 +4,9 @@
 ;; Copyright (C) 1996 Dan Rich
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
-;;         Dan Rich <drich@morpheus.corp.sgi.com>
+;;	Dan Rich <drich@morpheus.corp.sgi.com>
+;;	Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
+;;	Katsumi Yamaoka  <yamaoka@jpl.org>
 ;; Maintainer: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Created: 1995/12/15
 ;;	Renamed: 1997/2/21 from tm-image.el
@@ -35,6 +37,7 @@
 ;;; Code:
 
 (eval-when-compile (require 'static))
+
 (require 'mime-view)
 (require 'alist)
 (require 'path-util)

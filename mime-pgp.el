@@ -3,7 +3,7 @@
 ;; Copyright (C) 1995,1996,1997,1998,1999 MORIOKA Tomohiko
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
-;;         Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
+;;	Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
 ;; Created: 1995/12/7
 ;;	Renamed: 1997/2/27 from tm-pgp.el
 ;; Keywords: PGP, security, MIME, multimedia, mail, news
