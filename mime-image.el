@@ -190,7 +190,6 @@
 
 (defun mime-preview/filter-for-application/postscript (ctype params encoding)
   (let* ((mode mime::preview/original-major-mode)
-	 (m (assq mode mime-view-code-converter-alist))
 	 (beg (point-min)) (end (point-max))
 	 (file-base
 	  (make-temp-name (expand-file-name "tm" mime-temp-directory)))
