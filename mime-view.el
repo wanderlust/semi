@@ -980,22 +980,22 @@ button-2	Move to point under the mouse cursor
 (autoload 'mime-preview-play-current-entity "mime-play"
   "Play current entity." t)
 
-(defun mime-preview-extract-current-entity ()
+(defun mime-preview-extract-current-entity (&optional ignore-examples)
   "Extract current entity into file (maybe).
 It decodes current entity to call internal or external method as
 \"extract\" mode.  The method is selected from variable
 `mime-acting-condition'."
-  (interactive)
-  (mime-preview-play-current-entity "extract")
+  (interactive "P")
+  (mime-preview-play-current-entity ignore-examples "extract")
   )
 
-(defun mime-preview-print-current-entity ()
+(defun mime-preview-print-current-entity (&optional ignore-examples)
   "Print current entity (maybe).
 It decodes current entity to call internal or external method as
 \"print\" mode.  The method is selected from variable
 `mime-acting-condition'."
-  (interactive)
-  (mime-preview-play-current-entity "print")
+  (interactive "P")
+  (mime-preview-play-current-entity ignore-examples "print")
   )
 
 

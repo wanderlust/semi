@@ -2485,7 +2485,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	 (concat "^" (regexp-quote separator) "$"))
 	(replace-match "")
       )
-    (mime-view-mode)
+    (mime-view-buffer)
     ))
 
 (defun mime-edit-quitting-method ()

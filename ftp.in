@@ -8,10 +8,10 @@
 	access-type=anon-ftp;
 	site="ftp.jaist.ac.jp";
 	directory="/pub/GNU/elisp/semi";
-	name="semi-VERSION.tar.gz";
+	name="PACKAGE-VERSION.tar.gz";
 	mode=image]]
 Content-Type: application/octet-stream;
-	name="semi-VERSION.tar.gz";
+	name="PACKAGE-VERSION.tar.gz";
 	type=tar;
 	conversions=gzip
 --}-<<alternative>>

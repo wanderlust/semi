@@ -1,3 +1,63 @@
+1998-07-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* REMI: Version 1.8.4 (Takaoka) released.
+
+1998-07-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el: Reduce `mime-acting-situation-example-list' while
+	it is bigger than `mime-acting-situation-example-list-max-size'.
+
+1998-07-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-preview-message): Use `mime-view-buffer'
+	instead of `mime-view-mode'.
+
+
+1998-07-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* REMI: Version 1.8.3 (Ecch-Dþ-Nakagawa)-A released.
+
+	* mime-play.el (mime-delq-null-situation): Add new optional
+	argument `ignored-value'.
+	(mime-raw-play-entity): Add new optional argument
+	`ignored-method'; add `ignore-examples' to acting-situation.
+	(mime-detect-content): Specify `ignore-examples' of
+	acting-situation as `ignore-examples' of `mime-raw-play-entity';
+	specify `mime-detect-content' as `ignored-method' of
+	`mime-raw-play-entity'.
+
+1998-07-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-preview-extract-current-entity): Change
+	interface to add `ignore-examples'.
+	(mime-preview-print-current-entity): Likewise.
+
+	* mime-play.el (mime-acting-situation-example-list-max-size): New
+	variable.
+	(mime-reduce-acting-situation-examples): New function.
+	(mime-preview-play-current-entity): Change interface to add
+	`ignore-examples'.
+	(mime-raw-play-entity): Add new optional argument
+	`ignore-examples'.  Reduce `mime-acting-situation-example-list'
+	when loading example file.
+
+
+1998-07-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* REMI: Version 1.8.2 (N-Dòmachi)-A released.
+
+1998-07-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-acting-situation-example-list): New variable;
+	abolish `mime-acting-situation-examples'.
+	(mime-save-acting-situation-examples): Modify for
+	`mime-acting-situation-example-list'.
+	(mime-compare-situation-with-example): New function.
+	(mime-raw-play-entity): Change algorithm to compare with
+	acting-situation-examples.
+	(mime-store-message/partial-piece): Use `mime-view-buffer' instead
+	of `mime-view-mode'.
+
 1998-07-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-play.el (mime-preview-play-current-entity): Fix problem

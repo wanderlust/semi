@@ -3,7 +3,7 @@
 #
 
 PACKAGE = semi
-VERSION = 1.8.3
+VERSION = 1.8.4
 
 SHELL	= /bin/sh
 MAKE	= make
@@ -68,4 +68,5 @@ tar:
 	$(RM) /tmp/$(PACKAGE)-$(VERSION)/ftp.in
 	cd /tmp; $(TAR) cvzf $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION)
 	cd /tmp; $(RM) -r $(PACKAGE)-$(VERSION)
-	sed "s/VERSION/$(VERSION)/" < ftp.in > ftp
+	sed "s/VERSION/$(VERSION)/" < ftp.in \
+		| sed "s/PACKAGE/$(PACKAGE)/" > ftp

@@ -37,7 +37,9 @@
     (error (defvar bbdb-buffer-name nil)))
   )
 
-(defvar mime-acting-situation-examples nil)
+(defvar mime-acting-situation-example-list nil)
+
+(defvar mime-acting-situation-example-list-max-size 16)
 
 (defun mime-save-acting-situation-examples ()
   (let* ((file mime-acting-situation-examples-file)
@@ -51,8 +53,8 @@
           (insert "\n;; This file is generated automatically by "
                   mime-view-version-string "\n\n")
 	  (insert ";;; Code:\n\n")
-	  (pp `(setq mime-acting-situation-examples
-		     ',mime-acting-situation-examples)
+	  (pp `(setq mime-acting-situation-example-list
+		     ',mime-acting-situation-example-list)
 	      (current-buffer))
 	  (insert "\n;;; "
                   (file-name-nondirectory file)
@@ -62,25 +64,74 @@
 
 (add-hook 'kill-emacs-hook 'mime-save-acting-situation-examples)
 
-  
+(defun mime-reduce-acting-situation-examples ()
+  (let* ((rest mime-acting-situation-example-list)
+	 (min-example (car rest))
+	 (min-score (cdr min-example)))
+    (while rest
+      (let* ((example (car rest))
+	     (score (cdr example)))
+	(cond ((< score min-score)
+	       (setq min-score score
+		     min-example example)
+	       )
+	      ((= score min-score)
+	       (if (<= (length (car example))(length (car min-example)))
+		   (setq min-example example)
+		 ))
+	      ))
+      (setq rest (cdr rest)))
+    (setq mime-acting-situation-example-list
+	  (delq min-example mime-acting-situation-example-list))
+    (setq min-example (car min-example))
+    (let ((examples mime-acting-situation-example-list)
+	  (max-score 0)
+	  max-examples)
+      (while examples
+	(let* ((ret (mime-compare-situation-with-example min-example
+							 (caar examples)))
+	       (ret-score (car ret)))
+	  (cond ((> ret-score max-score)
+		 (setq max-score ret-score
+		       max-examples (list (cdr ret)))
+		 )
+		((= ret-score max-score)
+		 (setq max-examples (cons (cdr ret) max-examples))
+		 )))
+	(setq examples (cdr examples)))
+      (while max-examples
+	(let* ((example (car max-examples))
+	       (cell (assoc example mime-acting-situation-example-list)))
+	  (if cell
+	      (setcdr cell (1+ (cdr cell)))
+	    (setq mime-acting-situation-example-list
+		  (cons (cons example 0)
+			mime-acting-situation-example-list))
+	    ))
+	(setq max-examples (cdr max-examples))
+	))))
+
+
 ;;; @ content decoder
 ;;;
 
 (defvar mime-preview-after-decoded-position nil)
 
-(defun mime-preview-play-current-entity (&optional mode)
+(defun mime-preview-play-current-entity (&optional ignore-examples mode)
   "Play current entity.
 It decodes current entity to call internal or external method.  The
 method is selected from variable `mime-acting-condition'.
+If IGNORE-EXAMPLES (C-u prefix) is specified, this function ignores
+`mime-acting-situation-example-list'.
 If MODE is specified, play as it.  Default MODE is \"play\"."
-  (interactive)
+  (interactive "P")
   (let ((entity (get-text-property (point) 'mime-view-entity)))
     (if entity
 	(let ((the-buf (current-buffer))
 	      (raw-buffer (mime-entity-buffer entity)))
 	  (setq mime-preview-after-decoded-position (point))
 	  (set-buffer raw-buffer)
-	  (mime-raw-play-entity entity (or mode "play"))
+	  (mime-raw-play-entity entity (or mode "play") nil ignore-examples)
 	  (when (eq (current-buffer) raw-buffer)
 	    (set-buffer the-buf)
 	    (goto-char mime-preview-after-decoded-position)
@@ -121,17 +172,39 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	      )))
   )
 
-(defsubst mime-delq-null-situation (situations field)
+(defsubst mime-delq-null-situation (situations field
+					       &optional ignored-value)
   (let (dest)
     (while situations
-      (let ((situation (car situations)))
-	(if (assq field situation)
-	    (setq dest (cons situation dest))
-	  ))
+      (let* ((situation (car situations))
+	     (cell (assq field situation)))
+	(if cell
+	    (or (eq (cdr cell) ignored-value)
+		(setq dest (cons situation dest))
+		)))
       (setq situations (cdr situations)))
     dest))
 
-(defun mime-raw-play-entity (entity &optional mode situation)
+(defun mime-compare-situation-with-example (situation example)
+  (let ((example (copy-alist example))
+	(match 0))
+    (while situation
+      (let* ((cell (car situation))
+	     (key (car cell))
+	     (ecell (assoc key example)))
+	(when ecell
+	  (if (equal cell ecell)
+	      (setq match (1+ match))
+	    (setq example (delq ecell example))
+	    ))
+	)
+      (setq situation (cdr situation))
+      )
+    (cons match example)
+    ))
+
+(defun mime-raw-play-entity (entity &optional mode situation ignore-examples
+				    ignored-method)
   "Play entity specified by ENTITY.
 It decodes the entity to call internal or external method.  The method
 is selected from variable `mime-acting-condition'.  If MODE is
@@ -142,21 +215,66 @@ specified, play as it.  Default MODE is \"play\"."
     (if mode
 	(setq situation (cons (cons 'mode mode) situation))
       )
+    (if ignore-examples
+	(or (assq 'ignore-examples situation)
+	    (setq situation
+		  (cons (cons 'ignore-examples ignore-examples) situation)))
+      )
     (setq ret
-	  (or (ctree-match-calist mime-acting-situation-examples situation)
-	      (ctree-match-calist-partially mime-acting-situation-examples
-					    situation)
-	      situation))
-    (setq ret
-	  (or (mime-delq-null-situation
-	       (ctree-find-calist mime-acting-condition ret
-				  mime-view-find-every-acting-situation)
-	       'method)
-	      (mime-delq-null-situation
-	       (ctree-find-calist mime-acting-condition situation
-				  mime-view-find-every-acting-situation)
-	       'method)
-	      ))
+	  (mime-delq-null-situation
+	   (ctree-find-calist mime-acting-condition situation
+			      mime-view-find-every-acting-situation)
+	   'method ignored-method))
+    (or ignore-examples
+	(if (cdr ret)
+	    (let ((rest ret)
+		  (max-score 0)
+		  max-escore
+		  max-examples
+		  max-situations)
+	      (while rest
+		(let ((situation (car rest))
+		      (examples mime-acting-situation-example-list))
+		  (while examples
+		    (let* ((ret
+			    (mime-compare-situation-with-example
+			     situation (caar examples)))
+			   (ret-score (car ret)))
+		      (cond ((> ret-score max-score)
+			     (setq max-score ret-score
+				   max-escore (cdar examples)
+				   max-examples (list (cdr ret))
+				   max-situations (list situation))
+			     )
+			    ((= ret-score max-score)
+			     (cond ((> (cdar examples) max-escore)
+				    (setq max-escore (cdar examples)
+					  max-examples (list (cdr ret))
+					  max-situations (list situation))
+				    )
+				   ((= (cdar examples) max-escore)
+				    (setq max-examples
+					  (cons (cdr ret) max-examples))
+				    (or (member situation max-situations)
+					(setq max-situations
+					      (cons situation max-situations)))
+				    )))))
+		    (setq examples (cdr examples))))
+		(setq rest (cdr rest)))
+	      (when max-situations
+		(setq ret max-situations)
+		(while max-examples
+		  (let* ((example (car max-examples))
+			 (cell
+			  (assoc example mime-acting-situation-example-list)))
+		    (if cell
+			(setcdr cell (1+ (cdr cell)))
+		      (setq mime-acting-situation-example-list
+			    (cons (cons example 0)
+				  mime-acting-situation-example-list))
+		      ))
+		  (setq max-examples (cdr max-examples))
+		  )))))
     (cond ((cdr ret)
 	   (setq ret (select-menu-alist
 		      "Methods"
@@ -168,7 +286,7 @@ specified, play as it.  Default MODE is \"play\"."
 				  situation)))
 			      ret)))
 	   (setq ret (mime-sort-situation ret))
-	   (ctree-set-calist-strictly 'mime-acting-situation-examples ret)
+	   (add-to-list 'mime-acting-situation-example-list (cons ret 0))
 	   )
 	  (t
 	   (setq ret (car ret))
@@ -379,10 +497,13 @@ SUBTYPE is symbol to indicate subtype of media-type.")
 		  (setq rest (cdr rest))))))
 	(if type
 	    (mime-raw-play-entity
-	     entity "play"
+	     entity nil
 	     (put-alist 'type type
 			(put-alist 'subtype subtype
-				   (mime-entity-situation entity))))
+				   (del-alist 'method
+					      (copy-alist situation))))
+	     (cdr (assq 'ignore-examples situation))
+	     'mime-detect-content)
 	  ))
       )))
 
@@ -452,7 +573,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	    (erase-buffer)
 	    (as-binary-input-file (insert-file-contents file))
 	    (setq major-mode 'mime-show-message-mode)
-	    (mime-view-mode mother)
+	    (mime-view-buffer (current-buffer) nil mother)
 	    )
 	  (set-window-buffer pwin
 			     (save-excursion
@@ -522,11 +643,10 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 		       ))
 		(save-window-excursion
 		  (setq major-mode 'mime-show-message-mode)
-		  (mime-view-mode mother)
+		  (mime-view-buffer (current-buffer) nil mother)
 		  )
 		(let ((pwin (or (get-buffer-window mother)
-				(get-largest-window)
-				))
+				(get-largest-window)))
 		      (pbuf (save-excursion
 			      (set-buffer full-buf)
 			      mime-preview-buffer)))
@@ -611,8 +731,15 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	    (insert-file-contents file)
 	    (eval-buffer)
 	    ;; format check
-	    (or (eq (car mime-acting-situation-examples) 'type)
-		(setq mime-acting-situation-examples nil))
+	    (condition-case nil
+		(let ((i 0))
+		  (while (and (> (length mime-acting-situation-example-list)
+				 mime-acting-situation-example-list-max-size)
+			      (< i 16))
+		    (mime-reduce-acting-situation-examples)
+		    (setq i (1+ i))
+		    ))
+	      (error (setq mime-acting-situation-example-list nil)))
 	    )
 	(kill-buffer buffer))))
 

@@ -1,4 +1,4 @@
-;;; semi-def.el --- definition module for REMI
+;;; semi-def.el --- definition module for SEMI
 
 ;; Copyright (C) 1995,1996,1997,1998 Free Software Foundation, Inc.
 
@@ -30,7 +30,7 @@
 
 (require 'custom)
 
-(defconst mime-user-interface-version '("SEMI" "Ecch,D~(B-Daimon" 1 8 3)
+(defconst mime-user-interface-version '("SEMI" "Takaoka" 1 8 4)
   "Implementation name, version name and numbers of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
