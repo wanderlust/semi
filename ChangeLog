@@ -1,3 +1,15 @@
+1997-11-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el: Rename `mime-edit-enclose-region' ->
+	`mime-edit-enclose-region-internal'.
+
+	* mime-edit.el (mime-edit-enclose-quote-region,
+	mime-edit-enclose-mixed-region, mime-edit-enclose-parallel-region,
+	mime-edit-enclose-digest-region,
+	mime-edit-enclose-alternative-region,
+	mime-edit-enclose-signed-region,
+	mime-edit-enclose-encrypted-region): Change subtype to symbol.
+
 1997-11-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-bbdb.el, semi-setup.el: Use path-util.el instead of
