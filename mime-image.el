@@ -39,7 +39,7 @@
 (require 'mime-view)
 (require 'alist)
 
-(cond (running-xemacs
+(cond ((featurep 'xemacs)
        (require 'images)
        
        (defun-maybe image-inline-p (format)
