@@ -4,7 +4,7 @@
 
 PACKAGE = semi
 API	= 1.13
-RELEASE = 6
+RELEASE = 7
 
 FLIM_API= 1.13
 
