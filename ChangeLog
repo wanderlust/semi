@@ -1,5 +1,12 @@
 2000-02-01  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* semi-setup.el (mime-setup-enable-inline-image): Use "(fboundp
+	'create-image)" to detect Emacs 21.
+	Use `eval-after-load' instead of `call-after-loaded' to require
+	`mime-image'.
+
+2000-02-01  MORIOKA Tomohiko  <tomo@m17n.org>
+
 	* mime-view.el (mime-view-define-keymap): Change keybind for
 	`mime-preview-toggle-header' to "\C-c\C-t\C-h".
 
