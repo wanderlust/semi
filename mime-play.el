@@ -37,7 +37,7 @@
 
 (defvar mime-preview/after-decoded-position nil)
 
-(defun mime-play-entity (&optional mode)
+(defun mime-view-play-current-entity (&optional mode)
   "Play current entity.
 It decodes current entity to call internal or external method.  The
 method is selected from variable `mime/content-decoding-condition'.

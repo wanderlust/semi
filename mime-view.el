@@ -276,7 +276,7 @@ Each elements are regexp of field-name. [mime-view.el]")
 	       (insert rest)
 	       ))))
     (mime-add-button (point-min)(1- (point-max))
-		     (function mime-play-entity))
+		     (function mime-view-play-current-entity))
     ))
 
 (defun mime-preview/default-content-button-function
@@ -591,7 +591,7 @@ The compressed face will be piped to this command.")
       (narrow-to-region be be)
       (insert mime-view-announcement-for-message/partial)
       (mime-add-button (point-min)(point-max)
-		       (function mime-play-entity))
+		       (function mime-view-play-current-entity))
       )))
 
 (defun mime-article/get-uu-filename (param &optional encoding)
@@ -715,7 +715,7 @@ The compressed face will be piped to this command.")
     (next	 "Move to next content"	      mime-view-next-content)
     (scroll-down "Scroll to previous content" mime-view-scroll-down-content)
     (scroll-up	 "Scroll to next content"     mime-view-scroll-up-content)
-    (play	 "Play Content"               mime-play-entity)
+    (play	 "Play Content"               mime-view-play-current-entity)
     (extract	 "Extract Content"            mime-extract-entity)
     (print	 "Print"                      mime-print-entity)
     (x-face	 "Show X Face"                mime-view-display-x-face)
@@ -768,7 +768,7 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       "\C-\M-m"  (function mime-view-previous-line-content))
     (define-key mime-view-mode-map
-      "v"        (function mime-play-entity))
+      "v"        (function mime-view-play-current-entity))
     (define-key mime-view-mode-map
       "e"        (function mime-extract-entity))
     (define-key mime-view-mode-map
@@ -895,7 +895,7 @@ button-2	Move to point under the mouse cursor
 	(setq rpcl (cdr rpcl))
 	))))
 
-(autoload 'mime-play-entity "mime-play" "Play current entity." t)
+(autoload 'mime-view-play-current-entity "mime-play" "Play current entity." t)
 
 (defun mime-extract-entity ()
   "Extract current entity into file (maybe).
@@ -903,7 +903,7 @@ It decodes current entity to call internal or external method as
 \"extract\" mode.  The method is selected from variable
 `mime/content-decoding-condition'."
   (interactive)
-  (mime-play-entity "extract")
+  (mime-view-play-current-entity "extract")
   )
 
 (defun mime-print-entity ()
@@ -912,7 +912,7 @@ It decodes current entity to call internal or external method as
 \"print\" mode.  The method is selected from variable
 `mime/content-decoding-condition'."
   (interactive)
-  (mime-play-entity "print")
+  (mime-view-play-current-entity "print")
   )
 
 (defun mime-view-follow-content ()
