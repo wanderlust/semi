@@ -1170,7 +1170,8 @@ Optional argument ENCODING specifies an encoding method such as base64."
 	  (insert
 	   (mime-create-tag
 	    (mime-editor/set-parameter
-	     (mime-editor/get-contype tag) "charset" charset)
+	     (mime-editor/get-contype tag)
+	     "charset" (upcase (symbol-name charset)))
 	    (mime-editor/get-encoding tag)))
 	  ))))
 
@@ -1185,9 +1186,7 @@ Optional argument ENCODING specifies an encoding method such as base64."
 
 (defun mime-editor/choose-charset ()
   "Choose charset of a text following current point."
-  (upcase
-   (symbol-name
-    (detect-mime-charset-region (point) (mime-editor/content-end))))
+  (detect-mime-charset-region (point) (mime-editor/content-end))
   )
 
 (defun mime-make-text-tag (&optional subtype)
@@ -1950,7 +1949,7 @@ Content-Transfer-Encoding: 7bit
   (while (re-search-forward mime-editor/single-part-tag-regexp nil t)
     (let* ((tag (buffer-substring (match-beginning 0) (match-end 0)))
 	   (contype (mime-editor/get-contype tag))
-	   (charset (mime-get-parameter contype "charset"))
+	   (charset (intern (downcase (mime-get-parameter contype "charset"))))
 	   (encoding (mime-editor/get-encoding tag)))
       ;; Remove extra whitespaces after the tag.
       (if (looking-at "[ \t]+$")
@@ -2000,13 +1999,13 @@ Content-Transfer-Encoding: 7bit
 	(or encoding	;Encoding is not specified.
 	    (let* ((encoding
 		    (cdr
-		     (assoc charset
-			    mime-editor/charset-default-encoding-alist)
+		     (assq charset
+			   mime-editor/charset-default-encoding-alist)
 		     ))
 		   (beg (mime-editor/content-beginning))
 		   )
 	      (mime-charset-encode-region beg (mime-editor/content-end)
-					  charset)
+					  (upcase (symbol-name charset)))
 	      (mime-encode-region beg (mime-editor/content-end) encoding)
 	      (mime-editor/define-encoding encoding)
 	      ))
