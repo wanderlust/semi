@@ -70,6 +70,7 @@ buttom. Nil means don't scroll at all."
 		 (const :tag "On" t)
 		 (sexp :tag "Situation" 1)))
 
+
 ;;; @ in raw-buffer (representation space)
 ;;;
 
@@ -361,9 +362,24 @@ mother-buffer."
       ""))
 
 (defvar mime-preview-situation-example-list nil)
-(defvar mime-acting-situation-example-list nil)
-
 (defvar mime-preview-situation-example-list-max-size 16)
+(defvar mime-preview-situation-example-condition nil)
+
+(defun mime-find-entity-preview-situation (entity
+					   &optional default-situation)
+  (or (let ((ret
+	     (mime-unify-situations
+	      (append (mime-entity-situation entity)
+		      default-situation)
+	      mime-preview-condition
+	      mime-preview-situation-example-list)))
+	(setq mime-preview-situation-example-list
+	      (cdr ret))
+	(caar ret))
+      default-situation))
+
+  
+(defvar mime-acting-situation-example-list nil)
 (defvar mime-acting-situation-example-list-max-size 16)
 
 (defun mime-save-situation-examples ()
@@ -814,16 +830,8 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	  (mapcar (function
 		   (lambda (child)
 		     (let ((situation
-			    (or (let ((ret
-				       (mime-unify-situations
-					(append (mime-entity-situation child)
-						default-situation)
-					mime-preview-condition
-					mime-preview-situation-example-list)))
-				  (setq mime-preview-situation-example-list
-					(cdr ret))
-				  (caar ret))
-				default-situation)))
+			    (mime-find-entity-preview-situation
+			     child default-situation)))
 		       (if (cdr (assq 'body-presentation-method situation))
 			   (let ((score
 				  (cdr
@@ -989,20 +997,15 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
     (in-calist-package 'mime-view)
     (or situation
 	(setq situation
-	      (or (let ((ret 
-			 (mime-unify-situations
-			  (append (mime-entity-situation entity)
-				  default-situation)
-			  mime-preview-condition
-			  mime-preview-situation-example-list)))
-		    (setq mime-preview-situation-example-list
-			  (cdr ret))
-		    (caar ret))
-		  default-situation)))
+	      (mime-find-entity-preview-situation entity default-situation)))
     (let ((button-is-invisible
-	   (eq (cdr (assq 'entity-button situation)) 'invisible))
+	   (eq (cdr (or (assq '*entity-button situation)
+			(assq 'entity-button situation)))
+	       'invisible))
 	  (header-is-visible
-	   (eq (cdr (assq 'header situation)) 'visible))
+	   (eq (cdr (or (assq '*header situation)
+			(assq 'header situation)))
+	       'visible))
 	  (header-presentation-method
 	   (or (cdr (assq 'header-presentation-method situation))
 	       (cdr (assq (cdr (assq 'major-mode situation))
@@ -1717,13 +1720,22 @@ If LINES is negative, scroll up LINES lines."
 	  p-end (aref situation 1)
 	  entity (aref situation 2)
 	  situation (get-text-property p-beg 'mime-view-situation))
-    (if (eq (cdr (assq 'header situation)) 'visible)
-	(setq situation (put-alist 'header 'invisible situation))
-      (setq situation (put-alist 'header 'visible situation)))
+    (let ((cell (assq '*header situation)))
+      (if (null cell)
+	  (setq cell (assq 'header situation)))
+      (if (eq (cdr cell) 'visible)
+	  (setq situation (put-alist '*header 'invisible situation))
+	(setq situation (put-alist '*header 'visible situation))))
     (save-excursion
       (let ((inhibit-read-only t))
 	(delete-region p-beg p-end)
-	(mime-display-entity entity situation)))))
+	(mime-display-entity entity situation)))
+    ;; (ctree-set-calist-strictly 'mime-preview-condition situation)
+    (let ((ret (assoc situation mime-preview-situation-example-list)))
+      (if ret
+	  (setcdr ret (1+ (cdr ret)))
+	(add-to-list 'mime-preview-situation-example-list
+		     (cons situation 0))))))
 
     
 ;;; @@ quitting
@@ -1761,6 +1773,22 @@ It calls function registered in variable
 	    (insert-file-contents file)
 	    (eval-buffer)
 	    ;; format check
+	    (condition-case nil
+		(let ((i 0))
+		  (while (and (> (length mime-preview-situation-example-list)
+				 mime-preview-situation-example-list-max-size)
+			      (< i 16))
+		    (setq mime-preview-situation-example-list
+			  (mime-reduce-situation-examples
+			   mime-preview-situation-example-list))
+		    (setq i (1+ i))
+		    ))
+	      (error (setq mime-preview-situation-example-list nil)))
+            ;; (let ((rest mime-preview-situation-example-list))
+            ;;   (while rest
+            ;;     (ctree-set-calist-strictly 'mime-preview-condition
+            ;;                                (caar rest))
+            ;;     (setq rest (cdr rest))))
 	    (condition-case nil
 		(let ((i 0))
 		  (while (and (> (length mime-acting-situation-example-list)
