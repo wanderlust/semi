@@ -1,13 +1,13 @@
 \input texinfo.tex
 @setfilename mime-ui-en.info
-@settitle{SEMI 1.8 Manual}
+@settitle{SEMI 1.14 Manual}
 @titlepage
-@title SEMI 1.8 Manual
+@title SEMI 1.14 Manual
 @author MORIOKA Tomohiko <morioka@@jaist.ac.jp>
 @subtitle 1998/07/03
 @end titlepage
 @node Top, Introduction, (dir), (dir)
-@top SEMI 1.8 Manual
+@top SEMI 1.14 Manual
 
 @ifinfo
 
@@ -670,7 +670,7 @@ Regular expression to match field-name to be ignored when split sending.
 
 
 @menu
-* PGP::                         
+* PGP::                         Encryption, Sign
 * Buttons::                     Mouse button
 * Acting-condition configuration::  Utility for configuration
 @end menu
