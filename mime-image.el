@@ -118,7 +118,7 @@
 		 (progn
 		   (set-alist 'mime-view-content-filter-alist
 			      ctype
-			      (function mime-preview/filter-for-image))
+			      (function mime-view-filter-for-image))
 		   (set-alist 'mime-view-image-converter-alist
 			      ctype format)
 		   (add-to-list
@@ -144,7 +144,7 @@
 ;;;
 ;;    (for XEmacs 19.12 or later)
 
-(defun mime-preview/filter-for-image (ctype params encoding)
+(defun mime-view-filter-for-image (ctype params encoding)
   (let ((beg (point-min))
 	(end (point-max)))
     (remove-text-properties beg end '(face nil))
@@ -186,7 +186,7 @@
 ;;;
 ;;    (for XEmacs 19.14 or later)
 
-(defun mime-preview/filter-for-application/postscript (ctype params encoding)
+(defun mime-view-filter-for-application/postscript (ctype params encoding)
   (let* ((beg (point-min)) (end (point-max))
 	 (file-base
 	  (make-temp-name (expand-file-name "tm" mime-temp-directory)))
@@ -209,7 +209,7 @@
 
 (set-alist 'mime-view-content-filter-alist
 	   "application/postscript"
-	   (function mime-preview/filter-for-application/postscript))
+	   (function mime-view-filter-for-application/postscript))
 
 (if (featurep 'gif)
     (add-to-list 'mime-view-visible-media-type-list "application/postscript")
