@@ -950,13 +950,17 @@ button-2	Move to point under the mouse cursor
         	and decode current content as `play mode'
 "
   (interactive)
-  (mime-display-message
-   (save-excursion
-     (if raw-buffer (set-buffer raw-buffer))
-     (or mime-view-redisplay
-	 (setq mime-message-structure (mime-parse-message ctl encoding)))
-     )
-   preview-buffer mother default-keymap-or-function))
+  (let ((message
+	 (save-excursion
+	   (if raw-buffer (set-buffer raw-buffer))
+	   (or mime-view-redisplay
+	       (setq mime-message-structure (mime-parse-message ctl)))
+	   )))
+    (or (mime-entity-encoding message)
+	(mime-entity-set-encoding-internal message encoding))
+    (mime-display-message message preview-buffer
+			  mother default-keymap-or-function)
+    ))
 
 
 ;;; @@ playing
