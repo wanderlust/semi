@@ -174,12 +174,12 @@ FUNCTION.")
 
 (defmacro pgp-function (method)
   "Return function to do service METHOD."
-  (` (car (cdr (assq (, method) (symbol-value 'pgp-function-alist)))))
+  `(cadr (assq ,method (symbol-value 'pgp-function-alist)))
   )
 
 (mapcar (function
 	 (lambda (method)
-	   (autoload (cadr method)(third method))
+	   (autoload (cadr method)(nth 2 method))
 	   ))
 	pgp-function-alist)
 
