@@ -209,6 +209,7 @@ To insert a signature file automatically, call the function
     ("image"
      ("gif")
      ("jpeg")
+     ("png")
      ("tiff")
      ("x-pic")
      ("x-mag")
@@ -241,6 +242,11 @@ To insert a signature file automatically, call the function
      )
     ("\\.gif$"
      "image"	"gif"		nil
+     "base64"
+     "inline"		(("filename" . file))
+     )
+    ("\\.png$"
+     "image"	"png"		nil
      "base64"
      "inline"		(("filename" . file))
      )
