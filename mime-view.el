@@ -1191,7 +1191,6 @@ It calls following-method selected from variable
 	      (format "%s-%s" (buffer-name) (reverse entity-node-id)))
 	     new-buf
 	     (the-buf (current-buffer))
-	     (a-buf (mime-entity-buffer entity))
 	     fields)
 	(save-excursion
 	  (set-buffer (setq new-buf (get-buffer-create new-name)))
@@ -1201,50 +1200,59 @@ It calls following-method selected from variable
 	    (goto-char (point-min))
 	    (insert ?\n))
 	  (goto-char (point-min))
-          (let ((entity-node-id (mime-entity-node-id entity)) ci str)
-	    (while (progn
-		     (setq
-		      str
-		      (save-excursion
-			(set-buffer a-buf)
-			(setq ci
-			      (mime-find-entity-from-node-id entity-node-id))
-			(save-restriction
-			  (narrow-to-region
-			   (mime-entity-point-min ci)
-			   (mime-entity-point-max ci)
-			   )
-			  (std11-header-string-except
-			   (concat "^"
-				   (apply (function regexp-or) fields)
-				   ":") ""))))
-		     (if (and (eq (mime-entity-media-type ci) 'message)
-			      (eq (mime-entity-media-subtype ci) 'rfc822))
-			 nil
-		       (if str
-			   (insert str)
-			 )
-		       entity-node-id))
+          (let ((current-entity
+		 (if (and (eq (mime-entity-media-type entity) 'message)
+			  (eq (mime-entity-media-subtype entity) 'rfc822))
+		     (mime-entity-children entity)
+		   entity))
+		str)
+	    (while (and current-entity
+			(progn
+			  (setq str
+				(with-current-buffer
+				    (mime-entity-header-buffer current-entity)
+				  (save-restriction
+				    (narrow-to-region
+				     (mime-entity-header-start-point
+				      current-entity)
+				     (mime-entity-header-end-point
+				      current-entity))
+				    (std11-header-string-except
+				     (concat
+				      "^"
+				      (apply (function regexp-or) fields)
+				      ":") ""))))
+			  (if (and (eq (mime-entity-media-type
+					current-entity) 'message)
+				   (eq (mime-entity-media-subtype
+					current-entity) 'rfc822))
+			      nil
+			    (if str
+				(insert str)
+			      )
+			    t)))
 	      (setq fields (std11-collect-field-names)
-		    entity-node-id (cdr entity-node-id))
+		    current-entity (mime-entity-parent current-entity))
 	      )
 	    )
-	  (let ((rest mime-view-following-required-fields-list))
+	  (let ((rest mime-view-following-required-fields-list)
+		field-name ret)
 	    (while rest
-	      (let ((field-name (car rest)))
-		(or (std11-field-body field-name)
-		    (insert
-		     (format
-		      (concat field-name
-			      ": "
-			      (save-excursion
-				(set-buffer the-buf)
-				(set-buffer mime-mother-buffer)
-				(set-buffer mime-raw-buffer)
-				(std11-field-body field-name)
-				)
-			      "\n")))
-		    ))
+	      (setq field-name (car rest))
+	      (or (std11-field-body field-name)
+		  (progn
+		    (save-excursion
+		      (set-buffer the-buf)
+		      (setq ret
+			    (when mime-mother-buffer
+			      (set-buffer mime-mother-buffer)
+			      (mime-entity-fetch-field
+			       (get-text-property (point)
+						  'mime-view-entity)
+			       field-name))))
+		    (if ret
+			(insert (concat field-name ": " ret "\n"))
+		      )))
 	      (setq rest (cdr rest))
 	      ))
 	  (mime-decode-header-in-buffer)
