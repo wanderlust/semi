@@ -232,7 +232,7 @@ Each elements are regexp of field-name. [mime-view.el]")
     (narrow-to-region (point)(point))
     (let ((access-type (assoc "access-type" params))
 	  (charset (assoc "charset" params))
-	  (num (or (assoc-value "x-part-number" params)
+	  (num (or (cdr (assoc "x-part-number" params))
 		   (if (consp rcnum)
 		       (mapconcat (function
 				   (lambda (num)
