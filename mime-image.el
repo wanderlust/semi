@@ -87,9 +87,8 @@
 	     (make-temp-name 
 	      (expand-file-name "tm" temporary-file-directory))))
 	(with-temp-buffer
-	  (set-buffer-multibyte nil)
 	  (insert data)
-	  (write-region (point-min)(point-max) image-file))
+	  (write-region-as-binary (point-min)(point-max) image-file))
 	(list 'image ':type format ':file image-file)
 	)))
 
