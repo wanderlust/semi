@@ -138,7 +138,7 @@ as the detached signature SIGNATURE.")
   "Add all public keys in region between START
 and END to the keyring.")
 
-;;; @ interface functions
+;;; @ utility functions
 ;;;
 
 (defvar pgg-fetch-key-function (function pgg-fetch-key-with-w3))
@@ -155,30 +155,104 @@ and END to the keyring.")
   `(if (interactive-p)
        (let ((buffer (current-buffer)))
 	 (with-temp-buffer
-	   (let ((,start ,start) (,end ,end) buffer-undo-list)
+	   (let (buffer-undo-list)
 	     (set-buffer-multibyte nil)
 	     (insert-buffer-substring buffer ,start ,end)
 	     (encode-coding-region (point-min)(point-max)
 				   buffer-file-coding-system)
-	     (setq ,start (point-min) ,end (point-max))
 	     (prog1 (save-excursion ,@body)
 	       (push nil buffer-undo-list)
 	       (ignore-errors (undo)))
 	     )))
-     ,@body))
+     (save-restriction
+       (narrow-to-region ,start ,end)
+       ,@body)))
+
+(defun pgg-temp-buffer-show-function (buffer)
+  (if (one-window-p (selected-window))
+      (let ((window (split-window-vertically
+		     (- (window-height) 
+			(/ (window-height) 5)))))
+	(set-window-buffer window buffer))
+    (display-buffer buffer)))
 
 (defun pgg-display-output-buffer (start end status)
   (if status
       (progn
 	(delete-region start end)
 	(insert-buffer-substring pgg-output-buffer)
-	(decode-coding-region start (point)
-			      buffer-file-coding-system)
+	(decode-coding-region start (point) buffer-file-coding-system)
 	)
-    (with-output-to-temp-buffer pgg-echo-buffer
-      (set-buffer standard-output)
-      (insert-buffer-substring pgg-errors-buffer)
-      )))
+    (let ((temp-buffer-show-function 
+	   (function pgg-temp-buffer-show-function)))
+      (with-output-to-temp-buffer pgg-echo-buffer
+	(set-buffer standard-output)
+	(insert-buffer-substring pgg-errors-buffer)))
+    ))
+
+(defvar pgg-passphrase-cache-expiry 16)
+(defvar pgg-passphrase-cache (make-vector 7 0))
+
+(defvar pgg-read-passphrase nil)
+(defun pgg-read-passphrase (prompt &optional key)
+  (if (not pgg-read-passphrase)
+      (if (functionp 'read-passwd)
+	  (setq pgg-read-passphrase 'read-passwd)
+	(if (load "passwd" t)
+	    (setq pgg-read-passphrase 'read-passwd)
+	  (autoload 'ange-ftp-read-passwd "ange-ftp")
+	  (setq pgg-read-passphrase 'ange-ftp-read-passwd))))
+  (or (and key (setq key (pgg-truncate-key-identifier key))
+	   (symbol-value (intern-soft key pgg-passphrase-cache)))
+      (funcall pgg-read-passphrase prompt)))
+
+(defun pgg-add-passphrase-cache (key passphrase)
+  (setq key (pgg-truncate-key-identifier key))
+  (set (intern key pgg-passphrase-cache)
+       passphrase)
+  (run-at-time pgg-passphrase-cache-expiry nil
+	       #'pgg-remove-passphrase-cache
+	       key))
+
+(defun pgg-remove-passphrase-cache (key)
+  (unintern key pgg-passphrase-cache))
+
+(defmacro pgg-convert-lbt-region (start end lbt)
+  `(let ((pgg-conversion-end (set-marker (make-marker) ,end)))
+     (goto-char ,start)
+     (case ,lbt
+       (CRLF
+	(while (progn
+		 (end-of-line)
+		 (> (marker-position pgg-conversion-end) (point)))
+	  (insert "\r")
+	  (forward-line 1)))
+       (LF
+	(while (re-search-forward "\r$" pgg-conversion-end t)
+	  (replace-match ""))))
+     ))
+
+(put 'pgg-as-lbt 'lisp-indent-function 3)
+
+(defmacro pgg-as-lbt (start end lbt &rest body)
+  `(let ((inhibit-read-only t)
+	 buffer-read-only
+	 buffer-undo-list)
+     (pgg-convert-lbt-region ,start ,end ,lbt)
+     (let ((,end (point)))
+       ,@body)
+     (push nil buffer-undo-list)
+     (ignore-errors (undo))))
+
+(put 'pgg-process-when-success 'lisp-indent-function 0)
+
+(defmacro pgg-process-when-success (&rest body)
+  `(with-current-buffer pgg-output-buffer
+     (if (zerop (buffer-size)) nil ,@body t)))
+
+
+;;; @ interface functions
+;;;
 
 ;;;###autoload
 (defun pgg-encrypt-region (start end rcpts)
@@ -189,7 +263,7 @@ and END to the keyring.")
   (let* ((entity (pgg-make-scheme pgg-default-scheme))
 	 (status (pgg-save-coding-system start end
 		   (luna-send entity 'encrypt-region entity
-			      start end rcpts))))
+			      (point-min)(point-max) rcpts))))
     (when (interactive-p)
       (pgg-display-output-buffer start end status))
     status))
@@ -209,7 +283,8 @@ and END to the keyring.")
 	      pgg-default-scheme))
 	 (entity (pgg-make-scheme scheme))
 	 (status (pgg-save-coding-system start end
-		   (luna-send entity 'decrypt-region entity start end))))
+		   (luna-send entity 'decrypt-region entity 
+			      (point-min)(point-max)))))
     (when (interactive-p)
       (pgg-display-output-buffer start end status))
     status))
@@ -222,7 +297,8 @@ a detached signature."
   (interactive "r")
   (let* ((entity (pgg-make-scheme pgg-default-scheme))
 	 (status (pgg-save-coding-system start end
-		   (luna-send entity 'sign-region entity start end
+		   (luna-send entity 'sign-region entity
+			      (point-min)(point-max)
 			      (or (interactive-p) cleartext)))))
     (when (interactive-p)
       (pgg-display-output-buffer start end status))
@@ -267,8 +343,8 @@ signer's public key from `pgg-default-keyserver-address'."
 		   pgg-default-keyserver-address))
 	 (pgg-fetch-key keyserver key))
     (setq status (pgg-save-coding-system start end
-		   (luna-send entity 'verify-region
-			      entity start end signature)))
+		   (luna-send entity 'verify-region entity 
+			      (point-min)(point-max) signature)))
     (when (interactive-p)
       (with-output-to-temp-buffer pgg-echo-buffer
 	(set-buffer standard-output)
@@ -347,73 +423,6 @@ signer's public key from `pgg-default-keyserver-address'."
 	  (pgg-snarf-keys-region (point-min)(point-max))))
       )))
 
-
-;;; @ utility functions
-;;;
-
-(defvar pgg-passphrase-cache-expiry 16)
-(defvar pgg-passphrase-cache (make-vector 7 0))
-
-(defvar pgg-read-passphrase nil)
-(defun pgg-read-passphrase (prompt &optional key)
-  (if (not pgg-read-passphrase)
-      (if (functionp 'read-passwd)
-	  (setq pgg-read-passphrase 'read-passwd)
-	(if (load "passwd" t)
-	    (setq pgg-read-passphrase 'read-passwd)
-	  (autoload 'ange-ftp-read-passwd "ange-ftp")
-	  (setq pgg-read-passphrase 'ange-ftp-read-passwd))))
-  (or (and key (setq key (pgg-truncate-key-identifier key))
-	   (symbol-value (intern-soft key pgg-passphrase-cache)))
-      (funcall pgg-read-passphrase prompt)))
-
-(defun pgg-add-passphrase-cache (key passphrase)
-  (setq key (pgg-truncate-key-identifier key))
-  (set (intern key pgg-passphrase-cache)
-       passphrase)
-  (run-at-time pgg-passphrase-cache-expiry nil
-	       #'pgg-remove-passphrase-cache
-	       key))
-
-(defun pgg-remove-passphrase-cache (key)
-  (unintern key pgg-passphrase-cache))
-
-(defmacro pgg-convert-lbt-region (start end lbt)
-  `(let ((pgg-conversion-end (set-marker (make-marker) ,end)))
-     (goto-char ,start)
-     (case ,lbt
-       (CRLF
-	(while (progn
-		 (end-of-line)
-		 (> (marker-position pgg-conversion-end) (point)))
-	  (insert "\r")
-	  (forward-line 1)))
-       (LF
-	(while (re-search-forward "\r$" pgg-conversion-end t)
-	  (replace-match ""))))
-     ))
-
-(put 'pgg-as-lbt 'lisp-indent-function 3)
-
-(defmacro pgg-as-lbt (start end lbt &rest body)
-  `(let ((inhibit-read-only t)
-	 buffer-read-only
-	 buffer-undo-list)
-     (pgg-convert-lbt-region ,start ,end ,lbt)
-     (let ((,end (point)))
-       ,@body)
-     (push nil buffer-undo-list)
-     (ignore-errors (undo))))
-
-
-;;; @ postprocess macros
-;;;
-
-(put 'pgg-process-when-success 'lisp-indent-function 0)
-
-(defmacro pgg-process-when-success (&rest body)
-  `(with-current-buffer pgg-output-buffer
-     (if (zerop (buffer-size)) nil ,@body t)))
 
 (provide 'pgg)
 
