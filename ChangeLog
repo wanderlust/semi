@@ -1,3 +1,9 @@
+2000-08-11  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-display-text/plain): Display warning message
+	when `mime-insert-text-content' fails.
+
+
 2000-07-12  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
 	* REMI: Version 1.14.2 (Hokuhoku--DÒshima)-A released.
