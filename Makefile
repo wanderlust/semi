@@ -2,7 +2,7 @@
 # Makefile for SEMI kernel.
 #
 
-VERSION = 1.3.4
+VERSION = 1.4.0
 
 SHELL	= /bin/sh
 MAKE	= make
