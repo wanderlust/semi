@@ -545,7 +545,6 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 ;;;
 
 (defun mime-store-message/partial-piece (entity cal)
-  (goto-char (mime-entity-point-min entity))
   (let* ((root-dir
 	  (expand-file-name
 	   (concat "m-prts-" (user-login-name)) temporary-file-directory))
