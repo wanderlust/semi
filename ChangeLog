@@ -1,3 +1,8 @@
+1998-10-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el, mime-view.el: Use `(featurep 'xemacs)' instead of
+	`running-xemacs'.
+
 1998-10-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el, SEMI-ELS: Move function `mime-display-text/plain',
