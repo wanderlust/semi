@@ -248,6 +248,39 @@ window.")
   )
 
 
+;;; @ file extraction
+;;;
+
+(defun mime-extract-current-entity (beg end cal)
+  (goto-char beg)
+  (let* ((name
+	  (save-restriction
+	    (narrow-to-region beg end)
+	    (mime-article/get-filename cal)
+	    ))
+	 (encoding (cdr (assq 'encoding cal)))
+	 (filename
+          (if (and name (not (string-equal name "")))
+	      (expand-file-name name
+				(call-interactively
+				 (function
+				  (lambda (dir)
+				    (interactive "DDirectory: ")
+				    dir))))
+	    (call-interactively
+	     (function
+	      (lambda (file)
+		(interactive "FFilename: ")
+		(expand-file-name file))))))
+	 )
+    (if (file-exists-p filename)
+        (or (yes-or-no-p (format "File %s exists. Save anyway? " filename))
+            (error "")))
+    (re-search-forward "\n\n")
+    (mime-write-decoded-region (match-end 0)(point-max) filename encoding)
+    ))
+
+
 ;;; @ mail/news message
 ;;;
 
