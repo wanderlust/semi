@@ -30,9 +30,9 @@
 ;;;
 
 (defvar mime-text-decoder-alist
-  '((mime/show-message-mode      . mime-charset/decode-buffer)
-    (mime/temporary-message-mode . mime-charset/decode-buffer)
-    (t				 . mime-charset/maybe-decode-buffer)
+  '((mime/show-message-mode	. mime-charset/decode-buffer)
+    (mime-temp-message-mode	. mime-charset/decode-buffer)
+    (t				. mime-charset/maybe-decode-buffer)
     ))
 
 (defun mime-charset/decode-buffer (charset &optional encoding)

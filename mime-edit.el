@@ -2389,7 +2389,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
       (switch-to-buffer buf)
       )
     (insert str)
-    (setq major-mode 'mime/temporary-message-mode)
+    (setq major-mode 'mime-temp-message-mode)
     (make-local-variable 'mail-header-separator)
     (setq mail-header-separator separator)
     (make-local-variable 'mime-edit-buffer)
@@ -2416,7 +2416,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
     ))
 
 (set-alist 'mime-view-quitting-method-alist
-	   'mime/temporary-message-mode
+	   'mime-temp-message-mode
 	   (function mime-edit-quitting-method)
 	   )
 
