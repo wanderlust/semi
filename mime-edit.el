@@ -2540,10 +2540,9 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
     (switch-to-buffer buf)
     ))
 
-(set-alist 'mime-view-quitting-method-alist
+(set-alist 'mime-preview-quitting-method-alist
 	   'mime-temp-message-mode
-	   (function mime-edit-quitting-method)
-	   )
+	   #'mime-edit-quitting-method)
 
 
 ;;; @ edit again

@@ -348,7 +348,7 @@ message/partial, it is called `mother-buffer'.")
 ;;; @@ quitting method
 ;;;
 
-(defvar mime-view-quitting-method-alist
+(defvar mime-preview-quitting-method-alist
   '((mime-show-message-mode
      . mime-view-quitting-method-for-mime-show-message-mode))
   "Alist of major-mode vs. quitting-method of mime-view.")
@@ -1173,10 +1173,10 @@ If reached to (point-min), it calls function registered in variable
 (defun mime-preview-quit ()
   "Quit from MIME-preview buffer.
 It calls function registered in variable
-`mime-view-quitting-method-alist'."
+`mime-preview-quitting-method-alist'."
   (interactive)
   (let ((r (assq mime-preview-original-major-mode
-		 mime-view-quitting-method-alist)))
+		 mime-preview-quitting-method-alist)))
     (if r
 	(funcall (cdr r))
       )))

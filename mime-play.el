@@ -291,7 +291,7 @@ window.")
 
 (defun mime-view-quitting-method-for-mime-show-message-mode ()
   "Quitting method for mime-view.
-It is registered to variable `mime-view-quitting-method-alist'."
+It is registered to variable `mime-preview-quitting-method-alist'."
   (let ((mother mime-mother-buffer)
 	(win-conf mime-preview-original-window-configuration)
 	)
