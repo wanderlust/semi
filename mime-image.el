@@ -197,7 +197,7 @@
       (save-excursion
 	(mime-image-insert image)
 	(insert "\n")
-	(message "Decoding image... done")))))
+	(message "Decoding image...done")))))
 
 ;;; @ end
 ;;;

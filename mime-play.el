@@ -442,7 +442,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	 (directory (cdr (assoc "directory" cal)))
 	 (name (cdr (assoc "name" cal)))
 	 (pathname (concat "/anonymous@" site ":" directory)))
-    (message (concat "Accessing " (expand-file-name name pathname) " ..."))
+    (message (concat "Accessing " (expand-file-name name pathname) "..."))
     (funcall mime-raw-dired-function pathname)
     (goto-char (point-min))
     (search-forward name)))
@@ -451,7 +451,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 
 (defun mime-view-message/external-url (entity cal)
   (let ((url (cdr (assoc "url" cal))))
-    (message (concat "Accessing " url " ..."))
+    (message (concat "Accessing " url "..."))
     (funcall mime-raw-browse-url-function url)))
 
 
