@@ -113,6 +113,10 @@
     ;; (method "xterm" nil
     ;;	       "-e" "showexternal"
     ;;         'file '"access-type" '"name" '"site" '"directory"))
+    ((type . "message/external-body")
+     ("access-type" . "anon-ftp")
+     (method . mime-article/decode-message/external-ftp)
+     )
     ((type . "message/rfc822")
      (method . mime-article/view-message/rfc822)
      (mode . "play")
@@ -120,10 +124,6 @@
     ((type . "message/partial")
      (method . mime-article/decode-message/partial)
      (mode . "play")
-     )
-    ((type . "message/external-body")
-     ("access-type" . "anon-ftp")
-     (method . mime-article/decode-message/external-ftp)
      )
     
     ((method "metamail" t "-m" "tm" "-x" "-d" "-z" "-e" 'file)
@@ -1081,10 +1081,12 @@ variable `mime-view-over-to-next-method-alist'."
       )))
 
 (defun mime-view-scroll-up-entity (&optional h)
-  "Scroll up current entity."
+  "Scroll up current entity.
+If reached to (point-max), it calls function registered in variable
+`mime-view-over-to-next-method-alist'."
   (interactive)
   (or h
-      (setq h (- (window-height) 1))
+      (setq h (1- (window-height)))
       )
   (if (= (point) (point-max))
       (let ((f (assq mime::preview/original-major-mode
@@ -1092,25 +1094,14 @@ variable `mime-view-over-to-next-method-alist'."
         (if f
             (funcall (cdr f))
           ))
-    (let ((pcl mime::preview/content-list)
-          (p (point))
-          np beg)
-      (setq np
-            (or (catch 'tag
-                  (while pcl
-                    (setq beg (mime::preview-content-info/point-min (car pcl)))
-                    (if (< p beg)
-                        (throw 'tag beg)
-                      )
-                    (setq pcl (cdr pcl))
-                    ))
-                (point-max)))
+    (let ((point
+	   (or (next-single-property-change (point) 'mime-view-cinfo)
+	       (point-max))))
       (forward-line h)
-      (if (> (point) np)
-          (goto-char np)
+      (if (> (point) point)
+          (goto-char point)
         )
-      ))
-  )
+      )))
 
 (defun mime-view-scroll-down-entity (&optional h)
   "Scroll down current entity."
