@@ -365,7 +365,30 @@ as a version of Net$cape)."
   "*Max position of eword-lexical-analyze-cache.
 It is max size of eword-lexical-analyze-cache - 1.")
 
-(defun eword-analyze-quoted-string (string)
+(defcustom eword-lexical-analyzers
+  '(eword-analyze-quoted-string
+    eword-analyze-domain-literal
+    eword-analyze-comment
+    eword-analyze-spaces
+    eword-analyze-special
+    eword-analyze-encoded-word
+    eword-analyze-atom)
+  "*List of functions to return result of lexical analyze.
+Each function must have two arguments: STRING and MUST-UNFOLD.
+STRING is the target string to be analyzed.
+If MUST-UNFOLD is not nil, each function must unfold and eliminate
+bare-CR and bare-LF from the result even if they are included in
+content of the encoded-word.
+Each function must return nil if it can not analyze STRING as its
+format.
+
+Previous function is preferred to next function.  If a function
+returns nil, next function is used.  Otherwise the return value will
+be the result."
+  :group 'eword-decode
+  :type '(repeat function))
+
+(defun eword-analyze-quoted-string (string &optional must-unfold)
   (let ((p (std11-check-enclosure string ?\" ?\")))
     (if p
 	(cons (cons 'quoted-string
@@ -374,6 +397,9 @@ It is max size of eword-lexical-analyze-cache - 1.")
 		     default-mime-charset))
 	      (substring string p))
       )))
+
+(defun eword-analyze-domain-literal (string &optional must-unfold)
+  (std11-analyze-domain-literal string))
 
 (defun eword-analyze-comment (string &optional must-unfold)
   (let ((p (std11-check-enclosure string ?\( ?\) t)))
@@ -386,6 +412,12 @@ It is max size of eword-lexical-analyze-cache - 1.")
 		     must-unfold))
 	      (substring string p))
       )))
+
+(defun eword-analyze-spaces (string &optional must-unfold)
+  (std11-analyze-spaces string))
+
+(defun eword-analyze-special (string &optional must-unfold)
+  (std11-analyze-special string))
 
 (defun eword-analyze-encoded-word (string &optional must-unfold)
   (if (eq (string-match eword-encoded-word-regexp string) 0)
@@ -409,7 +441,7 @@ It is max size of eword-lexical-analyze-cache - 1.")
 	(cons (cons 'atom dest) string)
 	)))
 
-(defun eword-analyze-atom (string)
+(defun eword-analyze-atom (string &optional must-unfold)
   (if (string-match std11-atom-regexp string)
       (let ((end (match-end 0)))
 	(cons (cons 'atom (decode-mime-charset-string
@@ -422,15 +454,14 @@ It is max size of eword-lexical-analyze-cache - 1.")
   (let (dest ret)
     (while (not (string-equal string ""))
       (setq ret
-	    (or (eword-analyze-quoted-string string)
-		(std11-analyze-domain-literal string)
-		(eword-analyze-comment string must-unfold)
-		(std11-analyze-spaces string)
-		(std11-analyze-special string)
-		(eword-analyze-encoded-word string must-unfold)
-		(eword-analyze-atom string)
-		'((error) . "")
-		))
+	    (let ((rest eword-lexical-analyzers)
+		  func r)
+	      (while (and (setq func (car rest))
+			  (null (setq r (funcall func string must-unfold)))
+			  )
+		(setq rest (cdr rest)))
+	      (or r '((error) . ""))
+	      ))
       (setq dest (cons (car ret) dest))
       (setq string (cdr ret))
       )
