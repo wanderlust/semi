@@ -1,3 +1,8 @@
+2001-03-06  Hiroya Murata     <lapis-lazuli@pop06.odn.ne.jp>
+
+	* mime-edit.el (mime-edit-set-parameter): Get rid of the duplicated
+	optional fields.
+
 2000-12-28  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
 	* mime-view.el: Revert to use `static'.
