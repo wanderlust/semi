@@ -53,14 +53,13 @@
 	 (p-win (or (get-buffer-window mime::article/preview-buffer)
 		    (get-largest-window)))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
+	 (the-buf (current-buffer))
 	 (mother mime::article/preview-buffer)
 	 (mode major-mode)
-	 text-decoder
-	 (str (buffer-substring beg end))
-	 )
+	 text-decoder)
     (set-buffer (get-buffer-create new-name))
     (erase-buffer)
-    (insert str)
+    (insert-buffer-substring the-buf beg end)
     (cond ((progn
 	     (goto-char (point-min))
 	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t)
