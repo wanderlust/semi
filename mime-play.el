@@ -217,19 +217,6 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	      )))
   )
 
-(defsubst mime-delq-null-situation (situations field
-					       &optional ignored-value)
-  (let (dest)
-    (while situations
-      (let* ((situation (car situations))
-	     (cell (assq field situation)))
-	(if cell
-	    (or (eq (cdr cell) ignored-value)
-		(setq dest (cons situation dest))
-		)))
-      (setq situations (cdr situations)))
-    dest))
-
 (defun mime-compare-situation-with-example (situation example)
   (let ((example (copy-alist example))
 	(match 0))
