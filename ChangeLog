@@ -1,5 +1,12 @@
 1998-06-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-text.el (mime-text-insert-decoded-body): Use
+	`mime-entity-content'.
+
+	* mime-image.el (mime-display-image): Use `mime-entity-content'.
+
+1998-06-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-play.el (mime-entity-safe-filename): New implementation.
 
 1998-06-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
