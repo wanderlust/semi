@@ -1,5 +1,11 @@
 1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-view-display-entity): fixed.
+
+	* mime-parse.el (mime-parse-multipart): Change interface.
+
+1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-parse.el (make-mime-entity): Add 'content-disposition.
 	(mime-entity-content-disposition): New function.
 	(mime-parse-multipart): Modify for 'make-mime-entity.
