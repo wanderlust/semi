@@ -519,10 +519,11 @@ SUBTYPE is symbol to indicate subtype of media-type.")
 (defun mime-preview-quitting-method-for-mime-show-message-mode ()
   "Quitting method for mime-view.
 It is registered to variable `mime-preview-quitting-method-alist'."
-  (let ((mother mime-mother-buffer)
-	(win-conf mime-preview-original-window-configuration)
-	)
-    (kill-buffer mime-raw-buffer)
+  (let ((raw-buffer (mime-entity-buffer
+		     (get-text-property (point-min) 'mime-view-entity)))
+	(mother mime-mother-buffer)
+	(win-conf mime-preview-original-window-configuration))
+    (kill-buffer raw-buffer)
     (mime-preview-kill-buffer)
     (set-window-configuration win-conf)
     (pop-to-buffer mother)
