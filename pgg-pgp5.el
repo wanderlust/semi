@@ -216,7 +216,9 @@
     (pgg-pgp5-process-region (point)(point) nil pgg-pgp5-pgpv-program args)
     (delete-file orig-file)
     (if signature (delete-file signature))
-    (pgg-process-when-success nil)))
+    (with-current-buffer pgg-errors-buffer
+      (goto-char (point-min))
+      (re-search-forward "^Good signature" nil t))))
 
 (luna-define-method pgg-scheme-insert-key ((scheme pgg-scheme-pgp5))
   (let* ((pgg-pgp5-user-id (or pgg-pgp5-user-id pgg-default-user-id))

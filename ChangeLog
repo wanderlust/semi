@@ -20,6 +20,9 @@
 	(pgg-scheme-lookup-key-string): Fix number of arguments against
 	call-process.
 
+	* pgg-pgp5.el (pgg-scheme-verify-region): Analize process output
+	to see whether verify successed or not.
+
 2000-01-18   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* pgg.el,pgp-gpg.el,pgg-pgp.el,pgg-pgp5.el
