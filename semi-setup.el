@@ -102,7 +102,7 @@
 	 (mime-add-condition
 	  'action
 	  '((type . application)(subtype . pgp-encrypted)
-	    (method . mime-method-to-decrypt-application/pgp-encrypted))
+	    (method . mime-decrypt-application/pgp-encrypted))
 	  'strict "mime-pgp")
 	 
 	 (mime-add-condition

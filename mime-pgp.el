@@ -221,7 +221,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 ;;;
 ;;; It is based on RFC 2015 (PGP/MIME).
 
-(defun mime-method-to-decrypt-application/pgp-encrypted (entity situation)
+(defun mime-decrypt-application/pgp-encrypted (entity situation)
   (let* ((entity-node-id (mime-entity-node-id entity))
 	 (mother-node-id (cdr entity-node-id))
 	 (knum (car entity-node-id))
