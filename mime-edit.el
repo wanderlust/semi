@@ -2577,148 +2577,165 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	  "\\):")
   "Regexp for deleted header fields when `mime-edit-again' is called.")
 
-(defun mime-edit-decode-buffer (not-decode-text)
-  (save-excursion
+(defun mime-edit-decode-multipart-in-buffer (content-type not-decode-text)
+  (let* ((subtype (mime-content-type-subtype content-type))
+	 (boundary (mime-content-type-parameter content-type "boundary"))
+	 (boundary-pat (concat "\n--" (regexp-quote boundary) "[ \t]*\n")))
+    (re-search-forward boundary-pat nil t)
+    (let ((bb (match-beginning 0)) eb tag)
+      (setq tag (format "\n--<<%s>>-{\n" subtype))
+      (goto-char bb)
+      (insert tag)
+      (setq bb (+ bb (length tag)))
+      (re-search-forward
+       (concat "\n--" (regexp-quote boundary) "--[ \t]*\n")
+       nil t)
+      (setq eb (match-beginning 0))
+      (replace-match (format "--}-<<%s>>\n" subtype))
+      (save-restriction
+	(narrow-to-region bb eb)
+	(goto-char (point-min))
+	(while (re-search-forward boundary-pat nil t)
+	  (let ((beg (match-beginning 0))
+		end)
+	    (delete-region beg (match-end 0))
+	    (save-excursion
+	      (if (re-search-forward boundary-pat nil t)
+		  (setq end (match-beginning 0))
+		(setq end (point-max))
+		)
+	      (save-restriction
+		(narrow-to-region beg end)
+		(mime-edit-decode-message-in-buffer
+		 (if (eq subtype 'digest)
+		     (eval-when-compile
+		       (make-mime-content-type 'message 'rfc822))
+		   )
+		 not-decode-text)
+		(goto-char (point-max))
+		))))
+	))
     (goto-char (point-min))
-    (let ((ctl (mime-read-Content-Type)))
-      (if ctl
-	  (let ((type (mime-content-type-primary-type ctl))
-		(stype (mime-content-type-subtype ctl))
-		(params (mime-content-type-parameters ctl)))
-	    (cond
-	     ((and (eq type 'application)(eq stype 'pgp-signature))
-	      (delete-region (point-min)(point-max))
-	      )
-	     ((eq type 'multipart)
-	      (let* ((boundary (cdr (assoc "boundary" params)))
-		     (boundary-pat
-		      (concat "\n--" (regexp-quote boundary) "[ \t]*\n"))
-		     )
-		(re-search-forward boundary-pat nil t)
-		(let ((bb (match-beginning 0)) eb tag)
-		  (setq tag (format "\n--<<%s>>-{\n" stype))
-		  (goto-char bb)
-		  (insert tag)
-		  (setq bb (+ bb (length tag)))
-		  (re-search-forward
-		   (concat "\n--" (regexp-quote boundary) "--[ \t]*\n")
-		   nil t)
-		  (setq eb (match-beginning 0))
-		  (replace-match (format "--}-<<%s>>\n" stype))
-		  (save-restriction
-		    (narrow-to-region bb eb)
-		    (goto-char (point-min))
-		    (while (re-search-forward boundary-pat nil t)
-		      (let ((beg (match-beginning 0))
-			    end)
-			(delete-region beg (match-end 0))
-			(save-excursion
-			  (if (re-search-forward boundary-pat nil t)
-			      (setq end (match-beginning 0))
-			    (setq end (point-max))
-			    )
-			  (save-restriction
-			    (narrow-to-region beg end)
-			    (mime-edit-decode-buffer not-decode-text)
-			    (goto-char (point-max))
-			    ))))
-		    ))
-		(goto-char (point-min))
-		(or (= (point-min) 1)
-		    (delete-region (point-min)
-				   (if (search-forward "\n\n" nil t)
-				       (match-end 0)
-				     (point-min)
-				     )))
-		))
-	     (t
-	      (let* ((ctype (format "%s/%s" type stype))
-		     charset
-		     (pstr
-		      (let ((bytes (+ 14 (length ctype))))
-			(mapconcat (function
-				    (lambda (attr)
-				      (if (string= (car attr) "charset")
-					  (progn
-					    (setq charset (cdr attr))
-					    "")
-					(let* ((str
-						(concat (car attr)
-							"=" (cdr attr))
-						)
-					       (bs (length str))
-					       )
-					  (setq bytes (+ bytes bs 2))
-					  (if (< bytes 76)
-					      (concat "; " str)
-					    (setq bytes (+ bs 1))
-					    (concat ";\n " str)
-					    )
-					  ))))
-				   params "")))
-		     encoding
-		     encoded
-		     (limit (save-excursion
-			      (if (search-forward "\n\n" nil t)
-				  (1- (point))))))
-		(save-excursion
-		  (if (re-search-forward
-		       "^Content-Transfer-Encoding:" limit t)
-		      (let ((beg (match-beginning 0))
-			    (hbeg (match-end 0))
-			    (end (std11-field-end)))
-			(setq encoding
-			      (downcase
-			       (eliminate-top-spaces
-				(std11-unfold-string
-				 (buffer-substring hbeg end)))))
-			(if (or charset (eq type 'text))
-			    (progn
-			      (delete-region beg (1+ end))
-			      (goto-char (point-min))
-			      (if (search-forward "\n\n" nil t)
-				  (progn
-				    (mime-decode-region
-				     (match-end 0)(point-max) encoding)
-				    (setq encoded t
-					  encoding nil)
-				    )))))))
-		(if (or encoded (not not-decode-text))
-		    (decode-mime-charset-region
-		     (point-min)(point-max)
-		     (or charset default-mime-charset))
-		  )
-		(let ((he
-		       (if (re-search-forward "^$" nil t)
+    (or (= (point-min) 1)
+	(delete-region (point-min)
+		       (if (search-forward "\n\n" nil t)
 			   (match-end 0)
 			 (point-min)
 			 )))
-		  (if (and (eq type 'text)
-			   (eq stype 'x-rot13-47-48))
-		      (mule-caesar-region he (point-max))
-		    )
-		  (if (= (point-min) 1)
+    ))
+
+(defun mime-edit-decode-single-part-in-buffer (content-type not-decode-text)
+  (let* ((type (mime-content-type-primary-type content-type))
+	 (subtype (mime-content-type-subtype content-type))
+	 (ctype (format "%s/%s" type subtype))
+	 charset
+	 (pstr (let ((bytes (+ 14 (length ctype))))
+		 (mapconcat (function
+			     (lambda (attr)
+			       (if (string= (car attr) "charset")
+				   (progn
+				     (setq charset (cdr attr))
+				     "")
+				 (let* ((str (concat (car attr)
+						     "=" (cdr attr)))
+					(bs (length str)))
+				   (setq bytes (+ bytes bs 2))
+				   (if (< bytes 76)
+				       (concat "; " str)
+				     (setq bytes (+ bs 1))
+				     (concat ";\n " str)
+				     )
+				   ))))
+			    (mime-content-type-parameters content-type) "")))
+	 encoding
+	 encoded
+	 (limit (save-excursion
+		  (if (search-forward "\n\n" nil t)
+		      (1- (point))))))
+    (save-excursion
+      (if (re-search-forward
+	   "^Content-Transfer-Encoding:" limit t)
+	  (let ((beg (match-beginning 0))
+		(hbeg (match-end 0))
+		(end (std11-field-end)))
+	    (setq encoding
+		  (downcase
+		   (eliminate-top-spaces
+		    (std11-unfold-string
+		     (buffer-substring hbeg end)))))
+	    (if (or charset (eq type 'text))
+		(progn
+		  (delete-region beg (1+ end))
+		  (goto-char (point-min))
+		  (if (search-forward "\n\n" nil t)
 		      (progn
-			(goto-char he)
-			(insert
-			 (concat "\n"
-				 (mime-create-tag
-				  (format "%s/%s%s" type stype pstr)
-				  encoding)))
-			)
-		    (delete-region (point-min) he)
-		    (insert
+			(mime-decode-region
+			 (match-end 0)(point-max) encoding)
+			(setq encoded t
+			      encoding nil)
+			)))))))
+    (if (or encoded (not not-decode-text))
+	(decode-mime-charset-region (point-min)(point-max)
+				    (or charset default-mime-charset))
+      )
+    (let ((he (if (re-search-forward "^$" nil t)
+		  (match-end 0)
+		(point-min)
+		)))
+      (if (and (eq type 'text)
+	       (eq subtype 'x-rot13-47-48))
+	  (mule-caesar-region he (point-max))
+	)
+      (if (= (point-min) 1)
+	  (progn
+	    (goto-char he)
+	    (insert
+	     (concat "\n"
 		     (mime-create-tag
-		      (format "%s/%s%s" type stype pstr)
-		      encoding))
-		    ))
-		))))
+		      (format "%s/%s%s" type subtype pstr)
+		      encoding)))
+	    )
+	(delete-region (point-min) he)
+	(insert
+	 (mime-create-tag (format "%s/%s%s" type subtype pstr)
+			  encoding))
+	))
+    ))
+
+;;;###autoload
+(defun mime-edit-decode-message-in-buffer (&optional default-content-type
+						     not-decode-text)
+  (save-excursion
+    (goto-char (point-min))
+    (let ((ctl (or (mime-read-Content-Type)
+		   default-content-type)))
+      (if ctl
+	  (let ((type (mime-content-type-primary-type ctl)))
+	    (cond
+	     ((and (eq type 'application)
+		   (eq (mime-content-type-subtype ctl) 'pgp-signature))
+	      (delete-region (point-min)(point-max))
+	      )
+	     ((eq type 'multipart)
+	      (mime-edit-decode-multipart-in-buffer ctl not-decode-text)
+	      )
+	     (t
+	      (mime-edit-decode-single-part-in-buffer ctl not-decode-text)
+	      )))
 	(or not-decode-text
 	    (decode-mime-charset-region (point-min) (point-max)
-					default-mime-charset)
-	    )
-	))))
+					default-mime-charset))
+	)
+      (save-restriction
+	(std11-narrow-to-header)
+	(goto-char (point-min))
+	(while (re-search-forward mime-edit-again-ignored-field-regexp nil t)
+	  (delete-region (match-beginning 0) (1+ (std11-field-end)))
+	  ))
+      (mime-decode-header-in-buffer (not not-decode-text))
+      )))
 
+;;;###autoload
 (defun mime-edit-again (&optional not-decode-text no-separator not-turn-on)
   "Convert current buffer to MIME-Edit buffer and turn on MIME-Edit mode.
 Content-Type and Content-Transfer-Encoding header fields will be
@@ -2730,14 +2747,8 @@ converted to MIME-Edit tags."
        nil t)
       (replace-match "\n\n")
     )
-  (mime-edit-decode-buffer not-decode-text)
+  (mime-edit-decode-message-in-buffer nil not-decode-text)
   (goto-char (point-min))
-  (save-restriction
-    (std11-narrow-to-header)
-    (goto-char (point-min))
-    (while (re-search-forward mime-edit-again-ignored-field-regexp nil t)
-      (delete-region (match-beginning 0) (1+ (std11-field-end)))
-      ))
   (or no-separator
       (and (re-search-forward "^$")
 	   (replace-match mail-header-separator)
