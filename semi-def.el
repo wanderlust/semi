@@ -29,7 +29,7 @@
 (eval-when-compile (require 'cl))
 
 
-(defconst mime-module-version '("SEMI" "Itoigawa" 1 3 5)
+(defconst mime-module-version '("SEMI" "Itoigawa" 1 4 0)
   "Implementation name, version name and numbers of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
@@ -314,7 +314,8 @@ If optional argument FILE is specified, it is loaded when CONDITION is
 activate."
   (let ((sym (cdr (assq target-type mime-condition-type-alist))))
     (if sym
-	(let ((func (cdr (assq mode mime-condition-mode-alist))))
+	(let ((func (cdr (or (assq mode mime-condition-mode-alist)
+			     (assq t mime-condition-mode-alist)))))
 	  (if (fboundp func)
 	      (progn
 		(funcall func sym condition)
