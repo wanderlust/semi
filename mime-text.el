@@ -49,7 +49,7 @@
   (mime-decode-region (point-min) (point-max) encoding)
   (let ((m (save-excursion
 	     (set-buffer mime::preview/article-buffer)
-	     (or mime::article/code-converter
+	     (or mime-raw::text-decoder
 		 (cdr (or (assq major-mode mime-text-decoder-alist)
 			  (assq t mime-text-decoder-alist)))
 		 ))))
