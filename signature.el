@@ -4,7 +4,7 @@
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;;         OKABE Yasuo <okabe@kudpc.kyoto-u.ac.jp>
-;;         KOBAYASHI Shuhei <shuhei-k@jaist.ac.jp>
+;;         Shuhei KOBAYASHI <shuhei-k@jaist.ac.jp>
 ;; Maintainer: Shuhei KOBAYASHI <shuhei-k@jaist.ac.jp>
 ;; Created: 1994/7/11
 ;; Version: $Id$
@@ -52,7 +52,12 @@ It is inserted when signature is inserted at end of file.")
 (defvar signature-file-name "~/.signature"
   "*Name of file containing the user's signature.")
 
-(defvar signature-file-alist nil)
+(defvar signature-file-alist nil
+  "*Alist of the form:
+    (((FIELD . PATTERN) . FILENAME)
+     ...)
+PATTERN is a string or list of string. If PATTERN matches the contents of
+FIELD, the contents of FILENAME is inserted.")
 
 (defvar signature-file-prefix nil
   "*String containing optional prefix for the signature file names")
@@ -63,18 +68,7 @@ It is inserted when signature is inserted at end of file.")
 (defvar signature-use-bbdb nil
   "*If non-nil, Register sigtype to BBDB.")
 
-;;;
-;;; Example:
-;;;
-;;; (setq signature-file-alist
-;;;       '((("Newsgroups" . "zxr")   . "~/.signature-sun")
-;;;         (("To" . "uramimi")       . "~/.signature-sun")
-;;;         (("Newsgroups" . "jokes") . "~/.signature-jokes")
-;;;         (("To" . "tea")           . "~/.signature-jokes")
-;;;         (("To" . ("sim" "oku"))   . "~/.signature-formal")
-;;;         ))
-
-(autoload 'signature/get-sigtype-from-bbdb "tm-bbdb")
+(autoload 'signature/get-sigtype-from-bbdb "mime-bbdb")
 
 (defun signature/get-sigtype-interactively (&optional default)
   (read-file-name "Insert your signature: "
