@@ -1,17 +1,22 @@
 1999-11-13   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* pgg.el (pgg-temp-buffer-show-function): New function.
+	(pgg-display-output-buffer): Use it.
+	(pgg-save-coding-system): Use buffer narrowing.
+	(pgg-encrypt-region, pgg-decrypt-region, pgg-sign-region,
+	pgg-verify-region): Assume that the current region has already
+	been narrowed.
+
+1999-11-13   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
 	* pgg-def.el (pgg-default-keyserver-address): Default to
 	`wwwkeys.pgp.net'.
 
 	* pgg.el (pgg-save-coding-system): New macro.
 	(pgg-display-output-buffer): New function.
-	(pgg-encrypt-region): Add documentation string; use
-	`pgg-save-coding-system'.
-	(pgg-decrypt-region): Ditto.
-	(pgg-sign-region): Ditto.
-	(pgg-verify-region): Ditto.
-	(pgg-insert-key): Add documentation string.
-	(pgg-snarf-keys-region): Ditto.
+	(pgg-encrypt-region, pgg-decrypt-region, pgg-sign-region,
+	pgg-verify-region, pgg-insert-key, pgg-snarf-keys-region):
+	Add documentation string; use `pgg-save-coding-system'.
 	(pgg-fetch-key): Fix documentation.
 
 1999-11-11   Akihiro Arisawa   <ari@atesoft.advantest.co.jp>
