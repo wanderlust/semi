@@ -327,17 +327,22 @@ It is registered to variable `mime-view-quitting-method-alist'."
 ;;;
 
 (defvar mime-raw-coding-system-alist
-  (list '(mh-show-mode . no-conversion)
-	(cons t (mime-charset-to-coding-system default-mime-charset))
-	))
+  `((mh-show-mode . no-conversion)
+    (t . ,(mime-charset-to-coding-system default-mime-charset)))
+  "Alist of major-mode vs. corresponding coding-system.")
 
-(defun mime-article::write-region (start end file)
+(defun mime-raw-write-region (start end filename)
+  "Write current region into specified file.
+When called from a program, takes three arguments:
+START, END and FILENAME.  START and END are buffer positions.
+It refer `mime-raw-coding-system-alist' to choose coding-system to
+write."
   (let ((coding-system-for-write
 	 (cdr
 	  (or (assq major-mode mime-raw-coding-system-alist)
 	      (assq t mime-raw-coding-system-alist)
 	      ))))
-    (write-region start end file)
+    (write-region start end filename)
     ))
 
 (defun mime-method-to-store-message/partial (beg end cal)
@@ -381,7 +386,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
       (re-search-forward "^$")
       (goto-char (1+ (match-end 0)))
       (setq file (concat root-dir "/" number))
-      (mime-article::write-region (point) end file)
+      (mime-raw-write-region (point) end file)
       (let ((total-file (concat root-dir "/CT")))
 	(setq total
 	      (if total
