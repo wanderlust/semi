@@ -93,7 +93,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	     (mime-article/start-external-method-region beg end ret)
 	     )
 	    (t
-	     (mime-article/show-output-buffer
+	     (mime-show-echo-buffer
 	      "No method are specified for %s\n" ctype)
 	     ))
       )
@@ -145,7 +145,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 							 (cdr (cdr method)))
 			  ))
 	      (apply (function start-process) args)
-	      (mime-article/show-output-buffer)
+	      (mime-show-echo-buffer)
 	      ))
 	))))
 
@@ -169,7 +169,8 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 (defvar mime-echo-window-is-shared-with-bbdb t
   "*If non-nil, mime-echo window is shared with BBDB window.")
 
-(defun mime-article/show-output-buffer (&rest forms)
+(defun mime-show-echo-buffer (&rest forms)
+  "Show mime-echo buffer to display MIME-playing information."
   (get-buffer-create mime-echo-buffer-name)
   (let ((the-win (selected-window))
 	(win (get-buffer-window mime-echo-buffer-name))
