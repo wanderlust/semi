@@ -6,7 +6,7 @@
 ;; Version: $Id$
 ;; Keywords: PGP, security, MIME, multimedia, mail, news
 
-;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
+;; This file is part of SEMI (Secure Emacs MIME Interface).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
