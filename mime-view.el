@@ -735,9 +735,6 @@ The compressed face will be piped to this command.")
 				(copy-keymap default)
 			      (make-sparse-keymap)
 			      )))
-    (or (keymapp default)
-	(suppress-keymap mime-view-mode-map)
-	)
     (define-key mime-view-mode-map
       "u"        (function mime-view-up-content))
     (define-key mime-view-mode-map
