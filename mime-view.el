@@ -28,7 +28,7 @@
 
 ;;; Code:
 
-(require 'tl-list)
+(require 'cl)
 (require 'tl-atype)
 (require 'tl-misc)
 (require 'std11)
