@@ -1,3 +1,15 @@
+2000-02-20   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-image.el: Remove X-Face setting; require cl when compiling.
+	(mime-image-format-alist): Remove image/x-mag and image/x-pic.
+	(mime-image-type-available-p): New function.
+	(mime-image-create): New function.
+	(mime-image-insert): New function.
+	(mime-display-image): Rewrite.
+
+	* mime-edit.el
+	(mime-edit-define-charset): Handle 'mime-charset-comment.
+
 2000-02-07  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* mime-pgp.el: Fix doc string.
