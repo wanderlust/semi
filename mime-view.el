@@ -435,9 +435,7 @@ You can customize the visibility by changing `mime-view-button-place-alist'."
       (if body-is-invisible
 	  " ..."
 	""))
-     (function mime-preview-play-current-entity)
-     (if body-is-invisible
-	 'invisible))))
+     (function mime-preview-play-current-entity))))
 
 
 ;;; @@ entity-header
@@ -627,6 +625,16 @@ Each elements are regexp of field-name.")
 	(insert "\n"))
     (mime-add-url-buttons)
     (run-hooks 'mime-display-text/plain-hook)))
+
+(defun mime-display-text (entity situation)
+  (save-restriction
+    (narrow-to-region (point-max) (point-max))
+    (insert
+     (decode-coding-string
+      (mime-decode-string (mime-entity-content entity)
+			  (cdr (assq 'encoding situation)))
+      (or (cdr (assq 'coding situation))
+	  'binary)))))
 
 (defun mime-display-text/richtext (entity situation)
   (save-restriction
@@ -851,24 +859,25 @@ This can only handle gzipped contents."
 (defun mime-display-gzipped (entity situation)
   "Ungzip gzipped part and display."
     (insert
-     (with-temp-buffer
-       ;; #### Kludge to make FSF Emacs happy.
-       (if (featurep 'xemacs)
-	   (insert (mime-entity-content entity))
-	 (let ((content (mime-entity-content entity)))
-	   (if (not (multibyte-string-p content))
-	       ;; I really hate this brain-damaged function.
-	       (set-buffer-multibyte nil))
-	   (insert content)))
-       (as-binary-process
-	(call-process-region (point-min) (point-max) "gzip" t t
-			     nil "-cd"))
-       ;; Oh my goodness.
-       (when (fboundp 'set-buffer-multibyte)
-	 (set-buffer-multibyte t))
-       (decode-coding-region (point-min) (point-max) 'undecided)
-       (buffer-string)))
-    t)
+     (decode-coding-string
+      (with-temp-buffer
+	;; #### Kludge to make FSF Emacs happy.
+	(if (featurep 'xemacs)
+	    (insert (mime-entity-content entity))
+	  (let ((content (mime-entity-content entity)))
+	    (if (not (multibyte-string-p content))
+		;; I really hate this brain-damaged function.
+		(set-buffer-multibyte nil))
+	    (insert content)))
+	(as-binary-process
+	 (call-process-region (point-min) (point-max) "gzip" t t
+			      nil "-cd"))
+	;; Oh my goodness.
+	(when (fboundp 'set-buffer-multibyte)
+	  (set-buffer-multibyte t))
+	(buffer-string))
+      'undecided))
+     t)
 
 (defun mime-preview-inline ()
   "View part as text without code conversion."
@@ -915,46 +924,29 @@ This can only handle gzipped contents."
 With prefix, it prompts for coding-system."
   (interactive "P")
   (let ((inhibit-read-only t)
-	(entity (get-text-property (point) 'mime-view-entity))
-	(situation (get-text-property (point) 'mime-view-situation))
+	(mime-view-force-inline-types t)
+	(position (mime-preview-entity-boundary))
 	(coding (if ask-coding
 		    (or (read-coding-system "Coding system: ")
 			'undecided)
 		  'undecided))
-	start)
-    (when (and entity
-	       (not (get-text-property (point) 'mime-view-entity-header))
-	       (not (memq (mime-entity-media-type entity)
-			  '(multipart message))))
-      (setq start (or (and (not (mime-entity-parent entity))
-			   (1+ (previous-single-property-change
-				(point)
-				'mime-view-entity-header)))
-		      (and (not (eq (point) (point-min)))
-			   (not (eq (get-text-property (1- (point))
-						       'mime-view-entity)
-				    entity))
-			   (point))
-		      (previous-single-property-change (point)
-						       'mime-view-entity)
-		      (point)))
-      (delete-region start
-		     (1-
-		      (or (next-single-property-change (point)
-						       'mime-view-entity)
-			  (point-max))))
-      (setq start (point))
-      (if (mime-view-entity-button-visible-p entity)
-	  (mime-view-insert-entity-button entity))
-      (insert (decode-coding-string (mime-entity-content entity) coding))
-      (if (and (bolp) (eolp))
-	  (delete-char 1)
-	(forward-char 1))
-      (add-text-properties start (point)
-			   (list 'mime-view-entity entity
-				 'mime-view-situation situation))
-      (goto-char start))))
-	      
+	(cte (if ask-coding
+		 (completing-read "Content Transfer Encoding: "
+				  (mime-encoding-alist) nil t)))
+	entity situation)
+    (setq entity (get-text-property (car position) 'mime-view-entity)
+	  situation (get-text-property (car position) 'mime-view-situation))
+    (setq situation
+	  (put-alist
+	   'encoding cte
+	   (put-alist
+	    'coding coding
+	    (put-alist
+	     'body-presentation-method 'mime-display-text
+	     (put-alist '*body 'visible situation)))))
+    (save-excursion
+      (delete-region (car position) (cdr position))
+      (mime-display-entity entity situation))))
 
 (defun mime-preview-type ()
   "View part as text without code conversion."

@@ -1,3 +1,21 @@
+2000-04-17  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* EMY 1.13.5 is released.
+
+2000-04-17  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-view-insert-entity-button): Don't pass
+	invisible to mime-insert-button.
+
+2000-04-15  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-preview-text): Ask Content-Transfer-Encoding.
+	(mime-display-text): New function.
+
+2000-04-14  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-display-gzipped): Use decode-coding-string.
+
 2000-04-13   Daiki Ueno  <ueno@unixuser.org>
 
 	* pgg-gpg.el: Fix author's mailing address.
