@@ -1,6 +1,7 @@
 2004-09-27  Katsumi Yamaoka  <yamaoka@jpl.org>
 
-	* README.en (CVS based development): Mention anonymous CVS access.
+	* README.en (CVS based development): Mention anonymous CVS access;
+	remove the description about developers' pserver access.
 
 2003-11-15  Simon Josefsson  <jas@extundo.com>
 
