@@ -547,9 +547,11 @@ list of expected key-ID, start position and lines to be shown a result."
 ;;; It is based on RFC 2015 (PGP/MIME) and
 ;;; draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME).
 
-(defun mime-add-application/pgp-keys (entity &optional situation)
+(defun mime-add-application/pgp-keys (entity situation)
   (with-temp-buffer
     (mime-insert-entity-content entity)
+    (mime-decode-region (point-min) (point-max)
+			(cdr (assq 'encoding situation)))
     (let ((pgp-version (mime-pgp-detect-version)))
       (funcall (pgp-function 'snarf-keys))
       )))
