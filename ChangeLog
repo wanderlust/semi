@@ -1,5 +1,12 @@
 1998-06-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el (mime-raw-play-entity): Abolish tm-compatible
+	external method support; abolish function
+	`mime-activate-external-method' and
+	`mime-make-external-method-args'.
+
+1998-06-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-play.el (mime-activate-mailcap-method): Use
 	`mime-entity-body-start'.
 
