@@ -1,5 +1,10 @@
 1998-04-27  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el (mime-user-acting-condition): New variable.
+	(mime-raw-play-entity): Refer it.
+
+1998-04-27  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-play.el (mime-raw-play-entity): Get all available
  	acting-situations; display menu of methods to select
  	acting-situation to activate.
