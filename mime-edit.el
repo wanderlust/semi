@@ -2704,9 +2704,15 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 			      encoding nil)
 			)))))))
     (if (or encoded (not not-decode-text))
-	(decode-mime-charset-region (point-min)(point-max)
-				    (or charset default-mime-charset))
-      )
+ 	(progn
+ 	  (save-excursion
+ 	    (goto-char (point-min))
+ 	    (while (re-search-forward "\r\n" nil t)
+ 	      (replace-match "\n")
+ 	      ))
+ 	  (decode-mime-charset-region (point-min)(point-max)
+ 				      (or charset default-mime-charset))
+	  ))
     (let ((he (if (re-search-forward "^$" nil t)
 		  (match-end 0)
 		(point-min)

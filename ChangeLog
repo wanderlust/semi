@@ -1,3 +1,13 @@
+1999-03-30  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
+
+	* mime-edit.el (mime-edit-decode-single-part-in-buffer): Normalize
+	EOL code in MIME encoded text part.
+
+1999-03-27  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-preview-follow-current-entity): Don't copy
+	header if current entity is root.
+
 1999-03-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-edit.el (mime-charset-type-list): Add `tis-620'.
