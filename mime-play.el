@@ -211,8 +211,7 @@ specified, play as it.  Default MODE is \"play\"."
 		  (make-temp-name
 		   (expand-file-name "EMI" mime-temp-directory))
 		  ))
-	  (mime-write-decoded-region (mime-entity-body-start entity) end
-				     name (cdr (assq 'encoding situation)))
+          (mime-write-entity-content entity name)
 	  (message "External method is starting...")
 	  (let ((process
 		 (let ((command
