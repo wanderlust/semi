@@ -139,11 +139,14 @@
 
 (defvar mime-view-visible-media-type-list
   '("text/plain" nil "text/richtext" "text/enriched"
+    "text/rfc822-headers"
     "text/x-latex" "application/x-latex"
     "message/delivery-status"
     "application/pgp" "text/x-pgp"
     "application/octet-stream"
-    "application/x-selection" "application/x-comment"))
+    "application/x-selection" "application/x-comment")
+  "*List of media-types to be able to display in MIME-View buffer.
+Each elements are string of TYPE/SUBTYPE, e.g. \"text/plain\".")
 
 (defvar mime-view-content-button-ignored-ctype-list
   '("application/x-selection"))
