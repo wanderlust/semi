@@ -107,18 +107,25 @@ which are string or symbol."
 	 ))))
 
 (defun mime-parse-Content-Type (string)
-  "Parse STRING as field-body of Content-Type field."
+  "Parse STRING as field-body of Content-Type field.
+Return value is
+    (PRIMARY-TYPE SUBTYPE (NAME1 . VALUE1)(NAME2 . VALUE2) ...)
+or nil.  PRIMARY-TYPE and SUBTYPE are symbol and NAME_n and VALUE_n
+are string."
   (setq string (std11-unfold-string string))
-  (if (string-match `,(concat "^" mime-media-type/subtype-regexp) string)
-      (let* ((e (match-end 0))
-	     (ctype (downcase (substring string 0 e)))
+  (if (string-match `,(concat "^\\(" mime-token-regexp
+			      "\\)/\\(" mime-token-regexp "\\)") string)
+      (let* ((type (downcase
+		    (substring string (match-beginning 1) (match-end 1))))
+	     (subtype (downcase
+		       (substring string (match-beginning 2) (match-end 2))))
 	     ret dest)
-	(setq string (substring string e))
+	(setq string (substring string (match-end 0)))
 	(while (setq ret (mime-parse-parameter string))
 	  (setq dest (cons (car ret) dest)
 		string (cdr ret))
 	  )
-	(cons ctype (nreverse dest))
+	(cons (intern type) (cons (intern subtype) (nreverse dest)))
 	)))
 
 
@@ -145,7 +152,8 @@ which are string or symbol."
 
 (defun mime-read-Content-Type ()
   "Read field-body of Content-Type field from current-buffer,
-and return parsed it."
+and return parsed it.  Format of return value is as same as
+`mime-parse-Content-Type'."
   (let ((str (std11-field-body "Content-Type")))
     (if str
 	(mime-parse-Content-Type str)
@@ -181,8 +189,20 @@ and return parsed it. [mime-parse.el]"
 (define-structure mime::content-info
   rcnum point-min point-max type parameters encoding children)
 
+(defsubst make-mime-entity-info (rcnum
+				 point-min point-max
+				 media-type media-subtype
+				 parameters encoding children)
+  (let ((ctype (if media-type
+		   (if media-subtype
+		       (format "%s/%s" media-type media-subtype)
+		     (symbol-name media-type)))))
+    (mime::content-info/create rcnum point-min point-max
+			       ctype params encoding
+			       children)
+    ))
 
-(defun mime-parse-multipart (boundary ctype params encoding rcnum)
+(defun mime-parse-multipart (boundary primtype subtype params encoding rcnum)
   (goto-char (point-min))
   (let* ((dash-boundary   (concat "--" boundary))
 	 (delimiter       (concat "\n" (regexp-quote dash-boundary)))
@@ -196,9 +216,9 @@ and return parsed it. [mime-parse.el]"
 		  )))
 	 (rsep (concat delimiter "[ \t]*\n"))
 	 (dc-ctl
-	  (if (string-equal ctype "multipart/digest")
-	      '("message/rfc822")
-	    '("text/plain")
+	  (if (eq subtype 'digest)
+	      '(message rfc822)
+	    '(text plain)
 	    ))
 	 cb ce ret ncb children (i 0))
     (save-restriction
@@ -225,45 +245,51 @@ and return parsed it. [mime-parse.el]"
 	)
       (setq children (cons ret children))
       )
-    (mime::content-info/create rcnum beg (point-max)
-			       ctype params encoding
-			       (nreverse children))
+    (make-mime-entity-info rcnum beg (point-max)
+			   primtype subtype params encoding
+			   (nreverse children))
     ))
 
-(defun mime-parse-message (&optional ctl encoding rcnum)
-  "Parse current-buffer as a MIME message. [mime-parse.el]"
-  (setq ctl (or (mime-read-Content-Type) ctl))
-  (setq encoding (or (mime/Content-Transfer-Encoding) encoding))
-  (let ((ctype (car ctl))
-	(params (cdr ctl))
+(defun mime-parse-message (&optional default-ctl default-encoding rcnum)
+  "Parse current-buffer as a MIME message.
+DEFAULT-CTL is used when an entity does not have valid Content-Type
+field.  Its format must be as same as return value of
+mime-{parse|read}-Content-Type."
+  (setq default-ctl (or (mime-read-Content-Type) default-ctl))
+  (let ((primtype (car default-ctl))
+	(subtype (car (cdr default-ctl)))
+	(params (cdr (cdr default-ctl)))
+	(encoding (or (mime/Content-Transfer-Encoding) default-encoding))
 	)
     (let ((boundary (assoc "boundary" params)))
       (cond (boundary
 	     (setq boundary (std11-strip-quoted-string (cdr boundary)))
-	     (mime-parse-multipart boundary ctype params encoding rcnum)
+	     (mime-parse-multipart
+	      boundary
+	      primtype subtype params encoding rcnum)
 	     )
-	    ((or (string-equal ctype "message/rfc822")
-		 (string-equal ctype "message/news")
-		 )
+	    ((and (eq primtype 'message)
+		  (memq subtype '(rfc822 news))
+		  )
 	     (goto-char (point-min))
-	     (mime::content-info/create rcnum
-					(point-min) (point-max)
-					ctype params encoding
-					(save-restriction
-					  (narrow-to-region
-					   (if (re-search-forward "^$" nil t)
-					       (1+ (match-end 0))
-					     (point-min)
-					     )
-					   (point-max))
-					  (list (mime-parse-message
-						 nil nil (cons 0 rcnum)))
-					  )
-					)
+	     (make-mime-entity-info rcnum
+				    (point-min) (point-max)
+				    primtype subtype params encoding
+				    (save-restriction
+				      (narrow-to-region
+				       (if (re-search-forward "^$" nil t)
+					   (1+ (match-end 0))
+					 (point-min)
+					 )
+				       (point-max))
+				      (list (mime-parse-message
+					     nil nil (cons 0 rcnum)))
+				      ))
 	     )
 	    (t 
-	     (mime::content-info/create rcnum (point-min) (point-max)
-					ctype params encoding nil)
+	     (make-mime-entity-info rcnum (point-min) (point-max)
+				    primtype subtype params encoding
+				    nil)
 	     ))
       )))
 
