@@ -1,3 +1,8 @@
+2000-06-09   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-edit.el (mime-edit-insert-key): Insert a text tag when
+	the buffer has any trailing text.
+
 2000-06-05  Shugo Maeda <shugo@ruby-lang.org>
 
 	* pgg-gpg.el (pgg-scheme-insert-key): Don't quote user id.
