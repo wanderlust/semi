@@ -30,8 +30,12 @@
 (require 'alist)
 (require 'filename)
 
-(eval-when-compile (require 'mime-text))
-
+(eval-when-compile
+  (require 'mime-text)
+  (condition-case nil
+      (require 'bbdb)
+    (error (defvar bbdb-buffer-name nil))
+    ))
 
 (defvar mime-acting-situation-examples nil)
 
@@ -609,24 +613,22 @@ saved as binary.  Otherwise the region is saved by `write-region'."
 (defun mime-method-to-display-caesar (start end cal)
   "Internal method for mime-view to display ROT13-47-48 message."
   (let* ((entity (mime-raw-find-entity-from-point start))
-	 (cnum (reverse (mime-entity-node-id entity)))
-	 (new-name (format "%s-%s" (buffer-name) cnum))
-	 (the-buf (current-buffer))
+	 (new-name (format "%s-%s" (buffer-name)
+			   (reverse (mime-entity-node-id entity))))
 	 (mother mime-preview-buffer)
-	 (charset (cdr (assoc "charset" cal)))
-	 (encoding (cdr (assq 'encoding cal)))
-	 (mode major-mode))
+	 (the-buf (current-buffer)))
     (let ((pwin (or (get-buffer-window mother)
 		    (get-largest-window)))
-	  (buf (get-buffer-create new-name))
-	  )
+	  (buf (get-buffer-create new-name)))
       (set-window-buffer pwin buf)
       (set-buffer buf)
       (select-window pwin)
       )
     (setq buffer-read-only nil)
     (erase-buffer)
-    (mime-text-insert-decoded-body entity)
+    (let ((mime-raw-buffer the-buf))
+      (mime-text-insert-decoded-body entity)
+      )
     (mule-caesar-region (point-min) (point-max))
     (set-buffer-modified-p nil)
     (set-buffer mother)
@@ -647,7 +649,7 @@ saved as binary.  Otherwise the region is saved by `write-region'."
 	    (set-buffer buffer)
 	    (erase-buffer)
 	    (insert-file-contents file)
-	    (eval-current-buffer)
+	    (eval-buffer)
 	    ;; format check
 	    (or (eq (car mime-acting-situation-examples) 'type)
 		(setq mime-acting-situation-examples nil))
