@@ -1,8 +1,40 @@
+2000-01-16  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el (mime-compare-situation-with-example): Moved to
+	mime-view.el.
+	(mime-sort-situation): Likewise.
+
+	* mime-view.el (mime-compare-situation-with-example): Moved from
+	mime-play.el.
+	(mime-sort-situation): Likewise.
+
+2000-01-16  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* postpet.el: New module.
+
+	* SEMI-ELS (semi-modules-to-compile): Add `postpet'.
+
+	* mime-play.el (mime-delq-null-situation): Moved to mime-view.el.
+
+	* mime-view.el: Add setting for
+	`mime-display-application/x-postpet' to autoload "postpet".
+	(mime-delq-null-situation): Moved from mime-play.el.
+	(unpack): Moved to postpet.el.
+	(unpack-skip): Likewise.
+	(unpack-fixed): Likewise.
+	(unpack-byte): Likewise.
+	(unpack-short): Likewise.
+	(unpack-long): Likewise.
+	(unpack-string): Likewise.
+	(unpack-string-sjis): Likewise.
+	(postpet-decode): Likewise.
+	(mime-display-application/x-postpet): Likewise.
+
 2000-01-05  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* Makefile, README.en: Update for the new CVS server.
 
-1999-12-28   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+1999-12-28   Daiki Ueno       <ueno@ueda.info.waseda.ac.jp>
 
 	* mime-edit.el (mime-edit-user-agent-value): Don't require
 	`apel-ver' directly.
