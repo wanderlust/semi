@@ -493,7 +493,7 @@ Each elements are regexp of field-name.")
  'mime-preview-condition
  '((type . multipart)(subtype . alternative)
    (body . visible)
-   (body-presentation-method . mime-preview-multipart/alternative)))
+   (body-presentation-method . mime-display-multipart/alternative)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . message)(subtype . partial)
@@ -568,7 +568,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 			       (item :tag "Default" t))
 		       integer)))
 
-(defun mime-preview-multipart/alternative (entity situation)
+(defun mime-display-multipart/alternative (entity situation)
   (let* ((children (mime-entity-children entity))
 	 (default-situation
 	   (cdr (assq 'childrens-situation situation)))
