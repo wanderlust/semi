@@ -33,6 +33,7 @@
 (require 'mime-parse)
 (require 'semi-def)
 (require 'calist)
+(require 'alist)
 (require 'mailcap)
 
 
@@ -69,7 +70,7 @@
 ;;; @@ in raw-buffer
 ;;;
 
-(defvar mime-raw-message-info
+(defvar mime-raw-message-info nil
   "Information about structure of message.
 Please use reference function `mime-entity-SLOT' to get value of SLOT.
 
@@ -432,6 +433,12 @@ Each elements are regexp of field-name.")
    (body-presentation-method . mime-preview-text/plain)))
 
 (ctree-set-calist-strictly
+ 'mime-preview-condition
+ '((type . multipart)(subtype . alternative)
+   (body . visible)
+   (body-presentation-method . mime-preview-multipart/alternative)))
+
+(ctree-set-calist-strictly
  'mime-preview-condition '((type . message)(subtype . partial)
 			   (body-presentation-method
 			    . mime-preview-message/partial-button)))
@@ -485,10 +492,91 @@ Each elements are regexp of field-name.")
 	(default-situation
 	  (cdr (assq 'childrens-situation situation))))
     (while children
-      (mime-view-display-entity (car children) mime-raw-message-info
+      (mime-view-display-entity (car children)
+				(save-excursion
+				  (set-buffer mime-raw-buffer)
+				  mime-raw-message-info)
 				mime-raw-buffer (current-buffer)
 				default-situation)
       (setq children (cdr children))
+      )))
+
+(defcustom mime-view-type-subtype-score-alist
+  '(((text . enriched) . 3)
+    ((text . richtext) . 2)
+    ((text . plain)    . 1)
+    (t . 0))
+  "Alist MEDIA-TYPE vs corresponding score.
+MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
+  :group 'mime-view
+  :type '(repeat (cons (choice :tag "Media-Type"
+			       (item :tag "Type/Subtype"
+				     (cons symbol symbol))
+			       (item :tag "Type" symbol)
+			       (item :tag "Default" t))
+		       integer)))
+
+(defun mime-preview-multipart/alternative (entity situation)
+  (let* ((children (mime-entity-children entity))
+	 (default-situation
+	   (cdr (assq 'childrens-situation situation)))
+	 (i 0)
+	 (p 0)
+	 (max-score 0)
+	 (situations
+	  (mapcar (function
+		   (lambda (child)
+		     (let ((situation
+			    (or (ctree-match-calist
+				 mime-preview-condition
+				 (append
+				  (or (mime-entity-content-type child)
+				      (make-mime-content-type 'text 'plain))
+				  (list* (cons 'encoding
+					       (mime-entity-encoding child))
+					 (cons 'major-mode major-mode)
+					 default-situation)))
+				default-situation)))
+		       (if (cdr (assq 'body-presentation-method situation))
+			   (let ((score
+				  (cdr
+				   (or (assoc
+					(cons
+					 (cdr (assq 'type situation))
+					 (cdr (assq 'subtype situation)))
+					mime-view-type-subtype-score-alist)
+				       (assq
+					(cdr (assq 'type situation))
+					mime-view-type-subtype-score-alist)
+				       (assq
+					t
+					mime-view-type-subtype-score-alist)
+				       ))))
+			     (if (> score max-score)
+				 (setq p i
+				       max-score score)
+			       )))
+		       (setq i (1+ i))
+		       situation)
+		     ))
+		  children)))
+    (setq i 0)
+    (while children
+      (let ((situation (car situations)))
+	(mime-view-display-entity (car children)
+				  (save-excursion
+				    (set-buffer mime-raw-buffer)
+				    mime-raw-message-info)
+				  mime-raw-buffer (current-buffer)
+				  default-situation
+				  (if (= i p)
+				      situation
+				    (del-alist 'body-presentation-method
+					       (copy-alist situation))))
+	)
+      (setq children (cdr children)
+	    situation (cdr situations)
+	    i (1+ i))
       )))
 
 
@@ -726,7 +814,8 @@ The compressed face will be piped to this command.")
   )
 
 (defun mime-view-display-entity (entity message-info ibuf obuf
-					default-situation)
+					default-situation
+					&optional situation)
   (let* ((start (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))
          (content-type (mime-entity-content-type entity))
@@ -744,23 +833,24 @@ The compressed face will be piped to this command.")
       (narrow-to-region start end)
       (setq subj (eword-decode-string (mime-raw-get-subject entity)))
       )
-    (let* ((situation
-	    (or
-	     (ctree-match-calist mime-preview-condition
-				 (append
-				  (or content-type
-				      (make-mime-content-type 'text 'plain))
-				  (list* (cons 'encoding   encoding)
-					 (cons 'major-mode major-mode)
-					 default-situation)))
-	     default-situation))
-	   (button-is-invisible
-	    (eq (cdr (assq 'entity-button situation)) 'invisible))
-	   (header-is-visible
-	    (eq (cdr (assq 'header situation)) 'visible))
-	   (body-presentation-method
-	    (cdr (assq 'body-presentation-method situation)))
-	   (children (mime-entity-children entity)))
+    (or situation
+	(setq situation
+	      (or (ctree-match-calist mime-preview-condition
+				      (append
+				       (or content-type
+					   (make-mime-content-type
+					    'text 'plain))
+				       (list* (cons 'encoding   encoding)
+					      (cons 'major-mode major-mode)
+					      default-situation)))
+		  default-situation)))
+    (let ((button-is-invisible
+	   (eq (cdr (assq 'entity-button situation)) 'invisible))
+	  (header-is-visible
+	   (eq (cdr (assq 'header situation)) 'visible))
+	  (body-presentation-method
+	   (cdr (assq 'body-presentation-method situation)))
+	  (children (mime-entity-children entity)))
       (set-buffer obuf)
       (setq nb (point))
       (narrow-to-region nb nb)
