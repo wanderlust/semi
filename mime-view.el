@@ -820,7 +820,7 @@ button-2	Move to point under the mouse cursor
         	and decode current content as `play mode'
 "
   (interactive)
-  (let ((buf (get-buffer mime/output-buffer-name)))
+  (let ((buf (get-buffer mime-echo-buffer-name)))
     (if buf
 	(save-excursion
 	  (set-buffer buf)
