@@ -1,5 +1,8 @@
 1999-12-09   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* semi-def.el (mime-user-interface-product): Bump up to
+	EMIKO 1.13.9.
+
 	* smime.el: Require `static' when compiling.
 	(smime-directory-files): New macro.
 	(smime-find-certificate): Use it.
