@@ -374,18 +374,18 @@ If encoding is nil, it is determined from its contents.")
     (iso-2022-int-1	7 "base64")
     ))
 
-(defsubst mime/encoding-name (transfer-level &optional not-omit)
+(defvar mime-edit-transfer-level 7
+  "*A number of network transfer level.  It should be bigger than 7.")
+(make-variable-buffer-local 'mime-edit-transfer-level)
+
+(defsubst mime-encoding-name (transfer-level &optional not-omit)
   (cond ((> transfer-level 8) "binary")
 	((= transfer-level 8) "8bit")
 	(not-omit "7bit")
 	))
 
-(defvar mime-edit-transfer-level 7
-  "*A number of network transfer level.  It should be bigger than 7.")
-(make-variable-buffer-local 'mime-edit-transfer-level)
-
 (defvar mime-edit-transfer-level-string
-  (mime/encoding-name mime-edit-transfer-level 'not-omit)
+  (mime-encoding-name mime-edit-transfer-level 'not-omit)
   "*A string formatted version of mime/defaul-transfer-level")
 (make-variable-buffer-local 'mime-edit-transfer-level-string)
 
@@ -397,7 +397,7 @@ If encoding is nil, it is determined from its contents.")
 		   (encoding (nth 2 charset-type))
 		   )
 	       (if (<= type transfer-level)
-		   (cons charset (mime/encoding-name type))
+		   (cons charset (mime-encoding-name type))
 		 (cons charset encoding)
 		 ))))
 	  mime-charset-type-list))
@@ -822,7 +822,7 @@ User customizable variables (not documented all of them):
     ;; Set transfer level into mode line
     ;;
     (setq mime-edit-transfer-level-string
- 	  (mime/encoding-name mime-edit-transfer-level 'not-omit))
+ 	  (mime-encoding-name mime-edit-transfer-level 'not-omit))
     (force-mode-line-update)
     
     ;; Define menu.  Menus for other emacs implementations are
@@ -2125,7 +2125,7 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
   (message (format "Current transfer-level is %d bit"
 		   mime-edit-transfer-level))
   (setq mime-edit-transfer-level-string
-	(mime/encoding-name mime-edit-transfer-level 'not-omit))
+	(mime-encoding-name mime-edit-transfer-level 'not-omit))
   (force-mode-line-update)
   )
 
