@@ -93,7 +93,7 @@ which are string or symbol."
 	  "\\|[^; \t\n]*\\)"))
 
 (defconst mime::parameter-regexp
-  (concat "^[ \t]*\;[ \t]*\\(" mime/token-regexp "\\)"
+  (concat "^[ \t]*\;[ \t]*\\(" mime-token-regexp "\\)"
 	  "[ \t]*=[ \t]*\\(" mime/content-parameter-value-regexp "\\)"))
 
 (defun mime-parse-parameter (str)

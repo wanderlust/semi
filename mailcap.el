@@ -41,7 +41,7 @@
 ;;;
 
 (defsubst mailcap-look-at-token ()
-  (if (looking-at mime/token-regexp)
+  (if (looking-at mime-token-regexp)
       (let ((beg (match-beginning 0))
 	    (end (match-end 0)))
 	(goto-char end)
