@@ -300,11 +300,16 @@ or \"v\" for choosing a command of PGP 5.0i."
 
 (defun mime-pgp-detect-version ()
   "Detect PGP version in the buffer.  The buffer is expected to be narrowed
-to just an ascii armor."
+to just an ascii armor.  However, a few leading garbage lines are allowed."
   (let ((version (save-restriction
-		   (std11-narrow-to-header)
-		   (std11-fetch-field "Version")
-		   )))
+		   (goto-char (point-min))
+		   (if (re-search-forward "^-+BEGIN PGP " nil t)
+		       (progn
+			 (forward-line 1)
+			 (narrow-to-region (point) (point-max))
+			 (std11-narrow-to-header)
+			 (std11-fetch-field "Version")
+			 )))))
     (cond ((not version)
 	   pgp-version)
 	  ((string-match "GnuPG" version)
@@ -521,6 +526,15 @@ list of expected key-ID, start position and lines to be shown a result."
 	 (pgp-version (mime-entity-detect-pgp-version orig-entity))
 	 )
     (mime-view-application/pgp orig-entity situation)
+    ))
+
+(defun mime-edit-decrypt-application/pgp-encrypted ()
+  "Decrypt the encrypted part for the function `mime-edit-again'."
+  (let ((pgp-version (mime-pgp-detect-version)))
+    ;; The following process should returns a pair (SUCCEEDED . VERIFIED)
+    ;; where SUCCEEDED is t if the decryption succeeded and VERIFIED is t
+    ;; if there was a valid signature.
+    (as-binary-process (funcall (pgp-function 'decrypt)))
     ))
 
 
