@@ -240,6 +240,7 @@ It decodes the entity to call internal or external method.  The method
 is selected from variable `mime-acting-condition'.  If MODE is
 specified, play as it.  Default MODE is \"play\"."
   (let (method ret)
+    (in-calist-package 'mime-view)
     (setq ret
 	  (mime-delq-null-situation
 	   (ctree-find-calist mime-acting-condition
