@@ -1,3 +1,8 @@
+1997-07-23  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* eword-decode.el (eword-analyze-encoded-word): cdr of return
+	value must not nil (cf.[tm-ja:2496])
+
 1997-07-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el, mime-play.el: `mime-article/view-message/rfc822'
