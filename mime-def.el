@@ -51,8 +51,8 @@
 	     x))))
   )
 
-(defconst semi-version '("Nomachi" 1 2 1)
-  "Version name and numbers of SEMI-kernel package.")
+(defconst mime-module-version '("SEMI" "Nomachi" 1 2 1)
+  "Implementation name, version name and numbers of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
   "Caesar rotation of current region." t)
