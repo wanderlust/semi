@@ -411,9 +411,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	 (cnum (mime-raw-point-to-entity-number beg))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (mother mime-preview-buffer)
-	 (representation-type
-	  (cdr (or (assq major-mode mime-raw-representation-type-alist)
-		   (assq t mime-raw-representation-type-alist))))
+	 (representation-type (mime-entity-representation-type entity))
 	 str)
     (setq str (buffer-substring beg end))
     (switch-to-buffer new-name)
@@ -486,10 +484,9 @@ saved as binary.  Otherwise the region is saved by `write-region'."
 			       mime-preview-buffer))
 	  (select-window pwin)
 	  )
-      (re-search-forward "^$")
-      (goto-char (1+ (match-end 0)))
       (setq file (concat root-dir "/" number))
-      (mime-raw-write-region (point) (mime-entity-point-max entity) file)
+      (mime-raw-write-region (mime-entity-body-start entity)
+			     (mime-entity-body-end entity) file)
       (let ((total-file (concat root-dir "/CT")))
 	(setq total
 	      (if total
