@@ -1,5 +1,11 @@
 1998-05-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-edit.el (mime-edit-decode-buffer): Use
+ 	'mime-content-type-primary-type, 'mime-content-type-subtype and
+ 	'mime-content-type-parameters.
+
+1998-05-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-parse.el (mime-content-type-primary-type): New function.
   	(mime-content-type-subtype): New function.
   	(mime-content-type-parameters): New function.
