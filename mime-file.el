@@ -48,24 +48,13 @@
 	      (lambda (file)
 		(interactive "FFilename: ")
 		(expand-file-name file))))))
-	 (tmp-buf (generate-new-buffer (file-name-nondirectory filename)))
 	 )
     (if (file-exists-p filename)
         (or (yes-or-no-p (format "File %s exists. Save anyway? " filename))
             (error "")))
     (re-search-forward "\n\n")
-    (append-to-buffer tmp-buf (match-end 0) end)
-    (save-excursion
-      (set-buffer tmp-buf)
-      (mime-decode-region (point-min)(point-max) encoding)
-      (let ((coding-system-for-write 'no-conversion)
-	    jka-compr-compression-info-list ; for jka-compr
-	    jam-zcat-filename-list          ; for jam-zcat
-	    require-final-newline)
-	(write-region (point-min)(point-max) filename)
-	)
-      (kill-buffer tmp-buf)
-      )))
+    (mime-write-decoded-region (match-end 0)(point-max) filename encoding)
+    ))
 
 
 ;;; @ setup
