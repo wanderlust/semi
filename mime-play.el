@@ -1,6 +1,6 @@
 ;;; mime-play.el --- Playback processing module for mime-view.el
 
-;; Copyright (C) 1994,1995,1996,1997,1998 Free Software Foundation, Inc.
+;; Copyright (C) 1994,1995,1996,1997,1998,1999 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Created: 1995/9/26 (separated from tm-view.el)
@@ -65,58 +65,91 @@
 (add-hook 'kill-emacs-hook 'mime-save-acting-situation-examples)
 
 (defun mime-reduce-acting-situation-examples ()
-  (let* ((rest mime-acting-situation-example-list)
-	 (min-example (car rest))
-	 (min-score (cdr min-example)))
-    (while rest
-      (let* ((example (car rest))
-	     (score (cdr example)))
-	(cond ((< score min-score)
-	       (setq min-score score
-		     min-example example)
-	       )
-	      ((= score min-score)
-	       (if (<= (length (car example))(length (car min-example)))
-		   (setq min-example example)
-		 ))
-	      ))
-      (setq rest (cdr rest)))
-    (setq mime-acting-situation-example-list
-	  (delq min-example mime-acting-situation-example-list))
-    (setq min-example (car min-example))
-    (let ((examples mime-acting-situation-example-list)
-	  (max-score 0)
-	  max-examples)
-      (while examples
-	(let* ((ret (mime-compare-situation-with-example min-example
-							 (caar examples)))
-	       (ret-score (car ret)))
-	  (cond ((> ret-score max-score)
-		 (setq max-score ret-score
-		       max-examples (list (cdr ret)))
+  (let ((len (length mime-acting-situation-example-list))
+	i ir ic j jr jc ret
+	dest d-i d-j
+	(max-sim 0) sim
+	min-det-ret det-ret
+	min-det-org det-org
+	min-freq freq)
+    (setq i 0
+	  ir mime-acting-situation-example-list)
+    (while (< i len)
+      (setq ic (car ir)
+	    j 0
+	    jr mime-acting-situation-example-list)
+      (while (< j len)
+	(unless (= i j)
+	  (setq jc (car jr))
+	  (setq ret (mime-compare-situation-with-example (car ic)(car jc))
+		sim (car ret)
+		det-ret (+ (length (car ic))(length (car jc)))
+		det-org (length (cdr ret))
+		freq (+ (cdr ic)(cdr jc)))
+	  (cond ((< max-sim sim)
+		 (setq max-sim sim
+		       min-det-ret det-ret
+		       min-det-org det-org
+		       min-freq freq
+		       d-i i
+		       d-j j
+		       dest (cons (cdr ret) freq))
 		 )
-		((= ret-score max-score)
-		 (setq max-examples (cons (cdr ret) max-examples))
-		 )))
-	(setq examples (cdr examples)))
-      (while max-examples
-	(let* ((example (car max-examples))
-	       (cell (assoc example mime-acting-situation-example-list)))
-	  (if cell
-	      (setcdr cell (1+ (cdr cell)))
-	    (setq mime-acting-situation-example-list
-		  (cons (cons example 0)
-			mime-acting-situation-example-list))
-	    ))
-	(setq max-examples (cdr max-examples))
-	))))
+		((= max-sim sim)
+		 (cond ((> min-det-ret det-ret)
+			(setq min-det-ret det-ret
+			      min-det-org det-org
+			      min-freq freq
+			      d-i i
+			      d-j j
+			      dest (cons (cdr ret) freq))
+			)
+		       ((= min-det-ret det-ret)
+			(cond ((> min-det-org det-org)
+			       (setq min-det-org det-org
+				     min-freq freq
+				     d-i i
+				     d-j j
+				     dest (cons (cdr ret) freq))
+			       )
+			      ((= min-det-org det-org)
+			       (cond ((> min-freq freq)
+				      (setq min-freq freq
+					    d-i i
+					    d-j j
+					    dest (cons (cdr ret) freq))
+				      ))
+			       ))
+			))
+		 ))
+	  )
+	(setq jr (cdr jr)
+	      j (1+ j)))
+      (setq ir (cdr ir)
+	    i (1+ i)))
+    (if (> d-i d-j)
+	(setq i d-i
+	      d-i d-j
+	      d-j i))
+    (setq jr (nthcdr (1- d-j) mime-acting-situation-example-list))
+    (setcdr jr (cddr jr))
+    (if (= d-i 0)
+	(setq mime-acting-situation-example-list
+	      (cdr mime-acting-situation-example-list))
+      (setq ir (nthcdr (1- d-i) mime-acting-situation-example-list))
+      (setcdr ir (cddr ir))
+      )
+    (if (setq ir (assoc (car dest) mime-acting-situation-example-list))
+	(setcdr ir (+ (cdr ir)(cdr dest)))
+      (setq mime-acting-situation-example-list
+	    (cons dest mime-acting-situation-example-list))
+      )))
 
 
 ;;; @ content decoder
 ;;;
 
-(defvar mime-preview-after-decoded-position nil)
-
+;;;###autoload
 (defun mime-preview-play-current-entity (&optional ignore-examples mode)
   "Play current entity.
 It decodes current entity to call internal or external method.  The
@@ -127,15 +160,13 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
   (interactive "P")
   (let ((entity (get-text-property (point) 'mime-view-entity)))
     (if entity
-	(let ((the-buf (current-buffer))
-	      (raw-buffer (mime-entity-buffer entity)))
-	  (setq mime-preview-after-decoded-position (point))
-	  (set-buffer raw-buffer)
-	  (mime-raw-play-entity entity (or mode "play") nil ignore-examples)
-	  (when (eq (current-buffer) raw-buffer)
-	    (set-buffer the-buf)
-	    (goto-char mime-preview-after-decoded-position)
-	    )))))
+	(let ((situation (list (cons 'mode (or mode "play")))))
+	  (if ignore-examples
+	      (setq situation
+		    (cons (cons 'ignore-examples ignore-examples)
+			  situation)))
+	  (mime-play-entity entity situation)
+	  ))))
 
 (defun mime-sort-situation (situation)
   (sort situation
@@ -203,29 +234,20 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
     (cons match example)
     ))
 
-(defun mime-raw-play-entity (entity &optional mode situation ignore-examples
-				    ignored-method)
+;;;###autoload
+(defun mime-play-entity (entity &optional situation ignored-method)
   "Play entity specified by ENTITY.
 It decodes the entity to call internal or external method.  The method
 is selected from variable `mime-acting-condition'.  If MODE is
 specified, play as it.  Default MODE is \"play\"."
   (let (method ret)
-    (or situation
-	(setq situation (mime-entity-situation entity)))
-    (if mode
-	(setq situation (cons (cons 'mode mode) situation))
-      )
-    (if ignore-examples
-	(or (assq 'ignore-examples situation)
-	    (setq situation
-		  (cons (cons 'ignore-examples ignore-examples) situation)))
-      )
     (setq ret
 	  (mime-delq-null-situation
-	   (ctree-find-calist mime-acting-condition situation
+	   (ctree-find-calist mime-acting-condition
+			      (mime-entity-situation entity situation)
 			      mime-view-find-every-acting-situation)
 	   'method ignored-method))
-    (or ignore-examples
+    (or (assq 'ignore-examples situation)
 	(if (cdr ret)
 	    (let ((rest ret)
 		  (max-score 0)
@@ -315,34 +337,28 @@ specified, play as it.  Default MODE is \"play\"."
 (defvar mime-mailcap-method-filename-alist nil)
 
 (defun mime-activate-mailcap-method (entity situation)
-  (save-excursion
-    (save-restriction
-      (let ((start (mime-entity-point-min entity))
-	    (end (mime-entity-point-max entity)))
-	(narrow-to-region start end)
-	(goto-char start)
-	(let ((method (cdr (assoc 'method situation)))
-	      (name (mime-entity-safe-filename entity)))
-	  (setq name
-		(if (and name (not (string= name "")))
-		    (expand-file-name name temporary-file-directory)
-		  (make-temp-name
-		   (expand-file-name "EMI" temporary-file-directory))
-		  ))
-          (mime-write-entity-content entity name)
-	  (message "External method is starting...")
-	  (let ((process
-		 (let ((command
-			(mailcap-format-command
-			 method
-			 (cons (cons 'filename name) situation))))
-		   (start-process command mime-echo-buffer-name
-				  shell-file-name shell-command-switch command)
-		   )))
-	    (set-alist 'mime-mailcap-method-filename-alist process name)
-	    (set-process-sentinel process 'mime-mailcap-method-sentinel)
-	    )
-	  )))))
+  (let ((method (cdr (assoc 'method situation)))
+	(name (mime-entity-safe-filename entity)))
+    (setq name
+	  (if (and name (not (string= name "")))
+	      (expand-file-name name temporary-file-directory)
+	    (make-temp-name
+	     (expand-file-name "EMI" temporary-file-directory))
+	    ))
+    (mime-write-entity-content entity name)
+    (message "External method is starting...")
+    (let ((process
+	   (let ((command
+		  (mailcap-format-command
+		   method
+		   (cons (cons 'filename name) situation))))
+	     (start-process command mime-echo-buffer-name
+			    shell-file-name shell-command-switch command)
+	     )))
+      (set-alist 'mime-mailcap-method-filename-alist process name)
+      (set-process-sentinel process 'mime-mailcap-method-sentinel)
+      )
+    ))
 
 (defun mime-mailcap-method-sentinel (process event)
   (let ((file (cdr (assq process mime-mailcap-method-filename-alist))))
@@ -377,7 +393,8 @@ window.")
 		   (condition-case nil
 		       (setq win (get-buffer-window bbdb-buffer-name))
 		     (error nil)))
-	(select-window (get-buffer-window mime-preview-buffer))
+	(select-window (get-buffer-window (or mime-preview-buffer
+					      (current-buffer))))
 	(setq win (split-window-vertically
 		   (- (window-height)
 		      (if (functionp mime-echo-window-height)
@@ -473,16 +490,7 @@ SUBTYPE is symbol to indicate subtype of media-type.")
 
 (defun mime-detect-content (entity situation)
   (let (type subtype)
-    (let ((mdata (save-excursion
-		   ;;(set-buffer (mime-entity-buffer entity))
-		   (let* ((start (mime-entity-body-start entity))
-			  (end (progn
-				 (goto-char start)
-				 (end-of-line)
-				 (point))))
-		     (mime-decode-string (buffer-substring start end)
-					 (mime-entity-encoding entity))
-		     )))
+    (let ((mdata (mime-entity-content entity))
 	  (rest mime-magic-type-alist))
       (while (not (let ((cell (car rest)))
 		    (if cell
@@ -493,13 +501,12 @@ SUBTYPE is symbol to indicate subtype of media-type.")
 		      t)))
 	(setq rest (cdr rest))))
     (if type
-	(mime-raw-play-entity
-	 entity nil
+	(mime-play-entity
+	 entity
 	 (put-alist 'type type
 		    (put-alist 'subtype subtype
 			       (del-alist 'method
 					  (copy-alist situation))))
-	 (cdr (assq 'ignore-examples situation))
 	 'mime-detect-content)
       ))
   )
@@ -523,13 +530,11 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 (defun mime-view-message/rfc822 (entity situation)
   (let* ((new-name
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
-	 (mother mime-preview-buffer)
+	 (mother (current-buffer))
 	 (children (car (mime-entity-children entity))))
     (set-buffer (get-buffer-create new-name))
     (erase-buffer)
-    (insert-buffer-substring (mime-entity-buffer children)
-			     (mime-entity-point-min children)
-			     (mime-entity-point-max children))
+    (mime-insert-entity children)
     (setq mime-message-structure children)
     (setq major-mode 'mime-show-message-mode)
     (mime-view-buffer (current-buffer) nil mother
@@ -701,42 +706,40 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 
 (defun mime-view-caesar (entity situation)
   "Internal method for mime-view to display ROT13-47-48 message."
-  (let* ((new-name (format "%s-%s" (buffer-name)
-			   (mime-entity-number entity)))
-	 (mother mime-preview-buffer))
-    (let ((pwin (or (get-buffer-window mother)
-		    (get-largest-window)))
-	  (buf (get-buffer-create new-name)))
-      (set-window-buffer pwin buf)
-      (set-buffer buf)
-      (select-window pwin)
+  (let ((buf (get-buffer-create
+	      (format "%s-%s" (buffer-name) (mime-entity-number entity)))))
+    (with-current-buffer buf
+      (setq buffer-read-only nil)
+      (erase-buffer)
+      (let ((enable-character-translation nil))
+	(mime-insert-text-content entity))
+      (mule-caesar-region (point-min) (point-max))
+      (let ((str (buffer-string))
+	    (status (make-vector 9 nil))
+	    (table
+	     (catch 'tbl
+	       (let ((i 0) e)
+		 (while (and (< i (length translation-table-vector))
+			     (setq e (aref translation-table-vector i)))
+		   (if (eq (cdr e) standard-translation-table-for-decode)
+		       (throw 'tbl i))
+		   (setq i (1+ i)))
+		 nil))))
+	(when table
+	  (aset status 0 table)
+	  (delete-region (point-min) (point-max))
+	  (insert (ccl-execute-on-string
+		   'translate-string
+		   status
+		   str))))
+      (set-buffer-modified-p nil)
       )
-    (setq buffer-read-only nil)
-    (erase-buffer)
-    (let ((enable-character-translation nil))
-      (mime-insert-text-content entity))
-    (mule-caesar-region (point-min) (point-max))
-    (let ((str (buffer-string))
-	  (status (make-vector 9 nil))
-	  (table
-	   (catch 'tbl
-	     (let ((i 0) e)
-	       (while (and (< i (length translation-table-vector))
-			   (setq e (aref translation-table-vector i)))
-		 (if (eq (cdr e) standard-translation-table-for-decode)
-		     (throw 'tbl i))
-		 (setq i (1+ i)))
-	       nil))))
-      (when table
-	(aset status 0 table)
-	(delete-region (point-min) (point-max))
-	(insert (ccl-execute-on-string
-		 'translate-string
-		 status
-		 str))))
-    (set-buffer-modified-p nil)
-    (set-buffer mother)
-    (view-buffer new-name)
+    (let ((win (get-buffer-window (current-buffer))))
+      (or (eq (selected-window) win)
+	  (select-window (or win (get-largest-window)))
+	  ))
+    (view-buffer buf)
+    (goto-char (point-min))
     ))
 
 
