@@ -975,7 +975,7 @@ If nothing is inserted, return nil."
   (let ((oldtag nil)
 	(newtag nil)
 	(current (point))
-	exist-prev-tag exist-next-tag)
+	)
     (setq pritype
 	  (or pritype
 	      (mime-prompt-for-type)))
@@ -991,13 +991,7 @@ If nothing is inserted, return nil."
     (setq oldtag
 	  (save-excursion
 	    (if (mime-editor/goto-tag)
-		(progn
-		  (if (eq current (match-beginning 0))
-		      (setq exist-next-tag t)
-		    (setq exist-prev-tag t)
-		    )
-		  (buffer-substring (match-beginning 0) (match-end 0))
-		  )
+		(buffer-substring (match-beginning 0) (match-end 0))
 	      ;; Assume content type is 'text/plan'.
 	      (mime-make-tag "text" "plain")
 	      )))
@@ -1006,15 +1000,6 @@ If nothing is inserted, return nil."
 	     (not (mime-test-content-type
 		   (mime-editor/get-contype oldtag) "text")))
 	(setq oldtag nil))
-    (cond (exist-prev-tag (insert "\n"))
-	  (exist-next-tag (save-excursion
-			    (insert "\n")
-			    )))
-    (if (not (bolp))
-	(if exist-prev-tag
-	    (forward-line 1)
-	  (insert "\n")
-	  ))
     ;; Make a new tag.
     (if (or (not oldtag)		;Not text
 	    (or mime-ignore-same-text-tag
