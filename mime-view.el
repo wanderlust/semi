@@ -1025,27 +1025,24 @@ It decodes current entity to call internal or external method as
 
 (defun mime-view-up-content ()
   (interactive)
-  (let* ((pc (mime-preview/point-pcinfo (point)))
-	 (cinfo (mime::preview-content-info/content-info pc))
-	 (rcnum (mime::content-info/rcnum cinfo))
-	 )
-    (if rcnum
-	(let ((r (save-excursion
-		   (set-buffer (mime::preview-content-info/buffer pc))
-                   (mime-article/rcnum-to-cinfo (cdr rcnum))
-		   ))
-	      (rpcl mime::preview/content-list)
-	      cell)
-	  (while (and
-		  (setq cell (car rpcl))
-		  (not (eq r (mime::preview-content-info/content-info cell)))
-		  )
-	    (setq rpcl (cdr rpcl))
+  (let (cinfo)
+    (while (null (setq cinfo (get-text-property (point) 'mime-view-cinfo)))
+      (backward-char)
+      )
+    (let ((r (mime-article/rcnum-to-cinfo
+	      (cdr (mime::content-info/rcnum cinfo))
+	      (get-text-property 1 'mime-view-cinfo)))
+	  point)
+      (catch 'tag
+	(while (setq point (previous-single-property-change
+			    (point) 'mime-view-cinfo))
+	  (goto-char point)
+	  (if (eq r (get-text-property (point) 'mime-view-cinfo))
+	      (throw 'tag t)
 	    )
-	  (goto-char (mime::preview-content-info/point-min cell))
 	  )
-      (mime-view-quit)
-      )))
+	(mime-view-quit)
+	))))
 
 (defun mime-view-previous-content ()
   (interactive)
