@@ -1,5 +1,22 @@
 1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-parse.el (make-mime-entity): Change format.
+	(mime-entity-header-start): New function.
+	(mime-entity-header-end): New function.
+	(mime-entity-body-start): New function.
+	(mime-entity-body-end): New function.
+	(mime-entity-content-type): Modify for new format.
+	(mime-entity-content-disposition): Modify for new format.
+	(mime-entity-encoding): Modify for new format.
+	(mime-entity-children): Modify for new format.
+	(mime-entity-point-min): Change to alias of
+	'mime-entity-header-start.
+	(mime-entity-point-max): Change to alias of 'mime-entity-body-end.
+	(mime-parse-multipart): Modify for 'make-mime-entity.
+	(mime-parse-message): Modify for 'make-mime-entity.
+
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-parse.el (mime-parse-multipart): Change interface; abolish
 	local variable 'beg and 'end.
 	(mime-parse-message): Modify for 'mime-parse-multipart.
