@@ -128,6 +128,8 @@
   "S/MIME encryption of current region.")
 (autoload 'smime-sign-region "smime"
   "S/MIME signature of current region.")
+(defvar smime-output-buffer)
+(defvar smime-errors-buffer)
 
 
 ;;; @ version
@@ -1762,6 +1764,8 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 	  (replace-match (concat "-" (substring tag 2)))
 	  )))))
 
+(defvar mime-edit-pgp-user-id nil)
+
 (defun mime-edit-sign-pgp-mime (beg end boundary)
   (save-excursion
     (save-restriction
@@ -2511,8 +2515,6 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
 
 (defvar mime-edit-pgp-processing nil)
 (make-variable-buffer-local 'mime-edit-pgp-processing)
-
-(defvar mime-edit-pgp-user-id nil)
 
 (defun mime-edit-set-sign (arg)
   (interactive

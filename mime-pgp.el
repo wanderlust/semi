@@ -61,6 +61,8 @@
   "S/MIME decryption of current region.")
 (autoload 'smime-verify-region "smime"
   "S/MIME verification of current region.")
+(defvar smime-output-buffer)
+(defvar smime-errors-buffer)
 
 
 ;;; @ Internal method for multipart/signed
@@ -251,7 +253,7 @@
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
 	 (mother (current-buffer))
 	 (preview-buffer (concat "*Preview-" (buffer-name) "*")))
-    (when (memq (or (cdr (assq 'smime-type situation)) enveloped-data)
+    (when (memq (or (cdr (assq 'smime-type situation)) 'enveloped-data)
 		'(enveloped-data signed-data))
       (set-buffer (get-buffer-create new-name))
       (let ((inhibit-read-only t)
