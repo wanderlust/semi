@@ -36,7 +36,7 @@
 (autoload 'mule-caesar-region "mule-caesar"
   "Caesar rotation of current region." t)
 
-(autoload 'widget-convert-text "wid-edit")
+(autoload 'widget-convert-button "wid-edit")
 
 
 ;;; @ constants
@@ -140,8 +140,18 @@
   (while (re-search-forward mime-browse-url-regexp nil t)
     (let ((beg (match-beginning 0))
 	  (end (match-end 0)))
-      (widget-convert-text 'url-link beg end)
+      (widget-convert-button 'mime-url-link beg end
+			     (buffer-substring beg end))
       )))
+
+(define-widget 'mime-url-link 'link
+  "A link to an www page."
+  :help-echo 'widget-url-link-help-echo
+  :action 'widget-mime-url-link-action)
+
+(defun widget-mime-url-link-action (widget &optional event)
+  "Open the url specified by WIDGET."
+  (funcall mime-browse-url-function (widget-value widget)))
 
 
 ;;; @ menu
