@@ -1,3 +1,19 @@
+1999-05-13  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-decode-message-in-buffer): Call
+	`mime-edit-decode-single-part-in-buffer' with return value of
+	`mime-read-Content-Disposition'; don't modify the header if the
+	buffer is narrowed to a part.
+	(mime-edit-decode-single-part-in-buffer): Accept the optional arg
+	`content-disposition' and inherit it into the editing buffer.
+
+1999-05-13  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* mime-mc.el (mime-mc-pgp50-process-region,
+	mime-mc-gpg-process-region): Bind `shell-command-switch' to the
+	value of `mime-mc-shell-command-switch'.
+	(mime-mc-shell-command-switch): New user option.
+
 1999-05-12  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-edit.el (mime-edit-decode-multipart-in-buffer): Use
