@@ -353,7 +353,6 @@ Each elements are regexp of field-name.")
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . application)(subtype . pgp)
-			   (message-button . visible)
 			   (body . visible)))
 
 (ctree-set-calist-strictly
