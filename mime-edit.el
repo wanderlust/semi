@@ -489,6 +489,7 @@ If encoding is nil, it is determined from its contents."
     (cn-big5		8 "base64")
     (big5		8 "base64")
     (shift_jis		8 "base64")
+    (tis-620		8 "base64")
     (iso-2022-jp-2	7 "base64")
     (iso-2022-int-1	7 "base64")
     ))
