@@ -938,7 +938,7 @@ to it.  If it is a function, it will be bound as default binding of
 keymap of MIME-View mode.
 Optional argument REPRESENTATION-TYPE is representation-type of
 message.  It must be nil, `binary' or `cooked'.  If it is nil,
-`binary' is used as default."
+`cooked' is used as default."
   (interactive)
   (or raw-buffer
       (setq raw-buffer (current-buffer)))
