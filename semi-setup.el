@@ -1,8 +1,8 @@
 ;;; semi-setup.el --- setup file for MIME-View.
 
-;; Copyright (C) 1994,1995,1996,1997,1998 Free Software Foundation, Inc.
+;; Copyright (C) 1994,95,96,97,98,99,2000 Free Software Foundation, Inc.
 
-;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;; Author: MORIOKA Tomohiko <tomo@m17n.org>
 ;; Keywords: mail, news, MIME, multimedia, multilingual, encoded-word
 
 ;; This file is part of SEMI (Setting for Emacs MIME Interfaces).
@@ -60,22 +60,19 @@ it is used as hook to set."
   "*If it is non-nil, semi-setup sets up to use mime-w3.")
 
 (if mime-setup-enable-inline-html
-    (call-after-loaded
-     'mime-view
-     (function
-      (lambda ()
-	(autoload 'mime-preview-text/html "mime-w3")
-	
-	(ctree-set-calist-strictly
-	 'mime-preview-condition
-	 '((type . text)(subtype . html)
-	   (body . visible)
-	   (body-presentation-method . mime-preview-text/html)))
-	
-	(set-alist 'mime-view-type-subtype-score-alist
-		   '(text . html) 3)
-	)))
-  )
+    (eval-after-load "mime-view"
+      '(progn
+	 (autoload 'mime-preview-text/html "mime-w3")
+	 
+	 (ctree-set-calist-strictly
+	  'mime-preview-condition
+	  '((type . text)(subtype . html)
+	    (body . visible)
+	    (body-presentation-method . mime-preview-text/html)))
+	 
+	 (set-alist 'mime-view-type-subtype-score-alist
+		    '(text . html) 3)
+	 )))
 
 
 ;; for PGP
