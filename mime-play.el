@@ -169,6 +169,17 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 (defvar mime-echo-window-is-shared-with-bbdb t
   "*If non-nil, mime-echo window is shared with BBDB window.")
 
+(defvar mime-echo-window-height
+  (function
+   (lambda ()
+     (/ (window-height) 5)
+     ))
+  "*Size of mime-echo window.
+It allows function or integer.  If it is function,
+`mime-show-echo-buffer' calls it to get height of mime-echo window.
+Otherwise `mime-show-echo-buffer' uses it as height of mime-echo
+window.")
+
 (defun mime-show-echo-buffer (&rest forms)
   "Show mime-echo buffer to display MIME-playing information."
   (get-buffer-create mime-echo-buffer-name)
@@ -182,7 +193,12 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 		 )
 	    (set-window-buffer win mime-echo-buffer-name)
 	  (select-window (get-buffer-window mime-view-buffer))
-	  (setq win (split-window-vertically (/ (* (window-height) 3) 4)))
+	  (setq win (split-window-vertically
+		     (- (window-height)
+			(if (functionp mime-echo-window-height)
+			    (funcall mime-echo-window-height)
+			  mime-echo-window-height)
+			)))
 	  (set-window-buffer win mime-echo-buffer-name)
 	  ))
     (select-window win)
