@@ -949,7 +949,7 @@ Charset is automatically obtained from the `charsets-mime-charset-alist'."
 	      (insert "\n")
 	      (forward-char -1)
 	      ))
-	(if (and (member (second ret) '("enriched" "richtext"))
+	(if (and (member (cadr ret) '("enriched" "richtext"))
 		 (fboundp 'enriched-mode)
 		 )
 	    (enriched-mode t)
