@@ -51,7 +51,7 @@
   "MIME view mode"
   :group 'mime)
 
-(defcustom mime-view-find-every-acting-situation t
+(defcustom mime-view-find-every-acting-situation nil
   "*Find every available acting-situation if non-nil."
   :group 'mime-view
   :type 'boolean)
