@@ -354,6 +354,26 @@ If encoding is nil, it is determined from its contents.")
 ;;; @@ about charset, encoding and transfer-level
 ;;;
 
+(defvar mime-charset-type-list
+  '((us-ascii		7 nil)
+    (iso-8859-1		8 "quoted-printable")
+    (iso-8859-2		8 "quoted-printable")
+    (iso-8859-3		8 "quoted-printable")
+    (iso-8859-4		8 "quoted-printable")
+    (iso-8859-5		8 "quoted-printable")
+    (koi8-r		8 "quoted-printable")
+    (iso-8859-7		8 "quoted-printable")
+    (iso-8859-8		8 "quoted-printable")
+    (iso-8859-9		8 "quoted-printable")
+    (iso-2022-jp	7 "base64")
+    (iso-2022-kr	7 "base64")
+    (euc-kr		8 "base64")
+    (gb2312		8 "quoted-printable")
+    (big5		8 "base64")
+    (iso-2022-jp-2	7 "base64")
+    (iso-2022-int-1	7 "base64")
+    ))
+
 (defvar mime-edit-transfer-level 7
   "*A number of network transfer level.  It should be bigger than 7.")
 (make-variable-buffer-local 'mime-edit-transfer-level)
