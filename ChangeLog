@@ -1,3 +1,7 @@
+1998-11-12  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-split-ignored-field-regexp): Add "^".
+
 1998-11-10  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* semi-def.el (mime-insert-button): Insert invisible text as a
