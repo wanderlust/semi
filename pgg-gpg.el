@@ -57,16 +57,17 @@
 	    (luna-make-entity 'pgg-scheme-gpg))))
 
 (defun pgg-gpg-process-region (start end passphrase program args)
-  (let* ((output-file-name
-	  (concat temporary-file-directory (make-temp-name "pgg-output")))
+  (let* ((output-file-name (make-temp-file
+			    (expand-file-name "pgg-output"
+					      temporary-file-directory)))
 	 (args
 	  `("--status-fd" "2"
 	    ,@(if passphrase '("--passphrase-fd" "0"))
+	    "--yes" ; overwrite
 	    "--output" ,output-file-name
 	    ,@pgg-gpg-extra-args ,@args))
 	 (output-buffer pgg-output-buffer)
 	 (errors-buffer pgg-errors-buffer)
-	 (orig-mode (default-file-modes))
 	 (process-connection-type nil)
 	 process status exit-status)
     (with-current-buffer (get-buffer-create errors-buffer)
@@ -74,7 +75,6 @@
       (erase-buffer))
     (unwind-protect
 	(progn
-	  (set-default-file-modes 448)
 	  (let ((coding-system-for-write 'binary))
 	    (setq process
 		  (apply #'start-process "*GnuPG*" errors-buffer
@@ -103,8 +103,7 @@
       (if (and process (eq 'run (process-status process)))
 	  (interrupt-process process))
       (if (file-exists-p output-file-name)
-	  (delete-file output-file-name))
-      (set-default-file-modes orig-mode))))
+	  (delete-file output-file-name)))))
 
 (defun pgg-gpg-possibly-cache-passphrase (passphrase)
   (if (and pgg-cache-passphrase

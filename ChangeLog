@@ -1,3 +1,32 @@
+2004-08-29  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	Merge following changes from semi-1_14 branch:
+
+	* pgg-gpg.el (pgg-gpg-process-region): Use `make-temp-file' instead of
+	`make-temp-name'.
+	Add --yes option to overwrite existing output file;
+	Remove needless set-default-file-modes.
+	* pgg-pgp5.el (pgg-pgp5-process-region): Ditto.
+	(pgg-scheme-verify-region): Ditto.
+	(pgg-scheme-snarf-keys-region): Ditto.
+	* pgg-pgp.el (pgg-pgp-process-region): Ditto.
+	(pgg-scheme-verify-region): Ditto.
+	(pgg-scheme-snarf-keys-region): Ditto.
+	* mime-pgp.el (mime-verify-application/pgp-signature): Ditto.
+	* mime-play.el (mime-activate-mailcap-method): Make a temporary
+	directory of a temporary file for the mailcap application.
+	(mime-mailcap-method-sentinel): Follow the change above.
+	(mime-require-safe-directory): New function.
+	(mime-store-message/partial-piece): Use it.
+	Set `default-file-modes' for `make-directory'.
+	* mime-edit.el (mime-edit-split-and-send): Remove local variable
+	`mime-edit-draft-file-name'.
+
+	* mime-play.el (mime-play-delete-file-immediately): New user option.
+	(mime-mailcap-method-sentinel): Use it.
+	(mime-mailcap-delete-played-files): New function; set up for
+	`kill-emacs-hook'.
+
 2004-08-03  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* mime-edit.el (mime-edit-mime-version-field-for-message/partial):

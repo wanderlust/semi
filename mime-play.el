@@ -42,6 +42,11 @@ If t, it means current directory."
   :type '(choice (const :tag "Current directory" t)
 		 (directory)))
 
+(defcustom mime-play-delete-file-immediately t
+  "If non-nil, delete played file immediately."
+  :group 'mime-view
+  :type 'boolean)
+
 (defvar mime-play-find-every-situations t
   "*Find every available situations if non-nil.")
 
@@ -134,11 +139,10 @@ specified, play as it.  Default MODE is \"play\"."
 (defun mime-activate-mailcap-method (entity situation)
   (let ((method (cdr (assoc 'method situation)))
 	(name (mime-entity-safe-filename entity)))
-    (setq name
-	  (if (and name (not (string= name "")))
-	      (expand-file-name name temporary-file-directory)
-	    (make-temp-name
-	     (expand-file-name "EMI" temporary-file-directory))))
+    (setq name (expand-file-name (if (and name (not (string= name "")))
+				     name
+				   (make-temp-name "EMI"))
+				 (make-temp-file "EMI" 'directory)))
     (mime-write-entity-content entity name)
     (message "External method is starting...")
     (let ((process
@@ -153,11 +157,23 @@ specified, play as it.  Default MODE is \"play\"."
       (set-process-sentinel process 'mime-mailcap-method-sentinel))))
 
 (defun mime-mailcap-method-sentinel (process event)
-  (let ((file (cdr (assq process mime-mailcap-method-filename-alist))))
-    (if (file-exists-p file)
-	(delete-file file)))
-  (remove-alist 'mime-mailcap-method-filename-alist process)
+  (when mime-play-delete-file-immediately
+    (let ((file (cdr (assq process mime-mailcap-method-filename-alist))))
+      (when (file-exists-p file)
+	(ignore-errors
+	 (delete-file file)
+	 (delete-directory (file-name-directory file)))))
+    (remove-alist 'mime-mailcap-method-filename-alist process))
   (message "%s %s" process event))
+
+(defun mime-mailcap-delete-played-files ()
+  (dolist (elem mime-mailcap-method-filename-alist)
+    (when (file-exists-p (cdr elem))
+      (ignore-errors
+	(delete-file (cdr elem))
+	(delete-directory (file-name-directory (cdr elem)))))))
+
+(add-hook 'kill-emacs-hook 'mime-mailcap-delete-played-files)
 
 (defvar mime-echo-window-is-shared-with-bbdb
   (module-installed-p 'bbdb)
@@ -325,21 +341,51 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 ;;; @ message/partial
 ;;;
 
+(defun mime-require-safe-directory (dir)
+  "Create a directory DIR safely.
+The permission of the created directory becomes `700' (for the owner only).
+If the directory already exists and is writable by other users, an error
+occurs."
+  (let ((attr (file-attributes dir))
+	(orig-modes (default-file-modes)))
+    (if (and attr (eq (car attr) t)) ; directory already exists.
+	(unless (or (memq system-type '(windows-nt ms-dos OS/2 emx))
+		    (and (eq (nth 2 attr) (user-real-uid))
+			 (eq (file-modes dir) 448)))
+	  (error "Invalid owner or permission for %s" dir))
+      (unwind-protect
+	  (progn
+	    (set-default-file-modes 448)
+	    (make-directory dir))
+	(set-default-file-modes orig-modes)))))
+
 (defun mime-store-message/partial-piece (entity cal)
-  (let* ((root-dir
-	  (expand-file-name
-	   (concat "m-prts-" (user-login-name)) temporary-file-directory))
-	 (id (cdr (assoc "id" cal)))
-	 (number (cdr (assoc "number" cal)))
-	 (total (cdr (assoc "total" cal)))
-	 file
-	 (mother (current-buffer)))
+  (let ((root-dir
+	 (expand-file-name
+	  (concat "m-prts-" (user-login-name)) temporary-file-directory))
+	(id (cdr (assoc "id" cal)))
+	(number (cdr (assoc "number" cal)))
+	(total (cdr (assoc "total" cal)))
+	file
+	(mother (current-buffer))
+	(orig-modes (default-file-modes)))
+    (mime-require-safe-directory root-dir)
     (or (file-exists-p root-dir)
-	(make-directory root-dir))
+	(unwind-protect
+	    (progn
+	      (set-default-file-modes 448)
+	      (make-directory root-dir))
+	  (set-default-file-modes orig-modes)))
     (setq id (replace-as-filename id))
     (setq root-dir (concat root-dir "/" id))
+
     (or (file-exists-p root-dir)
-	(make-directory root-dir))
+	(unwind-protect
+	    (progn
+	      (set-default-file-modes 448)
+	      (make-directory root-dir))
+	  (set-default-file-modes orig-modes)))
+
     (setq file (concat root-dir "/FULL"))
     (if (file-exists-p file)
 	(let ((full-buf (get-buffer-create "FULL"))
