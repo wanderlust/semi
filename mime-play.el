@@ -63,10 +63,14 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 (defun mime-playback-entity (cinfo &optional mode)
   (let ((beg (mime-entity-info-point-min cinfo))
 	(end (mime-entity-info-point-max cinfo))
-	(ctype (or (mime-entity-info-type/subtype cinfo) "text/plain"))
+	(c-type (mime-entity-info-media-type cinfo))
+	(c-subtype (mime-entity-info-media-subtype cinfo))
 	(params (mime-entity-info-parameters cinfo))
 	(encoding (mime-entity-info-encoding cinfo))
 	)
+    (or c-type
+	(setq c-type 'text
+	      c-subtype 'plain))
     ;; Check for VM
     (if (< beg (point-min))
 	(setq beg (point-min))
@@ -75,7 +79,8 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	(setq end (point-max))
       )
     (let (method cal ret)
-      (setq cal (list* (cons 'type ctype)
+      (setq cal (list* (cons 'type c-type)
+		       (cons 'subtype c-subtype)
 		       (cons 'encoding encoding)
 		       (cons 'major-mode major-mode)
 		       params))
