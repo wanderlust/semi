@@ -526,7 +526,7 @@ when Subject field is encoded by `eword-encode-message-header'.")
 	(car (tm-eword::encode-string 0 str))
 	)))
 
-(defun eword-exist-encoded-word-in-subject ()
+(defun eword-in-subject-p ()
   (let ((str (std11-field-body "Subject")))
     (if (and str (string-match eword-encoded-word-regexp str))
 	str)))
@@ -575,7 +575,7 @@ when Subject field is encoded by `eword-encode-message-header'.")
 	  ))
       (and eword-generate-X-Nsubject
 	   (or (std11-field-body "X-Nsubject")
-	       (let ((str (eword-exist-encoded-word-in-subject)))
+	       (let ((str (eword-in-subject-p)))
 		 (if str
 		     (progn
 		       (setq str
