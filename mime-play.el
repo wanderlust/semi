@@ -32,8 +32,6 @@
 
 (eval-when-compile (require 'mime-text))
 
-(defvar mime-user-acting-condition nil)
-
   
 ;;; @ content decoder
 ;;;
@@ -59,6 +57,8 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	    (set-buffer the-buf)
 	    (goto-char mime-preview-after-decoded-position)
 	    )))))
+
+(defvar mime-user-acting-condition nil)
 
 (defun mime-raw-play-entity (entity-info &optional mode)
   "Play entity specified by ENTITY-INFO.
@@ -95,8 +95,10 @@ specified, play as it.  Default MODE is \"play\"."
 	    (or (ctree-match-calist mime-user-acting-condition cal)
 		cal))
       (setq ret
-	    (or (ctree-find-calist mime-acting-condition ret 'all)
-		(ctree-find-calist mime-acting-condition cal 'all)
+	    (or (ctree-find-calist mime-acting-condition ret
+				   mime-view-find-every-acting-situation)
+		(ctree-find-calist mime-acting-condition cal
+				   mime-view-find-every-acting-situation)
 		))
       (cond ((cdr ret)
 	     (setq ret (select-menu-alist
