@@ -1,3 +1,7 @@
+1999-12-13  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* README.en: Update fot the recent ML address and ftp site.
+
 1999-11-10  Yoshiki Hayashi  <t90553@mail.ecc.u-tokyo.ac.jp>
 
 	* mime-play.el: (mime-save-directory): New variable.
