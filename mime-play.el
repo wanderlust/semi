@@ -1,4 +1,4 @@
-;;; mime-play.el --- decoder for mime-view.el
+;;; mime-play.el --- Playback processing module for mime-view.el
 
 ;; Copyright (C) 1994,1995,1996,1997,1998 Free Software Foundation, Inc.
 
