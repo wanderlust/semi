@@ -1,3 +1,7 @@
+1997-09-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 0.115 (Hinomiko) was released.
+
 1997-09-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-def.el (butlast, nbutlast): Don't use `defun-maybe' for cl
