@@ -158,10 +158,10 @@ and return parsed it."
 ;;; @ Content-Transfer-Encoding
 ;;;
 
-(defun mime/Content-Transfer-Encoding (&optional default-encoding)
+(defun mime-read-Content-Transfer-Encoding (&optional default-encoding)
   "Read field-body of Content-Transfer-Encoding field from
 current-buffer, and return it.
-If is is not found, return DEFAULT-ENCODING. [mime-parse.el]"
+If is is not found, return DEFAULT-ENCODING."
   (let ((str (std11-field-body "Content-Transfer-Encoding")))
     (if str
 	(progn
@@ -170,8 +170,7 @@ If is is not found, return DEFAULT-ENCODING. [mime-parse.el]"
 	    )
 	  (downcase str)
 	  )
-      default-encoding)
-    ))
+      default-encoding)))
 
 
 ;;; @ message parser
@@ -254,7 +253,7 @@ mime-{parse|read}-Content-Type."
   (let ((primtype (mime-content-type-primary-type default-ctl))
 	(subtype (mime-content-type-subtype default-ctl))
 	(params (mime-content-type-parameters default-ctl))
-	(encoding (or (mime/Content-Transfer-Encoding) default-encoding)))
+	(encoding (mime-read-Content-Transfer-Encoding default-encoding)))
     (let ((boundary (assoc "boundary" params)))
       (cond (boundary
 	     (setq boundary (std11-strip-quoted-string (cdr boundary)))
