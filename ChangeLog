@@ -1,3 +1,9 @@
+1998-10-14  Jari Aalto        <jari.aalto@poboxes.com>
+
+	* mime-edit.el (mime-file-types): Add some new mime types, and
+	rearrange the types to logical sections: text; octext text and
+	binary. <cf. [tm-en:1856]>
+
 1998-10-12  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* README.en: Add explanation about `VERSION_SPECIFIC_LISPDIR'.
