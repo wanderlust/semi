@@ -132,15 +132,20 @@ local variable `mime-text-decoder' and variable
 ;;; @ content filters for mime-text
 ;;;
 
-(defun mime-preview-filter-for-text/plain (situation)
-  (mime-text-decode-body situation)
-  (goto-char (point-max))
-  (if (not (eq (char-after (1- (point))) ?\n))
-      (insert "\n")
-    )
-  (mime-text-add-url-buttons)
-  (run-hooks 'mime-preview-text/plain-hook)
-  )
+(defun mime-preview-text/plain (entity situation)
+  (save-restriction
+    (narrow-to-region (point-max)(point-max))
+    (insert-buffer-substring mime-raw-buffer
+			     (mime-entity-body-start entity)
+			     (mime-entity-body-end entity))
+    (mime-text-decode-body situation)
+    (goto-char (point-max))
+    (if (not (eq (char-after (1- (point))) ?\n))
+	(insert "\n")
+      )
+    (mime-text-add-url-buttons)
+    (run-hooks 'mime-preview-text/plain-hook)
+    ))
 
 (defun mime-preview-filter-for-text/richtext (situation)
   (let ((beg (point-min)))
