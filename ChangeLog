@@ -1,3 +1,39 @@
+2000-12-23  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-view.el (mime-view-define-keymap): Return
+	`mime-view-mode-map' instead of set up as local keymap; don't call
+	`mime-view-define-keymap-hook'.
+	(mime-display-message): Add new optional argument `keymap'.
+
+	* mime-play.el (mime-store-message/partial-piece): Use
+	`binary-insert-encoded-file' and `binary-write-decoded-region'
+	instead of `binary-insert-file-contents' and
+	`binary-write-region'.
+
+2000-12-23  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* smime.el (smime-process-region): Use `binary-funcall' instead of
+	`binary-start-process-shell-command'.
+	(smime-verify-region): Use `binary-write-decoded-region' and
+	`binary-insert-encoded-file' instead of `binary-write-region' and
+	`binary-insert-file-contents'.
+
+	* pgg-pgp5.el (pgg-pgp5-messages-coding-system): New variable.
+	(pgg-pgp5-process-region): Use `binary-to-text-funcall' instead of
+	`binary-start-process-shell-command'.
+	(pgg-scheme-verify-region): Use `binary-write-decoded-region'
+	instead of `binary-write-region'.
+
+	* pgg-pgp.el (pgg-pgp-messages-coding-system): New variable.
+	(pgg-pgp-process-region): Use `binary-to-text-funcall' instead of
+	`binary-start-process-shell-command'.
+	(pgg-scheme-verify-region): Use `binary-write-decoded-region'
+	instead of `binary-write-region'.
+
+	* pgg-gpg.el (pgg-gpg-process-region): Use
+	`binary-to-text-funcall' instead of `binary-start-process'.
+
+
 2000-12-22  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
 	* SEMI: Version 1.14.1 (Kaga-Onsen) released.
