@@ -183,7 +183,7 @@
 			  `(if (file-directory-p file) file nil)))
 		     (directory-files ,directory ,full ,match ,nosort)))
        `(directory-files ,directory ,full ,match ,nosort))))
-  (wrong-type-argument
+  (error
    (defalias 'smime-directory-files 'directory-files)))
 
 (defsubst smime-find-certificate (attr)
@@ -262,7 +262,11 @@
 	      (expand-file-name (read-file-name "Public key file: "))))
 	 (args (list "-e" key-file)))
     (smime-process-region start end smime-program args)
-    (smime-process-when-success nil)))
+    (smime-process-when-success 
+      (goto-char (point-min))
+      (delete-region (point-min) (progn
+				   (re-search-forward "^$" nil t)
+				   (1+ (point)))))))
 
 ;;;###autoload
 (defun smime-decrypt-region (start end)
@@ -295,6 +299,10 @@ a detached signature."
 	 (args (list "-ds" key-file passphrase)))
     (smime-process-region start end smime-program args)
     (smime-process-when-success 
+      (goto-char (point-min))
+      (delete-region (point-min) (progn
+				   (re-search-forward "^$" nil t)
+				   (1+ (point))))
       (when smime-cache-passphrase
 	(smime-add-passphrase-cache hash passphrase)))))
 
