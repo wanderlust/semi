@@ -558,6 +558,28 @@ it is used as hook to set."
     (add-hook hook-name func)
     ))
 
+(defmacro defun-maybe (name &rest everything-else)
+  (or (and (fboundp name)
+	   (not (get name 'defun-maybe))
+	   )
+      `(or (fboundp (quote ,name))
+	   (progn
+	     (defun ,name ,@everything-else)
+	     (put (quote ,name) 'defun-maybe t)
+	     ))
+      ))
+
+(put 'defun-maybe 'lisp-indent-function 'defun)
+
+(defun-maybe functionp (obj)
+  "Returns t if OBJ is a function, nil otherwise.
+\[XEmacs emulating function]"
+  (or (subrp obj)
+      (byte-code-function-p obj)
+      (and (symbolp obj)(fboundp obj))
+      (and (consp obj)(eq (car obj) 'lambda))
+      ))
+
 
 ;;; @ end
 ;;;
