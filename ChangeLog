@@ -1,3 +1,10 @@
+2001-09-23   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-view.el: Add setting to fontify the inline part of
+	application/emacs-lisp.
+	(mime-display-inline-fontify): New function stolen from mm-view.el.
+	(mime-display-application/emacs-lisp): Use it.
+
 2001-09-10   Daiki Ueno  <ueno@unixuser.org>
 
 	* semi-def.el (mime-browse-url-regexp): Add ";".
