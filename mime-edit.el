@@ -1106,16 +1106,13 @@ Optional argument ENCODING specifies an encoding method such as base64."
 	t
       ;; At first, go to the end.
       (cond ((re-search-forward mime-editor/beginning-tag-regexp nil t)
-	     (goto-char (match-beginning 0)) ;For multiline tag
-	     (forward-line -1)
-	     (end-of-line)
+	     (goto-char (1- (match-beginning 0))) ;For multiline tag
 	     )
 	    (t
 	     (goto-char (point-max))
 	     ))
       ;; Then search for the beginning. 
       (re-search-backward mime-editor/end-tag-regexp nil t)
-      (beginning-of-line)
       (or (looking-at mime-editor/beginning-tag-regexp)
 	  ;; Restore previous point.
 	  (progn
@@ -2032,7 +2029,7 @@ Content-Transfer-Encoding: 7bit
 	      (mime-encode-region beg (mime-editor/content-end) encoding)
 	      (mime-editor/define-encoding encoding)
 	      ))
-	(forward-line 1)
+	(goto-char (mime-editor/content-end))
 	)
        ((null encoding)		;Encoding is not specified.
 	;; Application, image, audio, video, and any other
