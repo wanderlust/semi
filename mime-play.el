@@ -679,7 +679,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
     (search-forward name)
     ))
 
-(defvar mime-raw-browse-url-function (function mime-browse-url))
+(defvar mime-raw-browse-url-function mime-browse-url-function)
 
 (defun mime-view-message/external-url (entity cal)
   (let ((url (cdr (assoc "url" cal))))
