@@ -716,7 +716,7 @@ The compressed face will be piped to this command.")
     (scroll-down "Scroll to previous content" mime-view-scroll-down-content)
     (scroll-up	 "Scroll to next content"     mime-view-scroll-up-content)
     (play	 "Play Content"               mime-play-entity)
-    (extract	 "Extract Content"            mime-view-extract-content)
+    (extract	 "Extract Content"            mime-extract-entity)
     (print	 "Print"                      mime-view-print-content)
     (x-face	 "Show X Face"                mime-view-display-x-face)
     )
@@ -770,7 +770,7 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       "v"        (function mime-play-entity))
     (define-key mime-view-mode-map
-      "e"        (function mime-view-extract-content))
+      "e"        (function mime-extract-entity))
     (define-key mime-view-mode-map
       "\C-c\C-p" (function mime-view-print-content))
     (define-key mime-view-mode-map
@@ -897,7 +897,7 @@ button-2	Move to point under the mouse cursor
 
 (autoload 'mime-play-entity "mime-play")
 
-(defun mime-view-extract-content ()
+(defun mime-extract-entity ()
   (interactive)
   (mime-play-entity "extract")
   )
