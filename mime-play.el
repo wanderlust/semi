@@ -138,10 +138,10 @@
       )))
 
 (defun field-unify (a b)
-  (let ((sym (intern (concat "field-unifier-for-" (intern (car a))))))
-    (if (not (fboundp sym))
+  (let ((sym (intern (concat "field-unifier-for-" (symbol-value (car a))))))
+    (or (fboundp sym)
 	(setq sym (function field-unifier-for-default))
-      )
+	)
     (funcall sym a b)
     ))
 
