@@ -1454,10 +1454,10 @@ It calls following-method selected from variable
 	  p-end (aref entity 1)
 	  entity (aref entity 2))
     (setq ph-end
-	  (previous-single-property-change p-end 'mime-view-entity-header))
+	  (next-single-property-change p-beg 'mime-view-entity-header))
     (if (or (null ph-end)
-	    (< ph-end p-beg))
-	(setq ph-end p-beg))
+	    (> ph-end p-end))
+	(setq ph-end p-end))
     (let* ((mode (mime-preview-original-major-mode 'recursive))
 	   (entity-node-id (mime-entity-node-id entity))
 	   (new-name
