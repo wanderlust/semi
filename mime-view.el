@@ -330,7 +330,7 @@ Each elements are regexp of field-name. [mime-view.el]")
 ;;; @@ content separator
 ;;;
 
-(defun mime-preview/default-content-separator (rcnum cinfo ctype params subj)
+(defun mime-view-entity-separator-function (rcnum cinfo ctype params subj)
   (if (and (not (mime-view-header-visible-p rcnum cinfo))
 	   (not (mime-view-body-visible-p rcnum cinfo ctype))
 	   )
@@ -538,7 +538,7 @@ The compressed face will be piped to this command.")
 	   (mime-view-insert-entity-button
 	    rcnum cinfo ctype params subj encoding)
 	   ))
-    (mime-preview/default-content-separator rcnum cinfo ctype params subj)
+    (mime-view-entity-separator-function rcnum cinfo ctype params subj)
     (prog1
 	(progn
 	  (setq ne (point-max))
