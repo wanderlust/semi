@@ -4,7 +4,7 @@
 
 PACKAGE = wemi
 API	= 1.14
-RELEASE = 4
+RELEASE = 5
 
 FLIM_API= 1.14
 
