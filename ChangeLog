@@ -1,3 +1,10 @@
+1998-07-01  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* README.en (Required environment): Modify for FLIM 1.8.0.
+
+	* mime-view.el (mime-display-entity): Modify for
+	`mime-insert-decoded-header'.
+
 1998-06-30  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-play.el (mime-activate-mailcap-method): Use
