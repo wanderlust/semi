@@ -122,6 +122,10 @@ and return parsed it.  Format of return value is as same as
   "Return primary-type of CONTENT-TYPE."
   (cddr content-type))
 
+(defsubst mime-content-type-parameter (content-type parameter)
+  "Return PARAMETER value of CONTENT-TYPE."
+  (cdr (assoc parameter (mime-content-type-parameters content-type))))
+
 
 ;;; @ Content-Disposition
 ;;;
