@@ -89,7 +89,7 @@ specified, play as it.  Default MODE is \"play\"."
       (if mode
 	  (setq cal (cons (cons 'mode mode) cal))
 	)
-      (setq ret (mime/get-content-decoding-alist cal))
+      (setq ret (ctree-match-calist mime-acting-condition cal))
       (setq method (cdr (assq 'method ret)))
       (cond ((and (symbolp method)
 		  (fboundp method))
@@ -105,13 +105,6 @@ specified, play as it.  Default MODE is \"play\"."
 	     ))
       )
     ))
-
-
-;;; @ method selector
-;;;
-
-(defun mime/get-content-decoding-alist (al)
-  (ctree-match-calist mime-acting-condition al))
 
 
 ;;; @ external decoder
