@@ -9,7 +9,7 @@
 
 	* mime-view.el (mime-preview-follow-current-entity): Likewise.
 
-1998-11-18  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
+1998-11-18  Keiichi Suzuki    <kei-suzu@mail.wbs.ne.jp>
 
 	* mime-edit.el (mime-content-transfer-encoding-priority-list): New
 	variable.
