@@ -38,27 +38,39 @@
 (defun signature/get-signature-file-name ()
   (catch 'tag
     (let ((r signature-file-alist) cell b f)
-      (while r
-	(setq cell (car r))
-	(setq b (car cell))
-	(if (setq f (rfc822/get-field-body (car b)))
-	    (cond ((listp (cdr b))
-		   (let ((r (cdr b)))
-		     (while r
-		       (if (string-match (car r) f)
+      (save-excursion
+	(save-restriction
+	  (narrow-to-region
+	   (point-min)
+	   (progn
+	     (goto-char (point-min))
+	     (if (re-search-forward
+		  (concat "^" (regexp-quote mail-header-separator) "$")
+		  nil t)
+		 (match-beginning 0)
+	       (point-max)
+	       )))
+	  (while r
+	    (setq cell (car r))
+	    (setq b (car cell))
+	    (if (setq f (rfc822/get-field-body (car b)))
+		(cond ((listp (cdr b))
+		       (let ((r (cdr b)))
+			 (while r
+			   (if (string-match (car r) f)
+			       (throw 'tag (cdr cell))
+			     )
+			   (setq r (cdr r))
+			   ))
+		       )
+		      ((stringp (cdr b))
+		       (if (string-match (cdr b) f)
 			   (throw 'tag (cdr cell))
-			 )
-		       (setq r (cdr r))
-		       ))
-		   )
-		  ((stringp (cdr b))
-		   (if (string-match (cdr b) f)
-		       (throw 'tag (cdr cell))
-		     ))
-		  ))
-	(setq r (cdr r))
-	))
-    signature-file-name))
+			 ))
+		      ))
+	    (setq r (cdr r))
+	    ))
+	signature-file-name))))
 
 (defun signature/insert-signature-at-point (&optional arg)
   "Insert the file named by signature-file-name at the current point."
@@ -72,7 +84,8 @@
 			      nil)
 	    (signature/get-signature-file-name)))))
     (insert-file-contents signature)
-    (set-buffer-modified-p (buffer-modified-p)))) ; force mode line update
+    (set-buffer-modified-p (buffer-modified-p)) ; force mode line update
+    signature))
 
 (defun signature/insert-signature-at-eof (&optional arg)
   "Insert the file named by signature-file-name at the end of file."
@@ -95,7 +108,8 @@
 	    (insert-file-contents signature)
 	    (set-buffer-modified-p (buffer-modified-p))
 					; force mode line update
-	    )))))
+	    )))
+    signature))
 
 (defun insert-signature (&optional arg)
   "Insert the file named by signature-file-name.  It is inserted at the
