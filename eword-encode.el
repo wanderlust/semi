@@ -438,6 +438,48 @@ MODE is allows `text', `comment', `phrase' or nil.  Default value is
     (tm-eword::space-process dest)
     ))
 
+(defun eword-addr-seq-to-rwl (seq)
+  (let (dest pname)
+    (while seq
+      (let* ((token (car seq))
+	     (name (car token))
+	     )
+	(cond ((eq name 'spaces)
+	       (setq dest (nconc dest (list (list (cdr token) nil nil))))
+	       )
+	      ((eq name 'comment)
+	       (setq dest
+		     (nconc
+		      dest
+		      (list (list "(" nil nil))
+		      (tm-eword::split-string (cdr token) 'comment)
+		      (list (list ")" nil nil))
+		      ))
+	       )
+	      ((eq name 'quoted-string)
+	       (setq dest
+		     (nconc
+		      dest
+		      (list
+		       (list (concat "\"" (cdr token) "\"") nil nil)
+		       )))
+	       )
+	      (t
+	       (setq dest
+		     (if (or (eq pname 'spaces)
+			     (eq pname 'comment))
+			 (nconc dest (list (list (cdr token) nil nil)))
+		       (nconc (butlast dest)
+			      (list
+			       (list (concat (car (car (last dest)))
+					     (cdr token))
+				     nil nil)))))
+	       ))
+	(setq seq (cdr seq)
+	      pname name))
+      )
+    dest))
+
 (defun tm-eword::phrase-route-addr-to-rwl (phrase-route-addr)
   (if (eq (car phrase-route-addr) 'phrase-route-addr)
       (let ((phrase (nth 1 phrase-route-addr))
@@ -457,47 +499,8 @@ MODE is allows `text', `comment', `phrase' or nil.  Default value is
 
 (defun eword-addr-spec-to-rwl (addr-spec)
   (if (eq (car addr-spec) 'addr-spec)
-      (let ((seq (cdr addr-spec))
-	    dest pname)
-	(while seq
-	  (let* ((token (car seq))
-		 (name (car token))
-		 )
-	    (cond ((eq name 'spaces)
-		   (setq dest (nconc dest (list (list (cdr token) nil nil))))
-		   )
-		  ((eq name 'comment)
-		   (setq dest
-			 (nconc
-			  dest
-			  (list (list "(" nil nil))
-			  (tm-eword::split-string (cdr token) 'comment)
-			  (list (list ")" nil nil))
-			  ))
-		   )
-		  ((eq name 'quoted-string)
-		   (setq dest
-			 (nconc
-			  dest
-			  (list
-			   (list (concat "\"" (cdr token) "\"") nil nil)
-			   )))
-		   )
-		  (t
-		   (setq dest
-			 (if (or (eq pname 'spaces)
-				 (eq pname 'comment))
-			     (nconc dest (list (list (cdr token) nil nil)))
-			   (nconc (butlast dest)
-				  (list
-				   (list (concat (car (car (last dest)))
-						 (cdr token))
-					 nil nil)))))
-		   ))
-	    (setq seq (cdr seq)
-		  pname name))
-	  )
-	dest)))
+      (eword-addr-seq-to-rwl (cdr addr-spec))
+    ))
 
 (defun tm-eword::mailbox-to-rwl (mbox)
   (let ((addr (nth 1 mbox))
