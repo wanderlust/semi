@@ -5,17 +5,17 @@
 	`mime-setup-decode-message-header'.
 	(mu-cite/pre-cite-hook): Don't use `eword-decode-header'.
 
-1999-12-14  Akihiro Arisawa  <ari@atesoft.advantest.co.jp>
+1999-12-14  Akihiro Arisawa   <ari@atesoft.advantest.co.jp>
 
-	* mime-view.el (mime-preview-follow-current-entity): Fetch 
-	field of `mime-view-following-required-fields-list' from parent entity
+	* mime-view.el (mime-preview-follow-current-entity): Fetch field
+	of `mime-view-following-required-fields-list' from parent entity
 	if it is not exist in current entity.
 
 1999-12-13  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* README.en: Update fot the recent ML address and ftp site.
 
-1999-12-11   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+1999-12-11  Daiki Ueno        <ueno@ueda.info.waseda.ac.jp>
 
 	* smime.el (smime-encrypt-region): Delete entity header.
 	(smime-sign-region): Ditto.
@@ -33,7 +33,7 @@
 	(mime-decrypt-application/pkcs7-mime):
 	Bind `inhibit-read-only' to t.
 
-1999-12-09   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+1999-12-09  Daiki Ueno        <ueno@ueda.info.waseda.ac.jp>
 
 	* semi-def.el (mime-user-interface-product): Bump up to
 	EMIKO 1.13.9.
@@ -42,7 +42,7 @@
 	(smime-directory-files): New macro.
 	(smime-find-certificate): Use it.
 
-1999-12-08   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+1999-12-08  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* smime.el (smime-verify-region): Abolish local variable `cert-file'.
 	(smime-find-certificate): Rename from `smime-search-certificate'.
@@ -64,13 +64,13 @@
 	* semi-setup.el: Set up for `mime-verify-application/pkcs7-signature'
 	and `mime-decrypt-application/pkcs7-mime'.
 
-1999-12-08   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+1999-12-08  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* smime.el (smime-x509-hash): Use `call-process' instead of
 	`call-process-region'.
 	(smime-x509-subject): Ditto.
 
-1999-12-08   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+1999-12-08  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* SEMI-ELS (semi-modules-to-compile): Add smime.el.
 
@@ -81,12 +81,12 @@
 	* mime-edit.el (mime-edit-decode-message-in-buffer): Don't decode
 	the message header twice.
 
-1999-11-30   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+1999-11-30  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* pgg.el (pgg-remove-passphrase-cache): Add checking whether
 	the passphrase has already been expired.
 
-1999-11-26   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+1999-11-26  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* mime-edit.el (mime-edit-pgp-user-id): New variable.
 	(mime-edit-sign-pgp-mime): Undo last change; refer
@@ -99,20 +99,20 @@
 	(decrypt-region): Ditto.
 	(insert-key): Ditto.
 
-1999-11-26   Nakagawa, Makoto  <Makoto.Nakagawa@jp.compaq.com>
+1999-11-26  Nakagawa, Makoto  <Makoto.Nakagawa@jp.compaq.com>
 
 	* mime-edit.el (mime-edit-sign-pgp-mime): Regard
 	`pgg-default-user-id' as more preferrable if it's specified.
 	(mime-edit-encrypt-pgp-mime): Ditto.
 
-1999-11-22   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+1999-11-22  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* semi-def.el (mime-user-interface-product): Bump up to
 	EMIKO 1.13.8.
 
 	* pgg.el (pgg-remove-passphrase-cache): Don't unbind passphrase.
 
-1999-11-20   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+1999-11-20  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* mime-edit.el (mime-edit-sign-pgp-mime): Bind
 	`pgg-default-user-id' to the canonical address of From field.
@@ -131,7 +131,7 @@
 	`mime-image-normalize-xbm' if the feature `xemacs' is provided or
 	the variable `image-types' is bound.
 
-1999-11-17   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+1999-11-17  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* mime-image.el (mime-image-normalize-xbm): Work for the future
 	FSF Emacsen as well.
@@ -142,7 +142,7 @@
 	* mime-image.el (mime-image-normalize-xbm): New macro.
 	(mime-display-image): Use it.
 
-1999-11-13   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+1999-11-13  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* pgg.el (pgg-temp-buffer-show-function): New function.
 	(pgg-display-output-buffer): Use it.
@@ -151,7 +151,7 @@
 	pgg-verify-region): Assume that the current region has already
 	been narrowed.
 
-1999-11-13   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+1999-11-13  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* pgg-def.el (pgg-default-keyserver-address): Default to
 	`wwwkeys.pgp.net'.
@@ -163,15 +163,15 @@
 	Add documentation string; use `pgg-save-coding-system'.
 	(pgg-fetch-key): Fix documentation.
 
-1999-11-11   Akihiro Arisawa   <ari@atesoft.advantest.co.jp>
+1999-11-11  Akihiro Arisawa   <ari@atesoft.advantest.co.jp>
 
 	* mime-image.el (image-normalize): Use `write-region-as-binary'.
 
-1999-11-11   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+1999-11-11  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* pgg-pgp.el, pgg-pgp5.el (verify-region): Set default umask to 077.
 
-1999-11-10   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+1999-11-10  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* pgg-gpg.el (pgg-gpg-process-region): Enclose `start-process'
 	with `as-binary-process'.
@@ -195,18 +195,18 @@
 	* mime-play.el: (mime-save-directory): New variable.
 	(mime-save-content): Don't force filename parameter to be used.
 
-1999-11-09   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+1999-11-09  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* pgg-pgp.el, pgg-pgp5.el
 	(sign-region): Don't convert line break	code.
 
-1999-11-07   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+1999-11-07  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* mime-pgp.el (mime-verify-application/pgp-signature): Don't
 	scroll MIME-echo buffer, just set window starting point.
 	(mime-add-application/pgp-keys): Ditto.
 
-1999-11-06   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+1999-11-06  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* pgg.el (pgg-sign-region): Add optional argument `cleartext'.
 
