@@ -1,5 +1,12 @@
 1998-06-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-entity-parent): New function; abolish
+	`mime-raw-entity-parent'.
+	(mime-view-entity-button-visible-p): Use `mime-entity-parent'
+	instead of `mime-raw-entity-parent'.
+
+1998-06-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-edit.el (mime-edit-normalize-body): Abolish unused local
 	variable.
 
