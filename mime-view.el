@@ -1326,7 +1326,7 @@ If reached to (point-min), it calls function registered in variable
     (let (point)
       (save-excursion
 	(catch 'tag
-	  (while (> (point) 1)
+	  (while (not (bobp))
 	    (if (setq point
 		      (previous-single-property-change (point)
 						       'mime-view-entity))
