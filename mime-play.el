@@ -555,4 +555,15 @@ to write."
 
 (provide 'mime-play)
 
+(let* ((file mime-view-acting-example-file)
+       (buffer (get-buffer-create " *mime-example*")))
+  (if (file-readable-p file)
+      (unwind-protect
+	  (save-excursion
+	    (set-buffer buffer)
+	    (erase-buffer)
+	    (insert-file-contents file)
+	    (eval-current-buffer))
+	(kill-buffer buffer))))
+
 ;;; mime-play.el ends here
