@@ -410,9 +410,9 @@ such as a version of Net$cape)."
 			 (std11-wrap-as-quoted-string value)
 			 )
 			((eq type 'comment)
-			 (concat "\""
-				 (std11-wrap-as-quoted-pairs value)
-				 "\"")
+			 (concat "("
+				 (std11-wrap-as-quoted-pairs value '(?( ?)))
+				 ")")
 			 )
 			(t
 			 value)))))
