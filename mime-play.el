@@ -84,7 +84,8 @@ specified, play as it.  Default MODE is \"play\"."
 	 (mime-unify-situations (mime-entity-situation entity situation)
 				mime-acting-condition
 				mime-acting-situation-example-list
-				'method ignored-method))
+				'method ignored-method
+				mime-view-find-every-situations))
 	method)
     (setq mime-acting-situation-example-list (cdr ret)
 	  ret (car ret))
