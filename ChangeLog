@@ -1,3 +1,8 @@
+1999-08-28  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el (mime-store-message/partial-piece): Use
+	`directory-files' to check number of pieces.
+
 1999-08-26  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-play.el (mime-store-message/partial-piece): Don't refer
