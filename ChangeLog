@@ -1,3 +1,9 @@
+1999-04-06  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-ui-en.texi, mime-ui-ja.texi: Sync up with .sgml files.
+	* mime-ui-en.sgml, mime-ui-ja.sgml (mime-mc-setversion): Use <var>,
+	</var> token in doc string.
+
 1999-04-06  Keiichi Suzuki  <keiichi@nanap.org>
 
 	* mime-pgp.el (mime-view-application/pgp): Support PGP5.X and

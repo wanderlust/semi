@@ -458,8 +458,7 @@ Encrypt to specified region. (cf. @ref{PGP})
 
 @item @key{C-c C-x C-q}
 avoid to encode tags in specified region.  In other words, tags is
-interpreted as such string.  (In current version, it may be
-incomplete.  Maybe PGP-signature does not work for this enclosure.)
+interpreted as such string.
 
 @end table
 
@@ -679,30 +678,50 @@ Regular expression to match field-name to be ignored when split sending.
 
 mime-edit provides PGP encryption, signature and inserting public-key
 features based on @strong{PGP/MIME} (RFC 2015) or @strong{PGP-kazu}
-(draft-kazu-pgp-mime-00.txt).@refill
+(draft-kazu-pgp-mime-00.txt).  In current version, PGP 5.0i and GnuPG
+are supported as well.@refill
 
-This feature requires pgp command and pgp interface package, such as
-Mailcrypt package (@ref{(mailcrypt)}).
+This feature requires PGP or GnuPG commands and its interface package,
+such as Mailcrypt package (@ref{(mailcrypt)}).
+
+@defvar pgp-version
+
+Version of PGP or GnuPG command to be used for encryption or sign.
+The value should be a symbol.  Allowed versions are @code{gpg},
+@code{pgp50} or @code{pgp}.@refill
+@end defvar
+
 
 @defvar pgp-function-alist
 
 Alist of service names vs. corresponding functions and its filenames.
-Each element looks like @code{(SERVICE FUNCTION FILE)}.@refill
+Each element looks like
+@code{(SERVICE FUNCTION FILE [PGP5_FUNCTION PGP5_FILE [GPG_FUNCTION GPG_FILE]])}.@refill
 
-SERVICE is a symbol of PGP processing.  It allows `verify', `decrypt',
-`fetch-key', `snarf-keys', `mime-sign', `traditional-sign', `encrypt' or
-`insert-key'.@refill
+SERVICE is a symbol of PGP2, PGP5 or GnuPG processing.  It allows
+`verify', `decrypt', `fetch-key', `snarf-keys', `mime-sign',
+`traditional-sign', `encrypt' or `insert-key'.@refill
 
 Function is a symbol of function to do specified SERVICE.@refill
-
 FILE is string of filename which has definition of corresponding
 FUNCTION.
+
+PGP5_FUNCTION, PGP5_FILE, GPG_FUNCTION and GPG_FILE are similar to
+FUNCTION and FILE, but they will be used for PGP 5.0i or GnuPG.@refill
+
 @end defvar
 
 
 @defun pgp-function method
 
 Return function to do service @var{method}.
+@end defun
+
+
+@defun mime-mc-setversion version
+
+Select `pgp-version' and `mc-default-scheme' if possible.
+@var{version} should be a string or a symbol.
 @end defun
 
 

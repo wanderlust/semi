@@ -647,8 +647,8 @@ Return function to do service <var>method</var>.
 <defun name="mime-mc-setversion">
 	    <args> version
 <p>
-Select `pgp-version' and `mc-default-scheme' if possible.  VERSION
-should be a string or a symbol.
+Select `pgp-version' and `mc-default-scheme' if possible.
+<var>version</var> should be a string or a symbol.
 <defun/>
 
 

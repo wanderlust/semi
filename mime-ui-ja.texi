@@ -472,8 +472,7 @@ enclosure を作るための操作としては以下のようなものがあります。
 
 @item @key{C-c C-x C-q}
 指定した region 内の tag を無効にし、その tag を文字列として利用できる
-ようにします。（現在の版ではうまく働かないことがあります。また、電子署
-名との併用に関しても不完全です）
+ようにします。
 
 @end table
 
@@ -696,30 +695,49 @@ Regular expression to match field-name to be ignored when split sending.
 
 mime-edit では @strong{PGP/MIME} (RFC 2015) および@strong{PGP-kazu}
 (draft-kazu-pgp-mime-00.txt) による暗号化・電子署名・公開鍵の挿入機能を
-利用することができます。@refill
+利用することができます。  現在の版では PGP 5.0i と GnuPG もサポートされ
+ています。@refill
 
 但し、この機能を利用するには Mailcrypt package (@ref{(mailcrypt)}) と 
 pgp command が必要です。
 
+@defvar pgp-version
+
+Version of PGP or GnuPG command to be used for encryption or sign.
+The value should be a symbol.  Allowed versions are @code{gpg},
+@code{pgp50} or @code{pgp}.@refill
+@end defvar
+
+
 @defvar pgp-function-alist
 
 Alist of service names vs. corresponding functions and its filenames.
-Each element looks like @code{(SERVICE FUNCTION FILE)}.@refill
+@code{(SERVICE FUNCTION FILE [PGP5_FUNCTION PGP5_FILE [GPG_FUNCTION GPG_FILE]])}.@refill
 
-SERVICE is a symbol of PGP processing.  It allows `verify', `decrypt',
-`fetch-key', `snarf-keys', `mime-sign', `traditional-sign', `encrypt' or
-`insert-key'.@refill
+SERVICE is a symbol of PGP2, PGP5 or GnuPG processing.  It allows
+`verify', `decrypt', `fetch-key', `snarf-keys', `mime-sign',
+`traditional-sign', `encrypt' or `insert-key'.@refill
 
 Function is a symbol of function to do specified SERVICE.@refill
 
 FILE is string of filename which has definition of corresponding
 FUNCTION.
+
+PGP5_FUNCTION, PGP5_FILE, GPG_FUNCTION and GPG_FILE are similar to
+FUNCTION and FILE, but they will be used for PGP 5.0i or GnuPG.@refill
 @end defvar
 
 
 @defun pgp-function method
 
 Return function to do service @var{method}.
+@end defun
+
+
+@defun mime-mc-setversion version
+
+Select `pgp-version' and `mc-default-scheme' if possible.
+@var{version} should be a string or a symbol.
 @end defun
 
 
