@@ -1,9 +1,9 @@
 ;;; mime-edit.el --- Simple MIME Composer for GNU Emacs
 
-;; Copyright (C) 1993,94,95,96,97,98,99 Free Software Foundation, Inc.
+;; Copyright (C) 1993,94,95,96,97,98,99,2000 Free Software Foundation, Inc.
 
 ;; Author: UMEDA Masanobu <umerin@mse.kyutech.ac.jp>
-;;	MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;;	MORIOKA Tomohiko <tomo@kanji.zinbun.kyoto-u.ac.jp>
 ;;	Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
 ;; Created: 1994/08/21 renamed from mime.el
 ;;	Renamed: 1997/2/21 from tm-edit.el
@@ -499,6 +499,7 @@ If encoding is nil, it is determined from its contents."
     (iso-8859-8		8 "quoted-printable")
     (iso-8859-9		8 "quoted-printable")
     (iso-2022-jp	7 "base64")
+    (iso-2022-jp-3	7 "base64")
     (iso-2022-kr	7 "base64")
     (euc-kr		8 "base64")
     (cn-gb		8 "base64")
