@@ -146,13 +146,13 @@ such as a version of Net$cape)."
 ;;; @ for message header
 ;;;
 
-(defun eword-decode-header ()
-  "Decode MIME encoded-words in header fields."
+(defun eword-decode-header (&optional separator)
+  "Decode MIME encoded-words in header fields.
+If SEPARATOR is not nil, it is used as header separator."
   (interactive "*")
   (save-excursion
     (save-restriction
-      (narrow-to-region (goto-char (point-min))
-			(progn (re-search-forward "^$" nil t) (point)))
+      (std11-narrow-to-header separator)
       (eword-decode-region (point-min) (point-max) t)
       )))
 
