@@ -2,6 +2,8 @@
 
 	* SEMI: Version 0.115 (Hinomiko) was released.
 
+	* README.en: Modify for Emacs 20.2.
+
 1997-09-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-def.el (butlast, nbutlast): Don't use `defun-maybe' for cl
