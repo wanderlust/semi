@@ -1,6 +1,6 @@
 ;;; mime-view.el --- interactive MIME viewer for GNU Emacs
 
-;; Copyright (C) 1995,1996,1997,1998 Free Software Foundation, Inc.
+;; Copyright (C) 1995,1996,1997,1998,1999 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Created: 1994/07/13
@@ -8,7 +8,7 @@
 ;;	Renamed: 1997/02/19 from tm-view.el
 ;; Keywords: MIME, multimedia, mail, news
 
-;; This file is part of SEMI (Sophisticated Emacs MIME Interfaces).
+;; This file is part of SEMI (Sample of Elastic MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -27,6 +27,7 @@
 
 ;;; Code:
 
+(require 'emu)
 (require 'mime)
 (require 'semi-def)
 (require 'calist)
@@ -256,9 +257,13 @@ Please redefine this function if you want to change default setting."
 			    num subject access-type (cdr server))
 		(let ((site (cdr (assoc "site" params)))
 		      (dir (cdr (assoc "directory" params)))
+		      (url (cdr (assoc "url" params)))
 		      )
-		  (format "%s %s ([%s] %s:%s)"
-			  num subject access-type site dir)
+		  (if url
+		      (format "%s %s ([%s] %s)"
+			      num subject access-type url)
+		    (format "%s %s ([%s] %s:%s)"
+			    num subject access-type site dir))
 		  )))
 	    )
 	   (t
@@ -1213,7 +1218,8 @@ variable `mime-preview-over-to-previous-method-alist'."
 If there is no previous entity, it calls function registered in
 variable `mime-preview-over-to-next-method-alist'."
   (interactive)
-  (while (null (get-text-property (point) 'mime-view-entity))
+  (while (and (not (eobp))
+	      (null (get-text-property (point) 'mime-view-entity)))
     (forward-char)
     )
   (let ((point (next-single-property-change (point) 'mime-view-entity)))

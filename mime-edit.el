@@ -633,6 +633,12 @@ If it is not specified for a major-mode,
 			  (concat "/"
 				  (substring emacs-version 0
 					     (match-beginning 0))
+				  (if (and (boundp 'xemacs-betaname)
+					   ;; It does not exist in XEmacs
+					   ;; versions prior to 20.3.
+					   xemacs-betaname)
+				      (concat " " xemacs-betaname)
+				    "")
 				  " (" xemacs-codename ") ("
 				  system-configuration ")")
 			" (" emacs-version ")"))
@@ -2588,6 +2594,12 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	  (if mime-edit-insert-user-agent-field "\\|User-Agent")
 	  "\\):")
   "Regexp for deleted header fields when `mime-edit-again' is called.")
+
+(defsubst eliminate-top-spaces (string)
+  "Eliminate top sequence of space or tab in STRING."
+  (if (string-match "^[ \t]+" string)
+      (substring string (match-end 0))
+    string))
 
 (defun mime-edit-decode-multipart-in-buffer (content-type not-decode-text)
   (let* ((subtype (mime-content-type-subtype content-type))
