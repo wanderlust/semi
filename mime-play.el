@@ -417,8 +417,9 @@ this function is called."
 	))
     (goto-char (setq start (point-max)))
     (if forms
-	(insert (apply (function format) forms))
-      )
+	(let ((buffer-read-only nil))
+	  (insert (apply (function format) forms))
+	  ))
     (prog1
 	(list win start (point))
       (select-window the-win)
