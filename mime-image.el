@@ -146,7 +146,7 @@
 	  ((eq (aref gl 0) 'xbm)
 	   (let ((xbm-file
 		  (make-temp-name
-		   (expand-file-name "tm" mime-temp-directory))))
+		   (expand-file-name "tm" temporary-file-directory))))
 	     (with-temp-buffer
 	       (insert (aref gl 2))
 	       (write-region (point-min)(point-max) xbm-file)
