@@ -1,3 +1,8 @@
+2002-11-03  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* mime-edit.el (mime-edit-decode-single-part-in-buffer): Decode text
+	part only.
+
 2002-11-05  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* mime-view.el (mime-view-insert-fontified-text-content): Make
