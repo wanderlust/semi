@@ -114,7 +114,6 @@
 (require 'mime-view)
 (require 'signature)
 (require 'alist)
-(require 'invisible)
 (require 'pgg-def)
 (require 'pgg-parse)
 
@@ -986,8 +985,6 @@ User customizable variables (not documented all of them):
     (if (featurep 'xemacs)
 	(mime-edit-define-menu-for-xemacs))
 
-    (enable-invisible)
-
     ;; I don't care about saving these.
     (setq paragraph-start
 	  (regexp-or mime-edit-single-part-tag-regexp
@@ -1021,7 +1018,6 @@ just return to previous mode."
     (if (and (featurep 'xemacs)
 	     (featurep 'menubar))
 	(delete-menu-item (list mime-edit-menu-title)))
-    (disable-invisible)
     (set-buffer-modified-p (buffer-modified-p))
     (run-hooks 'mime-edit-exit-hook)
     (message "Exit MIME editor mode.")))
@@ -1131,12 +1127,13 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
     (mime-edit-insert-tag "audio" "basic" nil)
     (mime-edit-define-encoding encoding)
     (save-restriction
-      (narrow-to-region (1- (point))(point))
+      (narrow-to-region (point)(point))
       (unwind-protect
 	  (funcall mime-edit-voice-recorder encoding)
 	(progn
 	  (insert "\n")
-	  (mime-edit-invisible-region (point-min)(point-max))
+	  (add-text-properties
+	   (point-min)(point-max) '(invisible t mime-edit-invisible t))
 	  (goto-char (point-max)))))))
 
 (defun mime-edit-insert-signature (&optional arg)
@@ -1205,42 +1202,6 @@ If nothing is inserted, return nil."
       nil				;Nothing is created.
       )))
 
-(defun mime-edit-invisible-region (start end)
-  (invisible-region start end)		;`invisible-region' might be overridden
-  (static-if (featurep 'xemacs)
-      (if (save-excursion
-	    (goto-char start)
-	    (eq (following-char) ?\n))
-	  (setq start (1+ start)))
-    (if (save-excursion
-	  (goto-char (1- end))
-	  (eq (following-char) ?\n))
-	(setq end (1- end))))
-  (put-text-property start end 'mime-edit-invisible t))
-
-(defun mime-edit-invisible-p (pos)
-  (static-when (featurep 'xemacs)
-    (if (save-excursion
-	  (goto-char pos)
-	  (eq (following-char) ?\n))
-	(setq pos (1+ pos))))
-  (get-text-property pos 'mime-edit-invisible))
-      
-(defun mime-edit-next-visible-point (pos)
-  (static-if (featurep 'xemacs)
-      (save-excursion
-	(if (save-excursion
-	      (goto-char pos)
-	      (eq (following-char) ?\n))
-	    (setq pos (1+ pos)))
-	(or (next-single-property-change pos 'mime-edit-invisible)
-	    (point-max)))
-    (save-excursion
-      (goto-char (next-single-property-change pos 'mime-edit-invisible))
-      (if (eq (following-char) ?\n)
-	  (forward-char))
-      (point))))
-
 (defun mime-edit-insert-binary-file (file &optional encoding)
   "Insert binary FILE at point.
 Optional argument ENCODING specifies an encoding method such as base64."
@@ -1253,13 +1214,12 @@ Optional argument ENCODING specifies an encoding method such as base64."
 			     (string-equal en "8bit")
 			     (string-equal en "binary")))))))
     (save-restriction
-      (narrow-to-region tagend (point))
+      (narrow-to-region (point)(point))
       (mime-insert-encoded-file file encoding)
       (if hide-p
-	  (progn
-	    (mime-edit-invisible-region (point-min) (point-max))
-	    (goto-char (point-max)))
-	(goto-char (point-max))))
+	  (add-text-properties
+	   (point-min)(point-max) '(invisible t mime-edit-invisible t)))
+      (goto-char (point-max)))
     (or hide-p
 	(looking-at mime-edit-tag-regexp)
 	(= (point)(point-max))
@@ -1318,9 +1278,9 @@ Optional argument ENCODING specifies an encoding method such as base64."
   (save-excursion
     (if (mime-edit-goto-tag)
 	(progn
-	  (goto-char (match-end 0))
-	  (if (mime-edit-invisible-p (point))
-	      (mime-edit-next-visible-point (point))
+	  (goto-char (1+ (match-end 0)))
+	  (if (get-text-property (point) 'mime-edit-invisible)
+	      (next-single-property-change (point) 'mime-edit-invisible)
 	    ;; Move to the end of this text.
 	    (if (re-search-forward mime-edit-tag-regexp nil 'move)
 		;; Don't forget a multiline tag.

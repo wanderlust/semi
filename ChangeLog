@@ -1,5 +1,18 @@
 2000-10-31   Daiki Ueno  <ueno@unixuser.org>
 
+	* mime-edit.el: Don't require `invisible'.
+	(mime-edit-insert-voice): Don't use `mime-edit-invisible-region'.
+	(mime-edit-insert-binary-file): Ditto.
+	(mime-edit-content-end): Don't use `mime-edit-invisible-p' and
+	`mime-edit-next-visible-point'.
+	(mime-edit-invisible-region): Abolish.
+	(mime-edit-invisible-p): Abolish.
+	(mime-edit-next-visible-point): Abolish.
+	(turn-on-mime-edit): Don't call `enable-invisible'.
+	(mime-edit-exit): Don't call `end-of-invisible'.
+
+2000-10-31   Daiki Ueno  <ueno@unixuser.org>
+
 	* mime-edit.el (mime-edit-insert-voice): Add text-property
 	`mime-edit-invisible'.
 	(mime-edit-insert-binary-file): Ditto.
