@@ -1,5 +1,22 @@
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-pgp.el: Rename `mime-pgp-add-keys' ->
+	`mime-method-to-add-application/pgp-keys'.
+
+	* mime-pgp.el: Rename `mime-pgp-decrypt-application/pgp-encrypted'
+	-> `mime-method-to-decrypt-application/pgp-encrypted'.
+
+	* mime-pgp.el: Rename `mime-pgp-check-application/pgp-signature'
+	-> `mime-method-to-verify-application/pgp-signature'.
+
+	* mime-pgp.el: Rename `mime-check-multipart/signed' ->
+	`mime-method-to-verify-multipart/signed'.
+
+	* mime-pgp.el: Rename `mime-process-application/pgp' ->
+	`mime-method-for-application/pgp'.
+
+1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mailcap.el (mailcap-look-at-type-field): Change type and subtype
 	to symbol.
 
