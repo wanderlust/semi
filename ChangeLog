@@ -1,8 +1,22 @@
+2000-02-01   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+ 	* pgg.el,pgp-gpg.el,pgg-pgp.el,pgg-pgp5.el
+	(pgg-scheme-lookup-key): Rename from
+	`pgg-scheme-lookup-key-string'.
+	(pgg-scheme-decrypt-region): Use `pgg-scheme-lookup-key'.
+	(pgg-scheme-sign-region): Ditto.
+
+	* pgg-gpg.el (pgg-scheme-lookup-key): Generate *PGG-output* buffer
+	if it does not exist.
+
 2000-02-01  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-image.el: Fix problem when x-face-mule is not installed.
 
 2000-01-24   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* semi-def.el (mime-user-interface-product): Bump up to
+	EMIKO 1.13.10.
 
 	* mime-image.el	[Emacs21]: Require `image' when compiling.
 	(image-normalize): Use `create-image' with 3rd arg `data-p'.

@@ -113,8 +113,7 @@
 
   (luna-define-internal-accessors 'pgg-scheme))
 
-(luna-define-generic pgg-scheme-lookup-key-string
-  (scheme string &optional type)
+(luna-define-generic pgg-scheme-lookup-key (scheme string &optional type)
   "Search keys associated with STRING")
 
 (luna-define-generic pgg-scheme-encrypt-region (scheme start end recipients)
@@ -334,7 +333,7 @@ signer's public key from `pgg-default-keyserver-address'."
     (and (stringp key)
 	 (setq key (concat "0x" (pgg-truncate-key-identifier key)))
 	 (null (let ((pgg-scheme scheme))
-		 (pgg-lookup-key-string key)))
+		 (pgg-lookup-key key)))
 	 (or fetch (interactive-p))
 	 (y-or-n-p (format "Key %s not found; attempt to fetch? " key))
 	 (setq keyserver
@@ -368,9 +367,9 @@ signer's public key from `pgg-default-keyserver-address'."
     (pgg-save-coding-system start end
       (pgg-scheme-snarf-keys-region entity start end))))
 
-(defun pgg-lookup-key-string (string &optional type)
+(defun pgg-lookup-key (string &optional type)
   (let ((entity (pgg-make-scheme (or pgg-scheme pgg-default-scheme))))
-    (pgg-scheme-lookup-key-string entity string type)))
+    (pgg-scheme-lookup-key entity string type)))
 
 (defvar pgg-insert-url-function  (function pgg-insert-url-with-w3))
 
