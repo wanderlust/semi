@@ -307,11 +307,6 @@ buffer です。MIME 書面は entity を単位とする木構造ですが、この
 	mime-preview-buffer を作る前の window-configuration を収める。
 
 
-[text-property] mime-view-raw-buffer
-
-	この位置に対応する mime-raw-buffer を示す。
-
-
 [text-property] mime-view-entity
 
 	この位置に対応する entity 構造体を示す。
