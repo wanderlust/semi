@@ -50,6 +50,8 @@
 (defvar pgg-errors-buffer " *PGG errors*")
 (defvar pgg-output-buffer " *PGG output*")
 
+(defvar pgg-echo-buffer "*PGG-echo*")
+
 (defvar pgg-scheme nil
   "Current scheme of PGP implementation")
 
