@@ -1,5 +1,15 @@
 1997-09-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-view-display-entity), mime-partial.el
+	(mime-combine-message/partials-automatically): Use
+	`mime-entity-info-parameters' instead of
+	`mime::content-info/parameters'.
+
+	* mime-parse.el (mime-entity-info-parameters): New inline
+	function.
+
+1997-09-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-view-header-visible-p,
 	mime-view-body-visible-p, mime-view-entity-button-function,
 	mime-view-display-entity, mime-view-follow-current-entity),
