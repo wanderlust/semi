@@ -1,3 +1,16 @@
+1998-03-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-image.el (mime-preview-condition): Set 'with-filter in
+	body-presentation-method for body-filter.
+
+	* mime-view.el (mime-view-display-entity): Call body-filter only
+	when body-presentation-method is 'with-filter.
+
+1998-03-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-entity): Modify to omit check
+	for body-presentation-method.
+
 1998-03-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* NEWS: Modify about `mime-preview-condition'.
