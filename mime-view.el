@@ -210,10 +210,30 @@ If optional argument MESSAGE-INFO is not specified,
 	 (set-buffer (mime-entity-buffer entity))
 	 mime-raw-message-info))))
 
-(defsubst mime-entity-situation (entity)
+(defun mime-entity-situation (entity)
   "Return situation of ENTITY."
   (append (or (mime-entity-content-type entity)
 	      (make-mime-content-type 'text 'plain))
+	  (let ((d (mime-entity-content-disposition entity)))
+	    (cons (cons 'disposition-type
+			(mime-content-disposition-type d))
+		  (mapcar (function
+			   (lambda (param)
+			     (let ((name (car param)))
+			       (cons (cond ((string= name "filename")
+					    'filename)
+					   ((string= name "creation-date")
+					    'creation-date)
+					   ((string= name "modification-date")
+					    'modification-date)
+					   ((string= name "read-date")
+					    'read-date)
+					   ((string= name "size")
+					    'size)
+					   (t (cons 'disposition (car param))))
+				     (cdr param)))))
+			  (mime-content-disposition-parameters d))
+		  ))
 	  (list (cons 'encoding (mime-entity-encoding entity))
 		(cons 'major-mode
 		      (save-excursion
