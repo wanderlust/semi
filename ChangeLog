@@ -1,3 +1,8 @@
+2003-04-05  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* mime-view.el (mime-preview-toggle-display): Use boundary with
+	children.
+
 2003-02-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* semi-def.el (mime-should-use-popup-menu): New function.

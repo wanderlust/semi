@@ -1806,7 +1806,7 @@ If LINES is negative, scroll up LINES lines."
 ;;;
 
 (defun mime-preview-toggle-display (type &optional display)
-  (let ((situation (mime-preview-find-boundary-info))
+  (let ((situation (mime-preview-find-boundary-info t))
 	(sym (intern (concat "*" (symbol-name type))))
 	entity p-beg p-end)
     (setq p-beg (aref situation 0)
