@@ -1011,26 +1011,27 @@ just return to previous mode."
     (princ (documentation 'mime-edit-mode))
     (print-help-return-message)))
 
-(defun mime-edit-insert-text ()
+(defun mime-edit-insert-text (&optional subtype)
   "Insert a text message.
-Charset is automatically obtained from the `charsets-mime-charset-alist'."
+Charset is automatically obtained from the `charsets-mime-charset-alist'.
+If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
   (interactive)
-  (let ((ret (mime-edit-insert-tag "text" nil nil)))
-  (if ret
-      (progn
-	(if (looking-at mime-edit-single-part-tag-regexp)
-	    (progn
-	      ;; Make a space between the following message.
-	      (insert "\n")
-	      (forward-char -1)
-	      ))
-	(if (and (member (cadr ret) '("enriched" "richtext"))
-		 (fboundp 'enriched-mode)
-		 )
-	    (enriched-mode t)
-	  (if (boundp 'enriched-mode)
-	      (enriched-mode -1)
-	    ))))))
+  (let ((ret (mime-edit-insert-tag "text" subtype nil)))
+    (when ret
+      (if (looking-at mime-edit-single-part-tag-regexp)
+	  (progn
+	    ;; Make a space between the following message.
+	    (insert "\n")
+	    (forward-char -1)
+	    ))
+      (if (and (member (cadr ret) '("enriched" "richtext"))
+	       (fboundp 'enriched-mode)
+	       )
+	  (enriched-mode t)
+	(if (boundp 'enriched-mode)
+	    (enriched-mode -1)
+	  ))
+      )))
 
 (defun mime-edit-insert-file (file &optional verbose)
   "Insert a message from a file."
