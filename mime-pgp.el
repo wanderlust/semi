@@ -314,12 +314,10 @@ to just an ascii armor."
 	  (t
 	   pgp-version))))
 
-(defun mime-entity-detect-pgp-version (entity situation)
+(defun mime-entity-detect-pgp-version (entity)
   "Detect PGP version from entity content."
   (with-temp-buffer
     (mime-insert-entity-content entity)
-    (mime-decode-region (point-min) (point-max)
-			(cdr (assq 'encoding situation)))
     (mime-pgp-detect-version)
     ))
 
@@ -431,7 +429,7 @@ key-ID if it is found."
 	 (basename (expand-file-name "tm" temporary-file-directory))
 	 (orig-file (make-temp-name basename))
 	 (sig-file (concat orig-file ".sig"))
-	 (pgp-version (mime-entity-detect-pgp-version entity situation))
+	 (pgp-version (mime-entity-detect-pgp-version entity))
 	 (parser (intern (format "mime-pgp-parse-verify-error-for-%s"
 				 pgp-version)))
 	 pgp-id done)
@@ -487,8 +485,7 @@ key-ID if it is found."
 		   (1- knum)
 		 (1+ knum)))
 	 (orig-entity (nth onum (mime-entity-children mother)))
-	 (pgp-version (mime-entity-detect-pgp-version
-		       orig-entity situation))
+	 (pgp-version (mime-entity-detect-pgp-version orig-entity))
 	 )
     (mime-view-application/pgp orig-entity situation)
     ))
@@ -499,11 +496,9 @@ key-ID if it is found."
 ;;; It is based on RFC 2015 (PGP/MIME) and
 ;;; draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME).
 
-(defun mime-add-application/pgp-keys (entity situation)
+(defun mime-add-application/pgp-keys (entity &optional situation)
   (with-temp-buffer
     (mime-insert-entity-content entity)
-    (mime-decode-region (point-min) (point-max)
-			(cdr (assq 'encoding situation)))
     (let ((pgp-version (mime-pgp-detect-version)))
       (funcall (pgp-function 'snarf-keys))
       )))
