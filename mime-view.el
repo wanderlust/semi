@@ -31,6 +31,7 @@
 (require 'mel)
 (require 'eword-decode)
 (require 'mime-parse)
+(require 'semi-def)
 (require 'calist)
 
 
@@ -185,26 +186,22 @@ If optional argument MESSAGE-INFO is not specified,
 ;;; @@@ predicate function
 ;;;
 
-(defvar mime-view-content-button-visible-ctype-list
-  '("application/pgp"))
-
 (defun mime-view-entity-button-visible-p (entity message-info)
   "Return non-nil if header of ENTITY is visible.
 Please redefine this function if you want to change default setting."
-  (and (not (mime-root-entity-p entity))
-       (let ((media-type (mime-entity-media-type entity))
-	     (media-subtype (mime-entity-media-subtype entity)))
-	 (or (not (eq media-type 'application))
-	     (and (not (eq media-subtype 'x-selection))
-		  (or (not (eq media-subtype 'octet-stream))
-		      (let ((mother-entity
-			     (mime-raw-entity-parent entity message-info)))
-			(or (not (eq (mime-entity-media-type mother-entity)
-				     'multipart))
-			    (not (eq (mime-entity-media-subtype mother-entity)
-				     'encrypted)))
-			)
-		      ))))))
+  (let ((media-type (mime-entity-media-type entity))
+	(media-subtype (mime-entity-media-subtype entity)))
+    (or (not (eq media-type 'application))
+	(and (not (eq media-subtype 'x-selection))
+	     (or (not (eq media-subtype 'octet-stream))
+		 (let ((mother-entity
+			(mime-raw-entity-parent entity message-info)))
+		   (or (not (eq (mime-entity-media-type mother-entity)
+				'multipart))
+		       (not (eq (mime-entity-media-subtype mother-entity)
+				'encrypted)))
+		   )
+		 )))))
 
 ;;; @@@ entity button generator
 ;;;
@@ -273,12 +270,11 @@ Please redefine this function if you want to change default setting."
 (defun mime-view-header-visible-p (entity message-info)
   "Return non-nil if header of ENTITY is visible."
   (let ((entity-node-id (mime-entity-node-id entity)))
-    (or (null entity-node-id)
-	(member (mime-entity-type/subtype
-		 (mime-raw-find-entity-from-node-id
-		  (cdr entity-node-id) message-info))
-		mime-view-childrens-header-showing-Content-Type-list)
-	)))
+    (member (mime-entity-type/subtype
+	     (mime-raw-find-entity-from-node-id
+	      (cdr entity-node-id) message-info))
+	    mime-view-childrens-header-showing-Content-Type-list)
+    ))
 
 ;;; @@@ entity header filter
 ;;;
@@ -338,6 +334,21 @@ Each elements are regexp of field-name.")
 
 ;;; @@@ predicate function
 ;;;
+
+(defun mime-calist::field-match-method-as-default-rule (calist
+							field-type field-value)
+  (let ((s-field (assq field-type calist)))
+    (cond ((null s-field)
+	   (cons (cons field-type field-value) calist)
+	   )
+	  (t calist))))
+
+(define-calist-field-match-method
+  'header #'mime-calist::field-match-method-as-default-rule)
+
+(define-calist-field-match-method
+  'body #'mime-calist::field-match-method-as-default-rule)
+
 
 (defvar mime-preview-condition nil
   "Condition-tree about how to display entity.")
@@ -639,7 +650,7 @@ The compressed face will be piped to this command.")
       (setq mime-preview-original-major-mode mode)
       (setq major-mode 'mime-view-mode)
       (setq mode-name "MIME-View")
-      (mime-view-display-entity message-info message-info the-buf obuf)
+      (mime-view-display-message message-info the-buf obuf)
       (set-buffer-modified-p nil)
       )
     (setq buffer-read-only t)
@@ -648,20 +659,91 @@ The compressed face will be piped to this command.")
   (setq mime-preview-buffer obuf)
   )
 
+(defun mime-view-display-message (message-info ibuf obuf)
+  (let* ((start (mime-entity-point-min message-info))
+	 (end (mime-entity-point-max message-info))
+	 (media-type (mime-entity-media-type message-info))
+	 (media-subtype (mime-entity-media-subtype message-info))
+	 (params (mime-entity-parameters message-info))
+	 (encoding (mime-entity-encoding message-info))
+	 end-of-header e nb ne subj)
+    (set-buffer ibuf)
+    (goto-char start)
+    (setq end-of-header (if (re-search-forward "^$" nil t)
+			    (1+ (match-end 0))
+			  end))
+    (if (> end-of-header end)
+	(setq end-of-header end)
+      )
+    (save-restriction
+      (narrow-to-region start end)
+      (setq subj
+	    (eword-decode-string
+	     (mime-raw-get-subject params encoding)))
+      )
+    (set-buffer obuf)
+    (setq nb (point))
+    (narrow-to-region nb nb)
+    ;; Insert message-header
+    (save-restriction
+      (narrow-to-region (point)(point))
+      (insert-buffer-substring mime-raw-buffer start end-of-header)
+      (let ((f (cdr (assq mime-preview-original-major-mode
+			  mime-view-content-header-filter-alist))))
+	(if (functionp f)
+	    (funcall f)
+	  (mime-view-default-content-header-filter)
+	  ))
+      (run-hooks 'mime-view-content-header-filter-hook)
+      )
+    (let* ((situation
+	    (ctree-match-calist mime-preview-condition
+				(list* (cons 'type       media-type)
+				       (cons 'subtype    media-subtype)
+				       (cons 'encoding   encoding)
+				       (cons 'major-mode major-mode)
+				       params)))
+	   (message-button
+	    (cdr (assq 'message-button situation)))
+	   (body-presentation-method
+	    (cdr (assq 'body-presentation-method situation))))
+      (when message-button
+	(goto-char (point-max))
+	(mime-view-insert-entity-button message-info message-info subj)
+	)
+      (cond ((eq body-presentation-method 'with-filter)
+	     (let ((body-filter (cdr (assq 'body-filter situation))))
+	       (save-restriction
+		 (narrow-to-region (point-max)(point-max))
+		 (insert-buffer-substring mime-raw-buffer end-of-header end)
+		 (funcall body-filter situation)
+		 )))
+	    ((functionp body-presentation-method)
+	     (funcall body-presentation-method situation)
+	     )
+	    ((null (mime-entity-children message-info))
+	     (goto-char (point-max))
+	     (mime-view-insert-entity-button message-info message-info subj)
+	     ))
+      )
+    (setq ne (point-max))
+    (widen)
+    (put-text-property nb ne 'mime-view-raw-buffer ibuf)
+    (put-text-property nb ne 'mime-view-entity message-info)
+    (goto-char ne)
+    (let ((children (mime-entity-children message-info)))
+      (while children
+	(mime-view-display-entity (car children) message-info ibuf obuf)
+	(setq children (cdr children))
+	))))
+
 (defun mime-view-display-entity (entity message-info ibuf obuf)
-  "Display ENTITY."
   (let* ((start (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))
 	 (media-type (mime-entity-media-type entity))
 	 (media-subtype (mime-entity-media-subtype entity))
-	 (ctype (if media-type
-		    (if media-subtype
-			(format "%s/%s" media-type media-subtype)
-		      (symbol-name media-type)
-		      )))
 	 (params (mime-entity-parameters entity))
 	 (encoding (mime-entity-encoding entity))
-	 (entity-node-id (mime-entity-node-id entity))
 	 end-of-header e nb ne subj)
     (set-buffer ibuf)
     (goto-char start)
@@ -695,13 +777,6 @@ The compressed face will be piped to this command.")
 	      ))
 	  (run-hooks 'mime-view-content-header-filter-hook)
 	  ))
-    (if (and (mime-root-entity-p entity)
-	     (member
-	      ctype mime-view-content-button-visible-ctype-list))
-	(save-excursion
-	  (goto-char (point-max))
-	  (mime-view-insert-entity-button entity message-info subj)
-	  ))
     (let* ((situation
 	    (ctree-match-calist mime-preview-condition
 				(list* (cons 'type       media-type)
@@ -720,11 +795,6 @@ The compressed face will be piped to this command.")
 		 )))
 	    ((functionp body-presentation-method)
 	     (funcall body-presentation-method situation)
-	     )
-	    ((and (null entity-node-id)
-		  (null (mime-entity-children message-info)))
-	     (goto-char (point-max))
-	     (mime-view-insert-entity-button entity message-info subj)
 	     ))
       (when (mime-view-entity-separator-visible-p entity message-info)
 	(goto-char (point-max))

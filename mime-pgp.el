@@ -26,17 +26,23 @@
 
 ;;; Commentary:
 
-;;    This module is based on 2 drafts about PGP MIME integration:
+;;    This module is based on
 
-;;	- RFC 2015: "MIME Security with Pretty Good Privacy (PGP)"
-;;		by Michael Elkins <elkins@aero.org> (1996/6)
-;;
-;;	- draft-kazu-pgp-mime-00.txt: "PGP MIME Integration"
-;;		by Kazuhiko Yamamoto <kazu@is.aist-nara.ac.jp>
-;;			(1995/10; expired)
-;;
-;;    These drafts may be contrary to each other.  You should decide
-;;  which you support.  (Maybe you should use PGP/MIME)
+;;	[security-multipart] RFC 1847: "Security Multiparts for MIME:
+;;	    Multipart/Signed and Multipart/Encrypted" by
+;;          Jim Galvin <galvin@tis.com>, Sandy Murphy <sandy@tis.com>,
+;;	    Steve Crocker <crocker@cybercash.com> and
+;;          Ned Freed <ned@innosoft.com> (1995/10)
+
+;;	[PGP/MIME] RFC 2015: "MIME Security with Pretty Good Privacy
+;;	    (PGP)" by Michael Elkins <elkins@aero.org> (1996/6)
+
+;;	[PGP-kazu] draft-kazu-pgp-mime-00.txt: "PGP MIME Integration"
+;;	    by Kazuhiko Yamamoto <kazu@is.aist-nara.ac.jp> (1995/10;
+;;	    expired)
+
+;;  PGP/MIME and PGP-kazu may be contrary to each other.  You should
+;;  decide which you support (Maybe you should not use PGP-kazu).
 
 ;;; Code:
 
@@ -45,37 +51,34 @@
 
 ;;; @ internal method for application/pgp
 ;;;
-;;; It is based on draft-kazu-pgp-mime-00.txt
+;;; It is based on draft-kazu-pgp-mime-00.txt (PGP-kazu).
 
-(defun mime-process-application/pgp (beg end cal)
-  (let* ((cnum (mime-article/point-content-number beg))
-	 (p-win (or (get-buffer-window mime-view-buffer)
+(defun mime-method-for-application/pgp (start end cal)
+  (let* ((entity-number (mime-raw-point-to-entity-number start))
+	 (p-win (or (get-buffer-window mime-preview-buffer)
 		    (get-largest-window)))
-	 (new-name (format "%s-%s" (buffer-name) cnum))
+	 (new-name (format "%s-%s" (buffer-name) entity-number))
 	 (the-buf (current-buffer))
-	 (mother mime-view-buffer)
+	 (mother mime-preview-buffer)
 	 (mode major-mode)
 	 text-decoder)
     (set-buffer (get-buffer-create new-name))
     (erase-buffer)
-    (insert-buffer-substring the-buf beg end)
+    (insert-buffer-substring the-buf start end)
     (cond ((progn
 	     (goto-char (point-min))
-	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t)
-	     )
+	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
 	   (funcall (pgp-function 'verify))
 	   (goto-char (point-min))
 	   (delete-region
 	    (point-min)
 	    (and
 	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+\n\n")
-	     (match-end 0))
-	    )
+	     (match-end 0)))
 	   (delete-region
 	    (and (re-search-forward "^-+BEGIN PGP SIGNATURE-+")
 		 (match-beginning 0))
-	    (point-max)
-	    )
+	    (point-max))
 	   (goto-char (point-min))
 	   (while (re-search-forward "^- -" nil t)
 	     (replace-match "-")
@@ -86,8 +89,7 @@
 	   )
 	  ((progn
 	     (goto-char (point-min))
-	     (re-search-forward "^-+BEGIN PGP MESSAGE-+$" nil t)
-	     )
+	     (re-search-forward "^-+BEGIN PGP MESSAGE-+$" nil t))
 	   (as-binary-process (funcall (pgp-function 'decrypt)))
 	   (goto-char (point-min))
 	   (delete-region (point-min)
@@ -99,41 +101,44 @@
     (setq major-mode 'mime-show-message-mode)
     (setq mime-text-decoder text-decoder)
     (save-window-excursion (mime-view-mode mother))
-    (set-window-buffer p-win mime-view-buffer)
+    (set-window-buffer p-win mime-preview-buffer)
     ))
 
-(set-atype 'mime-acting-condition
-	   '((type . "application/pgp")
-	     (method . mime-process-application/pgp)
-	     ))
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . application)(subtype . pgp)
+			   (message-button . visible)))
 
 (set-atype 'mime-acting-condition
-	   '((type . "text/x-pgp")
-	     (method . mime-process-application/pgp)
-	     ))
+	   '((type . application)(subtype . pgp)
+	     (method . mime-method-for-application/pgp)))
+
+(set-atype 'mime-acting-condition
+	   '((type . text)(subtype . x-pgp)
+	     (method . mime-method-for-application/pgp)))
 
 
 ;;; @ Internal method for multipart/signed
 ;;;
+;;; It is based on RFC 1847 (security-multipart).
 
-(defun mime-check-multipart/signed (beg end cal)
-  "Internal method to check multipart/signed."
-  (let* ((rcnum (reverse (mime-article/point-content-number beg)))
-	 (oinfo (mime-article/rcnum-to-cinfo (cons '1 rcnum)
-					     mime-raw-content-info))
-	 )
-    (mime-display-content oinfo (cdr (assq 'mode cal)))
-    ))
+(defun mime-method-to-verify-multipart/signed (start end cal)
+  "Internal method to verify multipart/signed."
+  (mime-raw-play-entity
+   ;; entity-info of signature
+   (mime-raw-find-entity-from-node-id
+    ;; entity-node-id of signature
+    (cons 1 (mime-raw-point-to-entity-node-id start)))
+   (cdr (assq 'mode cal)) ; play-mode
+   ))
 
 (set-atype 'mime-acting-condition
-	   '((type . "multipart/signed")
-	     (method . mime-check-multipart/signed)
-	     ))
+	   '((type . multipart)(subtype . signed)
+	     (method . mime-method-to-verify-multipart/signed)))
 
 
 ;;; @ Internal method for application/pgp-signature
 ;;;
-;;; It is based on RFC 2015.
+;;; It is based on RFC 2015 (PGP/MIME).
 
 (defvar mime-pgp-command "pgp"
   "*Name of the PGP command.")
@@ -172,126 +177,102 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 		 (t "Bad signature")))
 	  ))))
 
-(defun mime-pgp-check-application/pgp-signature (beg end cal)
+(defun mime-method-to-verify-application/pgp-signature (start end cal)
   "Internal method to check PGP/MIME signature."
   (let* ((encoding (cdr (assq 'encoding cal)))
-	 (cnum (mime-article/point-content-number beg))
-	 (rcnum (reverse cnum))
-	 (rmcnum (cdr rcnum))
-	 (knum (car rcnum))
+	 (entity-node-id (mime-raw-point-to-entity-node-id start))
+	 (mother-node-id (cdr entity-node-id))
+	 (knum (car entity-node-id))
 	 (onum (if (> knum 0)
 		   (1- knum)
 		 (1+ knum)))
-	 (raw-buf (current-buffer))
-	 (oinfo (mime-article/rcnum-to-cinfo (cons onum rmcnum)
-					     mime-raw-content-info))
-	 kbuf
+	 (oinfo (mime-raw-find-entity-from-node-id
+		 (cons onum mother-node-id) mime-raw-message-info))
 	 (basename (expand-file-name "tm" mime-temp-directory))
 	 (orig-file (make-temp-name basename))
 	 (sig-file (concat orig-file ".sig"))
 	 )
-    (save-excursion
-      (let ((p-min (mime-entity-info-point-min oinfo))
-	    (p-max (mime-entity-info-point-max oinfo))
-	    )
-	(set-buffer (get-buffer-create mime-temp-buffer-name))
-	(insert-buffer-substring raw-buf p-min p-max)
-	)
-      (goto-char (point-min))
-      (while (re-search-forward "\n" nil t)
-	(replace-match "\r\n")
-	)
-      (as-binary-output-file (write-region (point-min)(point-max) orig-file))
-      (kill-buffer (current-buffer))
-      )
+    (mime-raw-write-region (mime-entity-point-min oinfo)
+			   (mime-entity-point-max oinfo)
+			   orig-file)
     (save-excursion (mime-show-echo-buffer))
-    (save-excursion
-      (let ((p-min (save-excursion
-		     (goto-char beg)
-		     (and (search-forward "\n\n")
-			  (match-end 0))
-		     )))
-	(set-buffer (setq kbuf (get-buffer-create mime-temp-buffer-name)))
-	(insert-buffer-substring raw-buf p-min end)
-	)
-      (mime-decode-region (point-min)(point-max) encoding)
-      (as-binary-output-file (write-region (point-min)(point-max) sig-file))
-      (or (mime-pgp-check-signature mime-echo-buffer-name orig-file)
-	  (let (pgp-id)
-	    (save-excursion
-	      (set-buffer mime-echo-buffer-name)
-	      (goto-char (point-min))
-	      (let ((regexp (cdr (assq (or mime-pgp-default-language 'en)
-				       mime-pgp-key-expected-regexp-alist))))
-		(cond ((not (stringp regexp))
-		       (message
-			"Please specify right regexp for specified language")
-		       )
-		      ((re-search-forward regexp nil t)
-		       (setq pgp-id
-			     (concat "0x" (buffer-substring-no-properties
-					   (match-beginning 1)
-					   (match-end 1))))
-		       ))))
-	    (if (and pgp-id
-		     (y-or-n-p
-		      (format "Key %s not found; attempt to fetch? " pgp-id))
+    (mime-write-decoded-region (save-excursion
+				 (goto-char start)
+				 (and (search-forward "\n\n")
+				      (match-end 0))
+				 ) end sig-file encoding)
+    (or (mime-pgp-check-signature mime-echo-buffer-name orig-file)
+	(let (pgp-id)
+	  (save-excursion
+	    (set-buffer mime-echo-buffer-name)
+	    (goto-char (point-min))
+	    (let ((regexp (cdr (assq (or mime-pgp-default-language 'en)
+				     mime-pgp-key-expected-regexp-alist))))
+	      (cond ((not (stringp regexp))
+		     (message
+		      "Please specify right regexp for specified language")
 		     )
-		(progn
-		  (funcall (pgp-function 'fetch-key) (cons nil pgp-id))
-		  (mime-pgp-check-signature mime-echo-buffer-name orig-file)
-		  ))
-	    ))
-      (let ((other-window-scroll-buffer mime-echo-buffer-name))
-	(scroll-other-window 8)
-	)
-      (kill-buffer kbuf)
-      (delete-file orig-file)
-      (delete-file sig-file)
-      )))
+		    ((re-search-forward regexp nil t)
+		     (setq pgp-id
+			   (concat "0x" (buffer-substring-no-properties
+					 (match-beginning 1)
+					 (match-end 1))))
+		     ))))
+	  (if (and pgp-id
+		   (y-or-n-p
+		    (format "Key %s not found; attempt to fetch? " pgp-id))
+		   )
+	      (progn
+		(funcall (pgp-function 'fetch-key) (cons nil pgp-id))
+		(mime-pgp-check-signature mime-echo-buffer-name orig-file)
+		))
+	  ))
+    (let ((other-window-scroll-buffer mime-echo-buffer-name))
+      (scroll-other-window 8)
+      )
+    (delete-file orig-file)
+    (delete-file sig-file)
+    ))
 
 (set-atype 'mime-acting-condition
-	   '((type . "application/pgp-signature")
-	     (method . mime-pgp-check-application/pgp-signature)
-	     ))
+	   '((type . application)(subtype . pgp-signature)
+	     (method . mime-method-to-verify-application/pgp-signature)))
 
 
 ;;; @ Internal method for application/pgp-encrypted
 ;;;
-;;; It is based on RFC 2015.
+;;; It is based on RFC 2015 (PGP/MIME).
 
-(defun mime-pgp-decrypt-application/pgp-encrypted (beg end cal)
-  (let* ((cnum (mime-article/point-content-number beg))
-	 (rcnum (reverse cnum))
-	 (rmcnum (cdr rcnum))
-	 (knum (car rcnum))
+(defun mime-method-to-decrypt-application/pgp-encrypted (start end cal)
+  (let* ((entity-node-id (mime-raw-point-to-entity-node-id start))
+	 (mother-node-id (cdr entity-node-id))
+	 (knum (car entity-node-id))
 	 (onum (if (> knum 0)
 		   (1- knum)
 		 (1+ knum)))
-	 (oinfo (mime-article/rcnum-to-cinfo (cons onum rmcnum)
-					     mime-raw-content-info))
-	 (obeg (mime-entity-info-point-min oinfo))
-	 (oend (mime-entity-info-point-max oinfo))
+	 (oinfo (mime-raw-find-entity-from-node-id
+		 (cons onum mother-node-id) mime-raw-message-info))
+	 (obeg (mime-entity-point-min oinfo))
+	 (oend (mime-entity-point-max oinfo))
 	 )
-    (mime-process-application/pgp obeg oend cal)
+    (mime-method-for-application/pgp obeg oend cal)
     ))
 
 (set-atype 'mime-acting-condition
-	   '((type . "application/pgp-encrypted")
-	     (method . mime-pgp-decrypt-application/pgp-encrypted)
-	     ))
+	   '((type . application)(subtype . pgp-encrypted)
+	     (method . mime-method-to-decrypt-application/pgp-encrypted)))
 
 
 ;;; @ Internal method for application/pgp-keys
 ;;;
-;;; It is based on RFC 2015.
+;;; It is based on RFC 2015 (PGP/MIME).
 
-(defun mime-pgp-add-keys (beg end cal)
-  (let* ((cnum (mime-article/point-content-number beg))
-	 (new-name (format "%s-%s" (buffer-name) cnum))
+(defun mime-method-to-add-application/pgp-keys (start end cal)
+  (let* ((entity-number (mime-raw-point-to-entity-number start))
+	 (new-name (format "%s-%s" (buffer-name) entity-number))
 	 (encoding (cdr (assq 'encoding cal)))
 	 str)
-    (setq str (buffer-substring beg end))
+    (setq str (buffer-substring start end))
     (switch-to-buffer new-name)
     (setq buffer-read-only nil)
     (erase-buffer)
@@ -306,9 +287,8 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
     ))
 
 (set-atype 'mime-acting-condition
-	   '((type . "application/pgp-keys")
-	     (method . mime-pgp-add-keys)
-	     ))
+	   '((type . application)(subtype . pgp-keys)
+	     (method . mime-method-to-add-application/pgp-keys)))
 
 	 
 ;;; @ end
