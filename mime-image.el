@@ -146,7 +146,6 @@
 
 (defun mime-preview/filter-for-image (ctype params encoding)
   (let* ((mode mime::preview/original-major-mode)
-	 (m (assq mode mime-view-code-converter-alist))
 	 (charset (assoc "charset" params))
 	 (beg (point-min)) (end (point-max))
 	 )
