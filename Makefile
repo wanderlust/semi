@@ -3,7 +3,8 @@
 #
 
 PACKAGE = semi
-VERSION = 1.11.0
+API	= 1.12
+RELEASE = 0
 
 TAR	= tar
 RM	= /bin/rm -f
@@ -20,6 +21,9 @@ PACKAGEDIR = NONE
 VERSION_SPECIFIC_LISPDIR = NONE
 
 GOMI	= *.elc
+
+VERSION	= $(API).$(RELEASE)
+ARC_DIR = /pub/GNU/elisp/semi/semi-$(API)-for-flim-1.12
 
 
 elc:
@@ -48,15 +52,17 @@ clean:
 
 tar:
 	cvs commit
-	sh -c 'cvs tag -RF $(PACKAGE)-`echo $(VERSION) \
-				| sed s/\\\\./_/ | sed s/\\\\./_/`; \
+	sh -c 'cvs tag -RF $(PACKAGE)-`echo $(VERSION) | tr . _`; \
 	cd /tmp; \
 	cvs -d :pserver:anonymous@chamonix.jaist.ac.jp:/hare/cvs/root \
 		export -d $(PACKAGE)-$(VERSION) \
-		-r $(PACKAGE)-`echo $(VERSION) \
-			| sed s/\\\\./_/ | sed s/\\\\./_/` semi'
+		-r $(PACKAGE)-`echo $(VERSION) | tr . _`
+		semi'
 	$(RM) /tmp/$(PACKAGE)-$(VERSION)/ftp.in
 	cd /tmp; $(TAR) cvzf $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION)
 	cd /tmp; $(RM) -r $(PACKAGE)-$(VERSION)
-	sed "s/VERSION/$(VERSION)/" < ftp.in \
-		| sed "s/PACKAGE/$(PACKAGE)/" > ftp
+	sed "s/VERSION/$(VERSION)/" < ftp.in | sed "s/API/$(API)/" > ftp
+
+release:
+	-$(RM) $(ARC_DIR)/$(PACKAGE)-$(VERSION).tar.gz
+	mv /tmp/$(PACKAGE)-$(VERSION).tar.gz $(ARC_DIR)
