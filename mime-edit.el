@@ -441,10 +441,11 @@ If encoding is nil, it is determined from its contents."
     (iso-2022-jp	7 "base64")
     (iso-2022-kr	7 "base64")
     (euc-kr		8 "base64")
-    (cn-gb2312		8 "quoted-printable")
+    (cn-gb2312		8 "base64")
+    (gb2312		8 "base64")
     (cn-big5		8 "base64")
-    (gb2312		8 "quoted-printable")
     (big5		8 "base64")
+    (shift_jis		8 "base64")
     (iso-2022-jp-2	7 "base64")
     (iso-2022-int-1	7 "base64")
     ))
@@ -463,23 +464,6 @@ If encoding is nil, it is determined from its contents."
   (mime-encoding-name mime-transfer-level 'not-omit)
   "A string formatted version of mime-transfer-level")
 (make-variable-buffer-local 'mime-transfer-level-string)
-
-(defun mime-make-charset-default-encoding-alist (transfer-level)
-  (mapcar (function
-	   (lambda (charset-type)
-	     (let ((charset  (car charset-type))
-		   (type     (nth 1 charset-type))
-		   (encoding (nth 2 charset-type))
-		   )
-	       (if (<= type transfer-level)
-		   (cons charset (mime-encoding-name type))
-		 (cons charset encoding)
-		 ))))
-	  mime-charset-type-list))
-
-(defvar mime-edit-charset-default-encoding-alist
-  (mime-make-charset-default-encoding-alist mime-transfer-level))
-(make-variable-buffer-local 'mime-edit-charset-default-encoding-alist)
 
 
 ;;; @@ about message inserting
@@ -531,16 +515,6 @@ If it is not specified for a major-mode,
 (defvar mime-edit-split-message-sender-alist nil)
 
 (defvar mime-edit-news-reply-mode-server-running nil)
-
-
-;;; @@ about PGP
-;;;
-
-(defvar mime-edit-signing-type 'pgp-mime
-  "*PGP signing type (pgp-mime, pgp-kazu or nil).")
-
-(defvar mime-edit-encrypting-type 'pgp-mime
-  "*PGP encrypting type (pgp-mime, pgp-kazu or nil).")
 
 
 ;;; @@ about tag
@@ -677,9 +651,9 @@ Tspecials means any character that matches with it in header must be quoted.")
 (define-key mime-edit-mode-enclosure-map
   "\C-d" 'mime-edit-enclose-digest-region)
 (define-key mime-edit-mode-enclosure-map
-  "\C-s" 'mime-edit-enclose-signed-region)
+  "\C-s" 'mime-edit-enclose-pgp-signed-region)
 (define-key mime-edit-mode-enclosure-map
-  "\C-e" 'mime-edit-enclose-encrypted-region)
+  "\C-e" 'mime-edit-enclose-pgp-encrypted-region)
 (define-key mime-edit-mode-enclosure-map
   "\C-q" 'mime-edit-enclose-quote-region)
 
@@ -707,8 +681,8 @@ Tspecials means any character that matches with it in header must be quoted.")
     (parallel	"Enclose as parallel"	mime-edit-enclose-parallel-region)
     (mixed	"Enclose as serial"	mime-edit-enclose-mixed-region)
     (digest	"Enclose as digest"	mime-edit-enclose-digest-region)
-    (signed	"Enclose as signed"	mime-edit-enclose-signed-region)
-    (encrypted	"Enclose as encrypted"	mime-edit-enclose-encrypted-region)
+    (signed	"Enclose as signed"	mime-edit-enclose-pgp-signed-region)
+    (encrypted	"Enclose as encrypted"	mime-edit-enclose-pgp-encrypted-region)
     (quote	"Verbatim region"	mime-edit-enclose-quote-region)
     (key	"Insert Public Key"	mime-edit-insert-key)
     (split	"About split"           mime-edit-set-split)
@@ -826,24 +800,27 @@ Following commands are available in addition to major mode commands:
 \\[mime-edit-insert-tag]	insert a new MIME tag.
 
 \[make enclosure (maybe multipart)\]
-\\[mime-edit-enclose-alternative-region]	enclose as multipart/alternative.
-\\[mime-edit-enclose-parallel-region]	enclose as multipart/parallel.
-\\[mime-edit-enclose-mixed-region]	enclose as multipart/mixed.
-\\[mime-edit-enclose-digest-region]	enclose as multipart/digest.
-\\[mime-edit-enclose-signed-region]	enclose as PGP signed.
-\\[mime-edit-enclose-encrypted-region]	enclose as PGP encrypted.
-\\[mime-edit-enclose-quote-region]	enclose as verbose mode (to avoid to expand tags)
+\\[mime-edit-enclose-alternative-region]   enclose as multipart/alternative.
+\\[mime-edit-enclose-parallel-region]	   enclose as multipart/parallel.
+\\[mime-edit-enclose-mixed-region]	   enclose as multipart/mixed.
+\\[mime-edit-enclose-digest-region]	   enclose as multipart/digest.
+\\[mime-edit-enclose-pgp-signed-region]	   enclose as PGP signed.
+\\[mime-edit-enclose-pgp-encrypted-region] enclose as PGP encrypted.
+\\[mime-edit-enclose-quote-region]	   enclose as verbose mode
+					   (to avoid to expand tags)
 
 \[other commands\]
 \\[mime-edit-set-transfer-level-7bit]	set transfer-level as 7.
 \\[mime-edit-set-transfer-level-8bit]	set transfer-level as 8.
-\\[mime-edit-set-split]	set message splitting mode.
-\\[mime-edit-set-sign]	set PGP-sign mode.
-\\[mime-edit-set-encrypt]	set PGP-encryption mode.
-\\[mime-edit-preview-message]	preview editing MIME message.
-\\[mime-edit-exit]	exit and translate into a MIME compliant message.
-\\[mime-edit-help]	show this help.
-\\[mime-edit-maybe-translate]	exit and translate if in MIME mode, then split.
+\\[mime-edit-set-split]			set message splitting mode.
+\\[mime-edit-set-sign]			set PGP-sign mode.
+\\[mime-edit-set-encrypt]		set PGP-encryption mode.
+\\[mime-edit-preview-message]		preview editing MIME message.
+\\[mime-edit-exit]			exit and translate into a MIME
+					compliant message.
+\\[mime-edit-help]			show this help.
+\\[mime-edit-maybe-translate]		exit and translate if in MIME mode,
+					then split.
 
 Additional commands are available in some major modes:
 C-c C-c		exit, translate and run the original command.
@@ -1620,21 +1597,18 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 	  (cond ((string-equal type "quote")
 		 (mime-edit-enquote-region bb eb)
 		 )
-		((string-equal type "signed")
-		 (cond ((eq mime-edit-signing-type 'pgp-mime)
-			(mime-edit-sign-pgp-mime bb eb boundary)
-			)
-		       ((eq mime-edit-signing-type 'pgp-kazu)
-			(mime-edit-sign-pgp-kazu bb eb boundary)
-			))
+		((string-equal type "pgp-signed")
+		 (mime-edit-sign-pgp-mime bb eb boundary)
 		 )
-		((string-equal type "encrypted")
-		 (cond ((eq mime-edit-encrypting-type 'pgp-mime)
-			(mime-edit-encrypt-pgp-mime bb eb boundary)
-			)
-		       ((eq mime-edit-encrypting-type 'pgp-kazu)
-			(mime-edit-encrypt-pgp-kazu bb eb boundary)
-			)))
+		((string-equal type "pgp-encrypted")
+		 (mime-edit-encrypt-pgp-mime bb eb boundary)
+		 )
+		((string-equal type "kazu-signed")
+		 (mime-edit-sign-pgp-kazu bb eb boundary)
+		 )
+		((string-equal type "kazu-encrypted")
+		 (mime-edit-encrypt-pgp-kazu bb eb boundary)
+		 )
 		(t
 		 (setq boundary
 		       (nth 2 (mime-edit-translate-region bb eb
@@ -1773,9 +1747,7 @@ Content-Transfer-Encoding: 7bit
       (let* ((ret
 	      (mime-edit-translate-region beg end boundary))
 	     (ctype    (car ret))
-	     (encoding (nth 1 ret))
-	     (parts    (nth 3 ret))
-	     )
+	     (encoding (nth 1 ret)))
 	(goto-char beg)
 	(insert (format "Content-Type: %s\n" ctype))
 	(if encoding
@@ -1795,10 +1767,9 @@ Content-Transfer-Encoding: 7bit
 
 (defun mime-edit-encrypt-pgp-kazu (beg end boundary)
   (save-excursion
-    (let (from recipients header)
+    (let (recipients header)
       (let ((ret (mime-edit-make-encrypt-recipient-header)))
-	(setq from (aref ret 0)
-	      recipients (aref ret 1)
+	(setq recipients (aref ret 1)
 	      header (aref ret 2))
 	)
       (save-restriction
@@ -1806,9 +1777,7 @@ Content-Transfer-Encoding: 7bit
 	(let* ((ret
 		(mime-edit-translate-region beg end boundary))
 	       (ctype    (car ret))
-	       (encoding (nth 1 ret))
-	       (parts    (nth 3 ret))
-	       )
+	       (encoding (nth 1 ret)))
 	  (goto-char beg)
 	  (insert header)
 	  (insert (format "Content-Type: %s\n" ctype))
@@ -2043,12 +2012,17 @@ Content-Transfer-Encoding: 7bit
 	;; Define encoding and encode text if necessary.
 	(or encoding	;Encoding is not specified.
 	    (let* ((encoding
-		    (cdr
-		     (assq charset
-			   mime-edit-charset-default-encoding-alist)
-		     ))
-		   (beg (mime-edit-content-beginning))
-		   )
+		    (let (bits conv)
+		      (let ((ret (cdr (assq charset mime-charset-type-list))))
+			(if ret
+			    (setq bits (car ret)
+				  conv (nth 1 ret))
+			  (setq bits 8
+				conv "quoted-printable")))
+		      (if (<= bits mime-transfer-level)
+			  (mime-encoding-name bits)
+			conv)))
+		   (beg (mime-edit-content-beginning)))
 	      (encode-mime-charset-region beg (mime-edit-content-end)
 					  charset)
 	      ;; Protect "From " in beginning of line
@@ -2215,19 +2189,25 @@ and insert data encoded as ENCODING."
   (mime-edit-enclose-region-internal 'alternative beg end)
   )
 
-(defun mime-edit-enclose-signed-region (beg end)
+(defun mime-edit-enclose-pgp-signed-region (beg end)
   (interactive "*r")
-  (if mime-edit-signing-type
-      (mime-edit-enclose-region-internal 'signed beg end)
-    (message "Please specify signing type.")
-    ))
+  (mime-edit-enclose-region-internal 'pgp-signed beg end)
+  )
 
-(defun mime-edit-enclose-encrypted-region (beg end)
+(defun mime-edit-enclose-pgp-encrypted-region (beg end)
   (interactive "*r")
-  (if mime-edit-signing-type
-      (mime-edit-enclose-region-internal 'encrypted beg end)
-    (message "Please specify encrypting type.")
-    ))
+  (mime-edit-enclose-region-internal 'pgp-encrypted beg end)
+  )
+
+(defun mime-edit-enclose-kazu-signed-region (beg end)
+  (interactive "*r")
+  (mime-edit-enclose-region-internal 'kazu-signed beg end)
+  )
+
+(defun mime-edit-enclose-kazu-encrypted-region (beg end)
+  (interactive "*r")
+  (mime-edit-enclose-region-internal 'kazu-encrypted beg end)
+  )
 
 (defun mime-edit-insert-key (&optional arg)
   "Insert a pgp public key."
@@ -2263,8 +2243,6 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
 	(setq mime-transfer-level 8)
       (setq mime-transfer-level 7)
       ))
-  (setq mime-edit-charset-default-encoding-alist
-	(mime-make-charset-default-encoding-alist mime-transfer-level))
   (message (format "Current transfer-level is %d bit"
 		   mime-transfer-level))
   (setq mime-transfer-level-string
@@ -2286,18 +2264,18 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
 ;;; @ pgp
 ;;;
 
+(defvar mime-edit-pgp-processing nil)
+(make-variable-buffer-local 'mime-edit-pgp-processing)
+
 (defun mime-edit-set-sign (arg)
   (interactive
    (list
     (y-or-n-p "Do you want to sign? ")
     ))
   (if arg
-      (if mime-edit-signing-type
-	  (progn
-	    (setq mime-edit-pgp-processing 'sign)
-	    (message "This message will be signed.")
-	    )
-	(message "Please specify signing type.")
+      (progn
+	(setq mime-edit-pgp-processing 'sign)
+	(message "This message will be signed.")
 	)
     (if (eq mime-edit-pgp-processing 'sign)
 	(setq mime-edit-pgp-processing nil)
@@ -2311,21 +2289,15 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
     (y-or-n-p "Do you want to encrypt? ")
     ))
   (if arg
-      (if mime-edit-encrypting-type
-	  (progn
-	    (setq mime-edit-pgp-processing 'encrypt)
-	    (message "This message will be encrypt.")
-	    )
-	(message "Please specify encrypting type.")
+      (progn
+	(setq mime-edit-pgp-processing 'encrypt)
+	(message "This message will be encrypt.")
 	)
     (if (eq mime-edit-pgp-processing 'encrypt)
 	(setq mime-edit-pgp-processing nil)
       )
     (message "This message will not be encrypt.")
     ))
-
-(defvar mime-edit-pgp-processing nil)
-(make-variable-buffer-local 'mime-edit-pgp-processing)
 
 (defun mime-edit-pgp-enclose-buffer ()
   (let ((beg (save-excursion
@@ -2337,10 +2309,10 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
 	)
     (if beg
 	(cond ((eq mime-edit-pgp-processing 'sign)
-	       (mime-edit-enclose-signed-region beg end)
+	       (mime-edit-enclose-pgp-signed-region beg end)
 	       )
 	      ((eq mime-edit-pgp-processing 'encrypt)
-	       (mime-edit-enclose-encrypted-region beg end)
+	       (mime-edit-enclose-pgp-encrypted-region beg end)
 	       ))
       )))
 

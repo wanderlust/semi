@@ -25,7 +25,7 @@
 ;;; Code:
 
 (require 'mailcrypt)
-(load "mc-pgp")
+(eval-and-compile (load "mc-pgp"))
 
 (defun mime-mc-pgp-generic-parser (result)
   (let ((ret (mc-pgp-generic-parser result)))
