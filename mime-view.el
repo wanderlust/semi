@@ -602,12 +602,19 @@ If optional argument MESSAGE-INFO is not specified,
 		  )))
 	    t))))
 
-(defsubst mime-raw-entity-node-id-to-entity-info (entity-number
+(defun mime-raw-point-to-entity-node-id (position &optional message-info)
+  "Return entity-node-id from POTION in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (reverse (mime-raw-point-to-entity-number position message-info)))
+
+(defsubst mime-raw-entity-node-id-to-entity-info (entity-node-id
 						  &optional message-info)
   "Return entity-info from ENTITY-NODE-ID in mime-raw-buffer.
 If optional argument MESSAGE-INFO is not specified,
 `mime-raw-message-info' is used."
-  (mime-raw-entity-number-to-entity-info (reverse entity-number) message-info))
+  (mime-raw-entity-number-to-entity-info (reverse entity-node-id)
+					 message-info))
 
 (defun mime-raw-entity-number-to-entity-info (entity-number
 					      &optional message-info)
