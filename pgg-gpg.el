@@ -1,6 +1,6 @@
 ;;; pgg-gpg.el --- GnuPG support for PGG.
 
-;; Copyright (C) 1999,2000 Daiki Ueno
+;; Copyright (C) 1999,2000 Free Software Foundation, Inc.
 
 ;; Author: Daiki Ueno <ueno@unixuser.org>
 ;; Created: 1999/10/28
@@ -47,6 +47,9 @@
 (defvar pgg-gpg-user-id nil
   "GnuPG ID of your default identity.")
 
+(defvar pgg-gpg-messages-coding-system pgg-messages-coding-system
+  "Coding system used when reading from a GnuPG external process.")
+
 (defvar pgg-scheme-gpg-instance nil)
 
 ;;;###autoload
@@ -77,6 +80,9 @@
 	  (setq process
 		(apply #'binary-start-process "*GnuPG*" errors-buffer
 		       program args))
+	  (if (fboundp 'set-process-coding-system)
+	      (set-process-coding-system process
+					 pgg-gpg-messages-coding-system))
 	  (set-process-sentinel process #'ignore)
 	  (when passphrase
 	    (process-send-string process (concat passphrase "\n")))
@@ -186,6 +192,7 @@
   (let ((args '("--batch" "--verify")))
     (when (stringp signature)
       (setq args (append args (list signature))))
+    (setq args (append args '("-")))
     (pgg-gpg-process-region start end nil pgg-gpg-program args)
     (with-current-buffer pgg-errors-buffer
       (goto-char (point-min))
