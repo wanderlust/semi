@@ -179,7 +179,7 @@ FUNCTION.")
 
 (mapcar (function
 	 (lambda (method)
-	   (autoload (second method)(third method))
+	   (autoload (cadr method)(third method))
 	   ))
 	pgp-function-alist)
 
