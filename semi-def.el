@@ -173,11 +173,12 @@
     ;; for mime-pgp
     (verify		pgg-verify-region		"pgg")
     (decrypt		pgg-decrypt-region		"pgg")
+    (snarf-keys		pgg-snarf-keys-region		"pgg")
+    (lookup-key		pgg-lookup-key-string		"pgg")
     ;; for mime-edit
     (sign		pgg-sign-region			"pgg")
     (encrypt		pgg-encrypt-region		"pgg")
     (insert-key		pgg-insert-key			"pgg")
-    (snarf-keys		pgg-snarf-keys-region		"pgg")
     )
   "Alist of service names vs. corresponding functions and its filenames.
 Each element looks like (SERVICE FUNCTION FILE).
