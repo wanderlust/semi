@@ -51,6 +51,9 @@
 (defvar pgg-gpg-messages-coding-system pgg-messages-coding-system
   "Coding system used when reading from a GnuPG external process.")
 
+(defvar pgg-gpg-messages-locale pgg-messages-locale
+  "Locale set before running a GnuPG external process.")
+
 (defvar pgg-scheme-gpg-instance nil)
 
 ;;;###autoload
@@ -72,7 +75,11 @@
 	 (output-buffer pgg-output-buffer)
 	 (errors-buffer pgg-errors-buffer)
 	 (process-connection-type nil)
+	 (process-environment process-environment)
 	 process status exit-status)
+    (when pgg-gpg-messages-locale
+      (setq process-environment (copy-sequence process-environment))
+      (setenv "LC_ALL" pgg-gpg-messages-locale))
     (with-current-buffer (get-buffer-create errors-buffer)
       (buffer-disable-undo)
       (erase-buffer))
@@ -200,9 +207,7 @@
       (goto-char (point-min))
       (prog1 (re-search-forward "^\\[GNUPG:] GOODSIG\\>" nil t)
 	(goto-char (point-min))
-	(delete-matching-lines "^warning\\|\\[GNUPG:]")
-	(set-buffer pgg-output-buffer)
-	(insert-buffer-substring pgg-errors-buffer)))))
+	(delete-matching-lines "^\\[GNUPG:] ")))))
 
 (luna-define-method pgg-scheme-insert-key ((scheme pgg-scheme-gpg))
   (let* ((pgg-gpg-user-id (or pgg-gpg-user-id pgg-default-user-id))
@@ -232,9 +237,9 @@
 			 (aref status 11)))
 	      (if (zerop (aref status 9))
 		  ""
-		"\tSecret keys are imported.\n")))
-    (append-to-buffer pgg-output-buffer (point-min)(point-max))
-    (pgg-process-when-success)))
+		"\tSecret keys are imported.\n"))
+      (append-to-buffer pgg-errors-buffer (point-min)(point-max))
+      t)))
 
 (provide 'pgg-gpg)
 

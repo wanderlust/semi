@@ -61,6 +61,9 @@
 (defvar pgg-messages-coding-system nil
   "Coding system used when reading from a PGP external process.")
 
+(defvar pgg-messages-locale nil
+  "Locale set before running a PGP external process.")
+
 (defvar pgg-status-buffer " *PGG status*")
 (defvar pgg-errors-buffer " *PGG errors*")
 (defvar pgg-output-buffer " *PGG output*")

@@ -1,3 +1,18 @@
+2003-12-17  Daiki Ueno  <ueno@unixuser.org>
+
+	* pgg-gpg.el (pgg-gpg-messages-locale): New user option.
+	(pgg-gpg-process-region): Set environment variable LC_ALL when
+	pgg-gpg-messages-locale is specified.
+	(pgg-scheme-verify-region): Don't copy messages from
+	pgg-errors-buffer to pgg-output-buffer.
+	(pgg-scheme-snarf-keys-region): Ditto.
+
+	* pgg-def.el (pgg-messages-locale): New user option.
+
+	* mime-pgp.el (mime-verify-application/pgp-signature): Copy
+	messages from pgg-errors-buffer.
+	(mime-add-application/pgp-keys): Ditto.
+
 2003-12-16  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* mime-edit.el (mime-edit-normalize-body): Don't use the
