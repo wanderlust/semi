@@ -54,8 +54,8 @@
   :group 'mime
   :type 'file)
 
-(defcustom mime-mc-ommit-micalg nil
-  "Non-nil value means to ommit the micalg parameter for multipart/signed.
+(defcustom mime-mc-omit-micalg nil
+  "Non-nil value means to omit the micalg parameter for multipart/signed.
 See draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME) for more information."
   :group 'mime
   :type 'boolean)
@@ -332,7 +332,7 @@ Content-Transfer-Encoding: 7bit
 	      (setq boundary
 		    (concat "gpg-" (substring boundary (match-end 0))))
 	    )
-	  (if (not (or mime-mc-ommit-micalg
+	  (if (not (or mime-mc-omit-micalg
 		       (setq micalg
 			     (cdr (assoc (cdr key) mime-mc-micalg-alist)))
 		       ))
@@ -364,7 +364,7 @@ Content-Transfer-Encoding: 7bit
 --[[multipart/signed; protocol=\"application/pgp-signature\";
  boundary=\"%s\"%s][7bit]]\n"
 			 boundary
-			 (if mime-mc-ommit-micalg
+			 (if mime-mc-omit-micalg
 			     ""
 			   (concat "; micalg=pgp-" micalg)
 			   )
@@ -594,7 +594,7 @@ Content-Transfer-Encoding: 7bit
 	(setq args (cons (format "+comment=\"%s\"" mc-pgp50-comment) args))
       )
     (if (and boundary
-	     (not (or mime-mc-ommit-micalg
+	     (not (or mime-mc-omit-micalg
 		      (setq micalg
 			    (cdr (assoc (cdr key) mime-mc-micalg-alist)))
 		      )))
@@ -622,7 +622,7 @@ Content-Transfer-Encoding: 7bit
 --[[multipart/signed; protocol=\"application/pgp-signature\";
  boundary=\"%s\"%s][7bit]]\n"
 			 boundary
-			 (if mime-mc-ommit-micalg
+			 (if mime-mc-omit-micalg
 			     ""
 			   (concat "; micalg=pgp-" micalg)
 			   )
@@ -758,7 +758,7 @@ Content-Transfer-Encoding: 7bit
 --[[multipart/signed; protocol=\"application/pgp-signature\";
  boundary=\"%s\"%s][7bit]]\n"
 			 boundary
-			 (if mime-mc-ommit-micalg
+			 (if mime-mc-omit-micalg
 			     ""
 			   "; micalg=pgp-md5"
 			   )
