@@ -65,8 +65,8 @@ See also variable `mime-charset-coding-system-alist'."
       (mime-text-decode-buffer charset)
       ))
 
-(defun mime-text-decode-body (situation)
-  "Decode current buffer as text body.
+(defun mime-text-insert-decoded-body (entity situation)
+  "Insert text body of ENTITY in SITUATION.
 It decodes MIME-encoding then code-converts as MIME-charset.
 MIME-encoding is value of field 'encoding of SITUATION.  It must be
 'nil or string.  MIME-charset is value of field \"charset\" of
@@ -74,6 +74,9 @@ SITUATION.  It must be symbol.
 This function calls text-decoder for MIME-charset specified by buffer
 local variable `mime-text-decoder' and variable
 `mime-text-decoder-alist'."
+  (insert-buffer-substring mime-raw-buffer
+			   (mime-entity-body-start entity)
+			   (mime-entity-body-end entity))
   (let ((encoding (cdr (assq 'encoding situation))))
     (mime-decode-region (point-min) (point-max) encoding)
     (goto-char (point-min))
@@ -132,29 +135,35 @@ local variable `mime-text-decoder' and variable
 ;;; @ content filters for mime-text
 ;;;
 
-(defun mime-preview-filter-for-text/plain (situation)
-  (mime-text-decode-body situation)
-  (goto-char (point-max))
-  (if (not (eq (char-after (1- (point))) ?\n))
-      (insert "\n")
-    )
-  (mime-text-add-url-buttons)
-  (run-hooks 'mime-preview-text/plain-hook)
-  )
-
-(defun mime-preview-filter-for-text/richtext (situation)
-  (let ((beg (point-min)))
-    (remove-text-properties beg (point-max) '(face nil))
-    (mime-text-decode-body situation)
-    (richtext-decode beg (point-max))
+(defun mime-preview-text/plain (entity situation)
+  (save-restriction
+    (narrow-to-region (point-max)(point-max))
+    (mime-text-insert-decoded-body entity situation)
+    (goto-char (point-max))
+    (if (not (eq (char-after (1- (point))) ?\n))
+	(insert "\n")
+      )
+    (mime-text-add-url-buttons)
+    (run-hooks 'mime-preview-text/plain-hook)
     ))
 
-(defun mime-preview-filter-for-text/enriched (situation)
-  (let ((beg (point-min)))
-    (remove-text-properties beg (point-max) '(face nil))
-    (mime-text-decode-body situation)
-    (enriched-decode beg (point-max))
-    ))
+(defun mime-preview-text/richtext (entity situation)
+  (save-restriction
+    (narrow-to-region (point-max)(point-max))
+    (mime-text-insert-decoded-body entity situation)
+    (let ((beg (point-min)))
+      (remove-text-properties beg (point-max) '(face nil))
+      (richtext-decode beg (point-max))
+      )))
+
+(defun mime-preview-text/enriched (entity situation)
+  (save-restriction
+    (narrow-to-region (point-max)(point-max))
+    (mime-text-insert-decoded-body entity situation)
+    (let ((beg (point-min)))
+      (remove-text-properties beg (point-max) '(face nil))
+      (enriched-decode beg (point-max))
+      )))
 
 
 ;;; @ end

@@ -1,3 +1,100 @@
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-text.el (mime-text-insert-decoded-body): New function;
+	abolish 'mime-text-decode-body.
+	(mime-preview-text/plain): Use 'mime-text-insert-decoded-body.
+	(mime-preview-text/richtext): Use 'mime-text-insert-decoded-body.
+	(mime-preview-text/enriched): Use 'mime-text-insert-decoded-body.
+
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-preview-condition): Set up for
+	'mime-preview-text/enriched instead of
+	'mime-preview-filter-for-text/enriched.
+
+	* mime-text.el (mime-preview-text/enriched): New function; abolish
+	'mime-preview-filter-for-text/enriched.
+
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-preview-condition): Set up for
+	'mime-preview-text/richtext instead of
+	'mime-preview-filter-for-text/richtext.
+
+	* mime-text.el (mime-preview-text/richtext): New function; abolish
+	'mime-preview-filter-for-text/richtext.
+
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el: Rename 'mime-view-insert-message/partial-button to
+	'mime-preview-message/partial-button.
+
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-preview-condition): Set up for
+	'mime-preview-text/plain instead of
+	'mime-preview-filter-for-text/plain.
+	(mime-view-insert-message/partial-button): Change interface for
+	new spec of body-presentation-method.
+	(mime-view-display-entity): Change interface of
+	body-presentation-method.
+
+	* mime-text.el (mime-preview-text/plain): New function; abolish
+	'mime-preview-filter-for-text/plain.
+
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el (make-mime-entity): Change format.
+	(mime-entity-header-start): New function.
+	(mime-entity-header-end): New function.
+	(mime-entity-body-start): New function.
+	(mime-entity-body-end): New function.
+	(mime-entity-content-type): Modify for new format.
+	(mime-entity-content-disposition): Modify for new format.
+	(mime-entity-encoding): Modify for new format.
+	(mime-entity-children): Modify for new format.
+	(mime-entity-point-min): Change to alias of
+	'mime-entity-header-start.
+	(mime-entity-point-max): Change to alias of 'mime-entity-body-end.
+	(mime-parse-multipart): Modify for 'make-mime-entity.
+	(mime-parse-message): Modify for 'make-mime-entity.
+
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el (mime-parse-multipart): Change interface; abolish
+	local variable 'beg and 'end.
+	(mime-parse-message): Modify for 'mime-parse-multipart.
+
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el (mime-parse-multipart): Use
+	'mime-content-type-parameter.
+
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el (mime-parse-Content-Transfer-Encoding): New
+	function.
+	(mime-read-Content-Transfer-Encoding): Use function
+	'mime-parse-Content-Transfer-Encoding.
+	(mime-parse-message): Use 'mime-parse-* instead of 'mime-read-*.
+
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el: Move 'regexp-* and 'regexp-or to mime-def.el of
+	FLIM (Chao); move 'std11-quoted-pair-regexp, 'std11-qtext-regexp
+	and 'std11-quoted-string-regexp to mime-def.el of FLIM (Chao).	
+
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el: Rename 'rfc822/quoted-string-regexp ->
+	'std11-quoted-string-regexp.
+
+	* mime-parse.el: Rename 'rfc822/qtext-regexp ->
+	'std11-qtext-regexp.
+
+	* mime-parse.el: Rename 'rfc822/quoted-pair-regexp ->
+	'std11-quoted-pair-regexp.
+
 1998-05-29  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-view.el (mime-preview-scroll-down-entity): Use (not (bobp))
