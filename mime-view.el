@@ -470,7 +470,7 @@ The compressed face will be piped to this command.")
     (erase-buffer)
     (setq mime::preview/article-buffer the-buf)
     (setq mime::preview/original-major-mode mode)
-    (setq major-mode 'mime/viewer-mode)
+    (setq major-mode 'mime-view-mode)
     (setq mode-name "MIME-View")
     (let ((drest dest))
       (while pcl
@@ -731,74 +731,74 @@ The compressed face will be piped to this command.")
       ))
 
 (defun mime-view-define-keymap (&optional mother default-function)
-  (let ((mime/viewer-mode-map (if mother
+  (let ((mime-view-mode-map (if mother
 				  (copy-keymap mother)
 				(make-sparse-keymap)
 				)))
     (or mother default-function
-	(suppress-keymap mime/viewer-mode-map))
-    (define-key mime/viewer-mode-map
+	(suppress-keymap mime-view-mode-map))
+    (define-key mime-view-mode-map
       "u"        (function mime-view-up-content))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       "p"        (function mime-view-previous-content))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       "n"        (function mime-view-next-content))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       "\e\t"     (function mime-view-previous-content))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       "\t"       (function mime-view-next-content))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       " "        (function mime-view-scroll-up-content))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       "\M- "     (function mime-view-scroll-down-content))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       "\177"     (function mime-view-scroll-down-content))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       "\C-m"     (function mime-view-next-line-content))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       "\C-\M-m"  (function mime-view-previous-line-content))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       "v"        (function mime-view-play-content))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       "e"        (function mime-view-extract-content))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       "\C-c\C-p" (function mime-view-print-content))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       "x"        (function mime-view-display-x-face))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       "a"        (function mime-view-follow-content))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       "q"        (function mime-view-quit))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       "h"        (function mime-view-show-summary))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       "\C-c\C-x" (function mime-view-kill-buffer))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       "<"        (function beginning-of-buffer))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       ">"        (function end-of-buffer))
-    (define-key mime/viewer-mode-map
+    (define-key mime-view-mode-map
       "?"        (function describe-mode))
     (if default-function
-	(setq mime/viewer-mode-map
-	      (append mime/viewer-mode-map
+	(setq mime-view-mode-map
+	      (append mime-view-mode-map
 		      (list (cons t default-function))
 		      )))
     (if mouse-button-2
-	(define-key mime/viewer-mode-map
+	(define-key mime-view-mode-map
 	  mouse-button-2 (function tm:button-dispatcher))
       )
     (cond (running-xemacs
-	   (define-key mime/viewer-mode-map
+	   (define-key mime-view-mode-map
 	     mouse-button-3 (function mime-view-xemacs-popup-menu))
 	   )
 	  ((>= emacs-major-version 19)
-	   (define-key mime/viewer-mode-map [menu-bar mime-view]
+	   (define-key mime-view-mode-map [menu-bar mime-view]
 	     (cons mime-view-menu-title
 		   (make-sparse-keymap mime-view-menu-title)))
 	   (mapcar (function
 		    (lambda (item)
-		      (define-key mime/viewer-mode-map
+		      (define-key mime-view-mode-map
 			(vector 'menu-bar 'mime-view (car item))
 			(cons (nth 1 item)(nth 2 item))
 			)
@@ -806,15 +806,15 @@ The compressed face will be piped to this command.")
 		   (reverse mime-view-menu-list)
 		   )
 	   ))
-    (use-local-map mime/viewer-mode-map)
+    (use-local-map mime-view-mode-map)
     (run-hooks 'mime-view-define-keymap-hook)
     ))
 
-(defun mime/viewer-mode (&optional mother ctl encoding ibuf obuf
+(defun mime-view-mode (&optional mother ctl encoding ibuf obuf
 				   mother-keymap default-function)
   "Major mode for viewing MIME message.
 
-Here is a list of the standard keys for mime/viewer-mode.
+Here is a list of the standard keys for mime-view-mode.
 
 key		feature
 ---		-------
@@ -865,7 +865,7 @@ button-2	Move to point under the mouse cursor
 	 (if (<= e ce)
 	     e
 	   ce)))
-      (run-hooks 'mime/viewer-mode-hook)
+      (run-hooks 'mime-view-mode-hook)
       )))
 
 (defun mime-preview/point-content-number (point)
