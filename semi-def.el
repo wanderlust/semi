@@ -1,6 +1,6 @@
 ;;; semi-def.el --- definition module for SEMI -*- coding: iso-8859-4; -*-
 
-;; Copyright (C) 1995,1996,1997,1998,1999 Free Software Foundation, Inc.
+;; Copyright (C) 1995,96,97,98,99,2000 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <tomo@m17n.org>
 ;; Keywords: definition, MIME, multimedia, mail, news
@@ -30,7 +30,7 @@
 
 (require 'custom)
 
-(defconst mime-user-interface-product ["SEMI" (1 13 7) "Awazu"]
+(defconst mime-user-interface-product ["REMI" (1 14 3) "Matsudai"]
   "Product name, version number and code name of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
@@ -61,15 +61,14 @@
 
 (defsubst mime-add-button (from to function &optional data)
   "Create a button between FROM and TO with callback FUNCTION and DATA."
-  (let ((overlay (make-overlay from to)))
-    (and mime-button-face
-	 (overlay-put overlay 'face mime-button-face))
-    (and mime-button-mouse-face
-	 (overlay-put overlay 'mouse-face mime-button-mouse-face))
-    (add-text-properties from to (list 'mime-button-callback function))
-    (and data
-	 (add-text-properties from to (list 'mime-button-data data)))
-    ))
+  (and mime-button-face
+       (put-text-property from to 'face mime-button-face))
+  (and mime-button-mouse-face
+       (put-text-property from to 'mouse-face mime-button-mouse-face))
+  (put-text-property from to 'mime-button-callback function)
+  (and data
+       (put-text-property from to 'mime-button-data data))
+  )
 
 (defsubst mime-insert-button (string function &optional data)
   "Insert STRING as button with callback FUNCTION and DATA."
@@ -163,45 +162,6 @@
 	    menu-alist)
      ))
   )
-
-
-;;; @ PGP
-;;;
-
-(defvar pgp-function-alist
-  '(
-    ;; for mime-pgp
-    (verify		mc-verify			"mc-toplev")
-    (decrypt		mc-decrypt			"mc-toplev")
-    (fetch-key		mc-pgp-fetch-key		"mc-pgp")
-    (snarf-keys		mc-snarf-keys			"mc-toplev")
-    ;; for mime-edit
-    (mime-sign		mime-mc-pgp-sign-region		"mime-mc")
-    (traditional-sign	mc-pgp-sign-region		"mc-pgp")
-    (encrypt		mime-mc-pgp-encrypt-region	"mime-mc")
-    (insert-key		mc-insert-public-key		"mc-toplev")
-    )
-  "Alist of service names vs. corresponding functions and its filenames.
-Each element looks like (SERVICE FUNCTION FILE).
-
-SERVICE is a symbol of PGP processing.  It allows `verify', `decrypt',
-`fetch-key', `snarf-keys', `mime-sign', `traditional-sign', `encrypt'
-or `insert-key'.
-
-Function is a symbol of function to do specified SERVICE.
-
-FILE is string of filename which has definition of corresponding
-FUNCTION.")
-
-(defmacro pgp-function (method)
-  "Return function to do service METHOD."
-  `(cadr (assq ,method (symbol-value 'pgp-function-alist))))
-
-(mapcar (function
-	 (lambda (method)
-	   (autoload (cadr method)(nth 2 method))
-	   ))
-	pgp-function-alist)
 
 
 ;;; @ Other Utility

@@ -1,3 +1,1117 @@
+2000-10-19  Takanori Saneto  <sanewo@ba2.so-net.ne.jp>
+
+	* pgg-pgp.el (pgg-pgp-process-region): bind process-environment
+	locally so that setenv's effect won't last forever.
+	pgg-pgp5.el (pgg-pgp5-process-region): Ditto.
+
+2000-09-29  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-edit.el (mime-file-types): Fix to use application/msword
+	instead of application/winword.
+
+2000-08-11  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-display-text/plain): Display warning message
+	when `mime-insert-text-content' fails.
+
+2000-08-04   Daiki Ueno  <ueno@unixuser.org>
+
+	* pgg-gpg.el (pgg-gpg-process-region): Don't bind
+	coding-system-for-read.
+
+2000-07-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mime-image.el (mime-image-insert) [XEmacs]:
+	Insert `string' only if it is non-nil.
+
+2000-06-27   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-image.el (mime-image-insert): Synch with the latest image.el.
+	(mime-display-image): Don't pass underlying string "x".
+
+2000-06-09   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-edit.el (mime-edit-insert-key): Insert a text tag when
+	the buffer has any trailing text.
+
+2000-06-05  Shugo Maeda <shugo@ruby-lang.org>
+
+	* pgg-gpg.el (pgg-scheme-insert-key): Don't quote user id.
+
+2000-05-21   Daiki Ueno  <ueno@unixuser.org>
+
+	* pgg-gpg.el (pgg-gpg-process-region): Abolish redundant nconc.
+
+2000-05-16   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-image.el (mime-image-create) [XEmacs]: Don't call
+	`make-image-instance' directly.
+
+2000-05-02   Daiki Ueno  <ueno@unixuser.org>
+
+	* pgg-gpg.el (pgg-scheme-encrypt-region): Don't quote recipient;
+	concatenate all arguments destructively.
+
+2000-04-13   Daiki Ueno  <ueno@unixuser.org>
+
+	* pgg-gpg.el: Fix author's mailing address.
+	(pgg-gpg-process-region): Add --output option; set status fd to 2.
+	(pgg-gpg-possibly-cache-passphrase): New function.
+	(pgg-gpg-shell-file-name): Abolish.
+	(pgg-gpg-shell-command-switch): Abolish.
+	(pgg-scheme-lookup-key): Work on temp buffer.
+
+2000-03-01  Yoshiki Hayashi <yoshiki@xemacs.org>
+
+	* mime-image.el (mime-display-image): Don't wait for redisplay.
+
+
+2000-07-12  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* REMI: Version 1.14.2 (Hokuhoku--DÒshima)-A released.
+
+	* README.en (Required environment): Modify for FLIM-Chao 1.14.1.
+
+2000-07-11  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-pgp.el (mime-view-application/pgp): Setup local variable
+	`mime-view-temp-message-buffer' of preview-buffer.
+	(mime-view-application/pkcs7-mime): Likewise.
+
+	* mime-play.el
+	(mime-preview-quitting-method-for-mime-show-message-mode): Don't
+	use `mime-entity-buffer'; refer `mime-view-temp-message-buffer'.
+	(mime-store-message/partial-piece): Use
+	`insert-file-contents-as-binary' instead of
+	`(as-binary-input-file (insert-file-contents ...))'; use
+	`write-region-as-binary' instead of
+	`(as-binary-output-file (write-region ...)); setup local variable
+	`mime-view-temp-message-buffer' of preview-buffer.
+
+2000-06-23  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-edit.el (mime-edit-preview-message): Set up local variable
+	`mime-edit-temp-message-buffer'.
+	(mime-edit-quitting-method): Refer `mime-edit-temp-message-buffer'
+	to avoid to use `mime-entity-buffer'.
+
+2000-06-21  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-view.el (mime-view-mode): Use
+	`mime-entity-set-content-type' and `mime-entity-set-encoding'
+	instead of `mime-entity-set-content-type-internal' and
+	`mime-entity-set-encoding-internal'.
+
+	* mime-w3.el (mime-preview-text/html): Use
+	`mime-find-root-entity'.
+
+2000-05-25  Tanaka Akira      <akr@m17n.org>
+
+        * README.en: Update for CVS via SSH.
+
+2000-04-28  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-edit.el (mime-charset-type-list): Add `iso-2022-jp-3'.
+
+
+2000-03-01  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* REMI: Version 1.14.1 (Mushigawa-Dòsugi)-A released.
+
+2000-03-01  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-view-define-keymap): Add new binding
+	`mime-preview-show-header' for C-c C-v C-f and C-c C-v h; add new
+	binding `mime-preview-show-content' for C-c C-v C-c; add new
+	binding `mime-preview-hide-header' for C-c C-d C-f and C-c C-d h;
+	add new binding `mime-preview-hide-content' for C-c C-d C-c.
+	(mime-preview-toggle-display): New function.
+	(mime-preview-toggle-header): Add new optional argument
+	`force-visible'; use `mime-preview-toggle-display'.
+	(mime-preview-toggle-content): Likewise.
+	(mime-preview-show-header): New function.
+	(mime-preview-show-content): New function.
+	(mime-preview-hide-header): New function.
+	(mime-preview-hide-content): New function.
+
+2000-02-25  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-situation-examples-file-coding-system): New
+	variable.
+	(mime-save-situation-examples): Use `with-temp-buffer'; try to
+	save as `mime-situation-examples-file-coding-system'.
+	- Use with-temp-buffer to load `mime-situation-examples-file';
+	setup `mime-situation-examples-file-coding-system' when
+	mime-situation-examples-file is loaded;
+
+2000-02-25  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-view-define-keymap): Change keybind for
+	`mime-preview-toggle-header' to C-c C-t h and C-c C-t C-f.
+
+2000-02-24  Mito              <mit@nines.nec.co.jp>
+
+	* mime-edit.el (mime-edit-normalize-body): Fix number of arguments
+	against enriched-encode.
+
+2000-02-23  Daiki Ueno        <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-image.el (mime-image-normalize-xbm-buffer): New inline
+	function.
+	(mime-image-create) [XEmacs || Emacs21]: Use it for XBM data.
+	(mime-display-image): Don't create temporary file.
+
+2000-02-22  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-delq-null-situation): Accept multiple ignored
+	values.
+	(mime-unify-situations): t is also regarded as an ignored-value.
+	(mime-preview-follow-current-entity): Eliminate unused local
+	variable `str'.
+
+2000-02-22  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el (mime-play-find-every-situations): Renamed from
+	`mime-view-find-every-situations'.
+
+	* mime-view.el (mime-view-find-every-situations): Moved to
+	mime-play.el.
+
+2000-02-22  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el (mime-play-entity): Specify
+	`mime-view-find-every-situations' as an optional argument
+	`every-situations'.
+
+	* mime-view.el (mime-unify-situations): Add new optional argument
+	`every-situations'; use it instead of
+	`mime-view-find-every-situations'.
+	(mime-display-multipart/alternative): Modify `body' property
+	instead of `body-presentation-method' property of
+	preview-situation.
+
+	* semi-setup.el: Use `eval-after-load' for text/html related
+	setting.
+
+2000-02-21   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* semi-def.el (mime-user-interface-product): Bump up to
+	EMIKO 1.13.12.
+
+	* pgg.el (pgg-temp-buffer-show-function): Use
+	`shrink-window-if-larger-than-buffer'.
+
+	* pgg-gpg.el (pgg-gpg-process-region): Fix cleanup form.
+
+	* pgg-pgp.el (pgg-pgp-process-region): Ditto.
+
+	* pgg-pgp5.el (pgg-pgp5-process-region): Ditto.
+
+	* semi-setup.el (mime-setup-enable-inline-image): Remove checking
+	of bitmap-mule; use `eval-after-load' instead of
+	`call-after-loaded' to require `mime-image'.
+
+	* mime-image.el (mime-display-image): Set default umask to 077.
+	(mime-image-create): Use `nothing-image-instance-p'.
+
+	* mime-pgp.el: When it is compiled, define `smime-output-buffer'
+	and `smime-errors-buffer' to avoid compiler warning.
+
+	* mime-edit.el: Ditto.
+
+	* mime-pgp.el
+	(mime-view-application/pkcs7-mime): Regard smime-type as
+	"enveloped-data" unless it is specified.
+
+	* smime.el (smime-directory-files): Abolish.
+	(smime-verify-region): Abolish local variable `args'.
+
+2000-02-20   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-image.el: Remove X-Face setting; require cl when compiling.
+	(mime-image-format-alist): Remove image/x-mag and image/x-pic.
+	(mime-image-type-available-p): New function.
+	(mime-image-create): New function.
+	(mime-image-insert): New function.
+	(mime-display-image): Rewrite.
+
+	* mime-edit.el
+	(mime-edit-define-charset): Handle 'mime-charset-comment.
+
+2000-02-18  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-view-define-keymap): Change binding of
+	`mime-preview-toggle-content' from C-c C-t C-b to C-c C-t C-c.
+	(mime-preview-toggle-content): Renamed from
+	`mime-preview-toggle-body'.
+
+
+2000-02-17  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* REMI: Version 1.14.0 (Uragawara) released.
+
+2000-02-17  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-view-define-keymap): Add new binding
+	`mime-preview-toggle-body' for C-c C-t C-b.
+	(mime-preview-toggle-body): New command.
+
+	* semi-def.el (mime-add-button): Don't use overlay.
+
+2000-02-17  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-preview-condition): Add default setting of
+	multipart; declare body of message/partial, message/rfc822 and
+	message/news are visible.
+	(mime-display-entity): Check `*body' or `body' property of
+	situation.
+
+2000-02-17  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-display-entity): Find
+	`header-presentation-method' only if `header-is-visible'.
+
+2000-02-10  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-display-entity): Don't use
+	`mime-goto-header-start-point'.
+
+2000-02-10  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-display-message): Use `major-mode' of
+	current-buffer as default value of `original-major-mode'; don't
+	use `mime-entity-header-buffer'.
+	(mime-preview-follow-current-entity): Use `mime-insert-header' to
+	insert header; don't use `mime-entity-header-buffer',
+	`mime-entity-header-start-point' and
+	`mime-entity-header-end-point'.
+
+2000-02-10  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-preview-follow-current-entity): Use
+	`mime-view-entity-body' to find body.
+
+2000-02-10  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-preview-find-boundary-info): Fix problem when
+	entity is in boundary of mother entity.
+	(mime-preview-follow-current-entity): Check header information of
+	`mime-view-situation' property.
+
+2000-02-09  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-preview-find-boundary-info): Use <last point>
+	- 1 instead of <last point> to get `mime-view-entity' property.
+
+	* mime-view.el (mime-preview-follow-current-entity): Fix problem
+	in multipart entity.
+
+2000-02-07  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-pgp.el: Fix doc string.
+	* pgg-def.el: Ditto.
+	* pgg-gpg.el: Ditto.
+	* pgg-parse.el: Ditto.
+	* pgg-pgp.el: Ditto.
+	* pgg-pgp5.el: Ditto.
+	* pgg.el: Ditto.
+
+2000-02-02  Nakagawa, Makoto  <Makoto.Nakagawa@jp.compaq.com>
+
+	* pgg-pgp5.el (pgg-scheme-verify-region): Copy the contents of
+	`pgg-errors-buffer' to `pgg-output-buffer'.
+
+2000-02-02   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg.el (pgg-temp-buffer-show-function): Don't check if the
+	selected window is the only window.
+
+2000-02-01  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* semi-setup.el (mime-setup-enable-inline-image): Use "(fboundp
+	'create-image)" to detect Emacs 21.
+	Use `eval-after-load' instead of `call-after-loaded' to require
+	`mime-image'.
+
+2000-02-01  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-view-define-keymap): Change keybind for
+	`mime-preview-toggle-header' to "\C-c\C-t\C-h".
+
+2000-02-01   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-image.el: Add checking for `x-face-mule'.
+
+	* pgg.el,pgp-gpg.el,pgg-pgp.el,pgg-pgp5.el
+	(pgg-scheme-lookup-key): Rename from
+	`pgg-scheme-lookup-key-string'.
+	(pgg-scheme-decrypt-region): Use `pgg-scheme-lookup-key'.
+	(pgg-scheme-sign-region): Ditto.
+
+	* pgg-gpg.el (pgg-scheme-lookup-key): Generate *PGG-output* buffer
+	if it does not exist.
+
+2000-01-24   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* semi-def.el (mime-user-interface-product): Bump up to
+	EMIKO 1.13.10.
+
+	* mime-image.el	[Emacs21]: Require `image' when compiling.
+	(image-normalize): Use `create-image' with 3rd arg `data-p'.
+	 (create-image): Advice it to accept 3rd arg `data-p'.
+
+	* pgg-pgp.el. pgg-pgp5.el
+	(pgg-scheme-verify-region): Don't send buffer contents.
+
+	* mime-pgp.el (mime-view-application/pkcs7-mime): Rename from
+	`mime-decrypt-application/pkcs7-mime'; handle `smime-type'
+	parameter; abolish local variable `representation-type'.
+
+	* semi-setup.el: Rename `mime-decrypt-application/pkcs7-mime' to
+	`mime-view-application/pkcs7-mime'.
+
+2000-01-18   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg.el,pgp-gpg.el,pgg-pgp.el,pgg-pgp5.el
+	(pgg-scheme-lookup-key-string,pgg-scheme-encrypt-region,
+	pgg-scheme-decrypt-region,pgg-scheme-sign-region,
+	pgg-scheme-verify-region,pgg-scheme-insert-key,
+	pgg-scheme-snarf-keys-region): Prepend `pgg-scheme' to each symbol.
+
+	* pgg.el
+	(pgg-encrypt-region,pgg-decrypt-region,pgg-sign-region,
+	pgg-verify-region,pgg-insert-key,pgg-snarf-keys-region,
+	pgg-lookup-key-string): Don't use `luna-send'.
+
+2000-01-17  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-view-entity-button-visible-p): Comment out.
+	(mime-display-entity): Don't use
+	`mime-view-entity-button-visible-p'.
+
+2000-01-17  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-find-entity-preview-situation): New function.
+	(mime-display-multipart/alternative): Use
+	`mime-find-entity-preview-situation'.
+	(mime-display-entity): Likewise; prefer`*entity-button' and
+	`*header'.
+	(mime-preview-toggle-header): Modify `*header' instead of
+	`header'; update `mime-preview-situation-example-list'.
+
+2000-01-17  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-unify-situations): Fixed.
+	(mime-view-define-keymap): Add new binding
+	`mime-preview-toggle-header' for C-c h.
+	(mime-preview-find-boundary-info): New function.
+	(mime-preview-follow-current-entity): Use
+	`mime-preview-find-boundary-info'.
+	(mime-preview-toggle-header): New command.
+
+2000-01-16  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el (mime-play-entity): Modify for
+	`mime-unify-situations'.
+
+	* mime-view.el (mime-unify-situations): Add new optional argument
+	`required-name'; use it instead of `method'.
+	(mime-display-multipart/alternative): Use `mime-unify-situations'.
+	(mime-display-entity): Likewise.
+
+2000-01-16  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-reduce-situation-examples): New function;
+	delete `mime-reduce-acting-situation-examples'.
+
+2000-01-16  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-view-find-every-situations): Renamed from
+	`mime-view-find-every-acting-situation'; changed to variable.
+	(mime-situation-examples-file): Renamed from
+	`mime-acting-situation-examples-file'.
+	(mime-preview-situation-example-list-max-size): New variable.
+	(mime-save-situation-examples): Renamed from
+	`mime-save-acting-situation-examples'; save
+	`mime-preview-situation-example-list' if it is not null.
+
+2000-01-16  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el (mime-acting-situation-example-list): Moved to
+	mime-view.el.
+	(mime-acting-situation-example-list-max-size): Likewise.
+	(mime-save-acting-situation-examples): Likewise.
+	(mime-reduce-acting-situation-examples): Likewise.
+
+	* mime-view.el (mime-preview-situation-example-list): New
+	variable.
+	(mime-acting-situation-example-list): Moved from mime-play.el.
+	(mime-acting-situation-example-list-max-size): Likewise.
+	(mime-save-acting-situation-examples): Likewise.
+	(mime-reduce-acting-situation-examples): Likewise.
+	(mime-view-load-hook): Abolished.
+
+2000-01-16  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el (mime-play-entity): Use `mime-unify-situations'.
+
+	* mime-view.el (mime-unify-situations): New function.
+
+2000-01-16  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el (mime-compare-situation-with-example): Moved to
+	mime-view.el.
+	(mime-sort-situation): Likewise.
+
+	* mime-view.el (mime-compare-situation-with-example): Moved from
+	mime-play.el.
+	(mime-sort-situation): Likewise.
+
+2000-01-16  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* postpet.el: New module.
+
+	* SEMI-ELS (semi-modules-to-compile): Add `postpet'.
+
+	* mime-play.el (mime-delq-null-situation): Moved to mime-view.el.
+
+	* mime-view.el: Add setting for
+	`mime-display-application/x-postpet' to autoload "postpet".
+	(mime-delq-null-situation): Moved from mime-play.el.
+	(unpack): Moved to postpet.el.
+	(unpack-skip): Likewise.
+	(unpack-fixed): Likewise.
+	(unpack-byte): Likewise.
+	(unpack-short): Likewise.
+	(unpack-long): Likewise.
+	(unpack-string): Likewise.
+	(unpack-string-sjis): Likewise.
+	(postpet-decode): Likewise.
+	(mime-display-application/x-postpet): Likewise.
+
+2000-01-11  Nakagawa, Makoto  <Makoto.Nakagawa@jp.compaq.com>
+
+	* pgg-pgp.el, pgg-pgp5.el
+	(pgg-scheme-lookup-key-string): Fix number of arguments against
+	call-process.
+
+	* pgg-pgp5.el (pgg-scheme-verify-region): Analize process output
+	to see whether verify successed or not.
+
+2000-01-05  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* Makefile, README.en: Update for the new CVS server.
+
+1999-12-28   Daiki Ueno       <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-edit.el (mime-edit-user-agent-value): Don't require
+	`apel-ver' directly.
+
+1999-12-28  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-user-agent-value): Use `error' instead of
+	`file-error' for the handler of `condition-case' because XEmacs
+	does not signal an error named `file-error' if the required feature
+	is not provided.
+
+1999-12-16  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* semi-setup.el (mime-setup-decode-message-header): Comment out.
+	(mime-edit-mode-hook): Don't use
+	`mime-setup-decode-message-header'.
+	(mu-cite/pre-cite-hook): Don't use `eword-decode-header'.
+
+1999-12-14  Akihiro Arisawa   <ari@atesoft.advantest.co.jp>
+
+	* mime-view.el (mime-preview-follow-current-entity): Fetch field of
+	`mime-view-following-required-fields-list' from parent entity if it
+	is not exist in current entity.
+
+1999-12-13  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* README.en: Update for the recent ML address and ftp site.
+
+1999-12-11  Daiki Ueno        <ueno@ueda.info.waseda.ac.jp>
+
+	* smime.el (smime-encrypt-region): Delete entity header.
+	(smime-sign-region): Ditto.
+
+	* mime-edit.el: Fix autoload settings for `smime-sign-region' and
+	`smime-encrypt-region.
+	(mime-edit-sign-smime): Set Content-Type
+	`application/pkcs7-signature' instead of
+	`application/x-pkcs7-signature'; add Content-Description.
+	(mime-edit-encrypt-smime): Set content-type
+	`application/pkcs7-mime' instead of `x-application/pkcs7-mime'.
+
+	* mime-pgp.el: Fix autoload settings for `smime-verify-region' and
+	`smime-decrypt-region.
+	(mime-decrypt-application/pkcs7-mime):
+	Bind `inhibit-read-only' to t.
+
+1999-12-09  Daiki Ueno        <ueno@ueda.info.waseda.ac.jp>
+
+	* semi-def.el (mime-user-interface-product): Bump up to
+	EMIKO 1.13.9.
+
+	* smime.el: Require `static' when compiling.
+	(smime-directory-files): New macro.
+	(smime-find-certificate): Use it.
+
+1999-12-08  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* smime.el (smime-verify-region): Abolish local variable `cert-file'.
+	(smime-find-certificate): Rename from `smime-search-certificate'.
+
+	* mime-edit.el: Add autoload settings for `smime-encrypt-region' and
+	`smime-sign-region'.
+	(mime-edit-process-multipart-1): Handle type "smime-signed" and
+	"smime-encrypted".
+	(mime-edit-sign-smime): New function.
+	(mime-edit-encrypt-smime): New function.
+	(mime-edit-enclose-smime-signed-region): New function.
+	(mime-edit-enclose-smime-encrypted-region): New function.
+
+	* mime-pgp.el: Add autoload settings for `smime-decrypt-region' and
+	`smime-verify-region'.
+	(mime-verify-application/pkcs7-signature): New function.
+	(mime-decrypt-application/pkcs7-mime): New function.
+
+	* semi-setup.el: Set up for `mime-verify-application/pkcs7-signature'
+	and `mime-decrypt-application/pkcs7-mime'.
+
+1999-12-08  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* smime.el (smime-x509-hash): Use `call-process' instead of
+	`call-process-region'.
+	(smime-x509-subject): Ditto.
+
+1999-12-08  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* SEMI-ELS (semi-modules-to-compile): Add smime.el.
+
+	* smime.el: New file.
+
+1999-11-30  Tsukamoto Tetsuo  <czkmt@remus.dti.ne.jp>
+
+	* mime-edit.el (mime-edit-decode-message-in-buffer): Don't decode
+	the message header twice.
+
+1999-11-30  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg.el (pgg-remove-passphrase-cache): Add checking whether
+	the passphrase has already been expired.
+
+1999-11-26  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-edit.el (mime-edit-pgp-user-id): New variable.
+	(mime-edit-sign-pgp-mime): Undo last change; refer
+	`mime-edit-pgp-user-id'.
+	(mime-edit-encrypt-pgp-mime): Ditto.
+
+	* pgg-gpg.el, pgg-pgp.el, pgg-pgp5.el
+	(encrypt-region): Refer `pgg-<impl>-user-id' if specified.
+	(sign-region): Ditto.
+	(decrypt-region): Ditto.
+	(insert-key): Ditto.
+
+1999-11-26  Nakagawa, Makoto  <Makoto.Nakagawa@jp.compaq.com>
+
+	* mime-edit.el (mime-edit-sign-pgp-mime): Regard
+	`pgg-default-user-id' as more preferrable if it's specified.
+	(mime-edit-encrypt-pgp-mime): Ditto.
+
+1999-11-22  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* semi-def.el (mime-user-interface-product): Bump up to
+	EMIKO 1.13.8.
+
+	* pgg.el (pgg-remove-passphrase-cache): Don't unbind passphrase.
+
+1999-11-20  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-edit.el (mime-edit-sign-pgp-mime): Bind
+	`pgg-default-user-id' to the canonical address of From field.
+
+	* pgg-def.el (pgg-cache-passphrase): New user option.
+
+	* pgg.el (pgg-read-passphrase): Refer `pgg-cache-passphrase'.
+	(pgg-remove-passphrase-cache): Fill cached passphrase with `_'.
+
+	* pgg-gpg.el, pgg-pgp.el, pgg-pgp5.el (sign-region): Refer
+	`pgg-cache-passphrase'.
+
+1999-11-17  Katsumi Yamaoka <yamaoka@jpl.org>
+
+	* mime-image.el (mime-display-image): Use
+	`mime-image-normalize-xbm' if the feature `xemacs' is provided or
+	the variable `image-types' is bound.
+
+1999-11-17  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-image.el (mime-image-normalize-xbm): Work for the future
+	FSF Emacsen as well.
+	(mime-display-image): Always use `mime-image-normalize-xbm'.
+
+1999-11-17  Katsumi Yamaoka <yamaoka@jpl.org>
+
+	* mime-image.el (mime-image-normalize-xbm): New macro.
+	(mime-display-image): Use it.
+
+1999-11-13  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg.el (pgg-temp-buffer-show-function): New function.
+	(pgg-display-output-buffer): Use it.
+	(pgg-save-coding-system): Use buffer narrowing.
+	(pgg-encrypt-region, pgg-decrypt-region, pgg-sign-region,
+	pgg-verify-region): Assume that the current region has already
+	been narrowed.
+
+1999-11-13  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg-def.el (pgg-default-keyserver-address): Default to
+	`wwwkeys.pgp.net'.
+
+	* pgg.el (pgg-save-coding-system): New macro.
+	(pgg-display-output-buffer): New function.
+	(pgg-encrypt-region, pgg-decrypt-region, pgg-sign-region,
+	pgg-verify-region, pgg-insert-key, pgg-snarf-keys-region):
+	Add documentation string; use `pgg-save-coding-system'.
+	(pgg-fetch-key): Fix documentation.
+
+1999-11-11  Akihiro Arisawa   <ari@atesoft.advantest.co.jp>
+
+	* mime-image.el (image-normalize): Use `write-region-as-binary'.
+
+1999-11-11  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg-pgp.el, pgg-pgp5.el (verify-region): Set default umask to 077.
+
+1999-11-10  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg-gpg.el (pgg-gpg-process-region): Enclose `start-process'
+	with `as-binary-process'.
+
+	* pgg-pgp.el (pgg-pgp-process-region): Enclose `start-process'
+	with `as-binary-process'.
+
+	* pgg-pgp5.el (pgg-pgp5-process-region): Enclose `start-process'
+	with `as-binary-process'.
+
+	* mime-edit.el (mime-edit-set-sign): Remove duplication.
+	(mime-edit-set-encrypt): Ditto.
+	(mime-edit-encrypt-pgp-mime): Encode header before encrypting.
+
+	* mime-image.el (image-insert-at-point): Check the number of the
+	arguments of `insert-image'.
+	(mime-display-image): Rewrite.
+
+1999-11-10  Yoshiki Hayashi  <t90553@mail.ecc.u-tokyo.ac.jp>
+
+	* mime-play.el: (mime-save-directory): New variable.
+	(mime-save-content): Don't force filename parameter to be used.
+
+1999-11-09  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg-pgp.el, pgg-pgp5.el
+	(sign-region): Don't convert line break	code.
+
+1999-11-07  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-pgp.el (mime-verify-application/pgp-signature): Don't
+	scroll MIME-echo buffer, just set window starting point.
+	(mime-add-application/pgp-keys): Ditto.
+
+1999-11-06  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg.el (pgg-sign-region): Add optional argument `cleartext'.
+
+	* mime-ui-en.sgml, mime-ui-ja.sgml: Remove description about
+	`pgp-functions-alist' and `pgp-function'; add description about
+	`pgg-default-scheme' and `pgg-scheme'.
+
+	* NEWS (PGP 5.0i and GnuPG are now supported for PGP/MIME):
+	New section.
+
+	* pgg-gpg.el, pgg-pgp.el, pgg-pgp5.el (encrypt-region): Add
+	sender's user id to the recipients list if `pgg-encrypt-for-me' is
+	specified.
+
+	* pgg-def.el (pgg-encrypt-for-me): New user option.
+
+	* mime-edit.el:
+	(mime-edit-decode-multipart-in-buffer): Sync up with semi-pgpgpg_20.
+	(mime-edit-decode-message-in-buffer): Ditto.
+	(mime-edit-decode-single-part-in-buffer): Ditto.
+
+1999-11-06   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg.el (pgg-verify-region): Bind `pgg-scheme' in the predicate
+	of whether to fetch signer's public key.
+	(pgg-convert-lbt-region): New macro.
+	(pgg-as-lbt): New macro.
+
+	* mime-edit.el (mime-edit-encrypt-pgp-mime): Extract canonical
+	address of From field to use it as default user id; tokenize
+	bodies of the recipient fields.
+	(mime-edit-make-encrypt-recipient-header): Undo last change.
+	(mime-edit-translate-buffer): Do `undo-boundary'
+	before translating.
+
+	* pgg-gpg.el (sign-region): Use `pgg-as-lbt'.
+	(pgg-gpg-process-region): Use `pgg-convert-lbt-region'.
+	(encrypt-region): Don't ask passphrase.
+
+	* pgg-pgp5.el (sign-region): Use `pgg-as-lbt'.
+	(pgg-pgp5-process-region): Use `pgg-convert-lbt-region'.
+	(encrypt-region): Don't ask passphrase.
+
+	* pgg-pgp.el (verify-region): Fill errors buffer.
+	(pgg-pgp-process-region): Use `pgg-convert-lbt-region'.
+	(sign-region): Use `pgg-as-lbt'.
+	(encrypt-region): Don't ask passphrase.
+
+1999-11-06   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg-parse.el (pgg-byte-after): Always pass the first argument
+	of `char-after'.
+
+1999-11-05   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg-pgp.el (sign-region): Fix regexp for the beginning of armor.
+
+	* pgg-gpg.el (encrypt-region): Don't use "--textmode" in GPG
+	arguments, replace line break code with CRLF while signing
+	instead.
+
+1999-11-05   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-pgp.el (mime-verify-application/pgp-signature): Copy the
+	messages in PGG buffers to MIME-echo buffer instead of binding
+	`pgg-output-buffer'.
+	(mime-add-application/pgp-keys): Likewise.
+
+	* pgg-gpg.el (verify-region): Fill errors buffer whether
+	verification has succeeded or not.
+
+1999-11-05   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg-gpg.el, pgg-pgp.el, pgg-pgp5.el (snarf-keys-region):
+	Use `pgg-process-when-success'.
+
+	* pgg.el (pgg-encrypt-region): Add autoload cookie.
+	(pgg-decrypt-region): Ditto.
+	(pgg-sign-region): Ditto.
+	(pgg-verify-region): Don't modify the buffer; add autload cookie.
+	(pgg-snarf-keys-region): Add interactive spec; add autload cookie.
+	(pgg-insert-key): Add interactive spec; add autload cookie.
+
+1999-11-05   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg-gpg.el (pgg-gpg-shell-command-switch): New user option.
+	(pgg-gpg-process-region): Bind `shell-command-switch' to the value
+	of `pgg-gpg-shell-command-switch'.
+
+	* pgg-pgp.el (pgg-pgp-shell-command-switch): New user option.
+	(pgg-pgp-process-region): Bind `shell-command-switch' to the value
+	of `pgg-pgp-shell-command-switch'.
+
+	* pgg-pgp5.el (pgg-pgp5-shell-command-switch): New user option.
+	(pgg-pgp5-process-region): Bind `shell-command-switch' to the value
+	of `pgg-pgp5-shell-command-switch'.
+
+	* pgg-gpg.el, pgg-pgp.el, pgg-pgp5.el (sign-region): Use fixed end
+	position of the signature.
+
+	* mime-pgp.el: Add autoload for `pgg-decrypt-region',
+	`pgg-verify-region', `pgg-snarf-keys-region'.
+	(mime-view-application/pgp): Don't use `pgp-function'.
+	(mime-verify-application/pgp-signature): Ditto.
+	(mime-add-application/pgp-keys): Ditto.
+	(mime-pgp-command): Abolish.
+	(mime-pgp-default-language): Abolish.
+	(mime-pgp-good-signature-regexp-alist): Abolish.
+	(mime-pgp-key-expected-regexp-alist): Abolish
+	(mime-pgp-check-signature): Abolish.
+
+	* semi-def.el (pgp-function-alist): Abolish.
+	(pgp-function): Abolish.
+
+	* mime-edit.el: Add autoload for `pgg-encrypt-region',
+	`pgg-sign-region', `pgg-insert-key'.
+	(mime-edit-sign-pgp-mime): Throw an error when
+	`pgg-sign-region' returns nil; don't use `pgp-function'.
+	(mime-edit-encrypt-pgp-mime): Throw an error when
+	`pgg-encrypt-region' returns nil; don't use `pgp-function'.
+	(mime-edit-sign-pgp-kazu): Don't use `pgp-function'.
+	(mime-edit-encrypt-pgp-mime): Ditto.
+
+1999-11-05   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-pgp.el (mime-add-application/pgp-keys): Don't display
+	public key block; snarf keys immediately.
+
+	* pgg.el (pgg-insert-url-with-program): Call program asynchronously.
+
+1999-11-05   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg-def.el (pgg-echo-buffer): New variable.
+
+	* pgg.el (pgg-process-when-success): New macro.
+	(pgg-insert-url-with-w3): New function.
+	(pgg-insert-url-program): New variable.
+	(pgg-insert-url-extra-arguments): New variable.
+	(pgg-insert-url-function): New variable.
+	(pgg-fetch-key): Use it.
+	(pgg-encrypt-region): If called interactively, popup
+	`pgg-echo-buffer' to display encryption status.
+	(pgg-decrypt-region): Likewise.
+	(pgg-sign-region): Likewise.
+	(pgg-verify-region): Likewise.
+
+	* pgg-gpg.el (lookup-key-string): Use `call-process' instead of
+	`pgg-gpg-process-region'.
+	(encrypt-region): Use `pgg-process-when-success'; if the output
+	buffer is empty, don't copy errors, just return nil.
+	(decrypt-region): Likewise.
+	(verify-region): Check the contents of status buffer to looking
+	for `GOODSIG' response.
+	(sign-region): Accept optional argument `clearsign'.
+
+	* pgg-pgp.el (lookup-key-string): Use `call-process' instead of
+	`pgg-pgp-process-region'.
+	(encrypt-region): Use `pgg-process-when-success'; if the output
+	buffer is empty, don't copy errors, just return nil.
+	(decrypt-region): Likewise.
+	(verify-region): Likewise.
+	(sign-region): Accept optional argument `clearsign'.
+
+	* pgg-pgp5.el (lookup-key-string): Use `call-process' instead of
+	`pgg-pgp5-process-region'.
+	(encrypt-region): Use `pgg-process-when-success'; if the output
+	buffer is empty, don't copy errors, just return nil.
+	(decrypt-region): Likewise.
+	(verify-region): Likewise.
+	(sign-region): Accept optional argument `clearsign'.
+
+1999-11-04   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg.el (pgg-verify-region): Ignore all errors encountered on
+	calling `pgg-fetch-key'.
+
+1999-11-04  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-pgp.el (mime-verify-application/pgp-signature): Enclose
+	with `unwind-protect' to be sure of deleting *.asc files.
+
+	* pgg-pgp.el (pgg-pgp-process-region): Set `PGPPASSFD' before
+	starting PGP process.
+
+	* pgg-pgp5.el (pgg-pgp5-process-region): Ditto.
+
+1999-11-04  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg-parse.el (pgg-parse-crc24): Don't use any `write' ops.
+	(pgg-parse-crc24-string): Use `ccl-execute-on-string'.
+
+1999-11-04  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-edit.el (mime-edit-set-sign): Preserve last status of
+	`mime-edit-pgp-processing'.
+	(mime-edit-set-encrypt): Ditto.
+	(mime-edit-pgp-enclose-buffer): Process
+	`mime-edit-pgp-enclose-buffer' consequently.
+
+	* pgg-parse.el (pgg-decode-packets): Don't use
+	`mime-encode-string'.
+	(pgg-ignore-packet-checksum): Default to t.
+
+1999-11-04  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg.el: Rename the field name `cipher-algorithm' to
+	`symmetric-key-algorithm'.
+	(pgg-verify-condition): Fix documentation.
+	(pgg-decrypt-condition): Ditto.
+
+1999-11-04  Katsumi Yamaoka <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-preview-message): Inherit the value of
+	`mime-edit-pgp-processing'.
+
+1999-11-04  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg.el (pgg-encrypt-region): Add interactive spec.
+	(pgg-decrypt-region): Ditto.
+	(pgg-sign-region): Ditto.
+	(pgg-verify-region): Add optional argument `fetch' to fetch
+	signer's public key.
+
+	* pgg-def.el (pgg-default-keyserver-address): New variable.
+
+	* semi-def.el (pgp-function-alist): Remove `lookup-key'.
+
+	* mime-pgp.el (mime-display-application/pgp-signature): Abolish.
+	(mime-display-application/pgp-encrypted): Abolish.
+	(mime-display-application/pgp-keys): Abolish.
+	(mime-pgp-keyserver-url-template): Abolish.
+	(mime-pgp-keyserver-address): Abolish.
+	(mime-pgp-keyserver-port): Abolish.
+	(mime-pgp-keyserver-protocol): Abolish.
+	(mime-pgp-fetch-key): Abolish.
+
+	* semi-setup.el: Delete default setting of
+	`mime-display-application/pgp-signature', 
+	`mime-display-application/pgp-encrypted',
+	`mime-display-application/pgp-keys'
+
+1999-11-03  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg.el (pgg-fetch-key): Protect `buffer-file-name'.
+
+	* pgg-gpg.el (snarf-keys-region): Add `-' as extra argument of
+	gpg --import; convert status code into an integer.
+
+1999-11-03  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* semi-def.el (pgp-function-alist): Add `lookup-key'.
+
+	* pgg.el, pgg-gpg.el, pgg-pgp5.el, pgg-pgp.el:
+	Rename generic function `lookup-key' to `lookup-key-string';
+	add optional argument `type'.
+
+	* pgg-def.el (pgg-truncate-key-identifier): New macro.
+
+	* pgg.el: Rename generic function `lookup-key' to
+	`lookup-key-string'; add optional argument `type'.
+	(pgg-fetch-key): New function.
+	(pgg-snarf-keys-region): Fix typo.
+	(pgg-lookup-key-string): New function.
+	(pgg-read-passphrase): Use `pgg-truncate-key-identifier'.
+	(pgg-add-passphrase-cache): Ditto.
+
+	* mime-pgp.el (mime-pgp-keyserver-url-template): New variable
+	imported from semi-pgpgpg.
+	(mime-pgp-keyserver-address): Ditto.
+	(mime-pgp-keyserver-port): Ditto.
+	(mime-pgp-keyserver-protocol): New variable.
+	(mime-pgp-fetch-key): New function.
+	(mime-verify-application/pgp-signature): Prompt user to fetch
+	signer's public key.
+
+1999-11-03  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg.el (pgg-fetch-public-key): New function.
+
+	* pgg-pgp.el (lookup-key): New generic function.
+	(encrypt-region): Use `lookup-key'; cache passphrase if the
+	encryption has done successfully.
+	(sign-region): Likewise.
+	(decrypt-region): Use `lookup-key'.
+
+	* pgg.el (pgg-scheme): Remove all slots.
+	(pgg-decrypt-codition): Rename tag `cipher-algorithm' to
+	`symmetric-key-algorithm'.
+	(lookup-key): Add documentation about the new generic function.
+
+	* pgg-parse.el (pgg-decode-armor-region): Remove autoload cookie.
+	(pgg-armor-header-lines): New variable.
+
+1999-11-02  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg.el (pgg-add-passphrase-cache): Use only four octets of the key.
+	(pgg-read-passphrase): Ditto.
+	
+	* pgg-pgp5.el (lookup-key): New generic function. 
+	(encrypt-region): Use `lookup-key'; cache passphrase if the
+	encryption has done successfully.
+	(sign-region): Likewise.
+	(decrypt-region): Use `lookup-key'.
+
+1999-11-02  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg-parse.el
+	(pgg-parse-public-key-encrypted-session-key-packet):
+	Rename tag `public-key-identifier' to `key-identifier'.
+
+	* mime-pgp.el
+	(mime-display-application/pgp-encrypted): Refer it.
+
+	* pgg.el (pgg-passphrase-cache-expiry): New variable.
+	(pgg-passphrase-cache): New variable.
+	(pgg-read-passphrase): Add optional argument `key'.
+	(pgg-add-passphrase-cache): New function.
+	(pgg-remove-passphrase-cache): New function.
+
+	* pgg-gpg.el (lookup-key): New generic function.
+	(encrypt-region): Use `lookup-key'; cache passphrase if the
+	encryption has done successfully.
+	(sign-region): Likewise.
+	(decrypt-region): Use `lookup-key'.
+
+1999-11-02  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg-parse.el (pgg-parse-length-type): Fix typo.
+	(pgg-parse-public-key-encrypted-session-key-packet): Use
+	`pgg-read-bytes-string' instead of `pgg-read-bytes'.
+
+1999-11-02  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-edit.el (mime-edit-sign-pgp-mime): Rewrite with PGG functions.
+	(mime-edit-encrypt-pgp-mime): Likewise.
+	(mime-edit-encrypt-recipient-fields-list): Return recipients as list.
+
+	* mime-pgp.el: Add comment that this module is based on
+	draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME) and RFC 2440
+	(OpenPGP Message Format) as well. 
+	(mime-verify-application/pgp-signature): Use
+	`pgg-verify-region' instead of `mime-pgp-check-signature'.
+	(mime-display-application/pgp-signature): New function.
+	(mime-display-application/pgp-encrypted): New function.
+	(mime-display-application/pgp-keys): New function.
+
+	* semi-setup.el: Set up for
+	`mime-display-application/pgp-signature', 
+	`mime-display-application/pgp-encrypted',
+	`mime-display-application/pgp-keys'.
+	(mime-setup-enable-pgp): Default to t.
+
+	* SEMI-ELS (semi-modules-to-compile): Add `pgg', `pgg-parse',
+	`pgg-gpg', `pgg-pgp' and `pgg-pgp5' instead of `mime-mc'.
+
+	* EMIKO-VERSION, pgg-def.el, pgg.el, pgg-gpg.el, 
+	pgg-pgp5.el, pgg-pgp.el, pgg-parse.el: New file.
+
+	* mime-image.el (mime-display-image): Rewrite.
+
+	* semi-def.el (mime-user-interface-product): Modify for EMIKO.
+	(pgp-function-alist): Replace each method with PGG function.
+
+	* mime-view.el (mime-view-popup-menu): New variable.
+	(mime-view-popup-menu): New function.
+	(mime-view-define-keymap): Bind `mime-view-popup-menu' to
+	`mouse-button-3'.
+
+1999-11-01  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* mime-view.el (mime-display-application/x-postpet): New function.
+	(mime-preview-condition): Set up for
+	'mime-preview-application/x-postpet.
+	(unpack): New macro.
+	(unpack-skip): New function.
+	(unpack-fixed): New function.
+	(unpack-byte): New function.
+	(unpack-short): New function.
+	(unpack-long): New function.
+	(unpack-string): New function.
+	(unpack-string-sjis): New function.
+	(postpet-decode): New function.
+
+1999-10-17  Yoshiki Hayashi  <t90553@mail.ecc.u-tokyo.ac.jp>
+
+	* SEMI-MK (install-semi-package): Delte auto-autoloads.el
+	and custom-load.el
+
+
 1999-10-16  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* SEMI: Version 1.13.7 (Awazu) released.

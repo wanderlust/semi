@@ -1,13 +1,12 @@
 ;;; signature.el --- a signature utility for GNU Emacs
 
-;; Copyright (C) 1994,1995,1996,1997 Free Software Foundation, Inc.
+;; Copyright (C) 1994,1995,1996,1997,2000 Free Software Foundation, Inc.
 
-;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;; Author: MORIOKA Tomohiko <tomo@m17n.org>
 ;;         OKABE Yasuo <okabe@kudpc.kyoto-u.ac.jp>
-;;         Shuhei KOBAYASHI <shuhei-k@jaist.ac.jp>
-;; Maintainer: Shuhei KOBAYASHI <shuhei-k@jaist.ac.jp>
+;;         Shuhei KOBAYASHI <shuhei@aqua.ocn.ne.jp>
+;; Maintainer: Shuhei KOBAYASHI <shuhei@aqua.ocn.ne.jp>
 ;; Created: 1994/7/11
-;; Version: $Id$
 ;; Keywords: mail, news, signature
 
 ;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).

@@ -40,15 +40,16 @@ Required environment
   19.14.  SEMI also does not support Emacs 19.29 to 19.34, XEmacs
   19.15 or XEmacs 20.2 without mule, but SEMI may work with them.
 
-  SEMI requires APEL (9.20 or later) and FLIM (1.13.1 or later)
+  SEMI requires APEL (9.22 or later) and FLIM (Chao 1.14.1 or later)
   package.  Please install them before installing it.  APEL package is
   available at:
 
-	ftp://ftp.etl.go.jp/pub/mule/apel/
+	ftp://ftp.m17n.org/pub/mule/apel/
 
   and FLIM package is available at:
 
-	ftp://ftp.etl.go.jp/pub/mule/flim/flim-1.13/
+	http://www.kanji.zinbun.kyoto-u.ac.jp/~tomo/comp/emacsen/lisp/
+							flim/flim-1.14/
 
   PGP/MIME and application/pgp require mailcrypt or tiny-pgp package.
 
@@ -179,24 +180,24 @@ Mailing lists
 =============
 
   If you write bug-reports and/or suggestions for improvement, please
-  send them to the tm Mailing List:
+  send them to the EMACS-MIME Mailing List:
 
-	bug-tm-en@chamonix.jaist.ac.jp	(English)
-	bug-tm-ja@chamonix.jaist.ac.jp	(Japanese)
+	emacs-mime-en@m17n.org	(English)
+	emacs-mime-ja@m17n.org	(Japanese)
 
-  Via the tm ML, you can report SEMI bugs, obtain the latest release
-  of SEMI, and discuss future enhancements to SEMI.  To join the tm
-  ML, send an empty e-mail to
+  Via the EMACS-MIME ML, you can report SEMI bugs, obtain the latest
+  release of SEMI, and discuss future enhancements to SEMI.  To join
+  the EMACS-MIME ML, send an empty e-mail to
 
-	tm-en-help@chamonix.jaist.ac.jp	(English)
-	tm-ja-help@chamonix.jaist.ac.jp	(Japanese)
+	emacs-mime-en-ctl@m17n.org	(English)
+	emacs-mime-ja-ctl@m17n.org	(Japanese)
 
   Notice that you should not send mail to author(s), such as
   morioka@jaist.ac.jp, directly.  Because your problem may occur in
   other environments (if not, it might be your problem, not bug of
-  SEMI).  We should discuss in the tm mailing lists.  Anyway
+  SEMI).  We should discuss in the EMACS-MIME mailing lists.  Anyway
   direct-mail for authors might be ignored.  Please send mail to the
-  tm mailing lists.
+  EMACS-MIME mailing lists.
 
 
 CVS based development
@@ -204,10 +205,16 @@ CVS based development
 
   If you would like to join CVS based development, please send mail to
 
-	cvs@chamonix.jaist.ac.jp
+	cvs@cvs.m17n.org
 
-  with your account name and UNIX style crypted password.  We hope you 
-  will join the open development.
+  with your account name and your public key for ssh.  cvsroot is
+  :ext:cvs@cvs.m17n.org:/cvs/root.
+
+  If you cannot use ssh, please send UNIX /etc/passwd style crypted
+  password.  you can commit with the cvsroot
+  :pserver:<accountname>@cvs.m17n.org:/cvs/root.
+
+  We hope you will join the open development.
 
 
 Authors

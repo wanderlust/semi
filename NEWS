@@ -3,6 +3,17 @@ Copyright (C) 1998,1999 Free Software Foundation, Inc.
 
 * Changes in SEMI 1.13
 
+** PGP 5.0i and GnuPG are now supported for PGP/MIME
+
+  You can select the various PGP or GnuPG commands by the user option
+`pgg-default-scheme' or `pgg-scheme'. The former is for encrypting and
+signing, the latter could be bound for controlling which command is
+used to process the incoming PGP armors. Note that Mailcrypt is not
+needed anymore. A user interface for editing or viewing has never
+changed. Note also that `pgp-function' and `pgp-functions-alist' are
+abolished in this version.
+
+
 ** Requires FLIM 1.13 API
 
 

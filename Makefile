@@ -2,11 +2,11 @@
 # Makefile for SEMI kernel.
 #
 
-PACKAGE = semi
-API	= 1.13
-RELEASE = 7
+PACKAGE = remi
+API	= 1.14
+RELEASE = 2
 
-FLIM_API= 1.13
+FLIM_API= 1.14
 
 TAR	= tar
 RM	= /bin/rm -f
@@ -24,7 +24,7 @@ VERSION_SPECIFIC_LISPDIR = NONE
 GOMI	= *.elc
 
 VERSION	= $(API).$(RELEASE)
-ARC_DIR = /pub/mule/semi/semi-$(API)-for-flim-$(FLIM_API)
+ARC_DIR = /home/tomo/public_html/comp/emacsen/lisp/semi/semi-$(API)-for-flim-$(FLIM_API)
 
 
 elc:
@@ -53,7 +53,7 @@ tar:
 	cvs commit
 	sh -c 'cvs tag -RF $(PACKAGE)-`echo $(VERSION) | tr . _`; \
 	cd /tmp; \
-	cvs -d :pserver:anonymous@chamonix.jaist.ac.jp:/hare/cvs/root \
+	cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root \
 		export -d $(PACKAGE)-$(VERSION) \
 		-r $(PACKAGE)-`echo $(VERSION) | tr . _` \
 		semi'
