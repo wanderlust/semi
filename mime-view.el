@@ -131,7 +131,10 @@ mother-buffer."
 	(mime-preview-original-major-mode recursive)
 	)
     (cdr (assq 'major-mode
-	       (get-text-property (or point (point)) 'mime-view-situation)))))
+	       (get-text-property (or point (if (eobp)
+						(1- (point-max))
+					      (point)))
+				  'mime-view-situation)))))
 
 
 ;;; @ entity information
