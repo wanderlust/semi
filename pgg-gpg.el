@@ -92,9 +92,10 @@
     (with-current-buffer (get-buffer-create output-buffer)
       (buffer-disable-undo)
       (erase-buffer))
-    (setq process
-	  (apply #'start-process-shell-command "*GnuPG*" output-buffer
-		 program args))
+    (as-binary-process
+     (setq process
+	   (apply #'start-process-shell-command "*GnuPG*" output-buffer
+		  program args)))
     (set-process-sentinel process 'ignore)
     (when passphrase
       (process-send-string process (concat passphrase "\n")))
