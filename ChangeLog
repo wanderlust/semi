@@ -1,3 +1,7 @@
+2003-12-24  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* SEMI: Version 1.14.6 (Maruoka) released.
+
 2003-12-18  Daiki Ueno  <ueno@unixuser.org>
 
 	* pgg-gpg.el (pgg-gpg-process-region): Set environment variable
