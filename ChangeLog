@@ -1,9 +1,19 @@
 2000-08-21   Daiki Ueno  <ueno@unixuser.org>
 
+	* mime-vcard.el: New module.
+
+	* semi-setup.el: Remove `application/x-pkcs7-signature',
+	`application/x-pkcs7-mime'.
+	Set up for "text/x-vcard".
+	(mime-setup-enable-vcard): New variable.
+
+	* pgg-parse.el (pgg-decode-packets): Use `buffer-string' instead
+	of `buffer-substring'.
+
 	* mime-view.el: Add setting for 'vcard-parse-string',
-	`vcard-format-string' to autoload "vcard";
-	set up for "text/x-vcard"; add setting for
-	`fill-flowed' to autoload "flow-fill".
+	`vcard-format-string' and `vcard-filter-html' to autoload "vcard".
+	Set up for "text/x-vcard".
+	Add setting for	`fill-flowed' to autoload "flow-fill".
 	(mime-display-text/plain): Handle "format=flowed".
 
 2000-08-11  MORIOKA Tomohiko  <tomo@m17n.org>
