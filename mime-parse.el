@@ -180,25 +180,6 @@ If is is not found, return DEFAULT-ENCODING."
 ;;; @ message parser
 ;;;
 
-(defsubst make-mime-entity (buffer
-			    header-start header-end body-start body-end
-			    &optional node-id
-			    content-type content-disposition
-			    encoding children)
-  (vector buffer header-start header-end body-start body-end
-	  node-id content-type content-disposition encoding children))
-
-(defsubst mime-entity-buffer (entity)              (aref entity 0))
-(defsubst mime-entity-header-start (entity)        (aref entity 1))
-(defsubst mime-entity-header-end (entity)          (aref entity 2))
-(defsubst mime-entity-body-start (entity)          (aref entity 3))
-(defsubst mime-entity-body-end (entity)            (aref entity 4))
-(defsubst mime-entity-node-id (entity)             (aref entity 5))
-(defsubst mime-entity-content-type (entity)        (aref entity 6))
-(defsubst mime-entity-content-disposition (entity) (aref entity 7))
-(defsubst mime-entity-encoding (entity)            (aref entity 8))
-(defsubst mime-entity-children (entity)            (aref entity 9))
-
 (defsubst mime-entity-number (entity)
   (reverse (mime-entity-node-id entity)))
 
