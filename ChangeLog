@@ -1,3 +1,18 @@
+2000-02-25  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-situation-examples-file-coding-system): New
+	variable.
+	(mime-save-situation-examples): Use `with-temp-buffer'; try to
+	save as `mime-situation-examples-file-coding-system'.
+	- Use with-temp-buffer to load `mime-situation-examples-file';
+	setup `mime-situation-examples-file-coding-system' when
+	mime-situation-examples-file is loaded;
+
+2000-02-25  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-view-define-keymap): Change keybind for
+	`mime-preview-toggle-header' to C-c C-t h and C-c C-t C-f.
+
 2000-02-24  Mito              <mit@nines.nec.co.jp>
 
 	* mime-edit.el (mime-edit-normalize-body): Fix number of arguments
