@@ -110,7 +110,7 @@ MODE is allows `text', `comment', `phrase' or nil.  Default value is
       )))
 
 
-;;; @ leading char
+;;; @ charset word
 ;;;
 
 (defsubst eword-encode-char-type (character)
@@ -144,37 +144,34 @@ MODE is allows `text', `comment', `phrase' or nil.  Default value is
 ;;; @ word
 ;;;
 
-(defun tm-eword::parse-word (lcwl)
-  (let* ((lcw (car lcwl))
-	 (lc (car lcw))
-	 )
-    (if (null lc)
-	lcwl
-      (let ((lcl (list lc))
-	    (str (cdr lcw))
-	    )
-	(catch 'tag
-	  (while (setq lcwl (cdr lcwl))
-	    (setq lcw (car lcwl))
-	    (setq lc (car lcw))
-	    (if (null lc)
-		(throw 'tag nil)
+(defun tm-eword::lc-words-to-words (charset-words)
+  (let (dest)
+    (while charset-words
+      (let* ((charset-word (car charset-words))
+	     (charset (car charset-word))
+	     )
+	(if charset
+	    (let ((charsets (list charset))
+		  (str (cdr charset-word))
+		  )
+	      (catch 'tag
+		(while (setq charset-words (cdr charset-words))
+		  (setq charset-word (car charset-words)
+			charset (car charset-word))
+		  (if (null charset)
+		      (throw 'tag nil)
+		    )
+		  (or (memq charset charsets)
+		      (setq charsets (cons charset charsets))
+		      )
+		  (setq str (concat str (cdr charset-word)))
+		  ))
+	      (setq dest (cons (cons charsets str) dest))
 	      )
-	    (if (not (memq lc lcl))
-		(setq lcl (cons lc lcl))
-	      )
-	    (setq str (concat str (cdr lcw)))
-	    ))
-	(cons (cons lcl str) lcwl)
-	))))
-
-(defun tm-eword::lc-words-to-words (lcwl)
-  (let (ret dest)
-    (while (setq ret (tm-eword::parse-word lcwl))
-      (setq dest (cons (car ret) dest))
-      (setq lcwl (cdr ret))
-      )
-    (reverse dest)
+	  (setq dest (cons charset-word dest)
+		charset-words (cdr charset-words)
+		))))
+    (nreverse dest)
     ))
 
 
