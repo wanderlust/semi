@@ -56,11 +56,6 @@
 ;;; @ button
 ;;;
 
-(defun tm:set-face-region (b e face)
-  (let ((overlay (tl:make-overlay b e)))
-    (tl:overlay-put overlay 'face face)
-    ))
-
 (defvar tm:button-face 'bold
   "Face used for content-button or URL-button of MIME-Preview buffer.
 \[mime-def.el]")
