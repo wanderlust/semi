@@ -1347,22 +1347,23 @@ variable `mime-preview-over-to-next-method-alist'."
 If reached to (point-max), it calls function registered in variable
 `mime-preview-over-to-next-method-alist'."
   (interactive)
-  (or h
-      (setq h (1- (window-height)))
-      )
-  (if (= (point) (point-max))
+  (if (eobp)
       (let ((f (assq (mime-preview-original-major-mode)
-                     mime-preview-over-to-next-method-alist)))
-        (if f
-            (funcall (cdr f))
-          ))
+		     mime-preview-over-to-next-method-alist)))
+	(if f
+	    (funcall (cdr f))
+	  ))
     (let ((point
 	   (or (next-single-property-change (point) 'mime-view-entity)
-	       (point-max))))
-      (forward-line h)
-      (if (> (point) point)
-          (goto-char point)
-        )
+	       (point-max)))
+	  (bottom (window-end (selected-window))))
+      (if (and (not h)
+	       (> bottom point))
+	  (goto-char point)
+	(condition-case nil
+	    (scroll-up h)
+	  (end-of-buffer
+	   (goto-char (point-max)))))
       )))
 
 (defun mime-preview-scroll-down-entity (&optional h)
@@ -1370,33 +1371,38 @@ If reached to (point-max), it calls function registered in variable
 If reached to (point-min), it calls function registered in variable
 `mime-preview-over-to-previous-method-alist'."
   (interactive)
-  (or h
-      (setq h (1- (window-height)))
-      )
-  (if (= (point) (point-min))
+  (if (bobp)
       (let ((f (assq (mime-preview-original-major-mode)
 		     mime-preview-over-to-previous-method-alist)))
-        (if f
-            (funcall (cdr f))
-          ))
+	(if f
+	    (funcall (cdr f))
+	  ))
     (let ((point
 	   (or (previous-single-property-change (point) 'mime-view-entity)
-	       (point-min))))
-      (forward-line (- h))
-      (if (< (point) point)
-          (goto-char point)
-        ))))
+	       (point-min)))
+	  (top (window-start (selected-window))))
+      (if (and (not h)
+	       (< top point))
+	  (goto-char point)
+	(condition-case nil
+	    (scroll-down h)
+	  (beginning-of-buffer
+	   (goto-char (point-min)))))
+      )))
 
-(defun mime-preview-next-line-entity ()
-  (interactive)
-  (mime-preview-scroll-up-entity 1)
+(defun mime-preview-next-line-entity (&optional lines)
+  "Scroll up one line (or prefix LINES lines).
+If LINES is negative, scroll down LINES lines."
+  (interactive "p")
+  (mime-preview-scroll-up-entity (or lines 1))
   )
 
-(defun mime-preview-previous-line-entity ()
-  (interactive)
-  (mime-preview-scroll-down-entity 1)
+(defun mime-preview-previous-line-entity (&optional lines)
+  "Scrroll down one line (or prefix LINES lines).
+If LINES is negative, scroll up LINES lines."
+  (interactive "p")
+  (mime-preview-scroll-down-entity (or lines 1))
   )
-
 
 ;;; @@ quitting
 ;;;

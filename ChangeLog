@@ -1,3 +1,13 @@
+1999-09-20  Yoshiki Hayashi <t90553@mail.ecc.u-tokyo.ac.jp>
+
+	* mime-view.el (mime-preview-scroll-up-entitiy,
+	mime-preview-scroll-down-entity): Use scroll-up and scroll-down
+	instead of forward-line.
+	(mime-preview-next-line-entity,
+	mime-preview-previous-line-entity): Add optional argument LINES
+	and scroll LINES lines if specified. Add doc-string.
+
+
 1999-09-13  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* WEMI: Version 1.13.6 (Rokug-Dr) released.
