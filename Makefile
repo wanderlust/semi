@@ -1,8 +1,8 @@
 #
-# $Id$
+# Makefile for WEMI.
 #
 
-VERSION = 1.0.1
+VERSION = 1.2.0
 
 SHELL	= /bin/sh
 MAKE	= make
@@ -57,12 +57,14 @@ clean:
 
 tar:
 	cvs commit
-	sh -c 'cvs tag -RF semi-`echo $(VERSION) \
+	sh -c 'cvs tag -RF wemi-`echo $(VERSION) \
 				| sed s/\\\\./_/ | sed s/\\\\./_/`; \
-	cd /tmp; cvs -d $(HOME)/master export -d semi-$(VERSION) \
-		-r semi-`echo $(VERSION) \
-			| sed s/\\\\./_/ | sed s/\\\\./_/` SEMI/semi'
-	$(RM) /tmp/semi-$(VERSION)/ftp.in
-	cd /tmp; $(TAR) cvzf semi-$(VERSION).tar.gz semi-$(VERSION)
-	cd /tmp; $(RM) -r semi-$(VERSION)
+	cd /tmp; \
+	cvs -d :pserver:anonymous@chamonix.jaist.ac.jp:/hare/cvs/root \
+		export -d wemi-$(VERSION) \
+		-r wemi-`echo $(VERSION) \
+			| sed s/\\\\./_/ | sed s/\\\\./_/` semi'
+	$(RM) ~/tmp/wemi-$(VERSION)/ftp.in
+	cd ~/tmp; $(TAR) cvzf wemi-$(VERSION).tar.gz wemi-$(VERSION)
+	cd ~/tmp; $(RM) -r wemi-$(VERSION)
 	sed "s/VERSION/$(VERSION)/" < ftp.in > ftp
