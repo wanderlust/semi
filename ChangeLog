@@ -1,6 +1,11 @@
-1997-06-18  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+1997-06-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.91.1 was released.
+	* mime-view.el, mime-play.el, mime-partial.el:
+	`mime-article/decode-' -> `mime-display-'.
+
+	* mime-play.el (mime-display-caesar): fixed.
+
+1997-06-18  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* eword-decode.el (eword-decode-structured-field-body): fixed.
 
