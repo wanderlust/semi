@@ -39,8 +39,9 @@ Required environment
 
   EMY supports XEmacs 21.1 or later with mule, and Emacs 20.4 or later.
 
-  EMY does not support any other version. If you make patches to
-  make EMY to work on them, those might be applied.
+  EMY does not support any other version. If you write patches to
+  support version, those might be applied.  It depends on the
+  cleanliness of the patch.
 
   EMY requires APEL (9.20 or later) and FLIM (1.13.1 or later)
   package.  Please install them before installing it.  APEL package is

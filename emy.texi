@@ -258,7 +258,7 @@ This means you will have buttons around message/* and
 multipart/alternative, and before application/*.
 
 @node How to deal with broken MUA
-@section Illegal MIME messages
+@section Invalid MIME messages
 
 Some MUAs send totally broken MIME messages.  According to the standard,
 it's perfectly fine for EMY not to grok those message.  However, EMY

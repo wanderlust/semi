@@ -370,7 +370,7 @@ Insert signature.
 </dd>
 <kt>C-c C-x C-k
 <kd>
-Insert <dref>PGP</dref> public key. (It requires Mailcrypt package.)
+Insert <dref>PGP</dref> public key.
 </kd>
 <kt>C-c C-x t
 <kd>
@@ -609,29 +609,21 @@ mime-edit provides PGP encryption, signature and inserting public-key
 features based on <concept>PGP/MIME</concept> (RFC 2015) or
 <concept>PGP-kazu</concept> (draft-kazu-pgp-mime-00.txt).
 <p>
-This feature requires pgp command and pgp interface package, such as
-<a file="mailcrypt">Mailcrypt package</a>.
+This feature requires your pgp command.
 
-<defvar name="pgp-function-alist">
+<defvar name="pgg-default-scheme">
 <p>
-Alist of service names vs. corresponding functions and its filenames.
-Each element looks like <code>(SERVICE FUNCTION FILE)</code>.
-<p>
-SERVICE is a symbol of PGP processing.  It allows `verify', `decrypt',
-`fetch-key', `snarf-keys', `mime-sign', `traditional-sign', `encrypt'
-or `insert-key'.
-<p>
-Function is a symbol of function to do specified SERVICE.
-<p>
-FILE is string of filename which has definition of corresponding
-FUNCTION.
+Version of PGP or GnuPG command to be used for encryption or sign.
+The value should be a symbol.  Allowed versions are <code>gpg</code>,
+<code>pgp</code> or <code>pgp5</code>.
 </defvar>
 
-<defun name="pgp-function">
-	    <args> method
+<defvar name="pgg-scheme">
 <p>
-Return function to do service <var>method</var>.
-</defun>
+Version of PGP or GnuPG command to be used for decryption or verification.
+The value should be a symbol.  Allowed versions are <code>gpg</code>,
+<code>pgp</code> or <code>pgp5</code>.
+</defvar>
 
 
 <h2> Mouse button

@@ -1,3 +1,50 @@
+2000-02-07  Yoshiki Hayashi  <t90553@mail.ecc.u-tokyo.ac.jp>
+
+	* EMY 1.13.2 is released.
+
+2000-02-07  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-display-message): Add new local variable
+	line-move-ignore-invisible.  Bind it to t.
+
+2000-02-06  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* pgg-def.el (pgg-default-scheme): Improve custom options.
+
+2000-02-05  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* Makefile: Format Info file.
+
+2000-02-04  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-edit.el: Synch with EMIKO 1.13.11.
+	* mime-image.el: Ditto.
+	* mime-pgp.el: Ditto.
+	* semi-def.el: Ditto.
+	* semi-setup.el: Ditto.
+	* mime-ui-en.sgml: Ditto.
+	* mime-ui-en.texi: Ditto.
+	* mime-ui-ja.sgml: Ditto.
+	* mime-ui-ja.texi: Ditto.
+
+	* pgg-def.el: Synch with EMIKO 1.13.11.  New file.
+	* pgg-gpg.el: Ditto.
+	* pgg-parse.el: Ditto.
+	* pgg-pgp.el: Ditto.
+	* pgg-pgp5.el: Ditto.
+	* pgg.el: Ditto.
+	* smime.el: Ditto.
+
+2000-02-03  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-edit.el (mime-file-types): Defaults type of patch to
+	text/plain.  There's not much reason to use application/octet-stream.
+
+	* mime-view.el (mime-display-detect-application/octet-stream):
+	New function.
+	* mime-view.el (mime-display-gzipped): New function.
+	Ungzip content and inline it.  Requires external gzip program.
+
 2000-01-31  Yoshiki Hayashi  <t90553@mail.ecc.u-tokyo.ac.jp>
 
 	* EMY 1.13.1 is released.

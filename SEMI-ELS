@@ -6,6 +6,8 @@
 
 (setq semi-modules-to-compile
       '(signature
+	pgg-def pgg pgg-parse pgg-gpg pgg-pgp5 pgg-pgp mime-pgp
+	smime
 	semi-def mime-view mime-play mime-partial mime-edit
 	semi-setup mail-mime-setup))
 
@@ -14,25 +16,19 @@
 (mapcar (function
 	 (lambda (cell)
 	   (let ((c-module (car cell))
-		 (i-modules (cdr cell))
-		 )
+		 (i-modules (cdr cell)))
 	     (if (module-installed-p c-module)
 		 (setq semi-modules-to-compile
 		       (nconc semi-modules-to-compile i-modules))
 	       (setq semi-modules-not-to-compile
-		     (nconc semi-modules-not-to-compile i-modules))
-	       )
-	     )))
-	'((mailcrypt	mime-pgp mime-mc)
-	  (bbdb		mime-bbdb)
-	  (w3		mime-w3)
-	  ))
+		     (nconc semi-modules-not-to-compile i-modules))))))
+	'((bbdb		mime-bbdb)
+	  (w3		mime-w3)))
 
 (if (or (string-match "XEmacs" emacs-version)
 	(featurep 'mule))
     (setq semi-modules-to-compile
-	  (nconc semi-modules-to-compile '(mime-image)))
-  )
+	  (nconc semi-modules-to-compile '(mime-image))))
 
 (setq semi-modules (append semi-modules-to-compile
 			   semi-modules-not-to-compile))

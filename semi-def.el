@@ -30,7 +30,7 @@
 
 (require 'custom)
 
-(defconst mime-user-interface-product ["EMY" (1 13 1) "Haste makes waste"]
+(defconst mime-user-interface-product ["EMY" (1 13 2) "Better late than never"]
   "Product name, version number and code name of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
@@ -90,16 +90,14 @@
       (setq buf (current-buffer)
 	    point (point)
 	    func (get-text-property (point) 'mime-button-callback)
-	    data (get-text-property (point) 'mime-button-data)
-	    ))
+	    data (get-text-property (point) 'mime-button-data)))
     (save-excursion
       (set-buffer buf)
       (goto-char point)
       (if func
 	  (apply func data)
 	(if (fboundp mime-button-mother-dispatcher)
-	    (funcall mime-button-mother-dispatcher event)
-	  )))))
+	    (funcall mime-button-mother-dispatcher event))))))
 
 
 ;;; @ for URL
@@ -143,65 +141,19 @@
 			       (vector (car cell)
 				       `(progn
 					  (setq ret ',(cdr cell))
-					  (throw 'exit nil)
-					  )
-				       t)
-			       ))
-			    menu-alist)
-		    ))
+					  (throw 'exit nil))
+				       t)))
+			    menu-alist)))
 	    (recursive-edit)
 	    ret))
       (defun select-menu-alist (title menu-alist)
 	(x-popup-menu
 	 (list '(1 1) (selected-window))
-	 (list title (cons title menu-alist))
-	 ))
-      )
+	 (list title (cons title menu-alist)))))
   (defun select-menu-alist (title menu-alist)
     (cdr
      (assoc (completing-read (concat title " : ") menu-alist)
-	    menu-alist)
-     ))
-  )
-
-
-;;; @ PGP
-;;;
-
-(defvar pgp-function-alist
-  '(
-    ;; for mime-pgp
-    (verify		mc-verify			"mc-toplev")
-    (decrypt		mc-decrypt			"mc-toplev")
-    (fetch-key		mc-pgp-fetch-key		"mc-pgp")
-    (snarf-keys		mc-snarf-keys			"mc-toplev")
-    ;; for mime-edit
-    (mime-sign		mime-mc-pgp-sign-region		"mime-mc")
-    (traditional-sign	mc-pgp-sign-region		"mc-pgp")
-    (encrypt		mime-mc-pgp-encrypt-region	"mime-mc")
-    (insert-key		mc-insert-public-key		"mc-toplev")
-    )
-  "Alist of service names vs. corresponding functions and its filenames.
-Each element looks like (SERVICE FUNCTION FILE).
-
-SERVICE is a symbol of PGP processing.  It allows `verify', `decrypt',
-`fetch-key', `snarf-keys', `mime-sign', `traditional-sign', `encrypt'
-or `insert-key'.
-
-Function is a symbol of function to do specified SERVICE.
-
-FILE is string of filename which has definition of corresponding
-FUNCTION.")
-
-(defmacro pgp-function (method)
-  "Return function to do service METHOD."
-  `(cadr (assq ,method (symbol-value 'pgp-function-alist))))
-
-(mapcar (function
-	 (lambda (method)
-	   (autoload (cadr method)(nth 2 method))
-	   ))
-	pgp-function-alist)
+	    menu-alist))))
 
 
 ;;; @ Other Utility
@@ -233,13 +185,9 @@ activate."
 		(funcall func sym condition)
 		(if file
 		    (let ((method (cdr (assq 'method condition))))
-		      (autoload method file)
-		      ))
-		)
-	    (error "Function for mode `%s' is not found." mode)
-	    ))
-      (error "Variable for target-type `%s' is not found." target-type)
-      )))
+		      (autoload method file))))
+	    (error "Function for mode `%s' is not found." mode)))
+      (error "Variable for target-type `%s' is not found." target-type))))
 
 
 ;;; @ end

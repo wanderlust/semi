@@ -35,27 +35,22 @@ it is used as hook to set."
   (if (featurep module)
       (funcall func)
     (or hook-name
-	(setq hook-name (intern (concat (symbol-name module) "-load-hook")))
-	)
-    (add-hook hook-name func)
-    ))
+	(setq hook-name (intern (concat (symbol-name module) "-load-hook"))))
+    (add-hook hook-name func)))
 
 
 ;; for image/* and X-Face
 (defvar mime-setup-enable-inline-image
   (and window-system
        (or (featurep 'xemacs)
-	   (and (featurep 'mule)(module-installed-p 'bitmap))
-	   ))
+	   (and (featurep 'mule)(module-installed-p 'bitmap))))
   "*If it is non-nil, semi-setup sets up to use mime-image.")
 
 (if mime-setup-enable-inline-image
     (call-after-loaded 'mime-view
 		       (function
 			(lambda ()
-			  (require 'mime-image)
-			  )))
-  )
+			  (require 'mime-image)))))
 
 
 ;; for text/html
@@ -77,15 +72,12 @@ it is used as hook to set."
 	   (body-presentation-method . mime-preview-text/html)))
 	
 	(set-alist 'mime-view-type-subtype-score-alist
-		   '(text . html) 3)
-	)))
-  )
+		   '(text . html) 3)))))
 
 
 ;; for PGP
-(defvar mime-setup-enable-pgp
-  (module-installed-p 'mailcrypt)
-  "*If it is non-nil, semi-setup sets uf to use mime-pgp.")
+(defvar mime-setup-enable-pgp t
+  "*If it is non-nil, semi-setup sets up to use mime-pgp.")
 
 (if mime-setup-enable-pgp
     (eval-after-load "mime-view"
@@ -123,8 +115,30 @@ it is used as hook to set."
 	  '((type . application)(subtype . pgp-keys)
 	    (method . mime-add-application/pgp-keys))
 	  'strict "mime-pgp")
-	 ))
-  )
+
+	 (mime-add-condition
+	  'action
+	  '((type . application)(subtype . pkcs7-signature)
+	    (method . mime-verify-application/pkcs7-signature))
+	  'strict "mime-pgp")
+
+	 (mime-add-condition
+	  'action
+	  '((type . application)(subtype . x-pkcs7-signature)
+	    (method . mime-verify-application/pkcs7-signature))
+	  'strict "mime-pgp")
+	 
+	 (mime-add-condition
+	  'action
+	  '((type . application)(subtype . pkcs7-mime)
+	    (method . mime-view-application/pkcs7-mime))
+	  'strict "mime-pgp")
+
+	 (mime-add-condition
+	  'action
+	  '((type . application)(subtype . x-pkcs7-mime)
+	    (method . mime-view-application/pkcs7-mime))
+	  'strict "mime-pgp"))))
 
 
 ;;; @ for mime-edit
@@ -140,11 +154,9 @@ it is used as hook to set."
 	    (concat "^" (regexp-quote mail-header-separator) "$")
 	    nil t)
 	   (match-beginning 0)
-	 (point-max)
-	 ))
+	 (point-max)))
       (mime-decode-header-in-buffer)
-      (set-buffer-modified-p nil)
-      )))
+      (set-buffer-modified-p nil))))
 
 (add-hook 'mime-edit-mode-hook 'mime-setup-decode-message-header)
 
@@ -171,8 +183,7 @@ it is used as hook to set."
 	(let ((key
 	       (or (cdr (assq major-mode mime-setup-signature-key-alist))
 		   mime-setup-default-signature-key)))
-	  (define-key keymap key (function insert-signature))
-	  ))))
+	  (define-key keymap key (function insert-signature))))))
 
 (when mime-setup-use-signature
   (autoload 'insert-signature "signature" "Insert signature" t)

@@ -48,8 +48,7 @@
       `(let ((color (color-name (face-background 'default))))
 	 (prog1
 	     (progn ,@body)
-	   (font-set-face-background 'default color (current-buffer))
-	   ))
+	   (font-set-face-background 'default color (current-buffer))))
     (cons 'progn body)))
 
 (defun mime-preview-text/html (entity situation)
@@ -76,8 +75,7 @@
 					     'mime-view-entity)))))
     (when entity
       (mime-insert-entity-content entity)
-      (setq url-current-mime-type (mime-entity-type/subtype entity))
-      )))
+      (setq url-current-mime-type (mime-entity-type/subtype entity)))))
 
 (url-register-protocol "cid"
 		       'url-cid

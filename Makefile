@@ -14,7 +14,10 @@ CP	= /bin/cp -p
 
 EMACS	= emacs
 XEMACS	= xemacs
-FLAGS   = -batch -q -no-site-file -l SEMI-MK
+VANILLA = -batch -q -no-site-file
+FLAGS   = $(VANILLA) -l SEMI-MK
+TEXINFMT = $(VANILLA) -l texinfmt
+TEXIF = -f texinfo-format-buffer -f save-buffer
 
 PREFIX	= NONE
 LISPDIR = NONE
@@ -26,7 +29,7 @@ GOMI	= *.elc *.info
 VERSION	= $(API).$(RELEASE)
 ARC_DIR = /pub/mule/semi/semi-$(API)-for-flim-$(FLIM_API)
 
-all: elc
+all: elc info
 
 elc:
 	$(EMACS) $(FLAGS) -f compile-semi \
@@ -39,15 +42,19 @@ install-elc:	elc
 install:	install-elc
 
 
-package:
+package: package-elc info
+
+package-elc:
 	$(XEMACS) $(FLAGS) -f compile-semi-package $(PACKAGEDIR)
 
 install-package:	package
 	$(XEMACS) $(FLAGS) -f install-semi-package $(PACKAGEDIR)
 
 
-info:
-	makeinfo -o emy.info emy.texi
+info: emy.info
+
+%.info: %.texi
+	makeinfo -o $@ $<
 
 clean:
 	-$(RM) $(GOMI)
