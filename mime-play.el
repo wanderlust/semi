@@ -120,6 +120,16 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	      )))
   )
 
+(defsubst mime-delq-null-situation (situations field)
+  (let (dest)
+    (while situations
+      (let ((situation (car situations)))
+	(if (assq field situation)
+	    (setq dest (cons situation dest))
+	  ))
+      (setq situations (cdr situations)))
+    dest))
+
 (defun mime-raw-play-entity (entity-info &optional mode)
   "Play entity specified by ENTITY-INFO.
 It decodes the entity to call internal or external method.  The method
@@ -144,10 +154,14 @@ specified, play as it.  Default MODE is \"play\"."
 					      cal)
 		cal))
       (setq ret
-	    (or (ctree-find-calist mime-acting-condition ret
-				   mime-view-find-every-acting-situation)
-		(ctree-find-calist mime-acting-condition cal
-				   mime-view-find-every-acting-situation)
+	    (or (mime-delq-null-situation
+		 (ctree-find-calist mime-acting-condition ret
+				    mime-view-find-every-acting-situation)
+		 'method)
+		(mime-delq-null-situation
+		 (ctree-find-calist mime-acting-condition cal
+				    mime-view-find-every-acting-situation)
+		 'method)
 		))
       (cond ((cdr ret)
 	     (setq ret (select-menu-alist
