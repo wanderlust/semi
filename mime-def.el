@@ -41,9 +41,6 @@
     (function find-file)
     ))
 
-(defvar mime/output-buffer-window-is-shared-with-bbdb t
-  "*If t, mime/output-buffer window is shared with BBDB window.")
-
 
 ;;; @ constants
 ;;;
