@@ -1057,6 +1057,7 @@ User customizable variables (not documented all of them):
 		     paragraph-separate))
     (run-hooks 'mime-edit-mode-hook)
     (message
+     "%s"
      (substitute-command-keys
       "Type \\[mime-edit-exit] to exit MIME mode, and type \\[mime-edit-help] to get help."))
     ))
