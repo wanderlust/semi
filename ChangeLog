@@ -1,3 +1,8 @@
+1999-11-10  Yoshiki Hayashi  <t90553@mail.ecc.u-tokyo.ac.jp>
+
+	* mime-play.el: (mime-save-directory): New variable.
+	(mime-save-content): Don't force filename parameter to be used.
+
 1999-11-01  Tanaka Akira  <akr@jaist.ac.jp>
 	* mime-view.el (mime-display-application/x-postpet): New function.
 	(mime-preview-condition): Set up for
