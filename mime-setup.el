@@ -55,9 +55,6 @@
 ;;; @ variables
 ;;;
 
-(defvar mime-setup-use-sc nil
-  "If it is not nil, mime-setup requires sc-setup. [mime-setup.el]")
-
 (defvar mime-setup-use-signature t
   "If it is not nil, mime-setup sets up to use signature.el.
 \[mime-setup.el]")
@@ -86,14 +83,6 @@
       (setq mail-signature nil)
       (setq message-signature nil)
       ))
-
-
-;;; @ about SuperCite
-;;;
-
-(if mime-setup-use-sc
-    (require 'sc-setup)
-  )
 
 
 ;;; @ for mu-cite
