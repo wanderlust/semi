@@ -144,7 +144,7 @@ MODE is allows `text', `comment', `phrase' or nil.  Default value is
 ;;; @ word
 ;;;
 
-(defun tm-eword::lc-words-to-words (charset-words)
+(defun eword-encode-charset-words-to-words (charset-words)
   (let (dest)
     (while charset-words
       (let* ((charset-word (car charset-words))
@@ -243,7 +243,7 @@ MODE is allows `text', `comment', `phrase' or nil.  Default value is
 (defun tm-eword::split-string (str &optional mode)
   (tm-eword::space-process
    (tm-eword::words-to-ruled-words
-    (tm-eword::lc-words-to-words
+    (eword-encode-charset-words-to-words
      (eword-encode-divide-into-charset-words str))
     mode)))
 
@@ -415,7 +415,7 @@ MODE is allows `text', `comment', `phrase' or nil.  Default value is
 		   (append dest
 			   '(("(" nil nil))
 			   (tm-eword::words-to-ruled-words
-			    (tm-eword::lc-words-to-words
+			    (eword-encode-charset-words-to-words
 			     (eword-encode-divide-into-charset-words
 			      (cdr token)))
 			    'comment)
@@ -426,7 +426,7 @@ MODE is allows `text', `comment', `phrase' or nil.  Default value is
 	     (setq dest
 		   (append dest
 			   (tm-eword::words-to-ruled-words
-			    (tm-eword::lc-words-to-words
+			    (eword-encode-charset-words-to-words
 			     (eword-encode-divide-into-charset-words
 			      (cdr token))
 			     ) 'phrase)))
