@@ -10,7 +10,7 @@
 	mime-parse mime-view mime-text mime-play mime-partial
 	mime-tar mime-file
 	mime-edit
-	semi-setup))
+	semi-setup mail-mime-setup))
 
 (setq semi-modules-not-to-compile nil)
 
