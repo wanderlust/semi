@@ -1,3 +1,14 @@
+2000-01-16  MORIOKA Tomohiko  <tomo@etl.go.jp>
+
+	* mime-view.el (mime-view-find-every-situations): Renamed from
+	`mime-view-find-every-acting-situation'; changed to variable.
+	(mime-situation-examples-file): Renamed from
+	`mime-acting-situation-examples-file'.
+	(mime-preview-situation-example-list-max-size): New variable.
+	(mime-save-situation-examples): Renamed from
+	`mime-save-acting-situation-examples'; save
+	`mime-preview-situation-example-list' if it is not null.
+
 2000-01-16  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-play.el (mime-acting-situation-example-list): Moved to
