@@ -1601,7 +1601,7 @@ Optional DELIMITER specifies parameter delimiter (';' by default)."
 
 (defun mime-prompt-for-parameter (parameter)
   "Ask for PARAMETER.
-Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
+Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
   (let* ((prompt (car parameter))
 	 (choices (mapcar (function
 			   (lambda (e)
@@ -2673,7 +2673,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	  (message (format "Sending %d/%d..."
 			   mime-edit-partial-number total))
 	  (call-interactively command)
-	  (message (format "Sending %d/%d... done"
+	  (message (format "Sending %d/%d...done"
 			   mime-edit-partial-number total))
 	  )
 	(setq mime-edit-partial-number
@@ -2691,7 +2691,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
       (save-excursion
 	(message (format "Sending %d/%d..."
 			 mime-edit-partial-number total))
-	(message (format "Sending %d/%d... done"
+	(message (format "Sending %d/%d...done"
 			 mime-edit-partial-number total))
 	)
       )))
