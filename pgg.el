@@ -346,11 +346,13 @@ signer's public key from `pgg-default-keyserver-address'."
 		   (luna-send entity 'verify-region entity 
 			      (point-min)(point-max) signature)))
     (when (interactive-p)
-      (with-output-to-temp-buffer pgg-echo-buffer
-	(set-buffer standard-output)
-	(insert-buffer-substring (if status pgg-output-buffer
-				   pgg-errors-buffer))
-	))
+      (let ((temp-buffer-show-function
+	     (function pgg-temp-buffer-show-function)))
+	(with-output-to-temp-buffer pgg-echo-buffer
+	  (set-buffer standard-output)
+	  (insert-buffer-substring (if status pgg-output-buffer
+				     pgg-errors-buffer))
+	  )))
     status))
 
 ;;;###autoload
