@@ -1,3 +1,8 @@
+1999-01-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-view-caesar): Don't expect called in
+	raw-buffer; use `mime-insert-entity'.
+
 1999-01-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-w3.el (mime-preview-text/html): Display err if error occurs
