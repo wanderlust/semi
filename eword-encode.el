@@ -494,7 +494,10 @@ MODE is allows `text', `comment', `phrase' or nil.  Default value is
 	  )
 	(append
 	 dest
-	 (list (list (concat "<" (std11-addr-to-string route) ">") nil nil))
+	 (eword-addr-seq-to-rwl
+	  (append '((specials . "<"))
+		  route
+		  '((specials . ">"))))
 	 ))))
 
 (defun eword-addr-spec-to-rwl (addr-spec)
