@@ -1,6 +1,21 @@
 SEMI NEWS --- history of major-changes.
-Copyright (C) 1998 Free Software Foundation, Inc.
+Copyright (C) 1998,1999 Free Software Foundation, Inc.
 
+* Changes in SEMI 1.13
+
+** Function `mime-play-entity'
+
+Function `mime-play-entity' was renamed from `mime-raw-play-entity'.
+
+
+** Now acting-method must not expect to run in raw-buffer
+
+Function `mime-play-entity' was changed to permit to run in any buffer
+(may be called in preview-buffer).  So each acting-method is called in
+any buffer.
+
+
+
 * Changes in SEMI 1.12
 
 There are no user-visible changes.
