@@ -1,5 +1,10 @@
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el: Rename `mime-article::write-region' ->
+	`mime-raw-write-region'.
+
+1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-pgp.el, mime-play.el: Rename `mime-playback-entity' ->
 	`mime-raw-play-entity'.
 
