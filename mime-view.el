@@ -1359,11 +1359,10 @@ button-2	Move to point under the mouse cursor
 	  )
 	(setq mime-message-structure (mime-open-entity type raw-buffer))
 	(or (mime-entity-content-type mime-message-structure)
-	    (mime-entity-set-content-type-internal
-	     mime-message-structure ctl))
+	    (mime-entity-set-content-type mime-message-structure ctl))
 	)
       (or (mime-entity-encoding mime-message-structure)
-	  (mime-entity-set-encoding-internal mime-message-structure encoding))
+	  (mime-entity-set-encoding mime-message-structure encoding))
       ))
   (mime-display-message mime-message-structure preview-buffer
 			mother default-keymap-or-function)
