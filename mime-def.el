@@ -66,7 +66,7 @@
 (defun tm:add-button (from to func &optional data)
   "Create a button between FROM and TO with callback FUNC and data DATA."
   (and tm:button-face
-       (overlay-put (tl:make-overlay from to) 'face tm:button-face))
+       (overlay-put (make-overlay from to) 'face tm:button-face))
   (tl:add-text-properties from to
 			  (append (and tm:mouse-face
 				       (list 'mouse-face tm:mouse-face))
