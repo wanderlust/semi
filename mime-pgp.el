@@ -67,21 +67,18 @@
     (insert-buffer-substring the-buf start end)
     (cond ((progn
 	     (goto-char (point-min))
-	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t)
-	     )
+	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
 	   (funcall (pgp-function 'verify))
 	   (goto-char (point-min))
 	   (delete-region
 	    (point-min)
 	    (and
 	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+\n\n")
-	     (match-end 0))
-	    )
+	     (match-end 0)))
 	   (delete-region
 	    (and (re-search-forward "^-+BEGIN PGP SIGNATURE-+")
 		 (match-beginning 0))
-	    (point-max)
-	    )
+	    (point-max))
 	   (goto-char (point-min))
 	   (while (re-search-forward "^- -" nil t)
 	     (replace-match "-")
@@ -92,8 +89,7 @@
 	   )
 	  ((progn
 	     (goto-char (point-min))
-	     (re-search-forward "^-+BEGIN PGP MESSAGE-+$" nil t)
-	     )
+	     (re-search-forward "^-+BEGIN PGP MESSAGE-+$" nil t))
 	   (as-binary-process (funcall (pgp-function 'decrypt)))
 	   (goto-char (point-min))
 	   (delete-region (point-min)
@@ -110,13 +106,11 @@
 
 (set-atype 'mime-acting-condition
 	   '((type . application)(subtype . pgp)
-	     (method . mime-method-for-application/pgp)
-	     ))
+	     (method . mime-method-for-application/pgp)))
 
 (set-atype 'mime-acting-condition
 	   '((type . text)(subtype . x-pgp)
-	     (method . mime-method-for-application/pgp)
-	     ))
+	     (method . mime-method-for-application/pgp)))
 
 
 ;;; @ Internal method for multipart/signed
@@ -136,8 +130,7 @@
 
 (set-atype 'mime-acting-condition
 	   '((type . multipart)(subtype . signed)
-	     (method . mime-method-to-verify-multipart/signed)
-	     ))
+	     (method . mime-method-to-verify-multipart/signed)))
 
 
 ;;; @ Internal method for application/pgp-signature
@@ -185,9 +178,9 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
   "Internal method to check PGP/MIME signature."
   (let* ((encoding (cdr (assq 'encoding cal)))
 	 (entity-number (mime-raw-point-to-entity-number start))
-	 (rcnum (reverse entity-number))
-	 (rmcnum (cdr rcnum))
-	 (knum (car rcnum))
+	 (reversed-entity-number (reverse entity-number))
+	 (rmcnum (cdr reversed-entity-number))
+	 (knum (car reversed-entity-number))
 	 (onum (if (> knum 0)
 		   (1- knum)
 		 (1+ knum)))
@@ -261,8 +254,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 
 (set-atype 'mime-acting-condition
 	   '((type . application)(subtype . pgp-signature)
-	     (method . mime-method-to-verify-application/pgp-signature)
-	     ))
+	     (method . mime-method-to-verify-application/pgp-signature)))
 
 
 ;;; @ Internal method for application/pgp-encrypted
@@ -271,9 +263,9 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 
 (defun mime-method-to-decrypt-application/pgp-encrypted (start end cal)
   (let* ((entity-number (mime-raw-point-to-entity-number start))
-	 (rcnum (reverse entity-number))
-	 (rmcnum (cdr rcnum))
-	 (knum (car rcnum))
+	 (reversed-entity-number (reverse entity-number))
+	 (rmcnum (cdr reversed-entity-number))
+	 (knum (car reversed-entity-number))
 	 (onum (if (> knum 0)
 		   (1- knum)
 		 (1+ knum)))
@@ -287,8 +279,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 
 (set-atype 'mime-acting-condition
 	   '((type . application)(subtype . pgp-encrypted)
-	     (method . mime-method-to-decrypt-application/pgp-encrypted)
-	     ))
+	     (method . mime-method-to-decrypt-application/pgp-encrypted)))
 
 
 ;;; @ Internal method for application/pgp-keys
@@ -316,8 +307,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 
 (set-atype 'mime-acting-condition
 	   '((type . application)(subtype . pgp-keys)
-	     (method . mime-method-to-add-application/pgp-keys)
-	     ))
+	     (method . mime-method-to-add-application/pgp-keys)))
 
 	 
 ;;; @ end
