@@ -699,7 +699,7 @@ The compressed face will be piped to this command.")
 	    (cdr (assq 'message-button situation)))
 	   (body-presentation-method
 	    (cdr (assq 'body-presentation-method situation))))
-      (when message-button
+      (when (eq message-button 'visible)
 	(goto-char (point-max))
 	(mime-view-insert-entity-button message-info message-info subj)
 	)
@@ -765,7 +765,7 @@ The compressed face will be piped to this command.")
 	   (button-is-invisible
 	    (eq (cdr (assq 'entity-button situation)) 'invisible))
 	   (header-is-visible
-	    (cdr (assq 'header situation)))
+	    (eq (cdr (assq 'header situation)) 'visible))
 	   (body-presentation-method
 	    (cdr (assq 'body-presentation-method situation))))
       (set-buffer obuf)
