@@ -143,10 +143,10 @@
 
 (or (boundp 'epoch::version)
     (progn
-      (add-hook 'message-setup-hook 'mime-edit-mode)
-      (add-hook 'message-setup-hook 'message-maybe-setup-default-charset)
-      (add-hook 'message-send-hook  'mime-edit-maybe-translate)
-      (add-hook 'message-header-hook 'mime/encode-message-header)
+      (add-hook 'message-setup-hook  'mime-edit-mode)
+      (add-hook 'message-setup-hook  'message-maybe-setup-default-charset)
+      (add-hook 'message-send-hook   'mime-edit-maybe-translate)
+      (add-hook 'message-header-hook 'eword-encode-header)
       
       (call-after-loaded
        'message
