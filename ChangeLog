@@ -1,3 +1,8 @@
+2000-05-23  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* semi-def.el (mime-create-widget-button): Avoid truncating
+	extents.
+
 2000-05-22  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* semi-def.el (mime-create-xpm-button): Define it if the feature
