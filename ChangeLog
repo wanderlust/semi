@@ -73,6 +73,18 @@
 	* mime-w3.el (mime-preview-text/html): Use
 	`mime-find-root-entity'.
 
+2000-06-15  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* semi-setup.el (mime-setup-enable-inline-image): Don't check
+	window-system under XEmacs.
+	* semi-def.el (select-menu-alist): Use device-on-window-system-p
+	under XEmacs.
+
+2000-06-14  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* semi-def.el (mime-create-xpm-buttton): Make an extent start-open.
+	Put mime-button text-property for buttonize and unbuttonize.
+
 2000-06-09   Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-edit.el (mime-edit-insert-key): Insert a text tag when
