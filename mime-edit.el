@@ -2432,7 +2432,7 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
     ))
   (if arg
       (progn
-	(or (memq 'encrypt mime-edit-set-encrypt)
+	(or (memq 'encrypt mime-edit-pgp-processing)
 	    (setq mime-edit-pgp-processing 
 		  (nconc mime-edit-pgp-processing 
 			 (copy-sequence '(encrypt)))))
