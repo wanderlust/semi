@@ -53,8 +53,8 @@
 ;;;
 ;;; It is based on draft-kazu-pgp-mime-00.txt (PGP-kazu).
 
-(defun mime-method-for-application/pgp (beg end cal)
-  (let* ((cnum (mime-raw-point-to-entity-number beg))
+(defun mime-method-for-application/pgp (start end cal)
+  (let* ((cnum (mime-raw-point-to-entity-number start))
 	 (p-win (or (get-buffer-window mime-preview-buffer)
 		    (get-largest-window)))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
@@ -64,7 +64,7 @@
 	 text-decoder)
     (set-buffer (get-buffer-create new-name))
     (erase-buffer)
-    (insert-buffer-substring the-buf beg end)
+    (insert-buffer-substring the-buf start end)
     (cond ((progn
 	     (goto-char (point-min))
 	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t)
@@ -181,10 +181,10 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 		 (t "Bad signature")))
 	  ))))
 
-(defun mime-method-to-verify-application/pgp-signature (beg end cal)
+(defun mime-method-to-verify-application/pgp-signature (start end cal)
   "Internal method to check PGP/MIME signature."
   (let* ((encoding (cdr (assq 'encoding cal)))
-	 (cnum (mime-raw-point-to-entity-number beg))
+	 (cnum (mime-raw-point-to-entity-number start))
 	 (rcnum (reverse cnum))
 	 (rmcnum (cdr rcnum))
 	 (knum (car rcnum))
@@ -216,7 +216,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
     (save-excursion (mime-show-echo-buffer))
     (save-excursion
       (let ((p-min (save-excursion
-		     (goto-char beg)
+		     (goto-char start)
 		     (and (search-forward "\n\n")
 			  (match-end 0))
 		     )))
@@ -269,8 +269,8 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 ;;;
 ;;; It is based on RFC 2015 (PGP/MIME).
 
-(defun mime-method-to-decrypt-application/pgp-encrypted (beg end cal)
-  (let* ((cnum (mime-raw-point-to-entity-number beg))
+(defun mime-method-to-decrypt-application/pgp-encrypted (start end cal)
+  (let* ((cnum (mime-raw-point-to-entity-number start))
 	 (rcnum (reverse cnum))
 	 (rmcnum (cdr rcnum))
 	 (knum (car rcnum))
@@ -295,12 +295,12 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 ;;;
 ;;; It is based on RFC 2015 (PGP/MIME).
 
-(defun mime-method-to-add-application/pgp-keys (beg end cal)
-  (let* ((cnum (mime-raw-point-to-entity-number beg))
+(defun mime-method-to-add-application/pgp-keys (start end cal)
+  (let* ((cnum (mime-raw-point-to-entity-number start))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (encoding (cdr (assq 'encoding cal)))
 	 str)
-    (setq str (buffer-substring beg end))
+    (setq str (buffer-substring start end))
     (switch-to-buffer new-name)
     (setq buffer-read-only nil)
     (erase-buffer)
