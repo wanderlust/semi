@@ -79,8 +79,8 @@ partial messages using mime-view."
 	    (while t
 	      (mime-view-partial-message target)
 	      (set-buffer article-buffer)
-	      (setq parameters (mime::content-info/parameters
-				mime::article/content-info))
+	      (setq parameters
+		    (mime-entity-info-parameters mime::article/content-info))
 	      (setq the-id (cdr (assoc "id" parameters)))
 	      (if (string= the-id id)
 		  (progn
