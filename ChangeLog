@@ -12,7 +12,7 @@
 	(mime-edit-translate-buffer): Do `undo-boundary'
 	before translating.
 
-	* pgg-pgp.el (sign-region): Use `pgg-as-lbt'.
+	* pgg-gpg.el (sign-region): Use `pgg-as-lbt'.
 	(pgg-gpg-process-region): Use `pgg-convert-lbt-region'.
 	(encrypt-region): Don't ask passphrase.
 
