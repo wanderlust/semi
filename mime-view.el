@@ -983,6 +983,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 			(setq buffer-file-name filename)
 			(set-auto-mode))
 		    (setq buffer-file-name nil))))
+	    (require 'font-lock)
 	    (let ((font-lock-verbose nil))
 	      ;; I find font-lock a bit too verbose.
 	      (font-lock-fontify-buffer))

@@ -1,3 +1,8 @@
+2002-11-05  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* mime-view.el (mime-view-insert-fontified-text-content): Make
+	sure font-lock is loaded before using it.
+
 2002-10-26  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* mime-view.el (mime-preview-find-boundary-info): Fix logic. Do not
