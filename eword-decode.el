@@ -40,7 +40,7 @@
   :group 'mime)
 
 (defconst eword-decode-version
-  `,(mapconcat #'number-to-string (cdr semi-version) "."))
+  `,(mapconcat #'number-to-string (cddr mime-module-version) "."))
 
 
 ;;; @ MIME encoded-word definition
