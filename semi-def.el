@@ -98,8 +98,7 @@
 	    point (point)
 	    func (get-text-property (point) 'mime-button-callback)
 	    data (get-text-property (point) 'mime-button-data)
-	    )
-      )
+	    ))
     (save-excursion
       (set-buffer buf)
       (goto-char point)
@@ -178,8 +177,7 @@ FUNCTION.")
 
 (defmacro pgp-function (method)
   "Return function to do service METHOD."
-  `(cadr (assq ,method (symbol-value 'pgp-function-alist)))
-  )
+  `(cadr (assq ,method (symbol-value 'pgp-function-alist))))
 
 (mapcar (function
 	 (lambda (method)
