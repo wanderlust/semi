@@ -145,8 +145,7 @@
 ;;    (for XEmacs 19.12 or later)
 
 (defun mime-preview/filter-for-image (ctype params encoding)
-  (let* ((mode mime::preview/original-major-mode)
-	 (charset (assoc "charset" params))
+  (let* ((charset (assoc "charset" params))
 	 (beg (point-min)) (end (point-max))
 	 )
     (remove-text-properties beg end '(face nil))
@@ -189,8 +188,7 @@
 ;;    (for XEmacs 19.14 or later)
 
 (defun mime-preview/filter-for-application/postscript (ctype params encoding)
-  (let* ((mode mime::preview/original-major-mode)
-	 (beg (point-min)) (end (point-max))
+  (let* ((beg (point-min)) (end (point-max))
 	 (file-base
 	  (make-temp-name (expand-file-name "tm" mime-temp-directory)))
 	 (ps-file (concat file-base ".ps"))
