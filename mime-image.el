@@ -34,12 +34,13 @@
 
 ;;; Code:
 
+(eval-when-compile (require 'static))
 (require 'mime-view)
 (require 'alist)
 (require 'path-util)
 
-(cond 
- ((featurep 'xemacs) 
+(cond
+ ((featurep 'xemacs)
 
   (require 'images)
 
@@ -51,11 +52,11 @@
 		    ))
 		 image-native-formats)
 	))
-       
+
   (image-register-netpbm-utilities)
   (image-register-converter 'pic 'ppm "pictoppm")
   (image-register-converter 'mag 'ppm "magtoppm")
-       
+
   (defun image-insert-at-point (image)
     (let ((e (make-extent (point) (point))))
       (set-extent-end-glyph e (make-glyph image))))
@@ -66,9 +67,7 @@
 	(equal (aref glyph 2) "")
 	))
   )
- ((featurep 'mule) 
-
-  (eval-when-compile (require 'static))
+ ((featurep 'mule)
 
   (eval-and-compile
     (autoload 'bitmap-insert-xbm-buffer "bitmap")
@@ -83,8 +82,8 @@
   (defun-maybe image-normalize (format data)
     (if (memq format '(xbm xpm))
 	(list 'image ':type format ':data data)
-      (let ((image-file 
-	     (make-temp-name 
+      (let ((image-file
+	     (make-temp-name
 	      (expand-file-name "tm" temporary-file-directory))))
 	(with-temp-buffer
 	  (insert data)
@@ -130,7 +129,7 @@
  ((module-installed-p 'highlight-headers)
   (eval-and-compile
     (autoload 'highlight-headers "highlight-headers"))
- 
+
   (defun mime-preview-x-face-function-use-highlight-headers ()
     (highlight-headers (point-min) (re-search-forward "^$" nil t) t)
     )
@@ -174,16 +173,53 @@
 ;;;
 ;;    (for XEmacs 19.12 or later)
 
+(eval-when-compile
+  (defmacro mime-image-normalize-xbm (entity)
+    (` (with-temp-buffer
+	 (mime-insert-entity-content (, entity))
+	 (let ((cur (current-buffer))
+	       width height)
+	   (goto-char (point-min))
+	   (search-forward "width ")
+	   (setq width (read cur))
+	   (goto-char (point-min))
+	   (search-forward "height ")
+	   (setq height (read cur))
+	   (goto-char (point-min))
+	   (search-forward "{")
+	   (delete-region (point-min) (point))
+	   (insert "\"")
+	   (search-forward "}")
+	   (delete-region (1- (point)) (point-max))
+	   (insert "\"")
+	   (goto-char (point-min))
+	   (while (re-search-forward "[^\"0-9A-FXa-fx]+" nil t)
+	     (replace-match ""))
+	   (goto-char (point-min))
+	   (while (search-forward "0x" nil t)
+	     (replace-match "\\\\x"))
+	   (goto-char (point-min))
+	   (, (if (featurep 'xemacs)
+		  (` (vector 'xbm :data
+			     (list width height (read cur))))
+		'(` (image :type xbm :width (, width) :height (, height)
+			   :data (, (read cur))))))))))
+  )
+
 (defun mime-display-image (entity situation)
   (message "Decoding image...")
-  (let ((image (image-normalize (cdr (assq 'image-format situation))
-				(mime-entity-content entity))))
+  (let* ((format (cdr (assq 'image-format situation)))
+	 (image (if (or (featurep 'xemacs) (boundp 'image-types))
+		    (if (eq 'xbm format)
+			(mime-image-normalize-xbm entity)
+		      (image-normalize format (mime-entity-content entity)))
+		  (image-normalize format (mime-entity-content entity)))))
     (if (image-invalid-glyph-p image)
 	(message "Invalid glyph!")
       (image-insert-at-point image)
       (message "Decoding image... done")))
-  (insert "\n")
-  )
+  (static-when (featurep 'xemacs)
+    (insert "\n")))
 
 
 ;;; @ end

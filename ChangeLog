@@ -1,3 +1,20 @@
+1999-11-17  Katsumi Yamaoka <yamaoka@jpl.org>
+
+	* mime-image.el (mime-display-image): Use
+	`mime-image-normalize-xbm' if the feature `xemacs' is provided or
+	the variable `image-types' is bound.
+
+1999-11-17   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-image.el (mime-image-normalize-xbm): Work for the future
+	FSF Emacsen as well.
+	(mime-display-image): Always use `mime-image-normalize-xbm'.
+
+1999-11-17  Katsumi Yamaoka <yamaoka@jpl.org>
+
+	* mime-image.el (mime-image-normalize-xbm): New macro.
+	(mime-display-image): Use it.
+
 1999-11-13   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* pgg.el (pgg-temp-buffer-show-function): New function.
