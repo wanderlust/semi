@@ -1,5 +1,11 @@
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el, mime-view.el: Rename `mime::preview/' ->
+	`mime-preview-'.
+
+	* mime-view.el: Rename `mime-view-original-major-mode' ->
+	`mime-preview-original-major-mode'.
+
 	* mime-play.el, mime-edit.el, mime-view.el: Rename
 	`mime-view-kill-buffer' -> `mime-preview-kill-buffer'.
 
