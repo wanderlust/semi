@@ -4,7 +4,7 @@
 
 PACKAGE = remi
 API	= 1.14
-RELEASE = 0
+RELEASE = 1
 
 FLIM_API= 1.13
 

@@ -1,5 +1,9 @@
 2000-03-01  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* REMI: Version 1.14.1 (Mushigawa-Dòsugi)-A released.
+
+2000-03-01  MORIOKA Tomohiko  <tomo@m17n.org>
+
 	* mime-view.el (mime-view-define-keymap): Add new binding
 	`mime-preview-show-header' for C-c C-v C-f and C-c C-v h; add new
 	binding `mime-preview-show-content' for C-c C-v C-c; add new
