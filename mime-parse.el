@@ -39,36 +39,6 @@ which are string or symbol."
 			      )))
 		     args "")))
 
-(defmacro define-structure (name &rest slots)
-  (let ((pred (symbol-concat name '-p)))
-    (cons 'progn
-	  (nconc
-	   (list
-	    (` (defun (, pred) (obj)
-		 (and (vectorp obj)
-		      (eq (elt obj 0) '(, name))
-		      ))
-	       )
-	    (` (defun (, (symbol-concat name '/create)) (, slots)
-		 (, (cons 'vector (cons (list 'quote name) slots)))
-		 )
-	       ))
-	   (let ((i 1))
-	     (mapcar (function
-		      (lambda (slot)
-			(prog1
-			    (` (defun (, (symbol-concat name '/ slot)) (obj)
-				 (if ((, pred) obj)
-				     (elt obj (, i))
-				   ))
-			       )
-			  (setq i (+ i 1))
-			  )
-			)) slots)
-	     )
-	   (list (list 'quote name))
-	   ))))
-
 
 ;;; @ field parser
 ;;;
@@ -186,42 +156,29 @@ and return parsed it. [mime-parse.el]"
 ;;; @ message parser
 ;;;
 
-(define-structure mime::content-info
-  rcnum point-min point-max type parameters encoding children)
-
 (defsubst make-mime-entity-info (rcnum
 				 point-min point-max
-				 media-type media-subtype
-				 parameters encoding children)
-  (let ((ctype (if media-type
-		   (if media-subtype
-		       (format "%s/%s" media-type media-subtype)
-		     (symbol-name media-type)))))
-    (mime::content-info/create rcnum point-min point-max
-			       ctype params encoding
-			       children)
-    ))
+				 media-type media-subtype parameters
+				 encoding children)
+  (vector rcnum point-min point-max
+	  media-type media-subtype parameters encoding children))
 
-(defsubst mime-entity-info-rnum (entity-info)
-  (mime::content-info/rcnum entity-info))
-
-(defsubst mime-entity-info-point-min (entity-info)
-  (mime::content-info/point-min entity-info))
-
-(defsubst mime-entity-info-point-max (entity-info)
-  (mime::content-info/point-max entity-info))
+(defsubst mime-entity-info-rnum (entity-info)		(aref entity-info 0))
+(defsubst mime-entity-info-point-min (entity-info)	(aref entity-info 1))
+(defsubst mime-entity-info-point-max (entity-info)	(aref entity-info 2))
+(defsubst mime-entity-info-media-type (entity-info)	(aref entity-info 3))
+(defsubst mime-entity-info-media-subtype (entity-info)	(aref entity-info 4))
+(defsubst mime-entity-info-parameters (entity-info)	(aref entity-info 5))
+(defsubst mime-entity-info-encoding (entity-info)	(aref entity-info 6))
+(defsubst mime-entity-info-children (entity-info)	(aref entity-info 7))
 
 (defsubst mime-entity-info-type/subtype (entity-info)
-  (mime::content-info/type entity-info))
-
-(defsubst mime-entity-info-parameters (entity-info)
-  (mime::content-info/parameters entity-info))
-
-(defsubst mime-entity-info-encoding (entity-info)
-  (mime::content-info/encoding entity-info))
-
-(defsubst mime-entity-info-children (entity-info)
-  (mime::content-info/children entity-info))
+  (let ((type (mime-entity-info-media-type entity-info)))
+    (if type
+	(let ((subtype (mime-entity-info-media-subtype entity-info)))
+	  (if subtype
+	      (format "%s/%s" type subtype)
+	    (symbol-name type))))))
 
 (defun mime-parse-multipart (boundary primtype subtype params encoding rcnum)
   (goto-char (point-min))
