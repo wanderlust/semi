@@ -1,3 +1,10 @@
+1998-05-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-preview-move-to-previous): Must regard
+	previous entity separated by null property region.
+	(mime-preview-move-to-next): Must regard next entity separated by
+	null property region.
+
 1998-05-03  Simon Josefsson  <jas@pdc.kth.se>
 
        * mime-view.el (mime-preview-move-to-previous): check that new
