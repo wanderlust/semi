@@ -387,14 +387,6 @@ Each elements are regexp of field-name.")
 			   (body . visible)))
 
 (ctree-set-calist-strictly
- 'mime-preview-condition '((type . message)(subtype . rfc822)
-			   (childrens-situation (header . visible))))
-
-(ctree-set-calist-strictly
- 'mime-preview-condition '((type . message)(subtype . news)
-			   (childrens-situation (header . visible))))
-
-(ctree-set-calist-strictly
  'mime-preview-condition '((body . visible)
 			   (body-presentation-method . with-filter)
 			   (body-filter . mime-preview-filter-for-text/plain)))
@@ -429,6 +421,18 @@ Each elements are regexp of field-name.")
  'mime-preview-condition '((type . message)(subtype . partial)
 			   (body-presentation-method
 			    . mime-view-insert-message/partial-button)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . message)(subtype . rfc822)
+			   (body-presentation-method . nil)
+			   (childrens-situation (header . visible)
+						(entity-button . invisible))))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . message)(subtype . news)
+			   (body-presentation-method . nil)
+			   (childrens-situation (header . visible)
+						(entity-button . invisible))))
 
 
 ;;; @@@ entity filter
@@ -750,12 +754,6 @@ The compressed face will be piped to this command.")
 	    (eword-decode-string
 	     (mime-raw-get-subject params encoding)))
       )
-    (set-buffer obuf)
-    (setq nb (point))
-    (narrow-to-region nb nb)
-    (if (mime-view-entity-button-visible-p entity message-info)
-	(mime-view-insert-entity-button entity message-info subj)
-      )
     (let* ((situation
 	    (ctree-match-calist mime-preview-condition
 				(list* (cons 'type       media-type)
@@ -764,10 +762,19 @@ The compressed face will be piped to this command.")
 				       (cons 'major-mode major-mode)
 				       (append params
 					       default-situation))))
+	   (button-is-invisible
+	    (eq (cdr (assq 'entity-button situation)) 'invisible))
 	   (header-is-visible
 	    (cdr (assq 'header situation)))
 	   (body-presentation-method
 	    (cdr (assq 'body-presentation-method situation))))
+      (set-buffer obuf)
+      (setq nb (point))
+      (narrow-to-region nb nb)
+      (or button-is-invisible
+	  (if (mime-view-entity-button-visible-p entity message-info)
+	      (mime-view-insert-entity-button entity message-info subj)
+	    ))
       (if header-is-visible
 	  (save-restriction
 	    (narrow-to-region (point)(point))
