@@ -1,5 +1,11 @@
 2000-01-16  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* mime-play.el (mime-play-entity): Use `mime-unify-situations'.
+
+	* mime-view.el (mime-unify-situations): New function.
+
+2000-01-16  MORIOKA Tomohiko  <tomo@m17n.org>
+
 	* mime-play.el (mime-compare-situation-with-example): Moved to
 	mime-view.el.
 	(mime-sort-situation): Likewise.
