@@ -582,8 +582,7 @@ The compressed face will be piped to this command.")
 If optional argument MESSAGE-INFO is not specified,
 `mime-raw-message-info' is used."
   (or message-info
-      (setq message-info mime-raw-message-info)
-      )
+      (setq message-info mime-raw-message-info))
   (let ((b (mime-entity-info-point-min message-info))
 	(e (mime-entity-info-point-max message-info))
 	(c (mime-entity-info-children message-info))
@@ -606,18 +605,21 @@ If optional argument MESSAGE-INFO is not specified,
   (mime-raw-entity-number-to-entity-info (reverse rnum) cinfo)
   )
 
-(defun mime-raw-entity-number-to-entity-info (cn &optional cinfo)
-  (or cinfo
-      (setq cinfo mime-raw-message-info)
-      )
-  (if (eq cn t)
-      cinfo
-    (let ((sn (car cn)))
+(defun mime-raw-entity-number-to-entity-info (entity-number
+					      &optional message-info)
+  "Return entity-info from ENTITY-NUMBER in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (or message-info
+      (setq message-info mime-raw-message-info))
+  (if (eq entity-number t)
+      message-info
+    (let ((sn (car entity-number)))
       (if (null sn)
-	  cinfo
-	(let ((rc (nth sn (mime-entity-info-children cinfo))))
+	  message-info
+	(let ((rc (nth sn (mime-entity-info-children message-info))))
 	  (if rc
-	      (mime-raw-entity-number-to-entity-info (cdr cn) rc)
+	      (mime-raw-entity-number-to-entity-info (cdr entity-number) rc)
 	    ))
 	))))
 
