@@ -159,7 +159,7 @@
 					 (concat "\"" rcpt "\""))) 
 				 recipients))))))
     (pgg-as-lbt start end 'CRLF
-      (pgg-gpg-process-region start end pgg-gpg-program args)
+      (pgg-gpg-process-region start end nil pgg-gpg-program args)
       )
     (pgg-process-when-success
       (pgg-convert-lbt-region (point-min)(point-max) 'LF))
