@@ -1,3 +1,8 @@
+2002-08-28  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-user-agent-value): Add
+	`xemacs-extra-name'.
+
 2002-04-16   Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-edit.el (mime-file-types): Add setting of *.jpeg for image/jpeg.
