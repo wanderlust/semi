@@ -321,7 +321,7 @@ To insert a signature file automatically, call the function
 
     ;;  Pure binary
 
-    ("\\.jpg$"
+    ("\\.jpg$\\|\\.jpeg$"
      "image"	"jpeg"		nil
      "base64"
      "inline"		(("filename" . file)))
