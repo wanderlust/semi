@@ -1,3 +1,93 @@
+1998-05-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-setup.el: Avoid warning message of byte-compiler.
+
+1998-05-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-setup-buffers): Use
+	'mime-view-display-entity; abolish 'mime-view-display-message.
+	(mime-view-display-entity): fixed.
+
+1998-05-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-message): fixed.
+
+1998-05-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-raw-get-subject): Use
+	'mime-content-disposition-filename.
+
+	* mime-parse.el (mime-content-type-parameter): New function.
+
+	* mime-parse.el (mime-content-disposition-parameter): New
+	function.
+	(mime-content-disposition-filename): New function.
+
+1998-05-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-raw-get-original-filename): Abolish optional
+	argument 'encoding; modify for 'mime-raw-get-uu-filename.
+
+	* mime-view.el (mime-raw-get-uu-filename): Change interface; don't
+	check encoding.
+	(mime-raw-get-subject): Change interface; new implementation.
+
+1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-entity): fixed.
+
+	* mime-parse.el (mime-parse-multipart): Change interface.
+
+1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el (make-mime-entity): Add 'content-disposition.
+	(mime-entity-content-disposition): New function.
+	(mime-parse-multipart): Modify for 'make-mime-entity.
+	(mime-parse-message): Modify for 'make-mime-entity.
+
+1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-raw-play-entity): Don't use
+	'mime-entity-media-type, 'mime-entity-media-subtype and
+	'mime-entity-parameters.
+
+1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-entity): Don't use
+	'mime-entity-media-type, 'mime-entity-media-subtype and
+	'mime-entity-parameters.
+
+1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-message): Don't use
+	'mime-entity-media-type, 'mime-entity-media-subtype and
+	'mime-entity-parameters.
+
+1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-mailcap-method-filename-alist): New variable.
+	(mime-mailcap-method-sentinel): New function.
+	(mime-activate-mailcap-method): Use 'mime-mailcap-method-sentinel;
+	don't use 'mime-show-echo-buffer.
+
+1998-05-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-activate-mailcap-method): Regard
+	'mime-temp-directory.
+
+1998-05-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el (make-mime-entity): Change interface and
+	data-format.
+	(mime-entity-content-type): New access function.
+	(mime-entity-media-type): New implementation.
+	(mime-entity-subtype): New implementation.
+	(mime-entity-parameters): New implementation.
+	(mime-parse-multipart): Change interface; modify for
+	'make-mime-entity.
+	(mime-parse-message): Modify for 'make-mime-entity.
+
+
 1998-05-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* WEMI: Version 1.4.3 (Hiratsuka) released.
