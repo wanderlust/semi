@@ -1,3 +1,9 @@
+2002-02-14  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* mime-image.el (mime-image-create) [XEmacs]: Ignore errors about
+	to obtain the instance of glyph's image.
+	[cf. <emacs-mime-ja:989>]
+
 2001-11-27   Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-w3.el: Don't use `url-register-protocol' if it is not fboundp;
