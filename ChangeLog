@@ -1,5 +1,10 @@
 1998-06-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-edit.el (mime-edit-normalize-body): Abolish unused local
+	variable.
+
+1998-06-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-edit.el (mime-edit-translate-single-part-tag): Add new
 	argument `boundary'.
 	(mime-edit-translate-region): Modify for
