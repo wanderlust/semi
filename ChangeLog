@@ -1,5 +1,20 @@
 1997-09-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-view-display-entity,
+	mime-article/point-content-number,
+	mime-view-follow-current-entity), mime-play.el
+	(mime-display-content), mime-pgp.el
+	(mime-article/check-pgp-signature, mime-article/decrypt-pgp): Use
+	`mime-entity-info-point-{min|max}' instead of
+	`mime::content-info/point-{min|max}'.
+
+	* mime-parse.el (mime-entity-info-point-min): New inline function.
+	(mime-entity-info-point-max): New inline function.
+	(mime-parse-multipart): Use `mime-entity-info-point-max' instead
+	of `mime::content-info/point-max'.
+
+1997-09-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mailcap.el (mailcap-skip-comment): Check `chr' is nil.
 
 	* mime-edit.el (mime-edit-decode-buffer): Modify for new return
