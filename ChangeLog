@@ -1,3 +1,7 @@
+1998-03-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el: Require 'mime-text when compiling.
+
 1998-03-21  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
 
 	* eword-decode.el (eword-lexical-analyze-internal): Fixed return
@@ -6,6 +10,7 @@
 	* mime-view.el (mime-view-body-visible-condition): text media-
 	type is always visible.
 
+
 1998-03-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.1.1 (Oshino) was released.
