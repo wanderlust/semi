@@ -773,7 +773,18 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	)
       (cond (children)
             ((functionp body-presentation-method)
-	     (funcall body-presentation-method entity situation)
+	     (if debug-on-error
+		 (funcall body-presentation-method entity situation)
+	       (condition-case err
+		 (funcall body-presentation-method entity situation)
+		 (error (let ((start (point)))
+			  (insert (format "Presentation error occured: %s
+
+If you'd like to debug this error.
+Please set non-nil to `debug-on-error'.\n\n" err))
+			  (put-text-property start (point)
+					     'face 'font-lock-warning-face)
+			))))
 	     )
 	    (t
 	     (when button-is-invisible
