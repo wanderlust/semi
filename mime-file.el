@@ -1,13 +1,12 @@
 ;;; mime-file.el --- mime-view internal method for file extraction
 
-;; Copyright (C) 1995,1996,1997 Free Software Foundation, Inc.
+;; Copyright (C) 1995,1996,1997,1998 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; modified by Shuhei KOBAYASHI <shuhei-k@jaist.ac.jp>
-;; Version: $Id$
 ;; Keywords: file, extract, MIME, multimedia, mail, news
 
-;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
+;; This file is part of SEMI (Saver for Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -28,7 +27,7 @@
 
 (require 'mime-view)
 
-(defun mime-article/extract-file (beg end cal)
+(defun mime-extract-current-entity (beg end cal)
   (goto-char beg)
   (let* ((name
 	  (save-restriction
@@ -74,14 +73,14 @@
 
 (set-atype 'mime-acting-condition
 	   '((type . "application/octet-stream")
-	     (method . mime-article/extract-file)
+	     (method . mime-extract-current-entity)
 	     )
 	   'ignore '(method)
 	   'replacement)
 
 (set-atype 'mime-acting-condition
 	   '((mode . "extract")
-	     (method . mime-article/extract-file)
+	     (method . mime-extract-current-entity)
 	     )
 	   'remove
 	   '((method "mime-file"  nil 'file 'type 'encoding 'mode 'name)
