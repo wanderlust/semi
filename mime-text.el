@@ -53,41 +53,6 @@ SITUATION.  It must be symbol."
   )
 
 
-;;; @ for URL
-;;;
-
-(require 'browse-url)
-
-(defvar mime-text-url-regexp
-  "\\(http\\|ftp\\|file\\|gopher\\|news\\|telnet\\|wais\\|mailto\\):\\(//[-a-zA-Z0-9_.]+:[0-9]*\\)?[-a-zA-Z0-9_=?#$@~`%&*+|\\/.,]*[-a-zA-Z0-9_=#$@~`%&*+|\\/]"
-  "*Regexp to match URL in text/plain body.")
-
-(defun mime-text-browse-url (&optional url)
-  (if (fboundp browse-url-browser-function)
-      (if url 
-        (funcall browse-url-browser-function url)
-      (call-interactively browse-url-browser-function))
-    (if (fboundp mime-button-mother-dispatcher)
-	(call-interactively mime-button-mother-dispatcher)
-      )
-    ))
-
-(defsubst mime-text-add-url-buttons ()
-  "Add URL-buttons for text body."
-  (goto-char (point-min))
-  (while (re-search-forward mime-text-url-regexp nil t)
-    (let ((beg (match-beginning 0))
-	  (end (match-end 0)))
-      (widget-convert-text 'url-link beg end)
-      )))
-
-(defun mime-text-add-url-buttons-maybe ()
-  "Add URL-buttons if 'browse-url-browser-function is not 'nil."
-  (if browse-url-browser-function
-      (mime-text-add-url-buttons)
-    ))
-
-
 ;;; @ content filters for mime-text
 ;;;
 
@@ -99,7 +64,7 @@ SITUATION.  It must be symbol."
     (if (not (eq (char-after (1- (point))) ?\n))
 	(insert "\n")
       )
-    (mime-text-add-url-buttons)
+    (mime-add-url-buttons)
     (run-hooks 'mime-display-text/plain-hook)
     ))
 

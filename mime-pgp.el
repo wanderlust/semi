@@ -63,18 +63,17 @@
 ;;; It is based on draft-kazu-pgp-mime-00.txt (PGP-kazu).
 
 (defun mime-view-application/pgp (entity situation)
-  (let* ((start (mime-entity-point-min entity))
-	 (end (mime-entity-point-max entity))
-	 (entity-number (mime-raw-point-to-entity-number start))
-	 (p-win (or (get-buffer-window mime-preview-buffer)
+  (let* ((p-win (or (get-buffer-window mime-preview-buffer)
 		    (get-largest-window)))
-	 (new-name (format "%s-%s" (buffer-name) entity-number))
+	 (new-name
+	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
 	 (the-buf (current-buffer))
 	 (mother mime-preview-buffer)
 	 representation-type)
     (set-buffer (get-buffer-create new-name))
     (erase-buffer)
-    (insert-buffer-substring the-buf start end)
+    (insert-buffer-substring
+     the-buf (mime-entity-point-min entity) (mime-entity-point-max entity))
     (cond ((progn
 	     (goto-char (point-min))
 	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
@@ -93,7 +92,8 @@
 	   (while (re-search-forward "^- -" nil t)
 	     (replace-match "-")
 	     )
-	   (setq representation-type (mime-entity-representation-type entity))
+	   (setq representation-type (if (mime-entity-cooked-p entity)
+					 'cooked))
 	   )
 	  ((progn
 	     (goto-char (point-min))
@@ -107,8 +107,8 @@
 	   (setq representation-type 'binary)
 	   ))
     (setq major-mode 'mime-show-message-mode)
-    (setq mime-raw-representation-type representation-type)
-    (save-window-excursion (mime-view-mode mother))
+    (save-window-excursion (mime-view-buffer nil nil mother
+					     nil representation-type))
     (set-window-buffer p-win mime-preview-buffer)
     ))
 
@@ -170,9 +170,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	 (orig-file (make-temp-name basename))
 	 (sig-file (concat orig-file ".sig"))
 	 )
-    (mime-raw-write-region (mime-entity-point-min orig-entity)
-			   (mime-entity-point-max orig-entity)
-			   orig-file)
+    (mime-write-entity orig-entity orig-file)
     (save-excursion (mime-show-echo-buffer))
     (mime-write-decoded-region (save-excursion
 				 (goto-char start)

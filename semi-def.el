@@ -29,7 +29,7 @@
 (eval-when-compile (require 'cl))
 
 
-(defconst mime-user-interface-version '("WEMI" "Mishima" 1 8 0)
+(defconst mime-user-interface-version '("WEMI" "Numazu" 1 8 1)
   "Implementation name, version name and numbers of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
@@ -106,8 +106,33 @@
 	  (apply func data)
 	(if (fboundp mime-button-mother-dispatcher)
 	    (funcall mime-button-mother-dispatcher event)
-	  )
-	))))
+	  )))))
+
+
+;;; @ for URL
+;;;
+
+(defcustom mime-browse-url-regexp
+  (concat "\\(http\\|ftp\\|file\\|gopher\\|news\\|telnet\\|wais\\|mailto\\):"
+	  "\\(//[-a-zA-Z0-9_.]+:[0-9]*\\)?"
+	  "[-a-zA-Z0-9_=?#$@~`%&*+|\\/.,]*[-a-zA-Z0-9_=#$@~`%&*+|\\/]")
+  "*Regexp to match URL in text body."
+  :group 'mime
+  :type 'regexp)
+
+(defcustom mime-browse-url-function (function browse-url)
+  "*Function to browse URL."
+  :group 'mime
+  :type 'function)
+
+(defsubst mime-add-url-buttons ()
+  "Add URL-buttons for text body."
+  (goto-char (point-min))
+  (while (re-search-forward mime-browse-url-regexp nil t)
+    (let ((beg (match-beginning 0))
+	  (end (match-end 0)))
+      (widget-convert-text 'url-link beg end)
+      )))
 
 
 ;;; @ menu

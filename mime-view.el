@@ -70,16 +70,6 @@
 (make-variable-buffer-local 'mime-preview-buffer)
 
 
-(defvar mime-raw-representation-type nil
-  "Representation-type of mime-raw-buffer.
-It must be nil, `binary' or `cooked'.
-If it is nil, `mime-raw-representation-type-alist' is used as default
-value.
-Notice that this variable is usually used as buffer local variable in
-raw-buffer.")
-
-(make-variable-buffer-local 'mime-raw-representation-type)
-
 (defvar mime-raw-representation-type-alist
   '((mime-show-message-mode     . binary)
     (mime-temp-message-mode     . binary)
@@ -88,9 +78,7 @@ raw-buffer.")
   "Alist of major-mode vs. representation-type of mime-raw-buffer.
 Each element looks like (SYMBOL . REPRESENTATION-TYPE).  SYMBOL is
 major-mode or t.  t means default.  REPRESENTATION-TYPE must be
-`binary' or `cooked'.
-This value is overridden by buffer local variable
-`mime-raw-representation-type' if it is not nil.")
+`binary' or `cooked'.")
 
 
 (defun mime-raw-find-entity-from-point (point &optional message-info)
@@ -149,15 +137,6 @@ mother-buffer."
 
 ;;; @ entity information
 ;;;
-
-(defsubst mime-entity-representation-type (entity)
-  (with-current-buffer (mime-entity-buffer entity)
-    (or mime-raw-representation-type
-	(cdr (or (assq major-mode mime-raw-representation-type-alist)
-		 (assq t mime-raw-representation-type-alist))))))
-
-(defsubst mime-entity-cooked-p (entity)
-  (eq (mime-entity-representation-type entity) 'cooked))
 
 (defun mime-entity-situation (entity)
   "Return situation of ENTITY."
@@ -621,7 +600,14 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
  'mime-acting-condition
  '((type . message)(subtype . external-body)
    ("access-type" . "anon-ftp")
-   (method . mime-view-message/external-ftp)
+   (method . mime-view-message/external-anon-ftp)
+   ))
+
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . message)(subtype . external-body)
+   ("access-type" . "url")
+   (method . mime-view-message/external-url)
    ))
 
 (ctree-set-calist-strictly
@@ -907,15 +893,41 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	  (let ((r-win (get-buffer-window raw-buffer)))
 	    (if r-win
 		(set-window-buffer r-win preview-buffer)
-	      (switch-to-buffer preview-buffer)
-	      )))
+	      (let ((m-win (and mother (get-buffer-window mother))))
+		(if m-win
+		    (set-window-buffer m-win preview-buffer)
+		  (switch-to-buffer preview-buffer)
+		  )))))
       )))
 
 (defun mime-view-buffer (&optional raw-buffer preview-buffer mother
-				   default-keymap-or-function)
+				   default-keymap-or-function
+				   representation-type)
+  "View RAW-BUFFER in MIME-View mode.
+Optional argument PREVIEW-BUFFER is either nil or a name of preview
+buffer.
+Optional argument DEFAULT-KEYMAP-OR-FUNCTION is nil, keymap or
+function.  If it is a keymap, keymap of MIME-View mode will be added
+to it.  If it is a function, it will be bound as default binding of
+keymap of MIME-View mode.
+Optional argument REPRESENTATION-TYPE is representation-type of
+message.  It must be nil, `binary' or `cooked'.  If it is nil,
+`binary' is used as default."
   (interactive)
+  (or raw-buffer
+      (setq raw-buffer (current-buffer)))
+  (or representation-type
+      (setq representation-type
+	    (save-excursion
+	      (set-buffer raw-buffer)
+	      (cdr (or (assq major-mode mime-raw-representation-type-alist)
+		       (assq t mime-raw-representation-type-alist)))
+	      )))
+  (if (eq representation-type 'binary)
+      (setq representation-type 'buffer)
+    )
   (mime-display-message
-   (mime-parse-buffer raw-buffer)
+   (mime-open-entity representation-type raw-buffer)
    preview-buffer mother default-keymap-or-function))
 
 (defun mime-view-mode (&optional mother ctl encoding
@@ -944,13 +956,27 @@ button-2	Move to point under the mouse cursor
         	and decode current content as `play mode'
 "
   (interactive)
-  (mime-display-message
-   (save-excursion
-     (if raw-buffer (set-buffer raw-buffer))
-     (or mime-view-redisplay
-	 (setq mime-message-structure (mime-parse-message ctl encoding)))
-     )
-   preview-buffer mother default-keymap-or-function))
+  (unless mime-view-redisplay
+    (save-excursion
+      (if raw-buffer (set-buffer raw-buffer))
+      (let ((type
+	     (cdr
+	      (or (assq major-mode mime-raw-representation-type-alist)
+		  (assq t mime-raw-representation-type-alist)))))
+	(if (eq type 'binary)
+	    (setq type 'buffer)
+	  )
+	(setq mime-message-structure (mime-open-entity type raw-buffer))
+	(or (mime-entity-content-type mime-message-structure)
+	    (mime-entity-set-content-type-internal
+	     mime-message-structure ctl))
+	)
+      (or (mime-entity-encoding mime-message-structure)
+	  (mime-entity-set-encoding-internal mime-message-structure encoding))
+      ))
+  (mime-display-message mime-message-structure preview-buffer
+			mother default-keymap-or-function)
+  )
 
 
 ;;; @@ playing

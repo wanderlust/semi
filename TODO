@@ -101,3 +101,5 @@ Because they have problem with Semi-gnus.
 ============
 
 * MIME-Edit
+
+** Content-ID is mandatory for message/external-body
