@@ -138,10 +138,9 @@
 	 (args
 	  `("--batch" "--armor" "--always-trust" "--encrypt"
 	    ,@(if recipients
-		  (apply #'append
+		  (apply #'nconc
 			 (mapcar (lambda (rcpt)
-				   (list "--remote-user"
-					 (concat "\"" rcpt "\"")))
+				   (list "--remote-user" rcpt))
 				 (append recipients
 					 (if pgg-encrypt-for-me
 					     (list pgg-gpg-user-id)))))))))
