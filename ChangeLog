@@ -1,8 +1,17 @@
 1998-05-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el: Abolish setting for tm-sh-scripts.
+
+	* semi-setup.el: Abolish MUA depended signature setting.
+
+	* mail-mime-setup.el: Move setting for 'mail-signature from
+ 	semi-setup.el.
+
+1998-05-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* semi-setup.el: Use 'mime-add-condition to set up for mime-pgp.
 
-	* mime-pgp.el: Comment out setting for 'mime-preview-condition and
+	* mime-pgp.el: Abolish setting for 'mime-preview-condition and
  	mime-acting-condition.
 
 	* semi-def.el (mime-condition-type-alist): New variable.
