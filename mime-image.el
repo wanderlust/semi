@@ -11,7 +11,7 @@
 
 ;; Keywords: image, picture, X-Face, MIME, multimedia, mail, news
 
-;; This file is part of SEMI (Suite of Emacs MIME Interfaces).
+;; This file is part of SEMI (Showy Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -109,33 +109,35 @@
 
 (mapcar (function
 	 (lambda (rule)
-	   (let ((ctype  (car rule))
-		 (format (cdr rule))
-		 )
+	   (let ((type    (car rule))
+		 (subtype (nth 1 rule))
+		 (format  (nth 2 rule)))
 	     (if (image-inline-p format)
-		 (progn
+		 (let ((type/subtype (mime-type/subtype-string type subtype)))
 		   (set-alist 'mime-view-content-filter-alist
-			      ctype
-			      (function mime-view-filter-for-image))
+			      type/subtype #'mime-view-filter-for-image)
 		   (set-alist 'mime-view-image-converter-alist
-			      ctype format)
-		   (add-to-list
-		    'mime-view-visible-media-type-list
-		    ctype)
+			      type/subtype format)
+                   ;; (add-to-list
+                   ;;  'mime-view-visible-media-type-list
+                   ;;  ctype)
+		   (ctree-set-calist-strictly
+		    'mime-view-body-visible-condition
+		    (list (cons 'type type)(cons 'subtype subtype)))
 		   )
 	       ))))
-	'(("image/jpeg"			. jpeg)
-	  ("image/gif"			. gif)
-	  ("image/tiff"			. tiff)
-	  ("image/x-tiff"		. tiff)
-	  ("image/xbm"			. xbm)
-	  ("image/x-xbm"		. xbm)
-	  ("image/x-xpixmap"		. xpm)
-	  ("image/x-pic"		. pic)
-	  ("image/x-mag"		. mag)
-	  ("image/png"			. png)
+	'((image jpeg		jpeg)
+	  (image gif		gif)
+	  (image tiff		tiff)
+	  (image x-tiff		tiff)
+	  (image xbm		xbm)
+	  (image x-xbm		xbm)
+	  (image x-xpixmap	xpm)
+	  (image x-pic		pic)
+	  (image x-mag		mag)
+	  (image png		png)
 	  ))
-
+	   
 (defvar mime-view-ps-to-gif-command "pstogif")
 
 
