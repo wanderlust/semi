@@ -10,8 +10,7 @@
 			    (expand-file-name path default-directory)
 			    ))
 			 '("." "../emu" "../apel" "../bitmap-mule"
-			   "../mu" "../mel"
-			   "../emh" "../gnus-mime" "../rmail-mime")
+			   "../mu" "../mel")
 			 )
 		 load-path))
 
@@ -98,18 +97,6 @@
 	  "emu"
 	""))
 
-;; Please specify APEL prefix [optional]
-(setq APEL_PREFIX "apel")
-
-;; Please specify prefix for ``bitmap-mule'' [optional]
-(setq BITMAP_PREFIX "bitmap")
-
-;; Please specify MU prefix [optional]
-(setq MU_PREFIX "mu")
-
-;; Please specify MEL prefix [optional]
-(setq MEL_PREFIX "mel")
-
 ;; Please specify SEMI prefix [optional]
 (setq SEMI_PREFIX "semi")
 
@@ -134,56 +121,8 @@
 (defvar LISPDIR (install-detect-elisp-directory PREFIX))
 ;; (setq install-default-elisp-directory "~/lib/emacs/lisp")
 
-(setq EMU_DIR
-      (expand-file-name
-       EMU_PREFIX
-       (install-detect-elisp-directory PREFIX nil 'version-specific)))
-
-(setq APEL_DIR		(expand-file-name APEL_PREFIX	LISPDIR))
-(setq BITMAP_DIR	(expand-file-name BITMAP_PREFIX	LISPDIR))
-(setq MU_DIR		(expand-file-name MU_PREFIX	LISPDIR))
-(setq MEL_DIR		(expand-file-name MEL_PREFIX	LISPDIR))
 (setq SEMI_KERNEL_DIR	(expand-file-name SEMI_PREFIX	LISPDIR))
 (setq SETUP_FILE_DIR	SEMI_KERNEL_DIR)
-(setq EMH_DIR		SEMI_KERNEL_DIR)
-(setq Gnus_MIME_DIR	SEMI_KERNEL_DIR)
-(setq RMAIL_MIME_DIR	SEMI_KERNEL_DIR)
-(setq SEMI_VM_DIR	SEMI_KERNEL_DIR)
-
-(cond ((member LISPDIR default-load-path)
-       (setq APEL_RELATIVE_DIR		APEL_PREFIX)
-       (setq BITMAP_RELATIVE_DIR	BITMAP_PREFIX)
-       (setq MU_RELATIVE_DIR		MU_PREFIX)
-       (setq MEL_RELATIVE_DIR		MEL_PREFIX)
-       (setq SEMI_KERNEL_RELATIVE_DIR	SEMI_PREFIX)
-       )
-      ((string-match (concat "^" (regexp-quote (expand-file-name "~/")))
-		     LISPDIR)
-       (setq APEL_RELATIVE_DIR
-	     (concat "~/" (file-relative-name APEL_DIR "~/"))
-	     )
-       (setq BITMAP_RELATIVE_DIR
-	     (concat "~/" (file-relative-name BITMAP_DIR "~/"))
-	     )
-       (setq MU_RELATIVE_DIR
-	     (concat "~/" (file-relative-name MU_DIR "~/"))
-	     )
-       (setq MEL_RELATIVE_DIR
-	     (concat "~/" (file-relative-name MEL_DIR "~/"))
-	     )
-       (setq SEMI_KERNEL_RELATIVE_DIR
-	     (concat "~/" (file-relative-name SEMI_KERNEL_DIR "~/"))
-	     )
-       )
-      (t
-       (setq APEL_RELATIVE_DIR		APEL_DIR)
-       (setq BITMAP_RELATIVE_DIR	BITMAP_DIR)
-       (setq MU_RELATIVE_DIR		MU_DIR)
-       (setq MEL_RELATIVE_DIR		MEL_DIR)
-       (setq SEMI_KERNEL_RELATIVE_DIR	SEMI_KERNEL_DIR)
-       ))
-(setq EMH_RELATIVE_DIR		SEMI_KERNEL_RELATIVE_DIR)
-(setq Gnus_MIME_RELATIVE_DIR	SEMI_KERNEL_RELATIVE_DIR)
 
 (setq METHOD_SRC_DIR "methods")
 (setq METHODS
