@@ -53,7 +53,7 @@
 ;;;
 ;;; It is based on draft-kazu-pgp-mime-00.txt (PGP-kazu).
 
-(defun mime-method-for-application/pgp (entity cal)
+(defun mime-view-application/pgp (entity cal)
   (let* ((start (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))
 	 (entity-number (mime-raw-point-to-entity-number start))
@@ -233,7 +233,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 		 (1+ knum)))
 	 (oinfo (mime-raw-find-entity-from-node-id
 		 (cons onum mother-node-id) mime-raw-message-info)))
-    (mime-method-for-application/pgp oinfo cal)
+    (mime-view-application/pgp oinfo cal)
     ))
 
 

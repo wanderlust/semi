@@ -82,11 +82,11 @@
 		     (message-button . visible)))
 	 (mime-add-condition
 	  'action '((type . application)(subtype . pgp)
-		    (method . mime-method-for-application/pgp))
+		    (method . mime-view-application/pgp))
 	  'strict "mime-pgp")
 	 (mime-add-condition
 	  'action '((type . text)(subtype . x-pgp)
-		    (method . mime-method-for-application/pgp)))
+		    (method . mime-view-application/pgp)))
 	 
 	 (mime-add-condition
 	  'action '((type . multipart)(subtype . signed)
