@@ -644,15 +644,11 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 		  (and (file-exists-p file)
 		       (delete-file file)
 		       ))
-		(save-window-excursion
-		  (setq major-mode 'mime-show-message-mode)
-		  (mime-view-buffer (current-buffer) nil mother)
-		  )
 		(let ((pwin (or (get-buffer-window mother)
 				(get-largest-window)))
-		      (pbuf (save-excursion
-			      (set-buffer full-buf)
-			      mime-preview-buffer)))
+		      (pbuf (mime-display-message
+			     (mime-open-entity 'buffer (current-buffer))
+			     nil mother nil 'mime-show-message-mode)))
 		  (set-window-buffer pwin pbuf)
 		  (select-window pwin)
 		  )))))
