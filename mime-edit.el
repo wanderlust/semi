@@ -546,12 +546,19 @@ Tspecials means any character that matches with it in header must be quoted.")
 	(make-sparse-keymap 'mime-editor/minor-mime-map))
   (define-key mime-editor/minor-mime-map mime-prefix mime-editor/mime-map))
 
+(defun mime-editor/toggle-mode ()
+  (interactive)
+  (if mime/editor-mode-flag
+      (mime-editor/exit 'nomime)
+    (mime/editor-mode)
+    ))
+
 (if running-xemacs
     (add-minor-mode 'mime/editor-mode-flag
 		    '((" MIME-Edit "  mime-editor/transfer-level-string))
 		    mime-editor/minor-mime-map
 		    nil
-		    'mime/editor-mode)
+		    'mime-editor/toggle-mode)
   (set-alist 'minor-mode-alist
 	     'mime/editor-mode-flag
 	     '((" MIME-Edit "  mime-editor/transfer-level-string))))
@@ -744,7 +751,7 @@ User customizable variables (not documented all of them):
     non-nil."
   (interactive)
   (if mime/editor-mode-flag
-      (mime-editor/exit 'nomime)
+      (error "You are already editing a MIME message.")
     (setq mime/editor-mode-flag t)
     ;; Remember old key bindings.
     (if running-xemacs
