@@ -188,11 +188,12 @@ and END to the keyring.")
     status))
 
 ;;;###autoload
-(defun pgg-sign-region (start end)
+(defun pgg-sign-region (start end &optional cleartext)
   (interactive "r")
   (let* ((entity (pgg-make-scheme pgg-default-scheme))
 	 (status (luna-send entity 'sign-region 
-			    entity start end (interactive-p))))
+			    entity start end 
+			    (or (interactive-p) cleartext))))
     (when (interactive-p)
       (if status
 	  (progn
