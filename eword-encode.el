@@ -63,10 +63,6 @@ network-code.
 
 If method is nil, this field will not be encoded.")
 
-(defvar eword-generate-X-Nsubject nil
-  "*If it is not nil, X-Nsubject field is generated
-when Subject field is encoded by `eword-encode-header'.")
-
 (defvar eword-charset-encoding-alist
   '((us-ascii		. nil)
     (iso-8859-1		. "Q")
@@ -633,30 +629,6 @@ It refer variable `eword-field-encoding-method-alist'."
 			  )))
 		 ))
 	  ))
-      (and eword-generate-X-Nsubject
-	   (or (std11-field-body "X-Nsubject")
-	       (let ((str (eword-in-subject-p)))
-		 (if str
-		     (progn
-		       (setq str
-			     (eword-decode-string
-			      (std11-unfold-string str)))
-		       (if code-conversion
-			   (setq str
-				 (encode-mime-charset-string
-				  str
-				  (or (cdr (assoc-if
-					    (function
-					     (lambda (str)
-					       (and (stringp str)
-						    (string= "x-nsubject"
-							     (downcase str))
-						    )))
-					    eword-field-encoding-method-alist))
-				      'iso-2022-jp-2)))
-			 )
-		       (insert (concat "\nX-Nsubject: " str))
-		       )))))
       )))
 
 (defun eword-encode-string (str &optional column mode)
