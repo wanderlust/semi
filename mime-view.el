@@ -337,9 +337,9 @@ message/partial, it is called `mother-buffer'.")
   "Raw buffer corresponding with the (MIME-View) buffer.")
 (make-variable-buffer-local 'mime-raw-buffer)
 
-(defvar mime-view-original-major-mode nil
-  "Major-mode in mime-raw-buffer.")
-(make-variable-buffer-local 'mime-view-original-major-mode)
+(defvar mime-preview-original-major-mode nil
+  "Major-mode of mime-raw-buffer.")
+(make-variable-buffer-local 'mime-preview-original-major-mode)
 
 (make-variable-buffer-local 'mime::preview/original-window-configuration)
 
@@ -426,7 +426,7 @@ The compressed face will be piped to this command.")
       (widen)
       (erase-buffer)
       (setq mime-raw-buffer the-buf)
-      (setq mime-view-original-major-mode mode)
+      (setq mime-preview-original-major-mode mode)
       (setq major-mode 'mime-view-mode)
       (setq mode-name "MIME-View")
       (while pcl
@@ -513,7 +513,7 @@ The compressed face will be piped to this command.")
   (save-restriction
     (narrow-to-region (point)(point))
     (insert-buffer-substring mime-raw-buffer beg end)
-    (let ((f (cdr (assq mime-view-original-major-mode
+    (let ((f (cdr (assq mime-preview-original-major-mode
 			mime-view-content-header-filter-alist))))
       (if (functionp f)
 	  (funcall f)
@@ -881,7 +881,7 @@ of the mother-buffer."
 	(set-buffer mime-mother-buffer)
 	(mime-view-get-original-major-mode)
 	)
-    mime-view-original-major-mode))
+    mime-preview-original-major-mode))
 
 (defun mime-preview-follow-current-entity ()
   "Write follow message to current entity.
@@ -1063,7 +1063,7 @@ variable `mime-view-over-to-previous-method-alist'."
   (let ((point (previous-single-property-change (point) 'mime-view-cinfo)))
     (if point
 	(goto-char point)
-      (let ((f (assq mime-view-original-major-mode
+      (let ((f (assq mime-preview-original-major-mode
 		     mime-view-over-to-previous-method-alist)))
 	(if f
 	    (funcall (cdr f))
@@ -1078,7 +1078,7 @@ variable `mime-view-over-to-next-method-alist'."
   (let ((point (next-single-property-change (point) 'mime-view-cinfo)))
     (if point
 	(goto-char point)
-      (let ((f (assq mime-view-original-major-mode
+      (let ((f (assq mime-preview-original-major-mode
 		     mime-view-over-to-next-method-alist)))
 	(if f
 	    (funcall (cdr f))
@@ -1094,7 +1094,7 @@ If reached to (point-max), it calls function registered in variable
       (setq h (1- (window-height)))
       )
   (if (= (point) (point-max))
-      (let ((f (assq mime-view-original-major-mode
+      (let ((f (assq mime-preview-original-major-mode
                      mime-view-over-to-next-method-alist)))
         (if f
             (funcall (cdr f))
@@ -1117,7 +1117,7 @@ If reached to (point-min), it calls function registered in variable
       (setq h (1- (window-height)))
       )
   (if (= (point) (point-min))
-      (let ((f (assq mime-view-original-major-mode
+      (let ((f (assq mime-preview-original-major-mode
                      mime-view-over-to-previous-method-alist)))
         (if f
             (funcall (cdr f))
@@ -1159,7 +1159,7 @@ If reached to (point-min), it calls function registered in variable
 It calls function registered in variable
 `mime-view-quitting-method-alist'."
   (interactive)
-  (let ((r (assq mime-view-original-major-mode
+  (let ((r (assq mime-preview-original-major-mode
 		 mime-view-quitting-method-alist)))
     (if r
 	(funcall (cdr r))
@@ -1170,7 +1170,7 @@ It calls function registered in variable
 It calls function registered in variable
 `mime-view-show-summary-method'."
   (interactive)
-  (let ((r (assq mime-view-original-major-mode
+  (let ((r (assq mime-preview-original-major-mode
 		 mime-view-show-summary-method)))
     (if r
 	(funcall (cdr r))
