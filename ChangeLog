@@ -1,3 +1,9 @@
+1999-01-21  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
+
+	* mime-edit.el (mime-edit-line-break-type): New variable.
+	(mime-edit-normalize-body): Canonicalize line break code in the
+	text part with `encode-mime-charset-region'.
+
 1999-01-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el: Must require `emu'.
