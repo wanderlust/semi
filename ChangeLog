@@ -1,3 +1,9 @@
+1999-07-23  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* README.en (Required environment): Change required FLIM to
+	1.13.1; change location of APEL and FLIM.
+
+
 1999-07-22  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* REMI: Version 1.13.1 (Kubiki) released.
