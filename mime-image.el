@@ -85,19 +85,21 @@
 	    (insert file-or-data)
 	    (setq file-or-data
 		  (mime-image-normalize-xbm-buffer (current-buffer)))))
-	(let ((instance
-	       (make-image-instance
+	(let ((glyph
+	       (make-glyph
 		(if (and type (mime-image-type-available-p type))
 		    (vconcat
 		     (list type (if data-p :data :file) file-or-data)
 		     props)
-		  file-or-data)
-		nil nil 'noerror)))
-	  (if (nothing-image-instance-p instance) nil
-	    (make-glyph instance))))
+		  file-or-data))))
+	  (if (nothing-image-instance-p (glyph-image-instance glyph)) nil
+	    glyph)))
 
-      (defun mime-image-insert (image string &optional area)
-	(let ((extent (make-extent (point) (progn (insert string)(point)))))
+      (defun mime-image-insert (image &optional string area)
+	(let ((extent (make-extent (point)
+				   (progn (and string
+					       (insert string))
+					  (point)))))
 	  (set-extent-property extent 'invisible t)
 	  (set-extent-end-glyph extent image))))
   (condition-case nil
@@ -129,12 +131,12 @@
 				     (bitmap-read-xbm-buffer
 				      (current-buffer))) nil) "\n")
 	       (error nil)))
-	   (defun mime-image-insert (image string &optional area)
+	   (defun mime-image-insert (image &optional string area)
 	     (insert image)))
        (error
 	(defalias 'mime-image-read-xbm-buffer
 	  'mime-image-normalize-xbm-buffer)
-	(defun mime-image-insert (image string &optional area)
+	(defun mime-image-insert (image &optional string area)
 	  (save-restriction
 	    (narrow-to-region (point)(point))
 	    (let ((face (gensym "mii")))
@@ -192,11 +194,8 @@
     (if (null image)
 	(message "Invalid glyph!")
       (save-excursion
-	(mime-image-insert image "x")
+	(mime-image-insert image)
 	(insert "\n")
-	(save-window-excursion
-	  (set-window-buffer (selected-window)(current-buffer))
-	  (sit-for 0))
 	(message "Decoding image... done")))))
 
 ;;; @ end

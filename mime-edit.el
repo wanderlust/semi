@@ -2465,7 +2465,9 @@ and insert data encoded as ENCODING."
   (mime-edit-insert-tag "application" "pgp-keys")
   (mime-edit-define-encoding "7bit")
   (pgg-insert-key)
-  )
+  (if (and (not (eobp))
+	   (not (looking-at mime-edit-single-part-tag-regexp)))
+      (insert (mime-make-text-tag) "\n")))
 
 
 ;;; @ flag setting
