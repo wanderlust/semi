@@ -31,6 +31,7 @@
 (require 'mel)
 (require 'eword-decode)
 (require 'mime-parse)
+(require 'semi-def)
 (require 'calist)
 
 
