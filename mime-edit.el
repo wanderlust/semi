@@ -626,7 +626,7 @@ If it is not specified for a major-mode,
 		     (mime-product-version mime-user-interface-product) ".")
 	  " ("
 	  (mime-product-code-name mime-user-interface-product)
-	  ") "
+	  ") PGPGPG "
 	  (mime-product-name mime-library-product)
 	  "/"
 	  (mapconcat #'number-to-string
