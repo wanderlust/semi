@@ -1,3 +1,19 @@
+2000-02-22  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el (mime-play-entity): Specify
+	`mime-view-find-every-situations' as an optional argument
+	`every-situations'.
+
+	* mime-view.el (mime-unify-situations): Add new optional argument
+	`every-situations'; use it instead of
+	`mime-view-find-every-situations'.
+	(mime-display-multipart/alternative): Modify `body' property
+	instead of `body-presentation-method' property of
+	preview-situation.
+
+	* semi-setup.el: Use `eval-after-load' for text/html related
+	setting.
+
 2000-02-18  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-view.el (mime-view-define-keymap): Change binding of
