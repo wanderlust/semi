@@ -7,6 +7,47 @@
  
 ** dynamic configuration for 'mime-preview-condition
 
+** Don't use filter-model
+
+  tomo (major developer of SEMI) and akr (major developer of
+FLIM-FLAM) discussed about Emacs 20.3 problem related with SEMI and
+FLIM.  They found essential problem with Emacs 20.3 are:
+
+  - Emacs 20.3 separates string-type to unibyte-string and
+    multibyte-string.  Emacs 20.3 has enough APIs to treat them.
+
+  - Buffer has mode about interpretation of contents.  Each mode is
+    designed to save semantics as characters.  Namely buffer contains
+    unibyte-characters or multibyte-characters.  One buffer can not
+    contain both representations.
+
+  - {decode|encode}-coding-{region|string} run in byte world.  So it
+    is not harmonized with other API.
+
+  - It seems easy to write code in one mode or one world
+    (unibyte-string or multibyte-string).  However it seems not easy
+    to write inter-mode program, such as SEMI.
+
+  - Byte <-> byte conversion, such as base64, quoted-printable, must
+    be run only with unibyte-mode.
+
+  - Byte <-> character conversion, such as
+    {decode|encode}-coding-region, should not be defined in single
+    buffer.  Instead of them, decoder should read from unibyte buffer
+    and output to multibyte buffer.  Similarly, encoder should read
+    from multibyte buffer and output to unibyte buffer.
+    `insert-buffer-substring' like API may be suitable.  Anyway Emacs
+    introduces multiple representations, so it should be redesigned
+    based on multiple representation world model.
+
+  Anyway FLIM should introduce new APIs based on inter-representation
+world model.  Conventional APIs should be implemented based on new
+APIs.
+
+  SEMI should abolish filter model and introduce new methods to
+display inline data.  These methods should use new FLIM APIs based on
+inter-representation world model.
+
 
 * MIME-Edit
 
