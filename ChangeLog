@@ -1,5 +1,19 @@
 1998-03-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-pgp.el (mime-method-to-verify-application/pgp-signature):
+	Abolish unused local-variable `raw-buf'.
+
+	* mime-play.el (mime-raw-play-entity): fixed.
+
+	* mime-view.el (mime-preview-original-window-configuration): Use
+	`defvar' to avoid warning of byte-compiler.
+
+	* mime-view.el (mime-view-display-entity): Don't use
+	`mime-view-entity-button-function' (abolish it); use
+	`mime-root-entity-p'.
+
+1998-03-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-view-entity-button-visible-p): New function.
 	(mime-view-entity-button-function): Use function
  	`mime-view-entity-button-visible-p'.
@@ -273,7 +287,7 @@
 
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae) was released.-A
+	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae)-A was released.
 
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -385,7 +399,7 @@
 
 1998-02-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae) was released.-A
+	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae)-A was released.
 
 	* SEMI-ELS: Remove mime-tar.el.
 
@@ -522,7 +536,7 @@
 
 1997-11-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.116 (D-Dòhòji) was released.-A
+	* SEMI: Version 0.116 (D-Dòhòji)-A was released.
 
 1997-11-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
