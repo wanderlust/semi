@@ -1,5 +1,11 @@
 1998-09-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* SEMI-MK (config-semi-package): New function.
+	(compile-semi-package): New function.
+	(install-semi-package): New function.
+
+	* SEMI-CFG (PACKAGEDIR): New variable.
+
 	* Makefile: Abolish variable `SHELL', `MAKE', `CC' and `CFLAGS'.
 	(XEMACS): New variable.
 	(FLAGS): Add `-l SEMI-MK'.
