@@ -1,3 +1,7 @@
+2000-05-25  Tanaka Akira      <akr@m17n.org>
+
+        * README.en: Update for CVS via SSH.
+
 2000-05-23  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* semi-def.el (mime-create-widget-button): Avoid truncating
