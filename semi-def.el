@@ -42,12 +42,6 @@
 (defvar mime/use-multi-frame
   (and (>= emacs-major-version 19) window-system))
 
-(defvar mime/find-file-function
-  (if mime/use-multi-frame
-      (function find-file-other-frame)
-    (function find-file)
-    ))
-
 
 ;;; @ constants
 ;;;
