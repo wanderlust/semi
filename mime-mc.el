@@ -229,9 +229,8 @@ optional argument COMMENT if it is specified."
 	proc rc status parser-result
 	)
     (mc-gpg-debug-print (format 
-			 "(mime-mc-gpg-process-region beg=%s end=%s passwd=%s program=%s args=%s parser=%s bufferdummy=%s boundary=%s comment=%s)"
-			 beg end passwd program args parser bufferdummy
-			 boundary comment))
+       "(mime-mc-gpg-process-region beg=%s end=%s passwd=%s program=%s args=%s parser=%s bufferdummy=%s boundary=%s comment=%s)"
+       beg end passwd program args parser bufferdummy boundary comment))
     (setq stderr-tempfilename 
 	  (make-temp-name (expand-file-name "mailcrypt-gpg-stderr-"
 					    mc-temp-directory)))
@@ -240,6 +239,9 @@ optional argument COMMENT if it is specified."
 					    mc-temp-directory)))
     (unwind-protect
 	(progn
+	  ;; Returns non-nil if success, otherwise nil with error message.
+	  (catch 'mime-mc-gpg-process-region-done
+
 	  ;; get output places ready
 	  (setq mybuf (get-buffer-create " *mailcrypt stdout temp"))
 	  (set-buffer mybuf)
@@ -302,12 +304,18 @@ optional argument COMMENT if it is specified."
 	  ;; ponder process death: signal, not just rc!=0
 	  (if (or (eq 'stop status) (eq 'signal status))
 	      ;; process died
-	      (error "%s exited abnormally: '%s'" program rc) ;;is rc a string?
-	    )
+	      (progn
+		(message
+		 "%s exited abnormally: '%s'" program rc) ;; is rc a string?
+		(throw 'mime-mc-gpg-process-region-done nil)
+		))
 
 	  (if (= 127 rc)
-	      (error "%s could not be found" program) ;; at least on my system
-	    )
+	      (progn
+		(message
+		 "%s could not be found" program) ;; at least on my system
+		(throw 'mime-mc-gpg-process-region-done nil)
+		))
 
 	  ;; fill stderr buf
 	  (setq stderr-buf (get-buffer-create " *mailcrypt stderr temp"))
@@ -330,7 +338,14 @@ optional argument COMMENT if it is specified."
 	    )
 
 	  ;; feed the parser
-	  (setq parser-result (funcall parser mybuf stderr-buf status-buf rc))
+	  (condition-case err
+	      (setq parser-result
+		    (funcall parser mybuf stderr-buf status-buf rc)
+		    )
+	    (error
+	     (message "%s" err)
+	     (throw 'mime-mc-gpg-process-region-done nil)
+	     ))
 	  (mc-gpg-debug-print (format " parser returned %s" parser-result))
 
 	  ;; what did the parser tell us?
@@ -360,7 +375,7 @@ Content-Transfer-Encoding: 7bit
 
 	  ;; return result
 	  (cdr parser-result)
-	  )
+	  ))
       ;; cleanup forms
       (if (and proc (eq 'run (process-status proc)))
 	  ;; it is still running. kill it.
@@ -419,39 +434,45 @@ Content-Transfer-Encoding: 7bit
 	      (with-temp-buffer
 		(message "Detecting the value of `micalg'...")
 		(insert "\n")
-		(let ((mc-passwd-timeout 60)) ;; Don't deactivate passwd.
-		  (mime-mc-gpg-process-region
-		   1 2 passwd pgp-path
-		   (list "--clearsign" "--armor" "--batch" "--textmode"
-			 "--verbose" "--local-user" (cdr key))
-		   parser buffer nil
-		   ))
-		(std11-narrow-to-header)
-		(setq micalg
-		      (downcase (or (std11-fetch-field "Hash") "md5"))
+		(if (let ((mc-passwd-timeout 60)) ;; Don't deactivate passwd.
+		      (mime-mc-gpg-process-region
+		       1 2 passwd pgp-path
+		       (list "--clearsign" "--armor" "--batch" "--textmode"
+			     "--verbose" "--local-user" (cdr key))
+		       parser buffer nil)
 		      )
-		(set-alist 'mime-mc-micalg-alist (cdr key) micalg)
-		))
-	  ))
-    (message "Signing as %s ..." (car key))
-    (if (mime-mc-gpg-process-region
-	 start end passwd pgp-path args parser buffer boundary comment)
+		    (progn
+		      (std11-narrow-to-header)
+		      (setq micalg
+			    (downcase (or (std11-fetch-field "Hash") "md5"))
+			    )
+		      (set-alist 'mime-mc-micalg-alist (cdr key) micalg)
+		      )
+		  ))
+	    )))
+    (if (or mime-mc-omit-micalg micalg)
 	(progn
-	  (if boundary
+	  (message "Signing as %s ..." (car key))
+	  (if (mime-mc-gpg-process-region
+	       start end passwd pgp-path args parser buffer boundary comment)
 	      (progn
-		(goto-char (point-min))
-		(insert
-		 (format "\
+		(if boundary
+		    (progn
+		      (goto-char (point-min))
+		      (insert
+		       (format "\
 --[[multipart/signed; protocol=\"application/pgp-signature\";
  boundary=\"%s\"%s][7bit]]\n"
-			 boundary
-			 (if mime-mc-omit-micalg
-			     ""
-			   (concat "; micalg=pgp-" micalg)
-			   )
-			 ))))
-	  (message "Signing as %s ... Done." (car key))
-	  t)
+			       boundary
+			       (if mime-mc-omit-micalg
+				   ""
+				 (concat "; micalg=pgp-" micalg)
+				 )
+			       ))))
+		(message "Signing as %s ... Done." (car key))
+		t)
+	    nil)
+	  )
       nil)))
 
 (defun mime-mc-gpg-encrypt-region (recipients start end &optional id sign)
@@ -488,6 +509,9 @@ optional argument COMMENT if it is specified."
       )
     (unwind-protect
 	(progn
+	  ;; Returns non-nil if success, otherwise nil with error message.
+	  (catch 'mime-mc-pgp50-process-region-done
+
 	  (setq mybuf (or buffer (generate-new-buffer " *mailcrypt temp")))
 	  (set-buffer mybuf)
 	  (erase-buffer)
@@ -500,7 +524,12 @@ optional argument COMMENT if it is specified."
 	  ;; Now hand the process to the parser, which returns the exit
 	  ;; status of the dead process and the limits of the region
 	  ;; containing the PGP results.
-	  (setq results (funcall parser proc obuf beg end mybuf passwd))
+	  (condition-case err
+	      (setq results (funcall parser proc obuf beg end mybuf passwd))
+	    (error
+	     (message "%s" err)
+	     (throw 'mime-mc-pgp50-process-region-done nil)
+	     ))
 	  (setq result  (car results))
 	  (setq rgn     (cadr results))
 
@@ -508,7 +537,7 @@ optional argument COMMENT if it is specified."
 	  (set-buffer mybuf)
 
 	  ;; replace comment string
-	  (if comment
+	  (if (and comment (consp rgn))
 	      (setcdr rgn (mime-mc-replace-comment-field
 			   comment (car rgn) (cdr rgn)))
 	    )
@@ -547,7 +576,7 @@ Content-Transfer-Encoding: 7bit
 		(delete-region (car rgn) (cdr rgn))))
 
 	  ;; Return nil on failure and exit code on success
-	  (if rgn result nil))
+	  (if rgn result nil)))
 
       ;; Cleanup even on nonlocal exit
       (if (and proc (eq 'run (process-status proc)))
@@ -695,36 +724,43 @@ Content-Transfer-Encoding: 7bit
 	(with-temp-buffer
 	  (message "Detecting the value of `micalg'...")
 	  (insert "\n")
-	  (let ((mc-passwd-timeout 60)) ;; Don't deactivate passwd.
-	    (mime-mc-pgp50-process-region
-	     1 2 passwd pgp-path
-	     (list "-fat" "+verbose=1" "+language=us" "+clearsig=on"
-		   "+batchmode" "-u" (cdr key))
-	     (function mc-pgp50-sign-parser) buffer nil
-	     ))
-	  (std11-narrow-to-header)
-	  (setq micalg (downcase (or (std11-fetch-field "Hash") "md5")))
-	  (set-alist 'mime-mc-micalg-alist (cdr key) micalg)
-	  ))
-    (message "Signing as %s ..." (car key))
-    (if (mime-mc-pgp50-process-region
-	 start end passwd pgp-path args parser buffer boundary comment)
-	(progn
-	  (if boundary
+	  (if (let ((mc-passwd-timeout 60)) ;; Don't deactivate passwd.
+		(mime-mc-pgp50-process-region
+		 1 2 passwd pgp-path
+		 (list "-fat" "+verbose=1" "+language=us" "+clearsig=on"
+		       "+batchmode" "-u" (cdr key))
+		 (function mc-pgp50-sign-parser) buffer nil)
+		)
 	      (progn
-		(goto-char (point-min))
-		(insert
-		 (format "\
+		(std11-narrow-to-header)
+		(setq micalg (downcase (or (std11-fetch-field "Hash") "md5")))
+		(set-alist 'mime-mc-micalg-alist (cdr key) micalg)
+		)
+	    ))
+      )
+    (if (or mime-mc-omit-micalg micalg)
+	(progn
+	  (message "Signing as %s ..." (car key))
+	  (if (mime-mc-pgp50-process-region
+	       start end passwd pgp-path args parser buffer boundary comment)
+	      (progn
+		(if boundary
+		    (progn
+		      (goto-char (point-min))
+		      (insert
+		       (format "\
 --[[multipart/signed; protocol=\"application/pgp-signature\";
  boundary=\"%s\"%s][7bit]]\n"
-			 boundary
-			 (if mime-mc-omit-micalg
-			     ""
-			   (concat "; micalg=pgp-" micalg)
-			   )
-			 ))))
-	  (message "Signing as %s ... Done." (car key))
-	  t)
+			       boundary
+			       (if mime-mc-omit-micalg
+				   ""
+				 (concat "; micalg=pgp-" micalg)
+				 )
+			       ))))
+		(message "Signing as %s ... Done." (car key))
+		t)
+	    nil)
+	  )
       nil)))
 
 (defun mime-mc-pgp50-encrypt-region (recipients start end &optional id sign)

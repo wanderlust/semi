@@ -1,5 +1,12 @@
 1999-04-14  Katsumi Yamaoka   <yamaoka@jpl.org>
 
+	* mime-mc.el (mime-mc-pgp50-sign-region, mime-mc-gpg-sign-region):
+	Return nil if an erorr has occurred during detecting the value of
+	`micalg'.
+	(mime-mc-pgp50-process-region, mime-mc-gpg-process-region): Don't
+	signal an error. Return non-nil if success, otherwise nil with
+	error message.
+
 	* mime-edit.el (mime-edit-translate-buffer): Do `undo-boundary'
 	before translating.
 
@@ -25,6 +32,7 @@
 	mime-mc-gpg-process-region, mime-mc-insert-public-key): Identify
 	the version of SEMI as a comment field of ASCII armor.
 	(mime-mc-replace-comment-field): New function.
+	(mime-mc-comment): New macro.
 	(mime-mc-comment-alist): New user option.
 	(TopLevel): Require `mime-def'.
 
