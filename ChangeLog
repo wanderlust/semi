@@ -1,3 +1,10 @@
+2001-06-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* mime-edit.el (mime-edit-translate-body): Don't insert User-Agent
+	field.
+	(mime-edit-insert-user-agent-field): Changed default value to nil;
+	Fixed docstring.
+
 2000-11-29  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* mime-edit.el (mime-edit-guess-charset): New function.

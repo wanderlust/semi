@@ -602,8 +602,8 @@ If it is not specified for a `major-mode',
 ;;; @@ optional header fields
 ;;;
 
-(defcustom mime-edit-insert-user-agent-field t
-  "*If non-nil, insert User-Agent header field."
+(defcustom mime-edit-insert-user-agent-field nil
+  "*If non-nil, some MUA makes verbose User-Agent header field."
   :group 'mime-edit
   :type 'boolean)
 
@@ -2098,10 +2098,6 @@ Content-Description: S/MIME Encrypted Message][base64]]\n")
       (let ((contype (car ret))		;Content-Type
 	    (encoding (nth 1 ret))	;Content-Transfer-Encoding
 	    )
-	;; Insert User-Agent field
-	(and mime-edit-insert-user-agent-field
-	     (or (mail-position-on-field "User-Agent")
-		 (insert mime-edit-user-agent-value)))
 	;; Make primary MIME headers.
 	(or (mail-position-on-field "MIME-Version")
 	    (insert mime-edit-mime-version-value))
