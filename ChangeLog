@@ -1,5 +1,10 @@
 1998-03-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el, mime-text.el, mime-image.el: Rename
+ 	'mime-view-filter-for-* -> 'mime-preview-filter-for-*.
+
+1998-03-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-text.el: Rename 'mime-decode-text-body ->
  	'mime-text-decode-body.
 
