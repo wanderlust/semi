@@ -251,7 +251,7 @@ window.")
 ;;; @ file extraction
 ;;;
 
-(defun mime-extract-current-entity (beg end cal)
+(defun mime-method-to-save (beg end cal)
   (goto-char beg)
   (let* ((name
 	  (save-restriction
