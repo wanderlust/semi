@@ -1,3 +1,13 @@
+1997-09-18  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-x-emacs-value): Use `(featurep
+	'xemacs)'; add DOC-string.
+
+1997-09-17  Hisashi Miyashita <himi@bird.scphys.kyoto-u.ac.jp>
+
+	* mime-edit.el (mime-edit-x-emacs-value): Add `(Meadow-version)'
+	when running Meadow. (cf. [tm-ja:2567], [mule-win32:4339])
+
 1997-09-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-edit.el (mime-edit-mime-version-field-for-message/partial):
