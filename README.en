@@ -187,10 +187,16 @@ Mailing lists
 
   Via the EMACS-MIME ML, you can report SEMI bugs, obtain the latest
   release of SEMI, and discuss future enhancements to SEMI.  To join
-  the EMACS-MIME ML, send an empty e-mail to
+  the EMACS-MIME ML, send an e-mail to
 
 	emacs-mime-en-ctl@m17n.org	(English)
 	emacs-mime-ja-ctl@m17n.org	(Japanese)
+
+  containing
+
+	subscribe YOUR NAME
+
+  in its contents.
 
   Notice that you should not send mail to author(s), such as
   morioka@jaist.ac.jp, directly.  Because your problem may occur in

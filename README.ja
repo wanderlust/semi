@@ -178,7 +178,12 @@ SEMI とは?
 
  EMACS-MIME ML を経由して、あなたは SEMI のバグを報告することや、SEMI 
  の最新版の入手、SEMI の将来の強化について議論することなどができます。
- EMACS-MIME ML に加入するためには、空のメールを以下に送信してください。
+ EMACS-MIME ML に加入するためには、本文に
+
+	subscribe あなたの名前
+	例: subscribe MORIOKA Tomohiko
+
+と書いたメールを次のアドレスのどちらかに送信してください。
 
         emacs-mime-en-ctl@m17n.org      (英語)
         emacs-mime-ja-ctl@m17n.org      (日本語)
