@@ -24,7 +24,7 @@ LISPDIR = NONE
 PACKAGEDIR = NONE
 VERSION_SPECIFIC_LISPDIR = NONE
 
-GOMI	= *.elc *.info
+GOMI	= *.elc
 
 VERSION	= $(API).$(RELEASE)
 ARC_DIR = /pub/mule/semi/semi-$(API)-for-flim-$(FLIM_API)
@@ -35,11 +35,11 @@ elc:
 	$(EMACS) $(FLAGS) -f compile-semi \
 		$(PREFIX) $(LISPDIR) $(VERSION_SPECIFIC_LISPDIR)
 
-install-elc:	elc
+install-elc: elc
 	$(EMACS) $(FLAGS) -f install-semi \
 		$(PREFIX) $(LISPDIR) $(VERSION_SPECIFIC_LISPDIR)
 
-install:	install-elc
+install: install-elc
 
 
 package: package-elc info
@@ -65,6 +65,8 @@ xtexinfmt: emy.texi
 clean:
 	-$(RM) $(GOMI)
 
+distclean: clean
+	-$(RM) *.info
 
 tar:
 	cvs commit
