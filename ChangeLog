@@ -1,3 +1,8 @@
+1999-06-04  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-edit.el (mime-edit-user-agent-value): Modify code to get
+	version number of XEmacs. [cf. <tm-ja:4561>]
+
 1999-05-22  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-view.el (mime-entity-situation): Don't refer `major-mode'
