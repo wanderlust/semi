@@ -46,6 +46,11 @@
   :group 'pgg
   :type 'string)
 
+(defcustom pgg-encrypt-for-me nil
+  "Encrypt all outgoing messages with user's public key."
+  :group 'pgg
+  :type 'boolean)
+
 (defvar pgg-status-buffer " *PGG status*")
 (defvar pgg-errors-buffer " *PGG errors*")
 (defvar pgg-output-buffer " *PGG output*")

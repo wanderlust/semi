@@ -147,7 +147,10 @@
 	    "+language=us" "-fate"
 	    ,@(if recipients
 		  (mapcar (lambda (rcpt) (concat "\"" rcpt "\""))
-			  recipients)))))
+			  (append recipients
+				  (if pgg-encrypt-for-me
+				      (list pgg-pgp-user-id))))))
+	  ))
     (pgg-pgp-process-region start end nil
 			    pgg-pgp-program args)
     (pgg-process-when-success nil)

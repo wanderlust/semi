@@ -160,7 +160,10 @@
 			 (mapcar (lambda (rcpt) 
 				   (list "-r" 
 					 (concat "\"" rcpt "\""))) 
-				 recipients))))))
+				 (append recipients
+					 (if pgg-encrypt-for-me
+					     (list pgg-pgp5-user-id)))))))
+	  ))
     (pgg-pgp5-process-region start end nil
 			     pgg-pgp5-pgpe-program args)
     (pgg-process-when-success nil)

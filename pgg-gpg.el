@@ -157,7 +157,10 @@
 			 (mapcar (lambda (rcpt) 
 				   (list "--remote-user" 
 					 (concat "\"" rcpt "\""))) 
-				 recipients))))))
+				 (append recipients
+					 (if pgg-encrypt-for-me
+					     (list pgg-gpg-user-id)))))))
+	  ))
     (pgg-as-lbt start end 'CRLF
       (pgg-gpg-process-region start end nil pgg-gpg-program args)
       )
