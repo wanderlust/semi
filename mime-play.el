@@ -553,7 +553,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	 (number (cdr (assoc "number" cal)))
 	 (total (cdr (assoc "total" cal)))
 	 file
-	 (mother mime-preview-buffer)
+	 (mother (current-buffer))
 	 )
     (or (file-exists-p root-dir)
 	(make-directory root-dir)
