@@ -1,5 +1,10 @@
 1998-07-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el (mime-activate-mailcap-method): Check filename is
+	null string.
+
+1998-07-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-ui-ja.sgml, mime-ui-ja.texi: New files; delete
 	mime-view-ja.sgml and mime-view-ja.texi.
 
