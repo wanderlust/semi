@@ -1480,34 +1480,16 @@ It calls following-method selected from variable
 		 entity))
 	      str)
 	  (while (and current-entity
-		      (progn
-			(setq str
-			      (with-current-buffer
-				  (mime-entity-header-buffer current-entity)
-				(save-restriction
-				  (narrow-to-region
-				   (mime-entity-header-start-point
-				    current-entity)
-				   (mime-entity-header-end-point
-				    current-entity))
-				  (std11-header-string-except
-				   (concat
-				    "^"
-				    (apply (function regexp-or) fields)
-				    ":") ""))))
-			(if (and (eq (mime-entity-media-type
-				      current-entity) 'message)
-				 (eq (mime-entity-media-subtype
-				      current-entity) 'rfc822))
-			    nil
-			  (if str
-			      (insert str)
-			    )
-			  t)))
+		      (if (and (eq (mime-entity-media-type
+				    current-entity) 'message)
+			       (eq (mime-entity-media-subtype
+				    current-entity) 'rfc822))
+			  nil
+			(mime-insert-header current-entity fields)
+			t))
 	    (setq fields (std11-collect-field-names)
 		  current-entity (mime-entity-parent current-entity))
-	    )
-	  )
+	    ))
 	(let ((rest mime-view-following-required-fields-list)
 	      field-name ret)
 	  (while rest
@@ -1529,7 +1511,6 @@ It calls following-method selected from variable
 		    )))
 	    (setq rest (cdr rest))
 	    ))
-	(mime-decode-header-in-buffer)
 	)
       (let ((f (cdr (assq mode mime-preview-following-method-alist))))
 	(if (functionp f)
