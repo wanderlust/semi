@@ -1,3 +1,10 @@
+2004-09-15  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* mime-view.el (mime-preview-follow-current-entity): Avoid error
+	on null entity.
+	(mime-preview-find-boundary-info): Ditto.
+	Avoid error at the beginning of buffer.
+
 2004-08-29  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	Merge following changes from semi-1_14 branch:
