@@ -1,6 +1,11 @@
-2000-06-21  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+2000-06-23  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
-	* mime-w3.el: Modify header.
+	* mime-edit.el (mime-edit-preview-message): Set up local variable
+	`mime-edit-temp-message-buffer'.
+	(mime-edit-quitting-method): Refer `mime-edit-temp-message-buffer'
+	to avoid to use `mime-entity-buffer'.
+
+2000-06-21  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
 	* mime-view.el (mime-view-mode): Use
 	`mime-entity-set-content-type' and `mime-entity-set-encoding'
