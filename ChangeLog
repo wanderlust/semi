@@ -1,3 +1,8 @@
+1998-05-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-setup.el: Avoid warning message of byte-compiler.
+
+
 1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.4.4 (Ecch-Dþ-Miyazaki)-A released.
