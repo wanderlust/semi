@@ -401,9 +401,9 @@ If encoding is nil, it is determined from its contents."
 			,@(cons
 			   '(const nil)
 			   (mapcar (lambda (cell)
-				     (list 'item (car cell))
+				     (list 'item cell)
 				     )
-				   mime-file-encoding-method-alist)))
+				   (mime-encoding-list))))
 		;; disposition-type
 		(choice :tag "Disposition-Type"
 			(item nil)
@@ -1108,7 +1108,7 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
   (let ((encoding
 	 (completing-read
 	  "What transfer encoding: "
-	  mime-file-encoding-method-alist nil t nil)))
+	  (mime-encoding-alist) nil t nil)))
     (mime-edit-insert-tag "audio" "basic" nil)
     (mime-edit-define-encoding encoding)
     (save-restriction
@@ -1537,7 +1537,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 	    (setq encoding
 		  (completing-read
 		   "What transfer encoding: "
-		   mime-file-encoding-method-alist nil t default)
+		   (mime-encoding-alist) nil t default)
 		  )
 	    ""))
     encoding))
