@@ -166,8 +166,8 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	     ))
 	  format))
 
-(defvar mime/output-buffer-window-is-shared-with-bbdb t
-  "*If t, mime/output-buffer window is shared with BBDB window.")
+(defvar mime-echo-window-is-shared-with-bbdb t
+  "*If non-nil, mime-echo window is shared with BBDB window.")
 
 (defun mime-article/show-output-buffer (&rest forms)
   (get-buffer-create mime-echo-buffer-name)
@@ -175,7 +175,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	(win (get-buffer-window mime-echo-buffer-name))
 	)
     (or win
-	(if (and mime/output-buffer-window-is-shared-with-bbdb
+	(if (and mime-echo-window-is-shared-with-bbdb
 		 (boundp 'bbdb-buffer-name)
 		 (setq win (get-buffer-window bbdb-buffer-name))
 		 )
