@@ -108,6 +108,7 @@
 
 ;;; Code:
 
+(require 'emu)
 (require 'sendmail)
 (require 'mail-utils)
 (require 'mel)
@@ -663,71 +664,6 @@ Tspecials means any character that matches with it in header must be quoted.")
 			  mime-edit-menu-list)))
   )
 ;;; end
-
-;;; @@ visible/invisible
-;;;
-
-(defmacro enable-invisible ())
-
-(defmacro end-of-invisible ())
-
-(cond (running-xemacs
-       (defun invisible-region (start end)
-	 (if (save-excursion
-	       (goto-char start)
-	       (eq (following-char) ?\n)
-	       )
-	     (setq start (1+ start))
-	   )
-	 (put-text-property start end 'invisible t)
-	 )
-       (defun invisible-p (pos)
-	 (if (save-excursion
-	       (goto-char pos)
-	       (eq (following-char) ?\n)
-	       )
-	     (setq pos (1+ pos))
-	   )
-	 (get-text-property pos 'invisible)
-	 )
-       (defun next-visible-point (pos)
-	 (save-excursion
-	   (if (save-excursion
-		 (goto-char pos)
-		 (eq (following-char) ?\n)
-		 )
-	       (setq pos (1+ pos))
-	     )
-	   (or (next-single-property-change pos 'invisible)
-	       (point-max))
-	   ))
-       )
-      (t
-       (defun invisible-region (start end)
-	 (if (save-excursion
-	       (goto-char (1- end))
-	       (eq (following-char) ?\n)
-	       )
-	     (setq end (1- end))
-	   )
-	 (put-text-property start end 'invisible t)
-	 )
-       (defun invisible-p (pos)
-	 (get-text-property pos 'invisible)
-	 )
-       (defun next-visible-point (pos)
-	 (save-excursion
-	   (goto-char (next-single-property-change pos 'invisible))
-	   (if (eq (following-char) ?\n)
-	       (forward-char)
-	     )
-	   (point)
-	   ))
-       ))
-
-(defun visible-region (start end)
-  (put-text-property start end 'invisible nil)
-  )
 
 
 ;;; @ functions
