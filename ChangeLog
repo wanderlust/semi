@@ -1,5 +1,17 @@
 1997-06-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* eword-encode.el: `tm-eword::split-to-lc-words' ->
+	`eword-encode-divide-into-charset-words'.
+
+	* eword-encode.el: Function `tm-eword::parse-lc-word' was
+	abolished.
+	(tm-eword::split-to-lc-words): New implementation.
+
+1997-06-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* eword-encode.el: `tm-eword::char-type' ->
+	`eword-encode-char-type'.
+
 	* eword-encode.el: `tm-eword::encode-encoded-text' ->
 	`eword-encode-text'
 
