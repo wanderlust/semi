@@ -115,9 +115,10 @@
 (luna-define-method lookup-key-string ((scheme pgg-scheme-pgp) 
 				       string &optional type)
   (let ((args (list "+batchmode" "+language=en" "-kv" string)))
-    (pgg-pgp-process-region (point)(point) nil
-			    pgg-pgp-program args)
-    (with-current-buffer pgg-output-buffer
+    (with-current-buffer (get-buffer-create pgg-output-buffer)
+      (buffer-disable-undo)
+      (erase-buffer)
+      (apply #'call-process pgg-pgp-program nil t args)
       (goto-char (point-min))
       (cond
        ((re-search-forward "^pub\\s +[0-9]+/" nil t);PGP 2.*
@@ -148,15 +149,13 @@
 			  recipients)))))
     (pgg-pgp-process-region start end passphrase 
 			    pgg-pgp-program args)
-    (with-current-buffer pgg-output-buffer
-      (if (zerop (buffer-size))
-	  (insert-buffer-substring pgg-errors-buffer)
-	(let ((packet 
-	       (cdr (assq 1 (pgg-parse-armor-region 
-			     (point-min)(point-max))))))
-	  (pgg-add-passphrase-cache 
-	   (cdr (assq 'key-identifier packet))
-	   passphrase))))
+    (pgg-process-when-success
+      (let ((packet 
+	     (cdr (assq 1 (pgg-parse-armor-region 
+			   (point-min)(point-max))))))
+	(pgg-add-passphrase-cache 
+	 (cdr (assq 'key-identifier packet))
+	 passphrase)))
     ))
 
 (luna-define-method decrypt-region ((scheme pgg-scheme-pgp) 
@@ -171,13 +170,11 @@
 	  '("+verbose=1" "+batchmode" "+language=us" "-f")))
     (pgg-pgp-process-region start end passphrase 
 			    pgg-pgp-program args)
-    (with-current-buffer pgg-output-buffer
-      (when (zerop (buffer-size))
-	(insert-buffer-substring pgg-errors-buffer)))
+    (pgg-process-when-success nil)
     ))
 
 (luna-define-method sign-region ((scheme pgg-scheme-pgp) 
-				 start end)
+				 start end &optional clearsign)
   (let* ((pgg-pgp-user-id pgg-default-user-id)
 	 (passphrase
 	  (pgg-read-passphrase 
@@ -185,16 +182,21 @@
 	   (luna-send scheme 'lookup-key-string
 		      scheme pgg-pgp-user-id 'sign)))
 	 (args 
-	  (list "-fbast" "+verbose=1" "+language=us" "+batchmode"
+	  (list (if clearsign "-fast" "-fbast")
+		"+verbose=1" "+language=us" "+batchmode"
 		"-u" pgg-pgp-user-id)))
     (pgg-pgp-process-region start end passphrase 
 			     pgg-pgp-program args)
-    (with-current-buffer pgg-output-buffer
-      (if (zerop (buffer-size))
-	  (insert-buffer-substring pgg-errors-buffer)
+    (pgg-process-when-success
+      (goto-char (point-min))
+      (while (re-search-forward "\r$" end t)
+	(replace-match ""))
+      (when (re-search-forward "^-+BEGIN PGP SIGNATURE" nil t);XXX
 	(let ((packet 
 	       (cdr (assq 2 (pgg-parse-armor-region 
-			     (point-min)(point-max))))))
+			     (progn (beginning-of-line 2)
+				    (point))
+			     (point-max))))))
 	  (pgg-add-passphrase-cache 
 	   (cdr (assq 'key-identifier packet))
 	   passphrase))))
@@ -213,11 +215,8 @@
     (pgg-pgp-process-region (point-min)(point-max) nil
 			    pgg-pgp-program args)
     (delete-file orig-file)
-    (delete-file signature)
-    (set-buffer pgg-output-buffer)
-    (with-current-buffer pgg-output-buffer
-      (when (zerop (buffer-size))
-	(insert-buffer-substring pgg-errors-buffer)))
+    (if signature (delete-file signature))
+    (pgg-process-when-success nil)
     ))
 
 (luna-define-method insert-key ((scheme pgg-scheme-pgp))
