@@ -554,18 +554,7 @@ if it is not nil.")
  '((type . application)(subtype . postscript)(mode . "print")
    (method "tm-ps" nil 'file "" 'encoding 'mode 'name)
    ))
-(ctree-set-calist-strictly
- 'mime-acting-condition
- '((type . application)(subtype . octet-stream)
-   (method . mime-method-to-save)
-   ))
 
-(ctree-set-calist-strictly
- 'mime-acting-condition
- '((type . message)(subtype . external-body)
-   ("access-type" . "anon-ftp")
-   (method . mime-method-to-display-message/external-ftp)
-   ))
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . message)(subtype . rfc822)(mode . "play")
@@ -581,6 +570,19 @@ if it is not nil.")
  'mime-acting-condition
  '((mode . "extract")
    (method . mime-method-to-save)))
+
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . message)(subtype . external-body)
+   ("access-type" . "anon-ftp")
+   (method . mime-method-to-display-message/external-ftp)
+   ))
+
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . application)(subtype . octet-stream)
+   (method . mime-method-to-save)
+   ))
 
 
 ;;; @ quitting method
