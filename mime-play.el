@@ -144,6 +144,28 @@
 	    (cons dest mime-acting-situation-example-list))
       )))
 
+
+;;; @ content decoder
+;;;
+
+(defun mime-preview-play-current-entity (&optional ignore-examples mode)
+  "Play current entity.
+It decodes current entity to call internal or external method.  The
+method is selected from variable `mime-acting-condition'.
+If IGNORE-EXAMPLES (C-u prefix) is specified, this function ignores
+`mime-acting-situation-example-list'.
+If MODE is specified, play as it.  Default MODE is \"play\"."
+  (interactive "P")
+  (let ((entity (get-text-property (point) 'mime-view-entity)))
+    (if entity
+	(let ((situation (list (cons 'mode (or mode "play")))))
+	  (if ignore-examples
+	      (setq situation
+		    (cons (cons 'ignore-examples ignore-examples)
+			  situation)))
+	  (mime-play-entity entity situation)
+	  ))))
+
 (defun mime-sort-situation (situation)
   (sort situation
 	#'(lambda (a b)
