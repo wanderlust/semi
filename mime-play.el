@@ -46,7 +46,7 @@ If t, it means current directory."
 (defvar mime-play-find-every-situations t
   "*Find every available situations if non-nil.")
 
-(defvar mime-play-message-coding-system nil
+(defvar mime-play-messages-coding-system nil
   "Coding system to be used for external MIME playback method.")
 
 
@@ -154,7 +154,7 @@ specified, play as it.  Default MODE is \"play\"."
 		   method
 		   (cons (cons 'filename name) situation))))
 	     (binary-to-text-funcall
-	      mime-play-message-coding-system
+	      mime-play-messages-coding-system
 	      #'start-process command mime-echo-buffer-name
 	      shell-file-name shell-command-switch command))))
       (set-alist 'mime-mailcap-method-filename-alist process name)
