@@ -202,7 +202,7 @@ CVS に基づいた開発
   チェックアウトするためには、最初に以下の操作を行なって下さい。
 
   % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root login
-  CVS password: [CR] # NULL string
+  CVS password: [CR] # 空文字列
 
   以後は次の操作によって、最新の SEMI のソースを取得することができます。
 
