@@ -1,5 +1,16 @@
 1997-09-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-view-display-entity): Use `media-type' and
+	`media-subtype' instead of `ctype' to compare with
+	message/partial.
+
+	* mime-view.el (mime-view-follow-current-entity,
+	mime-view-display-entity, mime-view-entity-button-function): Use
+	`mime-entity-info-media-type' and `mime-entity-info-media-subtype'
+	instead of `mime-entity-info-type/subtype'.
+
+1997-09-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-parse.el: Abolish macro `define-structure'.
 	
 	(make-mime-entity-info, mime-entity-info-rnum,
