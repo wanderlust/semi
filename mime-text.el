@@ -44,19 +44,18 @@ SITUATION.  It must be symbol."
 		(cdr (or (assq major-mode mime-raw-representation-type-alist)
 			 (assq t mime-raw-representation-type-alist)))
 		))))
-    (insert-buffer-substring buffer
-			     (mime-entity-body-start entity)
-			     (mime-entity-body-end entity))
-    (let ((encoding (mime-entity-encoding entity)))
-      (mime-decode-region (point-min) (point-max) encoding)
-      (if (or (eq presentation-type 'binary)
-	      (not (member encoding '(nil "7bit" "8bit" "binary"))))
-	  (decode-mime-charset-region (point-min)(point-max)
-				      (or (mime-content-type-parameter
-					   (mime-entity-content-type entity)
-					   "charset")
-					  default-mime-charset))
-	)))
+    (let ((str (mime-entity-content entity)))
+      (insert
+       (if (or (eq presentation-type 'binary)
+	       (not (member (mime-entity-encoding entity)
+			    '(nil "7bit" "8bit" "binary"))))
+	   (decode-mime-charset-string
+	    str
+	    (or (mime-content-type-parameter
+		 (mime-entity-content-type entity) "charset")
+		default-mime-charset))
+	 str))
+      ))
   (run-hooks 'mime-text-decode-hook)
   )
 
