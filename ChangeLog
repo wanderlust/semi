@@ -1,6 +1,21 @@
+1998-05-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* README.en (Mailing lists): Add notice about direct-mail for
+	authors.
+
 1998-05-20  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* VERSION: Add new codenames for WEMI.
+
+1998-05-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-raw-dired-function): Don't refer
+	'mime/use-multi-frame.
+
+	* semi-def.el: Abolish variable 'mime/use-multi-frame.
+
+	* Abolish function 'get-version-string because it is
+	not used.
 
 
 1998-05-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>

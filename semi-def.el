@@ -36,13 +36,6 @@
   "Caesar rotation of current region." t)
 
 
-;;; @ variables
-;;;
-
-(defvar mime/use-multi-frame
-  (and (>= emacs-major-version 19) window-system))
-
-
 ;;; @ constants
 ;;;
 
@@ -260,16 +253,6 @@ FUNCTION.")
 	 (concat "^" (apply (function regexp-or) fields) ":"))
     (set sym fields)
     ))
-
-
-;;; @ RCS version
-;;;
-
-(defsubst get-version-string (id)
-  "Return a version-string from RCS ID."
-  (and (string-match ",v \\([0-9][0-9.][0-9.]+\\)" id)
-       (substring id (match-beginning 1)(match-end 1))
-       ))
 
 
 ;;; @ Other Utility

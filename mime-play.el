@@ -582,7 +582,7 @@ to write."
 ;;;
 
 (defvar mime-raw-dired-function
-  (if mime/use-multi-frame
+  (if (and (>= emacs-major-version 19) window-system)
       (function dired-other-frame)
     (function mime-raw-dired-function-for-one-frame)
     ))
