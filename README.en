@@ -1,5 +1,4 @@
 [README for SEMI kernel package (English Version)]
-by MORIOKA Tomohiko <morioka@jaist.ac.jp>
 
 What's SEMI?
 ============
@@ -163,3 +162,43 @@ CVS based development
 
   with your account name and UNIX style crypted password.  We hope you 
   will join the open development.
+
+
+Authors
+=======
+
+Original authors
+
+    MORIOKA Tomohiko <morioka@jaist.ac.jp>
+	(the author of mime-view and various parts of SEMI)
+    UMEDA Masanobu <umerin@mse.kyutech.ac.jp>
+	(the author of mime.el of emacs-mime-tools.  mime.el is the
+	origin of mime-edit.el of SEMI)
+
+Other authors
+
+    Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+	(a major author of signature.el and a lot of codes)
+    MASUTANI Yasuhiro <masutani@me.es.osaka-u.ac.jp>
+	(anonymous ftp codes of mime-play.el)
+    OKABE Yasuo <okabe@kudpc.kyoto-u.ac.jp>
+	(a major author of mime-partial.el and signature.el)
+
+    Steinar Bang <sb@metis.no>
+    Steven L. Baur <steve@miranova.com>
+    Kevin Broadey <KevinB@bartley.demon.co.uk>
+    Alastair Burt <burt@dfki.uni-kl.de>
+    Eric Ding <ericding@San-Jose.ate.slb.com>
+    Thierry Emery <Thierry.Emery@aar.alcatel-alsthom.fr>
+    Simon Josefsson <jas@pdc.kth.se>
+    Jens Lautenbacher <jtl@tkm.physik.uni-karlsruhe.de>
+    Carsten Leonhardt <leo@arioch.tng.oche.de>
+    Pekka Marjola <marjola@bilbo.ntc.nokia.com>
+    Hisashi Miyashita <himi@bird.scphys.kyoto-u.ac.jp>
+    Kazuhiro Ohta <ohta@ele.cst.nihon-u.ac.jp>
+    Alexandre Oliva <oliva@dcc.unicamp.br>
+    Fran.ANgois Pinard <pinard@iro.umontreal.ca>
+    Artur Pioro <artur@flugor.if.uj.edu.pl>
+    Dan Rich <drich@morpheus.corp.sgi.com>
+        (contribute to evolve mime-image.el with XEmacs)
+    Katsumi Yamaoka <yamaoka@ga.sony.co.jp>
