@@ -14,8 +14,16 @@
 
 	* semi-def.el: Abolish variable 'mime/use-multi-frame.
 
-	* Abolish function 'get-version-string because it is
+	* semi-def.el: Abolish function 'get-version-string because it is
 	not used.
+
+	* TODO (Don't use filter-model): New item.
+
+	* TODO (Fix problem of dynamic configuration for
+	'mime-acting-condition): Done.
+
+	* TODO (Mother entity should modify preview-situation of
+	children): Done.
 
 
 1998-05-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
