@@ -24,6 +24,7 @@
 
 ;;; Code:
 
+(require 'mime)
 (require 'alist)
 
 (put 'unpack 'lisp-indent-function 1)

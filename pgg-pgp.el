@@ -88,11 +88,10 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
       (setenv "PGPPASSFD" "0"))
     (unwind-protect
 	(progn
-	  (let ((coding-system-for-read 'binary)
-		(coding-system-for-write 'binary))
-	    (setq process
-		  (apply #'start-process-shell-command "*PGP*" output-buffer
-			 program args)))
+	  (setq process
+		(apply #'binary-start-process-shell-command "*PGP*"
+		       output-buffer
+		       program args))
 	  (set-process-sentinel process #'ignore)
 	  (when passphrase
 	    (process-send-string process (concat passphrase "\n")))

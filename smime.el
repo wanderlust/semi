@@ -39,6 +39,7 @@
 ;;; Code:
 
 (require 'path-util)
+(require 'raw-io)
 (eval-when-compile (require 'static))
 
 (defgroup smime ()
@@ -202,11 +203,9 @@
     (with-current-buffer (get-buffer-create smime-output-buffer)
       (buffer-disable-undo)
       (erase-buffer))
-    (let ((coding-system-for-read 'binary)
-	  (coding-system-for-write 'binary))
-      (setq process
-	    (apply #'start-process-shell-command "*S/MIME*"
-		   smime-output-buffer program args)))
+    (setq process
+	  (apply #'binary-start-process-shell-command "*S/MIME*"
+		 smime-output-buffer program args))
     (set-process-sentinel process 'ignore)
     (process-send-region process start end)
     (process-send-eof process)

@@ -74,10 +74,9 @@
     (unwind-protect
 	(progn
 	  (set-default-file-modes 448)
-	  (let ((coding-system-for-write 'binary))
-	    (setq process
-		  (apply #'start-process "*GnuPG*" errors-buffer
-			 program args)))
+	  (setq process
+		(apply #'binary-start-process "*GnuPG*" errors-buffer
+		       program args))
 	  (set-process-sentinel process #'ignore)
 	  (when passphrase
 	    (process-send-string process (concat passphrase "\n")))
