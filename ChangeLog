@@ -1,5 +1,8 @@
 2000-01-24   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* semi-def.el (mime-user-interface-product): Bump up to
+	EMIKO 1.13.10.
+
 	* mime-image.el	[Emacs21]: Require `image' when compiling.
 	(image-normalize): Use `create-image' with 3rd arg `data-p'.
 	 (create-image): Advice it to accept 3rd arg `data-p'.
