@@ -1,3 +1,11 @@
+1997-07-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-version-name): Add `semi-version-name'.
+
+	* mime-view.el (mime-view-version-name): New constant.
+
+	* mime-def.el (semi-version-name): New constant.
+
 1997-07-02  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* README.en (Required environment): Updated.
