@@ -148,9 +148,6 @@
   "*List of media-types to be able to display in MIME-View buffer.
 Each elements are string of TYPE/SUBTYPE, e.g. \"text/plain\".")
 
-(defvar mime-view-content-button-ignored-ctype-list
-  '("application/x-selection"))
-
 (defvar mime-view-content-button-visible-ctype-list
   '("application/pgp"))
 
@@ -284,11 +281,9 @@ Each elements are regexp of field-name. [mime-view.el]")
   (rcnum cinfo ctype params subj encoding)
   "Insert entity button conditionally."
   (if (and (consp rcnum)
-	   (not (member
-		 ctype
-		 mime-view-content-button-ignored-ctype-list)))
-      (mime-view-insert-entity-button
-       rcnum cinfo ctype params subj encoding)
+	   (not (string= ctype "application/x-selection"))
+	   )
+      (mime-view-insert-entity-button rcnum cinfo ctype params subj encoding)
     ))
 
 
