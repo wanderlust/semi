@@ -45,19 +45,19 @@ raw-buffer.")
 ;;;
 
 (defvar mime-text-decoder-alist
-  '((mime/show-message-mode	. mime-charset/decode-buffer)
-    (mime-temp-message-mode	. mime-charset/decode-buffer)
+  '((mime/show-message-mode	. mime-text-decode-buffer)
+    (mime-temp-message-mode	. mime-text-decode-buffer)
     (t				. mime-charset/maybe-decode-buffer)
     ))
 
-(defun mime-charset/decode-buffer (charset &optional encoding)
+(defun mime-text-decode-buffer (charset &optional encoding)
   (decode-mime-charset-region (point-min)(point-max)
 			      (or charset default-mime-charset))
   )
 
 (defun mime-charset/maybe-decode-buffer (charset &optional encoding)
   (or (member encoding '(nil "7bit" "8bit" "binary"))
-      (mime-charset/decode-buffer charset)
+      (mime-text-decode-buffer charset)
       ))
 
 (defun mime-preview/decode-text-buffer (charset encoding)
