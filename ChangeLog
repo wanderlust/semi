@@ -1,3 +1,8 @@
+1998-12-24  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-view.el (mime-preview-move-to-next): Don't move forward at
+	the end of buffer.
+
 1998-12-03  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-edit.el (mime-edit-user-agent-value): Include

@@ -1214,7 +1214,8 @@ variable `mime-preview-over-to-previous-method-alist'."
 If there is no previous entity, it calls function registered in
 variable `mime-preview-over-to-next-method-alist'."
   (interactive)
-  (while (null (get-text-property (point) 'mime-view-entity))
+  (while (and (not (eobp))
+	      (null (get-text-property (point) 'mime-view-entity)))
     (forward-char)
     )
   (let ((point (next-single-property-change (point) 'mime-view-entity)))
