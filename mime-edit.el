@@ -632,7 +632,9 @@ If it is not specified for a major-mode,
 	  (mime-product-code-name mime-library-product)
 	  ") "
 	  (if (featurep 'xemacs)
-	      (concat (if (featurep 'mule) "MULE")
+	      (concat (cond ((featurep 'utf-2000)
+			     (concat "UTF-2000-MULE/" utf-2000-version))
+			    ((featurep 'mule) "MULE"))
 		      " XEmacs"
 		      (if (string-match "^[0-9]+\\(\\.[0-9]+\\)" emacs-version)
 			  (concat "/"
