@@ -1,5 +1,13 @@
 2001-09-24   Daiki Ueno  <ueno@unixuser.org>
 
+	* semi-def.el (mime-should-use-popup-menu): New function.
+	(mime-menu-select): New function which wraps the call of the function
+	`mime-popup-menu-select'.
+
+	* mime-play.el (mime-play-entity): Uniquify menu items before asking user.
+
+2001-09-24   Daiki Ueno  <ueno@unixuser.org>
+
 	* mime-view.el (mime-display-inline-fontify): Reset the visited filename.
 
 2001-09-24   Daiki Ueno  <ueno@unixuser.org>
