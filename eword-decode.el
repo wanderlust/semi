@@ -212,6 +212,8 @@ If SEPARATOR is not nil, it is used as header separator."
 ;;; @ encoded-word decoder
 ;;;
 
+(defvar tm:warning-face nil "Face used for invalid encoded-word.")
+
 (defun eword-decode-encoded-word (word &optional must-unfold)
   "Decode WORD if it is an encoded-word.
 
