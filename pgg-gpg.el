@@ -60,7 +60,9 @@
 	    (luna-make-entity 'pgg-scheme-gpg))))
 
 (defun pgg-gpg-process-region (start end passphrase program args)
-  (let* ((output-file-name (make-temp-file "pgg-output"))
+  (let* ((output-file-name (make-temp-name
+			    (expand-file-name "pgg-output"
+					      temporary-file-directory)))
 	 (args
 	  `("--status-fd" "2"
 	    ,@(if passphrase '("--passphrase-fd" "0"))
