@@ -1,3 +1,18 @@
+1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-acting-condition), mime-play.el: Rename
+	`mime-display-message/external-ftp' ->
+	`mime-method-to-display-message/external-ftp'.
+
+	* mime-view.el (mime-acting-condition), mime-play.el: Rename
+	`mime-display-message/rfc822' ->
+	`mime-method-to-display-message/rfc822'.
+
+	* mime-play.el: Rename `mime-article/make-method-args' ->
+	`mime-make-external-method-args'.
+
+	* mime-file.el: Fix setting.
+
 1998-03-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-play.el: Rename `mime-article/start-external-method-region'
