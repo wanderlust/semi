@@ -1,3 +1,8 @@
+1999-06-04  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-user-agent-value): Ignore parenthesis in
+	`emacs-version' for XEmacs 21.2.15.
+
 1999-05-31  Keiichi Suzuki  <keiichi@nanap.org>
 
 	* mime-play.el (mime-show-echo-buffer): Bind `buffer-read-only' to
