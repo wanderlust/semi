@@ -1,3 +1,13 @@
+1997-06-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* eword-encode.el (eword-field-encoding-method-alist): Add
+	"Message-ID" as ignored.
+
+1997-06-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* eword-encode.el (tm-eword::encode-string-1): avoid infinite loop
+	caused by long non-encoded-word element. (cf. [tm-en:1356])
+
 1997-06-24  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el: `mime-preview/display-message/partial' ->
