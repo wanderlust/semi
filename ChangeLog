@@ -1,5 +1,21 @@
 1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-pgp.el (mime-view-application/pgp): Don't expect called in
+	raw-buffer.
+	(mime-verify-application/pgp-signature): Likewise.
+
+	* mime-play.el: Abolish variable
+	`mime-preview-after-decoded-position'.
+	(mime-preview-play-current-entity): Use `mime-play-entity' simply;
+	don't switch to raw-buffer.
+	(mime-play-entity): renamed from `mime-raw-play-entity'; don't
+	expect called in raw-buffer.
+	(mime-activate-mailcap-method): Don't expect called in raw-buffer.
+	(mime-show-echo-buffer): Permit to run in preview-buffer.
+
+
+1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* SEMI: Version 1.12.1 ([JR] Nonoichi) released.
 
 	* mime-play.el (mime-detect-content): Use `mime-entity-content'
