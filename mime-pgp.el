@@ -83,7 +83,8 @@
 	   (delete-region
 	    (point-min)
 	    (and
-	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+\n\n")
+	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+\n")
+	     (search-forward "\n\n")
 	     (match-end 0)))
 	   (delete-region
 	    (and (re-search-forward "^-+BEGIN PGP SIGNATURE-+")
