@@ -1,3 +1,10 @@
+1998-03-21  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* eword-decode.el (eword-decode-quoted-encoded-word): New variable.
+	(eword-decode-quoted-string): New function. It has facility that
+	decode encodes-words in quoted-string.
+	(eword-analyze-quoted-string): Call `eword-decode-quoted-string'.
+
 1998-03-20  Tanaka Akira  <akr@jaist.ac.jp>
 
 	* eword-decode.el (eword-decode-before-ewords-regexp): Delete.

@@ -102,7 +102,10 @@
 ;;;
 
 (defvar eword-decode-sticked-encoded-word nil
-  "*If non-nil, decode encoded-words sticked on encoded-words, atoms, etc.")
+  "*If non-nil, decode encoded-words sticked on atoms, other encoded-words, etc.")
+
+(defvar eword-decode-quoted-encoded-word nil
+  "*If non-nil, decode encoded-words in quoted-string.")
 
 (defun eword-decode-first-encoded-words (string after-regexp &optional must-unfold)
   (if eword-decode-sticked-encoded-word (setq after-regexp ""))
@@ -146,10 +149,13 @@
 	(flag-ew t))
     (while (< 0 (length src))
       (let ((ch (aref src 0))
-      	    (decoded (and flag-ew (eword-decode-first-encoded-words src "\\([ \t()\\\\]\\|$\\)" must-unfold))))
+      	    (decoded (and
+	    		flag-ew
+			(eword-decode-first-encoded-words src
+			  "\\([ \t()\\\\]\\|$\\)" must-unfold))))
 	(if (and (not (string= buf ""))
 		 (or decoded (eq ch ?\() (eq ch ?\))))
-	  (setq dst (concat dst (std11-wrap-as-quoted-pairs (decode-mime-charset-string buf default-mime-charset) '(?( ?))))
+	  (setq dst (concat dst (std11-wrap-as-quoted-pairs (decode-mime-charset-string buf default-mime-charset) '(?\( ?\))))
 		buf ""))
 	(cond
 	  (decoded
@@ -173,7 +179,55 @@
 		  flag-ew eword-decode-sticked-encoded-word))
 	  (t (error "something wrong")))))
     (if (not (string= buf ""))
-      (setq dst (concat dst (std11-wrap-as-quoted-pairs (decode-mime-charset-string buf default-mime-charset) '(?( ?))))))
+      (setq dst (concat dst (std11-wrap-as-quoted-pairs (decode-mime-charset-string buf default-mime-charset) '(?\( ?\))))))
+    dst))
+
+(defun eword-decode-quoted-string (string &optional must-unfold)
+  (let ((src string)
+	(buf "")
+  	(dst "")
+	(flag-ew t))
+    (while (< 0 (length src))
+      (let ((ch (aref src 0))
+      	    (decoded (and
+	    		eword-decode-quoted-encoded-word
+	    		flag-ew
+			(eword-decode-first-encoded-words src
+			  "\\([ \t\"\\\\]\\|$\\)" must-unfold))))
+	(if (and (not (string= buf ""))
+		 (or decoded (eq ch ?\")))
+	  (setq dst (concat dst
+		      (std11-wrap-as-quoted-pairs
+		        (decode-mime-charset-string buf default-mime-charset)
+			'(?\")))
+		buf ""))
+	(cond
+	  (decoded
+	    (setq dst (concat dst
+	    		(std11-wrap-as-quoted-pairs (car decoded) '(?\")))
+		  src (cdr decoded)))
+	  ((or (eq ch ?\"))
+	    (setq dst (concat dst (list ch))
+		  src (substring src 1)
+		  flag-ew t))
+	  ((eq ch ?\\)
+	    (setq buf (concat buf (list (aref src 1)))
+		  src (substring src 2)
+		  flag-ew t))
+	  ((or (eq ch ?\ ) (eq ch ?\t) (eq ch ?\n))
+	    (setq buf (concat buf (list ch))
+		  src (substring src 1)
+		  flag-ew t))
+	  ((string-match "\\`=?[^ \t\n\"\\\\=]*" src)
+	    (setq buf (concat buf (substring src 0 (match-end 0)))
+		  src (substring src (match-end 0))
+		  flag-ew eword-decode-sticked-encoded-word))
+	  (t (error "something wrong")))))
+    (if (not (string= buf ""))
+      (setq dst (concat dst
+      		  (std11-wrap-as-quoted-pairs
+		    (decode-mime-charset-string buf default-mime-charset)
+		    '(?\")))))
     dst))
 
 (defun eword-decode-unstructured-string (string &optional must-unfold)
@@ -451,10 +505,7 @@ be the result."
   (let ((p (std11-check-enclosure string ?\" ?\")))
     (if p
 	(cons (cons 'quoted-string
-		    (std11-wrap-as-quoted-string
-		     (decode-mime-charset-string
-		      (std11-strip-quoted-pair (substring string 1 (1- p)))
-		      default-mime-charset)))
+		    (eword-decode-quoted-string (substring string 0 p)))
 	      (substring string p))
       )))
 
@@ -464,7 +515,8 @@ be the result."
 (defun eword-analyze-comment (string &optional must-unfold)
   (let ((p (std11-check-enclosure string ?\( ?\) t)))
     (if p
-	(cons (cons 'comment (eword-decode-comment-string (substring string 0 p)))
+	(cons (cons 'comment
+		    (eword-decode-comment-string (substring string 0 p)))
 	      (substring string p))
       )))
 
