@@ -65,9 +65,11 @@ clean:
 
 tar:
 	cvs commit
-	sh -c 'cvs tag -RF semi-`echo $(VERSION)|sed s/\\\\./_/`; \
+	sh -c 'cvs tag -RF semi-`echo $(VERSION) \
+				| sed s/\\\\./_/ | sed s/\\\\./_/`; \
 	cd /tmp; cvs export -d semi-$(VERSION) \
-		-r semi-`echo $(VERSION)|sed s/\\\\./_/` SEMI/semi'
+		-r semi-`echo $(VERSION) \
+			| sed s/\\\\./_/ | sed s/\\\\./_/` SEMI/semi'
 	cd /tmp; $(TAR) cvzf semi-$(VERSION).tar.gz semi-$(VERSION)
 	cd /tmp; $(RM) -r semi-$(VERSION)
 	sed "s/VERSION/$(VERSION)/" < ftp.in > ftp
