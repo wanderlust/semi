@@ -1,3 +1,8 @@
+2003-12-12  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-edit.el (mime-edit-user-agent-value): Add a setting for
+	XEmacs CHISE.
+
 2002-05-18  ARISAWA Akihiro  <ari@mbf.sphere.ne.jp>
 
 	* mime-play.el (mime-activate-mailcap-method): Don't use

@@ -609,7 +609,10 @@ If it is not specified for a major-mode,
 	  (if (fboundp 'apel-version)
 	      (concat (apel-version) " "))
 	  (if (featurep 'xemacs)
-	      (concat (cond ((featurep 'utf-2000)
+	      (concat (cond ((and (featurep 'chise)
+				  (boundp 'xemacs-chise-version))
+			     (concat "CHISE-MULE/" xemacs-chise-version))
+			    ((featurep 'utf-2000)
 			     (concat "UTF-2000-MULE/" utf-2000-version))
 			    ((featurep 'mule) "MULE"))
 		      " XEmacs"
