@@ -3,7 +3,8 @@
 ;; Copyright (C) 1993,94,95,96,97,98,99 Free Software Foundation, Inc.
 
 ;; Author: UMEDA Masanobu <umerin@mse.kyutech.ac.jp>
-;;         MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;;	MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;;	Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
 ;; Created: 1994/08/21 renamed from mime.el
 ;;	Renamed: 1997/2/21 from tm-edit.el
 ;; Keywords: MIME, multimedia, multilingual, mail, news
@@ -1749,9 +1750,10 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 (defun mime-edit-sign-pgp-mime (beg end boundary)
   (save-excursion
     (save-restriction
-      (narrow-to-region beg end)
-      (let* ((ret
-	      (mime-edit-translate-region beg end boundary))
+      (let* ((from (std11-field-body "From" mail-header-separator))
+	     (ret (progn 
+		    (narrow-to-region beg end)
+		    (mime-edit-translate-region beg end boundary)))
 	     (ctype    (car ret))
 	     (encoding (nth 1 ret))
 	     (pgp-boundary (concat "pgp-sign-" boundary))
@@ -1762,7 +1764,11 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 	    (insert (format "Content-Transfer-Encoding: %s\n" encoding))
 	  )
 	(insert "\n")
-	(or (pgg-sign-region (point-min)(point-max))
+	(or (let ((pgg-default-user-id 
+		     (if from
+			 (nth 1 (std11-extract-address-components from))
+		       pgg-default-user-id)))
+	      (pgg-sign-region (point-min)(point-max)))
 	    (throw 'mime-edit-error 'pgp-error)
 	    )
 	(setq micalg
