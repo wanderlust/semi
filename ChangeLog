@@ -1,5 +1,17 @@
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* SEMI-ELS (semi-modules-to-compile): Abolish mime-file.el.
+
+	* mime-play.el (mime-extract-current-entity): New function; copied
+	from mime-file.el; abolish mime-file.el.
+
+	* mime-view.el (mime-acting-condition), mime-partial.el
+	(mime-combine-message/partials-automatically), mime-play.el:
+	Rename `mime-display-message/partial' ->
+	`mime-method-to-store-message/partial'.
+
+1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-acting-condition), mime-play.el: Rename
 	`mime-display-caesar' -> `mime-method-to-display-caesar'.
 
