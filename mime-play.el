@@ -65,7 +65,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
   (let ((beg (mime-entity-info-point-min cinfo))
 	(end (mime-entity-info-point-max cinfo))
 	(ctype (or (mime-entity-info-type/subtype cinfo) "text/plain"))
-	(params (mime::content-info/parameters cinfo))
+	(params (mime-entity-info-parameters cinfo))
 	(encoding (mime::content-info/encoding cinfo))
 	)
     ;; Check for VM
