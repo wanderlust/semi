@@ -374,9 +374,9 @@ If encoding is nil, it is determined from its contents.")
     (iso-2022-int-1	7 "base64")
     ))
 
-(defvar mime-edit-transfer-level 7
+(defvar mime-transfer-level 7
   "*A number of network transfer level.  It should be bigger than 7.")
-(make-variable-buffer-local 'mime-edit-transfer-level)
+(make-variable-buffer-local 'mime-transfer-level)
 
 (defsubst mime-encoding-name (transfer-level &optional not-omit)
   (cond ((> transfer-level 8) "binary")
@@ -384,10 +384,10 @@ If encoding is nil, it is determined from its contents.")
 	(not-omit "7bit")
 	))
 
-(defvar mime-edit-transfer-level-string
-  (mime-encoding-name mime-edit-transfer-level 'not-omit)
+(defvar mime-transfer-level-string
+  (mime-encoding-name mime-transfer-level 'not-omit)
   "*A string formatted version of mime/defaul-transfer-level")
-(make-variable-buffer-local 'mime-edit-transfer-level-string)
+(make-variable-buffer-local 'mime-transfer-level-string)
 
 (defun mime-edit-make-charset-default-encoding-alist (transfer-level)
   (mapcar (function
@@ -403,7 +403,7 @@ If encoding is nil, it is determined from its contents.")
 	  mime-charset-type-list))
 
 (defvar mime-edit-charset-default-encoding-alist
-  (mime-edit-make-charset-default-encoding-alist mime-edit-transfer-level))
+  (mime-edit-make-charset-default-encoding-alist mime-transfer-level))
 (make-variable-buffer-local 'mime-edit-charset-default-encoding-alist)
 
 ;;; @@ about message inserting
@@ -577,7 +577,7 @@ Tspecials means any character that matches with it in header must be quoted.")
 	       mime-edit-minor-mime-map mime-prefix mime-edit-mime-map)
 	     ))
        (add-minor-mode 'mime-edit-mode-flag
-		       '((" MIME-Edit "  mime-edit-transfer-level-string))
+		       '((" MIME-Edit "  mime-transfer-level-string))
 		       mime-edit-minor-mime-map
 		       nil
 		       'mime-edit-toggle-mode)
@@ -585,7 +585,7 @@ Tspecials means any character that matches with it in header must be quoted.")
       (t
        (set-alist 'minor-mode-alist
 		  'mime-edit-mode-flag
-		  '((" MIME-Edit "  mime-edit-transfer-level-string))))
+		  '((" MIME-Edit "  mime-transfer-level-string))))
       )
 
 (defconst mime-edit-menu-title "MIME-Edit")
@@ -781,7 +781,7 @@ User customizable variables (not documented all of them):
     Hide a non-textual body message encoded in base64 after insertion
     if non-nil.
 
- mime-edit-transfer-level
+ mime-transfer-level
     A number of network transfer level.  It should be bigger than 7.
     If you are in 8bit-through environment, please set 8.
 
@@ -821,8 +821,8 @@ User customizable variables (not documented all of them):
 
     ;; Set transfer level into mode line
     ;;
-    (setq mime-edit-transfer-level-string
- 	  (mime-encoding-name mime-edit-transfer-level 'not-omit))
+    (setq mime-transfer-level-string
+ 	  (mime-encoding-name mime-transfer-level 'not-omit))
     (force-mode-line-update)
     
     ;; Define menu.  Menus for other emacs implementations are
@@ -2114,18 +2114,18 @@ and insert data encoded as ENCODING. [mime-edit.el]"
 Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
   (interactive)
   (if (numberp transfer-level)
-      (setq mime-edit-transfer-level transfer-level)
-    (if (< mime-edit-transfer-level 8)
-	(setq mime-edit-transfer-level 8)
-      (setq mime-edit-transfer-level 7)
+      (setq mime-transfer-level transfer-level)
+    (if (< mime-transfer-level 8)
+	(setq mime-transfer-level 8)
+      (setq mime-transfer-level 7)
       ))
   (setq mime-edit-charset-default-encoding-alist
 	(mime-edit-make-charset-default-encoding-alist
-	 mime-edit-transfer-level))
+	 mime-transfer-level))
   (message (format "Current transfer-level is %d bit"
-		   mime-edit-transfer-level))
-  (setq mime-edit-transfer-level-string
-	(mime-encoding-name mime-edit-transfer-level 'not-omit))
+		   mime-transfer-level))
+  (setq mime-transfer-level-string
+	(mime-encoding-name mime-transfer-level 'not-omit))
   (force-mode-line-update)
   )
 
