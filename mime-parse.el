@@ -32,22 +32,6 @@
 ;;; @ field parser
 ;;;
 
-(defsubst regexp-* (regexp)
-  (concat regexp "*"))
-
-(defsubst regexp-or (&rest args)
-  (concat "\\(" (mapconcat (function identity) args "\\|") "\\)"))
-
-(defconst std11-quoted-pair-regexp "\\\\.")
-(defconst std11-qtext-regexp
-  (concat "[^" (char-list-to-string std11-non-qtext-char-list) "]"))
-(defconst std11-quoted-string-regexp
-  (concat "\""
-	  (regexp-*
-	   (regexp-or std11-qtext-regexp std11-quoted-pair-regexp)
-	   )
-	  "\""))
-
 (defconst mime/content-parameter-value-regexp
   (concat "\\("
 	  std11-quoted-string-regexp
