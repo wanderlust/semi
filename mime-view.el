@@ -880,7 +880,7 @@ It calls following-method selected from variable
 	   p-end
 	   (rcnum (mime::content-info/rcnum cinfo))
 	   (len (length rcnum))
-	   rc)
+	   )
       (cond ((null p-beg)
 	     (setq p-beg
 		   (if (eq (next-single-property-change (point-min)
