@@ -28,7 +28,7 @@
 (require 'cl)
 (require 'emu)
 
-(defconst semi-version-name "Naka-Tsurugi")
+(defconst semi-version-name "Tsurugi")
 
 (autoload 'mule-caesar-region "mule-caesar"
   "Caesar rotation of current region." t)
@@ -65,8 +65,6 @@
 
 (defconst mime-media-type/subtype-regexp
   (concat mime-token-regexp "/" mime-token-regexp))
-
-(defconst mime-disposition-type-regexp mime-token-regexp)
 
 
 ;;; @ button

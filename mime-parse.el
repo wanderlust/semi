@@ -122,6 +122,9 @@ which are string or symbol."
 	(cons ctype (nreverse dest))
 	)))
 
+
+(defconst mime-disposition-type-regexp mime-token-regexp)
+
 (defun mime-parse-Content-Disposition (string)
   "Parse STRING as field-body of Content-Disposition field."
   (setq string (std11-unfold-string string))
