@@ -114,6 +114,7 @@
 (require 'signature)
 (require 'alist)
 (require 'invisible)
+(autoload 'mime-edit-decrypt-application/pgp-encrypted "mime-pgp")
 
 
 ;;; @ version
@@ -2615,7 +2616,12 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
     string))
 
 (defun mime-edit-decode-multipart-in-buffer (content-type not-decode-text)
-  (let* ((subtype (mime-content-type-subtype content-type))
+  (let* ((subtype
+	  (or
+	   (cdr (assoc (mime-content-type-parameter content-type "protocol")
+		       '(("application/pgp-encrypted" . pgp-encrypted)
+			 ("application/pgp-signature" . pgp-signed))))
+	   (mime-content-type-subtype content-type)))
 	 (boundary (mime-content-type-parameter content-type "boundary"))
 	 (boundary-pat (concat "\n--" (regexp-quote boundary) "[ \t]*\n")))
     (re-search-forward boundary-pat nil t)
@@ -2634,7 +2640,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	(goto-char (point-min))
 	(while (re-search-forward boundary-pat nil t)
 	  (let ((beg (match-beginning 0))
-		end)
+		end decryption)
 	    (delete-region beg (match-end 0))
 	    (save-excursion
 	      (if (re-search-forward boundary-pat nil t)
@@ -2643,13 +2649,44 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 		)
 	      (save-restriction
 		(narrow-to-region beg end)
-		(mime-edit-decode-message-in-buffer
-		 (if (eq subtype 'digest)
-		     (eval-when-compile
-		       (make-mime-content-type 'message 'rfc822))
-		   )
-		 not-decode-text)
-		(goto-char (point-max))
+		(if (and (eq subtype 'pgp-encrypted)
+			 (progn
+			   (goto-char (point-min))
+			   (re-search-forward "^-+BEGIN PGP MESSAGE-+$"
+					      nil t)))
+		    (setq decryption
+			  (if (car-safe
+			       (save-window-excursion
+				 (mime-edit-decrypt-application/pgp-encrypted)
+				 ))
+			      'succeeded
+			    'failed))
+		  )
+		(if (eq subtype 'pgp-encrypted)
+		    (cond ((eq decryption 'succeeded)
+			   (mime-edit-decode-message-in-buffer
+			    nil not-decode-text)
+			   (delete-region (goto-char (point-min))
+					  (if (search-forward "\n\n" nil t)
+					      (match-end 0)
+					    (point-min)))
+			   (goto-char (point-max))
+			   )
+			  ((eq decryption 'failed)
+			   (delete-region (point-min) (point-max))
+			   (insert "\n\t*DECRYPTION FAILED*\n\n")
+			   )
+			  (t
+			   (delete-region (point-min) (point-max))
+			   ))
+		  (mime-edit-decode-message-in-buffer
+		   (if (eq subtype 'digest)
+		       (eval-when-compile
+			 (make-mime-content-type 'message 'rfc822))
+		     )
+		   not-decode-text)
+		  (goto-char (point-max))
+		  )
 		))))
 	))
     (goto-char (point-min))
