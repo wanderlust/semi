@@ -1,7 +1,32 @@
 1999-04-16  Katsumi Yamaoka   <yamaoka@jpl.org>
 
-	* mime-pgp.el (mime-pgp-detect-version): Bug fix -- save
-	restriction before narrowing.
+	* mime-play.el (mime-show-echo-buffer): Make it returns the list of
+	window, start and end positions of inserted text; adjust a window
+	height to the value of `mime-echo-window-height' whenever this
+	function is called; bind `window-min-height' to 1 during splitting
+	a window vertically.
+
+	* mime-pgp.el (mime-pgp-fetch-key): Enclose a tcp process with
+	a temp buffer.
+	(mime-pgp-show-fetched-key-for-pgp50): Always use
+	`mime-show-echo-buffer' for displaying a fetched key; optimize its
+	window height.
+	(mime-pgp-show-fetched-key): Likewise.
+	(mime-pgp-keyserver-port): Replace "HTTP" with "HKP" in doc string.
+	(mime-verify-application/pgp-signature): Optimize a height of window
+	where some informations are displayed.
+	(mime-pgp-parse-verify-error): Likewise.
+	(mime-pgp-show-echo-buffer): New macro.
+	(mime-pgp-parse-verify-error-for-pgp): Make it to accept an arg
+	`output-buffer' and to return the list of expected key-ID, start
+	position and lines to be shown a result.
+	(mime-pgp-parse-verify-error-for-pgp50): Likewise.
+	(mime-pgp-parse-verify-error-for-gpg): Likewise.
+	(mime-pgp-parse-verify-error): Likewise.
+	(mime-pgp-check-signature): Returns a start position and lines
+	to be used for how a result should be displayed in echo window.
+	(mime-pgp-detect-version): Bug fix -- save restriction before
+	narrowing.
 
 1999-04-15  Katsumi Yamaoka   <yamaoka@jpl.org>
 

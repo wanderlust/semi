@@ -299,13 +299,12 @@ or \"v\" for choosing a command of PGP 5.0i."
 	      )))
 
 (defun mime-pgp-detect-version ()
-  "Detect PGP version in the buffer. The buffer is expected to be narrowed
+  "Detect PGP version in the buffer.  The buffer is expected to be narrowed
 to just an ascii armor."
-  (let (version)
-    (save-restriction
-      (std11-narrow-to-header)
-      (setq version (std11-fetch-field "Version"))
-      )
+  (let ((version (save-restriction
+		   (std11-narrow-to-header)
+		   (std11-fetch-field "Version")
+		   )))
     (cond ((not version)
 	   pgp-version)
 	  ((string-match "GnuPG" version)
@@ -324,7 +323,8 @@ to just an ascii armor."
     (mime-pgp-detect-version)
     ))
 
-(defun mime-pgp-check-signature (output-buffer orig-file)
+(defun mime-pgp-check-signature (output-buffer orig-file
+					       &optional hide-lines)
   (with-current-buffer output-buffer
     (erase-buffer)
     (setq truncate-lines t))
@@ -346,79 +346,102 @@ to just an ascii armor."
 	 (good-post-function (mime-pgp-good-signature-post-function))
 	 (bad-regexp (mime-pgp-bad-signature-regexp))
 	 (bad-post-function (mime-pgp-bad-signature-post-function))
-	 status
+	 status start lines
 	 )
     (setq status (apply 'call-process-region (point-min) (point-max)
 			command nil output-buffer nil args)
 	  )
     (with-current-buffer output-buffer
       (goto-char (point-min))
+      (forward-line (or hide-lines 0))
+      (setq start (point)
+	    lines (count-lines start (point-max)))
       (cond ((not (stringp good-regexp))
 	     (message "Please specify right regexp for specified language")
+	     (cons start lines)
 	     )
-	    ((and (zerop status) (re-search-forward good-regexp nil t))
+	    ((and (zerop status)
+		  (progn
+		    (goto-char (point-min))
+		    (re-search-forward good-regexp nil t)
+		    ))
 	     (message (if good-post-function
 			  (funcall good-post-function)
 			(buffer-substring (match-beginning 0)
 					  (match-end 0))))
-	     (goto-char (point-min))
+	     (cons start lines)
 	     )
 	    ((not (stringp bad-regexp))
 	     (message "Please specify right regexp for specified language")
+	     (cons start lines)
 	     )
-	    ((re-search-forward bad-regexp nil t)
+	    ((progn
+	       (goto-char (point-min))
+	       (re-search-forward bad-regexp nil t)
+	       )
 	     (message (if bad-post-function
 			  (funcall bad-post-function)
 			(buffer-substring (match-beginning 0)
 					  (match-end 0))))
-	     (goto-char (point-min))
+	     (cons start lines)
 	     )
 	    (t
 	     ;; Returns nil in order for attempt to fetch key.
 	     nil
 	     )))))
 
-(defmacro mime-pgp-parse-verify-error (&rest forms)
-  (` (with-current-buffer mime-echo-buffer-name
-       (goto-char (point-min))
-       (prog1
-	   (let ((regexp (mime-pgp-key-expected-regexp)))
-	     (cond
-	      ((not (stringp regexp))
-	       (message "Please specify right regexp for specified language")
-	       nil
-	       )
-	      ((re-search-forward regexp nil t)
-	       (concat "0x" (buffer-substring-no-properties
-			     (match-beginning 1) (match-end 1)))
-	       )))
+(defmacro mime-pgp-parse-verify-error (output-buffer &rest forms)
+  (` (let ((regexp (mime-pgp-key-expected-regexp))
+	   keyid)
+       (with-current-buffer (, output-buffer)
 	 (goto-char (point-min))
+	 (if (stringp regexp)
+	     (if (re-search-forward regexp nil t)
+		 (progn
+		   (setq keyid (concat
+				"0x"
+				(buffer-substring-no-properties
+				 (match-beginning 1) (match-end 1))))
+		   (goto-char (point-min))
+		   ))
+	   (message "Please specify right regexp for specified language")
+	   )
 	 (,@ forms)
-	 (set-window-start
-	  (get-buffer-window mime-echo-buffer-name) (point))
+	 (list keyid (point) (count-lines (point) (point-max)))
 	 ))))
 
-(defun mime-pgp-parse-verify-error-for-gpg ()
-  "Subroutine used for parsing verify error with GnuPG.  Returns expected
-key-ID if it is found."
-  (mime-pgp-parse-verify-error)
+(defun mime-pgp-parse-verify-error-for-gpg (output-buffer)
+  "Subroutine used for parsing verify error with GnuPG.  Returns the
+list of expected key-ID, start position and lines to be shown a result."
+  (mime-pgp-parse-verify-error output-buffer)
   )
 
-(defun mime-pgp-parse-verify-error-for-pgp50 ()
-  "Subroutine used for parsing verify error with PGP 5.0i.  Returns expected
-key-ID if it is found."
-  (mime-pgp-parse-verify-error
-   (forward-line 1)
-   ))
+(defun mime-pgp-parse-verify-error-for-pgp50 (output-buffer)
+  "Subroutine used for parsing verify error with PGP 5.0i.  Returns the
+list of expected key-ID, start position and lines to be shown a result."
+  (mime-pgp-parse-verify-error output-buffer (forward-line 1))
+  )
 
-(defun mime-pgp-parse-verify-error-for-pgp ()
-  "Subroutine used for parsing verify error with PGP 2.6.  Returns expected
-key-ID if it is found."
+(defun mime-pgp-parse-verify-error-for-pgp (output-buffer)
+  "Subroutine used for parsing verify error with PGP 2.6.  Returns the
+list of expected key-ID, start position and lines to be shown a result."
   (mime-pgp-parse-verify-error
+   output-buffer
    (if (search-forward "\C-g" nil t)
        (goto-char (match-beginning 0))
      (forward-line 7))
    ))
+
+(defmacro mime-pgp-show-echo-buffer (start lines)
+  (` (let ((mime-echo-window-height
+	    (min (+ 2 (, lines))
+		 (max window-min-height
+		      (- (window-height) window-min-height)
+		      ))))
+       (set-window-start
+	(car (save-current-buffer (mime-show-echo-buffer)))
+	(, start))
+       )))
 
 (defun mime-verify-application/pgp-signature (entity situation)
   "Internal method to check PGP/MIME signature."
@@ -433,30 +456,37 @@ key-ID if it is found."
 	 (orig-file (make-temp-name basename))
 	 (sig-file (concat orig-file ".sig"))
 	 (pgp-version (mime-entity-detect-pgp-version entity))
+	 (output-buffer (get-buffer-create mime-echo-buffer-name))
+	 (hide-lines (cdr (assq pgp-version
+				'((gpg . nil) (pgp50 . 1) (pgp . 10)))))
 	 (parser (intern (format "mime-pgp-parse-verify-error-for-%s"
 				 pgp-version)))
-	 pgp-id done)
+	 done return pgp-id)
     (mime-write-entity orig-entity orig-file)
-    (save-current-buffer (mime-show-echo-buffer))
     (mime-write-entity-content entity sig-file)
     (message "Checking signature...")
     (unwind-protect
 	(while (not done)
-	  (if (setq done (mime-pgp-check-signature
-			  mime-echo-buffer-name orig-file))
-	      (let ((other-window-scroll-buffer mime-echo-buffer-name))
-		(scroll-other-window
-		 (cdr (assq pgp-version
-			    '((gpg . 0) (pgp50 . 1) (pgp . 10)))))
+	  (if (setq return (mime-pgp-check-signature
+			    output-buffer orig-file hide-lines))
+	      (progn
+		(mime-pgp-show-echo-buffer (car return) (cdr return))
+		(setq done t)
 		)
 	    (if (and
 		 (not pgp-id)
-		 (setq pgp-id (funcall parser))
+		 (progn
+		   (setq return (funcall parser output-buffer))
+		   (mime-pgp-show-echo-buffer (nth 1 return)
+					      (nth 2 return))
+		   (setq pgp-id (car return))
+		   )
 		 (y-or-n-p (format "Key %s not found; attempt to fetch? "
 				   pgp-id))
 		 )
 		(funcall (pgp-function 'fetch-key) (cons nil pgp-id))
-	      (funcall parser)
+	      (setq return (funcall parser output-buffer))
+	      (mime-pgp-show-echo-buffer (nth 1 return) (nth 2 return))
 	      (setq done t)
 	      (message "Can't check signature")
 	      )))
@@ -521,7 +551,7 @@ key-ID if it is found."
   :type 'string)
 
 (defcustom mime-pgp-keyserver-port 11371
-  "Port on which the keyserver's HTTP daemon lives."
+  "Port on which the keyserver's HKP daemon lives."
   :group 'mime-pgp
   :type 'integer)
 
@@ -548,10 +578,9 @@ values of this variable and `mime-pgp-http-proxy-server-port' appropriately."
   :type 'integer)
 
 (defmacro mime-pgp-show-fetched-key (key scroll &rest args)
-  (` (let ((buffer (get-buffer-create "*fetched keys*"))
-	   start height window shrink)
-       (with-current-buffer buffer
-	 (erase-buffer)
+  (` (let ((current-window (selected-window))
+	   keys start hide return window)
+       (with-temp-buffer
 	 (insert (, key))
 	 (as-binary-process
 	  (call-process-region
@@ -559,40 +588,38 @@ values of this variable and `mime-pgp-http-proxy-server-port' appropriately."
 	  )
 	 (goto-char (point-min))
 	 (forward-line (, scroll))
-	 (setq height (count-lines (point) (point-max))
-	       start (point))
+	 (setq keys (buffer-string)
+	       start (point)
+	       hide (count-lines (point) (point-max)))
 	 )
-       (setq window (get-buffer-window mime-echo-buffer-name))
-       (if window
-	   (set-window-buffer window buffer)
-	 (let (pop-up-frames)
-	   (display-buffer buffer)
-	   ))
-       (setq window (get-buffer-window buffer)
-	     shrink (1- (- (window-height window) height)))
-       (if (> shrink 0)
-	   (let ((window-min-height 1))
-	     (enlarge-window shrink)
+       (setq return (mime-show-echo-buffer "%s" keys)
+	     window (car return)
+	     start (1- (+ start (car (cdr return))))
+	     hide (- (window-height window) hide 2))
+       (if (>= (+ (window-height current-window) hide) window-min-height)
+	   (progn
+	     (select-window window)
+	     (shrink-window hide)
+	     (select-window current-window)
 	     ))
        (set-window-start window start)
-       buffer)))
+       )))
 
 (defun mime-pgp-show-fetched-key-for-gpg (key)
-  "Extract KEY and show. Returns buffer object to be killed."
+  "Extract KEY and show."
   (mime-pgp-show-fetched-key key 0)
   )
 
 (defun mime-pgp-show-fetched-key-for-pgp50 (key)
-  "Extract KEY and show. Returns buffer object to be killed."
-  (let ((buffer (get-buffer-create "*fetched keys*"))
+  "Extract KEY and show."
+  (let ((current-window (selected-window))
 	(process-environment process-environment)
-	process-connection-type process start height window shrink)
+	process-connection-type process keys start hide return window)
     (setenv "PGPPASSFD" nil)
-    (with-current-buffer buffer
-      (erase-buffer)
+    (with-temp-buffer
       (setq process
 	    (start-process "*show fetched keys*"
-			   buffer (mime-pgp-command 'v)
+			   (current-buffer) (mime-pgp-command 'v)
 			   "-f" "+batchmode=0" "+language=us")
 	    )
       (set-process-coding-system process 'binary 'binary)
@@ -612,26 +639,25 @@ values of this variable and `mime-pgp-http-proxy-server-port' appropriately."
       (delete-region start (point-max))
       (goto-char (point-min))
       (forward-line 10)
-      (setq height (count-lines (point) start)
-	    start (point))
+      (setq keys (buffer-string)
+	    start (point)
+	    hide (count-lines (point) start))
       )
-    (setq window (get-buffer-window mime-echo-buffer-name))
-    (if window
-	(set-window-buffer window buffer)
-      (let (pop-up-frames)
-	(display-buffer buffer)
-	))
-    (setq window (get-buffer-window buffer)
-	  shrink (1- (- (window-height window) height)))
-    (if (> shrink 0)
-	(let ((window-min-height 1))
-	  (enlarge-window shrink)
+    (setq return (mime-show-echo-buffer "%s" keys)
+	  window (car return)
+	  start (1- (+ start (car (cdr return))))
+	  hide (- (window-height window) hide 2))
+    (if (>= (+ (window-height current-window) hide) window-min-height)
+	(progn
+	  (select-window window)
+	  (shrink-window hide)
+	  (select-window current-window)
 	  ))
     (set-window-start window start)
-    buffer))
+    ))
 
 (defun mime-pgp-show-fetched-key-for-pgp (key)
-  "Extract KEY and show. Returns buffer object to be killed."
+  "Extract KEY and show."
   (mime-pgp-show-fetched-key key 7 "-f" "+language=en")
   )
 
@@ -661,8 +687,7 @@ In addition, if you are behind firewalls, please set the values of
 `mime-pgp-http-proxy-server-address' and `mime-pgp-http-proxy-server-port'
 appropriately."
   (interactive)
-  (let ((buffer (get-buffer-create "*key fetch*"))
-	(server (or mime-pgp-http-proxy-server-address
+  (let ((server (or mime-pgp-http-proxy-server-address
 		    mime-pgp-keyserver-address))
 	(port (or mime-pgp-http-proxy-server-port
 		  mime-pgp-keyserver-port))
@@ -676,84 +701,73 @@ appropriately."
 	(show-function (intern (format "mime-pgp-show-fetched-key-for-%s"
 				       pgp-version)))
 	(snarf-function (pgp-function 'snarf-keys))
-	(window-config (current-window-configuration))
-	case-fold-search process-connection-type process show-buffer)
-    (unwind-protect
-	(catch 'mime-pgp-fetch-key-done
-	  (cond ((interactive-p)
-		 (setq id (read-string "Fetch key for: "))
-		 (cond ((string-equal "" id)
-			(message "Aborted")
-			(throw 'mime-pgp-fetch-key-done nil)
-			)
-		       ((string-match "^0[Xx]" id)
-			(setq id (cons nil id))
-			)
-		       (t
-			(setq id (cons id nil))
-			)))
-		((or (null id)
-		     (not (or (stringp (car id)) (stringp (cdr id)))))
-		 (message "Aborted")
+	armor case-fold-search process-connection-type process start)
+    (if (cond ((interactive-p)
+	       (setq id (read-string "Fetch key for: "))
+	       (cond ((string-equal "" id)
+		      (message "Aborted")
+		      nil)
+		     ((string-match "^0[Xx]" id)
+		      (setq id (cons nil id)))
+		     (t
+		      (setq id (cons id nil)))))
+	      ((or (null id)
+		   (not (or (stringp (car id)) (stringp (cdr id)))))
+	       (message "Aborted")
+	       nil)
+	      (t t))
+	(progn
+	  (with-temp-buffer
+	    (catch 'mime-pgp-fetch-key-done
+	      (message "Fetching %s via HTTP to %s..."
+		       (or (cdr id) (car id))
+		       mime-pgp-keyserver-address)
+	      (condition-case err
+		  (setq process (open-network-stream-as-binary
+				 "*key fetch*" (current-buffer) server port))
+		(error
+		 (message "%s" err)
 		 (throw 'mime-pgp-fetch-key-done nil)
 		 ))
-	  (with-current-buffer buffer
-	    (erase-buffer)
-	    (message "Fetching %s via HTTP to %s..."
-		     (or (cdr id) (car id))
-		     mime-pgp-keyserver-address
-		     )
-	    (condition-case err
-		(setq process (open-network-stream-as-binary
-			       "*key fetch*" buffer server port)
-		      )
-	      (error
-	       (message "%s" err)
-	       (throw 'mime-pgp-fetch-key-done nil)
-	       ))
-	    (if (not process)
-		(progn
-		  (message "Can't connect to %s%s."
-			   mime-pgp-keyserver-address
-			   (if mime-pgp-http-proxy-server-address
-			       (concat "via "
-				       mime-pgp-http-proxy-server-address)
-			     ""))
-		  (throw 'mime-pgp-fetch-key-done nil)
-		  )
-	      (process-send-string
-	       process
-	       (concat "GET " (format url-template
-				      (or (cdr id) (car id))) "\r\n")
-	       )
-	      (while (and (eq 'open (process-status process))
-			  (accept-process-output process
-						 mime-pgp-fetch-timeout)
-			  ))
-	      (delete-process process)
-	      (goto-char (point-min))
-	      (if (and (re-search-forward
-			"^-----BEGIN PGP PUBLIC KEY BLOCK-----\r?$" nil t)
-		       (progn
-			 (delete-region (point-min) (match-beginning 0))
+	      (if (not process)
+		  (progn
+		    (message "Can't connect to %s%s."
+			     mime-pgp-keyserver-address
+			     (if mime-pgp-http-proxy-server-address
+				 (concat "via "
+					 mime-pgp-http-proxy-server-address)
+			       ""))
+		    (throw 'mime-pgp-fetch-key-done nil)
+		    )
+		(process-send-string
+		 process
+		 (concat "GET " (format url-template
+					(or (cdr id) (car id))) "\r\n")
+		 )
+		(while (and (eq 'open (process-status process))
+			    (accept-process-output process
+						   mime-pgp-fetch-timeout)
+			    ))
+		(delete-process process)
+		(goto-char (point-min))
+		(if (and (re-search-forward
+			  "^-----BEGIN PGP PUBLIC KEY BLOCK-----\r?$" nil t)
+			 (setq start (match-beginning 0))
 			 (re-search-forward
 			  "^-----END PGP PUBLIC KEY BLOCK-----\r?$" nil t)
-			 ))
-		  (progn
-		    (delete-region (1+ (match-end 0)) (point-max))
-		    (setq show-buffer
-			  (funcall show-function (buffer-string))
-			  )
-		    (if (y-or-n-p "Add this key to keyring? ")
-			(funcall snarf-function)
-		      )
-		    (kill-buffer show-buffer)
-		    t)
-		(message "Key not found.")
-		nil))))
-      (kill-buffer buffer)
-      (set-window-configuration window-config)
-      )))
+			 )
+		    (setq armor (buffer-substring start (1+ (point))))
+		  ))))
+	  (if armor
+	      (save-window-excursion
+		(funcall show-function armor)
+		(if (y-or-n-p "Add this key to keyring? ")
+		    (with-temp-buffer
+		      (insert armor)
+		      (funcall snarf-function)))
+		t)
+	    (message "Key not found.")
+	    nil)))))
 
 
 ;;; @ end

@@ -383,33 +383,45 @@ Otherwise `mime-show-echo-buffer' uses it as height of mime-echo
 window.")
 
 (defun mime-show-echo-buffer (&rest forms)
-  "Show mime-echo buffer to display MIME-playing information."
+  "Show mime-echo buffer to display MIME-playing information.
+It returns the list of window, start and end positions of inserted text.
+A window height of the buffer `mime-echo-buffer-name' will be determined
+by `mime-echo-window-height' (its value or its return value) whenever
+this function is called."
   (get-buffer-create mime-echo-buffer-name)
   (let ((the-win (selected-window))
-	(win (get-buffer-window mime-echo-buffer-name)))
-    (unless win
+	(win (get-buffer-window mime-echo-buffer-name))
+	(height (if (functionp mime-echo-window-height)
+		    (funcall mime-echo-window-height)
+		  mime-echo-window-height))
+	start)
+    (if win
+	(progn
+	  (select-window win)
+	  (enlarge-window (- height (window-height)))
+	  )
       (unless (and mime-echo-window-is-shared-with-bbdb
 		   (condition-case nil
-		       (setq win (get-buffer-window bbdb-buffer-name))
+		       (select-window
+			(setq win (get-buffer-window bbdb-buffer-name))
+			)
 		     (error nil)))
 	(select-window (get-buffer-window (or mime-preview-buffer
 					      (current-buffer))))
-	(setq win (split-window-vertically
-		   (- (window-height)
-		      (if (functionp mime-echo-window-height)
-			  (funcall mime-echo-window-height)
-			mime-echo-window-height)
-		      )))
-	)
-      (set-window-buffer win mime-echo-buffer-name)
-      )
-    (select-window win)
-    (goto-char (point-max))
+	(let ((window-min-height 1))
+	  (setq win (split-window-vertically (- (window-height) height)))
+	  )
+	(set-window-buffer win mime-echo-buffer-name)
+	(select-window win)
+	))
+    (goto-char (setq start (point-max)))
     (if forms
 	(insert (apply (function format) forms))
       )
-    (select-window the-win)
-    ))
+    (prog1
+	(list win start (point))
+      (select-window the-win)
+      )))
 
 
 ;;; @ file name
