@@ -624,29 +624,21 @@ mime-edit では <concept>PGP/MIME</concept> (RFC 2015) および
 <concept>PGP-kazu</concept> (draft-kazu-pgp-mime-00.txt) による暗号化・
 電子署名・公開鍵の挿入機能を利用することができます。
 <p>
-但し、この機能を利用するには <a file="mailcrypt">Mailcrypt package</a> 
-と pgp command が必要です。
+但し、この機能を利用するには各種 pgp command が必要です。
 
-<defvar name="pgp-function-alist">
+<defvar name="pgg-default-scheme">
 <p>
-Alist of service names vs. corresponding functions and its filenames.
-Each element looks like <code>(SERVICE FUNCTION FILE)</code>.
-<p>
-SERVICE is a symbol of PGP processing.  It allows `verify', `decrypt',
-`fetch-key', `snarf-keys', `mime-sign', `traditional-sign', `encrypt'
-or `insert-key'.
-<p>
-Function is a symbol of function to do specified SERVICE.
-<p>
-FILE is string of filename which has definition of corresponding
-FUNCTION.
+Version of PGP or GnuPG command to be used for encryption or sign.
+The value should be a symbol.  Allowed versions are <code>gpg</code>,
+<code>pgp</code> or <code>pgp5</code>.
 </defvar>
 
-<defun name="pgp-function">
-	    <args> method
+<defvar name="pgg-scheme">
 <p>
-Return function to do service <var>method</var>.
-</defun>
+Version of PGP or GnuPG command to be used for decryption or verification.
+The value should be a symbol.  Allowed versions are <code>gpg</code>,
+<code>pgp</code> or <code>pgp5</code>.
+</defvar>
 
 
 <h2> 押釦

@@ -1,6 +1,6 @@
 ;;; semi-def.el --- definition module for WEMI -*- coding: iso-8859-4; -*-
 
-;; Copyright (C) 1995,1996,1997,1998,1999 Free Software Foundation, Inc.
+;; Copyright (C) 1995,96,97,98,99,2000 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <tomo@m17n.org>
 ;; Keywords: definition, MIME, multimedia, mail, news
@@ -25,10 +25,10 @@
 ;;; Code:
 
 (require 'poe)
-(eval-when-compile (require 'cl))
+(eval-when-compile (require 'static))
 (require 'custom)
 
-(defconst mime-user-interface-product ["WEMI" (1 13 7) "Shimada"]
+(defconst mime-user-interface-product ["WEMI" (1 14 0) "Kanaya"]
   "Product name, version number and code name of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
@@ -80,7 +80,10 @@ provided or the TTY frame is used."
 	  ;; Avoid removing extents of next part.
 	  (if (eq (extent-end-position extent) end)
 	      (set-extent-endpoints extent end (point))))
-	(delete-region start end))))
+	(delete-region start end)))
+    (add-text-properties start (point)
+			 (list 'start-open t
+			       'mime-button t)))
   (insert "\n"))
 
 (static-when (featurep 'xemacs)
@@ -110,11 +113,15 @@ if the TTY frame is used."
 	;; `device-on-widow-system-p' must be checked at run-time.
 	(if (device-on-window-system-p)
 	    (progn
-	      (set-extent-properties (make-extent (point)
-						  (progn
-						    (insert "[" string "]")
-						    (point)))
-				     '(invisible t intangible t))
+	      (let ((old-point (point)))
+		(set-extent-properties (make-extent (point)
+						    (progn
+						      (insert "[" string "]")
+						      (point)))
+				       '(invisible t intangible t
+						   start-open t))
+		(add-text-properties old-point (point)
+				     '(mime-button t start-open t)))
 	      (let* ((spec (list string
 				 mime-xpm-button-shadow-thickness
 				 mime-xpm-button-foreground
@@ -236,11 +243,14 @@ if the TTY frame is used."
 ;;; @ menu
 ;;;
 
-(if window-system
-    (if (featurep 'xemacs)
-	(defun select-menu-alist (title menu-alist)
+(static-if (featurep 'xemacs)
+    (defun select-menu-alist (title menu-alist)
+      ;; XEmacs can have both X and tty frames at the same time with
+      ;; gnuclient.
+      (if (device-on-window-system-p)
 	  (let (ret)
 	    (popup-menu
+	     ;; list* is CL function, but CL is a part of XEmacs.
 	     (list* title
 		    "---"
 		    (mapcar (function
@@ -252,54 +262,19 @@ if the TTY frame is used."
 				       t)))
 			    menu-alist)))
 	    (recursive-edit)
-	    ret))
+	    ret)
+	(cdr
+	 (assoc (completing-read (concat title " : ") menu-alist)
+		menu-alist))))
+  (if window-system
       (defun select-menu-alist (title menu-alist)
 	(x-popup-menu
 	 (list '(1 1) (selected-window))
-	 (list title (cons title menu-alist)))))
-  (defun select-menu-alist (title menu-alist)
-    (cdr
-     (assoc (completing-read (concat title " : ") menu-alist)
-	    menu-alist))))
-
-
-;;; @ PGP
-;;;
-
-(defvar pgp-function-alist
-  '(
-    ;; for mime-pgp
-    (verify		mc-verify			"mc-toplev")
-    (decrypt		mc-decrypt			"mc-toplev")
-    (fetch-key		mc-pgp-fetch-key		"mc-pgp")
-    (snarf-keys		mc-snarf-keys			"mc-toplev")
-    ;; for mime-edit
-    (mime-sign		mime-mc-pgp-sign-region		"mime-mc")
-    (traditional-sign	mc-pgp-sign-region		"mc-pgp")
-    (encrypt		mime-mc-pgp-encrypt-region	"mime-mc")
-    (insert-key		mc-insert-public-key		"mc-toplev")
-    )
-  "Alist of service names vs. corresponding functions and its filenames.
-Each element looks like (SERVICE FUNCTION FILE).
-
-SERVICE is a symbol of PGP processing.  It allows `verify', `decrypt',
-`fetch-key', `snarf-keys', `mime-sign', `traditional-sign', `encrypt'
-or `insert-key'.
-
-Function is a symbol of function to do specified SERVICE.
-
-FILE is string of filename which has definition of corresponding
-FUNCTION.")
-
-(defmacro pgp-function (method)
-  "Return function to do service METHOD."
-  `(cadr (assq ,method (symbol-value 'pgp-function-alist))))
-
-(mapcar (function
-	 (lambda (method)
-	   (autoload (cadr method)(nth 2 method))
-	   ))
-	pgp-function-alist)
+	 (list title (cons title menu-alist))))
+    (defun select-menu-alist (title menu-alist)
+      (cdr
+       (assoc (completing-read (concat title " : ") menu-alist)
+	      menu-alist)))))
 
 
 ;;; @ Other Utility

@@ -1,8 +1,8 @@
 ;;; semi-setup.el --- setup file for MIME-View.
 
-;; Copyright (C) 1994,1995,1996,1997,1998 Free Software Foundation, Inc.
+;; Copyright (C) 1994,95,96,97,98,99,2000 Free Software Foundation, Inc.
 
-;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;; Author: MORIOKA Tomohiko <tomo@m17n.org>
 ;; Keywords: mail, news, MIME, multimedia, multilingual, encoded-word
 
 ;; This file is part of SEMI (Setting for Emacs MIME Interfaces).
@@ -41,22 +41,15 @@ it is used as hook to set."
     ))
 
 
-;; for image/* and X-Face
+;; for image/*
 (defvar mime-setup-enable-inline-image
   (and window-system
-       (or (featurep 'xemacs)
-	   (and (featurep 'mule)(module-installed-p 'bitmap))
-	   ))
+       (or (featurep 'xemacs)(featurep 'mule)))
   "*If it is non-nil, semi-setup sets up to use mime-image.")
 
 (if mime-setup-enable-inline-image
-    (call-after-loaded 'mime-view
-		       (function
-			(lambda ()
-			  (require 'mime-image)
-			  )))
-  )
-
+    (eval-after-load "mime-view"
+      '(require 'mime-image)))
 
 ;; for text/html
 (defvar mime-setup-enable-inline-html
@@ -64,27 +57,23 @@ it is used as hook to set."
   "*If it is non-nil, semi-setup sets up to use mime-w3.")
 
 (if mime-setup-enable-inline-html
-    (call-after-loaded
-     'mime-view
-     (function
-      (lambda ()
-	(autoload 'mime-preview-text/html "mime-w3")
-	
-	(ctree-set-calist-strictly
-	 'mime-preview-condition
-	 '((type . text)(subtype . html)
-	   (body . visible)
-	   (body-presentation-method . mime-preview-text/html)))
-	
-	(set-alist 'mime-view-type-subtype-score-alist
-		   '(text . html) 3)
-	)))
-  )
+    (eval-after-load "mime-view"
+      '(progn
+	 (autoload 'mime-preview-text/html "mime-w3")
+	 
+	 (ctree-set-calist-strictly
+	  'mime-preview-condition
+	  '((type . text)(subtype . html)
+	    (body . visible)
+	    (body-presentation-method . mime-preview-text/html)))
+	 
+	 (set-alist 'mime-view-type-subtype-score-alist
+		    '(text . html) 3)
+	 )))
 
 
 ;; for PGP
-(defvar mime-setup-enable-pgp
-  (module-installed-p 'mailcrypt)
+(defvar mime-setup-enable-pgp t
   "*If it is non-nil, semi-setup sets uf to use mime-pgp.")
 
 (if mime-setup-enable-pgp
@@ -123,6 +112,30 @@ it is used as hook to set."
 	  '((type . application)(subtype . pgp-keys)
 	    (method . mime-add-application/pgp-keys))
 	  'strict "mime-pgp")
+
+	 (mime-add-condition
+	  'action
+	  '((type . application)(subtype . pkcs7-signature)
+	    (method . mime-verify-application/pkcs7-signature))
+	  'strict "mime-pgp")
+
+	 (mime-add-condition
+	  'action
+	  '((type . application)(subtype . x-pkcs7-signature)
+	    (method . mime-verify-application/pkcs7-signature))
+	  'strict "mime-pgp")
+	 
+	 (mime-add-condition
+	  'action
+	  '((type . application)(subtype . pkcs7-mime)
+	    (method . mime-view-application/pkcs7-mime))
+	  'strict "mime-pgp")
+
+	 (mime-add-condition
+	  'action
+	  '((type . application)(subtype . x-pkcs7-mime)
+	    (method . mime-view-application/pkcs7-mime))
+	  'strict "mime-pgp")
 	 ))
   )
 
@@ -130,23 +143,23 @@ it is used as hook to set."
 ;;; @ for mime-edit
 ;;;
 
-(defun mime-setup-decode-message-header ()
-  (save-excursion
-    (save-restriction
-      (goto-char (point-min))
-      (narrow-to-region
-       (point-min)
-       (if (re-search-forward
-	    (concat "^" (regexp-quote mail-header-separator) "$")
-	    nil t)
-	   (match-beginning 0)
-	 (point-max)
-	 ))
-      (mime-decode-header-in-buffer)
-      (set-buffer-modified-p nil)
-      )))
+;; (defun mime-setup-decode-message-header ()
+;;   (save-excursion
+;;     (save-restriction
+;;       (goto-char (point-min))
+;;       (narrow-to-region
+;;        (point-min)
+;;        (if (re-search-forward
+;;             (concat "^" (regexp-quote mail-header-separator) "$")
+;;             nil t)
+;;            (match-beginning 0)
+;;          (point-max)
+;;          ))
+;;       (mime-decode-header-in-buffer)
+;;       (set-buffer-modified-p nil)
+;;       )))
 
-(add-hook 'mime-edit-mode-hook 'mime-setup-decode-message-header)
+;; (add-hook 'mime-edit-mode-hook 'mime-setup-decode-message-header)
 
 
 ;;; @@ variables
@@ -184,7 +197,7 @@ it is used as hook to set."
 ;;; @ for mu-cite
 ;;;
 
-(add-hook 'mu-cite/pre-cite-hook 'eword-decode-header)
+;; (add-hook 'mu-cite/pre-cite-hook 'eword-decode-header)
 
 
 ;;; @ end

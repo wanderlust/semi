@@ -3,10 +3,10 @@
 #
 
 PACKAGE = wemi
-API	= 1.13
-RELEASE = 7
+API	= 1.14
+RELEASE = 0
 
-FLIM_API= 1.13
+FLIM_API= 1.14
 
 TAR	= tar
 RM	= /bin/rm -f

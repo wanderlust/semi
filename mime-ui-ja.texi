@@ -698,29 +698,22 @@ mime-edit では @strong{PGP/MIME} (RFC 2015) および@strong{PGP-kazu}
 (draft-kazu-pgp-mime-00.txt) による暗号化・電子署名・公開鍵の挿入機能を
 利用することができます。@refill
 
-但し、この機能を利用するには Mailcrypt package (@ref{(mailcrypt)}) と 
-pgp command が必要です。
+但し、この機能を利用するには各種 pgp command が必要です。
 
-@defvar pgp-function-alist
+@defvar pgg-default-scheme
 
-Alist of service names vs. corresponding functions and its filenames.
-Each element looks like @code{(SERVICE FUNCTION FILE)}.@refill
-
-SERVICE is a symbol of PGP processing.  It allows `verify', `decrypt',
-`fetch-key', `snarf-keys', `mime-sign', `traditional-sign', `encrypt' or
-`insert-key'.@refill
-
-Function is a symbol of function to do specified SERVICE.@refill
-
-FILE is string of filename which has definition of corresponding
-FUNCTION.
+Version of PGP or GnuPG command to be used for encryption or sign.
+The value should be a symbol.  Allowed versions are @code{gpg},
+@code{pgp} or @code{pgp5}.@refill
 @end defvar
 
 
-@defun pgp-function method
+@defvar pgg-scheme
 
-Return function to do service @var{method}.
-@end defun
+Version of PGP or GnuPG command to be used for decryption or verification.
+The value should be a symbol.  Allowed versions are @code{gpg},
+@code{pgp} or @code{pgp5}.@refill
+@end defvar
 
 
 
