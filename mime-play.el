@@ -58,7 +58,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	    (goto-char mime-preview-after-decoded-position)
 	    )))))
 
-(defvar mime-view-acting-examples nil)
+(defvar mime-acting-situation-examples nil)
 
 (defun mime-raw-play-entity (entity-info &optional mode)
   "Play entity specified by ENTITY-INFO.
@@ -92,8 +92,8 @@ specified, play as it.  Default MODE is \"play\"."
 	  (setq cal (cons (cons 'mode mode) cal))
 	)
       (setq ret
-	    (or (ctree-match-calist mime-view-acting-examples cal)
-		(ctree-match-calist-partially mime-view-acting-examples cal)
+	    (or (ctree-match-calist mime-acting-situation-examples cal)
+		(ctree-match-calist-partially mime-acting-situation-examples cal)
 		cal))
       (setq ret
 	    (or (ctree-find-calist mime-acting-condition ret
@@ -111,7 +111,7 @@ specified, play as it.  Default MODE is \"play\"."
 					    (cdr (assq 'method situation)))
 				    situation)))
 				ret)))
-	     (ctree-set-calist-strictly 'mime-view-acting-examples ret)
+	     (ctree-set-calist-strictly 'mime-acting-situation-examples ret)
 	     )
 	    (t
 	     (setq ret (car ret))
