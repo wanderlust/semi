@@ -79,6 +79,7 @@
 	 (new-name
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
 	 (mother (current-buffer))
+	 (preview-buffer (concat "*Preview-" (buffer-name) "*"))
 	 representation-type)
     (set-buffer (get-buffer-create new-name))
     (erase-buffer)
@@ -117,9 +118,12 @@
 	   (setq representation-type 'binary)
 	   ))
     (setq major-mode 'mime-show-message-mode)
-    (save-window-excursion (mime-view-buffer nil nil mother
+    (save-window-excursion (mime-view-buffer nil preview-buffer mother
 					     nil representation-type))
-    (set-window-buffer p-win mime-preview-buffer)
+    (with-current-buffer preview-buffer
+      (setq mime-raw-buffer (get-buffer new-name)
+	    mime-mother-buffer mother))
+    (set-window-buffer p-win preview-buffer)
     ))
 
 
