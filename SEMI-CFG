@@ -16,6 +16,7 @@
 		 load-path))
 
 (require 'install)
+(require 'cl)
 
 
 ;;; @ Please specify optional package directory if you use them.
