@@ -731,7 +731,7 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       "a"        (function mime-preview-follow-current-entity))
     (define-key mime-view-mode-map
-      "q"        (function mime-view-quit))
+      "q"        (function mime-preview-quit))
     (define-key mime-view-mode-map
       "h"        (function mime-view-show-summary))
     (define-key mime-view-mode-map
@@ -1031,7 +1031,7 @@ It calls following-method selected from variable
 
 (defun mime-preview-move-to-upper ()
   "Move to upper entity.
-If there is no upper entity, call function `mime-view-quit'."
+If there is no upper entity, call function `mime-preview-quit'."
   (interactive)
   (let (cinfo)
     (while (null (setq cinfo (get-text-property (point) 'mime-view-cinfo)))
@@ -1049,7 +1049,7 @@ If there is no upper entity, call function `mime-view-quit'."
 	      (throw 'tag t)
 	    )
 	  )
-	(mime-view-quit)
+	(mime-preview-quit)
 	))))
 
 (defun mime-preview-move-to-previous ()
@@ -1154,7 +1154,7 @@ If reached to (point-min), it calls function registered in variable
 ;;; @@ quitting
 ;;;
 
-(defun mime-view-quit ()
+(defun mime-preview-quit ()
   "Quit from MIME-View buffer.
 It calls function registered in variable
 `mime-view-quitting-method-alist'."
