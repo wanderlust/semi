@@ -729,7 +729,7 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       "\C-c\C-p" (function mime-preview-print-current-entity))
     (define-key mime-view-mode-map
-      "a"        (function mime-view-follow-current-entity))
+      "a"        (function mime-preview-follow-current-entity))
     (define-key mime-view-mode-map
       "q"        (function mime-view-quit))
     (define-key mime-view-mode-map
@@ -883,7 +883,7 @@ of the mother-buffer."
 	)
     mime-view-original-major-mode))
 
-(defun mime-view-follow-current-entity ()
+(defun mime-preview-follow-current-entity ()
   "Write follow message to current entity.
 It calls following-method selected from variable
 `mime-view-following-method-alist'."
