@@ -276,7 +276,6 @@
 
 1998-11-17  Kazuhiro Ohta     <ohta@ele.cst.nihon-u.ac.jp>
 
->>>>>>> 1.349.2.5
 	* mime-partial.el
 	(mime-combine-message/partial-pieces-automatically): Fix
 	DOC-string.
