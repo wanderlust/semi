@@ -352,7 +352,8 @@ specified, play as it.  Default MODE is \"play\"."
   (remove-alist 'mime-mailcap-method-filename-alist process)
   (message (format "%s %s" process event)))
 
-(defvar mime-echo-window-is-shared-with-bbdb t
+(defvar mime-echo-window-is-shared-with-bbdb
+  (module-installed-p 'bbdb)
   "*If non-nil, mime-echo window is shared with BBDB window.")
 
 (defvar mime-echo-window-height
@@ -370,23 +371,22 @@ window.")
   "Show mime-echo buffer to display MIME-playing information."
   (get-buffer-create mime-echo-buffer-name)
   (let ((the-win (selected-window))
-	(win (get-buffer-window mime-echo-buffer-name))
+	(win (get-buffer-window mime-echo-buffer-name)))
+    (unless win
+      (unless (and mime-echo-window-is-shared-with-bbdb
+		   (condition-case nil
+		       (setq win (get-buffer-window bbdb-buffer-name))
+		     (error nil)))
+	(select-window (get-buffer-window mime-preview-buffer))
+	(setq win (split-window-vertically
+		   (- (window-height)
+		      (if (functionp mime-echo-window-height)
+			  (funcall mime-echo-window-height)
+			mime-echo-window-height)
+		      )))
 	)
-    (or win
-	(if (and mime-echo-window-is-shared-with-bbdb
-		 (boundp 'bbdb-buffer-name)
-		 (setq win (get-buffer-window bbdb-buffer-name))
-		 )
-	    (set-window-buffer win mime-echo-buffer-name)
-	  (select-window (get-buffer-window mime-preview-buffer))
-	  (setq win (split-window-vertically
-		     (- (window-height)
-			(if (functionp mime-echo-window-height)
-			    (funcall mime-echo-window-height)
-			  mime-echo-window-height)
-			)))
-	  (set-window-buffer win mime-echo-buffer-name)
-	  ))
+      (set-window-buffer win mime-echo-buffer-name)
+      )
     (select-window win)
     (goto-char (point-max))
     (if forms
