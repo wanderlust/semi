@@ -26,7 +26,7 @@
 ;;; Code:
 
 (eval-when-compile
-  (require 'mime-view)
+  (require 'mime-play)
   )
 
 
