@@ -376,7 +376,8 @@ Please redefine this function if you want to change default setting."
 ;;; @@ following method
 ;;;
 
-(defvar mime-view-following-method-alist nil)
+(defvar mime-view-following-method-alist nil
+  "Alist of major-mode vs. following-method of mime-view.")
 
 (defvar mime-view-following-required-fields-list
   '("From"))
@@ -746,7 +747,7 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       "\C-c\C-p" (function mime-view-print-current-entity))
     (define-key mime-view-mode-map
-      "a"        (function mime-view-follow-content))
+      "a"        (function mime-view-follow-current-entity))
     (define-key mime-view-mode-map
       "q"        (function mime-view-quit))
     (define-key mime-view-mode-map
@@ -862,7 +863,10 @@ It decodes current entity to call internal or external method as
   (mime-view-play-current-entity "print")
   )
 
-(defun mime-view-follow-content ()
+(defun mime-view-follow-current-entity ()
+  "Write follow message to current entity.
+It calls following-method selected from variable
+`mime-view-following-method-alist'."
   (interactive)
   (let ((root-cinfo
 	 (mime::preview-content-info/content-info
