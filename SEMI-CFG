@@ -4,15 +4,6 @@
 ;;;
 
 (defvar default-load-path load-path)
-;; (setq load-path (append
-;;                  (mapcar (function
-;;                           (lambda (path)
-;;                             (expand-file-name path default-directory)
-;;                             ))
-;;                          '("." "../emu" "../apel" "../bitmap-mule"
-;;                            "../mu" "../mel")
-;;                          )
-;;                  load-path))
 
 (add-to-list 'load-path
 	     (expand-file-name "../../site-lisp/apel" data-directory))
