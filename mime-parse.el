@@ -273,6 +273,14 @@ mime-{parse|read}-Content-Type."
       )))
 
 
+;;; @ utilities
+;;;
+
+(defsubst mime-root-entity-p (entity)
+  "Return t if ENTITY is root-entity (message)."
+  (null (mime-entity-node-id entity)))
+
+
 ;;; @ end
 ;;;
 
