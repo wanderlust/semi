@@ -196,9 +196,7 @@
 			     pgg-pgp-program args)
     (pgg-process-when-success
       (goto-char (point-min))
-      (while (re-search-forward "\r$" nil t)
-	(replace-match ""))
-      (when (re-search-forward "^-+BEGIN PGP SIGNATURE" nil t);XXX
+      (when (re-search-forward "^-+BEGIN PGP" nil t);XXX
 	(let ((packet 
 	       (cdr (assq 2 (pgg-parse-armor-region 
 			     (progn (beginning-of-line 2)

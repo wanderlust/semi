@@ -157,15 +157,28 @@
 	   (luna-send scheme 'lookup-key-string
 		      scheme pgg-gpg-user-id 'encrypt)))
 	 (args 
-	  `("--batch" "--armor" "--textmode" "--always-trust" "--encrypt"
+	  `("--batch" "--armor" "--always-trust" "--encrypt"
 	    ,@(if recipients
 		  (apply #'append 
 			 (mapcar (lambda (rcpt) 
 				   (list "--remote-user" 
 					 (concat "\"" rcpt "\""))) 
-				 recipients))))))
+				 recipients)))))
+	 (inhibit-read-only t)
+	 buffer-read-only)
+    (goto-char start)
+    (setq end (set-marker (make-marker) (point-max)))
+    (while (progn (end-of-line) (> (marker-position end) (point)))
+      (insert "\r")
+      (forward-line 1))
     (pgg-gpg-process-region start end passphrase pgg-gpg-program args)
+    (goto-char start)
+    (while (re-search-forward "\r$" end t)
+      (replace-match ""))
     (pgg-process-when-success
+      (goto-char (point-min))
+      (while (re-search-forward "\r$" nil t)
+	(replace-match ""))
       (let ((packet 
 	     (cdr (assq 1 (pgg-parse-armor-region 
 			   (point-min)(point-max))))))
@@ -198,7 +211,9 @@
 	 (args 
 	  (list (if cleartext "--clearsign" "--detach-sign")
 		"--armor" "--batch" "--verbose" 
-		"--local-user" pgg-gpg-user-id)))
+		"--local-user" pgg-gpg-user-id))
+	 (inhibit-read-only t)
+	 buffer-read-only)
     (goto-char start)
     (setq end (set-marker (make-marker) (point-max)))
     (while (progn (end-of-line) (> (marker-position end) (point)))
