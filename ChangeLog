@@ -1,3 +1,9 @@
+1999-12-09   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* smime.el: Require `static' when compiling.
+	(smime-directory-files): New macro.
+	(smime-find-certificate): Use it.
+
 1999-12-08   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* smime.el (smime-verify-region): Abolish local variable `cert-file'.
