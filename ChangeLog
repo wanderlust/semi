@@ -1,3 +1,15 @@
+1998-04-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el: Use 'ctree-set-calist-strictly instead of
+ 	'set-atype to set up for 'mime-acting-condition.
+
+	* mime-play.el (mime/get-content-decoding-alist): Use
+ 	'ctree-match-calist instead of 'get-unified-alist.
+
+	* mime-view.el (mime-acting-condition): Change format from list of
+ 	atype to ctree.
+
+
 1998-04-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.2.4 (Arimagawa) was released.
