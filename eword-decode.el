@@ -32,6 +32,7 @@
 
 ;;; Code:
 
+(require 'emu)
 (require 'std11)
 (require 'mel)
 (require 'mime-def)
