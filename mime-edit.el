@@ -193,7 +193,7 @@ To insert a signature file automatically, call the function
      ("css") ; rfc2318
      ("xml") ; rfc2376
      ("x-latex")
-     ("x-rot13-47-48")
+     ;; ("x-rot13-47-48")
      )
     ("message"
      ("external-body"
