@@ -668,8 +668,8 @@ The compressed face will be piped to this command.")
   '((up		 "Move to upper content"      mime-preview-move-to-upper)
     (previous	 "Move to previous content"   mime-preview-move-to-previous)
     (next	 "Move to next content"	      mime-preview-move-to-next)
-    (scroll-down "Scroll to previous content" mime-view-scroll-down-entity)
-    (scroll-up	 "Scroll to next content"     mime-view-scroll-up-entity)
+    (scroll-down "Scroll to previous content" mime-preview-scroll-down-entity)
+    (scroll-up	 "Scroll to next content"     mime-preview-scroll-up-entity)
     (play	 "Play Content"               mime-view-play-current-entity)
     (extract	 "Extract Content"            mime-view-extract-current-entity)
     (print	 "Print"                      mime-view-print-current-entity)
@@ -713,11 +713,11 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       "\t"       (function mime-preview-move-to-next))
     (define-key mime-view-mode-map
-      " "        (function mime-view-scroll-up-entity))
+      " "        (function mime-preview-scroll-up-entity))
     (define-key mime-view-mode-map
-      "\M- "     (function mime-view-scroll-down-entity))
+      "\M- "     (function mime-preview-scroll-down-entity))
     (define-key mime-view-mode-map
-      "\177"     (function mime-view-scroll-down-entity))
+      "\177"     (function mime-preview-scroll-down-entity))
     (define-key mime-view-mode-map
       "\C-m"     (function mime-view-next-line-content))
     (define-key mime-view-mode-map
@@ -745,9 +745,9 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       [tab] (function mime-preview-move-to-next))
     (define-key mime-view-mode-map
-      [delete] (function mime-view-scroll-down-entity))
+      [delete] (function mime-preview-scroll-down-entity))
     (define-key mime-view-mode-map
-      [backspace] (function mime-view-scroll-down-entity))
+      [backspace] (function mime-preview-scroll-down-entity))
     (if (functionp default)
 	(cond (running-xemacs
 	       (set-keymap-default-binding mime-view-mode-map default)
@@ -1084,7 +1084,7 @@ variable `mime-view-over-to-next-method-alist'."
 	  ))
       )))
 
-(defun mime-view-scroll-up-entity (&optional h)
+(defun mime-preview-scroll-up-entity (&optional h)
   "Scroll up current entity.
 If reached to (point-max), it calls function registered in variable
 `mime-view-over-to-next-method-alist'."
@@ -1107,7 +1107,7 @@ If reached to (point-max), it calls function registered in variable
         )
       )))
 
-(defun mime-view-scroll-down-entity (&optional h)
+(defun mime-preview-scroll-down-entity (&optional h)
   "Scroll down current entity.
 If reached to (point-min), it calls function registered in variable
 `mime-view-over-to-previous-method-alist'."
@@ -1141,12 +1141,12 @@ If reached to (point-min), it calls function registered in variable
 
 (defun mime-view-next-line-content ()
   (interactive)
-  (mime-view-scroll-up-entity 1)
+  (mime-preview-scroll-up-entity 1)
   )
 
 (defun mime-view-previous-line-content ()
   (interactive)
-  (mime-view-scroll-down-entity 1)
+  (mime-preview-scroll-down-entity 1)
   )
 
 
