@@ -114,6 +114,8 @@
 (require 'signature)
 (require 'alist)
 (require 'invisible)
+(require 'pgg-def)
+(require 'pgg-parse)
 
 
 ;;; @ version
@@ -1744,18 +1746,40 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 	      (mime-edit-translate-region beg end boundary))
 	     (ctype    (car ret))
 	     (encoding (nth 1 ret))
-	     (pgp-boundary (concat "pgp-sign-" boundary)))
+	     (pgp-boundary (concat "pgp-sign-" boundary))
+	     micalg)
 	(goto-char beg)
 	(insert (format "Content-Type: %s\n" ctype))
 	(if encoding
 	    (insert (format "Content-Transfer-Encoding: %s\n" encoding))
 	  )
 	(insert "\n")
-	(or (as-binary-process
-	     (funcall (pgp-function 'mime-sign)
-		      (point-min)(point-max) nil nil pgp-boundary))
-	    (throw 'mime-edit-error 'pgp-error)
-	    )
+	(funcall (pgp-function 'sign)
+		 (point-min)(point-max))
+	(setq micalg
+	      (cdr (assq 'hash-algorithm
+			 (cdar (with-current-buffer pgg-output-buffer
+				 (pgg-parse-armor-region 
+				  (point-min)(point-max))))))
+	      micalg 
+	      (if micalg
+		  (concat "; micalg=pgp-" (downcase (symbol-name micalg)))
+		""))
+	(goto-char beg)
+	(insert (format "--[[multipart/signed;
+ boundary=\"%s\"%s;
+ protocol=\"application/pgp-signature\"][7bit]]
+--%s
+" pgp-boundary micalg pgp-boundary))
+	(goto-char (point-max))
+	(insert (format "\n--%s
+Content-Type: application/pgp-signature
+Content-Transfer-Encoding: 7bit
+
+" pgp-boundary))
+	(insert-buffer-substring pgg-output-buffer)
+	(goto-char (point-max))
+	(insert (format "\n--%s--\n" pgp-boundary))
 	))))
 
 (defvar mime-edit-encrypt-recipient-fields-list '("To" "cc"))
@@ -1782,9 +1806,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 	     (or (string-equal value "")
 		 (progn
 		   (setq header (concat header name ": " value "\n")
-			 recipients (if recipients
-					(concat recipients " ," value)
-				      value))
+			 recipients (cons value recipients))
 		   ))))
       (setq names (cdr names)
 	    values (cdr values))
@@ -1796,28 +1818,28 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
   (save-excursion
     (save-restriction
       (let (from recipients header)
-	(let ((ret (mime-edit-make-encrypt-recipient-header)))
-	  (setq from (aref ret 0)
-		recipients (aref ret 1)
-		header (aref ret 2))
-	  )
-	(narrow-to-region beg end)
-	(let* ((ret
-		(mime-edit-translate-region beg end boundary))
-	       (ctype    (car ret))
-	       (encoding (nth 1 ret))
-	       (pgp-boundary (concat "pgp-" boundary)))
-	  (goto-char beg)
-	  (insert header)
-	  (insert (format "Content-Type: %s\n" ctype))
-	  (if encoding
-	      (insert (format "Content-Transfer-Encoding: %s\n" encoding))
-	    )
-	  (insert "\n")
-	  (or (funcall (pgp-function 'encrypt)
-		       recipients (point-min) (point-max) from)
-	      (throw 'mime-edit-error 'pgp-error)
-	      )
+        (let ((ret (mime-edit-make-encrypt-recipient-header)))
+          (setq from (aref ret 0)
+                recipients (aref ret 1)
+                header (aref ret 2))
+          )
+        (narrow-to-region beg end)
+        (let* ((ret
+                (mime-edit-translate-region beg end boundary))
+               (ctype    (car ret))
+               (encoding (nth 1 ret))
+               (pgp-boundary (concat "pgp-" boundary)))
+          (goto-char beg)
+          (insert header)
+          (insert (format "Content-Type: %s\n" ctype))
+          (if encoding
+              (insert (format "Content-Transfer-Encoding: %s\n" encoding))
+            )
+          (insert "\n")
+	  (let ((pgg-default-user-id (or from pgg-default-user-id)))
+	    (funcall (pgp-function 'encrypt)
+		     (point-min) (point-max) recipients))
+	  (delete-region (point-min)(point-max))
 	  (goto-char beg)
 	  (insert (format "--[[multipart/encrypted;
  boundary=\"%s\";
@@ -1830,6 +1852,7 @@ Content-Type: application/octet-stream
 Content-Transfer-Encoding: 7bit
 
 " pgp-boundary pgp-boundary pgp-boundary))
+	  (insert-buffer-substring pgg-output-buffer)
 	  (goto-char (point-max))
 	  (insert (format "\n--%s--\n" pgp-boundary))
 	  )))))
