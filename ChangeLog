@@ -1,3 +1,12 @@
+1997-07-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 0.97 (Naka-Tsurugi) was released.
+
+1997-07-24  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el: Delete unnecessary "[mime-edit.el]" from
+	DOC-strings.
+
 1997-07-23  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* eword-decode.el (eword-analyze-encoded-word): cdr of return
