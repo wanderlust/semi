@@ -1,3 +1,8 @@
+2004-09-27  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* README.en, README.ja (CVS based development): Mention anonymous
+	CVS access.
+
 2003-11-15  Simon Josefsson  <jas@extundo.com>
 
 	* pgg-gpg.el (pgg-scheme-lookup-key): Use regexp match instead of

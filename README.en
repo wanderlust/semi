@@ -209,6 +209,17 @@ Mailing lists
 CVS based development
 =====================
 
+  The SEMI development sources can be accessed via CVS pserver.  To
+  check out the SEMI sources, what you should do for the first time
+  is:
+
+  % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root login
+  CVS password: [CR] # NULL string
+
+  Then you can get the latest SEMI sources by the following:
+
+  % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout -r semi-1_14 semi
+
   If you would like to join CVS based development, please send mail to
 
 	cvs@cvs.m17n.org
