@@ -634,10 +634,9 @@ If it is not specified for a major-mode,
 	  (if (featurep 'xemacs)
 	      (concat (if (featurep 'mule) "MULE")
 		      " XEmacs"
-		      (if (string-match "\\s +\\\"" emacs-version)
+		      (if (string-match "^[0-9]+\\(\\.[0-9]+\\)" emacs-version)
 			  (concat "/"
-				  (substring emacs-version 0
-					     (match-beginning 0))
+				  (substring emacs-version 0 (match-end 0))
 				  (if (and (boundp 'xemacs-betaname)
 					   ;; It does not exist in XEmacs
 					   ;; versions prior to 20.3.
