@@ -177,7 +177,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 		 (setq win (get-buffer-window bbdb-buffer-name))
 		 )
 	    (set-window-buffer win mime/output-buffer-name)
-	  (select-window (get-buffer-window mime::article/preview-buffer))
+	  (select-window (get-buffer-window mime-view-buffer))
 	  (setq win (split-window-vertically (/ (* (window-height) 3) 4)))
 	  (set-window-buffer win mime/output-buffer-name)
 	  ))
@@ -247,7 +247,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
 (defun mime-article/view-message/rfc822 (beg end cal)
   (let* ((cnum (mime-article/point-content-number beg))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
-	 (mother mime::article/preview-buffer)
+	 (mother mime-view-buffer)
 	 (text-decoder
 	  (cdr (or (assq major-mode mime-text-decoder-alist)
 		   (assq t mime-text-decoder-alist))))
@@ -292,7 +292,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
 	 (number (cdr (assoc "number" cal)))
 	 (total (cdr (assoc "total" cal)))
 	 file
-	 (mother mime::article/preview-buffer)
+	 (mother mime-view-buffer)
          )
     (or (file-exists-p root-dir)
 	(make-directory root-dir)
@@ -318,7 +318,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
 	  (set-window-buffer pwin
 			     (save-excursion
 			       (set-buffer full-buf)
-			       mime::article/preview-buffer))
+			       mime-view-buffer))
 	  (select-window pwin)
 	  )
       (re-search-forward "^$")
@@ -390,7 +390,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
 				))
 		      (pbuf (save-excursion
 			      (set-buffer full-buf)
-			      mime::article/preview-buffer)))
+			      mime-view-buffer)))
 		  (set-window-buffer pwin pbuf)
 		  (select-window pwin)
 		  )))))
@@ -407,7 +407,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
     ))
 
 (defun mime-article/dired-function-for-one-frame (dir)
-  (let ((win (or (get-buffer-window mime::article/preview-buffer)
+  (let ((win (or (get-buffer-window mime-view-buffer)
 		 (get-largest-window))))
     (select-window win)
     (dired dir)
@@ -452,7 +452,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
 (defun mime-article/decode-caesar (beg end cal)
   (let* ((cnum (mime-article/point-content-number beg))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
-	 (mother mime::article/preview-buffer)
+	 (mother mime-view-buffer)
 	 (charset (cdr (assoc "charset" cal)))
 	 (encoding (cdr (assq 'encoding cal)))
 	 (mode major-mode)

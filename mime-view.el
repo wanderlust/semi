@@ -359,8 +359,9 @@ message/rfc822, content-infos of other entities are included in
 `children', so content-info become a tree.")
 (make-variable-buffer-local 'mime::article/content-info)
 
-(defvar mime::article/preview-buffer nil)
-(make-variable-buffer-local 'mime::article/preview-buffer)
+(defvar mime-view-buffer nil
+  "MIME View buffer corresponding with the buffer.")
+(make-variable-buffer-local 'mime-view-buffer)
 
 
 ;;; @@@ in view buffer
@@ -456,7 +457,7 @@ The compressed face will be piped to this command.")
   (or mime-view-redisplay
       (setq mime::article/content-info (mime-parse-message ctl encoding))
       )
-  (setq mime::article/preview-buffer (mime-view-make-preview-buffer obuf))
+  (setq mime-view-buffer (mime-view-make-preview-buffer obuf))
   )
 
 (defun mime-view-make-preview-buffer (&optional obuf)

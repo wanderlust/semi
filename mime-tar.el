@@ -307,7 +307,7 @@
 	      (setq mime-button-mother-dispatcher 'mime-tar-mouse-button-2)
 	      ))
 	(mime-tar-set-properties)
-	(mime-tar-mode mime::article/preview-buffer)
+	(mime-tar-mode mime-view-buffer)
 	(kill-buffer mime-tar-view-buffer)
 	(kill-buffer mime-tar-list-buffer)
 	(delete-file mime-tar-file-name)

@@ -50,11 +50,11 @@
 
 (defun mime-article/view-application/pgp (beg end cal)
   (let* ((cnum (mime-article/point-content-number beg))
-	 (p-win (or (get-buffer-window mime::article/preview-buffer)
+	 (p-win (or (get-buffer-window mime-view-buffer)
 		    (get-largest-window)))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (the-buf (current-buffer))
-	 (mother mime::article/preview-buffer)
+	 (mother mime-view-buffer)
 	 (mode major-mode)
 	 text-decoder)
     (set-buffer (get-buffer-create new-name))
@@ -100,7 +100,7 @@
     (setq major-mode 'mime-show-message-mode)
     (setq mime-text-decoder text-decoder)
     (save-window-excursion (mime-view-mode mother))
-    (set-window-buffer p-win mime::article/preview-buffer)
+    (set-window-buffer p-win mime-view-buffer)
     ))
 
 (set-atype 'mime/content-decoding-condition
