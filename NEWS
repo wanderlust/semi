@@ -1,6 +1,35 @@
 SEMI NEWS --- history of major-changes.
 Copyright (C) 1998 Free Software Foundation, Inc.
 
+* Changes in SEMI 1.2
+
+** User setting
+
+*** hooks
+
+  'mime-view-plain-text-preview-hook was renamed to
+'mime-preview-text/plain-hook.
+
+
+** API
+
+*** Interface for body-filter
+
+  'mime-view-filter-for-* was renamed to 'mime-preview-filter-for-*.
+
+
+*** mime-text-decode-body
+
+  Function 'mime-decode-text-body was renamed to
+'mime-text-decode-body and changed interface.  New interface is
+following:
+
+	mime-text-decode-body (SITUATION)
+
+SITUATION is preview-situation.  Content-Transfer-Encoding and
+MIME-charset are specified in field of it.
+
+
 * Changes in SEMI 1.1
 
 ** User setting
