@@ -1277,7 +1277,8 @@ Optional argument ENCODING specifies an encoding method such as base64."
 	(progn
 	  (goto-char (1+ (match-end 0)))
 	  (if (get-text-property (point) 'mime-edit-invisible)
-	      (next-single-property-change (point) 'mime-edit-invisible)
+	      (or (next-single-property-change (point) 'mime-edit-invisible)
+		  (point-max))
 	    ;; Move to the end of this text.
 	    (if (re-search-forward mime-edit-tag-regexp nil 'move)
 		;; Don't forget a multiline tag.
