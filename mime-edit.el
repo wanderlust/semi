@@ -2021,18 +2021,19 @@ Content-Transfer-Encoding: 7bit
 	      (save-restriction
 		(narrow-to-region beg (mime-edit-content-end))
 		(goto-char beg)
-		(if (re-search-forward "^From " nil t)
-		    (unless encoding
-		      (if (memq charset '(iso-2022-jp
-					  iso-2022-jp-2
-					  iso-2022-int-1
-					  x-ctext))
-			  (while (progn
-				   (replace-match "\e(BFrom ")
-				   (re-search-forward "^From " nil t)
-				   ))
-			(setq encoding "quoted-printable")
-			))))
+		(let (case-fold-search)
+		  (if (re-search-forward "^From " nil t)
+		      (unless encoding
+			(if (memq charset '(iso-2022-jp
+					    iso-2022-jp-2
+					    iso-2022-int-1
+					    x-ctext))
+			    (while (progn
+				     (replace-match "\e(BFrom ")
+				     (re-search-forward "^From " nil t)
+				     ))
+			  (setq encoding "quoted-printable")
+			  )))))
 	      ;; canonicalize line break code
 	      (or (member encoding '(nil "7bit" "8bit" "quoted-printable"))
 		  (save-restriction
