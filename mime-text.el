@@ -122,7 +122,7 @@ SITUATION.  It must be symbol."
       (richtext-decode beg (point-max))
       )))
 
-(defun mime-preview-text/enriched (entity situation)
+(defun mime-display-text/enriched (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
     (mime-text-insert-decoded-body entity)
