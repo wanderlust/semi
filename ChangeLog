@@ -1,3 +1,7 @@
+2001-06-02   Daiki Ueno  <ueno@unixuser.org>
+
+	* pgg.texi: New file.
+
 2001-05-06   Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-view.el (mime-display-message/partial-button): Don't use
