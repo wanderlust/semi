@@ -1,3 +1,8 @@
+2003-05-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* mime-edit.el (turn-on-mime-edit): Protect 1st arg of `message'.
+	* mime-view.el (mime-preview-follow-current-entity): Ditto.
+
 2003-05-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* mime-w3.el (mime-preview-text/html): Protect 1st arg of `message'.

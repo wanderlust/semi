@@ -1608,9 +1608,8 @@ It calls following-method selected from variable
 	(if (functionp f)
 	    (funcall f new-buf)
 	  (message
-	   (format
-	    "Sorry, following method for %s is not implemented yet."
-	    mode)))))))
+	   "Sorry, following method for %s is not implemented yet."
+	    mode))))))
 
 
 ;;; @@ moving
