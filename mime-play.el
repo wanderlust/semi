@@ -613,7 +613,9 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 			 (kill-buffer (current-buffer))
 			 )))
 		)))
-      (if (and total (> total 0))
+      (if (and total (> total 0)
+	       (>= (length (directory-files root-dir nil "^[0-9]+$" t))
+		   total))
 	  (catch 'tag
 	    (save-excursion
 	      (set-buffer (get-buffer-create mime-temp-buffer-name))
