@@ -1,3 +1,7 @@
+1998-12-02  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.12.0 (Nishi-Kanazawa) released.
+
 1998-11-30  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-edit.el (eliminate-top-spaces): New function (moved from
