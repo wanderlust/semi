@@ -46,6 +46,7 @@
 (defvar eword-field-encoding-method-alist
   '(("X-Nsubject" . iso-2022-jp-2)
     ("Newsgroups" . nil)
+    ("Message-ID" . nil)
     (t            . mime)
     )
   "*Alist to specify field encoding method.
