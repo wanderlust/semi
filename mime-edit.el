@@ -524,7 +524,6 @@ If encoding is nil, it is determined from its contents."
   "A string formatted version of mime-transfer-level")
 (make-variable-buffer-local 'mime-transfer-level-string)
 
-
 ;;; @@ about content transfer encoding
 
 (defvar mime-content-transfer-encoding-priority-list
@@ -1400,7 +1399,11 @@ Optional argument ENCODING specifies an encoding method such as base64."
 	   (mime-create-tag
 	    (mime-edit-set-parameter
 	     (mime-edit-get-contype tag)
-	     "charset" (upcase (symbol-name charset)))
+	     "charset"
+	     (let ((comment (get charset 'mime-charset-comment)))
+	       (if comment
+		   (concat (upcase (symbol-name charset)) " (" comment ")")
+		 (upcase (symbol-name charset)))))
 	    (mime-edit-get-encoding tag)))
 	  ))))
 
