@@ -75,21 +75,13 @@
     (add-text-properties from to (list 'mime-button-callback function))
     (and data
 	 (add-text-properties from to (list 'mime-button-data data)))
-    ;;(add-text-properties from to (list 'keymap widget-keymap))
     ))
 
 (defsubst mime-insert-button (string function &optional data)
   "Insert STRING as button with callback FUNCTION and DATA."
   (save-restriction
     (narrow-to-region (point)(point))
-    (insert (concat "[" string "]"))
-    ;; (widget-push-button-value-create
-    ;;  (widget-convert 'push-button
-    ;;                  :notify (lambda (&rest ignore)
-    ;;                            (mime-preview-play-current-entity)
-    ;;                            )
-    ;;                  string))
-    (insert "\n")
+    (insert (concat "[" string "]\n"))
     (mime-add-button (point-min)(point-max) function data)
     ))
 
@@ -105,8 +97,7 @@
 	    point (point)
 	    func (get-text-property (point) 'mime-button-callback)
 	    data (get-text-property (point) 'mime-button-data)
-	    )
-      )
+	    ))
     (save-excursion
       (set-buffer buf)
       (goto-char point)
@@ -185,8 +176,7 @@ FUNCTION.")
 
 (defmacro pgp-function (method)
   "Return function to do service METHOD."
-  `(cadr (assq ,method (symbol-value 'pgp-function-alist)))
-  )
+  `(cadr (assq ,method (symbol-value 'pgp-function-alist))))
 
 (mapcar (function
 	 (lambda (method)
