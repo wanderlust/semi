@@ -38,26 +38,25 @@ MIME-encoding is value of field 'encoding of SITUATION.  It must be
 SITUATION.  It must be symbol."
   (let* ((buffer (mime-entity-buffer entity))
 	 (presentation-type
-	 (save-excursion
-	   (set-buffer buffer)
-	   (or mime-raw-representation-type
-	       (cdr (or (assq major-mode mime-raw-representation-type-alist)
-			(assq t mime-raw-representation-type-alist)))
-	       ))))
-    (save-restriction
-      (insert-buffer-substring buffer
-			       (mime-entity-body-start entity)
-			       (mime-entity-body-end entity))
-      (let ((encoding (mime-entity-encoding entity)))
-	(mime-decode-region (point-min) (point-max) encoding)
-	(if (or (eq presentation-type 'binary)
-		(not (member encoding '(nil "7bit" "8bit" "binary"))))
-	    (decode-mime-charset-region (point-min)(point-max)
-					(or (mime-content-type-parameter
-					     (mime-entity-content-type entity)
-					     "charset")
-					    default-mime-charset))
-	  ))))
+	  (save-excursion
+	    (set-buffer buffer)
+	    (or mime-raw-representation-type
+		(cdr (or (assq major-mode mime-raw-representation-type-alist)
+			 (assq t mime-raw-representation-type-alist)))
+		))))
+    (insert-buffer-substring buffer
+			     (mime-entity-body-start entity)
+			     (mime-entity-body-end entity))
+    (let ((encoding (mime-entity-encoding entity)))
+      (mime-decode-region (point-min) (point-max) encoding)
+      (if (or (eq presentation-type 'binary)
+	      (not (member encoding '(nil "7bit" "8bit" "binary"))))
+	  (decode-mime-charset-region (point-min)(point-max)
+				      (or (mime-content-type-parameter
+					   (mime-entity-content-type entity)
+					   "charset")
+					  default-mime-charset))
+	)))
   (run-hooks 'mime-text-decode-hook)
   )
 
