@@ -410,11 +410,10 @@
     ))
 
 (defun mime-article/decode-message/external-ftp (beg end cal)
-  (let* ((access-type (cdr (assoc "access-type" cal)))
-	 (site (cdr (assoc "site" cal)))
+  (let* ((site (cdr (assoc "site" cal)))
 	 (directory (cdr (assoc "directory" cal)))
 	 (name (cdr (assoc "name" cal)))
-	 (mode (cdr (assoc "mode" cal)))
+	 ;;(mode (cdr (assoc "mode" cal)))
 	 (pathname (concat "/anonymous@" site ":" directory))
 	 )
     (message (concat "Accessing " (expand-file-name name pathname) "..."))
