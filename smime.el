@@ -202,10 +202,11 @@
     (with-current-buffer (get-buffer-create smime-output-buffer)
       (buffer-disable-undo)
       (erase-buffer))
-    (as-binary-process
-     (setq process
-	   (apply #'start-process-shell-command "*S/MIME*"
-		  smime-output-buffer program args)))
+    (let ((coding-system-for-read 'binary)
+	  (coding-system-for-write 'binary))
+      (setq process
+	    (apply #'start-process-shell-command "*S/MIME*"
+		   smime-output-buffer program args)))
     (set-process-sentinel process 'ignore)
     (process-send-region process start end)
     (process-send-eof process)
@@ -301,12 +302,12 @@ the detached signature of the current region."
     (unwind-protect
 	(progn
 	  (set-default-file-modes 448)
-	  (write-region-as-binary start end orig-file))
+	  (binary-write-region start end orig-file))
       (set-default-file-modes orig-mode))
     (with-temp-buffer
-      (insert-file-contents-as-binary signature)
+      (binary-insert-file-contents signature)
       (goto-char (point-max))
-      (insert-file-contents-as-binary
+      (binary-insert-file-contents
        (or (smime-find-certificate 
 	    (smime-query-signer (point-min)(point-max)))
 	   (expand-file-name 
