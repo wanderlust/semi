@@ -175,6 +175,15 @@ mother-buffer."
 ;;; @ entity information
 ;;;
 
+(defsubst mime-entity-representation-type (entity)
+  (with-current-buffer (mime-entity-buffer entity)
+    (or mime-raw-representation-type
+	(cdr (or (assq major-mode mime-raw-representation-type-alist)
+		 (assq t mime-raw-representation-type-alist))))))
+
+(defsubst mime-entity-cooked-p (entity)
+  (eq (mime-entity-representation-type entity) 'cooked))
+
 (defsubst mime-entity-parent (entity &optional message-info)
   "Return mother entity of ENTITY.
 If optional argument MESSAGE-INFO is not specified,
@@ -785,15 +794,13 @@ The compressed face will be piped to this command.")
       (when header-is-visible
 	(if header-presentation-method
 	    (funcall header-presentation-method entity situation)
-	  (mime-insert-decoded-header
-	   entity
-	   mime-view-ignored-field-list mime-view-visible-field-list
-	   (save-excursion
-	     (set-buffer raw-buffer)
-	     (if (eq (cdr (assq major-mode mime-raw-representation-type-alist))
-		     'binary)
-		 default-mime-charset)
-	     )))
+	  (mime-insert-decoded-header entity
+				      mime-view-ignored-field-list
+				      mime-view-visible-field-list
+				      (if (mime-entity-cooked-p entity)
+					  nil
+					default-mime-charset))
+	  )
 	(goto-char (point-max))
 	(insert "\n")
 	(run-hooks 'mime-display-header-hook)
