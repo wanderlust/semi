@@ -49,6 +49,8 @@
 ;;; @ button
 ;;;
 
+;; #### This definition should be removed.  Instead, defface should be
+;; used.
 (defcustom mime-button-face 'bold
   "Face used for content-button or URL-button of MIME-Preview buffer.
 Variable `widget-button-face' is equivalent for it if widget is used."

@@ -107,6 +107,8 @@
 
 ;;; Code:
 
+(eval-when-compile (require 'static))
+
 (require 'sendmail)
 (require 'mail-utils)
 (require 'mel)
@@ -482,8 +484,13 @@ either type/subtype or type only."
     (iso-2022-jp-2	7 "base64")
     (iso-2022-int-1	7 "base64")))
 
-(defvar mime-transfer-level 7
-  "*A number of network transfer level.  It should be bigger than 7.")
+(defcustom mime-transfer-level 7
+  "*A number of network transfer level.  It should be bigger than 7.
+Currently it has no effect except mode-line display."
+  :group 'mime-edit
+  :type '(choice (const 7)
+		 (const 8)
+		 (const :tag "Binary" 9)))
 (make-variable-buffer-local 'mime-transfer-level)
 
 (defsubst mime-encoding-name (transfer-level &optional not-omit)
@@ -504,16 +511,13 @@ either type/subtype or type only."
 ;;; @@ about message inserting
 ;;;
 
-(defvar mime-edit-yank-ignored-field-list
+(defcustom mime-edit-yank-ignored-field-list
   '("Received" "Approved" "Path" "Replied" "Status"
     "Xref" "X-UIDL" "X-Filter" "X-Gnus-.*" "X-VM-.*")
   "List of ignored header fields when inserting message/rfc822.
-Each elements are regexp of field-name.")
-
-(defvar mime-edit-yank-ignored-field-regexp
-  (concat "^"
-	  (apply (function regexp-or) mime-edit-yank-ignored-field-list)
-	  ":"))
+Each elements are regexp of field-name."
+  :group 'mime-edit
+  :type '(repeat regexp))
 
 (defvar mime-edit-message-inserter-alist nil)
 (defvar mime-edit-mail-inserter-alist nil)
@@ -581,11 +585,11 @@ If it is not specified for a `major-mode',
 	     mime-edit-multipart-beginning-regexp
 	     mime-edit-multipart-end-regexp))
 
-(defvar mime-tag-format "--[[%s]]"
-  "*Control-string making a MIME tag.")
+(defconst mime-tag-format "--[[%s]]"
+  "Control-string making a MIME tag.")
 
-(defvar mime-tag-format-with-encoding "--[[%s][%s]]"
-  "*Control-string making a MIME tag with encoding.")
+(defconst mime-tag-format-with-encoding "--[[%s][%s]]"
+  "Control-string making a MIME tag with encoding.")
 
 
 ;;; @@ multipart boundary
@@ -669,7 +673,7 @@ inserted into message header.")
 ;;;
 
 (defconst mime-tspecials-regexp "[][()<>@,;:\\\"/?.= \t]"
-  "*Specify MIME tspecials.
+  "Specify MIME tspecials.
 Tspecials means any character that matches with it in header must be quoted.")
 
 (defconst mime-edit-mime-version-value
@@ -678,7 +682,7 @@ Tspecials means any character that matches with it in header must be quoted.")
   "MIME version number.")
 
 (defconst mime-edit-mime-version-field-for-message/partial
-  "MIME-Version: 1.0"
+  "MIME-Version: 1.0\n"
 ;;  (concat "MIME-Version:"
 ;;	  (eword-encode-field-body
 ;;	   (concat " 1.0 (split by " mime-edit-version ")\n")
@@ -774,43 +778,44 @@ Tspecials means any character that matches with it in header must be quoted.")
     (level	"Toggle transfer-level"	mime-edit-toggle-transfer-level))
   "MIME-edit menubar entry.")
 
-(cond ((featurep 'xemacs)
+(static-if (featurep 'xemacs)
        ;; modified by Pekka Marjola <pema@iki.fi>
        ;;	1995/9/5 (c.f. [tm-en:69])
-       (defun mime-edit-define-menu-for-xemacs ()
-	 "Define menu for XEmacs."
-	 (cond ((featurep 'menubar)
-		(make-local-variable 'current-menubar)
-		(set-buffer-menubar current-menubar)
-		(add-submenu
-		 nil
-		 (cons mime-edit-menu-title
-		       (mapcar (function
-				(lambda (item)
-				  (vector (nth 1 item)(nth 2 item)
-					  mime-edit-mode-flag)))
-			       mime-edit-menu-list))))))
-
-       ;; modified by Steven L. Baur <steve@miranova.com>
-       ;;	1995/12/6 (c.f. [tm-en:209])
-       (or (boundp 'mime-edit-popup-menu-for-xemacs)
-	   (setq mime-edit-popup-menu-for-xemacs
-		 (append '("MIME Commands" "---")
-			 (mapcar (function (lambda (item)
-					     (vector (nth 1 item)
-						     (nth 2 item)
-						     t)))
-				 mime-edit-menu-list)))))
-      ((>= emacs-major-version 19)
-       (define-key mime-edit-mode-map [menu-bar mime-edit]
-	 (cons mime-edit-menu-title
-	       (make-sparse-keymap mime-edit-menu-title)))
-       (mapcar (function
-		(lambda (item)
-		  (define-key mime-edit-mode-map
-		    (vector 'menu-bar 'mime-edit (car item))
-		    (cons (nth 1 item)(nth 2 item)))))
-	       (reverse mime-edit-menu-list))))
+    (progn
+      (defun mime-edit-define-menu-for-xemacs ()
+	"Define menu for XEmacs."
+	(cond ((featurep 'menubar)
+	       (make-local-variable 'current-menubar)
+	       (set-buffer-menubar current-menubar)
+	       (add-submenu
+		nil
+		(cons mime-edit-menu-title
+		      (mapcar (function
+			       (lambda (item)
+				 (vector (nth 1 item)(nth 2 item)
+					 mime-edit-mode-flag)))
+			      mime-edit-menu-list))))))
+      ;; modified by Steven L. Baur <steve@miranova.com>
+      ;;	1995/12/6 (c.f. [tm-en:209])
+      (or (boundp 'mime-edit-popup-menu-for-xemacs)
+	  (setq mime-edit-popup-menu-for-xemacs
+		(append '("MIME Commands" "---")
+			(mapcar (function (lambda (item)
+					    (vector (nth 1 item)
+						    (nth 2 item)
+						    t)))
+				mime-edit-menu-list)))))
+      ;; Bogus check.  Nemacs is not supported.
+      ;;(>= emacs-major-version 19)
+  (define-key mime-edit-mode-map [menu-bar mime-edit]
+    (cons mime-edit-menu-title
+	  (make-sparse-keymap mime-edit-menu-title)))
+  (mapcar (function
+	   (lambda (item)
+	     (define-key mime-edit-mode-map
+	       (vector 'menu-bar 'mime-edit (car item))
+	       (cons (nth 1 item)(nth 2 item)))))
+	  (reverse mime-edit-menu-list)))
 
 ;;; @ macros
 ;;;
@@ -944,7 +949,7 @@ User customizable variables (not documented all of them):
 
  mime-transfer-level
     A number of network transfer level.  It should be bigger than 7.
-    If you are in 8bit-through environment, please set 8.
+    If you are in 8bit-through environment, please set to 8.
 
  mime-edit-voice-recorder
     Specifies a function to record a voice message and encode it.
@@ -974,19 +979,18 @@ User customizable variables (not documented all of them):
       (turn-on-mime-edit))))
 
 
-(cond ((featurep 'xemacs)
-       (add-minor-mode 'mime-edit-mode-flag
-		       '((" MIME-Edit "  mime-transfer-level-string))
-		       mime-edit-mode-map
-		       nil
-		       'mime-edit-mode))
-      (t
-       (set-alist 'minor-mode-alist
-		  'mime-edit-mode-flag
-		  '((" MIME-Edit "  mime-transfer-level-string)))
-       (set-alist 'minor-mode-map-alist
-		  'mime-edit-mode-flag
-		  mime-edit-mode-map)))
+(static-if (featurep 'xemacs)
+    (add-minor-mode 'mime-edit-mode-flag
+		    '((" MIME-Edit "  mime-transfer-level-string))
+		    mime-edit-mode-map
+		    nil
+		    'mime-edit-mode)
+  (set-alist 'minor-mode-alist
+	     'mime-edit-mode-flag
+	     '((" MIME-Edit "  mime-transfer-level-string)))
+  (set-alist 'minor-mode-map-alist
+	     'mime-edit-mode-flag
+	     mime-edit-mode-map))
 
 
 ;;;###autoload
@@ -2233,7 +2237,10 @@ and insert data encoded as ENCODING."
 	    (narrow-to-region header-start (match-beginning 0)))
 	(goto-char header-start)
 	(while (and (re-search-forward
-		     mime-edit-yank-ignored-field-regexp nil t)
+		     (concat "^"
+			     (apply (function regexp-or)
+				    mime-edit-yank-ignored-field-list)
+			     ":") nil t)
 		    (setq beg (match-beginning 0))
 		    (setq end (1+ (std11-field-end))))
 	  (delete-region beg end))))))

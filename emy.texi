@@ -122,7 +122,7 @@ try persuading me.  Warning: `It's de facto standard' is not enough.
 @end menu
 
 @node Content-Type
-@subsection How things are interpretes with each types
+@subsection How things are interpreted with each types
 
 @node Overview
 @chapter Some basic things about EMY
@@ -134,16 +134,16 @@ try persuading me.  Warning: `It's de facto standard' is not enough.
 @end menu
 
 @node Customize
-@section What you should care
+@section What you should care about
 
 @node MIME-View
 @chapter Viewing MIME messages
 
-Right now only differences between SEMI and EMY are documented.
+Right now, only differences between SEMI and EMY are documented.
 
 @menu
-* Manipulating an Entity::      Changing representation of the part
-* Changing Entity Button::      Where to add button indicating that entity.
+* Manipulating an Entity::      Changing representation of a part.
+* Changing Entity Buttons::     Where to add button indicating that entity.
 * Adding Buttons::              Where you want to see buttons.
 * How to deal with broken MUA:: Some MUA sends totally broken messages.
 @end menu
@@ -217,10 +217,20 @@ Toggle display of entity body.
 
 @end table
 
-@node Changing Entity Button
+@node Changing Entity Buttons
 @section How buttons look like
 
-Not yet written.
+@vindex mime-use-widget
+Before EMY 1.13.6, you need W- variants of SEMI to show buttons using
+widgets.  From now on, you only need to set @code{mime-use-widget}
+to @code{t}.
+
+Information of a part is displayed in buttons.  What will be shown is
+already defined.
+
+[You should be able to customize button with format string.
+ This might be implemented in later versions.  If you
+ want it, speak up!]
 
 @node Adding Buttons
 @section Add button before, after or around an entity
