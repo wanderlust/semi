@@ -111,7 +111,6 @@
 (require 'sendmail)
 (require 'mail-utils)
 (require 'mel)
-(require 'tl-list)
 (require 'mime-view)
 (require 'eword-encode)
 (require 'signature)
@@ -1959,7 +1958,7 @@ and insert data encoded as ENCODING. [mime-edit.el]"
 
 (defun mime-edit-insert-message (&optional message)
   (interactive)
-  (let ((inserter (assoc-value major-mode mime-edit-message-inserter-alist)))
+  (let ((inserter (cdr (assq major-mode mime-edit-message-inserter-alist))))
     (if (and inserter (fboundp inserter))
 	(progn
 	  (mime-edit-insert-tag "message" "rfc822")
@@ -1970,7 +1969,7 @@ and insert data encoded as ENCODING. [mime-edit.el]"
 
 (defun mime-edit-insert-mail (&optional message)
   (interactive)
-  (let ((inserter (assoc-value major-mode mime-edit-mail-inserter-alist)))
+  (let ((inserter (cdr (assq major-mode mime-edit-mail-inserter-alist))))
     (if (and inserter (fboundp inserter))
 	(progn
 	  (mime-edit-insert-tag "message" "rfc822")
@@ -2439,7 +2438,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	      (delete-region (point-min)(point-max))
 	      )
 	     ((string= type "multipart")
-	      (let* ((boundary (assoc-value "boundary" params))
+	      (let* ((boundary (cdr (assoc "boundary" params)))
 		     (boundary-pat
 		      (concat "\n--" (regexp-quote boundary) "[ \t]*\n"))
 		     )
