@@ -1,3 +1,19 @@
+1999-01-23  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* README.ja: Modify title.
+
+	* README.ja: Add notice about translation.
+
+	* README.ja, README.en (Required environment): Require FLIM
+	1.12.3; delete description about enriched.el because anything
+	older than Emacs 19.28 are not supported.
+
+	* mime-pgp.el (mime-view-application/pgp): Don't expect called in
+	raw-buffer; use `mime-insert-entity'.
+
+	* mime-play.el (mime-view-message/rfc822): Use
+	`mime-insert-entity'.
+
 1999-01-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* NEWS (Function `mime-play-entity'): Sync with latest
