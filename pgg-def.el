@@ -43,6 +43,10 @@
   :group 'pgg
   :type 'string)
 
+(defvar pgg-overriding-user-id nil
+  "User ID temporally bound during the command consequent upon
+`pgg-universal-user-id-argument'.")
+
 (defcustom pgg-default-keyserver-address "wwwkeys.pgp.net"
   "Host name of keyserver."
   :group 'pgg

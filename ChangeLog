@@ -1,3 +1,15 @@
+2003-08-16  Daiki Ueno <ueno@unixuser.org>
+
+	* Don't autoload S/MIME stuff.
+
+	* pgg-def.el (pgg-overriding-user-id): New variable.
+	* pgg.el (pgg-universal-user-id-argument): New command.
+	* pgg-gpg.el (pgg-scheme-encrypt-region): Prefer
+	pgg-overriding-user-id to pgg-gpg-user-id.
+	(pgg-scheme-decrypt-region): Ditto.
+	(pgg-scheme-sign-region): Ditto.
+	(pgg-scheme-insert-key): Ditto.
+
 2003-05-22  Daiki Ueno <ueno@unixuser.org>
 
 	* mime-play.el (mime-activate-mailcap-method): Undo the last change.

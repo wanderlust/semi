@@ -59,21 +59,6 @@
   "PGP verification of current region." t)
 (autoload 'pgg-snarf-keys-region "pgg"
   "Snarf PGP public keys in current region." t)
-(autoload 'smime-decrypt-buffer "smime"
-  "S/MIME decryption of current region.")
-(autoload 'smime-verify-buffer "smime"
-  "Verify integrity of S/MIME message in BUFFER.")
-(autoload 'smime-noverify-buffer "smime"
-  "Verify integrity of S/MIME message in BUFFER.")
-(autoload 'smime-pkcs7-region "smime"
-  "Convert S/MIME message into a PKCS7 message.")
-(autoload 'smime-pkcs7-certificates-region "smime"
-  "Extract any certificates enclosed in PKCS7 message.")
-(autoload 'smime-pkcs7-email-region "smime"
-  "Get email addresses contained in certificate.")
-(defvar smime-details-buffer)
-(defvar smime-CA-file)
-(defvar smime-CA-directory)
 
 ;;; @ Internal method for multipart/signed
 ;;;

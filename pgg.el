@@ -416,6 +416,15 @@ signer's public key from `pgg-default-keyserver-address'."
 	  (insert-buffer-substring pgg-output-buffer)
 	  (pgg-snarf-keys-region (point-min)(point-max)))))))
 
+;;;###autoload
+(defun pgg-universal-user-id-argument ()
+  (interactive)
+  (let* ((pgg-overriding-user-id (read-string "User ID: "))
+	 (command (key-binding (read-key-sequence
+				(format "Command to execute on \"%s\":"
+					pgg-overriding-user-id)))))
+    (message "")
+    (call-interactively command)))
 
 (provide 'pgg)
 

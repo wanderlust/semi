@@ -136,7 +136,8 @@
 
 (luna-define-method pgg-scheme-encrypt-region ((scheme pgg-scheme-gpg)
 					       start end recipients)
-  (let* ((pgg-gpg-user-id (or pgg-gpg-user-id pgg-default-user-id))
+  (let* ((user-id (or pgg-overriding-user-id pgg-gpg-user-id
+		      pgg-default-user-id))
 	 (args
 	  `("--batch" "--armor" "--always-trust" "--encrypt"
 	    ,@(if recipients
@@ -145,18 +146,19 @@
 				   (list "--remote-user" rcpt))
 				 (append recipients
 					 (if pgg-encrypt-for-me
-					     (list pgg-gpg-user-id)))))))))
+					     (list user-id)))))))))
     (pgg-as-lbt start end 'CRLF
       (pgg-gpg-process-region start end nil pgg-gpg-program args))
     (pgg-process-when-success)))
 
 (luna-define-method pgg-scheme-decrypt-region ((scheme pgg-scheme-gpg)
 					       start end)
-  (let* ((pgg-gpg-user-id (or pgg-gpg-user-id pgg-default-user-id))
+  (let* ((user-id (or pgg-overriding-user-id pgg-gpg-user-id
+		      pgg-default-user-id))
 	 (passphrase
 	  (pgg-read-passphrase
 	   (format "GnuPG passphrase for %s: " pgg-gpg-user-id)
-	   (pgg-scheme-lookup-key scheme pgg-gpg-user-id 'encrypt)))
+	   (pgg-scheme-lookup-key scheme user-id 'encrypt)))
 	 (args '("--batch" "--decrypt")))
     (pgg-gpg-process-region start end passphrase pgg-gpg-program args)
     (with-current-buffer pgg-errors-buffer
@@ -166,15 +168,16 @@
 
 (luna-define-method pgg-scheme-sign-region ((scheme pgg-scheme-gpg)
 					    start end &optional cleartext)
-  (let* ((pgg-gpg-user-id (or pgg-gpg-user-id pgg-default-user-id))
+  (let* ((user-id (or pgg-overriding-user-id pgg-gpg-user-id
+		      pgg-default-user-id))
 	 (passphrase
 	  (pgg-read-passphrase
-	   (format "GnuPG passphrase for %s: " pgg-gpg-user-id)
-	   (pgg-scheme-lookup-key scheme pgg-gpg-user-id 'sign)))
+	   (format "GnuPG passphrase for %s: " user-id)
+	   (pgg-scheme-lookup-key scheme user-id 'sign)))
 	 (args
 	  (list (if cleartext "--clearsign" "--detach-sign")
 		"--armor" "--batch" "--verbose"
-		"--local-user" pgg-gpg-user-id))
+		"--local-user" user-id))
 	 (inhibit-read-only t)
 	 buffer-read-only)
     (pgg-as-lbt start end 'CRLF
@@ -202,9 +205,9 @@
 	(insert-buffer-substring pgg-errors-buffer)))))
 
 (luna-define-method pgg-scheme-insert-key ((scheme pgg-scheme-gpg))
-  (let* ((pgg-gpg-user-id (or pgg-gpg-user-id pgg-default-user-id))
-	 (args (list "--batch" "--export" "--armor"
-		     pgg-gpg-user-id)))
+  (let* ((user-id (or pgg-overriding-user-id pgg-gpg-user-id
+		      pgg-default-user-id))
+	 (args (list "--batch" "--export" "--armor" user-id)))
     (pgg-gpg-process-region (point)(point) nil pgg-gpg-program args)
     (insert-buffer-substring pgg-output-buffer)))
 
