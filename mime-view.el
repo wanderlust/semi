@@ -736,7 +736,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
       (setq preview-buffer (current-buffer)))
   (let* ((raw-buffer (mime-entity-buffer entity))
 	 (start (mime-entity-point-min entity))
-	 e nb ne)
+	 e nb ne nhb nbb)
     (set-buffer raw-buffer)
     (goto-char start)
     (or situation
@@ -763,15 +763,18 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	      (mime-view-insert-entity-button entity)
 	    ))
       (when header-is-visible
+	(setq nhb (point))
 	(if header-presentation-method
 	    (funcall header-presentation-method entity situation)
 	  (mime-insert-header entity
 			      mime-view-ignored-field-list
 			      mime-view-visible-field-list))
 	(goto-char (point-max))
-	(insert "\n")
 	(run-hooks 'mime-display-header-hook)
+	(put-text-property nhb (point-max) 'mime-view-entity-header entity)
+	(insert "\n")
 	)
+      (setq nbb (point))
       (cond (children)
             ((functionp body-presentation-method)
 	     (funcall body-presentation-method entity situation)
@@ -790,6 +793,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
       (setq ne (point-max))
       (widen)
       (put-text-property nb ne 'mime-view-entity entity)
+      (put-text-property nbb ne 'mime-view-entity-body entity)
       (goto-char ne)
       (if children
 	  (if (functionp body-presentation-method)
@@ -1114,6 +1118,7 @@ It calls following-method selected from variable
     (let* ((p-beg
 	    (previous-single-property-change (point) 'mime-view-entity))
 	   p-end
+	   ph-end
 	   (entity-node-id (mime-entity-node-id entity))
 	   (len (length entity-node-id))
 	   )
@@ -1157,6 +1162,12 @@ It calls following-method selected from variable
 		 (setq p-end (point-max))
 		 ))
 	     ))
+      (setq ph-end
+	    (previous-single-property-change p-end 'mime-view-entity-header))
+      (if (or (null ph-end)
+	      (< ph-end p-beg))
+	  (setq ph-end p-beg)
+	)
       (let* ((mode (mime-preview-original-major-mode 'recursive))
 	     (new-name
 	      (format "%s-%s" (buffer-name) (reverse entity-node-id)))
@@ -1167,7 +1178,10 @@ It calls following-method selected from variable
 	(save-excursion
 	  (set-buffer (setq new-buf (get-buffer-create new-name)))
 	  (erase-buffer)
-	  (insert-buffer-substring the-buf p-beg p-end)
+	  (insert-buffer-substring the-buf ph-end p-end)
+	  (when (= ph-end p-beg)
+	    (goto-char (point-min))
+	    (insert ?\n))
 	  (goto-char (point-min))
           (let ((entity-node-id (mime-entity-node-id entity)) ci str)
 	    (while (progn
@@ -1186,10 +1200,8 @@ It calls following-method selected from variable
 			   (concat "^"
 				   (apply (function regexp-or) fields)
 				   ":") ""))))
-		     (if (or (null entity-node-id)
-			     (and
-			      (eq (mime-entity-media-type ci) 'message)
-			      (eq (mime-entity-media-subtype ci) 'rfc822)))
+		     (if (and (eq (mime-entity-media-type ci) 'message)
+			      (eq (mime-entity-media-subtype ci) 'rfc822))
 			 nil
 		       (if str
 			   (insert str)

@@ -1,3 +1,12 @@
+1999-05-19  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-display-entity): Put text-property
+	`mime-view-entity-header' and `mime-view-entity-body' to header
+	and body; run `mime-display-header-hook' before insert "\n".
+	(mime-preview-follow-current-entity): Use text-property
+	`mime-view-entity-header'.
+
+
 1999-05-12  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* WEMI: Version 1.13.4 (Nishi-Yaizu) released.
