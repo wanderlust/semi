@@ -1,3 +1,27 @@
+1998-10-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-version): Renamed from
+	`mime-edit-version-string'; use `mime-user-interface-product',
+	`mime-product-name', `mime-product-version' and
+	`mime-product-code-name'.
+	(mime-edit-user-agent-value): Use `mime-user-interface-product',
+	`mime-library-product', `mime-product-name',
+	`mime-product-version' and `mime-product-code-name'.
+	(mime-edit-mime-version-value): Rename `mime-edit-version-string'
+	-> `mime-edit-version'.
+	(mime-edit-mime-version-field-for-message/partial): Likewise.
+
+	* mime-play.el (mime-save-acting-situation-examples): Rename
+	`mime-view-version-string' -> `mime-view-version'.
+
+	* mime-view.el (mime-view-version): Renamed from
+	`mime-view-version-string'; use `mime-user-interface-product',
+	`mime-product-name', `mime-product-version' and
+	`mime-product-code-name'.
+
+	* semi-def.el (mime-user-interface-product): New variable; abolish
+	`mime-user-interface-version'.
+
 1998-10-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-play.el (mime-echo-window-is-shared-with-bbdb): Check bbdb
