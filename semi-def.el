@@ -30,7 +30,7 @@
 
 (require 'custom)
 
-(defconst mime-user-interface-product ["WEMI" (1 11 1) "Shimizu"]
+(defconst mime-user-interface-product ["WEMI" (1 12 0) "Shimizu"]
   "Implementation name, version name and numbers of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"

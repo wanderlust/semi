@@ -30,9 +30,7 @@
 
 (defun mime-combine-message/partial-pieces-automatically (entity situation)
   "Internal method for mime-view to combine message/partial messages
-automatically.  This function refers variable
-`mime-request-partial-message-method-alist' to select function to display
-partial messages using mime-view."
+automatically."
   (interactive)
   (let* ((id (cdr (assoc "id" situation)))
 	 (target (cdr (assq 'major-mode situation)))
