@@ -576,20 +576,22 @@ If it is not specified for a major-mode,
 	  (cadr mime-library-version)
 	  ") "
 	  (if (featurep 'xemacs)
-	      (concat "XEmacs"
+	      (concat (if (featurep 'mule) "MULE")
+		      " XEmacs"
 		      (if (string-match "\\s +\\\"" emacs-version)
 			  (concat "/"
 				  (substring emacs-version 0
 					     (match-beginning 0))
-				  " (" xemacs-codename ")")
-			" (" emacs-version ")")
-		      (if (featurep 'mule) " MULE"))
+				  " (" xemacs-codename ") ("
+				  system-configuration ")")
+			" (" emacs-version ")"))
 	    (let ((ver (if (string-match "\\.[0-9]+$" emacs-version)
 			   (substring emacs-version 0 (match-beginning 0))
 			 emacs-version)))
 	      (if (featurep 'mule)
 		  (if (boundp 'enable-multibyte-characters)
 		      (concat "Emacs/" ver
+			      " (" system-configuration ")"
 			      (if enable-multibyte-characters
 				  (concat " MULE/" mule-version)
 				" (with unibyte mode)")
@@ -602,7 +604,7 @@ If it is not specified for a major-mode,
 				      ))))
 		    (concat "MULE/" mule-version
 			    " (based on Emacs " ver ")"))
-		ver))))
+		(concat "Emacs/" ver " (" system-configuration ")")))))
   "Body of User-Agent field.
 If variable `mime-edit-insert-user-agent-field' is not nil, it is
 inserted into message header.")
