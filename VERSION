@@ -58,7 +58,7 @@
 1.6.0	Namerikawa		滑川		; <=> 富山地方鉄道
 1.7.0	Mizuhashi		水橋
 1.7.1	Higashi-Toyama		東富山
------	Toyama			富山		; = JR 高山本線、富山港線
+1.8.0	Toyama			富山		; = JR 高山本線、富山港線
 :	:			:
 -------	Takaoka			高岡		; = JR 氷見線、城端線
 :	:			:
@@ -112,7 +112,7 @@
 ;;	Central Japan Railway	東海旅客鉄道
 ;;-------------------------------------------------------------------------
 1.7.1	Kan'nami	函南
------	Mishima		三島	; = 伊豆箱根鉄道
+1.8.0	Mishima		三島	; = 伊豆箱根鉄道
 -----	Numazu		沼津	; = JR 御殿場線
 -----	Katahama	片浜
 -----	Hara		原

@@ -29,7 +29,7 @@
 (eval-when-compile (require 'cl))
 
 
-(defconst mime-user-interface-version '("WEMI" "Kan'nami" 1 7 1)
+(defconst mime-user-interface-version '("WEMI" "Mishima" 1 8 0)
   "Implementation name, version name and numbers of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
@@ -184,73 +184,6 @@ FUNCTION.")
 	   (autoload (cadr method)(nth 2 method))
 	   ))
 	pgp-function-alist)
-
-
-;;; @ field
-;;;
-
-(defun tm:set-fields (sym field-list &optional regexp-sym)
-  (or regexp-sym
-      (setq regexp-sym
-	    (let ((name (symbol-name sym)))
-	      (intern
-	       (concat (if (string-match "\\(.*\\)-list" name)
-			   (substring name 0 (match-end 1))
-			 name)
-		       "-regexp")
-	       )))
-      )
-  (set sym field-list)
-  (set regexp-sym
-       (concat "^" (apply (function regexp-or) field-list) ":"))
-  )
-
-(defun tm:add-fields (sym field-list &optional regexp-sym)
-  (or regexp-sym
-      (setq regexp-sym
-	    (let ((name (symbol-name sym)))
-	      (intern
-	       (concat (if (string-match "\\(.*\\)-list" name)
-			   (substring name 0 (match-end 1))
-			 name)
-		       "-regexp")
-	       )))
-      )
-  (let ((fields (eval sym)))
-    (mapcar (function
-	     (lambda (field)
-	       (or (member field fields)
-		   (setq fields (cons field fields))
-		   )
-	       ))
-	    (reverse field-list)
-	    )
-    (set regexp-sym
-	 (concat "^" (apply (function regexp-or) fields) ":"))
-    (set sym fields)
-    ))
-
-(defun tm:delete-fields (sym field-list &optional regexp-sym)
-  (or regexp-sym
-      (setq regexp-sym
-	    (let ((name (symbol-name sym)))
-	      (intern
-	       (concat (if (string-match "\\(.*\\)-list" name)
-			   (substring name 0 (match-end 1))
-			 name)
-		       "-regexp")
-	       )))
-      )
-  (let ((fields (eval sym)))
-    (mapcar (function
-	     (lambda (field)
-	       (setq fields (delete field fields))
-	       ))
-	    field-list)
-    (set regexp-sym
-	 (concat "^" (apply (function regexp-or) fields) ":"))
-    (set sym fields)
-    ))
 
 
 ;;; @ Other Utility

@@ -93,30 +93,6 @@ This value is overridden by buffer local variable
 `mime-raw-representation-type' if it is not nil.")
 
 
-(defsubst mime-raw-find-entity-from-node-id (entity-node-id
-					     &optional message-info)
-  "Return entity from ENTITY-NODE-ID in mime-raw-buffer.
-If optional argument MESSAGE-INFO is not specified,
-`mime-message-structure' is used."
-  (mime-raw-find-entity-from-number (reverse entity-node-id) message-info))
-
-(defun mime-raw-find-entity-from-number (entity-number &optional message-info)
-  "Return entity from ENTITY-NUMBER in mime-raw-buffer.
-If optional argument MESSAGE-INFO is not specified,
-`mime-message-structure' is used."
-  (or message-info
-      (setq message-info mime-message-structure))
-  (if (eq entity-number t)
-      message-info
-    (let ((sn (car entity-number)))
-      (if (null sn)
-	  message-info
-	(let ((rc (nth sn (mime-entity-children message-info))))
-	  (if rc
-	      (mime-raw-find-entity-from-number (cdr entity-number) rc)
-	    ))
-	))))
-
 (defun mime-raw-find-entity-from-point (point &optional message-info)
   "Return entity from POINT in mime-raw-buffer.
 If optional argument MESSAGE-INFO is not specified,
@@ -183,17 +159,6 @@ mother-buffer."
 (defsubst mime-entity-cooked-p (entity)
   (eq (mime-entity-representation-type entity) 'cooked))
 
-(defsubst mime-entity-parent (entity &optional message-info)
-  "Return mother entity of ENTITY.
-If optional argument MESSAGE-INFO is not specified,
-`mime-message-structure' in buffer of ENTITY is used."
-  (mime-raw-find-entity-from-node-id
-   (cdr (mime-entity-node-id entity))
-   (or message-info
-       (save-excursion
-	 (set-buffer (mime-entity-buffer entity))
-	 mime-message-structure))))
-
 (defun mime-entity-situation (entity)
   "Return situation of ENTITY."
   (append (or (mime-entity-content-type entity)
@@ -226,33 +191,9 @@ If optional argument MESSAGE-INFO is not specified,
 	  ))
 
 
-(defvar mime-view-uuencode-encoding-name-list '("x-uue" "x-uuencode"))
-
-(defun mime-entity-uu-filename (entity)
-  (if (member (mime-entity-encoding entity)
-	      mime-view-uuencode-encoding-name-list)
-      (save-excursion
-	(set-buffer (mime-entity-buffer entity))
-	(goto-char (mime-entity-body-start entity))
-	(if (re-search-forward "^begin [0-9]+ "
-			       (mime-entity-body-end entity) t)
-	    (if (looking-at ".+$")
-		(buffer-substring (match-beginning 0)(match-end 0))
-	      )))))
-
-(defun mime-entity-filename (entity)
-  (or (mime-entity-uu-filename entity)
-      (mime-content-disposition-filename
-       (mime-entity-content-disposition entity))
-      (cdr (let ((param (mime-content-type-parameters
-			 (mime-entity-content-type entity))))
-	     (or (assoc "name" param)
-		 (assoc "x-name" param))
-	     ))))
-
 (defun mime-view-entity-title (entity)
-  (or (mime-entity-read-field entity 'Content-Description)
-      (mime-entity-read-field entity 'Subject)
+  (or (mime-read-field 'Content-Description entity)
+      (mime-read-field 'Subject entity)
       (mime-entity-filename entity)
       ""))
 
@@ -715,38 +656,6 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
   '("From"))
 
 
-;;; @ X-Face
-;;;
-
-;; hack from Gnus 5.0.4.
-
-(defvar mime-view-x-face-to-pbm-command
-  "{ echo '/* Width=48, Height=48 */'; uncompface; } | icontopbm")
-
-(defvar mime-view-x-face-command
-  (concat mime-view-x-face-to-pbm-command
-	  " | xv -quit -")
-  "String to be executed to display an X-Face field.
-The command will be executed in a sub-shell asynchronously.
-The compressed face will be piped to this command.")
-
-(defun mime-view-x-face-function ()
-  "Function to display X-Face field. You can redefine to customize."
-  ;; 1995/10/12 (c.f. tm-eng:130)
-  ;;	fixed by Eric Ding <ericding@San-Jose.ate.slb.com>
-  (save-restriction
-    (narrow-to-region (point-min) (re-search-forward "^$" nil t))
-    ;; end
-    (goto-char (point-min))
-    (if (re-search-forward "^X-Face:[ \t]*" nil t)
-	(let ((beg (match-end 0))
-	      (end (std11-field-end))
-	      )
-	  (call-process-region beg end "sh" nil 0 nil
-			       "-c" mime-view-x-face-command)
-	  ))))
-
-
 ;;; @ buffer setup
 ;;;
 
@@ -836,7 +745,6 @@ The compressed face will be piped to this command.")
     (play	 "Play current entity"     mime-preview-play-current-entity)
     (extract	 "Extract current entity"  mime-preview-extract-current-entity)
     (print	 "Print current entity"    mime-preview-print-current-entity)
-    (x-face	 "Show X Face"             mime-preview-display-x-face)
     )
   "Menu for MIME Viewer")
 
@@ -968,10 +876,9 @@ The compressed face will be piped to this command.")
 	(setq preview-buffer
 	      (concat "*Preview-" (buffer-name raw-buffer) "*")))
     (set-buffer raw-buffer)
-    (mime-parse-buffer)
     (setq mime-preview-buffer preview-buffer)
     (let ((inhibit-read-only t))
-      (switch-to-buffer preview-buffer)
+      (set-buffer (get-buffer-create preview-buffer))
       (widen)
       (erase-buffer)
       (setq mime-raw-buffer raw-buffer)
@@ -994,19 +901,21 @@ The compressed face will be piped to this command.")
 	  (search-forward "\n\n" nil t)
 	  ))
       (run-hooks 'mime-view-mode-hook)
-      ))
-  (set-buffer-modified-p nil)
-  (setq buffer-read-only t)
-  )
+      (set-buffer-modified-p nil)
+      (setq buffer-read-only t)
+      (or (get-buffer-window preview-buffer)
+	  (let ((r-win (get-buffer-window raw-buffer)))
+	    (if r-win
+		(set-window-buffer r-win preview-buffer)
+	      (switch-to-buffer preview-buffer)
+	      )))
+      )))
 
 (defun mime-view-buffer (&optional raw-buffer preview-buffer mother
 				   default-keymap-or-function)
   (interactive)
   (mime-display-message
-   (save-excursion
-     (if raw-buffer (set-buffer raw-buffer))
-     (mime-parse-message)
-     )
+   (mime-parse-buffer raw-buffer)
    preview-buffer mother default-keymap-or-function))
 
 (defun mime-view-mode (&optional mother ctl encoding
@@ -1039,7 +948,7 @@ button-2	Move to point under the mouse cursor
    (save-excursion
      (if raw-buffer (set-buffer raw-buffer))
      (or mime-view-redisplay
-	 (mime-parse-message ctl encoding))
+	 (setq mime-message-structure (mime-parse-message ctl encoding)))
      )
    preview-buffer mother default-keymap-or-function))
 
@@ -1146,9 +1055,8 @@ It calls following-method selected from variable
 		      str
 		      (save-excursion
 			(set-buffer a-buf)
-			(setq
-			 ci
-			 (mime-raw-find-entity-from-node-id entity-node-id))
+			(setq ci
+			      (mime-find-entity-from-node-id entity-node-id))
 			(save-restriction
 			  (narrow-to-region
 			   (mime-entity-point-min ci)
@@ -1201,17 +1109,6 @@ It calls following-method selected from variable
 	))))
 
 
-;;; @@ X-Face
-;;;
-
-(defun mime-preview-display-x-face ()
-  (interactive)
-  (save-window-excursion
-    (set-buffer mime-raw-buffer)
-    (mime-view-x-face-function)
-    ))
-
-
 ;;; @@ moving
 ;;;
 
@@ -1224,9 +1121,7 @@ If there is no upper entity, call function `mime-preview-quit'."
 		       (get-text-property (point) 'mime-view-entity)))
       (backward-char)
       )
-    (let ((r (mime-raw-find-entity-from-node-id
-	      (cdr (mime-entity-node-id cinfo))
-	      (get-text-property 1 'mime-view-entity)))
+    (let ((r (mime-entity-parent cinfo))
 	  point)
       (catch 'tag
 	(while (setq point (previous-single-property-change

@@ -30,8 +30,8 @@
 
 (or (module-installed-p 'calist)
     (error "Please install APEL 8.7 or later."))
-(or (module-installed-p 'mime-lib)
-    (error "Please install FLIM 1.5.0 or later."))
+(or (module-installed-p 'mime)
+    (error "Please install FLIM 1.6.0 or later."))
 (if (module-installed-p 'tm-view)
     (message "Please remove tm from load-path."))
 

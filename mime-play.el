@@ -298,8 +298,8 @@ window.")
   (let ((filename
 	 (or (mime-entity-filename entity)
 	     (let ((subj
-		    (or (mime-entity-read-field entity 'Content-Description)
-			(mime-entity-read-field entity 'Subject))))
+		    (or (mime-read-field 'Content-Description entity)
+			(mime-read-field 'Subject entity))))
 	       (if (and subj
 			(or (string-match mime-view-file-name-regexp-1 subj)
 			    (string-match mime-view-file-name-regexp-2 subj)))

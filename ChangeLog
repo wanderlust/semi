@@ -1,3 +1,77 @@
+1998-06-24  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* WEMI: Version 1.8.0 (Mishima) released.
+
+1998-06-24  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI-CFG: Modify for FLIM 1.6.0.
+
+	* README.en (Required environment): Modify for FLIM 1.6.0.
+
+1998-06-24  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el:
+	  - Abolish function `mime-raw-find-entity-from-node-id',
+	    `mime-raw-find-entity-from-number'.
+	  - Move function `mime-entity-parent' to mime.el of FLIM.
+	  - Abolish variable `mime-view-uuencode-encoding-name-list'.
+	  - Move function `mime-entity-uu-filename' and
+	    `mime-entity-filename' to mime.el of FLIM.
+	(mime-preview-follow-current-entity): Use function
+	`mime-find-entity-from-node-id' instead of
+	`mime-raw-find-entity-from-node-id'.
+	(mime-preview-move-to-upper): Don't use
+	`mime-raw-find-entity-from-node-id'.
+
+	* mime-pgp.el (mime-verify-application/pgp-signature): Don't use
+	`mime-raw-find-entity-from-node-id'.
+	(mime-decrypt-application/pgp-encrypted): Likewise.
+
+	* mime-view.el, mime-play.el (mime-entity-safe-filename): Use
+	`mime-read-field' instead of `mime-entity-read-field'.
+
+	* mime-partial.el
+	(mime-combine-message/partial-pieces-automatically): Use
+	`mime-read-field' instead of `mime-entity-read-field'.
+
+	* mime-bbdb.el (mime-bbdb/update-record): Use `mime-fetch-field'
+	and `mime-read-field' instead of `mime-entity-fetch-field' and
+	`mime-entity-read-field'.
+
+1998-06-23  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-display-message): Use window of
+	preview-buffer or preview-buffer to display preview-buffer.
+	(mime-view-buffer): fixed.
+	(mime-view-mode): fixed.
+
+	* MIME-View-API-ja.ol: Delete MIME-View-API-ja.ol.
+
+1998-06-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS (Changes in SEMI 1.8): New chapter.
+
+1998-06-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el: Abolish external x-face viewer.
+
+1998-06-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* semi-def.el: Abolish function `tm:set-fields', `tm:add-fields'
+	and `tm:delete-fields'.
+
+	* mime-partial.el: Abolish variable
+	`mime-view-partial-message-method-alist' and function
+	`mime-view-partial-message'.
+	(mime-combine-message/partial-pieces-automatically): Use
+	`request-partial-message-method' in acting-situation.
+
+1998-06-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-display-message): Delete unnecessary
+	`mime-parse-buffer'.
+
+
 1998-06-23  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* WEMI: Version 1.7.1 (Kan'nami) released.
