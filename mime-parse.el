@@ -68,6 +68,10 @@
 	 (substring str e)
 	 ))))
 
+
+;;; @ Content-Type
+;;;
+
 (defun mime-parse-Content-Type (string)
   "Parse STRING as field-body of Content-Type field.
 Return value is
@@ -87,9 +91,35 @@ are string."
 	  (setq dest (cons (car ret) dest)
 		string (cdr ret))
 	  )
-	(cons (intern type) (cons (intern subtype) (nreverse dest)))
+	(list* (cons 'type (intern type))
+	       (cons 'subtype (intern subtype))
+	       (nreverse dest))
 	)))
 
+(defun mime-read-Content-Type ()
+  "Read field-body of Content-Type field from current-buffer,
+and return parsed it.  Format of return value is as same as
+`mime-parse-Content-Type'."
+  (let ((str (std11-field-body "Content-Type")))
+    (if str
+	(mime-parse-Content-Type str)
+      )))
+
+(defsubst mime-content-type-primary-type (content-type)
+  "Return primary-type of CONTENT-TYPE."
+  (cdr (car content-type)))
+
+(defsubst mime-content-type-subtype (content-type)
+  "Return primary-type of CONTENT-TYPE."
+  (cdr (cadr content-type)))
+
+(defsubst mime-content-type-parameters (content-type)
+  "Return primary-type of CONTENT-TYPE."
+  (cddr content-type))
+
+
+;;; @ Content-Disposition
+;;;
 
 (defconst mime-disposition-type-regexp mime-token-regexp)
 
@@ -108,18 +138,17 @@ are string."
 	(cons ctype (nreverse dest))
 	)))
 
-
-;;; @ field reader
-;;;
-
-(defun mime-read-Content-Type ()
-  "Read field-body of Content-Type field from current-buffer,
-and return parsed it.  Format of return value is as same as
-`mime-parse-Content-Type'."
-  (let ((str (std11-field-body "Content-Type")))
+(defun mime/Content-Disposition ()
+  "Read field-body of Content-Disposition field from current-buffer,
+and return parsed it. [mime-parse.el]"
+  (let ((str (std11-field-body "Content-Disposition")))
     (if str
-	(mime-parse-Content-Type str)
+	(mime-parse-Content-Disposition str)
       )))
+
+
+;;; @ Content-Transfer-Encoding
+;;;
 
 (defun mime/Content-Transfer-Encoding (&optional default-encoding)
   "Read field-body of Content-Transfer-Encoding field from
@@ -135,14 +164,6 @@ If is is not found, return DEFAULT-ENCODING. [mime-parse.el]"
 	  )
       default-encoding)
     ))
-
-(defun mime/Content-Disposition ()
-  "Read field-body of Content-Disposition field from current-buffer,
-and return parsed it. [mime-parse.el]"
-  (let ((str (std11-field-body "Content-Disposition")))
-    (if str
-	(mime-parse-Content-Disposition str)
-      )))
 
 
 ;;; @ message parser
@@ -222,11 +243,10 @@ DEFAULT-CTL is used when an entity does not have valid Content-Type
 field.  Its format must be as same as return value of
 mime-{parse|read}-Content-Type."
   (setq default-ctl (or (mime-read-Content-Type) default-ctl))
-  (let ((primtype (car default-ctl))
-	(subtype (car (cdr default-ctl)))
-	(params (cdr (cdr default-ctl)))
-	(encoding (or (mime/Content-Transfer-Encoding) default-encoding))
-	)
+  (let ((primtype (mime-content-type-primary-type default-ctl))
+	(subtype (mime-content-type-subtype default-ctl))
+	(params (mime-content-type-parameters default-ctl))
+	(encoding (or (mime/Content-Transfer-Encoding) default-encoding)))
     (let ((boundary (assoc "boundary" params)))
       (cond (boundary
 	     (setq boundary (std11-strip-quoted-string (cdr boundary)))
