@@ -47,6 +47,9 @@
 (defvar pgg-gpg-user-id nil
   "GnuPG ID of your default identity.")
 
+(defvar pgg-gpg-messages-coding-system pgg-messages-coding-system
+  "Coding system used when reading from a GnuPG external process.")
+
 (defvar pgg-scheme-gpg-instance nil)
 
 ;;;###autoload
@@ -74,9 +77,11 @@
     (unwind-protect
 	(progn
 	  (set-default-file-modes 448)
-	  (setq process
-		(apply #'binary-start-process "*GnuPG*" errors-buffer
-		       program args))
+	  (let ((coding-system-for-read 'pgg-gpg-messages-coding-system)
+		(coding-system-for-write 'binary))
+	    (setq process
+		  (apply #'start-process "*GnuPG*" errors-buffer
+			 program args)))
 	  (set-process-sentinel process #'ignore)
 	  (when passphrase
 	    (process-send-string process (concat passphrase "\n")))
@@ -186,6 +191,7 @@
   (let ((args '("--batch" "--verify")))
     (when (stringp signature)
       (setq args (append args (list signature))))
+    (setq args (append args '("-")))
     (pgg-gpg-process-region start end nil pgg-gpg-program args)
     (with-current-buffer pgg-errors-buffer
       (goto-char (point-min))
