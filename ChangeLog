@@ -1,3 +1,24 @@
+1997-11-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit): New customize group.
+	(mime-ignore-preceding-spaces): Use `defcustom'.
+	(mime-ignore-trailing-spaces): Use `defcustom'.
+	(mime-ignore-same-text-tag): Use `defcustom'.
+	(mime-auto-hide-body): Use `defcustom'.
+	(mime-edit-voice-recorder): Use `defcustom'.
+	(mime-edit-mode-hook): Use `defcustom'.
+	(mime-edit-translate-hook): Use `defcustom'.
+	(mime-edit-exit-hook): Use `defcustom'.
+
+	* mime-def.el (mime): New customize group.
+	(mime-button-face): Use `defcustom'.
+	(mime-button-mouse-face): Use `defcustom'.
+
+1997-11-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-x-emacs-value): Don't add mule-version
+	if enable-multibyte-characters is nil.
+
 1997-10-31  Kazuhiro Ohta     <ohta@ele.cst.nihon-u.ac.jp>
 
 	* mime-play.el (mime-article::write-region): fixed
