@@ -355,13 +355,6 @@ Each elements are regexp of field-name. [mime-view.el]")
 (defvar mime::article/preview-buffer nil)
 (make-variable-buffer-local 'mime::article/preview-buffer)
 
-(defvar mime-raw::text-decoder nil
-  "Function to decode text in current buffer.
-Interface of the function is (CHARSET &optional ENCODING).
-CHARSET is symbol of MIME charset and ENCODING is value of
-Content-Transfer-Encoding.")
-(make-variable-buffer-local 'mime-raw::text-decoder)
-
 
 ;;; @@@ in view buffer
 ;;;
