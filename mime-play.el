@@ -515,7 +515,7 @@ saved as binary.  Otherwise the region is saved by `write-region'."
       (write-region start end filename)
       )))
 
-(defun mime-method-to-store-message/partial (entity cal)
+(defun mime-store-message/partial-piece (entity cal)
   (goto-char (mime-entity-point-min entity))
   (let* ((root-dir
 	  (expand-file-name

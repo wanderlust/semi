@@ -688,7 +688,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . message)(subtype . partial)(mode . "play")
-   (method . mime-method-to-store-message/partial)
+   (method . mime-store-message/partial-piece)
    ))
 
 (ctree-set-calist-strictly
