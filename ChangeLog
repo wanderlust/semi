@@ -1,3 +1,13 @@
+1999-10-04  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-view.el (mime-preview-move-to-next): Attempt to go to the
+	next page if the return value of `next-single-property-change' is
+	greater than `point-max'.
+	(mime-preview-move-to-previous): Don't move backward at the
+	beginning of the buffer; attempt to go to the previous page if the
+	return value of `previous-single-property-change' is less than
+	`point-min'.
+
 1999-09-29  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-view.el (mime-display-multipart/mixed): Share cell of
