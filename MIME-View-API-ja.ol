@@ -437,6 +437,11 @@ entity-number と呼びます。entity-number は S 式としては (1 2 3
 	entity の生成子。
 
 
+[関数] mime-entity-number (ENTITY)
+
+	ENTITY の entity-number を返す。
+
+
 [関数] mime-entity-parent (ENTITY &optional MESSAGE-INFO)
 
 	ENTITY の親の entity を返す。
