@@ -34,8 +34,8 @@
   (require 'mime-text)
   (condition-case nil
       (require 'bbdb)
-    (error (defvar bbdb-buffer-name nil))
-    ))
+    (error (defvar bbdb-buffer-name nil)))
+  )
 
 (defvar mime-acting-situation-examples nil)
 
@@ -73,9 +73,7 @@
 It decodes current entity to call internal or external method.  The
 method is selected from variable `mime-acting-condition'.
 If MODE is specified, play as it.  Default MODE is \"play\"."
-  (interactive)
-  (or mode
-      (setq mode "play"))
+  (interactive (list "play"))
   (let ((entity (get-text-property (point) 'mime-view-entity)))
     (if entity
 	(let ((the-buf (current-buffer))
@@ -577,16 +575,23 @@ saved as binary.  Otherwise the region is saved by `write-region'."
     (dired dir)
     ))
 
-(defun mime-view-message/external-ftp (entity cal)
+(defun mime-view-message/external-anon-ftp (entity cal)
   (let* ((site (cdr (assoc "site" cal)))
 	 (directory (cdr (assoc "directory" cal)))
 	 (name (cdr (assoc "name" cal)))
 	 (pathname (concat "/anonymous@" site ":" directory)))
-    (message (concat "Accessing " (expand-file-name name pathname) "..."))
+    (message (concat "Accessing " (expand-file-name name pathname) " ..."))
     (funcall mime-raw-dired-function pathname)
     (goto-char (point-min))
     (search-forward name)
     ))
+
+(defvar mime-raw-browse-url-function (function mime-browse-url))
+
+(defun mime-view-message/external-url (entity cal)
+  (let ((url (cdr (assoc "url" cal))))
+    (message (concat "Accessing " url " ..."))
+    (funcall mime-raw-browse-url-function url)))
 
 
 ;;; @ rot13-47
