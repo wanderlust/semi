@@ -38,9 +38,9 @@
 ;;;
 
 (defconst mime-view-version-string
-  `,(concat "SEMI MIME-View "
-	    (mapconcat #'number-to-string (cdr semi-version) ".")
-	    " (" (car semi-version) ")"))
+  `,(concat (car mime-module-version) " MIME-View "
+	    (mapconcat #'number-to-string (cddr mime-module-version) ".")
+	    " (" (cadr mime-module-version) ")"))
 
 
 ;;; @ buffer local variables
