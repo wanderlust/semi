@@ -895,23 +895,23 @@ button-2	Move to point under the mouse cursor
 	(setq rpcl (cdr rpcl))
 	))))
 
-(autoload 'mime-preview/decode-content "mime-play")
+(autoload 'mime-play-content "mime-play")
 
 (defvar mime-view-decoding-mode "play" "MIME body decoding mode")
 
 (defun mime-view-play-content ()
   (interactive)
-  (mime-preview/decode-content "play")
+  (mime-play-content "play")
   )
 
 (defun mime-view-extract-content ()
   (interactive)
-  (mime-preview/decode-content "extract")
+  (mime-play-content "extract")
   )
 
 (defun mime-view-print-content ()
   (interactive)
-  (mime-preview/decode-content "print")
+  (mime-play-content "print")
   )
 
 (defun mime-view-follow-content ()

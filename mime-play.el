@@ -37,8 +37,15 @@
 
 (defvar mime-preview/after-decoded-position nil)
 
-(defun mime-preview/decode-content (&optional mode)
+(defun mime-play-entity (&optional mode)
+  "Play current entity.
+It decodes current entity to call internal or external method.  The
+method is selected from variable `mime/content-decoding-condition'.
+If MODE is specified, play as it.  Default MODE is \"play\"."
   (interactive)
+  (or mode
+      (setq mode "play")
+      )
   (let ((pc (mime-preview/point-pcinfo (point))))
     (if pc
 	(let ((the-buf (current-buffer)))
