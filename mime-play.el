@@ -399,6 +399,7 @@ this function is called."
 	(height (if (functionp mime-echo-window-height)
 		    (funcall mime-echo-window-height)
 		  mime-echo-window-height))
+	(window-min-height 1)
 	start)
     (if win
 	(progn
@@ -413,9 +414,8 @@ this function is called."
 		     (error nil)))
 	(select-window (get-buffer-window (or mime-preview-buffer
 					      (current-buffer))))
-	(let ((window-min-height 1))
-	  (setq win (split-window-vertically (- (window-height) height)))
-	  )
+	(setq win
+	      (split-window-vertically (min -2 (- (window-height) height))))
 	(set-window-buffer win mime-echo-buffer-name)
 	(select-window win)
 	))
