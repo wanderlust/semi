@@ -125,6 +125,22 @@
 -----	K-Dòbe		$(B?@8M(B	; = JR $(B;3M[K\@~(B-A
 
 
+[REMI version names]
+
+;;-------------------------------------------------------------------------
+;;	West Japan Railway	$(B@>F|K\N95RE4F;(B	http://www.westjr.co.jp/
+;;	Himi Line		$(BI98+@~(B
+;;-------------------------------------------------------------------------
+1.4.0	Himi			$(BI98+(B
+-------	Shimao			$(BEgHx(B
+-------	Amaharashi		$(B1+@2(B
+-------	Ecch-Dþ-Kokubu		$(B1[Cf9qJ,(B-A
+-------	Fushiki			$(BIzLZ(B
+-------	Noumachi		$(BG=D.(B
+-------	Ecch-Dþ-Nakagawa		$(B1[CfCf@n(B-A
+	(Takaoka)		($(B9b2,(B)		; = JR $(BKLN&K\@~!">kC<@~(B
+
+
 [etc.]
 
 ;;-------------------------------------------------------------------------
@@ -135,16 +151,3 @@
 :	:			:
 -------	Nishi--DÒtsu		$(B@>BgDE(B-A
 	(Yamashina)		($(B;32J(B)		; = JR $(BEl3$F;K\@~(B
-
-;;-------------------------------------------------------------------------
-;;	West Japan Railway	$(B@>F|K\N95RE4F;(B	http://www.westjr.co.jp/
-;;	Himi Line		$(BI98+@~(B
-;;-------------------------------------------------------------------------
--------	Himi			$(BI98+(B
--------	Shimao			$(BEgHx(B
--------	Amaharashi		$(B1+@2(B
--------	Ecch-Dþ-Kokubu		$(B1[Cf9qJ,(B-A
--------	Fushiki			$(BIzLZ(B
--------	Noumachi		$(BG=D.(B
--------	Ecch-Dþ-Nakagawa		$(B1[CfCf@n(B-A
-	(Takaoka)		($(B9b2,(B)		; = JR $(BKLN&K\@~!">kC<@~(B
