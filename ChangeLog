@@ -1,7 +1,11 @@
 2001-09-25   Daiki Ueno  <ueno@unixuser.org>
 
-	* mime-view.el (mime-view-default-charset): Use
-	`mime-entity-parameters'.
+	* mime-view.el (mime-view-guess-encoding): Rename from
+	`mime-view-default-content-transfer-encoding'.
+	(mime-view-read-encoding): Rename from
+	`mime-view-read-content-transfer-encoding'.
+	(mime-view-guess-charset): Rename from `mime-view-default-charset'.
+	Use `mime-entity-parameters'.
 
 	* semi-def.el (mime-user-interface-product): Bump up to EMIKO 1.14.1.
 
