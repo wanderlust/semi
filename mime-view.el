@@ -1116,11 +1116,11 @@ With prefix, it prompts for coding-system."
 		   (memq (mime-view-entity-type/subtype entity)
 			 mime-view-force-inline-types)
 		   ;; whether Content-Disposition header exists.
-		   (not (and
-			 (mime-entity-content-disposition entity)
-			 (eq 'inline
-			     (mime-content-disposition-type
-			      (mime-entity-content-disposition entity)))))))
+		   (and
+		    (mime-entity-content-disposition entity)
+		    (eq 'inline
+			(mime-content-disposition-type
+			 (mime-entity-content-disposition entity))))))
 	  ;; This is attachment
 	  (setq header-is-visible nil
 		body-is-visible nil))

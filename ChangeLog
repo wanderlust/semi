@@ -1,3 +1,8 @@
+2000-01-28  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-display-entity): Fix handling of
+	inline Content-Disposition.
+
 2000-01-20  Yoshiki Hayashi  <t90553@mail.ecc.u-tokyo.ac.jp>
 
 	* mime-edit.el (mime-edit-user-agent-value): Add apel-version.
