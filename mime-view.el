@@ -27,6 +27,7 @@
 
 ;;; Code:
 
+(require 'emu)
 (require 'mime)
 (require 'semi-def)
 (require 'calist)
