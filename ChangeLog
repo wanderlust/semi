@@ -1,5 +1,7 @@
 2000-12-22  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
+	* SEMI: Version 1.14.1 (Kaga-Onsen) released.
+
 	* pgg-gpg.el (pgg-gpg-process-region): Use
 	`pgg-gpg-messages-coding-system'.
 
