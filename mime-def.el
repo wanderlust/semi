@@ -242,8 +242,8 @@ FUNCTION.")
 	  base64-token-padding-regexp
           "\\)"))
 
-(defconst eword-B-encoding-and-encoded-text-regexp
-  (concat "\\(B\\)\\?" eword-B-encoded-text-regexp))
+;; (defconst eword-B-encoding-and-encoded-text-regexp
+;;   (concat "\\(B\\)\\?" eword-B-encoded-text-regexp))
 
 
 ;;; @@ Quoted-Printable
