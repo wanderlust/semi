@@ -1,5 +1,8 @@
 1998-06-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* NEWS: Add description about
+	`mime-preview-over-to-{previous|next}-method-alist'.
+
 	* mime-view.el (mime-preview-over-to-previous-method-alist):
 	Add DOC-string.
 	(mime-preview-over-to-next-method-alist): Add DOC-string.
