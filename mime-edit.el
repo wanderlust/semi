@@ -1193,26 +1193,25 @@ Optional argument ENCODING specifies an encoding method such as base64."
 (defun mime-edit-content-end ()
   "Return the point of the end of content."
   (save-excursion
-    (let ((beg (point)))
-      (if (mime-edit-goto-tag)
-	  (progn
-	    (goto-char (match-end 0))
-	    (if (invisible-p (point))
-		(next-visible-point (point))
-	      ;; Move to the end of this text.
-	      (if (re-search-forward mime-edit-tag-regexp nil 'move)
-		  ;; Don't forget a multiline tag.
-		  (goto-char (match-beginning 0))
-		)
-	      (point)
-	      ))
-	;; Assume the message begins with text/plain.
-	(goto-char (mime-edit-content-beginning))
-	(if (re-search-forward mime-edit-tag-regexp nil 'move)
-	    ;; Don't forget a multiline tag.
-	    (goto-char (match-beginning 0)))
-	(point))
-      )))
+    (if (mime-edit-goto-tag)
+	(progn
+	  (goto-char (match-end 0))
+	  (if (invisible-p (point))
+	      (next-visible-point (point))
+	    ;; Move to the end of this text.
+	    (if (re-search-forward mime-edit-tag-regexp nil 'move)
+		;; Don't forget a multiline tag.
+		(goto-char (match-beginning 0))
+	      )
+	    (point)
+	    ))
+      ;; Assume the message begins with text/plain.
+      (goto-char (mime-edit-content-beginning))
+      (if (re-search-forward mime-edit-tag-regexp nil 'move)
+	  ;; Don't forget a multiline tag.
+	  (goto-char (match-beginning 0)))
+      (point))
+    ))
 
 (defun mime-edit-define-charset (charset)
   "Set charset of current tag to CHARSET."
