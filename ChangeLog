@@ -1,3 +1,11 @@
+2000-10-10  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-edit.el (mime-edit-insert-place): Barf if on invisible region.
+	(mime-edit-insert-tag): Ditto.
+
+	* mime-edit.el (mime-edit-insert-file): Use
+	detect-mime-charset-region.
+
 2000-09-29  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
 	* mime-edit.el (mime-file-types): Fix to use application/msword

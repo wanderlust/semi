@@ -816,6 +816,8 @@ Tspecials means any character that matches with it in header must be quoted.")
 
 (defmacro mime-edit-insert-place (type-list &rest body)
   `(save-excursion
+     (if (get-text-property (point) 'invisible)
+	 (error "Can't split invisible region"))
      (if (or (member (intern (concat (car ,type-list) "/" (cadr ,type-list)))
 		     mime-edit-attach-at-end-type)
 	     (member (intern (car ,type-list))
@@ -1164,12 +1166,6 @@ Content-Transfer-Encoding and Content-Disposition headers."
 	      (setq candidate (if (listp candidates)
 				  (car candidates)
 				candidates))
-	      (if (memq (static-if (featurep 'xemacs)
-			    (coding-system-name candidate)
-			  candidate)
-			'(undecided undecided-unix
-				    undecided-dos undecided-mac))
-		  (setq candidate 'raw-text))
 	      (setq eol (coding-system-eol-type candidate))
 	      (cond ((eq eol
 			 (static-if (featurep 'xemacs)
@@ -1186,11 +1182,14 @@ Content-Transfer-Encoding and Content-Disposition headers."
 		(while (search-forward eol-string nil t)
 		  (replace-match "\r\n")))
 	      (setq string (buffer-string))
+	      ;; ####
+	      (set-buffer-multibyte t)
+	      (erase-buffer)
+	      (insert (decode-coding-string string candidate))
 	      (setq parameters
 		    (concat parameters "; charset="
-			    (symbol-name
-			     (coding-system-to-mime-charset
-			      candidate)))))))
+			    (symbol-name (detect-mime-charset-region
+					  (point-min) (point-max))))))))
 	  (while rest
 	    (setq cell (car rest))
 	    (setq attribute (car cell))
@@ -1281,6 +1280,8 @@ Content-Transfer-Encoding and Content-Disposition headers."
   "Insert new MIME tag and return a list of PRITYPE, SUBTYPE, and PARAMETERS.
 If nothing is inserted, return nil."
   (interactive)
+  (if (get-text-property (point) 'invisible)
+      (error "Can't split invisible region"))
   (let ((p (point)))
     (mime-edit-goto-tag)
     (if (and (re-search-forward mime-edit-tag-regexp nil t)
