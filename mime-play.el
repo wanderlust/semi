@@ -1,8 +1,8 @@
 ;;; mime-play.el --- Playback processing module for mime-view.el
 
-;; Copyright (C) 1994,1995,1996,1997,1998,1999 Free Software Foundation, Inc.
+;; Copyright (C) 1994,95,96,97,98,99,2000 Free Software Foundation, Inc.
 
-;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;; Author: MORIOKA Tomohiko <tomo@m17n.org>
 ;; Created: 1995/9/26 (separated from tm-view.el)
 ;;	Renamed: 1997/2/21 from tm-play.el
 ;; Keywords: MIME, multimedia, mail, news
@@ -181,59 +181,6 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 			  situation)))
 	  (mime-play-entity entity situation)
 	  ))))
-
-(defun mime-sort-situation (situation)
-  (sort situation
-	#'(lambda (a b)
-	    (let ((a-t (car a))
-		  (b-t (car b))
-		  (order '((type . 1)
-			   (subtype . 2)
-			   (mode . 3)
-			   (method . 4)
-			   (major-mode . 5)
-			   (disposition-type . 6)
-			   ))
-		  a-order b-order)
-	      (if (symbolp a-t)
-		  (let ((ret (assq a-t order)))
-		    (if ret
-			(setq a-order (cdr ret))
-		      (setq a-order 7)
-		      ))
-		(setq a-order 8)
-		)
-	      (if (symbolp b-t)
-		  (let ((ret (assq b-t order)))
-		    (if ret
-			(setq b-order (cdr ret))
-		      (setq b-order 7)
-		      ))
-		(setq b-order 8)
-		)
-	      (if (= a-order b-order)
-		  (string< (format "%s" a-t)(format "%s" b-t))
-		(< a-order b-order))
-	      )))
-  )
-
-(defun mime-compare-situation-with-example (situation example)
-  (let ((example (copy-alist example))
-	(match 0))
-    (while situation
-      (let* ((cell (car situation))
-	     (key (car cell))
-	     (ecell (assoc key example)))
-	(when ecell
-	  (if (equal cell ecell)
-	      (setq match (1+ match))
-	    (setq example (delq ecell example))
-	    ))
-	)
-      (setq situation (cdr situation))
-      )
-    (cons match example)
-    ))
 
 ;;;###autoload
 (defun mime-play-entity (entity &optional situation ignored-method)
