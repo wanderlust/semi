@@ -1,3 +1,11 @@
+2004-02-06  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* mime-image.el (mime-image-normalize-xbm-buffer): Add missing
+	format specifiers.
+
+	* mime-view.el (mime-view-insert-entity-button): Fix misplaced let
+	form.
+
 2004-01-15  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* mime-edit.el (mime-edit-normalize-body): Fix a comment that the

@@ -599,24 +599,22 @@ mother-buffer."
 		  )))
 	    )
 	   (t
-	    (let ((media-type (mime-entity-media-type entity))
-		  (media-subtype (mime-entity-media-subtype entity))
-		  (charset (cdr (assoc "charset" params)))
-		  (encoding (mime-entity-encoding entity)))
+	    (let* ((charset (cdr (assoc "charset" params)))
+		   (encoding (mime-entity-encoding entity))
+		   (rest (format " <%s/%s%s%s>"
+				 (mime-entity-media-type entity)
+				 (mime-entity-media-subtype entity)
+				 (if charset
+				     (concat "; " charset)
+				   "")
+				 (if encoding
+				     (concat " (" encoding ")")
+				   ""))))
 	      (concat
 	       num " " subject
-	       (let ((rest
-		      (format " <%s/%s%s%s>"
-			      media-type media-subtype
-			      (if charset
-				  (concat "; " charset)
-				"")
-			      (if encoding
-				  (concat " (" encoding ")")
-				""))))
-		 (if (>= (+ (current-column)(length rest))(window-width))
-		     "\n\t")
-		 rest)))
+	       (if (>= (+ (current-column)(length rest))(window-width))
+		   "\n\t")
+	       rest))
 	    )))
      (function mime-preview-play-current-entity))
     ))
