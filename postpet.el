@@ -24,6 +24,8 @@
 
 ;;; Code:
 
+(require 'alist)
+
 (put 'unpack 'lisp-indent-function 1)
 (defmacro unpack (string &rest body)
   `(let* ((*unpack*string* (string-as-unibyte ,string))
@@ -58,6 +60,7 @@
 (defun unpack-string-sjis ()
   (decode-mime-charset-string (unpack-string) 'shift_jis))
 
+;;;###autoload
 (defun postpet-decode (string)
   (condition-case nil
       (unpack string
@@ -96,29 +99,47 @@
 	  res))
     (error nil)))
 
+;;;###autoload
 (defun mime-display-application/x-postpet (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
     (let ((pet (postpet-decode (mime-entity-content entity))))
       (if pet
-	  (insert "Petname: " (cdr (assq 'petname pet)) "\n"
-		  "Owner: " (cdr (assq 'owner pet)) "\n"
-		  "Pettype: " (cdr (assq 'pettype pet)) "\n"
-		  "From: " (cdr (assq 'from pet)) "\n"
-		  "CarryingCount: " (int-to-string (cdr (assq 'carryingcount pet))) "\n"
-		  "SentYear: " (int-to-string (cdr (assq 'sentyear pet))) "\n"
-		  "SentMonth: " (int-to-string (cdr (assq 'sentmonth pet))) "\n"
-		  "SentDay: " (int-to-string (cdr (assq 'sentday pet))) "\n"
-		  "PetbirthYear: " (int-to-string (cdr (assq 'petbirthyear pet))) "\n"
-		  "PetbirthMonth: " (int-to-string (cdr (assq 'petbirthmonth pet))) "\n"
-		  "PetbirthDay: " (int-to-string (cdr (assq 'petbirthday pet))) "\n"
-		  "Health: " (int-to-string (cdr (assq 'health pet))) "\n"
-		  "Sex: " (int-to-string (cdr (assq 'sex pet))) "\n"
-		  "Brain: " (int-to-string (cdr (assq 'brain pet))) "\n"
-		  "Happiness: " (int-to-string (cdr (assq 'happiness pet))) "\n"
-		  "Treasure: " (int-to-string (cdr (assq 'treasure pet))) "\n"
-		  "Money: " (int-to-string (cdr (assq 'money pet))) "\n"
-		  )
+	  (insert
+	   "Petname: " (cdr (assq 'petname pet))
+	   "\n"
+	   "Owner: " (cdr (assq 'owner pet))
+	   "\n"
+	   "Pettype: " (cdr (assq 'pettype pet))
+	   "\n"
+	   "From: " (cdr (assq 'from pet))
+	   "\n"
+	   "CarryingCount: " (int-to-string (cdr (assq 'carryingcount pet)))
+	   "\n"
+	   "SentYear: " (int-to-string (cdr (assq 'sentyear pet)))
+	   "\n"
+	   "SentMonth: " (int-to-string (cdr (assq 'sentmonth pet)))
+	   "\n"
+	   "SentDay: " (int-to-string (cdr (assq 'sentday pet)))
+	   "\n"
+	   "PetbirthYear: " (int-to-string (cdr (assq 'petbirthyear pet)))
+	   "\n"
+	   "PetbirthMonth: " (int-to-string (cdr (assq 'petbirthmonth pet)))
+	   "\n"
+	   "PetbirthDay: " (int-to-string (cdr (assq 'petbirthday pet)))
+	   "\n"
+	   "Health: " (int-to-string (cdr (assq 'health pet)))
+	   "\n"
+	   "Sex: " (int-to-string (cdr (assq 'sex pet)))
+	   "\n"
+	   "Brain: " (int-to-string (cdr (assq 'brain pet)))
+	   "\n"
+	   "Happiness: " (int-to-string (cdr (assq 'happiness pet)))
+	   "\n"
+	   "Treasure: " (int-to-string (cdr (assq 'treasure pet)))
+	   "\n"
+	   "Money: " (int-to-string (cdr (assq 'money pet)))
+	   "\n")
 	(insert "Invalid format\n"))
       (run-hooks 'mime-display-application/x-postpet-hook))))
 
