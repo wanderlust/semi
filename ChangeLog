@@ -1,3 +1,12 @@
+2001-10-02   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-view.el: Add `mime-view-maybe-inherit-widget-keymap' to
+	`mime-view-mode-map' instead of `mime-view-define-keymap-hook'.
+	[cf. <emacs-mime-ja:950>]
+
+	* mime-bbdb.el: Add `mime-bbdb/define-keys' to `mime-view-mode-map'
+	instead of `mime-view-define-keymap-hook'.
+
 2001-09-27  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-edit.el (mime-edit-content-end): Return the value of
