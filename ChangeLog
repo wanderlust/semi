@@ -1,5 +1,10 @@
 1998-09-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-edit.el (mime-edit-user-agent-value): Add
+	system-configuration for Emacs and XEmacs.
+
+1998-09-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-edit.el (mime-edit-normalize-body): Use "7bit" for nil
 	encoding as an argument of `mime-encode-region'.
 
