@@ -1,3 +1,7 @@
+1998-10-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.9.1 (Kurikara) released.
+
 1998-10-14  Jari Aalto        <jari.aalto@poboxes.com>
 
 	* mime-edit.el (mime-file-types): Add some new mime types, and
