@@ -678,22 +678,6 @@ Tspecials means any character that matches with it in header must be quoted.")
 	       )
        ))
 
-(cond (running-xemacs
-       (add-minor-mode 'mime-edit-mode-flag
-		       '((" MIME-Edit "  mime-transfer-level-string))
-		       mime-edit-mode-map
-		       nil
-		       'mime-edit-mode)
-       )
-      (t
-       (set-alist 'minor-mode-alist
-		  'mime-edit-mode-flag
-		  '((" MIME-Edit "  mime-transfer-level-string)))
-       (set-alist 'minor-mode-map-alist
-		  'mime-edit-mode-flag
-		  mime-edit-mode-map)
-       ))
-
 
 ;;; @ functions
 ;;;
@@ -841,6 +825,24 @@ User customizable variables (not documented all of them):
       (turn-on-mime-edit)
       )))
 
+
+(cond (running-xemacs
+       (add-minor-mode 'mime-edit-mode-flag
+		       '((" MIME-Edit "  mime-transfer-level-string))
+		       mime-edit-mode-map
+		       nil
+		       'mime-edit-mode)
+       )
+      (t
+       (set-alist 'minor-mode-alist
+		  'mime-edit-mode-flag
+		  '((" MIME-Edit "  mime-transfer-level-string)))
+       (set-alist 'minor-mode-map-alist
+		  'mime-edit-mode-flag
+		  mime-edit-mode-map)
+       ))
+
+
 ;;;###autoload
 (defun turn-on-mime-edit ()
   "Unconditionally turn on MIME-Edit mode."
@@ -877,6 +879,7 @@ User customizable variables (not documented all of them):
 
 ;;;###autoload
 (defalias 'edit-mime 'turn-on-mime-edit) ; for convenience
+
 
 (defun mime-edit-exit (&optional nomime no-error)
   "Translate the tagged MIME message into a MIME compliant message.
