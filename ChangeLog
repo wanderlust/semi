@@ -1,5 +1,13 @@
 2000-02-22  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* mime-view.el (mime-delq-null-situation): Accept multiple ignored
+	values.
+	(mime-unify-situations): t is also regarded as an ignored-value.
+	(mime-preview-follow-current-entity): Eliminate unused local
+	variable `str'.
+
+2000-02-22  MORIOKA Tomohiko  <tomo@m17n.org>
+
 	* mime-play.el (mime-play-find-every-situations): Renamed from
 	`mime-view-find-every-situations'.
 
