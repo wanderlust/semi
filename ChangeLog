@@ -2,6 +2,9 @@
 
 	* SEMI: Version 1.14.4 (Hosorogi) released.
 
+	* Makefile (ARC_DIR_PREFIX): New variable.
+	(ARC_DIR): Use `ARC_DIR_PREFIX'.
+
 2001-08-10  Kenichi OKADA <okada@opaopa.org>
 
 	* semi-def.el (mime-browse-url-regexp): Allow nntps and ftps.
