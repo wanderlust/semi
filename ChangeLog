@@ -1,3 +1,44 @@
+1999-11-05   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg-def.el (pgg-echo-buffer): New variable.
+
+	* pgg.el (pgg-process-when-success): New macro.
+	(pgg-insert-url-with-w3): New function.
+	(pgg-insert-url-program): New variable.
+	(pgg-insert-url-extra-arguments): New variable.
+	(pgg-insert-url-function): New variable.
+	(pgg-fetch-key): Use it.
+	(pgg-encrypt-region): If called interactively, popup
+	`pgg-echo-buffer' to display encryption status.
+	(pgg-decrypt-region): Likewise.
+	(pgg-sign-region): Likewise.
+	(pgg-verify-region): Likewise.
+
+	* pgg-gpg.el (lookup-key-string): Use `call-process' instead of
+	`pgg-gpg-process-region'.
+	(encrypt-region): Use `pgg-process-when-success'; if the output
+	buffer is empty, don't copy errors, just return nil.
+	(decrypt-region): Likewise.
+	(verify-region): Check the contents of status buffer to looking
+	for `GOODSIG' response.
+	(sign-region): Accept optional argument `clearsign'.
+
+	* pgg-pgp.el (lookup-key-string): Use `call-process' instead of
+	`pgg-pgp-process-region'.
+	(encrypt-region): Use `pgg-process-when-success'; if the output
+	buffer is empty, don't copy errors, just return nil.
+	(decrypt-region): Likewise.
+	(verify-region): Likewise.
+	(sign-region): Accept optional argument `clearsign'.
+
+	* pgg-pgp5.el (lookup-key-string): Use `call-process' instead of
+	`pgg-pgp5-process-region'.
+	(encrypt-region): Use `pgg-process-when-success'; if the output
+	buffer is empty, don't copy errors, just return nil.
+	(decrypt-region): Likewise.
+	(verify-region): Likewise.
+	(sign-region): Accept optional argument `clearsign'.
+
 1999-11-04   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* pgg.el (pgg-verify-region): Ignore all errors encountered on
