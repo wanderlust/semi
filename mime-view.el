@@ -296,9 +296,10 @@ Please redefine this function if you want to change default setting."
 			(string-match regexp name)
 			)) mime-view-visible-field-list)
 	  (delete-region beg
-			 (if (re-search-forward "^\\([^ \t]\\|$\\)" nil t)
-			     (match-beginning 0)
-			   (point-max)))
+			 (save-excursion
+			   (if (re-search-forward "^\\([^ \t]\\|$\\)" nil t)
+			       (match-beginning 0)
+			     (point-max))))
 	  ))))
 
 (defun mime-view-default-content-header-filter ()
