@@ -1,11 +1,15 @@
-1998-11-19  Katsumi Yamaoka   <yamaoka@jpl.org>
+1998-11-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS (Changes in SEMI 1.11): New section.
+
+1998-11-18  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* semi-setup.el (mime-setup-decode-message-header): Use
 	`mime-decode-header-in-buffer' instead of `eword-decode-header'.
 
 	* mime-view.el (mime-preview-follow-current-entity): Likewise.
 
-1998-11-18  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
+1998-11-18  Keiichi Suzuki    <kei-suzu@mail.wbs.ne.jp>
 
 	* mime-edit.el (mime-content-transfer-encoding-priority-list): New
 	variable.
