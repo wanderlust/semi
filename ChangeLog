@@ -1,3 +1,13 @@
+2001-06-12  Yuuichi Teranishi <teranisi@gohome.org>
+
+	* mime-view.el (mime-display-multipart/related): When "start"
+	parameter specifies part, treat the part as root.
+
+2001-06-12  Akihiro Arisawa  <ari@mbf.sphere.ne.jp>
+
+	* mime-view.el (mime-display-multipart/related): New function; set up
+	for `mime-preview-condition'.
+
 2001-04-19  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-bbdb.el: Load "bbdb-hooks" when the symbol function
