@@ -912,8 +912,8 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
    (decode-mime-charset-string
     (mime-decode-string
      (mime-entity-body entity)
-     (mime-view-default-content-transfer-encoding entity situation))
-    (mime-view-default-charset entity situation)
+     (mime-view-guess-encoding entity situation))
+    (mime-view-guess-charset entity situation)
     'CRLF)))
 
 ;;; stolen (and renamed) from mm-view.el.
@@ -1716,15 +1716,15 @@ If LINES is negative, scroll up LINES lines."
 ;;; @@ display
 ;;;
 
-(defun mime-view-default-content-transfer-encoding (entity situation)
+(defun mime-view-guess-encoding (entity situation)
   (or (cdr (assq '*encoding situation))
       (cdr (assq 'encoding situation))
       (mime-entity-encoding entity)
       "7bit"))
 
-(defun mime-view-read-content-transfer-encoding (entity situation)
+(defun mime-view-read-encoding (entity situation)
   (let* ((default-encoding
-	   (mime-view-default-content-transfer-encoding entity situation))
+	   (mime-view-guess-encoding entity situation))
 	 (encoding
 	  (completing-read
 	   "Content Transfer Encoding: "
@@ -1733,7 +1733,7 @@ If LINES is negative, scroll up LINES lines."
 		(string= encoding default-encoding))
       encoding)))
 
-(defun mime-view-default-charset (entity situation)
+(defun mime-view-guess-charset (entity situation)
   (or (static-if (fboundp 'coding-system-to-mime-charset)
 	  ;; might be overridden by `universal-coding-system-argument'.
 	  (and coding-system-for-read
@@ -1748,7 +1748,7 @@ If LINES is negative, scroll up LINES lines."
 (defun mime-view-read-charset (entity situation)
   (static-if (featurep 'mule)
       (let* ((default-charset
-	       (mime-view-default-charset entity situation))
+	       (mime-view-guess-charset entity situation))
 	     (charset
 	      (intern (completing-read "MIME-charset: "
 				       (mapcar
@@ -1783,8 +1783,7 @@ If LINES is negative, scroll up LINES lines."
 			       situation))
     (when (and current-prefix-arg
 	       (eq (cdr (assq sym situation)) 'visible))
-      (if (setq encoding (mime-view-read-content-transfer-encoding
-			  entity situation))
+      (if (setq encoding (mime-view-read-encoding entity situation))
 	  (setq situation (put-alist '*encoding encoding situation)))
       (if (setq charset (mime-view-read-charset entity situation))
 	  (setq situation (put-alist '*charset charset situation))))
