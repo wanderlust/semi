@@ -172,7 +172,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 		 (t "Bad signature")))
 	  ))))
 
-(defun mime-pgp-check-application/pgp-signature (beg end cal)
+(defun mime-method-to-verify-application/pgp-signature (beg end cal)
   "Internal method to check PGP/MIME signature."
   (let* ((encoding (cdr (assq 'encoding cal)))
 	 (cnum (mime-article/point-content-number beg))
@@ -252,7 +252,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 
 (set-atype 'mime-acting-condition
 	   '((type . "application/pgp-signature")
-	     (method . mime-pgp-check-application/pgp-signature)
+	     (method . mime-method-to-verify-application/pgp-signature)
 	     ))
 
 
