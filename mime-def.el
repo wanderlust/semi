@@ -3,7 +3,6 @@
 ;; Copyright (C) 1995,1996,1997,1998 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
-;; Version: $Id$
 ;; Keywords: definition, MIME, multimedia, mail, news
 
 ;; This file is part of SEMI (Spadework for Emacs MIME Interfaces).
