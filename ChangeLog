@@ -1,3 +1,9 @@
+1997-07-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* signature.el (signature-separator): New variable.
+	(insert-signature): Insert `signature-separator' when signature is
+	inserted at end of file.
+
 1997-07-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-edit.el (mime-edit-version-name): Add `semi-version-name'.
