@@ -3,6 +3,13 @@ Copyright (C) 1998 Free Software Foundation, Inc.
 
 * Changes in SEMI 1.5
 
+** `pgp-elkins' -> `pgp-mime'
+
+  Rename `pgp-elkins' -> `pgp-mime'.  Variable
+`mime-edit-signing-type' and `mime-edit-encrypting-type' does not
+allow `pgp-elkins'.
+
+
 ** type-subtype-score
 
   Now MIME-View chooses one entity to display body in
