@@ -342,13 +342,7 @@ Each elements are regexp of field-name.")
 (defvar mime-view-body-visible-condition
   '(type
     (nil)
-    (text subtype
-	  (plain)
-	  (enriched)
-	  (rfc822-headers)
-	  (richtext)
-	  (x-latex)
-	  (x-pgp))
+    (text)
     (application subtype
 		 (octet-stream encoding
 			       (nil)
