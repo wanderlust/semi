@@ -1,3 +1,12 @@
+1999-10-05  Yoshiki Hayashi  <t90553@mail.ecc.u-tokyo.ac.jp>
+
+	* mime-view.el (mime-preview-scroll-down-entity,
+	mime-preview-scroll-up-entity): Recenter when moving to
+	a next entity.
+	(mime-preview-move-scroll): New variable.
+	(mime-preview-move-to-previous, mime-preview-move-to-next):
+	Recenter according to the variable mime-preview-move-scroll.
+
 1999-10-04  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-view.el (mime-preview-move-to-next): Attempt to go to the
