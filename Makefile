@@ -2,7 +2,7 @@
 # $Id$
 #
 
-VERSION = 0.70
+VERSION = 0.87
 
 SHELL	= /bin/sh
 MAKE	= make
@@ -16,40 +16,18 @@ GOMI	= *.elc
 FLAGS   = -batch -q -no-site-file
 
 PREFIX	= NONE
-EXEC_PREFIX =
+EXEC_PREFIX = NONE
+LISPDIR =
 
-SEMI_FILES =	semi/Makefile semi/SEMI-MK semi/SEMI-CFG semi/SEMI-ELS \
-		semi/*.el semi/ChangeLog
-
-MEL_FILES =	mel/Makefile mel/MEL-MK mel/MEL-CFG mel/MEL-ELS \
-		mel/*.el mel/ChangeLog
-
-MU_FILES =	mu/Makefile mu/MU-MK mu/MU-CFG mu/MU-ELS \
-		mu/*.el mu/ChangeLog
-
-APEL_FILES =	apel/Makefile apel/APEL-MK apel/APEL-CFG apel/APEL-ELS \
-		apel/*.el apel/ChangeLog
-
-BITMAP_FILES =	bitmap-mule/Makefile bitmap-mule/BITMAP-MK \
-		bitmap-mule/BITMAP-CFG bitmap-mule/BITMAP-ELS \
-		bitmap-mule/*.el bitmap-mule/*.bdf \
-		bitmap-mule/README.* bitmap-mule/ChangeLog
-
-EMU_FILES =	emu/Makefile emu/EMU-MK emu/EMU-CFG emu/EMU-ELS \
-		emu/*.el emu/ChangeLog
-
-SINFO_FILES =	sinfo/Makefile sinfo/SINFO-MK \
-		sinfo/SINFO-CFG sinfo/SINFO-ELS \
-		sinfo/*.dtd sinfo/*.el sinfo/*-mapping sinfo/ChangeLog
-
-FILES	=	$(SEMI_FILES) $(MEL_FILES) $(MU_FILES) \
-		$(APEL_FILES) $(BITMAP_FILES) $(EMU_FILES) $(SINFO_FILES)
+FILES =	Makefile SEMI-MK SEMI-CFG SEMI-ELS *.el ChangeLog
 
 elc:
-	$(EMACS) $(FLAGS) -l SEMI-MK -f compile-semi $(PREFIX) $(EXEC_PREFIX)
+	$(EMACS) $(FLAGS) -l SEMI-MK -f compile-semi \
+		$(PREFIX) $(EXEC_PREFIX) $(LISPDIR)
 
 install-elc:	elc
-	$(EMACS) $(FLAGS) -l SEMI-MK -f install-semi $(PREFIX) $(EXEC_PREFIX)
+	$(EMACS) $(FLAGS) -l SEMI-MK -f install-semi \
+		$(PREFIX) $(EXEC_PREFIX) $(LISPDIR)
 
 
 all:	$(UTILS) $(DVI) elc
@@ -85,7 +63,7 @@ clean:
 
 
 tar:
-	cd ..; gtar cvf semi-$(VERSION).tar $(FILES)
+	gtar cvf ../semi-$(VERSION).tar $(FILES)
 	-cd ..; mkdir semi-$(VERSION)
 	cp ../semi-kernel/README.?? ../semi-$(VERSION)
 	cp ../semi-kernel/Makefile ../semi-$(VERSION)
