@@ -507,11 +507,13 @@ SUBTYPE is symbol to indicate subtype of media-type.")
 (defun mime-preview-quitting-method-for-mime-show-message-mode ()
   "Quitting method for mime-view.
 It is registered to variable `mime-preview-quitting-method-alist'."
-  (let ((raw-buffer (mime-entity-buffer
+  (let ((raw-buffer (mime-entity-body-buffer
 		     (get-text-property (point-min) 'mime-view-entity)))
 	(mother mime-mother-buffer)
 	(win-conf mime-preview-original-window-configuration))
-    (kill-buffer raw-buffer)
+    ;; Existence of raw-buffer is not guaranteed.
+    (if raw-buffer
+	(kill-buffer raw-buffer))
     (mime-preview-kill-buffer)
     (set-window-configuration win-conf)
     (pop-to-buffer mother)))
@@ -596,7 +598,8 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	  (catch 'tag
 	    (save-excursion
 	      (set-buffer (get-buffer-create mime-temp-buffer-name))
-	      (let ((full-buf (current-buffer)))
+	      ;; #### ??? full-buf is not referenced.
+;;	      (let ((full-buf (current-buffer)))
 		(erase-buffer)
 		(let ((i 1))
 		  (while (<= i total)
@@ -624,7 +627,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 			     (mime-open-entity 'buffer (current-buffer))
 			     nil mother nil 'mime-show-message-mode)))
 		  (set-window-buffer pwin pbuf)
-		  (select-window pwin)))))))))
+		  (select-window pwin))))))))
 
 
 ;;; @ message/external-body

@@ -814,7 +814,7 @@ This can only handle gzipped contents."
   (let ((inhibit-read-only t)
 	(entity (get-text-property (point) 'mime-view-entity))
 	(situation (get-text-property (point) 'mime-view-situation))
-	start end)
+	start)
     (when (and entity
 	       (not (get-text-property (point) 'mime-view-entity-header))
 	       (not (memq (mime-entity-media-type entity)
@@ -858,7 +858,8 @@ With prefix, it prompts for coding-system."
 	(coding (if ask-coding
 		    (or (read-coding-system "Coding system: ")
 			'undecided)
-		  'undecided)))
+		  'undecided))
+	start)
     (when (and entity
 	       (not (get-text-property (point) 'mime-view-entity-header))
 	       (not (memq (mime-entity-media-type entity)
@@ -900,7 +901,7 @@ With prefix, it prompts for coding-system."
 	(entity (get-text-property (point) 'mime-view-entity))
 	(situation (get-text-property (point) 'mime-view-situation))
 	(mime-view-force-inline-types t)
-	start end)
+	start)
     (when (and entity
 	       (not (get-text-property (point) 'mime-view-entity-header))
 	       (not (memq (mime-entity-media-type entity)
@@ -1093,7 +1094,7 @@ With prefix, it prompts for coding-system."
 	(body-presentation-method
 	 (cdr (assq 'body-presentation-method situation)))
 	(children (mime-entity-children entity))
-	e nb ne nhb nbb)
+	nb ne nhb nbb)
     ;; Check if attachment is specified.
     ;; if inline is forced or not.
     (unless (or (eq t mime-view-force-inline-types)
@@ -1113,12 +1114,12 @@ With prefix, it prompts for coding-system."
     (setq nb (point))
     (save-restriction
       (narrow-to-region nb nb)
-      (or button-is-invisible
-	  (if (mime-view-entity-button-visible-p entity)
-	      (mime-view-insert-entity-button entity
-					      ;; work around composite type
-					      (not (or children
-						       body-is-visible)))))
+      (if (and (not button-is-invisible)
+	       (mime-view-entity-button-visible-p entity))
+	  (mime-view-insert-entity-button entity
+					  ;; work around composite type
+					  (not (or children
+						   body-is-visible))))
       (when header-is-visible
 	(setq nhb (point))
 	(if header-presentation-method
@@ -1142,10 +1143,9 @@ With prefix, it prompts for coding-system."
 					       ;; work around composite type
 					       (not (or children
 							body-is-visible))))
-	     (or header-is-visible
-		 (progn
-		   (goto-char (point-max))
-		   (insert "\n")))))
+	     (unless header-is-visible
+	       (goto-char (point-max))
+	       (insert "\n"))))
       (setq ne (point-max)))
     (put-text-property nb ne 'mime-view-entity entity)
     (put-text-property nb ne 'mime-view-situation situation)
