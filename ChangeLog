@@ -1,3 +1,10 @@
+1997-10-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* semi-setup.el (mime-setup-set-signature-key): Check local keymap
+	is exist or not to fix problem about
+	`gnus-summary-resend-message'.
+
+
 1997-10-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 0.115.1 (Oyanagi) was released.
