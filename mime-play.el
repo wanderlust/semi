@@ -450,25 +450,6 @@ It is registered to variable `mime-view-quitting-method-alist'."
 ;;; @ rot13-47
 ;;;
 
-(require 'view)
-
-(defconst mime-view-text/plain-mode-map (copy-keymap view-mode-map))
-(define-key mime-view-text/plain-mode-map
-  "q" (function mime-view-text/plain-exit))
-
-(defun mime-view-text/plain-mode ()
-  "\\{mime-view-text/plain-mode-map}"
-  (setq buffer-read-only t)
-  (setq major-mode 'mime-view-text/plain-mode)
-  (setq mode-name "MIME-View text/plain")
-  (use-local-map mime-view-text/plain-mode-map)
-  )
-
-(defun mime-view-text/plain-exit ()
-  (interactive)
-  (kill-buffer (current-buffer))
-  )
-
 (defun mime-display-caesar (beg end cal)
   "Internal method for mime-view to display ROT13-47-48 message."
   (let* ((cnum (mime-article/point-content-number beg))
@@ -505,7 +486,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
       (tm:caesar-region)
       )
     (set-buffer-modified-p nil)
-    (mime-view-text/plain-mode)
+    (view-mode-enter mother 'kill-buffer)
     ))
 
 
