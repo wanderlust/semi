@@ -1,5 +1,9 @@
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-def.el, mime-play.el, mime-view.el: Rename
+	`mime-view-play-current-entity' ->
+	`mime-preview-play-current-entity'.
+
 	* mime-view.el: Rename `mime-view-previous-line-content' ->
 	`mime-preview-previous-line-entity'.
 
