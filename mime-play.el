@@ -98,7 +98,8 @@ specified, play as it.  Default MODE is \"play\"."
 	     )
 	    (t
 	     (mime-show-echo-buffer
-	      "No method are specified for %s\n" ctype)
+	      "No method are specified for %s\n"
+	      (mime-type/subtype-string c-type c-subtype))
 	     ))
       )
     ))
