@@ -1,5 +1,30 @@
 1998-03-20  Tanaka Akira  <akr@jaist.ac.jp>
 
+	* eword-decode.el (eword-decode-before-ewords-regexp): Delete.
+	(eword-decode-between-ewords-regexp): Delete.
+	(eword-decode-after-ewords-regexp): Delete.
+	(eword-decode-sticked-encoded-word): New variable.
+	(eword-decode-first-encoded-words): New function.
+	(eword-decode-comment-string): New function.
+	(eword-decode-unstructured-string): New function. It treats
+	`default-mime-charset' for parts other than encoded-words.
+	(eword-decode-string): Now, it is stub to
+	`eword-decode-unstructured-string'.
+	(eword-decode-region): Now, it is stub to
+	`eword-decode-unstructured-string'.
+	(eword-decode-header): Adapt to new `eword-decode-string'.
+	(eword-analyze-quoted-string): Call
+	`std11-wrap-as-quoted-string' first.
+	(eword-analyze-comment): Call `eword-decode-comment-string'.
+	(eword-analyze-encoded-word): Now, it is stub to
+	`eword-decode-first-encoded-words'.
+	(eword-decode-token): Adapt to new `eword-analyze-quoted-string'
+	and `eword-analyze-comment'.
+	(eword-decode-unstructured-field-body): Adapt to new
+	`eword-decode-string'
+
+1998-03-20  Tanaka Akira  <akr@jaist.ac.jp>
+
 	* eword-decode.el (eword-decode-string): Treat undecodable
 	encoded-words.
 
