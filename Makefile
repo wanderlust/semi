@@ -56,7 +56,7 @@ tar:
 	cd /tmp; \
 	cvs -d :pserver:anonymous@chamonix.jaist.ac.jp:/hare/cvs/root \
 		export -d $(PACKAGE)-$(VERSION) \
-		-r $(PACKAGE)-`echo $(VERSION) | tr . _`
+		-r $(PACKAGE)-`echo $(VERSION) | tr . _` \
 		semi'
 	$(RM) /tmp/$(PACKAGE)-$(VERSION)/ftp.in
 	cd /tmp; $(TAR) cvzf $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION)
