@@ -414,8 +414,7 @@ this function is called."
 		     (error nil)))
 	(select-window (get-buffer-window (or mime-preview-buffer
 					      (current-buffer))))
-	(setq win
-	      (split-window-vertically (min -2 (- (window-height) height))))
+	(setq win (split-window-vertically (- (window-height) height)))
 	(set-window-buffer win mime-echo-buffer-name)
 	(select-window win)
 	))
