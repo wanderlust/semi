@@ -85,14 +85,14 @@
 
 (defvar mime-setup-enable-pgp
   (module-installed-p 'mailcrypt)
-  "*If it is non-nil, semi-setup sets uf to use tm-pgp.")
+  "*If it is non-nil, semi-setup sets uf to use mime-pgp.")
 
 ;; for PGP
 (if mime-setup-enable-pgp
     (call-after-loaded 'mime-view
 		       (function
 			(lambda ()
-			  (require 'tm-pgp)
+			  (require 'mime-pgp)
 			  )))
   )
 
