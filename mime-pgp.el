@@ -46,7 +46,6 @@
 
 (require 'mime-play)
 (require 'pgg-def)
-(require 'pgg-parse)
 
 
 ;;; @ Internal method for multipart/signed
@@ -175,90 +174,10 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
       (while (progn (end-of-line) (not (eobp)))
 	(insert "\r")
 	(forward-line 1))
-      (let ((packet 
-	     (cdr (assq 2 (pgg-parse-armor (mime-entity-content entity)))))
-	    (pgg-output-buffer mime-echo-buffer-name)
-	    key)
-	(cond
-	 ((or (null (setq key (cdr (assq 'key-identifier packet))))
-	      (funcall (pgp-function 'lookup-key)
-		       (setq key (concat "0x" (pgg-truncate-key-identifier key)))))
-	  (funcall (pgp-function 'verify) 
-		   (point-min)(point-max) sig-file)
-	  )
-	 ((y-or-n-p
-	   (format "Key %s not found; attempt to fetch? " key))
-	  (mime-pgp-fetch-key 
-	   key (cdr (assq 'preferred-key-server packet)))
-	  ))))
+      (let ((pgg-output-buffer mime-echo-buffer-name))
+	(funcall (pgp-function 'verify) 
+		 (point-min)(point-max) sig-file 'fetch)))
     (delete-file sig-file)
-    ))
-
-(defun mime-display-application/pgp-signature (entity situation)
-  (let ((packet
-	 (cdr (assq 2 (pgg-parse-armor (mime-entity-content entity)))))
-	field)
-    (insert 
-     "version: " 
-     (int-to-string (cdr (assq 'version packet)))
-     "\n"
-     "signature type: "
-     (cdr (assq 'signature-type packet))
-     "\n"
-     (if (setq field (cdr (assq 'hash-algorithm packet)))
-	 (concat "hash algorithm: " (symbol-name field) "\n")
-       "")
-     (if (setq field (cdr (assq 'public-key-algorithm packet)))
-	 (concat "public key algorithm: " (symbol-name field) "\n")
-       "")
-     (if (setq field (cdr (assq 'key-identifier packet)))
-	 (concat "key identifier: " field "\n")
-       "")
-     (if (setq field (cdr (assq 'creation-time packet)))
-	 (concat "creation time: " (current-time-string field) "\n")
-       "")
-     (if (setq field (cdr (assq 'signature-expiry packet)))
-	 (concat "signature exipiration time: "
-		 (current-time-string field) "\n")
-       "")
-     (if (setq field (cdr (assq 'key-expiry packet)))
-	 (concat "key exipiration time: " (current-time-string field) "\n")
-       "")
-     (if (setq field (cdr (assq 'trust-level packet)))
-	 (concat "trust level: " (int-to-string field) "\n")
-       "")
-     (if (setq field (cdr (assq 'preferred-symmetric-key-algorithm packet)))
-	 (concat "preferred symmetric algorithm: " 
-		 (symbol-name field) "\n")
-       "")
-     (if (setq field (cdr (assq 'preferred-hash-algorithm packet)))
-	 (concat "preferred hash algorithm: " 
-		 (symbol-name field) "\n")
-       "")
-     (if (setq field (cdr (assq 'exportability packet)))
-	 (concat "signature exportable: " 
-		 (if (< 0 field) "yes" "no") "\n")
-       "")
-     (if (setq field (cdr (assq 'revocability packet)))
-	 (concat "signature revocable: "
-		 (if (< 0 field) "yes" "no") "\n")
-       "")
-     (if (setq field (cdr (assq 'policy-url packet)))
-	 (concat "policy URL: " field "\n")
-       "")
-     (if (setq field 
-	       (delq nil (mapcar 
-			  (function (lambda (nn) 
-				      (and (eq (car nn) 'notation) nn)))
-			  packet)))
-	 (concat "notations:\n" 
-		 (mapconcat (lambda (nn)
-			      (concat " " (cadr nn) ": " (cddr nn)))
-			    field "\n")
-		 "\n")
-       ""))
-    (mime-add-url-buttons)
-    (run-hooks 'mime-display-application/pgp-signature-hook)
     ))
 
 
@@ -277,28 +196,6 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
     (mime-view-application/pgp orig-entity situation)
     ))
 
-(defun mime-display-application/pgp-encrypted (entity situation)
-  (let* ((entity-node-id (mime-entity-node-id entity))
-	 (mother (mime-entity-parent entity))
-	 (knum (car entity-node-id))
-	 (onum (if (> knum 0)
-		   (1- knum)
-		 (1+ knum)))
-	 (orig-entity (nth onum (mime-entity-children mother)))
-	 (packet (cdr (assq 1 (pgg-parse-armor 
-			       (mime-entity-content orig-entity))))))
-    (insert 
-     "version: " 
-     (int-to-string (cdr (assq 'version packet)))
-     "\n"
-     "public key identifier: " 
-     (cdr (assq 'key-identifier packet))
-     "\n"
-     "public key algorithm: " 
-     (symbol-name (cdr (assq 'public-key-algorithm packet)))
-     "\n\n")
-    (run-hooks 'mime-display-application/pgp-encrypted-hook)
-    ))
 
 ;;; @ Internal method for application/pgp-keys
 ;;;
@@ -325,65 +222,6 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	     (point-min)(point-max))
     (kill-buffer (current-buffer))
     ))
-
-(defun mime-display-application/pgp-keys (entity situation)
-  (let ((packet
-	 (cdr (assq 6 (pgg-parse-armor (mime-entity-content entity)))))
-	field)
-    (insert 
-     "version: " 
-     (int-to-string (cdr (assq 'version packet)))
-     "\n"
-     "creation time: " 
-     (current-time-string (cdr (assq 'creation-time packet)))
-     "\n"
-     "public key algorithm: " 
-     (symbol-name (cdr (assq 'public-key-algorithm packet)))
-     "\n"
-     (if (setq field (cdr (assq 'key-expiry packet)))
-	 (concat "key exipiration time: " (current-time-string field) "\n")
-       ""))
-    (run-hooks 'mime-display-application/pgp-keys-hook)
-    ))
-
-
-;;; @ Internal method for fetching a public key
-;;;
-
-(defcustom mime-pgp-keyserver-url-template "/pks/lookup?op=get&search=%s"
-  "The URL to pass to the keyserver."
-  :group 'mime-pgp
-  :type 'string)
-
-(defcustom mime-pgp-keyserver-protocol "http"
-  "Protocol name of keyserver."
-  :group 'mime-pgp
-  :type 'string)
-
-(defcustom mime-pgp-keyserver-address "pgp.nic.ad.jp"
-  "Host name of keyserver."
-  :group 'mime-pgp
-  :type 'string)
-
-(defcustom mime-pgp-keyserver-port 11371
-  "Port on which the keyserver's HKP daemon lives."
-  :group 'mime-pgp
-  :type 'integer)
-
-(defun mime-pgp-fetch-key (string &optional url)
-  "Attempt to fetch a key for addition to PGP or GnuPG keyring.
-Interactively, prompt for string matching key to fetch.
-
-Return t if we think we were successful; nil otherwise.  Note that nil
-is not necessarily an error, since we may have merely fired off an Email
-request for the key."
-  (let ((url (or url 
-		 (concat mime-pgp-keyserver-protocol "://"
-			 mime-pgp-keyserver-address ":"
-			 mime-pgp-keyserver-port
-			 (format mime-pgp-keyserver-url-template
-				 string)))))
-    (pgg-fetch-key url)))
 
 
 ;;; @ end
