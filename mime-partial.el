@@ -39,7 +39,8 @@ partial messages using mime-view."
 	 (subject-buf (eval (cdr (assq 'summary-buffer-exp situation))))
 	 subject-id
 	 (root-dir (expand-file-name
-		    (concat "m-prts-" (user-login-name)) mime-temp-directory))
+		    (concat "m-prts-" (user-login-name))
+		    temporary-file-directory))
 	 (request-partial-message-method
 	  (cdr (assq 'request-partial-message-method situation)))
 	 full-file)

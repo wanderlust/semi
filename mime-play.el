@@ -324,9 +324,9 @@ specified, play as it.  Default MODE is \"play\"."
 	      (name (mime-entity-safe-filename entity)))
 	  (setq name
 		(if (and name (not (string= name "")))
-		    (expand-file-name name mime-temp-directory)
+		    (expand-file-name name temporary-file-directory)
 		  (make-temp-name
-		   (expand-file-name "EMI" mime-temp-directory))
+		   (expand-file-name "EMI" temporary-file-directory))
 		  ))
           (mime-write-entity-content entity name)
 	  (message "External method is starting...")
@@ -543,7 +543,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
   (goto-char (mime-entity-point-min entity))
   (let* ((root-dir
 	  (expand-file-name
-	   (concat "m-prts-" (user-login-name)) mime-temp-directory))
+	   (concat "m-prts-" (user-login-name)) temporary-file-directory))
 	 (id (cdr (assoc "id" cal)))
 	 (number (cdr (assoc "number" cal)))
 	 (total (cdr (assoc "total" cal)))

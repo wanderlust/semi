@@ -2413,7 +2413,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
   (let* ((mime-edit-draft-file-name
 	  (or (buffer-file-name)
 	      (make-temp-name
-	       (expand-file-name "mime-draft" mime-temp-directory))))
+	       (expand-file-name "mime-draft" temporary-file-directory))))
 	 (separator mail-header-separator)
 	 (id (concat "\""
 		     (replace-space-with-underline (current-time-string))
