@@ -400,12 +400,6 @@ Each elements are regexp of field-name. [mime-edit.el]")
 (defvar mime-editor/split-blind-field-regexp
   "\\(^[BDFbdf]cc:\\|^cc:[ \t]*$\\)")
 
-(defvar mime-editor/message-default-sender-alist
-  '((mail-mode . mail-send-and-exit)
-    (mh-letter-mode . mh-send-letter)
-    (news-reply-mode . gnus-inews-news)
-    ))
-
 (defvar mime-editor/split-message-sender-alist
   '((mail-mode
      . (lambda ()
@@ -2337,9 +2331,6 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	       (cdr
 		(assq major-mode
 		      mime-editor/split-message-sender-alist))
-	       (cdr
-		(assq major-mode
-		      mime-editor/message-default-sender-alist))
 	       ))
 	  (mime-editor/partial-number 1)
 	  data)
