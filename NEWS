@@ -44,6 +44,12 @@ It is as same as interface of body-presentation-method.
   Please use function `mime-preview-original-major-mode' instead of
 it.
 
+
+** mime-preview-over-to-{previous|next}-method-alist
+
+  `mime-preview-over-to-{previous|next}-method-alist' were renamed
+from `mime-view-over-to-{previous|next}-method-alist'.
+
 
 * Changes in SEMI 1.5
 
