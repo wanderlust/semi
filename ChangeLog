@@ -1,5 +1,11 @@
 1999-07-21  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* mime-play.el (mime-store-message/partial-piece): Don't refer
+	`mime-preview-buffer'.
+
+
+1999-07-21  MORIOKA Tomohiko  <tomo@m17n.org>
+
 	* REMI: Version 1.13.0 (Saigata) released.
 
 1999-07-21  MORIOKA Tomohiko  <tomo@m17n.org>
