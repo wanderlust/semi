@@ -1216,7 +1216,7 @@ If nothing is inserted, return nil."
 	  (goto-char (1- end))
 	  (eq (following-char) ?\n))
 	(setq end (1- end))))
-  (put-text-property start end mime-edit-invisible t))
+  (put-text-property start end 'mime-edit-invisible t))
 
 (defun mime-edit-invisible-p (pos)
   (static-when (featurep 'xemacs)
