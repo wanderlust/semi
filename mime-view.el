@@ -794,6 +794,13 @@ The compressed face will be piped to this command.")
     (run-hooks 'mime-view-define-keymap-hook)
     ))
 
+(defsubst mime-hide-echo-buffer ()
+  "Hide mime-echo buffer."
+  (let ((win (get-buffer-window mime-echo-buffer-name)))
+    (if win
+	(delete-window win)
+      )))
+
 (defun mime-view-mode (&optional mother ctl encoding ibuf obuf
 				 default-keymap-or-function)
   "Major mode for viewing MIME message.
