@@ -1,5 +1,15 @@
 2000-01-16  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* mime-play.el (mime-play-entity): Modify for
+	`mime-unify-situations'.
+
+	* mime-view.el (mime-unify-situations): Add new optional argument
+	`required-name'; use it instead of `method'.
+	(mime-display-multipart/alternative): Use `mime-unify-situations'.
+	(mime-display-entity): Likewise.
+
+2000-01-16  MORIOKA Tomohiko  <tomo@m17n.org>
+
 	* mime-view.el (mime-reduce-situation-examples): New function;
 	delete `mime-reduce-acting-situation-examples'.
 
