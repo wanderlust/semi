@@ -1112,8 +1112,7 @@ of the mother-buffer."
 It calls following-method selected from variable
 `mime-view-following-method-alist'."
   (interactive)
-  (let ((message-info (get-text-property (point-min) 'mime-view-entity))
-	entity)
+  (let (entity)
     (while (null (setq entity
 		       (get-text-property (point) 'mime-view-entity)))
       (backward-char)
@@ -1176,16 +1175,7 @@ It calls following-method selected from variable
 	  (erase-buffer)
 	  (insert-buffer-substring the-buf p-beg p-end)
 	  (goto-char (point-min))
-          ;; (if (mime-view-header-visible-p entity message-info)
-          ;;     (delete-region (goto-char (point-min))
-          ;;                    (if (re-search-forward "^$" nil t)
-          ;;                        (match-end 0)
-          ;;                      (point-min)))
-          ;;   )
-	  ;;(goto-char (point-min))
-	  ;;(insert "\n")
-	  (goto-char (point-min))
-	  (let ((entity-node-id (mime-entity-node-id entity)) ci str)
+          (let ((entity-node-id (mime-entity-node-id entity)) ci str)
 	    (while (progn
 		     (setq
 		      str
