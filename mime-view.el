@@ -58,7 +58,7 @@
      (mode . "play")
      )
     ((type . "text/x-rot13-47")
-     (method . mime-article/decode-caesar)
+     (method . mime-display-caesar)
      (mode . "play")
      )
     ((type . "audio/basic")
