@@ -1,3 +1,11 @@
+2000-05-12  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view (mime-display-entity): Show header when message
+	is attachment.
+	(mime-display-text): Pass 7bit when no CTE is specified.
+	Use mime-entity-body if available.
+	(mime-display-message): Reconstruct list every time.
+
 2000-05-02   Daiki Ueno  <ueno@unixuser.org>
 
 	* pgg-gpg.el (pgg-scheme-encrypt-region): Don't quote recipient;

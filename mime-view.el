@@ -631,8 +631,13 @@ Each elements are regexp of field-name.")
     (narrow-to-region (point-max) (point-max))
     (insert
      (decode-coding-string
-      (mime-decode-string (mime-entity-content entity)
-			  (cdr (assq 'encoding situation)))
+      (mime-decode-string
+       (if (fboundp 'mime-entity-body)
+	   ;; FLIM 1.14
+	   (mime-entity-body entity)
+	 ;; #### This is wrong, but...
+	 (mime-entity-content entity))
+       (or (cdr (assq 'encoding situation)) "7bit"))
       (or (cdr (assq 'coding situation))
 	  'binary)))))
 
@@ -1119,11 +1124,13 @@ With prefix, it prompts for coding-system."
 		(eq 'inline
 		    (mime-content-disposition-type
 		     (mime-entity-content-disposition entity))))
-      ;; This is attachment
-      (setq header-is-visible nil
-	    body-is-visible nil)
-      (put-alist 'header 'invisible situation)
-      (put-alist 'body 'invisible situation))
+      ;; This is attachment.
+      ;; But show header when this is root entity.
+      (if (mime-root-entity-p entity)
+	  (progn (setq body-is-visible nil)
+		 (put-alist 'body 'invisible situation))
+	(setq header-is-visible nil)
+	(put-alist 'header 'invisible situation)))
     (set-buffer preview-buffer)
     (setq nb (point))
     (save-restriction
@@ -1349,9 +1356,9 @@ keymap of MIME-View mode."
       (setq major-mode 'mime-view-mode)
       (setq mode-name "MIME-View")
       (mime-display-entity message nil
-			   `((entity-button . invisible)
-			     (header . visible)
-			     (major-mode . ,original-major-mode))
+			   (list (cons 'entity-button 'invisible)
+				 (cons 'header 'visible)
+				 (cons 'major-mode original-major-mode))
 			   preview-buffer)
       (mime-view-define-keymap default-keymap-or-function)
       (set (make-local-variable 'line-move-ignore-invisible) t)
