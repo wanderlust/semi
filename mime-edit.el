@@ -230,6 +230,7 @@ To insert a signature file automatically, call the function
     ("application"
      ("octet-stream" ("type" "" "tar" "shar"))
      ("postscript")
+     ("pdf")
      ("msword")
      ("vnd.ms-excel")
      ("vnd.ms-powerpoint")
@@ -322,7 +323,11 @@ To insert a signature file automatically, call the function
      "inline"		(("filename" . file)))
     ("\\.ps$"
      "application" "postscript"	nil
-     "quoted-printable"
+     "base64"
+     "attachment"	(("filename" . file)))
+    ("\\.pdf$"
+     "application" "pdf"	nil
+     "base64"
      "attachment"	(("filename" . file)))
 
     ;;  Pure binary
