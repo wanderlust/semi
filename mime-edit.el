@@ -1903,17 +1903,15 @@ Content-Transfer-Encoding: 7bit
 	      (insert encoding)))
 	))))
 
-(defun mime-edit-translate-single-part-tag (&optional prefix)
+(defun mime-edit-translate-single-part-tag (boundary &optional prefix)
   "Translate single-part-tag to MIME header."
   (if (re-search-forward mime-edit-single-part-tag-regexp nil t)
       (let* ((beg (match-beginning 0))
 	     (end (match-end 0))
-	     (tag (buffer-substring beg end))
-	     )
+	     (tag (buffer-substring beg end)))
 	(delete-region beg end)
 	(let ((contype (mime-edit-get-contype tag))
-	      (encoding (mime-edit-get-encoding tag))
-	      )
+	      (encoding (mime-edit-get-encoding tag)))
 	  (insert (concat prefix "--" boundary "\n"))
 	  (save-restriction
 	    (narrow-to-region (point)(point))
@@ -1958,9 +1956,8 @@ Content-Transfer-Encoding: 7bit
 	 (t
 	  ;; It's a multipart message.
 	  (goto-char (point-min))
-	  (and (mime-edit-translate-single-part-tag)
-	       (while (mime-edit-translate-single-part-tag "\n"))
-	       )
+	  (and (mime-edit-translate-single-part-tag boundary)
+	       (while (mime-edit-translate-single-part-tag boundary "\n")))
 	  ;; Define Content-Type as "multipart/mixed".
 	  (setq contype
 		(concat "multipart/mixed;\n boundary=\"" boundary "\""))
