@@ -441,14 +441,13 @@ If encoding is nil, it is determined from its contents."
     (iso-2022-jp	7 "base64")
     (iso-2022-kr	7 "base64")
     (euc-kr		8 "base64")
-    (cn-gb2312		8 "quoted-printable")
+    (cn-gb2312		8 "base64")
+    (gb2312		8 "base64")
     (cn-big5		8 "base64")
-    (gb2312		8 "quoted-printable")
     (big5		8 "base64")
+    (shift_jis		8 "base64")
     (iso-2022-jp-2	7 "base64")
     (iso-2022-int-1	7 "base64")
-    (shift_jis		8 "base64")
-    (x-ctext		8 "quoted-printable")
     ))
 
 (defvar mime-transfer-level 7
@@ -2045,12 +2044,12 @@ Content-Transfer-Encoding: 7bit
 	;; Define encoding and encode text if necessary.
 	(or encoding	;Encoding is not specified.
 	    (let* ((encoding
-		    (cdr
-		     (assq charset
-			   mime-edit-charset-default-encoding-alist)
-		     ))
-		   (beg (mime-edit-content-beginning))
-		   )
+		    (or (cdr (assq charset
+				   mime-edit-charset-default-encoding-alist))
+			(if (< mime-transfer-level 8)
+			    "quoted-printable"
+			  "8bit")))
+		   (beg (mime-edit-content-beginning)))
 	      (encode-mime-charset-region beg (mime-edit-content-end)
 					  charset)
 	      ;; Protect "From " in beginning of line
