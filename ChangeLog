@@ -1,6 +1,7 @@
 2003-01-10  NAKAJI Hiroyuki  <nakaji@tutrp.tut.ac.jp>
 
 	* README.ja: new file, Japanese translation of README.en.
+	Spaces between ascii and Japanese characters are added.
 
 2002-11-15  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 

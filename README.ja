@@ -1,11 +1,11 @@
 [README for SEMI kernel package (日本語版)]
 
-SEMIとは?
+SEMI とは?
 =========
 
- SEMIはGNU Emacsに対してMIME機能を提供するライブラリです。
- MIMEは、メッセージ内にプレーンテキスト(ASCII)以外の内容やヘッダを
- 含むものに関して提案されたインターネット規格です。
+ SEMI は GNU Emacs に対して MIME 機能を提供するライブラリです。MIME は、
+ メッセージ内にプレーンテキスト (ASCII) 以外の内容やヘッダを含むものに
+ 関して提案されたインターネット規格です。
 
         RFC 2045 : Internet Message Bodies
         RFC 2046 : Media Types
@@ -13,12 +13,12 @@ SEMIとは?
         RFC 2048 : MIME Registration Procedures
         RFC 2049 : MIME Conformance
 
- SEMIは、以下の機能を持っています:
+ SEMI は、以下の機能を持っています:
 
         - MIME message viewer   (mime-view-mode) (RFC 2045 .. 2049)
         - MIME message composer (mime-edit-mode) (RFC 2045 .. 2049)
 
- MIME message viewerとMIME message compiserはさらに次の特徴を持って
+ MIME message viewer と MIME message compiser はさらに次の特徴を持って
  います:
 
         - filename handling by Content-Disposition field (RFC 1806)
@@ -28,33 +28,33 @@ SEMIとは?
         - text/enriched (RFC 1896)
         - External method configuration by mailcap (RFC 1524)
 
- このパッケージにはMUAsに関するMIME拡張は含まれていないことに注意して
- ください。これらは、別のパッケージとして配布されています。
+ このパッケージには MUAs に関する MIME 拡張は含まれていないことに注意
+ してください。これらは、別のパッケージとして配布されています。
 
 必要な環境
 ==========
 
- SEMIは、XEmacs 21.1以降、およびGNU Emacs 20.4以降に対応しています。
+ SEMI は、XEmacs 21.1 以降、および GNU Emacs 20.4 以降に対応しています。
 
- SEMIは、GNU Emacs 19.28またはXEmacs 19.14よりも古いものについては、
- 一切対応していません。加えて、SEMIはMule 1, Mule 2およびGNU Emacs
- 20.1/20.2などで実装されているbyte-indexingでは動作しません。
+ SEMI は、GNU Emacs 19.28 または XEmacs 19.14 よりも古いものについては、
+ 一切対応していません。加えて、SEMI は Mule 1, Mule 2 および GNU Emacs
+ 20.1/20.2 などで実装されている byte-indexing では動作しません。
 
- SEMIは、Emacs 19.29から19.34, XEmacs 19.15またはXEmacs 20.2について
- も対応はしていませんが、動くかもしれません。
+ SEMI は、Emacs 19.29 から 19.34, XEmacs 19.15 または XEmacs 20.2 につ
+ いても対応はしていませんが、動くかもしれません。
 
- SEMIは、APEL ( 9.22以降 )とFLIM ( 1.14.2以降 )のpackageを必要としま
- す。 SEMIをインストールする前に、これらをインストールしてください。
- APEL packageは、以下で入手可能です。:
+ SEMI は、APEL (9.22 以降) と FLIM (1.14.2 以降) を必要とします。 SEMI 
+ をインストールする前に、これらをインストールしてください。APEL は、以
+ 下で入手可能です。:
 
         ftp://ftp.m17n.org/pub/mule/apel/
 
- そして、FLIM packageは、以下で入手可能です。:
+ そして、FLIM は以下で入手可能です。:
 
         http://www.kanji.zinbun.kyoto-u.ac.jp/~tomo/comp/emacsen/lisp/
                                                         flim/flim-1.14/
 
- PGP/MIME と application/pgp は、mailcrypt かtiny-pgpを必要とします。
+ PGP/MIME と application/pgp は、mailcrypt か tiny-pgp を必要とします。
 
 インストール
 ============
@@ -66,11 +66,11 @@ SEMIとは?
 
         % make
 
- あなたはemacsコマンド名を指定することが可能です。例えば、
+ あなたは emacs コマンド名を指定することが可能です。例えば、
 
         % make EMACS=xemacs
 
- もし、`EMACS=...' が省略されると、EMACS=emacsが用いられます。
+ もし、`EMACS=...' が省略されると、EMACS=emacs が用いられます。
 
 (b) make install
 
@@ -79,102 +79,93 @@ SEMIとは?
 
         % make install
 
- あなたはemacsコマンド名を指定することが可能です。例えば、
+ あなたは emacs コマンド名を指定することが可能です。例えば、
 
         % make install EMACS=xemacs
 
- もし、`EMACS=...' が省略されると、EMACS=emacsが用いられます。
+ もし、`EMACS=...' が省略されると、EMACS=emacs が用いられます。
 
- あなたは、Emacs Lispプログラムとシェルスクリプトに関するディレクトリ階
+ あなたは、Emacs Lisp プログラムとシェルスクリプトに関するディレクトリ階
  層の接頭語を指定することができます。たとえば、:
 
         % make install PREFIX=~/
 
- もし、`PREFIX=...' が省略されると、指定したemacsコマンドのディレクトリ
- 階層の接頭語が使用されます。(たぶん、/usr/local)
+ もし、`PREFIX=...' が省略されると、指定した emacs コマンドのディレク
+ トリ階層の接頭語が使用されます。(たぶん、/usr/local)
 
- 例えば、もし、PREFIX=/usr/local および、EMACS 19.34が指定されると、以
- 下のようなディレクトリ階層が作成されるでしょう。:
+ 例えば、もし、PREFIX=/usr/local および、EMACS 19.34 が指定されると、
+ 以下のようなディレクトリ階層が作成されるでしょう。:
 
         /usr/local/share/emacs/19.34/site-lisp/  --- emu
         /usr/local/share/emacs/site-lisp/apel/   --- APEL
         /usr/local/share/emacs/site-lisp/flim/   --- FLIM
         /usr/local/share/emacs/site-lisp/semi/   --- SEMI
 
- あなたは、site-lispのディレクトリを指定することができます。例えば、
+ あなたは、site-lisp のディレクトリを指定することができます。例えば、
 
         % make install LISPDIR=~/share/emacs/lisp
 
- もし、`LISPDIR=...' が省略されると、指定したemacsコマンドのsite-lisp
- ディレクトリが使用されます。(たぶん、/usr/local/share/emacs/site-lisp
- または、 /usr/local/lib/xemacs/site-lisp)
+ もし、`LISPDIR=...' が省略されると、指定した emacs コマンドの 
+ site-lisp ディレクトリが使用されます(たぶん、
+ /usr/local/share/emacs/site-lisp または 
+ /usr/local/lib/xemacs/site-lisp)。
 
- もし、emuモジュール( APEL packageに含まれている )が一般的ではないディ
- レクトリにインストールされている場合には、あなたは、これらがどこで見付
- けられるか指定する必要があります。:
+ もし、emu モジュール (APEL に含まれている)が一般的ではないディレクト
+ リにインストールされている場合には、あなたは、これらがどこで見付けら
+ れるか指定する必要があります。:
 
         % make install VERSION_SPECIFIC_LISPDIR=~/elisp
 
-(c) XEmacs packageとしてのインストール
+(c) XEmacs package としてのインストール
 
- もしあなたが、XEmacs packageのディレクトリにインストールすることを望む
- ならば、以下を実行してください。:
+ もしあなたが、XEmacs package のディレクトリにインストールすることを望
+ むならば、以下を実行してください。:
 
         % make install-package
 
- あなたは、emacs commandの名前を指定することができます。たとえば、:
+ あなたは、emacs command の名前を指定することができます。たとえば、:
 
         % make install-package XEMACS=xemacs-21
 
- もし、`XEMACS=...' が省略されると、XEMACS=xemacsが用いられます。
+ もし、`XEMACS=...' が省略されると、XEMACS=xemacs が用いられます。
 
- あなたは、packageのディレクトリを指定することができます。たとえば、:
+ あなたは、package のディレクトリを指定することができます。たとえば、:
 
         % make install PACKAGEDIR=~/.xemacs
 
- もし、`PACKAGEDIR=...' が省略されると、最初に存在するpackageのディレク
- トリが使用されます。
+ もし、`PACKAGEDIR=...' が省略されると、最初に存在する package のディ
+ レクトリが使用されます。
 
- XEmacs packageシステムは、XEmacs 21.0以降を必要とすることに注意してく
+ XEmacs package システムは、XEmacs 21.0 以降を必要とすることに注意してく
  ださい。
 
 (a,b,c)
 
  あなたは、${archive}/SEMI-CFG というファイルを書き換えることにより、
- 他のオプションの設定を指定することができます。
- ${archive}/README.en と${archive}/SEMI-CFG のコメントを読んでください。
+ 他のオプションの設定を指定することができます。${archive}/README.en と 
+ ${archive}/SEMI-CFG のコメントを読んでください。
 
 初期化
 ======
 
 (a) load-path
 
- もし、あなたがEmacs かMule を使用しているならば、load-pathにemu, apel,
- flim, およびsemi のディレクトリを加えてください。もし、デフォルトの設定
- でインストールしたならば、例えば、subdirs.elに以下のように書くことがで
- きます。:
-
-  --------------------------------------------------------------------
-  (normal-top-level-add-to-load-path
-   '("apel" "flim" "semi"))
-  --------------------------------------------------------------------
-
- もし、あなたがXEmacs を使用しているのであれば、load-pathに関して必要な
- 設定はありません。
+ あなたが XEmacs 21.1 以降あるいは GNU Emacs 20.4 以降を使用しているな
+ ら、load-path に関して必要な設定はありません。
 
 (b) mime-setup
 
- あなたの~/.emacsに以下の記述を追加してください。:
+ あなたの ~/.emacs に以下の記述を追加してください。:
 
         (load "mime-setup")
 
 付属資料
 ========
 
- SEMIを使い始めるために、${archive}/README.en を読んでください。
+ SEMI を使い始めるために、${archive}/README.en を読んでください。
 
  RFC 822, 1524, 1806, 1847, 1896, 2015, 2045, 2046, 2047, 2048 および
- 2049 はanonymous ftpを経由して入手可能です。:
+ 2049 は anonymous ftp を経由して入手可能です。:
 
         ftp://ftp.merit.edu/internet/documents/rfc/
 
@@ -182,38 +173,38 @@ SEMIとは?
 ================
 
  もし、あなたが、バグレポートおよび/または改良のための提案を書く場合には、
- それらをEMACS-MIMEメーリングリストに送ってください。
+ それらを EMACS-MIME メーリングリストに送ってください。
 
         emacs-mime-en@m17n.org  (英語)
         emacs-mime-ja@m17n.org  (日本語)
 
- EMACS-MIME MLを経由して、あなたは SEMIのバグを報告することや、SEMIの最新
- 版の入手、SEMIの将来の強化について議論することなどができます。
- EMACS-MIME MLに加入するためには、空のメールを以下に送信してください。
+ EMACS-MIME ML を経由して、あなたは SEMI のバグを報告することや、SEMI 
+ の最新版の入手、SEMI の将来の強化について議論することなどができます。
+ EMACS-MIME ML に加入するためには、空のメールを以下に送信してください。
 
         emacs-mime-en-ctl@m17n.org      (英語)
         emacs-mime-ja-ctl@m17n.org      (日本語)
 
- ここで、morioka@jaist.ac.jpなどの作者(達)に直接メールを送信してはならない
- ことに注意してください。なぜなら、あなたの問題は、他の環境に生じるかもしれ
- ないからです。(そうでなければそれはSEMIのバクでは無く、あなたの問題である
- かもしれません。) 我々は、 EMACS-MIMEメーリングリスト内で議論します。
- とりあえず、作者への直接のメールは無視されるかもしれません。 EMACS-MIMEメ
- ーリングリストにメールを送信してください。
+ ここで、morioka@jaist.ac.jp などの作者(達)に直接メールを送信してはな
+ らないことに注意してください。なぜなら、あなたの問題は、他の環境に生
+ じるかもしれないからです(そうでなければそれはSEMIのバクでは無く、あな
+ たの問題であるかもしれません)。 我々は、EMACS-MIME メーリングリスト内
+ で議論します。とりあえず、作者への直接のメールは無視されるかもしれま
+ せん。EMACS-MIME メーリングリストにメールを送信してください。
 
-CVSに基づいた開発
-=================
+CVS に基づいた開発
+==================
 
- もしあなたがCVSに基づいた開発に参加したいと思うならば、以下のアドレスに、
- あなたのアカウント名とsshのpublic keyを添えたメールを送信してください。
+ もしあなたが CVS に基づいた開発に参加したいと思うならば、以下のアドレスに、
+ あなたのアカウント名と ssh の public key を添えたメールを送信してください。
 
         cvs@cvs.m17n.org
 
- cvsrootは、:ext:cvs@cvs.m17n.org:/cvs/root です。
+ CVSROOT は、:ext:cvs@cvs.m17n.org:/cvs/root です。
 
- もし、あなたがssh を使用できないのであれば、 UNIX の/etc/passwd 型に暗号
- 化されたパスワードを送信してください。あなたはcvsrootに
- :pserver:<accountname>@cvs.m17n.org:/cvs/root.
+ もし、あなたが ssh を使用できないのであれば、UNIX の /etc/passwd 型に暗号
+ 化されたパスワードを送信してください。あなたは CVSROOT を
+ :pserver:<accountname>@cvs.m17n.org:/cvs/root
  として参加することができます。
 
  我々は、あなたが開かれた開発に参加してくださることを期待しています。
@@ -224,19 +215,19 @@ CVSに基づいた開発
 元の作者
 
     MORIOKA Tomohiko <morioka@jaist.ac.jp>
-        (SEMIのいろいろな部分とmime-viewの作者。)
+        (SEMI のいろいろな部分と mime-view の作者)
     UMEDA Masanobu <umerin@mse.kyutech.ac.jp>
-        (emacs-mime-toolsのmime.elの作者。mime.elはSEMIのmeme-edit.el
-         の原型です。)
+        (emacs-mime-tools の mime.el の作者。mime.el は SEMI の
+        meme-edit.el の原型です)
 
 他の作者
 
     Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
-        (たくさんのコードとsignature.elの主要な作者)
+        (たくさんのコードと signature.el の主要な作者)
     MASUTANI Yasuhiro <masutani@me.es.osaka-u.ac.jp>
-        (mime-play.elのanonymous ftpコード)
+        (mime-play.el の anonymous ftp コード)
     OKABE Yasuo <okabe@kudpc.kyoto-u.ac.jp>
-        (mime-partial.el と signature.elの主要な作者)
+        (mime-partial.el と signature.el の主要な作者)
 
     Steinar Bang <sb@metis.no>
     Steven L. Baur <steve@miranova.com>
@@ -255,5 +246,5 @@ CVSに基づいた開発
     Artur Pioro <artur@flugor.if.uj.edu.pl>
     Artur Pioro <artur@flugor.if.uj.edu.pl>
     Dan Rich <drich@morpheus.corp.sgi.com>
-        (XEmacsと共にmime-image.elを発展させるために寄与)
+        (XEmacs と共に mime-image.el を発展させるために寄与)
     Katsumi Yamaoka <yamaoka@jpl.org>
