@@ -1,5 +1,9 @@
 1998-03-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* SEMI-CFG: Must set up load-path before version check codes.
+
+1998-03-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el: Don't require mime-text.el; add autoload setting
 	for mime-text.el.
 	(mime-text-decoder-alist): moved from mime-text.el.
