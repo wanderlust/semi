@@ -1,4 +1,41 @@
+1998-06-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-enclose-region-internal): Abolish unused
+	local variable.
+
 1998-06-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* MIME-View-API-ja.ol (entity): Add description of
+ 	`mime-entity-number'.
+
+	* mime-play.el (mime-method-to-display-caesar): Use
+ 	`mime-entity-number'.
+
+	* mime-parse.el (mime-entity-number): New function.
+
+1998-06-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* MIME-View-API-ja.ol (entity-button): Modify description of
+	`mime-view-insert-entity-button'.
+
+	* mime-view.el (mime-view-insert-entity-button): Change interface.
+	(mime-view-display-entity): Modify for
+	`mime-view-insert-entity-button'.
+
+1998-06-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* MIME-View-API-ja.ol (entity-button): Modify description of
+	`mime-view-entity-button-visible-p'.
+
+	* mime-view.el (mime-view-entity-button-visible-p): Change
+	interface.
+	(mime-view-display-entity): Modify for
+	`mime-view-entity-button-visible-p'.
+
+1998-06-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* MIME-View-API-ja.ol: Add description of `mime-entity-parent' and
+	abolish description `mime-raw-entity-parent'.
 
 	* mime-view.el (mime-entity-parent): New function; abolish
 	`mime-raw-entity-parent'.

@@ -189,6 +189,17 @@ If optional argument MESSAGE-INFO is not specified,
 	    (setq children (cdr children)))
 	  message-info))))
 
+(defsubst mime-entity-parent (entity &optional message-info)
+  "Return mother entity of ENTITY.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' in buffer of ENTITY is used."
+  (mime-raw-find-entity-from-node-id
+   (cdr (mime-entity-node-id entity))
+   (or message-info
+       (save-excursion
+	 (set-buffer (mime-entity-buffer entity))
+	 mime-raw-message-info))))
+
 (defsubst mime-raw-point-to-entity-node-id (point &optional message-info)
   "Return entity-node-id from POINT in mime-raw-buffer.
 If optional argument MESSAGE-INFO is not specified,
@@ -199,14 +210,7 @@ If optional argument MESSAGE-INFO is not specified,
   "Return entity-number from POINT in mime-raw-buffer.
 If optional argument MESSAGE-INFO is not specified,
 `mime-raw-message-info' is used."
-  (reverse (mime-raw-point-to-entity-node-id point message-info)))
-
-(defsubst mime-raw-entity-parent (entity &optional message-info)
-  "Return mother entity of ENTITY.
-If optional argument MESSAGE-INFO is not specified,
-`mime-raw-message-info' is used."
-  (mime-raw-find-entity-from-node-id (cdr (mime-entity-node-id entity))
-				     message-info))
+  (mime-entity-number (mime-raw-find-entity-from-point point message-info)))
 
 (defun mime-raw-flatten-message-info (&optional message-info)
   "Return list of entity in mime-raw-buffer.
@@ -231,7 +235,7 @@ If optional argument MESSAGE-INFO is not specified,
 ;;; @@@ predicate function
 ;;;
 
-(defun mime-view-entity-button-visible-p (entity message-info)
+(defun mime-view-entity-button-visible-p (entity)
   "Return non-nil if header of ENTITY is visible.
 Please redefine this function if you want to change default setting."
   (let ((media-type (mime-entity-media-type entity))
@@ -239,8 +243,7 @@ Please redefine this function if you want to change default setting."
     (or (not (eq media-type 'application))
 	(and (not (eq media-subtype 'x-selection))
 	     (or (not (eq media-subtype 'octet-stream))
-		 (let ((mother-entity
-			(mime-raw-entity-parent entity message-info)))
+		 (let ((mother-entity (mime-entity-parent entity)))
 		   (or (not (eq (mime-entity-media-type mother-entity)
 				'multipart))
 		       (not (eq (mime-entity-media-subtype mother-entity)
@@ -251,7 +254,7 @@ Please redefine this function if you want to change default setting."
 ;;; @@@ entity button generator
 ;;;
 
-(defun mime-view-insert-entity-button (entity message-info subj)
+(defun mime-view-insert-entity-button (entity subject)
   "Insert entity-button of ENTITY."
   (let ((entity-node-id (mime-entity-node-id entity))
 	(params (mime-entity-parameters entity)))
@@ -271,12 +274,12 @@ Please redefine this function if you want to change default setting."
 		(setq access-type (cdr access-type))
 		(if server
 		    (format "%s %s ([%s] %s)"
-			    num subj access-type (cdr server))
+			    num subject access-type (cdr server))
 		(let ((site (cdr (assoc "site" params)))
 		      (dir (cdr (assoc "directory" params)))
 		      )
 		  (format "%s %s ([%s] %s:%s)"
-			  num subj access-type site dir)
+			  num subject access-type site dir)
 		  )))
 	    )
 	   (t
@@ -285,7 +288,7 @@ Please redefine this function if you want to change default setting."
 		  (charset (cdr (assoc "charset" params)))
 		  (encoding (mime-entity-encoding entity)))
 	      (concat
-	       num " " subj
+	       num " " subject
 	       (let ((rest
 		      (format " <%s/%s%s%s>"
 			      media-type media-subtype
@@ -868,8 +871,8 @@ The compressed face will be piped to this command.")
       (setq nb (point))
       (narrow-to-region nb nb)
       (or button-is-invisible
-	  (if (mime-view-entity-button-visible-p entity message-info)
-	      (mime-view-insert-entity-button entity message-info subj)
+	  (if (mime-view-entity-button-visible-p entity)
+	      (mime-view-insert-entity-button entity subj)
 	    ))
       (if header-is-visible
 	  (save-restriction
@@ -897,7 +900,7 @@ The compressed face will be piped to this command.")
 	    (t
 	     (when button-is-invisible
 	       (goto-char (point-max))
-	       (mime-view-insert-entity-button entity message-info subj)
+	       (mime-view-insert-entity-button entity subj)
 	       )
 	     (or header-is-visible
 		 (progn

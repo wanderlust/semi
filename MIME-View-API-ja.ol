@@ -437,6 +437,11 @@ entity-number $B$H8F$S$^$9!#(Bentity-number $B$O(B S $B<0$H$7$F$O(B (1 2 3
 	entity $B$N@8@.;R!#(B
 
 
+[$B4X?t(B] mime-entity-number (ENTITY)
+
+	ENTITY $B$N(B entity-number $B$rJV$9!#(B
+
+
 [$B4X?t(B] mime-entity-parent (ENTITY &optional MESSAGE-INFO)
 
 	ENTITY $B$N?F$N(B entity $B$rJV$9!#(B
@@ -505,12 +510,12 @@ media-type/subtype $BEy$N(B entity $B$N9=B$!&7A<0$K4X$9$k>pJs$KBP$7$F!"I=<((
 
 ** entity-button
 
-[$B4X?t(B] mime-view-entity-button-visible-p (ENTITY MESSAGE-INFO)
+[$B4X?t(B] mime-view-entity-button-visible-p (ENTITY)
 
 	$BHs(B nil $B$N>l9g!"(Bentity-button $B$rI=<($9$k$3$H$rI=$9!#(B
 
 
-[$B4X?t(B] mime-view-insert-entity-button (ENTITY MESSAGE-INFO SUBJECT)
+[$B4X?t(B] mime-view-insert-entity-button (ENTITY SUBJECT)
 
 	ENTITY $B$N(B entity-button $B$rA^F~$9$k!#(B
 

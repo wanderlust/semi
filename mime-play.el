@@ -628,7 +628,7 @@ saved as binary.  Otherwise the region is saved by `write-region'."
   "Internal method for mime-view to display ROT13-47-48 message."
   (let* ((entity (mime-raw-find-entity-from-point start))
 	 (new-name (format "%s-%s" (buffer-name)
-			   (reverse (mime-entity-node-id entity))))
+			   (mime-entity-number entity)))
 	 (mother mime-preview-buffer))
     (let ((pwin (or (get-buffer-window mother)
 		    (get-largest-window)))
