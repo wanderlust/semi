@@ -1,5 +1,13 @@
 2000-02-22  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* mime-play.el (mime-play-find-every-situations): Renamed from
+	`mime-view-find-every-situations'.
+
+	* mime-view.el (mime-view-find-every-situations): Moved to
+	mime-play.el.
+
+2000-02-22  MORIOKA Tomohiko  <tomo@m17n.org>
+
 	* mime-play.el (mime-play-entity): Specify
 	`mime-view-find-every-situations' as an optional argument
 	`every-situations'.
