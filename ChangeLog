@@ -87,7 +87,7 @@
 	`mime-product-name', `mime-product-version' and
 	`mime-product-code-name'.
 
-	* semi-def.el (mime-user-interface-product): New variable; abolish
+	* semi-def.el (mime-user-interface-product): New constant; abolish
 	`mime-user-interface-version'.
 
 1998-10-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
