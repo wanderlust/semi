@@ -1,5 +1,12 @@
 1998-11-10  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
 
+	* mime-edit.el (mime-content-transfer-encoding-priority-list): New
+	variable.
+	(mime-edit-translate-single-part-tag): Change return value to
+	`nil' or a cons which include content-type and encoding.
+	(mime-edit-translate-region): Generate `encodeing' from
+	return value of `mime-edit-translate-single-part-tag'.
+
 	* Sync up with `semi-vcard' branch.
 
 * 1998-11-07  Tanaka Akira  <akr@jaist.ac.jp>
