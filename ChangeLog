@@ -1,5 +1,7 @@
 1998-03-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* SEMI: Version 1.1.1 (Oshino) was released.
+
 	* mime-play.el (mime-method-to-save): Must treat nil encoding as
 	7bit.
 
