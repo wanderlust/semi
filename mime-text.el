@@ -60,7 +60,7 @@
 	 )))
 
 
-;;; @ content filters for tm-view
+;;; @ content filters for mime-text
 ;;;
 
 (defun mime-preview/filter-for-text/plain (ctype params encoding)
