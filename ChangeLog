@@ -1,5 +1,9 @@
 1998-03-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* SEMI-CFG: Insert version check code.
+
+1998-03-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-image.el: Set up `mime-view-body-visible-condition' instead
  	of `mime-view-visible-media-type-list'.
 
