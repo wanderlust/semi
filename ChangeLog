@@ -1,5 +1,13 @@
 1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-parse.el (mime-parse-Content-Transfer-Encoding): New
+	function.
+	(mime-read-Content-Transfer-Encoding): Use function
+	'mime-parse-Content-Transfer-Encoding.
+	(mime-parse-message): Use 'mime-parse-* instead of 'mime-read-*.
+
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-parse.el: Move 'regexp-* and 'regexp-or to mime-def.el of
 	FLIM (Chao); move 'std11-quoted-pair-regexp, 'std11-qtext-regexp
 	and 'std11-quoted-string-regexp to mime-def.el of FLIM (Chao).	
