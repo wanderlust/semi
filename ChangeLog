@@ -1,3 +1,9 @@
+1997-11-23  MORIOKA Tomohiko  <morioka@mousai.jaist.ac.jp>
+
+	* mime-view.el (mime-maybe-hide-echo-buffer): New inline function;
+ 	abolish `mime-hide-echo-buffer'.
+	(mime-view-mode): Use `mime-maybe-hide-echo-buffer'.
+
 1997-11-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-pgp.el: Rename `mime-article/add-pgp-keys' ->
