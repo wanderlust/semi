@@ -757,8 +757,11 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
      . mime-preview-quitting-method-for-mime-show-message-mode))
   "Alist of major-mode vs. quitting-method of mime-view.")
 
-(defvar mime-preview-over-to-previous-method-alist nil)
-(defvar mime-preview-over-to-next-method-alist nil)
+(defvar mime-preview-over-to-previous-method-alist nil
+  "Alist of major-mode vs. over-to-previous-method of mime-view.")
+
+(defvar mime-preview-over-to-next-method-alist nil
+  "Alist of major-mode vs. over-to-next-method of mime-view.")
 
 
 ;;; @ following method
