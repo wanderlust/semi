@@ -1,5 +1,7 @@
 2000-12-25  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
+	* SEMI: Version 1.14.2 (Daish-Dòji)-A released.
+
 	* README.en (Required environment): Update to FLIM 1.14.2.
 
 	* mail-mime-setup.el (mail-setup-hook): Don't add
