@@ -917,24 +917,28 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
     (save-current-buffer
       (set-buffer buffer)
       (buffer-disable-undo)
+      (kill-all-local-variables)
       (erase-buffer)
       (mime-insert-entity-content entity)
-      (if mode
-	  (funcall mode)
-	(if (setq filename (mime-entity-filename entity))
-	    (set-visited-file-name filename))
-	(set-auto-mode))
-      (let ((font-lock-verbose nil))
-	;; I find font-lock a bit too verbose.
-	(font-lock-fontify-buffer))
-      ;; By default, XEmacs font-lock uses non-duplicable text
-      ;; properties.  This code forces all the text properties
-      ;; to be copied along with the text.
-      (static-when (fboundp 'extent-list)
-	(map-extents (lambda (ext ignored)
-		       (set-extent-property ext 'duplicable t)
-		       nil)
-		     nil nil nil nil nil 'text-prop)))
+      (unwind-protect
+	  (progn
+	    (if mode
+		(funcall mode)
+	      (if (setq filename (mime-entity-filename entity))
+		  (set-visited-file-name filename))
+	      (set-auto-mode))
+	    (let ((font-lock-verbose nil))
+	      ;; I find font-lock a bit too verbose.
+	      (font-lock-fontify-buffer))
+	    ;; By default, XEmacs font-lock uses non-duplicable text
+	    ;; properties.  This code forces all the text properties
+	    ;; to be copied along with the text.
+	    (static-when (fboundp 'extent-list)
+	      (map-extents (lambda (ext ignored)
+			     (set-extent-property ext 'duplicable t)
+			     nil)
+			   nil nil nil nil nil 'text-prop)))
+	(set-visited-file-name nil)))
     (insert-buffer-substring buffer)))
 
 (defun mime-display-application/emacs-lisp (entity situation)
