@@ -1,3 +1,26 @@
+1998-05-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* Makefile (PACKAGE): New variable.
+	(tar): Use $(PACKAGE).
+
+1998-05-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el: Change data format of mime-content-type.
+
+1998-05-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-decode-buffer): Use
+ 	'mime-content-type-primary-type, 'mime-content-type-subtype and
+ 	'mime-content-type-parameters.
+
+1998-05-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el (mime-content-type-primary-type): New function.
+  	(mime-content-type-subtype): New function.
+  	(mime-content-type-parameters): New function.
+  	(mime-parse-message): Use 'mime-content-type-primary-type,
+ 	'mime-content-type-subtype and 'mime-content-type-parameters.
+
 1998-05-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-parse.el: Abolish function 'symbol-concat because it is not
@@ -37,7 +60,7 @@
 
 1998-05-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.4.1 (-DÒmi) released.-A
+	* SEMI: Version 1.4.1 (-DÒmi)-A released.
 
 	* README.en (Required environment): Modify for FLIM 1.2.0.
 
@@ -197,7 +220,7 @@
 
 1998-04-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.3.2 (N-Dò) was released.-A
+	* SEMI: Version 1.3.2 (N-Dò)-A was released.
 
 	* mime-edit.el (mime-edit-mode-entity-prefix): New variable.
 	(mime-edit-mode-entity-map): New variable.
@@ -852,7 +875,7 @@
 
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae) was released.-A
+	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae)-A was released.
 
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -964,7 +987,7 @@
 
 1998-02-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae) was released.-A
+	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae)-A was released.
 
 	* SEMI-ELS: Remove mime-tar.el.
 
@@ -1101,7 +1124,7 @@
 
 1997-11-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.116 (D-Dòhòji) was released.-A
+	* SEMI: Version 0.116 (D-Dòhòji)-A was released.
 
 1997-11-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
