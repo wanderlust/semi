@@ -2,6 +2,8 @@
 
 	* SEMI: Version 1.2.2 (Naoetsu) was released.
 
+	* README.en: Modify for FLIM.
+
 1998-04-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI-CFG: Modify messages for FLIM and APEL 8.2.
@@ -770,10 +772,10 @@
 	* mime-view.el (mime-maybe-hide-echo-buffer): bury MIME echo
  	buffer.
 
-1997-11-23  MORIOKA Tomohiko  <morioka@mousai.jaist.ac.jp>
+1997-11-23  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el (mime-maybe-hide-echo-buffer): New inline function;
- 	abolish `mime-hide-echo-buffer'.
+	abolish `mime-hide-echo-buffer'.
 	(mime-view-mode): Use `mime-maybe-hide-echo-buffer'.
 
 1997-11-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
