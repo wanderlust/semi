@@ -1,6 +1,17 @@
 SEMI NEWS --- history of major-changes.
 Copyright (C) 1998 Free Software Foundation, Inc.
 
+* Changes in SEMI 1.11
+
+** New function `mime-edit-decode-message-in-buffer'
+
+Add new function `mime-edit-decode-message-in-buffer'.  Function
+`mime-edit-decode-buffer' was abolished.
+
+
+** Requires FLIM 1.12 API
+
+
 * Changes in SEMI 1.10
 
 ** Abolish variable `mime-temp-directory'
@@ -18,7 +29,7 @@ instead of `mime-text-insert-decoded-body'.
 
   Now `mime-view-caesar' does not run `mime-text-decode-hook'.
 
-
+
 * Changes in SEMI 1.9
 
 ** User option `mime-encoding-list'
@@ -48,7 +59,7 @@ data format:
 Please use them to get elements of the constant
 `mime-user-interface-product'.
 
-
+
 * Changes in SEMI 1.8
 
 ** Don't use "file" command to detect content of entity
