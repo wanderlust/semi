@@ -138,7 +138,7 @@
 	 (orig-entity (nth onum (mime-entity-children mother)))
 	 (basename (expand-file-name "tm" temporary-file-directory))
 	 (sig-file (concat (make-temp-name basename) ".asc"))
-	 )
+	 status)
     (save-excursion (mime-show-echo-buffer))
     (mime-write-entity-content entity sig-file)
     (unwind-protect
@@ -148,9 +148,16 @@
 	  (while (progn (end-of-line) (not (eobp)))
 	    (insert "\r")
 	    (forward-line 1))
-	  (let ((pgg-output-buffer mime-echo-buffer-name))
-	    (pgg-verify-region (point-min)(point-max) sig-file 'fetch)))
+	  (setq status (pgg-verify-region (point-min)(point-max) 
+					  sig-file 'fetch))
+	  (save-excursion 
+	    (set-buffer mime-echo-buffer-name)
+	    (insert-buffer-substring (if status pgg-output-buffer
+				       pgg-errors-buffer))))
       (delete-file sig-file))
+    (let ((other-window-scroll-buffer mime-echo-buffer-name))
+      (scroll-other-window 8)
+      )
     ))
 
 
@@ -182,8 +189,15 @@
     (mime-insert-entity-content entity)
     (mime-decode-region (point-min) (point-max)
                         (cdr (assq 'encoding situation)))
-    (let ((pgg-output-buffer mime-echo-buffer-name))
-      (pgg-snarf-keys-region (point-min)(point-max)))))
+    (let ((status (pgg-snarf-keys-region (point-min)(point-max))))
+      (save-excursion 
+	(set-buffer mime-echo-buffer-name)
+	(insert-buffer-substring (if status pgg-output-buffer
+				   pgg-errors-buffer)))
+      ))
+  (let ((other-window-scroll-buffer mime-echo-buffer-name))
+    (scroll-other-window 8)
+    ))
 
 
 ;;; @ end
