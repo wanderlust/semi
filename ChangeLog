@@ -1,5 +1,7 @@
 1998-03-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-image.el: Abolish 'mime-view-ps-to-gif-command.
+
 	* mime-image.el (mime-view-filter-for-image): Change interface.
 	Abolish `mime-view-filter-for-application/postscript'.
 
