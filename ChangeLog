@@ -1,6 +1,14 @@
 1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-pgp.el (mime-method-to-verify-application/pgp-signature):
+	Don't use temporary buffer for signed entity.
+
+	* mime-pgp.el (mime-method-to-verify-application/pgp-signature):
+	Don't use temporary buffer for PGP-signature.
+
+1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el (mime-method-to-verify-application/pgp-signature):
 	Use `write-region-as-binary'.
 
 	* mime-pgp.el (mime-method-to-verify-application/pgp-signature):
