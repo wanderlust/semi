@@ -45,11 +45,35 @@
   )
 
 
+;; for text/html
+(defvar mime-setup-enable-inline-html
+  (module-installed-p 'w3)
+  "*If it is non-nil, semi-setup sets up to use mime-w3.")
+
+(if mime-setup-enable-inline-html
+    (call-after-loaded
+     'mime-view
+     (function
+      (lambda ()
+	(autoload 'mime-preview-text/html "mime-w3")
+	
+	(ctree-set-calist-strictly
+	 'mime-preview-condition
+	 '((type . text)(subtype . html)
+	   (body . visible)
+	   (body-presentation-method . mime-preview-text/html)))
+	
+	(set-alist 'mime-view-type-subtype-score-alist
+		   '(text . html) 3)
+	)))
+  )
+
+
+;; for PGP
 (defvar mime-setup-enable-pgp
   (module-installed-p 'mailcrypt)
   "*If it is non-nil, semi-setup sets uf to use mime-pgp.")
 
-;; for PGP
 (if mime-setup-enable-pgp
     (eval-after-load "mime-view"
       '(progn
