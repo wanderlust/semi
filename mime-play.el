@@ -179,9 +179,9 @@ specified, play as it.  Default MODE is \"play\"."
 	  ((stringp method)
 	   (mime-activate-mailcap-method entity ret)
 	   )
-	  ((and (listp method)(stringp (car method)))
-	   (mime-activate-external-method entity ret)
-	   )
+          ;; ((and (listp method)(stringp (car method)))
+          ;;  (mime-activate-external-method entity ret)
+          ;;  )
 	  (t
 	   (mime-show-echo-buffer "No method are specified for %s\n"
 				  (mime-entity-type/subtype entity))
@@ -228,61 +228,52 @@ specified, play as it.  Default MODE is \"play\"."
   (remove-alist 'mime-mailcap-method-filename-alist process)
   (message (format "%s %s" process event)))
 
-(defun mime-activate-external-method (entity cal)
-  (save-excursion
-    (save-restriction
-      (let ((beg (mime-entity-point-min entity))
-	    (end (mime-entity-point-max entity)))
-	(narrow-to-region beg end)
-	(goto-char beg)
-	(let ((method (cdr (assoc 'method cal)))
-	      (name (mime-raw-get-filename cal)))
-	  (if method
-	      (let ((file (make-temp-name
-			   (expand-file-name "TM" mime-temp-directory)))
-		    b args)
-		(if (nth 1 method)
-		    (setq b beg)
-		  (setq b
-			(if (re-search-forward "^$" nil t)
-			    (1+ (match-end 0))
-			  (point-min)
-			  ))
-		  )
-		(goto-char b)
-		(write-region b end file)
-		(message "External method is starting...")
-		(setq cal (put-alist
-			   'name (replace-as-filename name) cal))
-		(setq cal (put-alist 'file file cal))
-		(setq args (nconc
-			    (list (car method)
-				  mime-echo-buffer-name (car method)
-				  )
-			    (mime-make-external-method-args
-			     cal (cdr (cdr method)))
-			    ))
-		(apply (function start-process) args)
-		(mime-show-echo-buffer)
-		))
-	  )))))
+;; (defun mime-activate-external-method (entity cal)
+;;   (save-excursion
+;;     (save-restriction
+;;       (let ((beg (mime-entity-point-min entity))
+;;             (end (mime-entity-point-max entity)))
+;;         (narrow-to-region beg end)
+;;         (goto-char beg)
+;;         (let ((method (cdr (assoc 'method cal)))
+;;               (name (mime-raw-get-filename cal)))
+;;           (if method
+;;               (let ((file (make-temp-name
+;;                            (expand-file-name "TM" mime-temp-directory)))
+;;                     b args)
+;;                 (if (nth 1 method)
+;;                     (setq b beg)
+;;                   (setq b (mime-entity-body-start entity)))
+;;                 (goto-char b)
+;;                 (write-region b end file)
+;;                 (message "External method is starting...")
+;;                 (setq cal (put-alist
+;;                            'name (replace-as-filename name) cal))
+;;                 (setq cal (put-alist 'file file cal))
+;;                 (setq args (nconc
+;;                             (list (car method)
+;;                                   mime-echo-buffer-name (car method))
+;;                             (mime-make-external-method-args
+;;                              cal (cdr (cdr method)))
+;;                             ))
+;;                 (apply (function start-process) args)
+;;                 (mime-show-echo-buffer)
+;;                 ))
+;;           )))))
 
-(defun mime-make-external-method-args (cal format)
-  (mapcar (function
-	   (lambda (arg)
-	     (if (stringp arg)
-		 arg
-	       (let* ((item (eval arg))
-		      (ret (cdr (assoc item cal)))
-		      )
-		 (if ret
-		     ret
-		   (if (eq item 'encoding)
-		       "7bit"
-		     ""))
-		 ))
-	     ))
-	  format))
+;; (defun mime-make-external-method-args (cal format)
+;;   (mapcar (function
+;;            (lambda (arg)
+;;              (if (stringp arg)
+;;                  arg
+;;                (let* ((item (eval arg))
+;;                       (ret (cdr (assoc item cal))))
+;;                  (or ret
+;;                      (if (eq item 'encoding)
+;;                          "7bit"
+;;                        ""))
+;;                  ))))
+;;           format))
 
 (defvar mime-echo-window-is-shared-with-bbdb t
   "*If non-nil, mime-echo window is shared with BBDB window.")
