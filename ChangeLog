@@ -1,3 +1,12 @@
+1997-10-03  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+
+	* mime-play.el (mime-display-message/partial): Use `write-region'.
+
+	* mime-pgp.el (mime-article/check-pgp-signature): Use
+	`write-region'.
+
+	* mime-file.el (mime-article/extract-file): Use `write-region'.
+
 1997-10-02  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-def.el: Don't use `third' (don't use cl function).
