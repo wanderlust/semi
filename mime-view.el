@@ -235,7 +235,7 @@ If optional argument MESSAGE-INFO is not specified,
 ;;; @@@ predicate function
 ;;;
 
-(defun mime-view-entity-button-visible-p (entity message-info)
+(defun mime-view-entity-button-visible-p (entity)
   "Return non-nil if header of ENTITY is visible.
 Please redefine this function if you want to change default setting."
   (let ((media-type (mime-entity-media-type entity))
@@ -243,8 +243,7 @@ Please redefine this function if you want to change default setting."
     (or (not (eq media-type 'application))
 	(and (not (eq media-subtype 'x-selection))
 	     (or (not (eq media-subtype 'octet-stream))
-		 (let ((mother-entity
-			(mime-entity-parent entity message-info)))
+		 (let ((mother-entity (mime-entity-parent entity)))
 		   (or (not (eq (mime-entity-media-type mother-entity)
 				'multipart))
 		       (not (eq (mime-entity-media-subtype mother-entity)
@@ -872,7 +871,7 @@ The compressed face will be piped to this command.")
       (setq nb (point))
       (narrow-to-region nb nb)
       (or button-is-invisible
-	  (if (mime-view-entity-button-visible-p entity message-info)
+	  (if (mime-view-entity-button-visible-p entity)
 	      (mime-view-insert-entity-button entity message-info subj)
 	    ))
       (if header-is-visible
