@@ -170,31 +170,15 @@
 	(smime-parse-attribute
 	 (buffer-substring (point)(progn (end-of-line)(point))))))))
 
-(static-condition-case nil
-    (directory-files nil nil nil nil nil)
-  (wrong-number-of-arguments
-   (defmacro smime-directory-files 
-     (directory &optional full match nosort files-only)
-     (if files-only
-	 `(delq nil (mapcar 
-		     (lambda (file) 
-		       ,(if (eq files-only t)
-			    `(if (file-directory-p file) nil file)
-			  `(if (file-directory-p file) file nil)))
-		     (directory-files ,directory ,full ,match ,nosort)))
-       `(directory-files ,directory ,full ,match ,nosort))))
-  (error
-   (defalias 'smime-directory-files 'directory-files)))
-
 (defsubst smime-find-certificate (attr)
-  (let ((files (if (file-directory-p smime-certificate-directory)
-		   (delq nil (mapcar (lambda (file) 
-				       (if (file-directory-p file) nil
-					 file))
-				     (directory-files 
-				      smime-certificate-directory
-				      'full)))
-		 nil)))
+  (let ((files
+	 (and (file-directory-p smime-certificate-directory)
+	      (delq nil (mapcar (lambda (file) 
+				  (if (file-directory-p file) nil
+				    file))
+				(directory-files 
+				 smime-certificate-directory
+				 'full))))))
     (catch 'found
       (while files
 	(if (or (string-equal 
@@ -313,13 +297,11 @@ If the optional 3rd argument SIGNATURE is non-nil, it is treated as
 the detached signature of the current region."
   (let* ((basename (expand-file-name "smime" temporary-file-directory))
 	 (orig-file (make-temp-name basename))
-	 (args (list "-qs" signature))
 	 (orig-mode (default-file-modes)))
     (unwind-protect
 	(progn
 	  (set-default-file-modes 448)
-	  (write-region-as-binary start end orig-file)
-	  )
+	  (write-region-as-binary start end orig-file))
       (set-default-file-modes orig-mode))
     (with-temp-buffer
       (insert-file-contents-as-binary signature)

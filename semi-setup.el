@@ -41,13 +41,10 @@ it is used as hook to set."
     ))
 
 
-;; for image/* and X-Face
+;; for image/*
 (defvar mime-setup-enable-inline-image
   (and window-system
-       (or (featurep 'xemacs)
-	   (and (featurep 'mule)
-		(or (fboundp 'create-image)
-		    (module-installed-p 'bitmap)))))
+       (or (featurep 'xemacs)(featurep 'mule)))
   "*If it is non-nil, semi-setup sets up to use mime-image.")
 
 (if mime-setup-enable-inline-image

@@ -114,7 +114,7 @@
   (luna-define-internal-accessors 'pgg-scheme))
 
 (luna-define-generic pgg-scheme-lookup-key (scheme string &optional type)
-  "Search keys associated with STRING")
+  "Search keys associated with STRING.")
 
 (luna-define-generic pgg-scheme-encrypt-region (scheme start end recipients)
   "Encrypt the current region between START and END.")
@@ -128,15 +128,13 @@
 
 (luna-define-generic pgg-scheme-verify-region
   (scheme start end &optional signature)
-  "Verify region between START and END
-as the detached signature SIGNATURE.")
+  "Verify region between START and END as the detached signature SIGNATURE.")
 
 (luna-define-generic pgg-scheme-insert-key (scheme)
   "Insert public key at point.")
 
 (luna-define-generic pgg-scheme-snarf-keys-region (scheme start end)
-  "Add all public keys in region between START
-and END to the keyring.")
+  "Add all public keys in region between START and END to the keyring.")
 
 ;;; @ utility functions
 ;;;
@@ -167,12 +165,9 @@ and END to the keyring.")
        ,@body)))
 
 (defun pgg-temp-buffer-show-function (buffer)
-  (if (one-window-p (selected-window))
-      (let ((window (split-window-vertically
-		     (- (window-height) 
-			(/ (window-height) 5)))))
-	(set-window-buffer window buffer))
-    (display-buffer buffer)))
+  (let ((window (split-window-vertically)))
+    (set-window-buffer window buffer)
+    (shrink-window-if-larger-than-buffer window)))
 
 (defun pgg-display-output-buffer (start end status)
   (if status
@@ -180,7 +175,7 @@ and END to the keyring.")
 	(delete-region start end)
 	(insert-buffer-substring pgg-output-buffer)
 	(decode-coding-region start (point) buffer-file-coding-system))
-    (let ((temp-buffer-show-function 
+    (let ((temp-buffer-show-function
 	   (function pgg-temp-buffer-show-function)))
       (with-output-to-temp-buffer pgg-echo-buffer
 	(set-buffer standard-output)
@@ -260,7 +255,7 @@ and END to the keyring.")
    (list (region-beginning)(region-end)
 	 (split-string (read-string "Recipients: ") "[ \t,]+")))
   (let* ((entity (pgg-make-scheme pgg-default-scheme))
-	 (status 
+	 (status
 	  (pgg-save-coding-system start end
 	    (pgg-scheme-encrypt-region entity (point-min)(point-max) rcpts))))
     (when (interactive-p)
@@ -317,7 +312,7 @@ signer's public key from `pgg-default-keyserver-address'."
 	      (buffer-disable-undo)
 	      (set-buffer-multibyte nil)
 	      (insert-file-contents signature)
-	      (cdr (assq 2 (pgg-decode-armor-region 
+	      (cdr (assq 2 (pgg-decode-armor-region
 			    (point-min)(point-max)))))))
 	 (scheme
 	  (or pgg-scheme

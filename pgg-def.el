@@ -32,9 +32,11 @@
   :group 'mime)
 
 (defcustom pgg-default-scheme 'gpg
-  "Default PGP scheme"
-  :group 'symbol
-  :type 'string)
+  "Default PGP scheme."
+  :group 'pgg
+  :type '(choice (const :tag "GnuPG" gpg)
+		 (const :tag "PGP 5" pgp5)
+		 (const :tag "PGP" pgp)))
 
 (defcustom pgg-default-user-id (user-login-name)
   "User ID of your default identity."
@@ -47,12 +49,12 @@
   :type 'string)
 
 (defcustom pgg-encrypt-for-me nil
-  "Encrypt all outgoing messages with user's public key."
+  "If t, encrypt all outgoing messages with user's public key."
   :group 'pgg
   :type 'boolean)
 
 (defcustom pgg-cache-passphrase t
-  "Cache passphrase"
+  "If t, cache passphrase."
   :group 'pgg
   :type 'boolean)
 
@@ -63,7 +65,7 @@
 (defvar pgg-echo-buffer "*PGG-echo*")
 
 (defvar pgg-scheme nil
-  "Current scheme of PGP implementation")
+  "Current scheme of PGP implementation.")
 
 (defmacro pgg-truncate-key-identifier (key)
   `(if (> (length ,key) 8) (substring ,key 8) ,key))

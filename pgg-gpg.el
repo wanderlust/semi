@@ -37,8 +37,8 @@
   :type 'string)
 
 (defcustom pgg-gpg-shell-file-name "/bin/sh"
-  "File name to load inferior shells from.  Bourne shell or its equivalent
-\(not tcsh) is needed for \"2>\"."
+  "File name to load inferior shells from.
+Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
   :group 'pgg-gpg
   :type 'string)
 
@@ -68,12 +68,12 @@
 
 (defun pgg-gpg-process-region (start end passphrase program args)
   (let* ((errors-file-name
-	  (concat temporary-file-directory 
+	  (concat temporary-file-directory
 		  (make-temp-name "pgg-errors")))
 	 (status-file-name
-	  (concat temporary-file-directory 
+	  (concat temporary-file-directory
 		  (make-temp-name "pgg-status")))
-	 (args 
+	 (args
 	  (append
 	   `("--status-fd" "3"
 	     ,@(if passphrase '("--passphrase-fd" "0"))
@@ -91,46 +91,50 @@
     (with-current-buffer (get-buffer-create output-buffer)
       (buffer-disable-undo)
       (erase-buffer))
-    (as-binary-process
-     (setq process
-	   (apply #'start-process-shell-command "*GnuPG*" output-buffer
-		  program args)))
-    (set-process-sentinel process #'ignore)
-    (when passphrase
-      (process-send-string process (concat passphrase "\n")))
-    (process-send-region process start end)
-    (process-send-eof process)
-    (while (eq 'run (process-status process))
-      (accept-process-output process 5))
-    (setq status (process-status process)
-	  exit-status (process-exit-status process))
-    (delete-process process)
-    (with-current-buffer output-buffer
-      (pgg-convert-lbt-region (point-min)(point-max) 'LF)
+    (unwind-protect
+	(progn
+	  (as-binary-process
+	   (setq process
+		 (apply #'start-process-shell-command "*GnuPG*" output-buffer
+			program args)))
+	  (set-process-sentinel process #'ignore)
+	  (when passphrase
+	    (process-send-string process (concat passphrase "\n")))
+	  (process-send-region process start end)
+	  (process-send-eof process)
+	  (while (eq 'run (process-status process))
+	    (accept-process-output process 5))
+	  (setq status (process-status process)
+		exit-status (process-exit-status process))
+	  (delete-process process)
+	  (with-current-buffer output-buffer
+	    (pgg-convert-lbt-region (point-min)(point-max) 'LF)
 
-      (if (memq status '(stop signal))
-	  (error "%s exited abnormally: '%s'" program exit-status))
-      (if (= 127 exit-status)
-	  (error "%s could not be found" program))
+	    (if (memq status '(stop signal))
+		(error "%s exited abnormally: '%s'" program exit-status))
+	    (if (= 127 exit-status)
+		(error "%s could not be found" program))
 
-      (set-buffer (get-buffer-create errors-buffer))
-      (buffer-disable-undo)
-      (erase-buffer)
-      (insert-file-contents errors-file-name)
-      (delete-file errors-file-name)
+	    (set-buffer (get-buffer-create errors-buffer))
+	    (buffer-disable-undo)
+	    (erase-buffer)
+	    (insert-file-contents errors-file-name)
       
-      (set-buffer (get-buffer-create status-buffer))
-      (buffer-disable-undo)
-      (erase-buffer)
-      (insert-file-contents status-file-name)
-      (delete-file status-file-name)
-
+	    (set-buffer (get-buffer-create status-buffer))
+	    (buffer-disable-undo)
+	    (erase-buffer)
+	    (insert-file-contents status-file-name)))
       (if (and process (eq 'run (process-status process)))
-	  (interrupt-process process)))))
+	  (interrupt-process process))
+      (condition-case nil
+	  (progn
+	    (delete-file status-file-name)
+	    (delete-file errors-file-name))
+	(file-error nil)))))
 
 (luna-define-method pgg-scheme-lookup-key ((scheme pgg-scheme-gpg)
 					   string &optional type)
-  (let ((args (list "--with-colons" "--no-greeting" "--batch" 
+  (let ((args (list "--with-colons" "--no-greeting" "--batch"
 		    (if type "--list-secret-keys" "--list-keys")
 		    string)))
     (with-current-buffer (get-buffer-create pgg-output-buffer)
@@ -139,23 +143,23 @@
       (apply #'call-process pgg-gpg-program nil t nil args)
       (goto-char (point-min))
       (when (re-search-forward "^\\(sec\\|pub\\):"  nil t)
-	(substring 
-	 (nth 3 (split-string 
+	(substring
+	 (nth 3 (split-string
 		 (buffer-substring (match-end 0)
 				   (progn (end-of-line)(point)))
 		 ":"))
 	 8)))))
 
-(luna-define-method pgg-scheme-encrypt-region ((scheme pgg-scheme-gpg) 
+(luna-define-method pgg-scheme-encrypt-region ((scheme pgg-scheme-gpg)
 					       start end recipients)
   (let* ((pgg-gpg-user-id (or pgg-gpg-user-id pgg-default-user-id))
-	 (args 
+	 (args
 	  `("--batch" "--armor" "--always-trust" "--encrypt"
 	    ,@(if recipients
-		  (apply #'append 
-			 (mapcar (lambda (rcpt) 
-				   (list "--remote-user" 
-					 (concat "\"" rcpt "\""))) 
+		  (apply #'append
+			 (mapcar (lambda (rcpt)
+				   (list "--remote-user"
+					 (concat "\"" rcpt "\"")))
 				 (append recipients
 					 (if pgg-encrypt-for-me
 					     (list pgg-gpg-user-id)))))))))
@@ -164,27 +168,27 @@
     (pgg-process-when-success
       (pgg-convert-lbt-region (point-min)(point-max) 'LF))))
 
-(luna-define-method pgg-scheme-decrypt-region ((scheme pgg-scheme-gpg) 
+(luna-define-method pgg-scheme-decrypt-region ((scheme pgg-scheme-gpg)
 					       start end)
   (let* ((pgg-gpg-user-id (or pgg-gpg-user-id pgg-default-user-id))
 	 (passphrase
-	  (pgg-read-passphrase 
+	  (pgg-read-passphrase
 	   (format "GnuPG passphrase for %s: " pgg-gpg-user-id)
 	   (pgg-scheme-lookup-key scheme pgg-gpg-user-id 'encrypt)))
 	 (args '("--batch" "--decrypt")))
     (pgg-gpg-process-region start end passphrase pgg-gpg-program args)
     (pgg-process-when-success nil)))
 
-(luna-define-method pgg-scheme-sign-region ((scheme pgg-scheme-gpg) 
+(luna-define-method pgg-scheme-sign-region ((scheme pgg-scheme-gpg)
 					    start end &optional cleartext)
   (let* ((pgg-gpg-user-id (or pgg-gpg-user-id pgg-default-user-id))
 	 (passphrase
-	  (pgg-read-passphrase 
+	  (pgg-read-passphrase
 	   (format "GnuPG passphrase for %s: " pgg-gpg-user-id)
 	   (pgg-scheme-lookup-key scheme pgg-gpg-user-id 'sign)))
-	 (args 
+	 (args
 	  (list (if cleartext "--clearsign" "--detach-sign")
-		"--armor" "--batch" "--verbose" 
+		"--armor" "--batch" "--verbose"
 		"--local-user" pgg-gpg-user-id))
 	 (inhibit-read-only t)
 	 buffer-read-only)
@@ -193,17 +197,17 @@
     (pgg-process-when-success
       (pgg-convert-lbt-region (point-min)(point-max) 'LF)
       (when (re-search-forward "^-+BEGIN PGP SIGNATURE" nil t);XXX
-	(let ((packet 
-	       (cdr (assq 2 (pgg-parse-armor-region 
+	(let ((packet
+	       (cdr (assq 2 (pgg-parse-armor-region
 			     (progn (beginning-of-line 2)
 				    (point))
 			     (point-max))))))
 	  (if pgg-cache-passphrase
-	      (pgg-add-passphrase-cache 
+	      (pgg-add-passphrase-cache
 	       (cdr (assq 'key-identifier packet))
 	       passphrase)))))))
 
-(luna-define-method pgg-scheme-verify-region ((scheme pgg-scheme-gpg) 
+(luna-define-method pgg-scheme-verify-region ((scheme pgg-scheme-gpg)
 					      start end &optional signature)
   (let ((args '("--batch" "--verify")))
     (when (stringp signature)
@@ -230,7 +234,7 @@
 
 (luna-define-method pgg-scheme-insert-key ((scheme pgg-scheme-gpg))
   (let* ((pgg-gpg-user-id (or pgg-gpg-user-id pgg-default-user-id))
-	 (args (list "--batch" "--export" "--armor" 
+	 (args (list "--batch" "--export" "--armor"
 		     (concat "\"" pgg-gpg-user-id "\""))))
     (pgg-gpg-process-region (point)(point) nil pgg-gpg-program args)
     (insert-buffer-substring pgg-output-buffer)))
@@ -242,10 +246,10 @@
     (set-buffer pgg-status-buffer)
     (goto-char (point-min))
     (when (re-search-forward "^\\[GNUPG:] +IMPORT_RES +" nil t)
-      (setq status (buffer-substring (match-end 0) 
-				     (progn (end-of-line) 
+      (setq status (buffer-substring (match-end 0)
+				     (progn (end-of-line)
 					    (point)))
-	    status (vconcat (mapcar #'string-to-int 
+	    status (vconcat (mapcar #'string-to-int
 				    (split-string status))))
       (erase-buffer)
       (insert (format "Imported %d key(s).
