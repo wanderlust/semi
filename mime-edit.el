@@ -573,34 +573,6 @@ Tspecials means any character that matches with it in header must be quoted.")
 (define-key mime-edit-map "\C-z"	'mime-edit-exit)
 (define-key mime-edit-map "?"		'mime-edit-help)
 
-(defun mime-edit-toggle-mode ()
-  (interactive)
-  (if mime-edit-mode-flag
-      (mime-edit-exit 'nomime)
-    (mime-edit-mode)
-    ))
-
-(cond (running-xemacs
-       (defconst mime-edit-mode-map nil "Keymap for MIME commands.")
-       (or mime-edit-mode-map
-	   (progn
-	     (setq mime-edit-mode-map 
-		   (make-sparse-keymap 'mime-edit-mode-map))
-	     (define-key
-	       mime-edit-mode-map mime-edit-prefix mime-edit-map)
-	     ))
-       (add-minor-mode 'mime-edit-mode-flag
-		       '((" MIME-Edit "  mime-transfer-level-string))
-		       mime-edit-mode-map
-		       nil
-		       'mime-edit-toggle-mode)
-       )
-      (t
-       (set-alist 'minor-mode-alist
-		  'mime-edit-mode-flag
-		  '((" MIME-Edit "  mime-transfer-level-string))))
-      )
-
 (defconst mime-edit-menu-title "MIME-Edit")
 
 (defconst mime-edit-menu-list
@@ -630,52 +602,80 @@ Tspecials means any character that matches with it in header must be quoted.")
     )
   "MIME-edit menubar entry.")
 
-(defun mime-edit-define-menu-for-emacs19 ()
-  "Define menu for Emacs 19."
-  (define-key (current-local-map) [menu-bar mime-edit]
-    (cons mime-edit-menu-title
-	  (make-sparse-keymap mime-edit-menu-title)))
-  (mapcar (function
-	   (lambda (item)
-	     (define-key (current-local-map)
-	       (vector 'menu-bar 'mime-edit (car item))
-	       (cons (nth 1 item)(nth 2 item))
+(defvar mime-edit-mode-map (make-sparse-keymap)
+  "Keymap for MIME-Edit mode commands.")
+(define-key mime-edit-mode-map mime-edit-prefix mime-edit-map)
+
+(cond (running-xemacs
+       ;; modified by Pekka Marjola <pema@iki.fi>
+       ;;	1995/9/5 (c.f. [tm-en:69])
+       (defun mime-edit-define-menu-for-xemacs ()
+	 "Define menu for Emacs 19."
+	 (cond ((featurep 'menubar)
+		(make-local-variable 'current-menubar)
+		(set-buffer-menubar current-menubar)
+		(add-submenu
+		 nil
+		 (cons mime-edit-menu-title
+		       (mapcar (function
+				(lambda (item)
+				  (vector (nth 1 item)(nth 2 item)
+					  mime-edit-mode-flag)
+				  ))
+			       mime-edit-menu-list)))
+		)))
+       
+       ;; modified by Steven L. Baur <steve@miranova.com>
+       ;;	1995/12/6 (c.f. [tm-en:209])
+       (or (boundp 'mime-edit-popup-menu-for-xemacs)
+	   (setq mime-edit-popup-menu-for-xemacs
+		 (append '("MIME Commands" "---")
+			 (mapcar (function (lambda (item)
+					     (vector (nth 1 item)
+						     (nth 2 item)
+						     t)))
+				 mime-edit-menu-list)))
+	   )
+       )
+      ((>= emacs-major-version 19)
+       (define-key mime-edit-mode-map [menu-bar mime-edit]
+	 (cons mime-edit-menu-title
+	       (make-sparse-keymap mime-edit-menu-title)))
+       (mapcar (function
+		(lambda (item)
+		  (define-key mime-edit-mode-map
+		    (vector 'menu-bar 'mime-edit (car item))
+		    (cons (nth 1 item)(nth 2 item))
+		    )
+		  ))
+	       (reverse mime-edit-menu-list)
 	       )
-	     ))
-	  (reverse mime-edit-menu-list)
-	  ))
+       ))
 
-;;; modified by Pekka Marjola <pema@iki.fi>
-;;;	1995/9/5 (c.f. [tm-en:69])
-(defun mime-edit-define-menu-for-xemacs ()
-  "Define menu for Emacs 19."
-  (cond ((featurep 'menubar)
-	 (make-local-variable 'current-menubar)
-	 (set-buffer-menubar current-menubar)
-	 (add-submenu nil
-		      (cons mime-edit-menu-title
-			    (mapcar (function
-				     (lambda (item)
-				       (vector (nth 1 item)(nth 2 item)
-					       mime-edit-mode-flag)
-				       ))
-				    mime-edit-menu-list)))
-	 )))
+(defun mime-edit-toggle-mode ()
+  (interactive)
+  (if mime-edit-mode-flag
+      (mime-edit-exit 'nomime)
+    (mime-edit-mode)
+    ))
 
-;;; modified by Steven L. Baur <steve@miranova.com>
-;;;	1995/12/6 (c.f. [tm-en:209])
-(if (and running-xemacs (not (boundp 'mime-edit-popup-menu-for-xemacs)))
-    (setq mime-edit-popup-menu-for-xemacs
-	  (append '("MIME Commands" "---")
-		  (mapcar (function (lambda (item)
-				      (vector (nth 1 item)
-					      (nth 2 item)
-					      t)))
-			  mime-edit-menu-list)))
-  )
-;;; end
+(cond (running-xemacs
+       (add-minor-mode 'mime-edit-mode-flag
+		       '((" MIME-Edit "  mime-transfer-level-string))
+		       mime-edit-mode-map
+		       nil
+		       'mime-edit-toggle-mode)
+       )
+      (t
+       (set-alist 'minor-mode-alist
+		  'mime-edit-mode-flag
+		  '((" MIME-Edit "  mime-transfer-level-string)))
+       (set-alist 'minor-mode-map-alist
+		  'mime-edit-mode-flag
+		  mime-edit-mode-map)
+       ))
 
-(defvar mime-edit-mode-old-local-map nil) ; buffer local variable
+;;(defvar mime-edit-mode-old-local-map nil) ; buffer local variable
 
 
 ;;; @ functions
@@ -823,16 +823,16 @@ User customizable variables (not documented all of them):
       (error "You are already editing a MIME message.")
     (setq mime-edit-mode-flag t)
     ;; Remember old key bindings.
-    (if running-xemacs
-	(use-local-map (or (current-local-map) (make-sparse-keymap)))
-      (make-local-variable 'mime-edit-mode-old-local-map)
-      (setq mime-edit-mode-old-local-map (current-local-map))
-      ;; Add MIME commands to current local map.
-      (use-local-map (copy-keymap (or (current-local-map)
-				      (make-sparse-keymap))))
-      )
-    (if (not (lookup-key (current-local-map) mime-edit-prefix))
-	(define-key (current-local-map) mime-edit-prefix mime-edit-map))
+    ;; (if running-xemacs
+    ;;     (use-local-map (or (current-local-map) (make-sparse-keymap)))
+    ;;   (make-local-variable 'mime-edit-mode-old-local-map)
+    ;;   (setq mime-edit-mode-old-local-map (current-local-map))
+    ;;   ;; Add MIME commands to current local map.
+    ;;   (use-local-map (copy-keymap (or (current-local-map)
+    ;;                                   (make-sparse-keymap))))
+    ;;   )
+    ;; (if (not (lookup-key (current-local-map) mime-edit-prefix))
+    ;;     (define-key (current-local-map) mime-edit-prefix mime-edit-map))
 
     ;; Set transfer level into mode line
     ;;
@@ -844,9 +844,10 @@ User customizable variables (not documented all of them):
     ;; welcome.
     (cond (running-xemacs
 	   (mime-edit-define-menu-for-xemacs))
-	  ((>= emacs-major-version 19)
-	   (mime-edit-define-menu-for-emacs19)
-	   ))
+          ;; ((>= emacs-major-version 19)
+          ;;  (mime-edit-define-menu-for-emacs19)
+          ;;  )
+	  )
     ;; end
     
     (enable-invisible)
@@ -886,8 +887,10 @@ just return to previous mode."
     (cond (running-xemacs
 	   (if (featurep 'menubar) 
 	       (delete-menu-item (list mime-edit-menu-title))))
-	  (t
-	   (use-local-map mime-edit-mode-old-local-map)))
+          ;; (t
+          ;;  (use-local-map mime-edit-mode-old-local-map)
+          ;;  )
+	  )
     
     (end-of-invisible)
     (set-buffer-modified-p (buffer-modified-p))
