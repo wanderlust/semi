@@ -832,6 +832,7 @@ button-2	Move to point under the mouse cursor
 	(save-excursion
 	  (set-buffer buf)
 	  (erase-buffer)
+	  (mime-hide-echo-buffer)
 	  )))
   (let ((ret (mime-view-setup-buffers ctl encoding ibuf obuf))
 	(win-conf (current-window-configuration))
