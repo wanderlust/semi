@@ -77,7 +77,7 @@
 
 1999-08-18  MORIOKA Tomohiko  <tomo@m17n.org>
 
-	* REMI: Version 1.13.2 (-DRike-Ikoinomori) released.
+	* REMI: Version 1.13.2 (-DÒike-Ikoinomori)-A released.
 
 1999-08-17  Katsumi Yamaoka   <yamaoka@jpl.org>
 
@@ -148,7 +148,7 @@
 
 1999-07-27  MORIOKA Tomohiko  <tomo@m17n.org>
 
-	* SEMI: Version 1.13.5 (Meih-Dr) released.
+	* SEMI: Version 1.13.5 (Meih-Dò)-A released.
 
 1999-07-27  MORIOKA Tomohiko  <tomo@m17n.org>
 
@@ -451,7 +451,7 @@
 
 1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.13.0 (Matt-Dr) released.
+	* SEMI: Version 1.13.0 (Matt-Dò)-A released.
 
 1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -949,7 +949,7 @@
 
 1998-07-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* REMI: Version 1.8.3 (Ecch-D~-Nakagawa) released.
+	* REMI: Version 1.8.3 (Ecch-Dþ-Nakagawa)-A released.
 
 	* mime-play.el (mime-delq-null-situation): Add new optional
 	argument `ignored-value'.
@@ -978,7 +978,7 @@
 
 1998-07-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* REMI: Version 1.8.2 (N-Drmachi) released.
+	* REMI: Version 1.8.2 (N-Dòmachi)-A released.
 
 1998-07-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -1097,7 +1097,7 @@
 
 1998-06-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* REMI: Version 1.8.0 (Ecch-D~-Kokubu) released.
+	* REMI: Version 1.8.0 (Ecch-Dþ-Kokubu)-A released.
 
 1998-06-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -1933,7 +1933,7 @@
 
 1998-06-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.5.0 (Nishi-Ny-D~zen) released.
+	* SEMI: Version 1.5.0 (Nishi-Ny-Dþzen)-A released.
 
 	* README.en (Required environment): Modify for FLIM 1.3.0.
 
@@ -1985,7 +1985,7 @@
 
 1998-06-01  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.4.6 (Ny-D~zen) released.
+	* SEMI: Version 1.4.6 (Ny-Dþzen)-A released.
 
 1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -2198,7 +2198,7 @@
 
 1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.4.4 (Ecch-D~-Miyazaki) released.
+	* SEMI: Version 1.4.4 (Ecch-Dþ-Miyazaki)-A released.
 
 	* mime-play.el (mime-mailcap-method-filename-alist): New variable.
 	(mime-mailcap-method-sentinel): New function.
@@ -2324,7 +2324,7 @@
 
 1998-05-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.4.1 (-DRmi) released.
+	* SEMI: Version 1.4.1 (-DÒmi)-A released.
 
 	* README.en (Required environment): Modify for FLIM 1.2.0.
 
@@ -2484,7 +2484,7 @@
 
 1998-04-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.3.2 (N-Dr) was released.
+	* SEMI: Version 1.3.2 (N-Dò)-A was released.
 
 	* mime-edit.el (mime-edit-mode-entity-prefix): New variable.
 	(mime-edit-mode-entity-map): New variable.
@@ -3139,7 +3139,7 @@
 
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.2 (Nonoichi-K-Drdaimae) was released.
+	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae)-A was released.
 
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -3222,7 +3222,7 @@
 	* mime-file.el: Rename `mime-article/extract-file' ->
 	`mime-extract-current-entity'.
 
-1998-03-03  Fran-Agois Pinard   <pinard@iro.umontreal.ca>
+1998-03-03  François Pinard   <pinard@iro.umontreal.ca>
 
 	* mime-edit.el (mime-edit-insert-signature): Function
  	`mime-edit-insert-tag' is sometimes called with more arguments
@@ -3251,7 +3251,7 @@
 
 1998-02-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.0 (Nukaj-D~taku-mae) was released.
+	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae)-A was released.
 
 	* SEMI-ELS: Remove mime-tar.el.
 
@@ -3388,14 +3388,14 @@
 
 1997-11-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.116 (D-Drhrji) was released.
+	* SEMI: Version 0.116 (D-Dòhòji)-A was released.
 
 1997-11-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el, mime-pgp.el, mime-partial.el: Rename
 	`mime::article/content-info' -> `mime-raw-content-info'.
 
-1997-11-11  Fran-Agois Pinard   <pinard@iro.umontreal.ca>
+1997-11-11  François Pinard   <pinard@iro.umontreal.ca>
 
 	* mime-edit.el: Modify space in prompt and removespurious trailing
 	spaces in the files. (cf. [tm-en:1507])
