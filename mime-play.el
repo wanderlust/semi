@@ -450,7 +450,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
 ;;; @ rot13-47
 ;;;
 
-(defun mime-display-caesar (beg end cal)
+(defun mime-display-caesar (start end cal)
   "Internal method for mime-view to display ROT13-47-48 message."
   (let* ((cnum (mime-article/point-content-number beg))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
@@ -459,8 +459,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
 	 (charset (cdr (assoc "charset" cal)))
 	 (encoding (cdr (assq 'encoding cal)))
 	 (mode major-mode)
-	 str)
-    (setq str (buffer-substring beg end))
+	 )
     (let ((pwin (or (get-buffer-window mother)
 		    (get-largest-window)))
 	  (buf (get-buffer-create new-name))
@@ -471,7 +470,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
       )
     (setq buffer-read-only nil)
     (erase-buffer)
-    (insert str)
+    (insert-buffer-substring the-buf start end)
     (goto-char (point-min))
     (if (re-search-forward "^\n" nil t)
 	(delete-region (point-min) (match-end 0))
