@@ -114,6 +114,7 @@
 (require 'mime-view)
 (require 'eword-encode)
 (require 'signature)
+(require 'alist)
 
 
 ;;; @ version

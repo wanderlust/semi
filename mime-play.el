@@ -28,6 +28,7 @@
 ;;; Code:
 
 (require 'mime-view)
+(require 'alist)
 
   
 ;;; @ content decoder

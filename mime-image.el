@@ -8,7 +8,8 @@
 ;; Maintainer: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Created: 1995/12/15
 ;;	Renamed: 1997/2/21 from tm-image.el
-;; Version: $Id$
+;; Version:
+;;	$Id$
 
 ;; Keywords: image, picture, X-Face, MIME, multimedia, mail, news
 
@@ -36,6 +37,7 @@
 ;;; Code:
 
 (require 'mime-view)
+(require 'alist)
 
 (cond (running-xemacs
        (require 'images)
