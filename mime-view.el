@@ -197,34 +197,6 @@ Each elements are regexp of field-name.")
     ))
 
 
-;;; @@ predicate functions
-;;;
-
-(defun mime-view-header-visible-p (rcnum cinfo)
-  "Return non-nil if header of current entity is visible."
-  (or (null rcnum)
-      (member (mime-entity-info-type/subtype
-	       (mime-article/rcnum-to-cinfo (cdr rcnum) cinfo))
-	      mime-view-childrens-header-showing-Content-Type-list)
-      ))
-
-(defun mime-view-body-visible-p (rcnum cinfo media-type media-subtype)
-  (let ((ctype (if media-type
-		   (if media-subtype
-		       (format "%s/%s" media-type media-subtype)
-		     (symbol-name media-type)
-		     ))))
-    (and (member ctype mime-view-visible-media-type-list)
-	 (if (and (eq media-type 'application)
-		  (eq media-subtype 'octet-stream))
-	     (let ((ccinfo (mime-article/rcnum-to-cinfo rcnum cinfo)))
-	       (member (mime-entity-info-encoding ccinfo)
-		       '(nil "7bit" "8bit"))
-	       )
-	   t))
-    ))
-
-
 ;;; @@ entity button
 ;;;
 
@@ -693,6 +665,34 @@ The compressed face will be piped to this command.")
       (setq rcl (cdr rcl))
       )
     dest))
+
+
+;;; @@ predicate functions
+;;;
+
+(defun mime-view-header-visible-p (rcnum cinfo)
+  "Return non-nil if header of current entity is visible."
+  (or (null rcnum)
+      (member (mime-entity-info-type/subtype
+	       (mime-article/rcnum-to-cinfo (cdr rcnum) cinfo))
+	      mime-view-childrens-header-showing-Content-Type-list)
+      ))
+
+(defun mime-view-body-visible-p (rcnum cinfo media-type media-subtype)
+  (let ((ctype (if media-type
+		   (if media-subtype
+		       (format "%s/%s" media-type media-subtype)
+		     (symbol-name media-type)
+		     ))))
+    (and (member ctype mime-view-visible-media-type-list)
+	 (if (and (eq media-type 'application)
+		  (eq media-subtype 'octet-stream))
+	     (let ((ccinfo (mime-article/rcnum-to-cinfo rcnum cinfo)))
+	       (member (mime-entity-info-encoding ccinfo)
+		       '(nil "7bit" "8bit"))
+	       )
+	   t))
+    ))
 
 
 ;;; @ MIME viewer mode
