@@ -525,13 +525,6 @@ If it is not specified for a major-mode,
 	  (concat "Emacs " ver ", MULE " mule-version)
 	ver))))
 
-  
-;;; @@ buffer local variables
-;;;
-
-(defvar mime-edit-mode-old-local-map nil)
-(defvar mime-edit-buffer nil)
-
 
 ;;; @ constants
 ;;;
@@ -688,6 +681,8 @@ Tspecials means any character that matches with it in header must be quoted.")
 			  mime-edit-menu-list)))
   )
 ;;; end
+
+(defvar mime-edit-mode-old-local-map nil) ; buffer local variable
 
 
 ;;; @ functions
@@ -2373,6 +2368,8 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 ;;; @ preview message
 ;;;
 
+(defvar mime-edit-buffer nil) ; buffer local variable
+
 (defun mime-edit-preview-message ()
   "preview editing MIME message. [mime-edit.el]"
   (interactive)
@@ -2421,63 +2418,6 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 (set-alist 'mime-view-quitting-method-alist
 	   'mime/temporary-message-mode
 	   (function mime-edit-quitting-method)
-	   )
-
-
-;;; @ draft preview
-;;; 
-;; by "OKABE Yasuo <okabe@kudpc.kyoto-u.ac.jp>
-;;	 Mon, 10 Apr 1995 20:03:07 +0900
-
-(defvar mime-edit-draft-header-separator-alist
-  '((news-reply-mode . mail-header-separator)
-    (mh-letter-mode . mail-header-separator)
-    ))
-
-(defvar mime::article/draft-header-separator nil)
-
-(defun mime-edit-draft-preview ()
-  (interactive)
-  (let ((sep (cdr (assq major-mode mime-edit-draft-header-separator-alist))))
-    (or (stringp sep) (setq sep (eval sep)))
-    (make-variable-buffer-local 'mime::article/draft-header-separator)
-    (goto-char (point-min))
-    (re-search-forward
-     (concat "^\\(" (regexp-quote sep) "\\)?$"))
-    (setq mime::article/draft-header-separator
-	  (buffer-substring (match-beginning 0) (match-end 0)))
-    (replace-match "")
-    (mime-view-mode (current-buffer))
-    (pop-to-buffer (current-buffer))
-    ))
-
-(defun mime-viewer::quitting-method/draft-preview ()
-  (let ((mother mime::preview/mother-buffer))
-    (save-excursion
-      (switch-to-buffer mother)
-      (goto-char (point-min))
-      (if (and
-	   (re-search-forward
-	    (concat "^\\("
-		    (regexp-quote mime::article/draft-header-separator)
-		    "\\)?$") nil t)
-	   (bolp))
-	  (progn
-	    (insert mime::article/draft-header-separator)
-	    (set-buffer-modified-p (buffer-modified-p))
-	    )))
-    (mime-view-kill-buffer)
-    (pop-to-buffer mother)
-    ))
-
-(set-alist 'mime-view-quitting-method-alist
-	   'mh-letter-mode
-	   (function mime-viewer::quitting-method/draft-preview)
-	   )
-
-(set-alist 'mime-view-quitting-method-alist
-	   'news-reply-mode
-	   (function mime-viewer::quitting-method/draft-preview)
 	   )
 
 
