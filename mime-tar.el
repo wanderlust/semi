@@ -327,25 +327,25 @@
 ;;; @@ message types to use mime-tar
 ;;;
 
-(set-atype 'mime/content-decoding-condition
+(set-atype 'mime-acting-condition
 	   '((type . "application/octet-stream")
 	     (method . mime-decode-message/tar)
 	     (mode . "play") ("type" . "tar")
 	     ))
 
-(set-atype 'mime/content-decoding-condition
+(set-atype 'mime-acting-condition
 	   '((type . "application/octet-stream")
 	     (method . mime-decode-message/tar)
 	     (mode . "play") ("type" . "tar+gzip")
 	     ))
 
-(set-atype 'mime/content-decoding-condition
+(set-atype 'mime-acting-condition
 	   '((type . "application/x-gzip")
 	     (method . mime-decode-message/tar)
 	     (mode . "play") ("type" . "tar")
 	     ))
 
-(set-atype 'mime/content-decoding-condition
+(set-atype 'mime-acting-condition
 	   '((type . "application/x-tar")
 	     (method . mime-decode-message/tar)
 	     (mode . "play")

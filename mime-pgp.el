@@ -103,12 +103,12 @@
     (set-window-buffer p-win mime-view-buffer)
     ))
 
-(set-atype 'mime/content-decoding-condition
+(set-atype 'mime-acting-condition
 	   '((type . "application/pgp")
 	     (method . mime-article/view-application/pgp)
 	     ))
 
-(set-atype 'mime/content-decoding-condition
+(set-atype 'mime-acting-condition
 	   '((type . "text/x-pgp")
 	     (method . mime-article/view-application/pgp)
 	     ))
@@ -239,7 +239,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
       (delete-file sig-file)
       )))
 
-(set-atype 'mime/content-decoding-condition
+(set-atype 'mime-acting-condition
 	   '((type . "application/pgp-signature")
 	     (method . mime-article/check-pgp-signature)
 	     ))
@@ -265,7 +265,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
     (mime-article/view-application/pgp obeg oend cal)
     ))
 
-(set-atype 'mime/content-decoding-condition
+(set-atype 'mime-acting-condition
 	   '((type . "application/pgp-encrypted")
 	     (method . mime-article/decrypt-pgp)
 	     ))
@@ -294,7 +294,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
     (kill-buffer (current-buffer))
     ))
 
-(set-atype 'mime/content-decoding-condition
+(set-atype 'mime-acting-condition
 	   '((type . "application/pgp-keys")
 	     (method . mime-article/add-pgp-keys)
 	     ))

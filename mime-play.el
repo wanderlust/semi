@@ -40,7 +40,7 @@
 (defun mime-view-play-current-entity (&optional mode)
   "Play current entity.
 It decodes current entity to call internal or external method.  The
-method is selected from variable `mime/content-decoding-condition'.
+method is selected from variable `mime-acting-condition'.
 If MODE is specified, play as it.  Default MODE is \"play\"."
   (interactive)
   (or mode
@@ -104,7 +104,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 ;;;
 
 (defun mime/get-content-decoding-alist (al)
-  (get-unified-alist mime/content-decoding-condition al)
+  (get-unified-alist mime-acting-condition al)
   )
 
 

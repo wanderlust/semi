@@ -72,14 +72,14 @@
 ;;; @ setup
 ;;;
 
-(set-atype 'mime/content-decoding-condition
+(set-atype 'mime-acting-condition
 	   '((type . "application/octet-stream")
 	     (method . mime-article/extract-file)
 	     )
 	   'ignore '(method)
 	   'replacement)
 
-(set-atype 'mime/content-decoding-condition
+(set-atype 'mime-acting-condition
 	   '((mode . "extract")
 	     (method . mime-article/extract-file)
 	     )

@@ -48,7 +48,7 @@
 ;;; @ variables
 ;;;
 
-(defvar mime/content-decoding-condition
+(defvar mime-acting-condition
   '(((type . "text/plain")
      (method "tm-plain" nil 'file 'type 'encoding 'mode 'name)
      (mode "play" "print")
@@ -865,7 +865,7 @@ button-2	Move to point under the mouse cursor
   "Extract current entity into file (maybe).
 It decodes current entity to call internal or external method as
 \"extract\" mode.  The method is selected from variable
-`mime/content-decoding-condition'."
+`mime-acting-condition'."
   (interactive)
   (mime-view-play-current-entity "extract")
   )
@@ -874,7 +874,7 @@ It decodes current entity to call internal or external method as
   "Print current entity (maybe).
 It decodes current entity to call internal or external method as
 \"print\" mode.  The method is selected from variable
-`mime/content-decoding-condition'."
+`mime-acting-condition'."
   (interactive)
   (mime-view-play-current-entity "print")
   )
