@@ -63,7 +63,7 @@ tar:
 	cvs -d :pserver:anonymous@chamonix.jaist.ac.jp:/hare/cvs/root \
 		export -d semi-$(VERSION) \
 		-r semi-`echo $(VERSION) \
-			| sed s/\\\\./_/ | sed s/\\\\./_/` SEMI/semi'
+			| sed s/\\\\./_/ | sed s/\\\\./_/` semi'
 	$(RM) /tmp/semi-$(VERSION)/ftp.in
 	cd /tmp; $(TAR) cvzf semi-$(VERSION).tar.gz semi-$(VERSION)
 	cd /tmp; $(RM) -r semi-$(VERSION)
