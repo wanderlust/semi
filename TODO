@@ -1,0 +1,24 @@
+* MIME-View
+
+** Unify entity display specifications to 'mime-preview-condition
+
+** Mother entity should modify preview-situation of children
+
+** Better implementation for multipart/alternative
+ 
+** Change 'mime-acting-condition to condition-tree format
+
+** dynamic configuration for 'mime-preview-condition
+
+** mailcap support
+
+** dynamic configuration for 'mime-acting-condition
+
+
+* MIME-Edit
+
+** WYSIWYG editing support
+
+** Use MIME-Preview like tag and display
+
+** keymap-prefix
