@@ -27,39 +27,14 @@
 (require 'mime-view)
 
 
-;;; @ code conversion
-;;;
-
-(defun mime-text-insert-decoded-body (entity)
-  "Insert text body of ENTITY in SITUATION.
-It decodes MIME-encoding then code-converts as MIME-charset.
-MIME-encoding is value of field 'encoding of SITUATION.  It must be
-'nil or string.  MIME-charset is value of field \"charset\" of
-SITUATION.  It must be symbol."
-  (let ((str (mime-entity-content entity)))
-    (insert
-     (if (and (mime-entity-cooked-p entity)
-	      (member (mime-entity-encoding entity)
-		      '(nil "7bit" "8bit" "binary")))
-	 str
-       (decode-mime-charset-string str
-				   (or (mime-content-type-parameter
-					(mime-entity-content-type entity)
-					"charset")
-				       default-mime-charset)
-				   'CRLF)
-       )))
-  (run-hooks 'mime-text-decode-hook)
-  )
-
-
 ;;; @ content filters for mime-text
 ;;;
 
 (defun mime-display-text/plain (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
-    (mime-text-insert-decoded-body entity)
+    (mime-insert-text-content entity)
+    (run-hooks 'mime-text-decode-hook)
     (goto-char (point-max))
     (if (not (eq (char-after (1- (point))) ?\n))
 	(insert "\n")
@@ -71,7 +46,8 @@ SITUATION.  It must be symbol."
 (defun mime-display-text/richtext (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
-    (mime-text-insert-decoded-body entity)
+    (mime-insert-text-content entity)
+    (run-hooks 'mime-text-decode-hook)
     (let ((beg (point-min)))
       (remove-text-properties beg (point-max) '(face nil))
       (richtext-decode beg (point-max))
@@ -80,7 +56,8 @@ SITUATION.  It must be symbol."
 (defun mime-display-text/enriched (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
-    (mime-text-insert-decoded-body entity)
+    (mime-insert-text-content entity)
+    (run-hooks 'mime-text-decode-hook)
     (let ((beg (point-min)))
       (remove-text-properties beg (point-max) '(face nil))
       (enriched-decode beg (point-max))
