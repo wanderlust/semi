@@ -1,3 +1,8 @@
+2000-12-22   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-view.el (mime-view-define-keymap): Bind [down-mouse-3]
+	instead of `mouse-button-3'.
+
 2000-12-21  Tadashi Watanabe <watanabe@sigmaitec.co.jp>
 
 	* pgg-gpg.el (pgg-scheme-verify-region): Use a "-" as the name for
