@@ -215,8 +215,11 @@ and END to the keyring.")
 ;;; @ utility functions
 ;;;
 
+(defvar pgg-passphrase-cache-expiry 16)
+(defvar pgg-passphrase-cache (make-vector 7 0))
+
 (defvar pgg-read-passphrase nil)
-(defun pgg-read-passphrase (prompt)
+(defun pgg-read-passphrase (prompt &optional key)
   (if (not pgg-read-passphrase)
       (if (functionp 'read-passwd)
 	  (setq pgg-read-passphrase 'read-passwd)
@@ -224,7 +227,18 @@ and END to the keyring.")
 	    (setq pgg-read-passphrase 'read-passwd)
 	  (autoload 'ange-ftp-read-passwd "ange-ftp")
 	  (setq pgg-read-passphrase 'ange-ftp-read-passwd))))
-  (funcall pgg-read-passphrase prompt))
+  (or (and key (symbol-value (intern-soft key pgg-passphrase-cache)))
+      (funcall pgg-read-passphrase prompt)))
+
+(defun pgg-add-passphrase-cache (key passphrase)
+  (set (intern key pgg-passphrase-cache)
+       passphrase)
+  (run-at-time pgg-passphrase-cache-expiry nil
+	       #'pgg-remove-passphrase-cache
+	       key))
+
+(defun pgg-remove-passphrase-cache (key)
+  (unintern key pgg-passphrase-cache))
 
 (provide 'pgg)
 
