@@ -1,3 +1,17 @@
+2000-05-16  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-edit.el (mime-edit-mime-version-field-for-message/partial):
+	Remove mime-edit-version.
+	(mime-edit-message-default-max-lines): Increment to 5000.
+	(mime-edit-split-and-send):
+	(mime-edit-exit):
+	Shut up byte compiler.
+
+2000-05-16  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-view-automatic-conversion): New variable.
+	(mime-display-text): Decode CTE when FLIM 1.14.
+
 2000-05-12  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* mime-view (mime-display-entity): Show header when message

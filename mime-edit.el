@@ -527,7 +527,7 @@ Each elements are regexp of field-name.")
   :group 'mime-edit
   :type 'boolean)
 
-(defcustom mime-edit-message-default-max-lines 1000
+(defcustom mime-edit-message-default-max-lines 5000
   "*Default maximum lines of a message."
   :group 'mime-edit
   :type 'integer)
@@ -678,10 +678,11 @@ Tspecials means any character that matches with it in header must be quoted.")
   "MIME version number.")
 
 (defconst mime-edit-mime-version-field-for-message/partial
-  (concat "MIME-Version:"
-	  (eword-encode-field-body
-	   (concat " 1.0 (split by " mime-edit-version ")\n")
-	   "MIME-Version:"))
+  "MIME-Version: 1.0"
+;;  (concat "MIME-Version:"
+;;	  (eword-encode-field-body
+;;	   (concat " 1.0 (split by " mime-edit-version ")\n")
+;;	   "MIME-Version:"))
   "MIME version field for message/partial.")
 
 
@@ -1042,7 +1043,7 @@ no errors will be signaled even if it is not MIME-Edit mode."
     (if (and (featurep 'xemacs)
 	     (featurep 'menubar))
 	(delete-menu-item (list mime-edit-menu-title)))
-    (end-of-invisible)
+    (disable-invisible)
     (set-buffer-modified-p (buffer-modified-p))
     (run-hooks 'mime-edit-exit-hook)
     (message "Exit MIME editor mode.")))
@@ -2417,10 +2418,11 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
       (setq mime-edit-message-max-length
 	    (or (cdr (assq major-mode mime-edit-message-max-lines-alist))
 		mime-edit-message-default-max-lines)))
-  (let* ((mime-edit-draft-file-name
-	  (or (buffer-file-name)
-	      (make-temp-name
-	       (expand-file-name "mime-draft" temporary-file-directory))))
+  (let* (
+;;	 (mime-edit-draft-file-name
+;;	  (or (buffer-file-name)
+;;	      (make-temp-name
+;;	       (expand-file-name "mime-draft" temporary-file-directory))))
 	 (separator mail-header-separator)
 	 (id (concat "\""
 		     (replace-space-with-underline (current-time-string))

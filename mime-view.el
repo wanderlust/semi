@@ -117,6 +117,14 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 			       (const :tag "Default" t))
 		       integer)))
 
+(defvar mime-view-automatic-conversion
+  (cond ((featurep 'xemacs)
+	 'automatic-conversion)
+	((boundp 'MULE)
+	 '*autoconv*)
+	(t
+	 'undecided)))
+
 ;;; @ in raw-buffer (representation space)
 ;;;
 
@@ -637,7 +645,10 @@ Each elements are regexp of field-name.")
 	   (mime-entity-body entity)
 	 ;; #### This is wrong, but...
 	 (mime-entity-content entity))
-       (or (cdr (assq 'encoding situation)) "7bit"))
+       (or (cdr (assq 'encoding situation))
+	   (if (fboundp 'mime-entity-body)
+	       (mime-entity-encoding entity)
+	     "7bit")))
       (or (cdr (assq 'coding situation))
 	  'binary)))))
 
@@ -881,7 +892,7 @@ This can only handle gzipped contents."
 	(when (fboundp 'set-buffer-multibyte)
 	  (set-buffer-multibyte t))
 	(buffer-string))
-      'undecided))
+      mime-view-automatic-conversion))
      t)
 
 (defun mime-preview-inline ()
@@ -933,8 +944,8 @@ With prefix, it prompts for coding-system."
 	(position (mime-preview-entity-boundary))
 	(coding (if ask-coding
 		    (or (read-coding-system "Coding system: ")
-			'undecided)
-		  'undecided))
+			mime-view-automatic-conversion)
+		  mime-view-automatic-conversion))
 	(cte (if ask-coding
 		 (completing-read "Content Transfer Encoding: "
 				  (mime-encoding-alist) nil t)))
