@@ -167,14 +167,13 @@ such as a version of Net$cape)."
 	(replace-match "\\1\\6")
         (goto-char (point-min))
 	)
-      (let (charset encoding text)
-	(while (re-search-forward eword-encoded-word-regexp nil t)
-	  (insert (eword-decode-encoded-word
-		   (prog1
-		       (buffer-substring (match-beginning 0) (match-end 0))
-		     (delete-region (match-beginning 0) (match-end 0))
-		     ) must-unfold))
-	  ))
+      (while (re-search-forward eword-encoded-word-regexp nil t)
+	(insert (eword-decode-encoded-word
+		 (prog1
+		     (buffer-substring (match-beginning 0) (match-end 0))
+		   (delete-region (match-beginning 0) (match-end 0))
+		   ) must-unfold))
+	)
       )))
 
 
