@@ -1,5 +1,16 @@
 1998-09-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-edit.el (mime-edit-insert-user-agent-field): New variable
+	(abolish `mime-edit-insert-x-emacs-field').
+	(mime-edit-user-agent-value): New variable (abolish
+	`mime-edit-x-emacs-value').
+	(mime-edit-translate-body): Insert User-Agent field instead of
+	`X-Emacs' field.
+	(mime-edit-again-ignored-field-regexp): Add `User-Agent' instead
+	of `X-Emacs' field conditionally.
+
+1998-09-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* SEMI-MK (config-semi-package): New function.
 	(compile-semi-package): New function.
 	(install-semi-package): New function.
