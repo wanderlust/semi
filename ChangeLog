@@ -1,3 +1,7 @@
+2000-12-20  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* SEMI: Version 1.14.0 (Iburihashi) released.
+
 2000-12-19  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
 	* mime-edit.el (mime-edit-mime-version-field-for-message/partial):
