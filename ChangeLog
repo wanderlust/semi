@@ -1,3 +1,14 @@
+2000-10-31   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-edit.el (mime-edit-insert-voice): Add text-property
+	`mime-edit-invisible'.
+	(mime-edit-insert-binary-file): Ditto.
+	(mime-edit-content-end): Check text-property `mime-edit-invisible'
+	instead of `invisible'.
+	(mime-edit-invisible-region): New function.
+	(mime-edit-invisible-p): New function.
+	(mime-edit-next-visible-point): New function.
+
 2000-10-19  Takanori Saneto  <sanewo@ba2.so-net.ne.jp>
 
 	* pgg-pgp.el (pgg-pgp-process-region): bind process-environment
