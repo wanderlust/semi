@@ -1,3 +1,20 @@
+1998-11-10  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
+
+	* Sync up with `semi-vcard' branch.
+
+* 1998-11-07  Tanaka Akira  <akr@jaist.ac.jp>
+
+        * mime-view.el: (mime-display-text/x-vcard): Preserve encoding.
+
+* 1998-11-07  Tanaka Akira  <akr@jaist.ac.jp>
+
+        * mime-view.el: (mime-display-text/x-vcard): New function.
+        (mime-preview-condition): Set up for 'mime-preview-text/x-vcard.
+
+1998-11-10  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
+
+	* Create new branch `keiichi-1_11'.
+
 1998-11-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-bbdb.el (mime-bbdb/update-record): Use
