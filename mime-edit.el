@@ -2689,6 +2689,10 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 			   (match-end 0)
 			 (point-min)
 			 )))
+		  (if (and (eq type 'text)
+			   (eq stype 'x-rot13-47-48))
+		      (mule-caesar-region he (point-max))
+		    )
 		  (if (= (point-min) 1)
 		      (progn
 			(goto-char he)

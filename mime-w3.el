@@ -51,7 +51,8 @@
     (mime-save-background-color
      (save-restriction
        (narrow-to-region p p)
-       (mime-text-insert-decoded-body entity)
+       (mime-insert-text-content entity)
+       (run-hooks 'mime-text-decode-hook)
        (w3-region p (point-max))
        (mime-put-keymap-region p (point-max) w3-mode-map)
        ))))

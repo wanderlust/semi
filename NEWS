@@ -1,6 +1,46 @@
 SEMI NEWS --- history of major-changes.
 Copyright (C) 1998 Free Software Foundation, Inc.
 
+* Changes in SEMI 1.10
+
+** Function `mime-text-insert-decoded-body' was abolished
+
+  SEMI 1.9 uses `mime-insert-text-content' of FLIM 1.11 API instead of
+`mime-text-insert-decoded-body'.
+
+  Now `mime-view-caesar' does not run `mime-text-decode-hook'.
+
+
+* Changes in SEMI 1.9
+
+** User option `mime-encoding-list'
+
+  SEMI 1.9 requires FLIM 1.10 API.  In FLIM 1.10 API, variable
+`mime-file-encoding-method-alist' was abolished.  If you want to use
+non-standard Content-Transfer-Encoding to insert a file into sending
+message, please edit new user option `mime-encoding-list' instead of
+`mime-file-encoding-method-alist'.
+
+
+** Constant `mime-user-interface-product'
+
+  Constant `mime-user-interface-version' was renamed to
+`mime-user-interface-product'.  Notice that data format is changed
+too.
+
+  FLIM 1.10 API provides following macros to access a slot of the new
+data format:
+
+     mime-product-name (product)
+
+     mime-product-version (product)
+
+     mime-product-code-name (product)
+
+Please use them to get elements of the constant
+`mime-user-interface-product'.
+
+
 * Changes in SEMI 1.8
 
 ** Don't use "file" command to detect content of entity
@@ -38,6 +78,15 @@ required to display message at current summary line, and its return
 value were ignored.  On the other hand,
 `request-partial-message-method' is required to return structure of
 message at current summary line.  Format of it is mime-entity.
+
+
+** User-Agent field
+
+  MIME-Edit inserts User-Agent field instaed of X-Emacs field if
+`mime-edit-insert-user-agent-field' is not nil.  Contents of
+User-Agent is specified by mime-edit-user-agent-value'.
+
+  X-Emacs field related features were abolished.
 
 
 * Changes in SEMI 1.7
