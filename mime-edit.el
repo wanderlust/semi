@@ -2401,6 +2401,12 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 ;;; @ edit again
 ;;;
 
+(defvar mime-edit-again-ignored-field-regexp
+  (concat "^\\(" "Content-.*\\|Mime-Version"
+	  (if mime-edit-insert-x-emacs-field "\\|X-Emacs")
+	  "\\):")
+  "Regexp for deleted header fields when `mime-edit-again' is called.")
+
 (defun mime-editor::edit-again (code-conversion)
   (save-excursion
     (goto-char (point-min))
@@ -2555,8 +2561,7 @@ converted to MIME-Edit tags."
   (save-restriction
     (std11-narrow-to-header)
     (goto-char (point-min))
-    (while (re-search-forward
-	    "^\\(Content-.*\\|Mime-Version\\):" nil t)
+    (while (re-search-forward mime-edit-again-ignored-field-regexp nil t)
       (delete-region (match-beginning 0) (1+ (std11-field-end)))
       ))
   (or no-separator
