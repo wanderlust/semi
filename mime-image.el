@@ -145,9 +145,8 @@
 ;;    (for XEmacs 19.12 or later)
 
 (defun mime-preview/filter-for-image (ctype params encoding)
-  (let* ((charset (assoc "charset" params))
-	 (beg (point-min)) (end (point-max))
-	 )
+  (let ((beg (point-min))
+	(end (point-max)))
     (remove-text-properties beg end '(face nil))
     (message "Decoding image...")
     (mime-decode-region beg end encoding)
