@@ -1,5 +1,8 @@
 1998-10-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-edit.el (mime-edit-version): Enclose with
+	`eval-and-compile'.
+
 	* mime-edit.el (mime-edit-version): Renamed from
 	`mime-edit-version-string'; use `mime-user-interface-product',
 	`mime-product-name', `mime-product-version' and
