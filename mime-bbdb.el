@@ -172,7 +172,7 @@ the user confirms the creation."
 	  )
         (if from
             (bbdb-annotate-message-sender
-             (eword-decode-structured-field-body from) t
+             (mime-decode-field-body from 'From) t
              (or (bbdb-invoke-hook-for-value mime-bbdb/auto-create-p)
                  offer-to-create)
              offer-to-create))
