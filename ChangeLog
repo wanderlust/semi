@@ -1,3 +1,11 @@
+2001-11-27  Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-w3.el: Don't use `url-register-protocol' if it is not
+	fboundp; announce `url-cid' feature instead.
+	[cf. <Wanderlust:8566>]
+
+	(url-cid): Change return value for the current URL package.
+
 2003-06-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* pgg-gpg.el (pgg-gpg-process-region): Undo the last change;
