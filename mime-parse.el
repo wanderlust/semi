@@ -202,7 +202,7 @@ and return parsed it. [mime-parse.el]"
 	      '("message/rfc822")
 	    '("text/plain")
 	    ))
-	 cb ce ct ret ncb children (i 0))
+	 cb ce ret ncb children (i 0))
     (save-restriction
       (narrow-to-region beg end)
       (goto-char beg)
