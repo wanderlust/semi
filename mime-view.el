@@ -686,21 +686,32 @@ Each elements are regexp of field-name.")
    (body-presentation-method . mime-display-multipart/alternative)))
 
 (ctree-set-calist-strictly
- 'mime-preview-condition '((type . message)(subtype . partial)
-			   (body-presentation-method
-			    . mime-display-message/partial-button)))
+ 'mime-preview-condition
+ '((type . multipart)(subtype . t)
+   (body . visible)
+   (body-presentation-method . mime-display-multipart/mixed)))
 
 (ctree-set-calist-strictly
- 'mime-preview-condition '((type . message)(subtype . rfc822)
-			   (body-presentation-method . nil)
-			   (childrens-situation (header . visible)
-						(entity-button . invisible))))
+ 'mime-preview-condition
+ '((type . message)(subtype . partial)
+   (body . visible)
+   (body-presentation-method . mime-display-message/partial-button)))
 
 (ctree-set-calist-strictly
- 'mime-preview-condition '((type . message)(subtype . news)
-			   (body-presentation-method . nil)
-			   (childrens-situation (header . visible)
-						(entity-button . invisible))))
+ 'mime-preview-condition
+ '((type . message)(subtype . rfc822)
+   (body . visible)
+   (body-presentation-method . mime-display-multipart/mixed)
+   (childrens-situation (header . visible)
+			(entity-button . invisible))))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition
+ '((type . message)(subtype . news)
+   (body . visible)
+   (body-presentation-method . mime-display-multipart/mixed)
+   (childrens-situation (header . visible)
+			(entity-button . invisible))))
 
 
 ;;; @@@ entity presentation
@@ -984,8 +995,10 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	   (eq (cdr (or (assq '*header situation)
 			(assq 'header situation)))
 	       'visible))
-	  (body-presentation-method
-	   (cdr (assq 'body-presentation-method situation)))
+	  (body-is-visible
+	   (eq (cdr (or (assq '*body situation)
+			(assq 'body situation)))
+	       'visible))
 	  (children (mime-entity-children entity)))
       (set-buffer preview-buffer)
       (setq nb (point))
@@ -1011,32 +1024,33 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	    (goto-char (point-max))
 	    (insert "\n")))
       (setq nbb (point))
-      (cond (children)
-            ((functionp body-presentation-method)
-	     (funcall body-presentation-method entity situation)
-	     )
-	    (t
-	     (when button-is-invisible
-	       (goto-char (point-max))
-	       (mime-view-insert-entity-button entity)
-	       )
-	     (or header-is-visible
-		 (progn
-		   (goto-char (point-max))
-		   (insert "\n")
-		   ))
-	     ))
+      (unless children
+	(if body-is-visible
+	    (let ((body-presentation-method
+		   (cdr (assq 'body-presentation-method situation))))
+	      (if (functionp body-presentation-method)
+		  (funcall body-presentation-method entity situation)
+		(mime-display-text/plain entity situation)))
+	  (when button-is-invisible
+	    (goto-char (point-max))
+	    (mime-view-insert-entity-button entity)
+	    )
+	  (unless header-is-visible
+	    (goto-char (point-max))
+	    (insert "\n"))
+	  ))
       (setq ne (point-max))
       (widen)
       (put-text-property nb ne 'mime-view-entity entity)
       (put-text-property nb ne 'mime-view-situation situation)
       (put-text-property nbb ne 'mime-view-entity-body entity)
       (goto-char ne)
-      (if children
-	  (if (functionp body-presentation-method)
-	      (funcall body-presentation-method entity situation)
-	    (mime-display-multipart/mixed entity situation)
-	    ))
+      (if (and children body-is-visible)
+	  (let ((body-presentation-method
+		 (cdr (assq 'body-presentation-method situation))))
+	    (if (functionp body-presentation-method)
+		(funcall body-presentation-method entity situation)
+	      (mime-display-multipart/mixed entity situation))))
       )))
 
 
