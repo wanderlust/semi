@@ -40,12 +40,22 @@
    (function (lambda (elem) (apply 'autoload elem)))
    '(
      (mc-gpg-debug-print	"mc-gpg")
+
      (mc-gpg-encrypt-region	"mc-gpg")
+     (mc-gpg-fetch-key		"mc-gpg")
      (mc-gpg-lookup-key		"mc-gpg")
+     (mc-gpg-sign-region	"mc-gpg")
+
      (mc-pgp50-encrypt-region	"mc-pgp5")
+     (mc-pgp50-fetch-key	"mc-pgp5")
      (mc-pgp50-lookup-key	"mc-pgp5")
+     (mc-pgp50-sign-region	"mc-pgp5")
+
      (mc-pgp-encrypt-region	"mc-pgp")
+     (mc-pgp-fetch-key		"mc-pgp")
      (mc-pgp-lookup-key		"mc-pgp")
+     (mc-pgp-sign-region	"mc-pgp")
+
      (mc-snarf-keys		"mc-toplev")
      )))
 
@@ -170,7 +180,58 @@ VERSION should be a string or a symbol."
 	      )))
 	(point-max)))))
 
+(defun mime-mc-verify ()
+  "Verify a message in the current buffer. Exact behavior depends on
+current major mode."
+  (let ((mc-default-scheme (intern (format "mc-scheme-%s" pgp-version))))
+    (mc-verify)
+    ))
+
+(defun mime-mc-decrypt ()
+  "Decrypt a message in the current buffer. Exact behavior depends on
+current major mode."
+  (let ((mc-default-scheme (intern (format "mc-scheme-%s" pgp-version))))
+    (mc-decrypt)
+    ))
+
+(defun mime-mc-fetch-key (&optional id)
+  "Attempt to fetch a key for addition to PGP or GnuPG keyring.
+Interactively, prompt for string matching key to fetch.
+
+Non-interactively, ID must be a pair.  The CAR must be a bare Email
+address and the CDR a keyID (with \"0x\" prefix).  Either, but not
+both, may be nil.
+
+Return t if we think we were successful; nil otherwise.  Note that nil
+is not necessarily an error, since we may have merely fired off an Email
+request for the key."
+  (funcall (intern (format "mc-%s-fetch-key" pgp-version)) id)
+  )
+
+(defun mime-mc-snarf-keys ()
+  "Add all public keys in the buffer to your keyring."
+  (let ((mc-default-scheme (intern (format "mc-scheme-%s" pgp-version))))
+    (mc-snarf-keys)
+    ))
+
+(defun mime-mc-sign-region (start end &optional id unclear boundary)
+  (funcall (intern (format "mime-mc-%s-sign-region" pgp-version))
+	   start end id unclear boundary)
+  )
+
+(defun mime-mc-traditional-sign-region (start end &optional id unclear)
+  (funcall (intern (format "mc-%s-sign-region" pgp-version))
+	   start end id unclear)
+  )
+
+(defun mime-mc-encrypt-region (recipients start end &optional id sign)
+  (funcall (intern (format "mime-mc-%s-encrypt-region" pgp-version))
+	   recipients start end id sign)
+  )
+
 (defun mime-mc-insert-public-key (&optional userid)
+  "Insert your public key at point. With one prefix arg, prompts for
+user id to use."
   (let ((not-loaded (not (fboundp (intern (format "mc-%s-insert-public-key"
 						  pgp-version)))))
 	(comment (mime-mc-comment))
@@ -199,21 +260,6 @@ VERSION should be a string or a symbol."
     (if comment
 	(mime-mc-replace-comment-field comment)
       )))
-
-(defun mime-mc-verify ()
-  (let ((mc-default-scheme (intern (format "mc-scheme-%s" pgp-version))))
-    (mc-verify)
-    ))
-
-(defun mime-mc-decrypt ()
-  (let ((mc-default-scheme (intern (format "mc-scheme-%s" pgp-version))))
-    (mc-decrypt)
-    ))
-
-(defun mime-mc-snarf-keys ()
-  (let ((mc-default-scheme (intern (format "mc-scheme-%s" pgp-version))))
-    (mc-snarf-keys)
-    ))
 
 
 ;;; @ GnuPG functions

@@ -553,7 +553,7 @@ values of this variable and `mime-pgp-http-proxy-server-port' appropriately."
 
 (defmacro mime-pgp-show-fetched-key (key scroll &rest args)
   (` (let ((buffer (get-buffer-create "*fetched keys*"))
-	   start)
+	   start height window shrink)
        (with-current-buffer buffer
 	 (erase-buffer)
 	 (insert (, key))
@@ -563,20 +563,34 @@ values of this variable and `mime-pgp-http-proxy-server-port' appropriately."
 	  )
 	 (goto-char (point-min))
 	 (forward-line (, scroll))
-	 (setq start (point))
+	 (setq height (count-lines (point) (point-max))
+	       start (point))
 	 )
-       (display-buffer buffer)
-       (set-window-start (get-buffer-window buffer) start)
-       )))
+       (setq window (get-buffer-window mime-echo-buffer-name))
+       (if window
+	   (set-window-buffer window buffer)
+	 (let (pop-up-frames)
+	   (display-buffer buffer)
+	   ))
+       (setq window (get-buffer-window buffer)
+	     shrink (1- (- (window-height window) height)))
+       (if (> shrink 0)
+	   (let ((window-min-height 1))
+	     (enlarge-window shrink)
+	     ))
+       (set-window-start window start)
+       buffer)))
 
 (defun mime-pgp-show-fetched-key-for-gpg (key)
+  "Extract KEY and show. Returns buffer object to be killed."
   (mime-pgp-show-fetched-key key 0)
   )
 
 (defun mime-pgp-show-fetched-key-for-pgp50 (key)
+  "Extract KEY and show. Returns buffer object to be killed."
   (let ((buffer (get-buffer-create "*fetched keys*"))
 	(process-environment process-environment)
-	process-connection-type process start)
+	process-connection-type process start height window shrink)
     (setenv "PGPPASSFD" nil)
     (with-current-buffer buffer
       (erase-buffer)
@@ -597,21 +611,36 @@ values of this variable and `mime-pgp-http-proxy-server-port' appropriately."
 	      "^Add these keys to your keyring\\? \\[Y/n\\] "
 	      nil t))
 	    ))
+      (setq start (match-beginning 0))
       (delete-process process)
+      (delete-region start (point-max))
       (goto-char (point-min))
       (forward-line 10)
-      (setq start (point))
+      (setq height (count-lines (point) start)
+	    start (point))
       )
-    (display-buffer buffer)
-    (set-window-start (get-buffer-window buffer) start)
-    ))
+    (setq window (get-buffer-window mime-echo-buffer-name))
+    (if window
+	(set-window-buffer window buffer)
+      (let (pop-up-frames)
+	(display-buffer buffer)
+	))
+    (setq window (get-buffer-window buffer)
+	  shrink (1- (- (window-height window) height)))
+    (if (> shrink 0)
+	(let ((window-min-height 1))
+	  (enlarge-window shrink)
+	  ))
+    (set-window-start window start)
+    buffer))
 
 (defun mime-pgp-show-fetched-key-for-pgp (key)
+  "Extract KEY and show. Returns buffer object to be killed."
   (mime-pgp-show-fetched-key key 7 "-f" "+language=en")
   )
 
 (defun mime-pgp-fetch-key (&optional id)
-  "Attempt to fetch a key via HTTP for addition to PGP or GnuPG keyring.
+  "Attempt to fetch a key for addition to PGP or GnuPG keyring.
 Interactively, prompt for string matching key to fetch.
 
 Non-interactively, ID must be a pair.  The CAR must be a bare Email
@@ -652,7 +681,7 @@ appropriately."
 				       pgp-version)))
 	(snarf-function (pgp-function 'snarf-keys))
 	(window-config (current-window-configuration))
-	case-fold-search process-connection-type process)
+	case-fold-search process-connection-type process show-buffer)
     (unwind-protect
 	(catch 'mime-pgp-fetch-key-done
 	  (cond ((interactive-p)
@@ -716,12 +745,17 @@ appropriately."
 			 ))
 		  (progn
 		    (delete-region (1+ (match-end 0)) (point-max))
-		    (funcall show-function (buffer-string))
+		    (setq show-buffer
+			  (funcall show-function (buffer-string))
+			  )
 		    (if (y-or-n-p "Add this key to keyring? ")
 			(funcall snarf-function)
-		      ))
+		      )
+		    (kill-buffer show-buffer)
+		    t)
 		(message "Key not found.")
 		nil))))
+      (kill-buffer buffer)
       (set-window-configuration window-config)
       )))
 

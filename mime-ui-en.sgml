@@ -622,20 +622,16 @@ The value should be a symbol.  Allowed versions are <code>gpg</code>,
 <defvar name="pgp-function-alist">
 <p>
 Alist of service names vs. corresponding functions and its filenames.
-Each element looks like
-<code>(SERVICE FUNCTION FILE [PGP5_FUNCTION PGP5_FILE [GPG_FUNCTION GPG_FILE]])</code>.
+Each element looks like <code>(SERVICE FUNCTION FILE)</code>.
 <p>
-SERVICE is a symbol of PGP2, PGP5 or GnuPG processing.  It allows
-`verify', `decrypt', `fetch-key', `snarf-keys', `mime-sign',
-`traditional-sign', `encrypt' or `insert-key'.
+SERVICE is a symbol of PGP processing.  It allows `verify', `decrypt',
+`fetch-key', `snarf-keys', `mime-sign', `traditional-sign', `encrypt'
+or `insert-key'.
 <p>
 Function is a symbol of function to do specified SERVICE.
 <p>
 FILE is string of filename which has definition of corresponding
 FUNCTION.
-<p>
-PGP5_FUNCTION, PGP5_FILE, GPG_FUNCTION and GPG_FILE are similar to
-FUNCTION and FILE, but they will be used for PGP 5.0i or GnuPG.
 </defvar>
 
 <defun name="pgp-function">

@@ -185,62 +185,34 @@ The value should be a symbol.  Allowed versions are:
     ;; for mime-pgp
     (verify		mime-mc-verify			"mime-mc")
     (decrypt		mime-mc-decrypt			"mime-mc")
-    (fetch-key		mc-pgp-fetch-key		"mc-pgp"
-			mc-pgp50-fetch-key		"mc-pgp5"
-			mc-gpg-fetch-key		"mc-gpg")
+    (fetch-key		mime-mc-fetch-key		"mime-mc")
     (snarf-keys		mime-mc-snarf-keys		"mime-mc")
     ;; for mime-edit
-    (mime-sign		mime-mc-pgp-sign-region		"mime-mc"
-			mime-mc-pgp50-sign-region	"mime-mc"
-			mime-mc-gpg-sign-region		"mime-mc")
-    (traditional-sign	mc-pgp-sign-region		"mc-pgp"
-			mc-pgp50-sign-region		"mc-pgp5"
-			mc-gpg-sign-region		"mc-gpg")
-    (encrypt		mime-mc-pgp-encrypt-region	"mime-mc"
-			mime-mc-pgp50-encrypt-region	"mime-mc"
-			mime-mc-gpg-encrypt-region	"mime-mc")
+    (mime-sign		mime-mc-sign-region		"mime-mc")
+    (traditional-sign	mime-mc-traditional-sign-region	"mime-mc")
+    (encrypt		mime-mc-encrypt-region		"mime-mc")
     (insert-key		mime-mc-insert-public-key	"mime-mc")
     )
   "Alist of service names vs. corresponding functions and its filenames.
-Each element looks like:
+Each element looks like (SERVICE FUNCTION FILE).
 
-\(SERVICE FUNCTION FILE [PGP5_FUNCTION PGP5_FILE [GPG_FUNCTION GPG_FILE]]).
+SERVICE is a symbol of PGP processing.  It allows `verify', `decrypt',
+`fetch-key', `snarf-keys', `mime-sign', `traditional-sign', `encrypt'
+or `insert-key'.
 
-SERVICE is a symbol of PGP2, PGP5 or GnuPG processing.  It allows `verify',
-`decrypt', `fetch-key', `snarf-keys', `mime-sign', `traditional-sign',
-`encrypt' or `insert-key'.
-
-FUNCTION is a symbol of function to do specified SERVICE.
+Function is a symbol of function to do specified SERVICE.
 
 FILE is string of filename which has definition of corresponding
-FUNCTION.
-
-PGP5_FUNCTION, PGP5_FILE, GPG_FUNCTION and GPG_FILE are similar to
-FUNCTION and FILE, but they will be used for PGP 5.0i or GnuPG.")
+FUNCTION.")
 
 (defmacro pgp-function (method)
   "Return function to do service METHOD."
-  `(let ((elem (assq ,method (symbol-value 'pgp-function-alist))))
-     (cond ((eq 'gpg pgp-version)
-	    (if (> (length elem) 3)
-		(nth 5 elem)
-	      (nth 1 elem))
-	    )
-	   ((eq 'pgp50 pgp-version)
-	    (if (> (length elem) 3)
-		(nth 3 elem)
-	      (nth 1 elem))
-	    )
-	   (t
-	    (nth 1 elem)
-	    ))))
+  `(cadr (assq ,method (symbol-value 'pgp-function-alist))))
 
 (mapcar (function
-	 (lambda (elem)
-	   (setq elem (cdr elem))
-	   (while elem
-	     (autoload (car elem) (nth 1 elem))
-	     (setq elem (nthcdr 2 elem)))))
+	 (lambda (method)
+	   (autoload (cadr method)(nth 2 method))
+	   ))
 	pgp-function-alist)
 
 

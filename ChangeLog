@@ -1,5 +1,31 @@
 1999-04-14  Katsumi Yamaoka   <yamaoka@jpl.org>
 
+	* mime-ui-en.texi, mime-ui-ja.texi: Sync up with .sgml files.
+	* mime-ui-en.sgml, mime-ui-ja.sgml: Modify a description for
+	simplified `pgp-function-alist'.
+
+	* semi-def.el (pgp-function-alist): Simplify. Use
+	`mime-mc-encrypt-region', `mime-mc-traditional-sign-region',
+	`mime-mc-sign-region' and `mime-mc-fetch-key' for it.
+
+	* mime-mc.el (mime-mc-insert-public-key, mime-mc-snarf-keys,
+	mime-mc-decrypt, mime-mc-verify): Add doc strings.
+	(mime-mc-encrypt-region, mime-mc-traditional-sign-region,
+	mime-mc-sign-region, mime-mc-fetch-key): New functions.
+	(TopLevel): Add autoloads "mc-gpg", "mc-pgp5" and "mc-pgp" for the
+	functions `mc-gpg-fetch-key', `mc-gpg-sign-region',
+	`mc-pgp50-fetch-key', `mc-pgp50-sign-region', `mc-pgp-fetch-key'
+	and `mc-pgp-sign-region'.
+
+	* mime-pgp.el (mime-pgp-fetch-key): Kill useless buffers after
+	fetching.
+	(mime-pgp-show-fetched-key-for-pgp50, mime-pgp-show-fetched-key):
+	Show fetched key in the window of `mime-echo-buffer-name' if it is
+	alive, otherwise use `display-buffer'; minimize the window height;
+	return buffer object to be killed.
+
+1999-04-14  Katsumi Yamaoka   <yamaoka@jpl.org>
+
 	* mime-pgp.el (mime-pgp-fetch-key,
 	mime-pgp-show-fetched-key-for-pgp,
 	mime-pgp-show-fetched-key-for-pgp50,
