@@ -54,7 +54,7 @@
 (defconst eword-encoded-word-regexp
   (concat (regexp-quote "=?")
 	  "\\("
-	  eword-charset-regexp
+	  mime-charset-regexp
 	  "\\)"
 	  (regexp-quote "?")
 	  "\\(B\\|Q\\)"
