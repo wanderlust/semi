@@ -1,3 +1,7 @@
+1998-11-02  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* WEMI: Version 1.10.2 (Yui) released.
+
 1998-10-29  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* NEWS (Abolish variable `mime-temp-directory'): New subsection.
