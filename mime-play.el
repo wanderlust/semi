@@ -295,14 +295,19 @@ window.")
 	  "\\(\\." mime-view-file-name-char-regexp "+\\)*"))
 
 (defun mime-entity-safe-filename (entity)
-  (replace-as-filename
-   (or (mime-entity-filename entity)
-       (let ((ret (or (mime-entity-read-field entity 'Content-Description)
-		      (mime-entity-read-field entity 'Subject))))
-	 (if (or (string-match mime-view-file-name-regexp-1 ret)
-		 (string-match mime-view-file-name-regexp-2 ret))
-	     (substring ret (match-beginning 0)(match-end 0))
-	   )))))
+  (let ((filename
+	 (or (mime-entity-filename entity)
+	     (let ((subj
+		    (or (mime-entity-read-field entity 'Content-Description)
+			(mime-entity-read-field entity 'Subject))))
+	       (if (and subj
+			(or (string-match mime-view-file-name-regexp-1 subj)
+			    (string-match mime-view-file-name-regexp-2 subj)))
+		   (substring subj (match-beginning 0)(match-end 0))
+		 )))))
+    (if filename
+	(replace-as-filename filename)
+      )))
 
 
 ;;; @ file extraction
