@@ -130,16 +130,16 @@
 	(setq i d-i
 	      d-i d-j
 	      d-j i))
-    (setq j-r (nthcdr (1- d-j) mime-acting-situation-example-list))
-    (setcdr j-r (cddr j-r))
+    (setq jr (nthcdr (1- d-j) mime-acting-situation-example-list))
+    (setcdr jr (cddr jr))
     (if (= d-i 0)
 	(setq mime-acting-situation-example-list
 	      (cdr mime-acting-situation-example-list))
-      (setq i-r (nthcdr (1- d-i) mime-acting-situation-example-list))
-      (setcdr i-r (cddr i-r))
+      (setq ir (nthcdr (1- d-i) mime-acting-situation-example-list))
+      (setcdr ir (cddr ir))
       )
-    (if (setq i-r (assoc (car dest) mime-acting-situation-example-list))
-	(setcdr i-r (+ (cdr i-r)(cdr dest)))
+    (if (setq ir (assoc (car dest) mime-acting-situation-example-list))
+	(setcdr ir (+ (cdr ir)(cdr dest)))
       (setq mime-acting-situation-example-list
 	    (cons dest mime-acting-situation-example-list))
       )))
