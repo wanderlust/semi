@@ -41,7 +41,7 @@
 (defconst std11-quoted-pair-regexp "\\\\.")
 (defconst std11-qtext-regexp
   (concat "[^" (char-list-to-string std11-non-qtext-char-list) "]"))
-(defconst rfc822/quoted-string-regexp
+(defconst std11-quoted-string-regexp
   (concat "\""
 	  (regexp-*
 	   (regexp-or std11-qtext-regexp std11-quoted-pair-regexp)
@@ -50,7 +50,7 @@
 
 (defconst mime/content-parameter-value-regexp
   (concat "\\("
-	  rfc822/quoted-string-regexp
+	  std11-quoted-string-regexp
 	  "\\|[^; \t\n]*\\)"))
 
 (defconst mime::parameter-regexp
