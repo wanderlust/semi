@@ -7,7 +7,7 @@
 --[[message/external-body;
 	access-type=anon-ftp;
 	site="ftp.jpl.org";
-	directory="ftp://ftp.jpl.org/pub/elisp/wemi";
+	directory="/pub/elisp/wemi";
 	name="PACKAGE-VERSION.tar.gz";
 	mode=image]]
 Content-Type: application/octet-stream;
