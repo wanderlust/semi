@@ -675,6 +675,9 @@ Each elements are regexp of field-name.")
 
 (autoload 'fill-flowed "flow-fill")
 
+(defvar mime-preview-inline-fontify t
+  "If non-nil, fontify the inline part.")
+
 (ctree-set-calist-strictly
  'mime-preview-condition
  '((type . nil)
@@ -703,7 +706,7 @@ Each elements are regexp of field-name.")
 
 (ctree-set-calist-strictly
  'mime-preview-condition
- '((type . application)(subtype . emacs-lisp)(disposition-type . inline)
+ '((type . application)(subtype . emacs-lisp)
    (body . visible)
    (body-presentation-method . mime-display-application/emacs-lisp)))
 
@@ -761,7 +764,10 @@ Each elements are regexp of field-name.")
   (save-restriction
     (narrow-to-region (point-max)(point-max))
     (condition-case nil
-	(mime-insert-text-content entity)
+	(if (and mime-preview-inline-fontify
+		 (mime-entity-filename entity))	;should be an attachment.
+	    (mime-display-inline-fontify entity)
+	  (mime-insert-entity-content entity))
       (error (progn
 	       (message "Can't decode current entity.")
 	       (sit-for 1))))
@@ -901,18 +907,23 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
     (mime-display-entity start nil default-situation)))
 
 ;;; stolen (and renamed) from mm-view.el.
-(defun mime-display-inline-fontify (entity mode)
+(defun mime-display-inline-fontify (entity &optional mode)
   ;; XEmacs @#$@ version of font-lock refuses to fully turn itself
   ;; on for buffers whose name begins with " ".  That's why we use
   ;; save-current-buffer/get-buffer-create rather than
   ;; with-temp-buffer.
-  (let ((buffer (get-buffer-create "*fontification*")))
+  (let ((buffer (get-buffer-create "*fontification*"))
+	filename)
     (save-current-buffer
       (set-buffer buffer)
       (buffer-disable-undo)
       (erase-buffer)
       (mime-insert-entity-content entity)
-      (funcall mode)
+      (if mode
+	  (funcall mode)
+	(if (setq filename (mime-entity-filename entity))
+	    (set-visited-file-name filename))
+	(set-auto-mode))
       (let ((font-lock-verbose nil))
 	;; I find font-lock a bit too verbose.
 	(font-lock-fontify-buffer))
