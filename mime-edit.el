@@ -120,13 +120,11 @@
 
 (eval-and-compile
   (defconst mime-edit-version
-    (eval-when-compile
-      (concat
-       (mime-product-name mime-user-interface-product) " "
-       (mapconcat #'number-to-string
-		  (mime-product-version mime-user-interface-product) ".")
-       " - \"" (mime-product-code-name mime-user-interface-product) "\"")))
-  )
+    (concat
+     (mime-product-name mime-user-interface-product) " "
+     (mapconcat #'number-to-string
+		(mime-product-version mime-user-interface-product) ".")
+     " - \"" (mime-product-code-name mime-user-interface-product) "\"")))
 
 
 ;;; @ variables
