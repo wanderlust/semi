@@ -48,6 +48,50 @@
 	(pgg-pgp5-process-region): Use `binary-funcall' instead of
 	`binary-to-text-funcall'.
 
+
+2000-12-28  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* SEMI: Version 1.14.3 (Ushinoya) released.
+
+	* mime-view.el (mime-view-read-situation-examples-file): Don't try
+	to read situation-examples-file is it is nil.
+	(mime-situation-examples-file): Avoid to read
+	situation-examples-file at compile time.
+
+2000-12-28  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-view.el (mime-view-read-situation-examples-file): Display
+	warning. [cf. <emacs-mime-ja:680>]
+
+2000-12-27  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-view.el (mime-view-mailcap-files): New user option.
+	(mime-view-read-mailcap-files): Renamed from
+	`mime-view-read-mailcap'; read `mime-view-mailcap-files'.
+
+	* mime-view.el (mime-view-read-situation-examples-file): New
+	function; don't occur error.
+	(mime-view-read-mailcap): New function.
+
+2000-12-27  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-play.el (mime-play-messages-coding-system): Renamed from
+	`mime-mailcap-method-messages-coding-system'.
+
+	* pgg-def.el (pgg-messages-coding-system): Change default value to
+	nil.
+
+2000-12-27  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-play.el (mime-activate-mailcap-method): Fix typo.
+
+2000-12-26   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-play.el (mime-mailcap-method-messages-coding-system): New
+	variable.
+	(mime-activate-mailcap-method): Use it.
+
+
 2000-12-25  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
 	* SEMI: Version 1.14.2 (Daish-Dòji)-A released.

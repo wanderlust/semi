@@ -66,6 +66,15 @@ buttom. Nil means don't scroll at all."
 		 (const :tag "On" t)
 		 (sexp :tag "Situation" 1)))
 
+(defcustom mime-view-mailcap-files
+  (let ((files '("/etc/mailcap" "/usr/etc/mailcap" "~/.mailcap")))
+    (or (member mime-mailcap-file files)
+	(setq files (cons mime-mailcap-file files)))
+    files)
+  "List of mailcap files."
+  :group 'mime-view
+  :type '(repeat file))
+
 
 ;;; @ in raw-buffer (representation space)
 ;;;
@@ -337,6 +346,53 @@ mother-buffer."
 (defvar mime-acting-situation-example-list nil)
 (defvar mime-acting-situation-example-list-max-size 16)
 (defvar mime-situation-examples-file-coding-system nil)
+
+(defun mime-view-read-situation-examples-file (&optional file)
+  (or file
+      (setq file mime-situation-examples-file))
+  (if (and file
+	   (file-readable-p file))
+      (with-temp-buffer
+	(insert-file-contents file)
+	(setq mime-situation-examples-file-coding-system
+              (and (boundp 'buffer-file-coding-system)
+		   buffer-file-coding-system)
+	      ;; (static-cond
+              ;;  ((boundp 'buffer-file-coding-system)
+              ;;   (symbol-value 'buffer-file-coding-system))
+              ;;  ((boundp 'file-coding-system)
+              ;;   (symbol-value 'file-coding-system))
+              ;;  (t nil))
+	      )
+	(condition-case error
+	    (eval-buffer)
+	  (error (message "%s is broken: %s" file (cdr error))))
+	;; format check
+	(condition-case nil
+	    (let ((i 0))
+	      (while (and (> (length mime-preview-situation-example-list)
+			     mime-preview-situation-example-list-max-size)
+			  (< i 16))
+		(setq mime-preview-situation-example-list
+		      (mime-reduce-situation-examples
+		       mime-preview-situation-example-list))
+		(setq i (1+ i))))
+	  (error (setq mime-preview-situation-example-list nil)))
+	;; (let ((rest mime-preview-situation-example-list))
+	;;   (while rest
+	;;     (ctree-set-calist-strictly 'mime-preview-condition
+	;;                                (caar rest))
+	;;     (setq rest (cdr rest))))
+	(condition-case nil
+	    (let ((i 0))
+	      (while (and (> (length mime-acting-situation-example-list)
+			     mime-acting-situation-example-list-max-size)
+			  (< i 16))
+		(setq mime-acting-situation-example-list
+		      (mime-reduce-situation-examples
+		       mime-acting-situation-example-list))
+		(setq i (1+ i))))
+	  (error (setq mime-acting-situation-example-list nil))))))
 
 (defun mime-save-situation-examples ()
   (if (or mime-preview-situation-example-list
@@ -820,29 +876,39 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 (defvar mime-acting-condition nil
   "Condition-tree about how to process entity.")
 
-(if (file-readable-p mime-mailcap-file)
-    (let ((entries (mime-parse-mailcap-file)))
-      (while entries
-	(let ((entry (car entries))
-	      view print shared)
-	  (while entry
-	    (let* ((field (car entry))
-		   (field-type (car field)))
-	      (cond ((eq field-type 'view)  (setq view field))
-		    ((eq field-type 'print) (setq print field))
-		    ((memq field-type '(compose composetyped edit)))
-		    (t (setq shared (cons field shared)))))
-	    (setq entry (cdr entry)))
-	  (setq shared (nreverse shared))
-	  (ctree-set-calist-with-default
-	   'mime-acting-condition
-	   (append shared (list '(mode . "play")(cons 'method (cdr view)))))
-	  (if print
-	      (ctree-set-calist-with-default
-	       'mime-acting-condition
-	       (append shared
-		       (list '(mode . "print")(cons 'method (cdr view)))))))
-	(setq entries (cdr entries)))))
+(defun mime-view-read-mailcap-files (&optional files)
+  (or files
+      (setq files mime-view-mailcap-files))
+  (let (entries file)
+    (while files
+      (setq file (car files))
+      (if (file-readable-p file)
+	  (setq entries (append entries (mime-parse-mailcap-file file))))
+      (setq files (cdr files)))
+    (while entries
+      (let ((entry (car entries))
+	    view print shared)
+	(while entry
+	  (let* ((field (car entry))
+		 (field-type (car field)))
+	    (cond ((eq field-type 'view)  (setq view field))
+		  ((eq field-type 'print) (setq print field))
+		  ((memq field-type '(compose composetyped edit)))
+		  (t (setq shared (cons field shared))))
+	    )
+	  (setq entry (cdr entry)))
+	(setq shared (nreverse shared))
+	(ctree-set-calist-with-default
+	 'mime-acting-condition
+	 (append shared (list '(mode . "play")(cons 'method (cdr view)))))
+	(if print
+	    (ctree-set-calist-with-default
+	     'mime-acting-condition
+	     (append shared
+		     (list '(mode . "print")(cons 'method (cdr view)))))))
+      (setq entries (cdr entries)))))
+
+(mime-view-read-mailcap-files)
 
 (ctree-set-calist-strictly
  'mime-acting-condition
@@ -1639,43 +1705,11 @@ It calls function registered in variable
 
 (provide 'mime-view)
 
-(let ((file mime-situation-examples-file))
-  (if (file-readable-p file)
-      (with-temp-buffer
-	(insert-file-contents file)
-	(setq mime-situation-examples-file-coding-system
-	      (static-cond
-	       ((boundp 'buffer-file-coding-system)
-		(symbol-value 'buffer-file-coding-system))
-	       ((boundp 'file-coding-system)
-		(symbol-value 'file-coding-system))
-	       (t nil)))
-	(eval-buffer)
-	;; format check
-	(condition-case nil
-	    (let ((i 0))
-	      (while (and (> (length mime-preview-situation-example-list)
-			     mime-preview-situation-example-list-max-size)
-			  (< i 16))
-		(setq mime-preview-situation-example-list
-		      (mime-reduce-situation-examples
-		       mime-preview-situation-example-list))
-		(setq i (1+ i))))
-	  (error (setq mime-preview-situation-example-list nil)))
-	;; (let ((rest mime-preview-situation-example-list))
-	;;   (while rest
-	;;     (ctree-set-calist-strictly 'mime-preview-condition
-	;;                                (caar rest))
-	;;     (setq rest (cdr rest))))
-	(condition-case nil
-	    (let ((i 0))
-	      (while (and (> (length mime-acting-situation-example-list)
-			     mime-acting-situation-example-list-max-size)
-			  (< i 16))
-		(setq mime-acting-situation-example-list
-		      (mime-reduce-situation-examples
-		       mime-acting-situation-example-list))
-		(setq i (1+ i))))
-	  (error (setq mime-acting-situation-example-list nil))))))
+(eval-when-compile
+  (setq mime-situation-examples-file nil)
+  ;; to avoid to read situation-examples-file at compile time.
+  )
+
+(mime-view-read-situation-examples-file)
 
 ;;; mime-view.el ends here

@@ -105,8 +105,9 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
     (unwind-protect
 	(progn
 	  (setq process
-		(apply #'binary-funcall #'start-process-shell-command
-		       "*PGP*" output-buffer program args))
+		(apply #'binary-funcall
+		       #'start-process-shell-command "*PGP*" output-buffer
+		       program args))
 	  (set-process-sentinel process #'ignore)
 	  (when passphrase
 	    (process-send-string process (concat passphrase "\n")))
