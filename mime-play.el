@@ -445,15 +445,17 @@ It is registered to variable `mime-preview-quitting-method-alist'."
   "Write current region into specified file.
 When called from a program, takes three arguments:
 START, END and FILENAME.  START and END are buffer positions.
-It refer `mime-raw-buffer-coding-system-alist' to choose coding-system
-to write."
-  (let ((coding-system-for-write
-	 (cdr
-	  (or (assq major-mode mime-raw-buffer-coding-system-alist)
-	      (assq t mime-raw-buffer-coding-system-alist)
-	      ))))
-    (write-region start end filename)
-    ))
+It refer `mime-raw-representation-type' or `major-mode
+mime-raw-representation-type-alist'.  If it is `binary', region is
+saved as binary.  Otherwise the region is saved by `write-region'."
+  (let ((presentation-type
+	 (or mime-raw-representation-type
+	     (cdr (or (assq major-mode mime-raw-representation-type-alist)
+		      (assq t mime-raw-representation-type-alist))))))
+    (if (eq presentation-type 'binary)
+	(write-region-as-binary start end filename)
+      (write-region start end filename)
+      )))
 
 (defun mime-method-to-store-message/partial (beg end cal)
   (goto-char beg)
