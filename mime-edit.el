@@ -1132,8 +1132,9 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
   (let ((signature-insert-hook
          (function
           (lambda ()
-            (apply (function mime-edit-insert-tag)
-                   (mime-find-file-type signature-file-name))
+	    (let ((items (mime-find-file-type signature-file-name)))
+	      (apply (function mime-edit-insert-tag)
+		     (car items) (cadr items) (list (caddr items))))
             )))
         )
     (insert-signature arg)
