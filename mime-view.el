@@ -230,50 +230,47 @@ Each elements are regexp of field-name.")
 
 (defun mime-view-insert-entity-button (rcnum cinfo ctype params subj encoding)
   "Insert entity-button."
-  (save-restriction
-    (narrow-to-region (point)(point))
-    (let ((access-type (assoc "access-type" params))
-	  (num (or (cdr (assoc "x-part-number" params))
-		   (if (consp rcnum)
-		       (mapconcat (function
-				   (lambda (num)
-				     (format "%s" (1+ num))
-				     ))
-				  (reverse rcnum) ".")
-		     "0"))
-	       ))
-      (cond (access-type
-	     (let ((server (assoc "server" params)))
-	       (setq access-type (cdr access-type))
-	       (if server
-		   (insert (format "[%s %s ([%s] %s)]\n" num subj
-				   access-type (cdr server)))
-		 (let ((site (cdr (assoc "site" params)))
-		       (dir (cdr (assoc "directory" params)))
-		       )
-		   (insert (format "[%s %s ([%s] %s:%s)]\n" num subj
-				   access-type site dir))
-		   )))
-	     )
-	    (t
-	     (let ((charset (cdr (assoc "charset" params))))
-	       (insert (concat "[" num " " subj))
+  (mime-insert-button
+   (let ((access-type (assoc "access-type" params))
+	 (num (or (cdr (assoc "x-part-number" params))
+		  (if (consp rcnum)
+		      (mapconcat (function
+				  (lambda (num)
+				    (format "%s" (1+ num))
+				    ))
+				 (reverse rcnum) ".")
+		    "0"))
+	      ))
+     (cond (access-type
+	    (let ((server (assoc "server" params)))
+	      (setq access-type (cdr access-type))
+	      (if server
+		  (format "%s %s ([%s] %s)"
+			  num subj access-type (cdr server))
+		(let ((site (cdr (assoc "site" params)))
+		      (dir (cdr (assoc "directory" params)))
+		      )
+		  (format "%s %s ([%s] %s:%s)"
+			  num subj access-type site dir)
+		  )))
+	    )
+	   (t
+	    (let ((charset (cdr (assoc "charset" params))))
+	      (concat
+	       num " " subj
 	       (let ((rest
 		      (concat " <" ctype
 			      (if charset
 				  (concat "; " charset)
 				(if encoding (concat " (" encoding ")"))
 				)
-			      ">]\n")))
+			      ">")))
 		 (if (>= (+ (current-column)(length rest))(window-width))
-		     (insert "\n\t")
-		   )
-		 (insert rest)
-		 ))))
-      )
-    (mime-add-button (point-min)(1- (point-max))
-		     (function mime-view-play-current-entity))
-    ))
+		     "\n\t")
+		 rest)))
+	    )))
+   (function mime-view-play-current-entity))
+  )
 
 (defun mime-view-entity-button-function
   (rcnum cinfo ctype params subj encoding)
@@ -474,18 +471,20 @@ The compressed face will be piped to this command.")
     (or obuf
 	(setq obuf (concat "*Preview-" (buffer-name the-buf) "*")))
     (set-buffer (get-buffer-create obuf))
-    (setq buffer-read-only nil)
-    (widen)
-    (erase-buffer)
-    (setq mime-raw-buffer the-buf)
-    (setq mime-view-original-major-mode mode)
-    (setq major-mode 'mime-view-mode)
-    (setq mode-name "MIME-View")
-    (while pcl
-      (mime-view-display-entity (car pcl) cinfo the-buf obuf)
-      (setq pcl (cdr pcl))
+    (let ((inhibit-read-only t))
+      ;;(setq buffer-read-only nil)
+      (widen)
+      (erase-buffer)
+      (setq mime-raw-buffer the-buf)
+      (setq mime-view-original-major-mode mode)
+      (setq major-mode 'mime-view-mode)
+      (setq mode-name "MIME-View")
+      (while pcl
+	(mime-view-display-entity (car pcl) cinfo the-buf obuf)
+	(setq pcl (cdr pcl))
+	)
+      (set-buffer-modified-p nil)
       )
-    (set-buffer-modified-p nil)
     (setq buffer-read-only t)
     (set-buffer the-buf)
     )
@@ -583,12 +582,9 @@ The compressed face will be piped to this command.")
     (if (not (search-backward "\n\n" nil t))
 	(insert "\n")
       )
-    (let ((be (point-max)))
-      (narrow-to-region be be)
-      (insert mime-view-announcement-for-message/partial)
-      (mime-add-button (point-min)(point-max)
-		       (function mime-view-play-current-entity))
-      )))
+    (mime-insert-button mime-view-announcement-for-message/partial
+			(function mime-view-play-current-entity))
+    ))
 
 (defun mime-article/get-uu-filename (param &optional encoding)
   (if (member (or encoding
