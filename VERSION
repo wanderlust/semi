@@ -1,17 +1,17 @@
 [SEMI Version names]
 
-0.72	--------	--------
-0.75	--------	--------
-0.83	--------	--------
-0.87	--------	--------
-0.88	--------	--------
-0.91	--------	--------
-0.92	--------	--------
+0.72	--------		--------
+0.75	--------		--------
+0.83	--------		--------
+0.87	--------		--------
+0.88	--------		--------
+0.91	--------		--------
+0.92	--------		--------
 
 
-;; $(BKLN&E4F;(B / $(B@P@n@~(B
-;; Hokuriku Railway / Ishikawa Line
-
+;;		Hokuriku Railway	$(BKLN&E4F;(B
+;;		Ishikawa Line		$(B@P@n@~(B
+;; -------------------------------------------------------------------------
 0.96	Kaga-Ichinomiya		$(B2C2l0l$N5\(B	; $(B!JGr;3Hf$(D5/$(B?@<R!K(B
 0.97	Naka-Tsurugi		$(BCfDaMh(B
 0.112	Tsurugi			$(BDaMh(B		; <=> $(B$8$c$$%P%9(B
@@ -25,7 +25,6 @@
 1.0.0	Nukaj-Dþtaku-mae-A		$(B3[=;BpA0(B
 1.0.1	Magae			$(BGOBX(B
 1.0.2	Nonoichi-K-Dòdaimae-A	$(BLn!9;T9)BgA0(B
-
 1.1.0	Nonoichi		$(BLn!9;T(B
 1.1.1	Oshino			$(B2!Ln(B
 1.1.2	Shin-Nishikanazawa	$(B?7@>6bBt(B	; <=> JR $(B@>6bBt(B
@@ -33,9 +32,17 @@
 1.2.1	Nomachi			$(BLnD.(B
 
 
-;; JR / $(BKLN&K\@~(B
-;; JR / Hokuriku Line
+[WEMI version names]
 
+;;	JR			$(B!JElF|K\!&El3$!&@>F|K\N95RE4F;!K(B
+;;	T-Dòkaidò-A Line		$(BEl3$F;K\@~(B
+;; -------------------------------------------------------------------------
+1.2.0	T-Dòkyò-A			$(BEl5~(B
+
+
+;;	JR			$(B!J@>F|K\N95RE4F;!K(B
+;;	Hokuriku Line		$(BKLN&K\@~(B
+;; -------------------------------------------------------------------------
 	(Maibara)		($(BJF86(B)		; = JR $(BEl3$F;K\@~(B
 -------	Sakata			$(B:dED(B
 ------- Tamura			$(BEDB<(B
