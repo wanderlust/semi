@@ -218,7 +218,7 @@ Please redefine this function if you want to change default setting."
 	   (or (eq media-subtype 'x-selection)
 	       (and (eq media-subtype 'octet-stream)
 		    (let ((entity-info
-			   (mime-article/rcnum-to-cinfo (cdr rcnum) cinfo)))
+			   (mime-raw-rcnum-to-cinfo (cdr rcnum) cinfo)))
 		      (and (eq (mime-entity-info-media-type entity-info)
 			       'multipart)
 			   (eq (mime-entity-info-media-subtype entity-info)
@@ -468,7 +468,7 @@ The compressed face will be piped to this command.")
       (narrow-to-region beg end)
       (setq subj
 	    (eword-decode-string
-	     (mime-article/get-subject params encoding)))
+	     (mime-raw-get-subject params encoding)))
       )
     (set-buffer obuf)
     (setq nb (point))
@@ -546,7 +546,7 @@ The compressed face will be piped to this command.")
 		     (function mime-preview-play-current-entity))
     ))
 
-(defun mime-article/get-uu-filename (param &optional encoding)
+(defun mime-raw-get-uu-filename (param &optional encoding)
   (if (member (or encoding
 		  (cdr (assq 'encoding param))
 		  )
@@ -559,7 +559,7 @@ The compressed face will be piped to this command.")
 	    ""))
     ))
 
-(defun mime-article/get-subject (param &optional encoding)
+(defun mime-raw-get-subject (param &optional encoding)
   (or (std11-find-field-body '("Content-Description" "Subject"))
       (let (ret)
 	(if (or (and (setq ret (mime/Content-Disposition))
@@ -570,14 +570,14 @@ The compressed face will be piped to this command.")
 		)
 	    (std11-strip-quoted-string (cdr ret))
 	  ))
-      (mime-article/get-uu-filename param encoding)
+      (mime-raw-get-uu-filename param encoding)
       ""))
 
 
 ;;; @ entity information
 ;;;
 
-(defun mime-article/point-content-number (p &optional cinfo)
+(defun mime-raw-point-content-number (p &optional cinfo)
   (or cinfo
       (setq cinfo mime-raw-entity-info)
       )
@@ -590,7 +590,7 @@ The compressed face will be piped to this command.")
 	      (catch 'tag
 		(while c
 		  (setq co (car c))
-		  (setq ret (mime-article/point-content-number p co))
+		  (setq ret (mime-raw-point-content-number p co))
 		  (cond ((eq ret t) (throw 'tag (list sn)))
 			(ret (throw 'tag (cons sn ret)))
 			)
@@ -599,11 +599,11 @@ The compressed face will be piped to this command.")
 		  )))
 	    t))))
 
-(defsubst mime-article/rcnum-to-cinfo (rnum &optional cinfo)
-  (mime-article/cnum-to-cinfo (reverse rnum) cinfo)
+(defsubst mime-raw-rcnum-to-cinfo (rnum &optional cinfo)
+  (mime-raw-cnum-to-cinfo (reverse rnum) cinfo)
   )
 
-(defun mime-article/cnum-to-cinfo (cn &optional cinfo)
+(defun mime-raw-cnum-to-cinfo (cn &optional cinfo)
   (or cinfo
       (setq cinfo mime-raw-entity-info)
       )
@@ -614,7 +614,7 @@ The compressed face will be piped to this command.")
 	  cinfo
 	(let ((rc (nth sn (mime-entity-info-children cinfo))))
 	  (if rc
-	      (mime-article/cnum-to-cinfo (cdr cn) rc)
+	      (mime-raw-cnum-to-cinfo (cdr cn) rc)
 	    ))
 	))))
 
@@ -639,7 +639,7 @@ The compressed face will be piped to this command.")
   "Return non-nil if header of current entity is visible."
   (or (null rcnum)
       (member (mime-entity-info-type/subtype
-	       (mime-article/rcnum-to-cinfo (cdr rcnum) cinfo))
+	       (mime-raw-rcnum-to-cinfo (cdr rcnum) cinfo))
 	      mime-view-childrens-header-showing-Content-Type-list)
       ))
 
@@ -652,7 +652,7 @@ The compressed face will be piped to this command.")
     (and (member ctype mime-view-visible-media-type-list)
 	 (if (and (eq media-type 'application)
 		  (eq media-subtype 'octet-stream))
-	     (let ((ccinfo (mime-article/rcnum-to-cinfo rcnum cinfo)))
+	     (let ((ccinfo (mime-raw-rcnum-to-cinfo rcnum cinfo)))
 	       (member (mime-entity-info-encoding ccinfo)
 		       '(nil "7bit" "8bit"))
 	       )
@@ -962,7 +962,7 @@ It calls following-method selected from variable
 		     (setq str
 			   (save-excursion
 			     (set-buffer a-buf)
-			     (setq ci (mime-article/rcnum-to-cinfo rcnum))
+			     (setq ci (mime-raw-rcnum-to-cinfo rcnum))
 			     (save-restriction
 			       (narrow-to-region
 				(mime-entity-info-point-min ci)
@@ -1037,7 +1037,7 @@ If there is no upper entity, call function `mime-preview-quit'."
     (while (null (setq cinfo (get-text-property (point) 'mime-view-cinfo)))
       (backward-char)
       )
-    (let ((r (mime-article/rcnum-to-cinfo
+    (let ((r (mime-raw-rcnum-to-cinfo
 	      (cdr (mime-entity-info-rnum cinfo))
 	      (get-text-property 1 'mime-view-cinfo)))
 	  point)

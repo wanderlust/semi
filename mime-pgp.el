@@ -48,7 +48,7 @@
 ;;; It is based on draft-kazu-pgp-mime-00.txt
 
 (defun mime-method-for-application/pgp (beg end cal)
-  (let* ((cnum (mime-article/point-content-number beg))
+  (let* ((cnum (mime-raw-point-content-number beg))
 	 (p-win (or (get-buffer-window mime-preview-buffer)
 		    (get-largest-window)))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
@@ -118,8 +118,8 @@
 
 (defun mime-method-to-verify-multipart/signed (beg end cal)
   "Internal method to check multipart/signed."
-  (let* ((rcnum (reverse (mime-article/point-content-number beg)))
-	 (oinfo (mime-article/rcnum-to-cinfo (cons '1 rcnum)
+  (let* ((rcnum (reverse (mime-raw-point-content-number beg)))
+	 (oinfo (mime-raw-rcnum-to-cinfo (cons '1 rcnum)
 					     mime-raw-entity-info))
 	 )
     (mime-playback-entity oinfo (cdr (assq 'mode cal)))
@@ -175,7 +175,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 (defun mime-method-to-verify-application/pgp-signature (beg end cal)
   "Internal method to check PGP/MIME signature."
   (let* ((encoding (cdr (assq 'encoding cal)))
-	 (cnum (mime-article/point-content-number beg))
+	 (cnum (mime-raw-point-content-number beg))
 	 (rcnum (reverse cnum))
 	 (rmcnum (cdr rcnum))
 	 (knum (car rcnum))
@@ -183,7 +183,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 		   (1- knum)
 		 (1+ knum)))
 	 (raw-buf (current-buffer))
-	 (oinfo (mime-article/rcnum-to-cinfo (cons onum rmcnum)
+	 (oinfo (mime-raw-rcnum-to-cinfo (cons onum rmcnum)
 					     mime-raw-entity-info))
 	 kbuf
 	 (basename (expand-file-name "tm" mime-temp-directory))
@@ -261,14 +261,14 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 ;;; It is based on RFC 2015.
 
 (defun mime-method-to-decrypt-application/pgp-encrypted (beg end cal)
-  (let* ((cnum (mime-article/point-content-number beg))
+  (let* ((cnum (mime-raw-point-content-number beg))
 	 (rcnum (reverse cnum))
 	 (rmcnum (cdr rcnum))
 	 (knum (car rcnum))
 	 (onum (if (> knum 0)
 		   (1- knum)
 		 (1+ knum)))
-	 (oinfo (mime-article/rcnum-to-cinfo (cons onum rmcnum)
+	 (oinfo (mime-raw-rcnum-to-cinfo (cons onum rmcnum)
 					     mime-raw-entity-info))
 	 (obeg (mime-entity-info-point-min oinfo))
 	 (oend (mime-entity-info-point-max oinfo))
@@ -287,7 +287,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 ;;; It is based on RFC 2015.
 
 (defun mime-method-to-add-application/pgp-keys (beg end cal)
-  (let* ((cnum (mime-article/point-content-number beg))
+  (let* ((cnum (mime-raw-point-content-number beg))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (encoding (cdr (assq 'encoding cal)))
 	 str)

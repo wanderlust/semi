@@ -121,7 +121,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
       (narrow-to-region beg end)
       (goto-char beg)
       (let ((method (cdr (assoc 'method cal)))
-	    (name (mime-article/get-filename cal))
+	    (name (mime-raw-get-filename cal))
 	    )
 	(if method
 	    (let ((file (make-temp-name
@@ -227,8 +227,8 @@ window.")
   (concat (regexp-* mime-view-file-name-char-regexp)
 	  "\\(\\." mime-view-file-name-char-regexp "+\\)*"))
 
-(defun mime-article/get-original-filename (param &optional encoding)
-  (or (mime-article/get-uu-filename param encoding)
+(defun mime-raw-get-original-filename (param &optional encoding)
+  (or (mime-raw-get-uu-filename param encoding)
       (let (ret)
 	(or (if (or (and (setq ret (mime/Content-Disposition))
 			 (setq ret (assoc "filename" (cdr ret)))
@@ -248,8 +248,8 @@ window.")
 	    ))
       ))
 
-(defun mime-article/get-filename (param)
-  (replace-as-filename (mime-article/get-original-filename param))
+(defun mime-raw-get-filename (param)
+  (replace-as-filename (mime-raw-get-original-filename param))
   )
 
 
@@ -261,7 +261,7 @@ window.")
   (let* ((name
 	  (save-restriction
 	    (narrow-to-region beg end)
-	    (mime-article/get-filename cal)
+	    (mime-raw-get-filename cal)
 	    ))
 	 (encoding (cdr (assq 'encoding cal)))
 	 (filename
@@ -302,7 +302,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
     ))
 
 (defun mime-method-to-display-message/rfc822 (beg end cal)
-  (let* ((cnum (mime-article/point-content-number beg))
+  (let* ((cnum (mime-raw-point-content-number beg))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (mother mime-preview-buffer)
 	 (text-decoder
@@ -326,7 +326,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
 ;;; @ message/partial
 ;;;
 
-(defvar mime-article/coding-system-alist
+(defvar mime-raw-coding-system-alist
   (list '(mh-show-mode . no-conversion)
 	(cons t (mime-charset-to-coding-system default-mime-charset))
 	))
@@ -334,8 +334,8 @@ It is registered to variable `mime-view-quitting-method-alist'."
 (defun mime-article::write-region (start end file)
   (let ((coding-system-for-write
 	 (cdr
-	  (or (assq major-mode mime-article/coding-system-alist)
-	      (assq t mime-article/coding-system-alist)
+	  (or (assq major-mode mime-raw-coding-system-alist)
+	      (assq t mime-raw-coding-system-alist)
 	      ))))
     (write-region start end file)
     ))
@@ -459,13 +459,13 @@ It is registered to variable `mime-view-quitting-method-alist'."
 ;;; @ message/external-body
 ;;;
 
-(defvar mime-article/dired-function
+(defvar mime-raw-dired-function
   (if mime/use-multi-frame
       (function dired-other-frame)
-    (function mime-article/dired-function-for-one-frame)
+    (function mime-raw-dired-function-for-one-frame)
     ))
 
-(defun mime-article/dired-function-for-one-frame (dir)
+(defun mime-raw-dired-function-for-one-frame (dir)
   (let ((win (or (get-buffer-window mime-preview-buffer)
 		 (get-largest-window))))
     (select-window win)
@@ -480,7 +480,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
 	 (pathname (concat "/anonymous@" site ":" directory))
 	 )
     (message (concat "Accessing " (expand-file-name name pathname) "..."))
-    (funcall mime-article/dired-function pathname)
+    (funcall mime-raw-dired-function pathname)
     (goto-char (point-min))
     (search-forward name)
     ))
@@ -491,7 +491,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
 
 (defun mime-method-to-display-caesar (start end cal)
   "Internal method for mime-view to display ROT13-47-48 message."
-  (let* ((cnum (mime-article/point-content-number start))
+  (let* ((cnum (mime-raw-point-content-number start))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (the-buf (current-buffer))
 	 (mother mime-preview-buffer)
