@@ -361,6 +361,115 @@ mother-buffer."
       (mime-entity-filename entity)
       ""))
 
+(defvar mime-preview-situation-example-list nil)
+(defvar mime-acting-situation-example-list nil)
+
+(defvar mime-acting-situation-example-list-max-size 16)
+
+(defun mime-save-acting-situation-examples ()
+  (let* ((file mime-acting-situation-examples-file)
+	 (buffer (get-buffer-create " *mime-example*")))
+    (unwind-protect
+        (save-excursion
+          (set-buffer buffer)
+          (setq buffer-file-name file)
+          (erase-buffer)
+          (insert ";;; " (file-name-nondirectory file) "\n")
+          (insert "\n;; This file is generated automatically by "
+                  mime-view-version "\n\n")
+	  (insert ";;; Code:\n\n")
+	  (pp `(setq mime-acting-situation-example-list
+		     ',mime-acting-situation-example-list)
+	      (current-buffer))
+	  (insert "\n;;; "
+                  (file-name-nondirectory file)
+                  " ends here.\n")
+          (save-buffer))
+      (kill-buffer buffer))))
+
+(add-hook 'kill-emacs-hook 'mime-save-acting-situation-examples)
+
+(defun mime-reduce-acting-situation-examples ()
+  (let ((len (length mime-acting-situation-example-list))
+	i ir ic j jr jc ret
+	dest d-i d-j
+	(max-sim 0) sim
+	min-det-ret det-ret
+	min-det-org det-org
+	min-freq freq)
+    (setq i 0
+	  ir mime-acting-situation-example-list)
+    (while (< i len)
+      (setq ic (car ir)
+	    j 0
+	    jr mime-acting-situation-example-list)
+      (while (< j len)
+	(unless (= i j)
+	  (setq jc (car jr))
+	  (setq ret (mime-compare-situation-with-example (car ic)(car jc))
+		sim (car ret)
+		det-ret (+ (length (car ic))(length (car jc)))
+		det-org (length (cdr ret))
+		freq (+ (cdr ic)(cdr jc)))
+	  (cond ((< max-sim sim)
+		 (setq max-sim sim
+		       min-det-ret det-ret
+		       min-det-org det-org
+		       min-freq freq
+		       d-i i
+		       d-j j
+		       dest (cons (cdr ret) freq))
+		 )
+		((= max-sim sim)
+		 (cond ((> min-det-ret det-ret)
+			(setq min-det-ret det-ret
+			      min-det-org det-org
+			      min-freq freq
+			      d-i i
+			      d-j j
+			      dest (cons (cdr ret) freq))
+			)
+		       ((= min-det-ret det-ret)
+			(cond ((> min-det-org det-org)
+			       (setq min-det-org det-org
+				     min-freq freq
+				     d-i i
+				     d-j j
+				     dest (cons (cdr ret) freq))
+			       )
+			      ((= min-det-org det-org)
+			       (cond ((> min-freq freq)
+				      (setq min-freq freq
+					    d-i i
+					    d-j j
+					    dest (cons (cdr ret) freq))
+				      ))
+			       ))
+			))
+		 ))
+	  )
+	(setq jr (cdr jr)
+	      j (1+ j)))
+      (setq ir (cdr ir)
+	    i (1+ i)))
+    (if (> d-i d-j)
+	(setq i d-i
+	      d-i d-j
+	      d-j i))
+    (setq jr (nthcdr (1- d-j) mime-acting-situation-example-list))
+    (setcdr jr (cddr jr))
+    (if (= d-i 0)
+	(setq mime-acting-situation-example-list
+	      (cdr mime-acting-situation-example-list))
+      (setq ir (nthcdr (1- d-i) mime-acting-situation-example-list))
+      (setcdr ir (cddr ir))
+      )
+    (if (setq ir (assoc (car dest) mime-acting-situation-example-list))
+	(setcdr ir (+ (cdr ir)(cdr dest)))
+      (setq mime-acting-situation-example-list
+	    (cons dest mime-acting-situation-example-list))
+      )))
+
 
 ;;; @ presentation of preview
 ;;;
@@ -1592,6 +1701,26 @@ It calls function registered in variable
 
 (provide 'mime-view)
 
-(run-hooks 'mime-view-load-hook)
+(let* ((file mime-acting-situation-examples-file)
+       (buffer (get-buffer-create " *mime-example*")))
+  (if (file-readable-p file)
+      (unwind-protect
+	  (save-excursion
+	    (set-buffer buffer)
+	    (erase-buffer)
+	    (insert-file-contents file)
+	    (eval-buffer)
+	    ;; format check
+	    (condition-case nil
+		(let ((i 0))
+		  (while (and (> (length mime-acting-situation-example-list)
+				 mime-acting-situation-example-list-max-size)
+			      (< i 16))
+		    (mime-reduce-acting-situation-examples)
+		    (setq i (1+ i))
+		    ))
+	      (error (setq mime-acting-situation-example-list nil)))
+	    )
+	(kill-buffer buffer))))
 
 ;;; mime-view.el ends here
