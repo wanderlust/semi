@@ -554,7 +554,7 @@ to write."
 
 (provide 'mime-play)
 
-(let* ((file mime-view-acting-example-file)
+(let* ((file mime-acting-situation-examples-file)
        (buffer (get-buffer-create " *mime-example*")))
   (if (file-readable-p file)
       (unwind-protect
