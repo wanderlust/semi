@@ -302,7 +302,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
     ))
 
 (defun mime-method-to-display-message/rfc822 (beg end cal)
-  (let* ((cnum (mime-raw-point-content-number beg))
+  (let* ((cnum (mime-raw-point-to-entity-number beg))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (mother mime-preview-buffer)
 	 (text-decoder
@@ -491,7 +491,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
 
 (defun mime-method-to-display-caesar (start end cal)
   "Internal method for mime-view to display ROT13-47-48 message."
-  (let* ((cnum (mime-raw-point-content-number start))
+  (let* ((cnum (mime-raw-point-to-entity-number start))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (the-buf (current-buffer))
 	 (mother mime-preview-buffer)

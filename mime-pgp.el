@@ -48,7 +48,7 @@
 ;;; It is based on draft-kazu-pgp-mime-00.txt
 
 (defun mime-method-for-application/pgp (beg end cal)
-  (let* ((cnum (mime-raw-point-content-number beg))
+  (let* ((cnum (mime-raw-point-to-entity-number beg))
 	 (p-win (or (get-buffer-window mime-preview-buffer)
 		    (get-largest-window)))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
@@ -118,7 +118,7 @@
 
 (defun mime-method-to-verify-multipart/signed (beg end cal)
   "Internal method to check multipart/signed."
-  (let* ((rcnum (reverse (mime-raw-point-content-number beg)))
+  (let* ((rcnum (reverse (mime-raw-point-to-entity-number beg)))
 	 (oinfo (mime-raw-rcnum-to-cinfo (cons '1 rcnum)
 					     mime-raw-entity-info))
 	 )
@@ -175,7 +175,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 (defun mime-method-to-verify-application/pgp-signature (beg end cal)
   "Internal method to check PGP/MIME signature."
   (let* ((encoding (cdr (assq 'encoding cal)))
-	 (cnum (mime-raw-point-content-number beg))
+	 (cnum (mime-raw-point-to-entity-number beg))
 	 (rcnum (reverse cnum))
 	 (rmcnum (cdr rcnum))
 	 (knum (car rcnum))
@@ -261,7 +261,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 ;;; It is based on RFC 2015.
 
 (defun mime-method-to-decrypt-application/pgp-encrypted (beg end cal)
-  (let* ((cnum (mime-raw-point-content-number beg))
+  (let* ((cnum (mime-raw-point-to-entity-number beg))
 	 (rcnum (reverse cnum))
 	 (rmcnum (cdr rcnum))
 	 (knum (car rcnum))
@@ -287,7 +287,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 ;;; It is based on RFC 2015.
 
 (defun mime-method-to-add-application/pgp-keys (beg end cal)
-  (let* ((cnum (mime-raw-point-content-number beg))
+  (let* ((cnum (mime-raw-point-to-entity-number beg))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (encoding (cdr (assq 'encoding cal)))
 	 str)
