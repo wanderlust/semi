@@ -2741,19 +2741,18 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	(replace-match "")
       )
     (mime-view-buffer)
-    ))
+    (make-local-variable 'mime-edit-temp-message-buffer)
+    (setq mime-edit-temp-message-buffer buf)))
 
 (defun mime-edit-quitting-method ()
   "Quitting method for mime-view."
-  (let* ((entity (get-text-property (point-min) 'mime-view-entity))
-	 (temp (mime-entity-buffer entity))
+  (let* ((temp mime-edit-temp-message-buffer)
 	 buf)
     (mime-preview-kill-buffer)
     (set-buffer temp)
     (setq buf mime-edit-buffer)
     (kill-buffer temp)
-    (switch-to-buffer buf)
-    ))
+    (switch-to-buffer buf)))
 
 (set-alist 'mime-preview-quitting-method-alist
 	   'mime-temp-message-mode
