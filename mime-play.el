@@ -89,7 +89,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	     (funcall method beg end ret)
 	     )
 	    ((and (listp method)(stringp (car method)))
-	     (mime-article/start-external-method-region beg end ret)
+	     (mime-activate-external-method beg end ret)
 	     )
 	    (t
 	     (mime-show-echo-buffer
@@ -110,7 +110,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 ;;; @ external decoder
 ;;;
 
-(defun mime-article/start-external-method-region (beg end cal)
+(defun mime-activate-external-method (beg end cal)
   (save-excursion
     (save-restriction
       (narrow-to-region beg end)
