@@ -1,3 +1,8 @@
+2000-05-02   Daiki Ueno  <ueno@unixuser.org>
+
+	* pgg-gpg.el (pgg-scheme-encrypt-region): Don't quote recipient;
+	concatenate all arguments destructively.
+
 2000-04-17  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* EMY 1.13.5 is released.
