@@ -5,6 +5,10 @@
 
 ** dynamic configuration for 'mime-preview-condition
 
+** Don't expect raw-buffer
+
+** lazy generating of situations from mime-entity information
+
 
 * MIME-Edit
 
