@@ -47,20 +47,44 @@ raw-buffer.")
 (defvar mime-text-decoder-alist
   '((mime/show-message-mode	. mime-text-decode-buffer)
     (mime-temp-message-mode	. mime-text-decode-buffer)
-    (t				. mime-charset/maybe-decode-buffer)
-    ))
+    (t				. mime-text-decode-buffer-maybe)
+    )
+  "Alist of major-mode vs. mime-text-decoder.
+Each element looks like (SYMBOL . FUNCTION).  SYMBOL is major-mode or
+t.  t means default.
+
+Specification of FUNCTION is described in DOC-string of variable
+`mime-text-decoder'.
+
+This value is overridden by buffer local variable `mime-text-decoder'
+if it is not nil.")
 
 (defun mime-text-decode-buffer (charset &optional encoding)
+  "Decode text of current buffer as CHARSET.
+It code-converts current buffer from network representation specified
+by MIME CHARSET to internal code.  CHARSET is symbol of MIME charset.
+See also variable `mime-charset-coding-system-alist'."
   (decode-mime-charset-region (point-min)(point-max)
 			      (or charset default-mime-charset))
   )
 
-(defun mime-charset/maybe-decode-buffer (charset &optional encoding)
+(defun mime-text-decode-buffer-maybe (charset &optional encoding)
+  "Decode text of current buffer as CHARSET if ENCODING is actual encoding.
+It code-converts current buffer from network representation specified
+by MIME CHARSET to internal code if ENCODING is not nil, \"7bit\",
+\"8bit\" or \"binary\".  CHARSET is symbol of MIME charset.
+See also variable `mime-charset-coding-system-alist'."
   (or (member encoding '(nil "7bit" "8bit" "binary"))
       (mime-text-decode-buffer charset)
       ))
 
 (defun mime-decode-text-body (charset encoding)
+  "Decode current buffer as text body.
+It decodes MIME-encoding as ENCODING then code-converts as MIME
+CHARSET.  CHARSET is SYMBOL and ENCODING is nil or STRING.
+
+It calls text decoder for MIME charset specified by buffer local
+variable `mime-text-decoder' and variable `mime-text-decoder-alist'."
   (mime-decode-region (point-min) (point-max) encoding)
   (let ((text-decoder
 	 (save-excursion
