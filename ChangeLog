@@ -1,5 +1,9 @@
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* README.en (What's SEMI?): Remove what does SEMI stand for.
+
+1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-acting-condition): Use `mime-method-to-save'
 	instead of external method "tm-file".
 
