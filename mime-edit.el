@@ -1076,8 +1076,10 @@ Optional argument ENCODING specifies an encoding method such as base64."
 	  ))
       (if hide-p
 	  (progn
-	    (mime-flag-region (point-min) (1- (point-max)) ?\^M)
-	    (goto-char (point-max)))
+	    ;;(mime-flag-region (point-min) (1- (point-max)) ?\^M)
+	    (invisible-region (point-min) (1- (point-max)))
+	    (goto-char (point-max))
+	    )
 	))
     ;; Define encoding even if it is 7bit.
     (if (stringp encoding)
@@ -1136,22 +1138,38 @@ Optional argument ENCODING specifies an encoding method such as base64."
 (defun mime-editor/content-end ()
   "Return the point of the end of content."
   (save-excursion
-    (let ((beg (save-excursion
-		 (beginning-of-line) (point))))
+    (let ((beg (point)))
       (if (mime-editor/goto-tag)
 	  (let ((top (point)))
 	    (goto-char (match-end 0))
-	    (if (and (= beg top)	;Must be on the same line.
-		     (= (following-char) ?\^M))
-		(progn
-		  (end-of-line)
-		  (point))
-	      ;; Move to the end of this text.
-	      (if (re-search-forward mime-editor/tag-regexp nil 'move)
-		  ;; Don't forget a multiline tag.
-		  (goto-char (match-beginning 0)))
-	      (point)
-	      ))
+	    (cond ((and (= (save-excursion
+			     (beginning-of-line)
+			     (point))
+			   (save-excursion
+			     (goto-char beg)
+			     (beginning-of-line)
+			     (point))) ;Must be on the same line.
+			(= (following-char) ?\^M)
+			)
+		   (end-of-line)
+		   (point)
+		   )
+		  ((get-text-property (point) 'invisible)
+		   (while (and (let ((p (next-property-change (point))))
+				 (and p (goto-char p))
+				 )
+			       (get-text-property (point) 'invisible)
+			       ))
+		   (point)
+		   )
+		  (t
+		   ;; Move to the end of this text.
+		   (if (re-search-forward mime-editor/tag-regexp nil 'move)
+		       ;; Don't forget a multiline tag.
+		       (goto-char (match-beginning 0))
+		     )
+		   (point)
+		   )))
 	;; Assume the message begins with text/plain.
 	(goto-char (mime-editor/content-beginning))
 	(if (re-search-forward mime-editor/tag-regexp nil 'move)
@@ -1959,23 +1977,16 @@ Content-Transfer-Encoding: 7bit
       ;; Remove extra whitespaces after the tag.
       (if (looking-at "[ \t]+$")
 	  (delete-region (match-beginning 0) (match-end 0)))
+      (let ((beg (point))
+	    (end (mime-editor/content-end))
+	    )
+	(goto-char (1+ end))
+	(or (looking-at mime-editor/beginning-tag-regexp)
+	    (insert (mime-make-text-tag) "\n")
+	    )
+	(visible-region beg end)
+	)
       (cond
-       ((= (following-char) ?\^M)
-	;; It must be image, audio or video.
-	(let ((beg (point))
-	      (end (mime-editor/content-end)))
-	  ;; Insert explicit MIME tags after hidden messages.
-	  (forward-line 1)
-	  (if (and (not (eobp))
-		   (not (looking-at mime-editor/single-part-tag-regexp)))
-	      (progn
-		(insert (mime-make-text-tag) "\n")
-		(forward-line -1)	;Process it again as text.
-		))
-	  ;; Show a hidden message.  The point is not altered
-	  ;; after the conversion.
-	  (mime-flag-region beg end ?\n)
-	  ))
        ((mime-test-content-type contype "message")
 	;; Content-type "message" should be sent as is.
 	(forward-line 1)
@@ -2033,8 +2044,7 @@ Content-Transfer-Encoding: 7bit
 	  (mime-encode-region beg end encoding)
 	  (mime-editor/define-encoding encoding))
 	(forward-line 1)
-	)
-       )
+	))
       )))
 
 (defun mime-delete-field (field)
