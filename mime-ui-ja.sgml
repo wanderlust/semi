@@ -586,6 +586,34 @@ file="mime-ja">STD 11</dref> を拡張しているが、message header では
 </memo>
 
 
+<h2> Splitting
+<node> message/partial sending
+<p>
+<defvar name="mime-edit-split-message">
+<p>
+Split large message if it is non-nil.
+</defvar>
+
+<defvar name="mime-edit-message-default-max-lines">
+<p>
+Default maximum lines of a message.
+</defvar>
+
+<defvar name="mime-edit-message-max-lines-alist">
+<p>
+Alist of major-mode vs maximum lines of a message.
+<p>
+If it is not specified for a major-mode,
+<code>mime-edit-message-default-max-lines</code> is used.
+</defvar>
+
+<defvar name="mime-edit-split-blind-field-regexp">
+<p>
+Regular expression to match field-name to be ignored when split
+sending.
+</defvar>
+
+
 <h1> その他
 <node> Various
 <p>
