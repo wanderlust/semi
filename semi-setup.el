@@ -29,18 +29,6 @@
 (require 'file-detect)
 
 
-;;; @ for mime-view
-;;;
-
-(call-after-loaded
- 'mime-view
- (function
-  (lambda ()
-    ;; for message/partial
-    (require 'mime-partial)
-    )))
-
-
 ;; for image/* and X-Face
 (defvar mime-setup-enable-inline-image
   (and window-system
