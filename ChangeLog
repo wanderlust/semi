@@ -1,3 +1,7 @@
+1998-10-29  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS (Abolish variable `mime-temp-directory'): New subsection.
+
 1998-10-27  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-edit.el (mime-edit-decode-buffer): Limit search bound for
