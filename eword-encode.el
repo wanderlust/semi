@@ -91,7 +91,12 @@ when Subject field is encoded by `eword-encode-header'.")
 ;;; @ encoded-text encoder
 ;;;
 
-(defun tm-eword::encode-encoded-text (charset encoding string &optional mode)
+(defun eword-encode-text (charset encoding string &optional mode)
+  "Encode STRING as an encoded-word, and return the result.
+CHARSET is a symbol to indicate MIME charset of the encoded-word.
+ENCODING allows \"B\" or \"Q\".
+MODE is allows `text', `comment', `phrase' or nil.  Default value is
+`phrase'."
   (let ((text
 	 (cond ((string= encoding "B")
 		(base64-encode-string string))
@@ -294,7 +299,7 @@ when Subject field is encoded by `eword-encode-header'.")
 		  (<= (+ column len) 76)
 		  )
 	     (setq string
-		   (tm-eword::encode-encoded-text
+		   (eword-encode-text
 		    (tm-eword::rword-charset rword)
 		    (tm-eword::rword-encoding rword)
 		    (cdr ret)
@@ -326,7 +331,7 @@ when Subject field is encoded by `eword-encode-header'.")
 		 (setq rwl (cons (cons (substring string p) (cdr rword))
 				 (cdr rwl)))
 		 (setq string
-		       (tm-eword::encode-encoded-text
+		       (eword-encode-text
 			(tm-eword::rword-charset rword)
 			(tm-eword::rword-encoding rword)
 			str
