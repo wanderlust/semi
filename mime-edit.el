@@ -2682,7 +2682,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	   "^Content-Transfer-Encoding:" limit t)
 	  (let ((beg (match-beginning 0))
 		(hbeg (match-end 0))
-		(end (std11-field-end)))
+		(end (std11-field-end limit)))
 	    (setq encoding
 		  (downcase
 		   (eliminate-top-spaces

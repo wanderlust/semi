@@ -64,56 +64,91 @@
 (add-hook 'kill-emacs-hook 'mime-save-acting-situation-examples)
 
 (defun mime-reduce-acting-situation-examples ()
-  (let* ((rest mime-acting-situation-example-list)
-	 (min-example (car rest))
-	 (min-score (cdr min-example)))
-    (while rest
-      (let* ((example (car rest))
-	     (score (cdr example)))
-	(cond ((< score min-score)
-	       (setq min-score score
-		     min-example example)
-	       )
-	      ((= score min-score)
-	       (if (<= (length (car example))(length (car min-example)))
-		   (setq min-example example)
-		 ))
-	      ))
-      (setq rest (cdr rest)))
-    (setq mime-acting-situation-example-list
-	  (delq min-example mime-acting-situation-example-list))
-    (setq min-example (car min-example))
-    (let ((examples mime-acting-situation-example-list)
-	  (max-score 0)
-	  max-examples)
-      (while examples
-	(let* ((ret (mime-compare-situation-with-example min-example
-							 (caar examples)))
-	       (ret-score (car ret)))
-	  (cond ((> ret-score max-score)
-		 (setq max-score ret-score
-		       max-examples (list (cdr ret)))
+  (let ((len (length mime-acting-situation-example-list))
+	i ir ic j jr jc ret
+	dest d-i d-j
+	(max-sim 0) sim
+	min-det-ret det-ret
+	min-det-org det-org
+	min-freq freq)
+    (setq i 0
+	  ir mime-acting-situation-example-list)
+    (while (< i len)
+      (setq ic (car ir)
+	    j 0
+	    jr mime-acting-situation-example-list)
+      (while (< j len)
+	(unless (= i j)
+	  (setq jc (car jr))
+	  (setq ret (mime-compare-situation-with-example (car ic)(car jc))
+		sim (car ret)
+		det-ret (+ (length (car ic))(length (car jc)))
+		det-org (length (cdr ret))
+		freq (+ (cdr ic)(cdr jc)))
+	  (cond ((< max-sim sim)
+		 (setq max-sim sim
+		       min-det-ret det-ret
+		       min-det-org det-org
+		       min-freq freq
+		       d-i i
+		       d-j j
+		       dest (cons (cdr ret) freq))
 		 )
-		((= ret-score max-score)
-		 (setq max-examples (cons (cdr ret) max-examples))
-		 )))
-	(setq examples (cdr examples)))
-      (while max-examples
-	(let* ((example (car max-examples))
-	       (cell (assoc example mime-acting-situation-example-list)))
-	  (if cell
-	      (setcdr cell (1+ (cdr cell)))
-	    (setq mime-acting-situation-example-list
-		  (cons (cons example 0)
-			mime-acting-situation-example-list))
-	    ))
-	(setq max-examples (cdr max-examples))
-	))))
+		((= max-sim sim)
+		 (cond ((> min-det-ret det-ret)
+			(setq min-det-ret det-ret
+			      min-det-org det-org
+			      min-freq freq
+			      d-i i
+			      d-j j
+			      dest (cons (cdr ret) freq))
+			)
+		       ((= min-det-ret det-ret)
+			(cond ((> min-det-org det-org)
+			       (setq min-det-org det-org
+				     min-freq freq
+				     d-i i
+				     d-j j
+				     dest (cons (cdr ret) freq))
+			       )
+			      ((= min-det-org det-org)
+			       (cond ((> min-freq freq)
+				      (setq min-freq freq
+					    d-i i
+					    d-j j
+					    dest (cons (cdr ret) freq))
+				      ))
+			       ))
+			))
+		 ))
+	  )
+	(setq jr (cdr jr)
+	      j (1+ j)))
+      (setq ir (cdr ir)
+	    i (1+ i)))
+    (if (> d-i d-j)
+	(setq i d-i
+	      d-i d-j
+	      d-j i))
+    (setq jr (nthcdr (1- d-j) mime-acting-situation-example-list))
+    (setcdr jr (cddr jr))
+    (if (= d-i 0)
+	(setq mime-acting-situation-example-list
+	      (cdr mime-acting-situation-example-list))
+      (setq ir (nthcdr (1- d-i) mime-acting-situation-example-list))
+      (setcdr ir (cddr ir))
+      )
+    (if (setq ir (assoc (car dest) mime-acting-situation-example-list))
+	(setcdr ir (+ (cdr ir)(cdr dest)))
+      (setq mime-acting-situation-example-list
+	    (cons dest mime-acting-situation-example-list))
+      )))
 
 
 ;;; @ content decoder
 ;;;
 
+;;;###autoload
 (defun mime-preview-play-current-entity (&optional ignore-examples mode)
   "Play current entity.
 It decodes current entity to call internal or external method.  The
@@ -198,6 +233,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
     (cons match example)
     ))
 
+;;;###autoload
 (defun mime-play-entity (entity &optional situation ignored-method)
   "Play entity specified by ENTITY.
 It decodes the entity to call internal or external method.  The method
@@ -661,23 +697,21 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 
 (defun mime-view-caesar (entity situation)
   "Internal method for mime-view to display ROT13-47-48 message."
-  (let* ((new-name (format "%s-%s" (buffer-name)
-			   (mime-entity-number entity)))
-	 (mother mime-preview-buffer))
-    (let ((pwin (or (get-buffer-window mother)
-		    (get-largest-window)))
-	  (buf (get-buffer-create new-name)))
-      (set-window-buffer pwin buf)
-      (set-buffer buf)
-      (select-window pwin)
+  (let ((buf (get-buffer-create
+	      (format "%s-%s" (buffer-name) (mime-entity-number entity)))))
+    (with-current-buffer buf
+      (setq buffer-read-only nil)
+      (erase-buffer)
+      (mime-insert-text-content entity)
+      (mule-caesar-region (point-min) (point-max))
+      (set-buffer-modified-p nil)
       )
-    (setq buffer-read-only nil)
-    (erase-buffer)
-    (mime-insert-text-content entity)
-    (mule-caesar-region (point-min) (point-max))
-    (set-buffer-modified-p nil)
-    (set-buffer mother)
-    (view-buffer new-name)
+    (let ((win (get-buffer-window (current-buffer))))
+      (or (eq (selected-window) win)
+	  (select-window (or win (get-largest-window)))
+	  ))
+    (view-buffer buf)
+    (goto-char (point-min))
     ))
 
 

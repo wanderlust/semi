@@ -58,7 +58,9 @@
        (narrow-to-region p p)
        (mime-insert-text-content entity)
        (run-hooks 'mime-text-decode-hook)
-       (w3-region p (point-max))
+       (condition-case err
+	   (w3-region p (point-max))
+	 (error (message (format "%s" err))))
        (mime-put-keymap-region p (point-max) w3-mode-map)
        ))))
 
