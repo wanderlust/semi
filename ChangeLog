@@ -1,5 +1,14 @@
 1998-06-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-edit.el (mime-edit-touched-flag): Define by `defvar'.
+	(mime-edit-mode): Don't check `mime-edit-touched-flag' is bound or
+	not.
+
+	* mime-edit.el (mime-edit-find-inmost): Abolish unused local
+	variables.
+
+1998-06-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-text.el (mime-text-insert-decoded-body): Don't refer
 	`mime-raw-buffer'.
 
