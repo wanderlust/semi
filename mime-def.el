@@ -28,7 +28,7 @@
 (require 'cl)
 (require 'emu)
 
-(defconst semi-version-name "Tsurugi")
+(defconst semi-version-name "Hinomiko")
 
 (autoload 'mule-caesar-region "mule-caesar"
   "Caesar rotation of current region." t)
