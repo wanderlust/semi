@@ -1,5 +1,32 @@
 1998-06-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-raw-message-info): Fix typo.
+	(mime-view-type-subtype-score-alist): New variable.
+	(mime-preview-multipart/alternative): New function; set up for
+	`mime-preview-condition'.
+	(mime-view-display-entity): Add optional argument `situation'.
+
+1998-06-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-entity): Call
+	body-presentation-method to display multipart if it is function.
+
+	* NEWS: Add news about SEMI 1.5.
+
+1998-06-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-preview-multipart/mixed): New function.
+	(mime-view-display-entity): Use `mime-preview-multipart/mixed'.
+
+1998-06-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-entity): Display entity-button
+	in body if button is invisible and body-presentation-method is not
+	found.
+
+
+1998-06-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* WEMI: Version 1.5.0 (Kamonomiya) released.
 
 1998-06-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
