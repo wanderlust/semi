@@ -14,6 +14,7 @@
 	* mime-def.el (mime-add-button): Argument `func' was renamed to
 	`function'; Use overlay for `mime-button-mouse-face'.
 
+
 1997-06-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 0.92 was released.
