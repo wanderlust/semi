@@ -116,14 +116,16 @@
 ;;; @ Internal method for multipart/signed
 ;;;
 
-(defun mime-method-to-verify-multipart/signed (beg end cal)
-  "Internal method to check multipart/signed."
-  (let* ((rcnum (reverse (mime-raw-point-to-entity-number beg)))
-	 (oinfo (mime-raw-reversed-entity-number-to-entity-info
-		 (cons 1 rcnum) mime-raw-message-info))
-	 )
-    (mime-playback-entity oinfo (cdr (assq 'mode cal)))
-    ))
+(defun mime-method-to-verify-multipart/signed (start end cal)
+  "Internal method to verify multipart/signed."
+  (mime-raw-play-entity
+   ;; entity-info of signature
+   (mime-raw-reversed-entity-number-to-entity-info
+    ;; reversed-entity-number of signature
+    (cons 1 (reverse (mime-raw-point-to-entity-number start)))
+    mime-raw-message-info)
+   (cdr (assq 'mode cal)) ; play-mode
+   ))
 
 (set-atype 'mime-acting-condition
 	   '((type . multipart)(subtype . signed)
