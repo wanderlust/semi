@@ -25,20 +25,11 @@
 
 ;;; Code:
 
+(require 'emu)
 (require 'mel)
 (require 'std11)
 (require 'mime-def)
 (require 'cl)
-
-(defsubst find-non-ascii-charset-string (string)
-  "Return a list of charsets in the STRING except ascii."
-  (delq 'ascii (find-charset-string string))
-  )
-
-(defsubst find-non-ascii-charset-region (start end)
-  "Return a list of charsets except ascii in the region between START and END."
-  (delq 'ascii (find-charset-string (buffer-substring start end)))
-  )
 
 
 ;;; @ version
