@@ -167,15 +167,9 @@ Each elements are regexp of field-name. [mime-view.el]")
 	  (apply (function regexp-or) mime-view-ignored-field-list)
 	  ":"))
 
-(defvar mime-view-visible-field-list
-  '("Dnas.*" "Message-Id")
+(defvar mime-view-visible-field-list '("Dnas.*" "Message-Id")
   "All fields that match this list will be displayed in MIME preview buffer.
-Each elements are regexp of field-name. [mime-view.el]")
-
-(defvar mime-view-visible-field-regexp
-  (concat "^"
-	  (apply (function regexp-or) mime-view-visible-field-list)
-	  ":"))
+Each elements are regexp of field-name.")
 
 (defvar mime-view-redisplay nil)
 
