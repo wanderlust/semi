@@ -25,133 +25,117 @@
 ;;; Code:
 
 (require 'semi-def)
-(require 'path-util)
-
-(defun call-after-loaded (module func &optional hook-name)
-  "If MODULE is provided, then FUNC is called.
-Otherwise func is set to MODULE-load-hook.
-If optional argument HOOK-NAME is specified,
-it is used as hook to set."
-  (if (featurep module)
-      (funcall func)
-    (or hook-name
-	(setq hook-name (intern (concat (symbol-name module) "-load-hook"))))
-    (add-hook hook-name func)))
-
 
 ;; for image/*
 (defvar mime-setup-enable-inline-image
-  (and window-system
-       (or (featurep 'xemacs)(featurep 'mule)))
+  (if (featurep 'xemacs)
+      (console-on-window-system-p)
+    window-system)
   "*If it is non-nil, semi-setup sets up to use mime-image.")
 
-(if mime-setup-enable-inline-image
-    (eval-after-load "mime-view"
-      '(require 'mime-image)))
+(eval-after-load "mime-view"
+  '(if mime-setup-enable-inline-image
+       (require 'mime-image)))
 
 ;; for text/html
 (defvar mime-setup-enable-inline-html
-  (module-installed-p 'w3)
+  (locate-library "w3")
   "*If it is non-nil, semi-setup sets up to use mime-w3.")
 
-(if mime-setup-enable-inline-html
-    (eval-after-load "mime-view"
-      '(progn
-	 (autoload 'mime-preview-text/html "mime-w3")
+(eval-after-load "mime-view"
+  '(when mime-setup-enable-inline-html
+     (autoload 'mime-preview-text/html "mime-w3")
+     (ctree-set-calist-strictly
+      'mime-preview-condition
+      '((type . text)(subtype . html)
+	(body . visible)
+	(body-presentation-method . mime-preview-text/html)))
 	 
-	 (ctree-set-calist-strictly
-	  'mime-preview-condition
-	  '((type . text)(subtype . html)
-	    (body . visible)
-	    (body-presentation-method . mime-preview-text/html)))
-	 
-	 (set-alist 'mime-view-type-subtype-score-alist
-		    '(text . html) 3))))
+     (set-alist 'mime-view-type-subtype-score-alist
+		'(text . html) 3)))
 
 ;; for text/x-vcard
 (defvar mime-setup-enable-vcard
-  (module-installed-p 'vcard)
+  (locate-library "vcard")
   "*If it is non-nil, semi-setup sets uf to use mime-vcard.")
 
-(if mime-setup-enable-vcard
-    (eval-after-load "mime-view"
-      '(progn
-	 (autoload 'mime-display-text/x-vcard "mime-vcard")
+(eval-after-load "mime-view"
+  '(when mime-setup-enable-vcard
+     (autoload 'mime-display-text/x-vcard "mime-vcard")
 
-	 (mime-add-condition
-	  'preview 
-	  '((type . text)(subtype . x-vcard)
-	    (body . visible)
-	    (body-presentation-method . mime-display-text/x-vcard))
-	  'strict)
+     (mime-add-condition
+      'preview 
+      '((type . text)(subtype . x-vcard)
+	(body . visible)
+	(body-presentation-method . mime-display-text/x-vcard))
+      'strict)
 
-	 (set-alist 'mime-view-type-subtype-score-alist
-		    '(text . x-vcard) 3))))
+     (set-alist 'mime-view-type-subtype-score-alist
+		'(text . x-vcard) 3)))
 
 ;; for PGP
 (defvar mime-setup-enable-pgp t
   "*If it is non-nil, semi-setup sets uf to use mime-pgp.")
 
-(if mime-setup-enable-pgp
-    (eval-after-load "mime-view"
-      '(progn
-	 (mime-add-condition
-	  'preview '((type . application)(subtype . pgp)
-		     (message-button . visible)))
-	 (mime-add-condition
-	  'action '((type . application)(subtype . pgp)
-		    (method . mime-view-application/pgp))
-	  'strict "mime-pgp")
-	 (mime-add-condition
-	  'action '((type . text)(subtype . x-pgp)
-		    (method . mime-view-application/pgp)))
+(eval-after-load "mime-view"
+  '(when mime-setup-enable-pgp
+     (mime-add-condition
+      'preview '((type . application)(subtype . pgp)
+		 (message-button . visible)))
+     (mime-add-condition
+      'action '((type . application)(subtype . pgp)
+		(method . mime-view-application/pgp))
+      'strict "mime-pgp")
+     (mime-add-condition
+      'action '((type . text)(subtype . x-pgp)
+		(method . mime-view-application/pgp)))
 	 
-	 (mime-add-condition
-	  'action '((type . multipart)(subtype . signed)
-		    (method . mime-verify-multipart/signed))
-	  'strict "mime-pgp")
+     (mime-add-condition
+      'action '((type . multipart)(subtype . signed)
+		(method . mime-verify-multipart/signed))
+      'strict "mime-pgp")
 	 
-	 (mime-add-condition
-	  'action
-	  '((type . application)(subtype . pgp-signature)
-	    (method . mime-verify-application/pgp-signature))
-	  'strict "mime-pgp")
+     (mime-add-condition
+      'action
+      '((type . application)(subtype . pgp-signature)
+	(method . mime-verify-application/pgp-signature))
+      'strict "mime-pgp")
 	 
-	 (mime-add-condition
-	  'action
-	  '((type . application)(subtype . pgp-encrypted)
-	    (method . mime-decrypt-application/pgp-encrypted))
-	  'strict "mime-pgp")
+     (mime-add-condition
+      'action
+      '((type . application)(subtype . pgp-encrypted)
+	(method . mime-decrypt-application/pgp-encrypted))
+      'strict "mime-pgp")
 	 
-	 (mime-add-condition
-	  'action
-	  '((type . application)(subtype . pgp-keys)
-	    (method . mime-add-application/pgp-keys))
-	  'strict "mime-pgp")
+     (mime-add-condition
+      'action
+      '((type . application)(subtype . pgp-keys)
+	(method . mime-add-application/pgp-keys))
+      'strict "mime-pgp")
 
-	 (mime-add-condition
-	  'action
-	  '((type . application)(subtype . pkcs7-signature)
-	    (method . mime-verify-application/pkcs7-signature))
-	  'strict "mime-pgp")
+     (mime-add-condition
+      'action
+      '((type . application)(subtype . pkcs7-signature)
+	(method . mime-verify-application/pkcs7-signature))
+      'strict "mime-pgp")
 
-	 (mime-add-condition
-	  'action
-	  '((type . application)(subtype . x-pkcs7-signature)
-	    (method . mime-verify-application/pkcs7-signature))
-	  'strict "mime-pgp")
+     (mime-add-condition
+      'action
+      '((type . application)(subtype . x-pkcs7-signature)
+	(method . mime-verify-application/pkcs7-signature))
+      'strict "mime-pgp")
 
-	 (mime-add-condition
-	  'action
-	  '((type . application)(subtype . pkcs7-mime)
-	    (method . mime-view-application/pkcs7-mime))
-	  'strict "mime-pgp")
+     (mime-add-condition
+      'action
+      '((type . application)(subtype . pkcs7-mime)
+	(method . mime-view-application/pkcs7-mime))
+      'strict "mime-pgp")
 
-	 (mime-add-condition
-	  'action
-	  '((type . application)(subtype . x-pkcs7-mime)
-	    (method . mime-view-application/pkcs7-mime))
-	  'strict "mime-pgp"))))
+     (mime-add-condition
+      'action
+      '((type . application)(subtype . x-pkcs7-mime)
+	(method . mime-view-application/pkcs7-mime))
+      'strict "mime-pgp")))
 
 
 ;;; @ for mime-edit
