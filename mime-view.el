@@ -3,12 +3,12 @@
 ;; Copyright (C) 1995,1996,1997,1998 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
-;; Created: 1994/7/13
-;;	Renamed: 1994/8/31 from tm-body.el
+;; Created: 1994/07/13
+;;	Renamed: 1994/08/31 from tm-body.el
 ;;	Renamed: 1997/02/19 from tm-view.el
 ;; Keywords: MIME, multimedia, mail, news
 
-;; This file is part of SEMI (Sophisticated Emacs MIME Interfaces).
+;; This file is part of WEMI (Widget based Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -31,190 +31,205 @@
 (require 'mel)
 (require 'eword-decode)
 (require 'mime-parse)
-(require 'mime-text)
+(require 'calist)
 
 
 ;;; @ version
 ;;;
 
 (defconst mime-view-version-string
-  `,(concat "SEMI MIME-View "
-	    (mapconcat #'number-to-string (cdr semi-version) ".")
-	    " (" (car semi-version) ")"))
+  `,(concat (car mime-module-version) " MIME-View "
+	    (mapconcat #'number-to-string (cddr mime-module-version) ".")
+	    " (" (cadr mime-module-version) ")"))
 
 
-;;; @ variables
+;;; @ buffer local variables
 ;;;
 
-(defvar mime-acting-condition
-  '(((type . "text/plain")
-     (method "tm-plain" nil 'file 'type 'encoding 'mode 'name)
-     (mode "play" "print")
-     )
-    ((type . "text/html")
-     (method "tm-html" nil 'file 'type 'encoding 'mode 'name)
-     (mode . "play")
-     )
-    ((type . "text/x-rot13-47")
-     (method . mime-display-caesar)
-     (mode . "play")
-     )
-    ((type . "text/x-rot13-47-48")
-     (method . mime-display-caesar)
-     (mode . "play")
-     )
-    ((type . "audio/basic")
-     (method "tm-au"    nil 'file 'type 'encoding 'mode 'name)
-     (mode . "play")
-     )
-    
-    ((type . "image/jpeg")
-     (method "tm-image" nil 'file 'type 'encoding 'mode 'name)
-     (mode "play" "print")
-     )
-    ((type . "image/gif")
-     (method "tm-image" nil 'file 'type 'encoding 'mode 'name)
-     (mode "play" "print")
-     )
-    ((type . "image/png")
-     (method "tm-image" nil 'file 'type 'encoding 'mode 'name)
-     (mode "play" "print")
-     )
-    ((type . "image/tiff")
-     (method "tm-image" nil 'file 'type 'encoding 'mode 'name)
-     (mode "play" "print")
-     )
-    ((type . "image/x-tiff")
-     (method "tm-image" nil 'file 'type 'encoding 'mode 'name)
-     (mode "play" "print")
-     )
-    ((type . "image/x-xbm")
-     (method "tm-image" nil 'file 'type 'encoding 'mode 'name)
-     (mode "play" "print")
-     )
-    ((type . "image/x-pic")
-     (method "tm-image" nil 'file 'type 'encoding 'mode 'name)
-     (mode "play" "print")
-     )
-    ((type . "image/x-mag")
-     (method "tm-image" nil 'file 'type 'encoding 'mode 'name)
-     (mode "play" "print")
-     )
-    
-    ((type . "video/mpeg")
-     (method "tm-mpeg"  nil 'file 'type 'encoding 'mode 'name)
-     (mode . "play")
-     )
-    
-    ((type . "application/postscript")
-     (method "tm-ps" nil 'file 'type 'encoding 'mode 'name)
-     (mode "play" "print")
-     )
-    ((type . "application/octet-stream")
-     (method "tm-file"  nil 'file 'type 'encoding 'mode 'name)
-     (mode "play" "print")
-     )
-    
-    ;;((type . "message/external-body")
-    ;; (method "xterm" nil
-    ;;	       "-e" "showexternal"
-    ;;         'file '"access-type" '"name" '"site" '"directory"))
-    ((type . "message/external-body")
-     ("access-type" . "anon-ftp")
-     (method . mime-display-message/external-ftp)
-     )
-    ((type . "message/rfc822")
-     (method . mime-display-message/rfc822)
-     (mode . "play")
-     )
-    ((type . "message/partial")
-     (method . mime-display-message/partial)
-     (mode . "play")
-     )
-    
-    ((method "metamail" t "-m" "tm" "-x" "-d" "-z" "-e" 'file)
-     (mode . "play")
-     )
-    ((method "tm-file"  nil 'file 'type 'encoding 'mode 'name)
-     (mode . "extract")
-     )
-    ))
+;;; @@ in raw-buffer
+;;;
 
-(defvar mime-view-childrens-header-showing-Content-Type-list
-  '("message/rfc822" "message/news"))
+(defvar mime-raw-message-info
+  "Information about structure of message.
+Please use reference function `mime-entity-SLOT' to get value of SLOT.
 
-(defvar mime-view-visible-media-type-list
-  '("text/plain" nil "text/richtext" "text/enriched"
-    "text/rfc822-headers"
-    "text/x-latex" "application/x-latex"
-    "message/delivery-status"
-    "application/pgp" "text/x-pgp"
-    "application/octet-stream"
-    "application/x-selection" "application/x-comment")
-  "*List of media-types to be able to display in MIME-View buffer.
-Each elements are string of TYPE/SUBTYPE, e.g. \"text/plain\".")
+Following is a list of slots of the structure:
+
+node-id		reversed entity-number (list of integers)
+point-min	beginning point of region in raw-buffer
+point-max	end point of region in raw-buffer
+type		media-type (symbol)
+subtype		media-subtype (symbol)
+type/subtype	media-type/subtype (string or nil)
+parameters	parameter of Content-Type field (association list)
+encoding	Content-Transfer-Encoding (string or nil)
+children	entities included in this entity (list of content-infos)
+
+If an entity includes other entities in its body, such as multipart or
+message/rfc822, `mime-entity' structures of them are included in
+`children', so the `mime-entity' structure become a tree.")
+(make-variable-buffer-local 'mime-raw-message-info)
+
+(defvar mime-preview-buffer nil
+  "MIME-preview buffer corresponding with the (raw) buffer.")
+(make-variable-buffer-local 'mime-preview-buffer)
+
+
+;;; @@ in preview-buffer
+;;;
+
+(defvar mime-mother-buffer nil
+  "Mother buffer corresponding with the (MIME-preview) buffer.
+If current MIME-preview buffer is generated by other buffer, such as
+message/partial, it is called `mother-buffer'.")
+(make-variable-buffer-local 'mime-mother-buffer)
+
+(defvar mime-raw-buffer nil
+  "Raw buffer corresponding with the (MIME-preview) buffer.")
+(make-variable-buffer-local 'mime-raw-buffer)
+
+(defvar mime-preview-original-major-mode nil
+  "Major-mode of mime-raw-buffer.")
+(make-variable-buffer-local 'mime-preview-original-major-mode)
+
+(defvar mime-preview-original-window-configuration nil
+  "Window-configuration before mime-view-mode is called.")
+(make-variable-buffer-local 'mime-preview-original-window-configuration)
+
+
+;;; @ entity information
+;;;
+
+(defsubst mime-raw-find-entity-from-node-id (entity-node-id
+					     &optional message-info)
+  "Return entity from ENTITY-NODE-ID in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (mime-raw-find-entity-from-number (reverse entity-node-id) message-info))
+
+(defun mime-raw-find-entity-from-number (entity-number &optional message-info)
+  "Return entity from ENTITY-NUMBER in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (or message-info
+      (setq message-info mime-raw-message-info))
+  (if (eq entity-number t)
+      message-info
+    (let ((sn (car entity-number)))
+      (if (null sn)
+	  message-info
+	(let ((rc (nth sn (mime-entity-children message-info))))
+	  (if rc
+	      (mime-raw-find-entity-from-number (cdr entity-number) rc)
+	    ))
+	))))
+
+(defun mime-raw-find-entity-from-point (point &optional message-info)
+  "Return entity from POINT in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (or message-info
+      (setq message-info mime-raw-message-info))
+  (if (and (<= (mime-entity-point-min message-info) point)
+	   (<= point (mime-entity-point-max message-info)))
+      (let ((children (mime-entity-children message-info)))
+	(catch 'tag
+	  (while children
+	    (let ((ret
+		   (mime-raw-find-entity-from-point point (car children))))
+	      (if ret
+		  (throw 'tag ret)
+		))
+	    (setq children (cdr children)))
+	  message-info))))
+
+(defsubst mime-raw-point-to-entity-node-id (point &optional message-info)
+  "Return entity-node-id from POINT in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (mime-entity-node-id (mime-raw-find-entity-from-point point message-info)))
+
+(defsubst mime-raw-point-to-entity-number (point &optional message-info)
+  "Return entity-number from POINT in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (reverse (mime-raw-point-to-entity-node-id point message-info)))
+
+(defsubst mime-raw-entity-parent (entity &optional message-info)
+  "Return mother entity of ENTITY.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (mime-raw-find-entity-from-node-id (cdr (mime-entity-node-id entity))
+				     message-info))
+
+(defun mime-raw-flatten-message-info (&optional message-info)
+  "Return list of entity in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (or message-info
+      (setq message-info mime-raw-message-info))
+  (let ((dest (list message-info))
+	(rcl (mime-entity-children message-info)))
+    (while rcl
+      (setq dest (nconc dest (mime-raw-flatten-message-info (car rcl))))
+      (setq rcl (cdr rcl)))
+    dest))
+
+
+;;; @ presentation of preview
+;;;
+
+;;; @@ entity-button
+;;;
+
+;;; @@@ predicate function
+;;;
 
 (defvar mime-view-content-button-visible-ctype-list
   '("application/pgp"))
 
-(defvar mime-view-uuencode-encoding-name-list '("x-uue" "x-uuencode"))
+(defun mime-view-entity-button-visible-p (entity message-info)
+  "Return non-nil if header of ENTITY is visible.
+Please redefine this function if you want to change default setting."
+  (and (not (mime-root-entity-p entity))
+       (let ((media-type (mime-entity-media-type entity))
+	     (media-subtype (mime-entity-media-subtype entity)))
+	 (or (not (eq media-type 'application))
+	     (and (not (eq media-subtype 'x-selection))
+		  (or (not (eq media-subtype 'octet-stream))
+		      (let ((mother-entity
+			     (mime-raw-entity-parent entity message-info)))
+			(or (not (eq (mime-entity-media-type mother-entity)
+				     'multipart))
+			    (not (eq (mime-entity-media-subtype mother-entity)
+				     'encrypted)))
+			)
+		      ))))))
 
-(defvar mime-view-ignored-field-list
-  '(".*Received" ".*Path" ".*Id" "References"
-    "Replied" "Errors-To"
-    "Lines" "Sender" ".*Host" "Xref"
-    "Content-Type" "Precedence"
-    "Status" "X-VM-.*")
-  "All fields that match this list will be hidden in MIME preview buffer.
-Each elements are regexp of field-name. [mime-view.el]")
-
-(defvar mime-view-ignored-field-regexp
-  (concat "^"
-	  (apply (function regexp-or) mime-view-ignored-field-list)
-	  ":"))
-
-(defvar mime-view-visible-field-list '("Dnas.*" "Message-Id")
-  "All fields that match this list will be displayed in MIME preview buffer.
-Each elements are regexp of field-name.")
-
-(defvar mime-view-redisplay nil)
-
-(defvar mime-view-announcement-for-message/partial
-  (if (and (>= emacs-major-version 19) window-system)
-      "\
-\[[ This is message/partial style split message. ]]
-\[[ Please press `v' key in this buffer          ]]
-\[[ or click here by mouse button-2.             ]]"
-    "\
-\[[ This is message/partial style split message. ]]
-\[[ Please press `v' key in this buffer.         ]]"
-    ))
-
-
-;;; @@ entity button
+;;; @@@ entity button generator
 ;;;
 
-(defun mime-view-insert-entity-button (rcnum cinfo
-					     media-type media-subtype params
-					     subj encoding)
-  "Insert entity-button."
-  (mime-insert-button
-   (let ((access-type (assoc "access-type" params))
-	 (num (or (cdr (assoc "x-part-number" params))
-		  (if (consp rcnum)
-		      (mapconcat (function
-				  (lambda (num)
-				    (format "%s" (1+ num))
-				    ))
-				 (reverse rcnum) ".")
-		    "0"))
-	      ))
-     (cond (access-type
-	    (let ((server (assoc "server" params)))
-	      (setq access-type (cdr access-type))
-	      (if server
-		  (format "%s %s ([%s] %s)"
-			  num subj access-type (cdr server))
+(defun mime-view-insert-entity-button (entity message-info subj)
+  "Insert entity-button of ENTITY."
+  (let ((entity-node-id (mime-entity-node-id entity))
+	(params (mime-entity-parameters entity)))
+    (mime-insert-button
+     (let ((access-type (assoc "access-type" params))
+	   (num (or (cdr (assoc "x-part-number" params))
+		    (if (consp entity-node-id)
+			(mapconcat (function
+				    (lambda (num)
+				      (format "%s" (1+ num))
+				      ))
+				   (reverse entity-node-id) ".")
+		      "0"))
+		))
+       (cond (access-type
+	      (let ((server (assoc "server" params)))
+		(setq access-type (cdr access-type))
+		(if server
+		    (format "%s %s ([%s] %s)"
+			    num subj access-type (cdr server))
 		(let ((site (cdr (assoc "site" params)))
 		      (dir (cdr (assoc "directory" params)))
 		      )
@@ -223,7 +238,10 @@ Each elements are regexp of field-name.")
 		  )))
 	    )
 	   (t
-	    (let ((charset (cdr (assoc "charset" params))))
+	    (let ((media-type (mime-entity-media-type entity))
+		  (media-subtype (mime-entity-media-subtype entity))
+		  (charset (cdr (assoc "charset" params)))
+		  (encoding (mime-entity-encoding entity)))
 	      (concat
 	       num " " subj
 	       (let ((rest
@@ -239,32 +257,59 @@ Each elements are regexp of field-name.")
 		     "\n\t")
 		 rest)))
 	    )))
-   (function mime-view-play-current-entity))
+     (function mime-preview-play-current-entity))
+    ))
+
+
+;;; @@ entity-header
+;;;
+
+;;; @@@ predicate function
+;;;
+
+(defvar mime-view-childrens-header-showing-Content-Type-list
+  '("message/rfc822" "message/news"))
+
+(defun mime-view-header-visible-p (entity message-info)
+  "Return non-nil if header of ENTITY is visible."
+  (let ((entity-node-id (mime-entity-node-id entity)))
+    (or (null entity-node-id)
+	(member (mime-entity-type/subtype
+		 (mime-raw-find-entity-from-node-id
+		  (cdr entity-node-id) message-info))
+		mime-view-childrens-header-showing-Content-Type-list)
+	)))
+
+;;; @@@ entity header filter
+;;;
+
+(defvar mime-view-content-header-filter-alist nil)
+
+(defun mime-view-default-content-header-filter ()
+  (mime-view-cut-header)
+  (eword-decode-header)
   )
 
-(defun mime-view-entity-button-function (rcnum cinfo
-					       media-type media-subtype
-					       params subj encoding)
-  "Insert entity button conditionally.
-Please redefine this function if you want to change default setting."
-  (or (null rcnum)
-      (and (eq media-type 'application)
-	   (or (eq media-subtype 'x-selection)
-	       (and (eq media-subtype 'octet-stream)
-		    (let ((entity-info
-			   (mime-article/rcnum-to-cinfo (cdr rcnum) cinfo)))
-		      (and (eq (mime-entity-info-media-type entity-info)
-			       'multipart)
-			   (eq (mime-entity-info-media-subtype entity-info)
-			       'encrypted)
-			   )))))
-      (mime-view-insert-entity-button
-       rcnum cinfo media-type media-subtype params subj encoding)
-      ))
-
-
-;;; @@ content header filter
+;;; @@@ entity field cutter
 ;;;
+
+(defvar mime-view-ignored-field-list
+  '(".*Received" ".*Path" ".*Id" "References"
+    "Replied" "Errors-To"
+    "Lines" "Sender" ".*Host" "Xref"
+    "Content-Type" "Precedence"
+    "Status" "X-VM-.*")
+  "All fields that match this list will be hidden in MIME preview buffer.
+Each elements are regexp of field-name.")
+
+(defvar mime-view-ignored-field-regexp
+  (concat "^"
+	  (apply (function regexp-or) mime-view-ignored-field-list)
+	  ":"))
+
+(defvar mime-view-visible-field-list '("Dnas.*" "Message-Id")
+  "All fields that match this list will be displayed in MIME preview buffer.
+Each elements are regexp of field-name.")
 
 (defun mime-view-cut-header ()
   (goto-char (point-min))
@@ -287,101 +332,224 @@ Please redefine this function if you want to change default setting."
 			   (point-max))))
 	))))
 
-(defun mime-view-default-content-header-filter ()
-  (mime-view-cut-header)
-  (eword-decode-header)
-  )
 
-(defvar mime-view-content-header-filter-alist nil)
-
-
-;;; @@ content filter
+;;; @@ entity-body
 ;;;
 
-(defvar mime-view-content-filter-alist
-  '(("text/enriched" . mime-view-filter-for-text/enriched)
-    ("text/richtext" . mime-view-filter-for-text/richtext)
-    (t . mime-view-filter-for-text/plain)
+;;; @@@ predicate function
+;;;
+
+(defvar mime-preview-condition nil
+  "Condition-tree about how to display entity.")
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . application)(subtype . octet-stream)
+			   (encoding . nil)
+			   (body . visible)))
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . application)(subtype . octet-stream)
+			   (encoding . "7bit")
+			   (body . visible)))
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . application)(subtype . octet-stream)
+			   (encoding . "8bit")
+			   (body . visible)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . application)(subtype . pgp)
+			   (body . visible)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . application)(subtype . x-latex)
+			   (body . visible)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . application)(subtype . x-selection)
+			   (body . visible)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . application)(subtype . x-comment)
+			   (body . visible)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . message)(subtype . delivery-status)
+			   (body . visible)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((body . visible)
+			   (body-presentation-method . with-filter)
+			   (body-filter . mime-preview-filter-for-text/plain)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . nil)
+			   (body . visible)
+			   (body-presentation-method . with-filter)
+			   (body-filter . mime-preview-filter-for-text/plain)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . text)(subtype . enriched)
+			   (body . visible)
+			   (body-presentation-method . with-filter)
+			   (body-filter
+			    . mime-preview-filter-for-text/enriched)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . text)(subtype . richtext)
+			   (body . visible)
+			   (body-presentation-method . with-filter)
+			   (body-filter
+			    . mime-preview-filter-for-text/richtext)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . text)(subtype . t)
+			   (body . visible)
+			   (body-presentation-method . with-filter)
+			   (body-filter . mime-preview-filter-for-text/plain)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . message)(subtype . partial)
+			   (body-presentation-method
+			    . mime-view-insert-message/partial-button)))
+
+(defun mime-view-body-visible-p (entity message-info)
+  "Return non-nil if body of ENTITY is visible."
+  (ctree-match-calist mime-preview-condition
+		      (list* (cons 'type (mime-entity-media-type entity))
+			     (cons 'subtype (mime-entity-media-subtype entity))
+			     (cons 'encoding (mime-entity-encoding entity))
+			     (cons 'major-mode major-mode)
+			     (mime-entity-parameters entity))))
+
+
+;;; @@@ entity filter
+;;;
+
+(autoload 'mime-preview-filter-for-text/plain "mime-text")
+(autoload 'mime-preview-filter-for-text/enriched "mime-text")
+(autoload 'mime-preview-filter-for-text/richtext "mime-text")
+
+(defvar mime-text-decoder-alist
+  '((mime-show-message-mode	. mime-text-decode-buffer)
+    (mime-temp-message-mode	. mime-text-decode-buffer)
+    (t				. mime-text-decode-buffer-maybe)
     )
-  "Alist of media-types vs. corresponding MIME-View filter functions.
-Each element looks like (TYPE/SUBTYPE . FUNCTION) or (t . FUNCTION).
-TYPE/SUBTYPE is a string of media-type and FUNCTION is a filter
-function.  t means default media-type.")
+  "Alist of major-mode vs. mime-text-decoder.
+Each element looks like (SYMBOL . FUNCTION).  SYMBOL is major-mode or
+t.  t means default.
+
+Specification of FUNCTION is described in DOC-string of variable
+`mime-text-decoder'.
+
+This value is overridden by buffer local variable `mime-text-decoder'
+if it is not nil.")
+
+
+(defvar mime-view-announcement-for-message/partial
+  (if (and (>= emacs-major-version 19) window-system)
+      "\
+This is message/partial style split message.
+Please press `v' key in this buffer         
+or click here by mouse button-2.            "
+    "\
+This is message/partial style split message.
+Please press `v' key in this buffer.        "
+    ))
+
+(defun mime-view-insert-message/partial-button (&optional situation)
+  (save-restriction
+    (goto-char (point-max))
+    (if (not (search-backward "\n\n" nil t))
+	(insert "\n")
+      )
+    (goto-char (point-max))
+    ;;(narrow-to-region (point-max)(point-max))
+    ;;(insert mime-view-announcement-for-message/partial)
+    ;; (mime-add-button (point-min)(point-max)
+    ;;                  #'mime-preview-play-current-entity)
+    (mime-insert-button mime-view-announcement-for-message/partial
+			#'mime-preview-play-current-entity)
+    ))
 
 
 ;;; @@ entity separator
 ;;;
 
-(defun mime-view-entity-separator-function (rcnum cinfo
-						  media-type media-subtype
-						  params subj)
-  "Insert entity separator conditionally.
-Please redefine this function if you want to change default setting."
-  (or (mime-view-header-visible-p rcnum cinfo)
-      (mime-view-body-visible-p rcnum cinfo media-type media-subtype)
-      (progn
-	(goto-char (point-max))
-	(insert "\n")
-	)))
+(defun mime-view-entity-separator-visible-p (entity message-info)
+  "Return non-nil if separator is needed for ENTITY."
+  (and (not (mime-view-header-visible-p entity message-info))
+       (not (mime-view-body-visible-p entity message-info))))
 
 
-;;; @@ buffer local variables
+;;; @ acting-condition
 ;;;
 
-;;; @@@ in raw buffer
+(defvar mime-acting-condition
+  '(((type . text)(subtype . plain)
+     (method "tm-plain" nil 'file "" 'encoding 'mode 'name)
+     (mode "play" "print")
+     )
+    ((type . text)(subtype . html)
+     (method "tm-html" nil 'file "" 'encoding 'mode 'name)
+     (mode . "play")
+     )
+    ((type . text)(subtype . x-rot13-47)
+     (method . mime-method-to-display-caesar)
+     (mode . "play")
+     )
+    ((type . text)(subtype . x-rot13-47-48)
+     (method . mime-method-to-display-caesar)
+     (mode . "play")
+     )
+
+    ((type . audio)(subtype . basic)
+     (method "tm-au"    nil 'file "" 'encoding 'mode 'name)
+     (mode . "play")
+     )
+    
+    ((type . image)
+     (method "tm-image" nil 'file "" 'encoding 'mode 'name)
+     (mode "play" "print")
+     )
+    
+    ((type . video)(subtype . mpeg)
+     (method "tm-mpeg"  nil 'file "" 'encoding 'mode 'name)
+     (mode . "play")
+     )
+    
+    ((type . application)(subtype . postscript)
+     (method "tm-ps" nil 'file "" 'encoding 'mode 'name)
+     (mode "play" "print")
+     )
+    ((type . application)(subtype . octet-stream)
+     (method . mime-method-to-save)(mode "play" "print")
+     )
+
+    ((type . message)(subtype . external-body)
+     ("access-type" . "anon-ftp")
+     (method . mime-method-to-display-message/external-ftp)
+     )
+    ((type . message)(subtype . rfc822)
+     (method . mime-method-to-display-message/rfc822)
+     (mode . "play")
+     )
+    ((type . message)(subtype . partial)
+     (method . mime-method-to-store-message/partial)
+     (mode . "play")
+     )
+    
+    ((method "metamail" t "-m" "tm" "-x" "-d" "-z" "-e" 'file)
+     (mode . "play")
+     )
+    ((method . mime-method-to-save)(mode . "extract"))
+    ))
+
+
+;;; @ quitting method
 ;;;
 
-(defvar mime-raw-content-info
-  "Information about structure of message.
-Please use reference function `mime::content-info/SLOT-NAME' to
-reference slot of content-info.  Their argument is only content-info.
-
-Following is a list of slots of the structure:
-
-rcnum		reversed content-number (list)
-point-min	beginning point of region in raw-buffer
-point-max	end point of region in raw-buffer
-type		media-type/subtype (string or nil)
-parameters	parameter of Content-Type field (association list)
-encoding	Content-Transfer-Encoding (string or nil)
-children	entities included in this entity (list of content-infos)
-
-If a entity includes other entities in its body, such as multipart or
-message/rfc822, content-infos of other entities are included in
-`children', so content-info become a tree.")
-(make-variable-buffer-local 'mime-raw-content-info)
-
-(defvar mime-view-buffer nil
-  "MIME View buffer corresponding with the (raw) buffer.")
-(make-variable-buffer-local 'mime-view-buffer)
-
-
-;;; @@@ in view buffer
-;;;
-
-(defvar mime-mother-buffer nil
-  "Mother buffer corresponding with the (MIME-View) buffer.
-If current MIME-View buffer is generated by other buffer, such as
-message/partial, it is called `mother-buffer'.")
-(make-variable-buffer-local 'mime-mother-buffer)
-
-(defvar mime-raw-buffer nil
-  "Raw buffer corresponding with the (MIME-View) buffer.")
-(make-variable-buffer-local 'mime-raw-buffer)
-
-(defvar mime-view-original-major-mode nil
-  "Major-mode in mime-raw-buffer.")
-(make-variable-buffer-local 'mime-view-original-major-mode)
-
-(make-variable-buffer-local 'mime::preview/original-window-configuration)
-
-
-;;; @@ quitting method
-;;;
-
-(defvar mime-view-quitting-method-alist
+(defvar mime-preview-quitting-method-alist
   '((mime-show-message-mode
-     . mime-view-quitting-method-for-mime-show-message-mode))
+     . mime-preview-quitting-method-for-mime-show-message-mode))
   "Alist of major-mode vs. quitting-method of mime-view.")
 
 (defvar mime-view-over-to-previous-method-alist nil)
@@ -391,7 +559,7 @@ message/partial, it is called `mother-buffer'.")
   "Alist of major-mode vs. show-summary-method.")
 
 
-;;; @@ following method
+;;; @ following method
 ;;;
 
 (defvar mime-view-following-method-alist nil
@@ -401,7 +569,7 @@ message/partial, it is called `mother-buffer'.")
   '("From"))
 
 
-;;; @@ X-Face
+;;; @ X-Face
 ;;;
 
 ;; hack from Gnus 5.0.4.
@@ -433,8 +601,20 @@ The compressed face will be piped to this command.")
 	  ))))
 
 
+;;; @ miscellaneous
+;;;
+
+(defvar mime-view-uuencode-encoding-name-list '("x-uue" "x-uuencode"))
+
+(defvar mime-raw-buffer-coding-system-alist
+  `((t . ,(mime-charset-to-coding-system default-mime-charset)))
+  "Alist of major-mode vs. corresponding coding-system of `mime-raw-buffer'.")
+
+
 ;;; @ buffer setup
 ;;;
+
+(defvar mime-view-redisplay nil)
 
 (defun mime-view-setup-buffers (&optional ctl encoding ibuf obuf)
   (if ibuf
@@ -443,13 +623,11 @@ The compressed face will be piped to this command.")
 	(set-buffer ibuf)
 	))
   (or mime-view-redisplay
-      (setq mime-raw-content-info (mime-parse-message ctl encoding))
+      (setq mime-raw-message-info (mime-parse-message ctl encoding))
       )
-  (let* ((cinfo mime-raw-content-info)
-	 (pcl (mime/flatten-content-info cinfo))
-	 (the-buf (current-buffer))
-	 (mode major-mode)
-	 )
+  (let ((message-info mime-raw-message-info)
+	(the-buf (current-buffer))
+	(mode major-mode))
     (or obuf
 	(setq obuf (concat "*Preview-" (buffer-name the-buf) "*")))
     (set-buffer (get-buffer-create obuf))
@@ -458,127 +636,112 @@ The compressed face will be piped to this command.")
       (widen)
       (erase-buffer)
       (setq mime-raw-buffer the-buf)
-      (setq mime-view-original-major-mode mode)
+      (setq mime-preview-original-major-mode mode)
       (setq major-mode 'mime-view-mode)
       (setq mode-name "MIME-View")
-      (while pcl
-	(mime-view-display-entity (car pcl) cinfo the-buf obuf)
-	(setq pcl (cdr pcl))
-	)
+      (mime-view-display-entity message-info message-info the-buf obuf)
       (set-buffer-modified-p nil)
       )
     (setq buffer-read-only t)
     (set-buffer the-buf)
     )
-  (setq mime-view-buffer obuf)
+  (setq mime-preview-buffer obuf)
   )
 
-(defun mime-view-display-entity (content cinfo ibuf obuf)
-  "Display entity from content-info CONTENT."
-  (let* ((beg (mime-entity-info-point-min content))
-	 (end (mime-entity-info-point-max content))
-	 (media-type (mime-entity-info-media-type content))
-	 (media-subtype (mime-entity-info-media-subtype content))
+(defun mime-view-display-entity (entity message-info ibuf obuf)
+  "Display ENTITY."
+  (let* ((start (mime-entity-point-min entity))
+	 (end (mime-entity-point-max entity))
+	 (media-type (mime-entity-media-type entity))
+	 (media-subtype (mime-entity-media-subtype entity))
 	 (ctype (if media-type
 		    (if media-subtype
 			(format "%s/%s" media-type media-subtype)
 		      (symbol-name media-type)
 		      )))
-	 (params (mime-entity-info-parameters content))
-	 (encoding (mime-entity-info-encoding content))
-	 (rcnum (mime-entity-info-rnum content))
-	 he e nb ne subj)
+	 (params (mime-entity-parameters entity))
+	 (encoding (mime-entity-encoding entity))
+	 (entity-node-id (mime-entity-node-id entity))
+	 end-of-header e nb ne subj)
     (set-buffer ibuf)
-    (goto-char beg)
-    (setq he (if (re-search-forward "^$" nil t)
-		 (1+ (match-end 0))
-	       end))
-    (if (> he end)
-	(setq he end)
+    (goto-char start)
+    (setq end-of-header (if (re-search-forward "^$" nil t)
+			    (1+ (match-end 0))
+			  end))
+    (if (> end-of-header end)
+	(setq end-of-header end)
       )
     (save-restriction
-      (narrow-to-region beg end)
+      (narrow-to-region start end)
       (setq subj
 	    (eword-decode-string
-	     (mime-article/get-subject params encoding)))
+	     (mime-raw-get-subject params encoding)))
       )
     (set-buffer obuf)
     (setq nb (point))
     (narrow-to-region nb nb)
-    (mime-view-entity-button-function
-     rcnum cinfo media-type media-subtype params subj encoding)
-    (if (mime-view-header-visible-p rcnum cinfo)
-	(mime-view-display-header beg he)
+    (if (mime-view-entity-button-visible-p entity message-info)
+	(mime-view-insert-entity-button entity message-info subj)
       )
-    (if (and (null rcnum)
+    (if (mime-view-header-visible-p entity message-info)
+	(save-restriction
+	  (narrow-to-region (point)(point))
+	  (insert-buffer-substring mime-raw-buffer start end-of-header)
+	  (let ((f (cdr (assq mime-preview-original-major-mode
+			      mime-view-content-header-filter-alist))))
+	    (if (functionp f)
+		(funcall f)
+	      (mime-view-default-content-header-filter)
+	      ))
+	  (run-hooks 'mime-view-content-header-filter-hook)
+	  ))
+    (if (and (mime-root-entity-p entity)
 	     (member
 	      ctype mime-view-content-button-visible-ctype-list))
 	(save-excursion
 	  (goto-char (point-max))
-	  (mime-view-insert-entity-button
-	   rcnum cinfo media-type media-subtype params subj encoding)
+	  (mime-view-insert-entity-button entity message-info subj)
 	  ))
-    (cond ((mime-view-body-visible-p rcnum cinfo media-type media-subtype)
-	   (mime-view-display-body he end
-				      rcnum cinfo ctype params subj encoding)
-	   )
-	  ((and (eq media-type 'message)(eq media-subtype 'partial))
-	   (mime-view-insert-message/partial-button)
-	   )
-	  ((and (null rcnum)
-		(null (mime-entity-info-children cinfo))
-		)
-	   (goto-char (point-max))
-	   (mime-view-insert-entity-button
-	    rcnum cinfo media-type media-subtype params subj encoding)
-	   ))
-    (mime-view-entity-separator-function
-     rcnum cinfo media-type media-subtype params subj)
+    (let* ((situation
+	    (ctree-match-calist mime-preview-condition
+				(list* (cons 'type       media-type)
+				       (cons 'subtype    media-subtype)
+				       (cons 'encoding   encoding)
+				       (cons 'major-mode major-mode)
+				       params)))
+	   (body-presentation-method
+	    (cdr (assq 'body-presentation-method situation))))
+      (cond ((eq body-presentation-method 'with-filter)
+	     (let ((body-filter (cdr (assq 'body-filter situation))))
+	       (save-restriction
+		 (narrow-to-region (point-max)(point-max))
+		 (insert-buffer-substring mime-raw-buffer end-of-header end)
+		 (funcall body-filter situation)
+		 )))
+	    ((functionp body-presentation-method)
+	     (funcall body-presentation-method situation)
+	     )
+	    ((and (null entity-node-id)
+		  (null (mime-entity-children message-info)))
+	     (goto-char (point-max))
+	     (mime-view-insert-entity-button entity message-info subj)
+	     ))
+      (when (mime-view-entity-separator-visible-p entity message-info)
+	(goto-char (point-max))
+	(insert "\n"))
+      )
     (setq ne (point-max))
     (widen)
     (put-text-property nb ne 'mime-view-raw-buffer ibuf)
-    (put-text-property nb ne 'mime-view-cinfo content)
+    (put-text-property nb ne 'mime-view-entity entity)
     (goto-char ne)
-    ))
+    (let ((children (mime-entity-children entity)))
+      (while children
+	(mime-view-display-entity (car children) message-info ibuf obuf)
+	(setq children (cdr children))
+	))))
 
-(defun mime-view-display-header (beg end)
-  (save-restriction
-    (narrow-to-region (point)(point))
-    (insert-buffer-substring mime-raw-buffer beg end)
-    (let ((f (cdr (assq mime-view-original-major-mode
-			mime-view-content-header-filter-alist))))
-      (if (functionp f)
-	  (funcall f)
-	(mime-view-default-content-header-filter)
-	))
-    (run-hooks 'mime-view-content-header-filter-hook)
-    ))
-
-(defun mime-view-display-body (beg end rcnum cinfo ctype params subj encoding)
-  (save-restriction
-    (narrow-to-region (point-max)(point-max))
-    (insert-buffer-substring mime-raw-buffer beg end)
-    (let ((f (cdr (or (assoc ctype mime-view-content-filter-alist)
-		      (assq t mime-view-content-filter-alist)))))
-      (and (functionp f)
-	   (funcall f ctype params encoding)
-	   )
-      )))
-
-(defun mime-view-insert-message/partial-button ()
-  (save-restriction
-    (goto-char (point-max))
-    (if (not (search-backward "\n\n" nil t))
-	(insert "\n")
-      )
-    (goto-char (point-max))
-    (narrow-to-region (point-max)(point-max))
-    (insert mime-view-announcement-for-message/partial)
-    (mime-add-button (point-min)(point-max)
-		     (function mime-view-play-current-entity))
-    ))
-
-(defun mime-article/get-uu-filename (param &optional encoding)
+(defun mime-raw-get-uu-filename (param &optional encoding)
   (if (member (or encoding
 		  (cdr (assq 'encoding param))
 		  )
@@ -591,7 +754,7 @@ The compressed face will be piped to this command.")
 	    ""))
     ))
 
-(defun mime-article/get-subject (param &optional encoding)
+(defun mime-raw-get-subject (param &optional encoding)
   (or (std11-find-field-body '("Content-Description" "Subject"))
       (let (ret)
 	(if (or (and (setq ret (mime/Content-Disposition))
@@ -602,94 +765,8 @@ The compressed face will be piped to this command.")
 		)
 	    (std11-strip-quoted-string (cdr ret))
 	  ))
-      (mime-article/get-uu-filename param encoding)
+      (mime-raw-get-uu-filename param encoding)
       ""))
-
-
-;;; @ entity information
-;;;
-
-(defun mime-article/point-content-number (p &optional cinfo)
-  (or cinfo
-      (setq cinfo mime-raw-content-info)
-      )
-  (let ((b (mime-entity-info-point-min cinfo))
-	(e (mime-entity-info-point-max cinfo))
-	(c (mime-entity-info-children cinfo))
-	)
-    (if (and (<= b p)(<= p e))
-	(or (let (co ret (sn 0))
-	      (catch 'tag
-		(while c
-		  (setq co (car c))
-		  (setq ret (mime-article/point-content-number p co))
-		  (cond ((eq ret t) (throw 'tag (list sn)))
-			(ret (throw 'tag (cons sn ret)))
-			)
-		  (setq c (cdr c))
-		  (setq sn (1+ sn))
-		  )))
-	    t))))
-
-(defsubst mime-article/rcnum-to-cinfo (rnum &optional cinfo)
-  (mime-article/cnum-to-cinfo (reverse rnum) cinfo)
-  )
-
-(defun mime-article/cnum-to-cinfo (cn &optional cinfo)
-  (or cinfo
-      (setq cinfo mime-raw-content-info)
-      )
-  (if (eq cn t)
-      cinfo
-    (let ((sn (car cn)))
-      (if (null sn)
-	  cinfo
-	(let ((rc (nth sn (mime-entity-info-children cinfo))))
-	  (if rc
-	      (mime-article/cnum-to-cinfo (cdr cn) rc)
-	    ))
-	))))
-
-(defun mime/flatten-content-info (&optional cinfo)
-  (or cinfo
-      (setq cinfo mime-raw-content-info)
-      )
-  (let ((dest (list cinfo))
-	(rcl (mime-entity-info-children cinfo))
-	)
-    (while rcl
-      (setq dest (nconc dest (mime/flatten-content-info (car rcl))))
-      (setq rcl (cdr rcl))
-      )
-    dest))
-
-
-;;; @@ predicate functions
-;;;
-
-(defun mime-view-header-visible-p (rcnum cinfo)
-  "Return non-nil if header of current entity is visible."
-  (or (null rcnum)
-      (member (mime-entity-info-type/subtype
-	       (mime-article/rcnum-to-cinfo (cdr rcnum) cinfo))
-	      mime-view-childrens-header-showing-Content-Type-list)
-      ))
-
-(defun mime-view-body-visible-p (rcnum cinfo media-type media-subtype)
-  (let ((ctype (if media-type
-		   (if media-subtype
-		       (format "%s/%s" media-type media-subtype)
-		     (symbol-name media-type)
-		     ))))
-    (and (member ctype mime-view-visible-media-type-list)
-	 (if (and (eq media-type 'application)
-		  (eq media-subtype 'octet-stream))
-	     (let ((ccinfo (mime-article/rcnum-to-cinfo rcnum cinfo)))
-	       (member (mime-entity-info-encoding ccinfo)
-		       '(nil "7bit" "8bit"))
-	       )
-	   t))
-    ))
 
 
 ;;; @ MIME viewer mode
@@ -697,15 +774,15 @@ The compressed face will be piped to this command.")
 
 (defconst mime-view-menu-title "MIME-View")
 (defconst mime-view-menu-list
-  '((up		 "Move to upper content"      mime-view-move-to-upper)
-    (previous	 "Move to previous content"   mime-view-move-to-previous)
-    (next	 "Move to next content"	      mime-view-move-to-next)
-    (scroll-down "Scroll to previous content" mime-view-scroll-down-entity)
-    (scroll-up	 "Scroll to next content"     mime-view-scroll-up-entity)
-    (play	 "Play Content"               mime-view-play-current-entity)
-    (extract	 "Extract Content"            mime-view-extract-current-entity)
-    (print	 "Print"                      mime-view-print-current-entity)
-    (x-face	 "Show X Face"                mime-view-display-x-face)
+  '((up		 "Move to upper entity"    mime-preview-move-to-upper)
+    (previous	 "Move to previous entity" mime-preview-move-to-previous)
+    (next	 "Move to next entity"	   mime-preview-move-to-next)
+    (scroll-down "Scroll-down"             mime-preview-scroll-down-entity)
+    (scroll-up	 "Scroll-up"               mime-preview-scroll-up-entity)
+    (play	 "Play current entity"     mime-preview-play-current-entity)
+    (extract	 "Extract current entity"  mime-preview-extract-current-entity)
+    (print	 "Print current entity"    mime-preview-print-current-entity)
+    (x-face	 "Show X Face"             mime-preview-display-x-face)
     )
   "Menu for MIME Viewer")
 
@@ -735,39 +812,39 @@ The compressed face will be piped to this command.")
 			      (make-sparse-keymap)
 			      )))
     (define-key mime-view-mode-map
-      "u"        (function mime-view-move-to-upper))
+      "u"        (function mime-preview-move-to-upper))
     (define-key mime-view-mode-map
-      "p"        (function mime-view-move-to-previous))
+      "p"        (function mime-preview-move-to-previous))
     (define-key mime-view-mode-map
-      "n"        (function mime-view-move-to-next))
+      "n"        (function mime-preview-move-to-next))
     (define-key mime-view-mode-map
-      "\e\t"     (function mime-view-move-to-previous))
+      "\e\t"     (function mime-preview-move-to-previous))
     (define-key mime-view-mode-map
-      "\t"       (function mime-view-move-to-next))
+      "\t"       (function mime-preview-move-to-next))
     (define-key mime-view-mode-map
-      " "        (function mime-view-scroll-up-entity))
+      " "        (function mime-preview-scroll-up-entity))
     (define-key mime-view-mode-map
-      "\M- "     (function mime-view-scroll-down-entity))
+      "\M- "     (function mime-preview-scroll-down-entity))
     (define-key mime-view-mode-map
-      "\177"     (function mime-view-scroll-down-entity))
+      "\177"     (function mime-preview-scroll-down-entity))
     (define-key mime-view-mode-map
-      "\C-m"     (function mime-view-next-line-content))
+      "\C-m"     (function mime-preview-next-line-entity))
     (define-key mime-view-mode-map
-      "\C-\M-m"  (function mime-view-previous-line-content))
+      "\C-\M-m"  (function mime-preview-previous-line-entity))
     (define-key mime-view-mode-map
-      "v"        (function mime-view-play-current-entity))
+      "v"        (function mime-preview-play-current-entity))
     (define-key mime-view-mode-map
-      "e"        (function mime-view-extract-current-entity))
+      "e"        (function mime-preview-extract-current-entity))
     (define-key mime-view-mode-map
-      "\C-c\C-p" (function mime-view-print-current-entity))
+      "\C-c\C-p" (function mime-preview-print-current-entity))
     (define-key mime-view-mode-map
-      "a"        (function mime-view-follow-current-entity))
+      "a"        (function mime-preview-follow-current-entity))
     (define-key mime-view-mode-map
-      "q"        (function mime-view-quit))
+      "q"        (function mime-preview-quit))
     (define-key mime-view-mode-map
-      "h"        (function mime-view-show-summary))
+      "h"        (function mime-preview-show-summary))
     (define-key mime-view-mode-map
-      "\C-c\C-x" (function mime-view-kill-buffer))
+      "\C-c\C-x" (function mime-preview-kill-buffer))
     ;; (define-key mime-view-mode-map
     ;;   "<"        (function beginning-of-buffer))
     ;; (define-key mime-view-mode-map
@@ -775,11 +852,11 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       "?"        (function describe-mode))
     (define-key mime-view-mode-map
-      [tab] (function mime-view-move-to-next))
+      [tab] (function mime-preview-move-to-next))
     (define-key mime-view-mode-map
-      [delete] (function mime-view-scroll-down-entity))
+      [delete] (function mime-preview-scroll-down-entity))
     (define-key mime-view-mode-map
-      [backspace] (function mime-view-scroll-down-entity))
+      [backspace] (function mime-preview-scroll-down-entity))
     (if (functionp default)
 	(cond (running-xemacs
 	       (set-keymap-default-binding mime-view-mode-map default)
@@ -860,13 +937,14 @@ button-2	Move to point under the mouse cursor
 	)
     (prog1
 	(switch-to-buffer ret)
-      (setq mime::preview/original-window-configuration win-conf)
+      (setq mime-preview-original-window-configuration win-conf)
       (if mother
 	  (progn
 	    (setq mime-mother-buffer mother)
 	    ))
       (mime-view-define-keymap default-keymap-or-function)
-      (let ((point (next-single-property-change (point-min) 'mime-view-cinfo)))
+      (let ((point
+	     (next-single-property-change (point-min) 'mime-view-entity)))
 	(if point
 	    (goto-char point)
 	  (goto-char (point-min))
@@ -879,73 +957,76 @@ button-2	Move to point under the mouse cursor
 ;;; @@ playing
 ;;;
 
-(autoload 'mime-view-play-current-entity "mime-play" "Play current entity." t)
+(autoload 'mime-preview-play-current-entity "mime-play"
+  "Play current entity." t)
 
-(defun mime-view-extract-current-entity ()
+(defun mime-preview-extract-current-entity ()
   "Extract current entity into file (maybe).
 It decodes current entity to call internal or external method as
 \"extract\" mode.  The method is selected from variable
 `mime-acting-condition'."
   (interactive)
-  (mime-view-play-current-entity "extract")
+  (mime-preview-play-current-entity "extract")
   )
 
-(defun mime-view-print-current-entity ()
+(defun mime-preview-print-current-entity ()
   "Print current entity (maybe).
 It decodes current entity to call internal or external method as
 \"print\" mode.  The method is selected from variable
 `mime-acting-condition'."
   (interactive)
-  (mime-view-play-current-entity "print")
+  (mime-preview-play-current-entity "print")
   )
 
 
 ;;; @@ following
 ;;;
 
-(defun mime-view-get-original-major-mode ()
+(defun mime-preview-original-major-mode ()
   "Return major-mode of original buffer.
 If a current buffer has mime-mother-buffer, return original major-mode
 of the mother-buffer."
   (if mime-mother-buffer
       (save-excursion
 	(set-buffer mime-mother-buffer)
-	(mime-view-get-original-major-mode)
+	(mime-preview-original-major-mode)
 	)
-    mime-view-original-major-mode))
+    mime-preview-original-major-mode))
 
-(defun mime-view-follow-current-entity ()
+(defun mime-preview-follow-current-entity ()
   "Write follow message to current entity.
 It calls following-method selected from variable
 `mime-view-following-method-alist'."
   (interactive)
-  (let ((root-cinfo (get-text-property (point-min) 'mime-view-cinfo))
-	cinfo)
-    (while (null (setq cinfo (get-text-property (point) 'mime-view-cinfo)))
+  (let ((message-info (get-text-property (point-min) 'mime-view-entity))
+	entity)
+    (while (null (setq entity
+		       (get-text-property (point) 'mime-view-entity)))
       (backward-char)
       )
-    (let* ((p-beg (previous-single-property-change (point) 'mime-view-cinfo))
+    (let* ((p-beg
+	    (previous-single-property-change (point) 'mime-view-entity))
 	   p-end
-	   (rcnum (mime-entity-info-rnum cinfo))
-	   (len (length rcnum))
+	   (entity-node-id (mime-entity-node-id entity))
+	   (len (length entity-node-id))
 	   )
       (cond ((null p-beg)
 	     (setq p-beg
 		   (if (eq (next-single-property-change (point-min)
-							'mime-view-cinfo)
+							'mime-view-entity)
 			   (point))
 		       (point)
 		     (point-min)))
 	     )
-	    ((eq (next-single-property-change p-beg 'mime-view-cinfo)
+	    ((eq (next-single-property-change p-beg 'mime-view-entity)
 		 (point))
 	     (setq p-beg (point))
 	     ))
-      (setq p-end (next-single-property-change p-beg 'mime-view-cinfo))
+      (setq p-end (next-single-property-change p-beg 'mime-view-entity))
       (cond ((null p-end)
 	     (setq p-end (point-max))
 	     )
-	    ((null rcnum)
+	    ((null entity-node-id)
 	     (setq p-end (point-max))
 	     )
 	    (t
@@ -955,12 +1036,13 @@ It calls following-method selected from variable
 		 (let (e)
 		   (while (setq e
 				(next-single-property-change
-				 (point) 'mime-view-cinfo))
+				 (point) 'mime-view-entity))
 		     (goto-char e)
-		     (let ((rc (mime-entity-info-rnum
+		     (let ((rc (mime-entity-node-id
 				(get-text-property (point)
-						   'mime-view-cinfo))))
-		       (or (equal rcnum (nthcdr (- (length rc) len) rc))
+						   'mime-view-entity))))
+		       (or (equal entity-node-id
+				  (nthcdr (- (length rc) len) rc))
 			   (throw 'tag nil)
 			   ))
 		     (setq p-end e)
@@ -968,8 +1050,9 @@ It calls following-method selected from variable
 		 (setq p-end (point-max))
 		 ))
 	     ))
-      (let* ((mode (mime-view-get-original-major-mode))
-	     (new-name (format "%s-%s" (buffer-name) (reverse rcnum)))
+      (let* ((mode (mime-preview-original-major-mode))
+	     (new-name
+	      (format "%s-%s" (buffer-name) (reverse entity-node-id)))
 	     new-buf
 	     (the-buf (current-buffer))
 	     (a-buf mime-raw-buffer)
@@ -979,7 +1062,7 @@ It calls following-method selected from variable
 	  (erase-buffer)
 	  (insert-buffer-substring the-buf p-beg p-end)
 	  (goto-char (point-min))
-	  (if (mime-view-header-visible-p rcnum root-cinfo)
+	  (if (mime-view-header-visible-p entity message-info)
 	      (delete-region (goto-char (point-min))
 			     (if (re-search-forward "^$" nil t)
 				 (match-end 0)
@@ -988,31 +1071,34 @@ It calls following-method selected from variable
 	  (goto-char (point-min))
 	  (insert "\n")
 	  (goto-char (point-min))
-	  (let ((rcnum (mime-entity-info-rnum cinfo)) ci str)
+	  (let ((entity-node-id (mime-entity-node-id entity)) ci str)
 	    (while (progn
-		     (setq str
-			   (save-excursion
-			     (set-buffer a-buf)
-			     (setq ci (mime-article/rcnum-to-cinfo rcnum))
-			     (save-restriction
-			       (narrow-to-region
-				(mime-entity-info-point-min ci)
-				(mime-entity-info-point-max ci)
-				)
-			       (std11-header-string-except
-				(concat "^"
-					(apply (function regexp-or) fields)
-					":") ""))))
+		     (setq
+		      str
+		      (save-excursion
+			(set-buffer a-buf)
+			(setq
+			 ci
+			 (mime-raw-find-entity-from-node-id entity-node-id))
+			(save-restriction
+			  (narrow-to-region
+			   (mime-entity-point-min ci)
+			   (mime-entity-point-max ci)
+			   )
+			  (std11-header-string-except
+			   (concat "^"
+				   (apply (function regexp-or) fields)
+				   ":") ""))))
 		     (if (and
-			  (eq (mime-entity-info-media-type ci) 'message)
-			  (eq (mime-entity-info-media-subtype ci) 'rfc822))
+			  (eq (mime-entity-media-type ci) 'message)
+			  (eq (mime-entity-media-subtype ci) 'rfc822))
 			 nil
 		       (if str
 			   (insert str)
 			 )
-		       rcnum))
+		       entity-node-id))
 	      (setq fields (std11-collect-field-names)
-		    rcnum (cdr rcnum))
+		    entity-node-id (cdr entity-node-id))
 	      )
 	    )
 	  (let ((rest mime-view-following-required-fields-list))
@@ -1049,7 +1135,7 @@ It calls following-method selected from variable
 ;;; @@ X-Face
 ;;;
 
-(defun mime-view-display-x-face ()
+(defun mime-preview-display-x-face ()
   (interactive)
   (save-window-excursion
     (set-buffer mime-raw-buffer)
@@ -1060,63 +1146,65 @@ It calls following-method selected from variable
 ;;; @@ moving
 ;;;
 
-(defun mime-view-move-to-upper ()
+(defun mime-preview-move-to-upper ()
   "Move to upper entity.
-If there is no upper entity, call function `mime-view-quit'."
+If there is no upper entity, call function `mime-preview-quit'."
   (interactive)
   (let (cinfo)
-    (while (null (setq cinfo (get-text-property (point) 'mime-view-cinfo)))
+    (while (null (setq cinfo
+		       (get-text-property (point) 'mime-view-entity)))
       (backward-char)
       )
-    (let ((r (mime-article/rcnum-to-cinfo
-	      (cdr (mime-entity-info-rnum cinfo))
-	      (get-text-property 1 'mime-view-cinfo)))
+    (let ((r (mime-raw-find-entity-from-node-id
+	      (cdr (mime-entity-node-id cinfo))
+	      (get-text-property 1 'mime-view-entity)))
 	  point)
       (catch 'tag
 	(while (setq point (previous-single-property-change
-			    (point) 'mime-view-cinfo))
+			    (point) 'mime-view-entity))
 	  (goto-char point)
-	  (if (eq r (get-text-property (point) 'mime-view-cinfo))
+	  (if (eq r (get-text-property (point) 'mime-view-entity))
 	      (throw 'tag t)
 	    )
 	  )
-	(mime-view-quit)
+	(mime-preview-quit)
 	))))
 
-(defun mime-view-move-to-previous ()
+(defun mime-preview-move-to-previous ()
   "Move to previous entity.
 If there is no previous entity, it calls function registered in
 variable `mime-view-over-to-previous-method-alist'."
   (interactive)
-  (while (null (get-text-property (point) 'mime-view-cinfo))
+  (while (null (get-text-property (point) 'mime-view-entity))
     (backward-char)
     )
-  (let ((point (previous-single-property-change (point) 'mime-view-cinfo)))
+  (let ((point
+	 (previous-single-property-change (point) 'mime-view-entity)))
     (if point
 	(goto-char point)
-      (let ((f (assq mime-view-original-major-mode
+      (let ((f (assq mime-preview-original-major-mode
 		     mime-view-over-to-previous-method-alist)))
 	(if f
 	    (funcall (cdr f))
 	  ))
       )))
 
-(defun mime-view-move-to-next ()
+(defun mime-preview-move-to-next ()
   "Move to next entity.
 If there is no previous entity, it calls function registered in
 variable `mime-view-over-to-next-method-alist'."
   (interactive)
-  (let ((point (next-single-property-change (point) 'mime-view-cinfo)))
+  (let ((point (next-single-property-change (point) 'mime-view-entity)))
     (if point
 	(goto-char point)
-      (let ((f (assq mime-view-original-major-mode
+      (let ((f (assq mime-preview-original-major-mode
 		     mime-view-over-to-next-method-alist)))
 	(if f
 	    (funcall (cdr f))
 	  ))
       )))
 
-(defun mime-view-scroll-up-entity (&optional h)
+(defun mime-preview-scroll-up-entity (&optional h)
   "Scroll up current entity.
 If reached to (point-max), it calls function registered in variable
 `mime-view-over-to-next-method-alist'."
@@ -1125,13 +1213,13 @@ If reached to (point-max), it calls function registered in variable
       (setq h (1- (window-height)))
       )
   (if (= (point) (point-max))
-      (let ((f (assq mime-view-original-major-mode
+      (let ((f (assq mime-preview-original-major-mode
                      mime-view-over-to-next-method-alist)))
         (if f
             (funcall (cdr f))
           ))
     (let ((point
-	   (or (next-single-property-change (point) 'mime-view-cinfo)
+	   (or (next-single-property-change (point) 'mime-view-entity)
 	       (point-max))))
       (forward-line h)
       (if (> (point) point)
@@ -1139,7 +1227,7 @@ If reached to (point-max), it calls function registered in variable
         )
       )))
 
-(defun mime-view-scroll-down-entity (&optional h)
+(defun mime-preview-scroll-down-entity (&optional h)
   "Scroll down current entity.
 If reached to (point-min), it calls function registered in variable
 `mime-view-over-to-previous-method-alist'."
@@ -1148,7 +1236,7 @@ If reached to (point-min), it calls function registered in variable
       (setq h (1- (window-height)))
       )
   (if (= (point) (point-min))
-      (let ((f (assq mime-view-original-major-mode
+      (let ((f (assq mime-preview-original-major-mode
                      mime-view-over-to-previous-method-alist)))
         (if f
             (funcall (cdr f))
@@ -1159,7 +1247,7 @@ If reached to (point-min), it calls function registered in variable
 	  (while (> (point) 1)
 	    (if (setq point
 		      (previous-single-property-change (point)
-						       'mime-view-cinfo))
+						       'mime-view-entity))
 		(throw 'tag t)
 	      )
 	    (backward-char)
@@ -1171,43 +1259,43 @@ If reached to (point-min), it calls function registered in variable
           (goto-char point)
         ))))
 
-(defun mime-view-next-line-content ()
+(defun mime-preview-next-line-entity ()
   (interactive)
-  (mime-view-scroll-up-entity 1)
+  (mime-preview-scroll-up-entity 1)
   )
 
-(defun mime-view-previous-line-content ()
+(defun mime-preview-previous-line-entity ()
   (interactive)
-  (mime-view-scroll-down-entity 1)
+  (mime-preview-scroll-down-entity 1)
   )
 
 
 ;;; @@ quitting
 ;;;
 
-(defun mime-view-quit ()
-  "Quit from MIME-View buffer.
+(defun mime-preview-quit ()
+  "Quit from MIME-preview buffer.
 It calls function registered in variable
-`mime-view-quitting-method-alist'."
+`mime-preview-quitting-method-alist'."
   (interactive)
-  (let ((r (assq mime-view-original-major-mode
-		 mime-view-quitting-method-alist)))
+  (let ((r (assq mime-preview-original-major-mode
+		 mime-preview-quitting-method-alist)))
     (if r
 	(funcall (cdr r))
       )))
 
-(defun mime-view-show-summary ()
+(defun mime-preview-show-summary ()
   "Show summary.
 It calls function registered in variable
 `mime-view-show-summary-method'."
   (interactive)
-  (let ((r (assq mime-view-original-major-mode
+  (let ((r (assq mime-preview-original-major-mode
 		 mime-view-show-summary-method)))
     (if r
 	(funcall (cdr r))
       )))
 
-(defun mime-view-kill-buffer ()
+(defun mime-preview-kill-buffer ()
   (interactive)
   (kill-buffer (current-buffer))
   )

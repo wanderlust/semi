@@ -1,11 +1,11 @@
-;;; mime-def.el --- definition module for SEMI
+;;; mime-def.el --- definition module for WEMI
 
 ;; Copyright (C) 1995,1996,1997,1998 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Keywords: definition, MIME, multimedia, mail, news
 
-;; This file is part of SEMI (Spadework for Emacs MIME Interfaces).
+;; This file is part of WEMI (Widget based Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -51,8 +51,8 @@
 	     x))))
   )
 
-(defconst semi-version '("Nonoichi-K,Dr(Bdaimae" 1 0 2)
-  "Version name and numbers of SEMI-kernel package.")
+(defconst mime-module-version '("WEMI" "Shinbashi" 1 2 1)
+  "Implementation name, version name and numbers of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
   "Caesar rotation of current region." t)
@@ -104,32 +104,41 @@
   :group 'mime
   :type 'face)
 
-(defsubst mime-add-button (from to function &optional data)
-  "Create a button between FROM and TO with callback FUNCTION and DATA."
-  (let ((overlay (make-overlay from to)))
-    (and mime-button-face
-	 (overlay-put overlay 'face mime-button-face))
-    (and mime-button-mouse-face
-	 (overlay-put overlay 'mouse-face mime-button-mouse-face))
-    (add-text-properties from to (list 'mime-button-callback function))
-    (and data
-	 (add-text-properties from to (list 'mime-button-data data)))
-    ;;(add-text-properties from to (list 'keymap widget-keymap))
-    ))
+;; (defsubst mime-add-button (from to function &optional data)
+;;   "Create a button between FROM and TO with callback FUNCTION and DATA."
+;;   (let ((overlay (make-overlay from to)))
+;;     (and mime-button-face
+;;          (overlay-put overlay 'face mime-button-face))
+;;     (and mime-button-mouse-face
+;;          (overlay-put overlay 'mouse-face mime-button-mouse-face))
+;;     (add-text-properties from to (list 'mime-button-callback function))
+;;     (and data
+;;          (add-text-properties from to (list 'mime-button-data data)))
+;;     (add-text-properties from to (list 'keymap widget-keymap))
+;;     ))
 
 (defsubst mime-insert-button (string function &optional data)
   "Insert STRING as button with callback FUNCTION and DATA."
   (save-restriction
     (narrow-to-region (point)(point))
-    (insert (concat "[" string "]"))
-    ;; (widget-push-button-value-create
-    ;;  (widget-convert 'push-button
-    ;;                  :notify (lambda (&rest ignore)
-    ;;                            (mime-view-play-current-entity)
-    ;;                            )
-    ;;                  string))
+    (widget-create 'push-button
+		   :action `(lambda (widget &optional event)
+			      (,function)
+			      )
+		   :mouse-down-action `(lambda (widget event)
+					 (let (buf point)
+					   (save-window-excursion
+					     (mouse-set-point event)
+					     (setq buf (current-buffer)
+						   point (point)))
+					   (save-excursion
+					     (set-buffer buf)
+					     (goto-char point)
+					     (,function)
+					     )))
+		   string)
     (insert "\n")
-    (mime-add-button (point-min)(point-max) function data)
+    ;;(mime-add-button (point-min)(point-max) function data)
     ))
 
 (defvar mime-button-mother-dispatcher nil)

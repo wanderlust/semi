@@ -1,12 +1,11 @@
 ;;; mime-text.el --- mime-view content filter for text
 
-;; Copyright (C) 1994,1995,1996,1997 Free Software Foundation, Inc.
+;; Copyright (C) 1994,1995,1996,1997,1998 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
-;; Version: $Id$
 ;; Keywords: text, MIME, multimedia, mail, news
 
-;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
+;; This file is part of WEMI (Widget based Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -25,6 +24,10 @@
 
 ;;; Code:
 
+(require 'mime-view)
+(autoload 'widget-convert-text "wid-edit")
+
+
 ;;; @ buffer local variables in raw-buffer
 ;;;
 
@@ -42,21 +45,6 @@ raw-buffer.")
 
 ;;; @ code conversion
 ;;;
-
-(defvar mime-text-decoder-alist
-  '((mime-show-message-mode	. mime-text-decode-buffer)
-    (mime-temp-message-mode	. mime-text-decode-buffer)
-    (t				. mime-text-decode-buffer-maybe)
-    )
-  "Alist of major-mode vs. mime-text-decoder.
-Each element looks like (SYMBOL . FUNCTION).  SYMBOL is major-mode or
-t.  t means default.
-
-Specification of FUNCTION is described in DOC-string of variable
-`mime-text-decoder'.
-
-This value is overridden by buffer local variable `mime-text-decoder'
-if it is not nil.")
 
 (defun mime-text-decode-buffer (charset &optional encoding)
   "Decode text of current buffer as CHARSET.
@@ -77,28 +65,33 @@ See also variable `mime-charset-coding-system-alist'."
       (mime-text-decode-buffer charset)
       ))
 
-(defun mime-decode-text-body (charset encoding)
+(defun mime-text-decode-body (situation)
   "Decode current buffer as text body.
-It decodes MIME-encoding as ENCODING then code-converts as MIME
-CHARSET.  CHARSET is SYMBOL and ENCODING is nil or STRING.
-
-It calls text decoder for MIME charset specified by buffer local
-variable `mime-text-decoder' and variable `mime-text-decoder-alist'."
-  (mime-decode-region (point-min) (point-max) encoding)
-  (goto-char (point-min))
-  (while (search-forward "\r\n" nil t)
-    (replace-match "\n")
-    )
-  (let ((text-decoder
-	 (save-excursion
-	   (set-buffer mime-raw-buffer)
-	   (or mime-text-decoder
-	       (cdr (or (assq major-mode mime-text-decoder-alist)
-			(assq t mime-text-decoder-alist)))
-	       ))))
-    (and (functionp text-decoder)
-	 (funcall text-decoder charset encoding)
-	 )))
+It decodes MIME-encoding then code-converts as MIME-charset.
+MIME-encoding is value of field 'encoding of SITUATION.  It must be
+'nil or string.  MIME-charset is value of field \"charset\" of
+SITUATION.  It must be symbol.
+This function calls text-decoder for MIME-charset specified by buffer
+local variable `mime-text-decoder' and variable
+`mime-text-decoder-alist'."
+  (let ((encoding (cdr (assq 'encoding situation))))
+    (mime-decode-region (point-min) (point-max) encoding)
+    (goto-char (point-min))
+    (while (search-forward "\r\n" nil t)
+      (replace-match "\n")
+      )
+    (let ((text-decoder
+	   (save-excursion
+	     (set-buffer mime-raw-buffer)
+	     (or mime-text-decoder
+		 (cdr (or (assq major-mode mime-text-decoder-alist)
+			  (assq t mime-text-decoder-alist)))
+		 ))))
+      (and (functionp text-decoder)
+	   (funcall text-decoder (cdr (assoc "charset" situation)) encoding)
+	   ))
+    (run-hooks 'mime-text-decode-hook)
+    ))
 
 
 ;;; @ for URL
@@ -120,44 +113,46 @@ variable `mime-text-decoder' and variable `mime-text-decoder-alist'."
       )
     ))
 
+(defsubst mime-text-add-url-buttons ()
+  "Add URL-buttons for text body."
+  (goto-char (point-min))
+  (while (re-search-forward mime-text-url-regexp nil t)
+    (let ((beg (match-beginning 0))
+	  (end (match-end 0)))
+      (widget-convert-text 'url-link beg end)
+      )))
+
+(defun mime-text-add-url-buttons-maybe ()
+  "Add URL-buttons if 'browse-url-browser-function is not 'nil."
+  (if browse-url-browser-function
+      (mime-text-add-url-buttons)
+    ))
+
 
 ;;; @ content filters for mime-text
 ;;;
 
-(defun mime-view-filter-for-text/plain (ctype params encoding)
-  (mime-decode-text-body (cdr (assoc "charset" params)) encoding)
+(defun mime-preview-filter-for-text/plain (situation)
+  (mime-text-decode-body situation)
   (goto-char (point-max))
   (if (not (eq (char-after (1- (point))) ?\n))
       (insert "\n")
     )
-  (if browse-url-browser-function
-      (progn
-	(goto-char (point-min))
-	(while (re-search-forward mime-text-url-regexp nil t)
-	  (let ((beg (match-beginning 0))
-		(end (match-end 0)))
-	    (mime-add-button beg end
-			     (function mime-text-browse-url)
-			     (list (buffer-substring beg end))))
-	  )))
-  (run-hooks 'mime-view-plain-text-preview-hook)
+  (mime-text-add-url-buttons)
+  (run-hooks 'mime-preview-text/plain-hook)
   )
 
-(defun mime-view-filter-for-text/richtext (ctype params encoding)
-  (let* ((charset (cdr (assoc "charset" params)))
-	 (beg (point-min))
-	 )
+(defun mime-preview-filter-for-text/richtext (situation)
+  (let ((beg (point-min)))
     (remove-text-properties beg (point-max) '(face nil))
-    (mime-decode-text-body charset encoding)
+    (mime-text-decode-body situation)
     (richtext-decode beg (point-max))
     ))
 
-(defun mime-view-filter-for-text/enriched (ctype params encoding)
-  (let* ((charset (cdr (assoc "charset" params)))
-	 (beg (point-min))
-	 )
+(defun mime-preview-filter-for-text/enriched (situation)
+  (let ((beg (point-min)))
     (remove-text-properties beg (point-max) '(face nil))
-    (mime-decode-text-body charset encoding)
+    (mime-text-decode-body situation)
     (enriched-decode beg (point-max))
     ))
 
