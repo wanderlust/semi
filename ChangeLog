@@ -1,3 +1,21 @@
+1997-09-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-image.el: Use `exec-installed-p' to search
+	`uncompface-program'.
+
+1997-09-24  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+
+	* signature.el: Add doc-string to `signature-file-alist'.
+
+	* mime-bbdb.el: Remove Artur Pioro from the authors list; Recent
+	versions don't contain his code.
+
+1997-09-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el: Don't use cl.
+	(mime-article/rcnum-to-cinfo): New implementation (use function
+	`mime-article/cnum-to-cinfo'); use `defsubst'.
+
 1997-09-18  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-edit.el (mime-edit-x-emacs-value): Use `(featurep
