@@ -35,8 +35,6 @@
 ;;; @ content decoder
 ;;;
 
-(defvar mime-view-decoding-mode "play" "MIME body decoding mode")
-
 (defvar mime-preview/after-decoded-position nil)
 
 (defun mime-play-entity (&optional mode)
@@ -64,9 +62,6 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	  ))))
 
 (defun mime-article/decode-content (cinfo &optional mode)
-  (or mode
-      (setq mode mime-view-decoding-mode)
-      )
   (let ((beg (mime::content-info/point-min cinfo))
 	(end (mime::content-info/point-max cinfo))
 	(ctype (or (mime::content-info/type cinfo) "text/plain"))
