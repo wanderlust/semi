@@ -129,10 +129,8 @@
   (let ((args (list "--with-colons" "--no-greeting" "--batch" 
 		    (if type "--list-secret-keys" "--list-keys")
 		    string)))
-    (with-current-buffer (get-buffer-create pgg-output-buffer)
-      (buffer-disable-undo)
-      (erase-buffer)
-      (apply #'call-process pgg-gpg-program nil t args)
+    (pgg-gpg-process-region (point)(point) nil pgg-gpg-program args)
+    (with-current-buffer pgg-output-buffer
       (goto-char (point-min))
       (when (re-search-forward "^\\(sec\\|pub\\):"  nil t)
 	(substring 
