@@ -45,18 +45,14 @@ it is used as hook to set."
 (defvar mime-setup-enable-inline-image
   (and window-system
        (or (featurep 'xemacs)
-	   (and (featurep 'mule)(module-installed-p 'bitmap))
-	   ))
+	   (and (featurep 'mule)
+		(or (fboundp 'create-image)
+		    (module-installed-p 'bitmap)))))
   "*If it is non-nil, semi-setup sets up to use mime-image.")
 
 (if mime-setup-enable-inline-image
-    (call-after-loaded 'mime-view
-		       (function
-			(lambda ()
-			  (require 'mime-image)
-			  )))
-  )
-
+    (eval-after-load "mime-view"
+      '(require 'mime-image)))
 
 ;; for text/html
 (defvar mime-setup-enable-inline-html
