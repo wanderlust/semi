@@ -1,5 +1,10 @@
 2000-06-19  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
+	* mime-view.el (mime-display-multipart/encrypted): New function.
+	* semi-setup.el: Set up multipart/encrypted.
+
+2000-06-19  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
 	* mime-edit.el (mime-edit-insert-file): Don't produce
 	charset=x-unknown.
 

@@ -81,6 +81,10 @@ it is used as hook to set."
 	  'preview '((type . application)(subtype . pgp)
 		     (message-button . visible)))
 	 (mime-add-condition
+	  'preview '((type . multipart) (subtype . encrypted)
+		     (body . visible)
+		     (body-presentation-method . mime-display-multipart/encrypted)))
+	 (mime-add-condition
 	  'action '((type . application)(subtype . pgp)
 		    (method . mime-view-application/pgp))
 	  'strict "mime-pgp")

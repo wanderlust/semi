@@ -874,6 +874,25 @@ Please press `v' key in this buffer."))
 	    situations (cdr situations)
 	    i (1+ i)))))
 
+(defun mime-display-multipart/encrypted (entity situation)
+  (let ((children (mime-entity-children entity))
+	(original-major-mode-cell (assq 'major-mode situation))
+	(default-situation
+	  (cdr (assq 'childrens-situation situation))))
+    (if original-major-mode-cell
+	(setq default-situation
+	      (cons original-major-mode-cell default-situation)))
+    (mime-display-entity (car children) nil default-situation)
+    (mime-display-entity (cadr children) nil
+			 (put-alist '*entity-button
+				    'invisible default-situation))
+    (del-alist '*entity-button default-situation)
+    (setq children (nth 2 children))
+    ;; This shouldn't happen.
+    (while children
+      (mime-display-entity (car children) nil default-situation)
+      (setq children (cdr children)))))
+
 (defun mime-display-detect-application/octet-stream (entity situation)
   "Detect unknown ENTITY and display it inline.
 This can only handle gzipped contents."
