@@ -148,11 +148,11 @@ and return parsed it."
 
 (defsubst mime-content-disposition-type (content-disposition)
   "Return disposition-type of CONTENT-DISPOSITION."
-  (cdr (car content-type)))
+  (cdr (car content-disposition)))
 
 (defsubst mime-content-disposition-parameters (content-disposition)
   "Return disposition-parameters of CONTENT-DISPOSITION."
-  (cdr (cdr content-type)))
+  (cdr (cdr content-disposition)))
 
 
 ;;; @ Content-Transfer-Encoding
