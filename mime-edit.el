@@ -498,6 +498,7 @@ If encoding is nil, it is determined from its contents."
     (iso-8859-7		8 "quoted-printable")
     (iso-8859-8		8 "quoted-printable")
     (iso-8859-9		8 "quoted-printable")
+    (iso-8859-15	8 "quoted-printable")
     (iso-2022-jp	7 "base64")
     (iso-2022-jp-3	7 "base64")
     (iso-2022-kr	7 "base64")
