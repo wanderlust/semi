@@ -1,9 +1,8 @@
 ;;; mime-mc.el --- Mailcrypt interface for SEMI
 
-;; Copyright (C) 1996,1997 MORIOKA Tomohiko
+;; Copyright (C) 1996,1997,1998 MORIOKA Tomohiko
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
-;; Version: $Id$
 ;; Keywords: PGP, security, MIME, multimedia, mail, news
 
 ;; This file is part of SEMI (Secure Emacs MIME Interface).
@@ -26,7 +25,7 @@
 ;;; Code:
 
 (require 'mailcrypt)
-(load "mc-pgp")
+(eval-and-compile (load "mc-pgp"))
 
 (defun mime-mc-pgp-generic-parser (result)
   (let ((ret (mc-pgp-generic-parser result)))

@@ -35,15 +35,25 @@
 		      ,keymap)
   )
 
+(defmacro mime-save-background-color (&rest body)
+  (if (featurep 'xemacs)
+      `(let ((color (color-name (face-background 'default))))
+	 (prog1
+	     (progn ,@body)
+	   (font-set-face-background 'default color (current-buffer))
+	   ))
+    (cons 'progn body)))
+
 (defun mime-preview-text/html (entity situation)
-  (save-restriction
-    (narrow-to-region (point-max)(point-max))
-    (mime-text-insert-decoded-body entity)
-    (let ((beg (point-min)))
-      (remove-text-properties beg (point-max) '(face nil))
-      (w3-region beg (point-max))
-      (mime-put-keymap-region beg (point-max) w3-mode-map)
-      )))
+  (mime-save-background-color
+   (save-restriction
+     (narrow-to-region (point-max)(point-max))
+     (mime-text-insert-decoded-body entity)
+     (let ((beg (point-min)))
+       (remove-text-properties beg (point-max) '(face nil))
+       (w3-region beg (point-max))
+       (mime-put-keymap-region beg (point-max) w3-mode-map)
+       ))))
 
 
 ;;; @ end

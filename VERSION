@@ -55,7 +55,7 @@
 1.5.2	Kurobe			$(B9uIt(B
 1.5.3	Uozu			$(B5{DE(B		; <=> $(BIY;3COJ}E4F;(B
 1.5.4	Higashi-Namerikawa	$(BEl3j@n(B
------	Namerikawa		$(B3j@n(B		; <=> $(BIY;3COJ}E4F;(B
+1.6.0	Namerikawa		$(B3j@n(B		; <=> $(BIY;3COJ}E4F;(B
 -----	Mizuhashi		$(B?e66(B
 -----	Higashi-Toyama		$(BElIY;3(B
 -----	Toyama			$(BIY;3(B		; = JR $(B9b;3K\@~!"IY;39A@~(B
@@ -106,12 +106,19 @@
 1.5.2	Hayakawa	$BAa@n(B
 1.5.3	Nebukawa	$B:,I\@n(B
 1.5.4	Manazuru	$B??Da(B
------	Yugawara	$BEr2O86(B
+1.6.0	Yugawara	$BEr2O86(B
 -----	Atami		$(BG.3$(B	; = JR $(B0KEl@~(B
 ;;-------------------------------------------------------------------------
 ;;	Central Japan Railway	$(BEl3$N95RE4F;(B
 ;;-------------------------------------------------------------------------
 -----	Kan'nami	$(BH!Fn(B
+-----	Mishima		$B;0Eg(B	; = $B0KF&H":,E4F;(B
+-----	Numazu		$B>BDE(B	; = JR $(B8fEB>l@~(B
+-----	Katahama	$BJRIM(B
+-----	Hara		$B86(B
+-----	Higashi-Tagonoura	$BElED;R%N1:(B
+-----	Yoshiwara	$B5H86(B	; = $B3YFnE4F;(B
+-----	Fuji		$BIY;N(B	; = JR $B?H1d@~(B
 :	:		:
 -----	Kanayama	$(B6b;3(B	; =$(B!J(BJR $(BCf1{K\@~!K(B
 -----	Ot-Dòbashi	$(BHxF,66(B-A
@@ -145,7 +152,7 @@
 ;;-------------------------------------------------------------------------
 1.4.0	Himi			$(BI98+(B
 1.5.0	Shimao			$(BEgHx(B
-1.5.1	Amaharashi		$(B1+@2(B
+1.6.0	Amaharashi		$(B1+@2(B
 -------	Ecch-Dþ-Kokubu		$(B1[Cf9qJ,(B-A
 -------	Fushiki			$(BIzLZ(B
 -------	Noumachi		$(BG=D.(B

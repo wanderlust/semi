@@ -1,7 +1,63 @@
 SEMI NEWS --- history of major-changes.
 Copyright (C) 1998 Free Software Foundation, Inc.
 
+* Changes in SEMI 1.6
+
+** Abolish tm-compatible external method support
+
+  Abolish tm-compatible external method support.  Please use mailcap
+method instead of it.
+
+
+** Abolish `mime-edit-signing-type' and `mime-edit-encrypting-type'
+
+  C-c C-m C-s encloses as "pgp-signed" which means PGP/MIME signature.
+
+  C-c C-m C-e encloses as "pgp-encrypted" which means PGP/MIME
+encryption.
+
+
+** New interface to display message
+
+- Function `mime-view-buffer'
+- Function `mime-view-display-message'
+
+
+** Change interface of internal playback method
+
+  Interface of internal playback method was changed to
+
+	(entity situation)
+
+It is as same as interface of body-presentation-method.
+
+
+** Change interface of `mime-view-entity-button-visible-p'
+
+** Change interface of `mime-view-insert-entity-button'
+
+
+** `mime-preview-original-major-mode'
+
+  Abolish variable `mime-preview-original-major-mode'.
+
+  Please use function `mime-preview-original-major-mode' instead of
+it.
+
+
+** mime-preview-over-to-{previous|next}-method-alist
+
+  `mime-preview-over-to-{previous|next}-method-alist' were renamed
+from `mime-view-over-to-{previous|next}-method-alist'.
+
+
 * Changes in SEMI 1.5
+
+** mime-w3
+
+  Add inline text/html preview feature using w3.  If
+`mime-setup-enable-inline-html' is not nil, semi-setup.el sets up it.
+
 
 ** `pgp-elkins' -> `pgp-mime'
 
@@ -32,6 +88,7 @@ text presentation.  So SEMI was changed to use
 body-presentation-method to display text entity.  In this purpose, old
 text decoding features were abolished and introduces news features
 (cf. next section).
+
 
 ** mime-raw-representation-type and mime-raw-representation-type-alist
 
