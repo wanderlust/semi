@@ -90,7 +90,7 @@
 	 
 	 (mime-add-condition
 	  'action '((type . multipart)(subtype . signed)
-		    (method . mime-method-to-verify-multipart/signed))
+		    (method . mime-verify-multipart/signed))
 	  'strict "mime-pgp")
 	 
 	 (mime-add-condition
