@@ -923,21 +923,23 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
   ;; on for buffers whose name begins with " ".  That's why we use
   ;; save-current-buffer/get-buffer-create rather than
   ;; with-temp-buffer.
-  (let ((buffer (get-buffer-create "*fontification*"))
+  (let ((buffer (generate-new-buffer "*fontification*"))
 	filename)
-    (save-current-buffer
-      (set-buffer buffer)
-      (buffer-disable-undo)
-      (kill-all-local-variables)
-      (erase-buffer)
-      (mime-view-insert-text-content entity situation)
-      (unwind-protect
-	  (progn
+    (unwind-protect
+	(progn
+	  (save-current-buffer
+	    (set-buffer buffer)
+	    (buffer-disable-undo)
+	    (kill-all-local-variables)
+	    (mime-view-insert-text-content entity situation)
 	    (if mode
 		(funcall mode)
 	      (if (setq filename (mime-entity-filename entity))
-		  (set-visited-file-name filename))
-	      (set-auto-mode))
+		  (unwind-protect
+		      (progn
+			(setq buffer-file-name filename)
+			(set-auto-mode))
+		    (setq buffer-file-name nil))))
 	    (let ((font-lock-verbose nil))
 	      ;; I find font-lock a bit too verbose.
 	      (font-lock-fontify-buffer))
@@ -949,8 +951,8 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 			     (set-extent-property ext 'duplicable t)
 			     nil)
 			   nil nil nil nil nil 'text-prop)))
-	(set-visited-file-name nil)))
-    (insert-buffer-substring buffer)))
+	  (insert-buffer-substring buffer))
+      (kill-buffer buffer))))
 
 (defun mime-display-application/emacs-lisp (entity situation)
   (save-restriction
