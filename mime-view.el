@@ -363,7 +363,7 @@ mother-buffer."
 
 (defvar mime-preview-situation-example-list nil)
 (defvar mime-preview-situation-example-list-max-size 16)
-(defvar mime-preview-situation-example-condition nil)
+;; (defvar mime-preview-situation-example-condition nil)
 
 (defun mime-find-entity-preview-situation (entity
 					   &optional default-situation)
@@ -505,21 +505,21 @@ mother-buffer."
 ;;; @@@ predicate function
 ;;;
 
-(defun mime-view-entity-button-visible-p (entity)
-  "Return non-nil if header of ENTITY is visible.
-Please redefine this function if you want to change default setting."
-  (let ((media-type (mime-entity-media-type entity))
-	(media-subtype (mime-entity-media-subtype entity)))
-    (or (not (eq media-type 'application))
-	(and (not (eq media-subtype 'x-selection))
-	     (or (not (eq media-subtype 'octet-stream))
-		 (let ((mother-entity (mime-entity-parent entity)))
-		   (or (not (eq (mime-entity-media-type mother-entity)
-				'multipart))
-		       (not (eq (mime-entity-media-subtype mother-entity)
-				'encrypted)))
-		   )
-		 )))))
+;; (defun mime-view-entity-button-visible-p (entity)
+;;   "Return non-nil if header of ENTITY is visible.
+;; Please redefine this function if you want to change default setting."
+;;   (let ((media-type (mime-entity-media-type entity))
+;;         (media-subtype (mime-entity-media-subtype entity)))
+;;     (or (not (eq media-type 'application))
+;;         (and (not (eq media-subtype 'x-selection))
+;;              (or (not (eq media-subtype 'octet-stream))
+;;                  (let ((mother-entity (mime-entity-parent entity)))
+;;                    (or (not (eq (mime-entity-media-type mother-entity)
+;;                                 'multipart))
+;;                        (not (eq (mime-entity-media-subtype mother-entity)
+;;                                 'encrypted)))
+;;                    )
+;;                  )))))
 
 ;;; @@@ entity button generator
 ;;;
@@ -1017,9 +1017,10 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
       (setq nb (point))
       (narrow-to-region nb nb)
       (or button-is-invisible
-	  (if (mime-view-entity-button-visible-p entity)
-	      (mime-view-insert-entity-button entity)
-	    ))
+          ;; (if (mime-view-entity-button-visible-p entity)
+	  (mime-view-insert-entity-button entity)
+          ;;   )
+	  )
       (when header-is-visible
 	(setq nhb (point))
 	(if header-presentation-method
