@@ -123,8 +123,7 @@
    ;; entity-info of signature
    (mime-raw-entity-node-id-to-entity-info
     ;; entity-node-id of signature
-    (cons 1 (reverse (mime-raw-point-to-entity-number start)))
-    mime-raw-message-info)
+    (cons 1 (mime-raw-point-to-entity-node-id start)))
    (cdr (assq 'mode cal)) ; play-mode
    ))
 
