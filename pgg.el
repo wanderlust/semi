@@ -68,7 +68,7 @@
 
 (ctree-set-calist-strictly
  'pgg-decrypt-codition
- '((cipher-algorithm IDEA)(public-key-algorithm RSA)
+ '((public-key-algorithm RSA)(symmetric-key-algorithm IDEA)
    (scheme . pgp)))
 
 (ctree-set-calist-strictly
@@ -80,8 +80,8 @@
 
 (ctree-set-calist-strictly
  'pgg-decrypt-codition
- '((cipher-algorithm 3DES CAST5 IDEA)
-   (public-key-algorithm RSA ELG DSA)
+ '((public-key-algorithm RSA ELG DSA)
+   (symmetric-key-algorithm 3DES CAST5 IDEA)
    (scheme . pgp5)))
 
 (ctree-set-calist-strictly
@@ -94,24 +94,20 @@
 (ctree-set-calist-strictly
  'pgg-decrypt-codition
  '((public-key-algorithm ELG-E DSA ELG)
-   (cipher-algorithm 3DES CAST5 BLOWFISH TWOFISH)
+   (symmetric-key-algorithm 3DES CAST5 BLOWFISH TWOFISH)
    (scheme . gpg)))
 
 ;;; @ definition of the implementation scheme
 ;;;
 
 (eval-and-compile
-  (luna-define-class pgg-scheme ()
-		     (message-beginning-line
-		      message-end-line
-		      signed-beginning-line
-		      signed-end-line
-		      key-beginning-line
-		      key-end-line
-		      ))
+  (luna-define-class pgg-scheme ())
 
   (luna-define-internal-accessors 'pgg-scheme)
   )
+
+(luna-define-generic lookup-key (scheme string)
+  "Search keys associated with STRING")
 
 (luna-define-generic encrypt-region (scheme start end recipients)
   "Encrypt the current region between START and END.")
@@ -132,28 +128,6 @@ as the detached signature SIGNATURE.")
 (luna-define-generic snarf-keys-region (scheme start end)
   "Add all public keys in region between START 
 and END to the keyring.")
-
-(defvar pgg-scheme-message-delimiters
-  '(:message-beginning-line 
-    "^-----BEGIN PGP MESSAGE-----\r?$"
-    :message-end-line 
-    "^-----END PGP MESSAGE-----\r?$"
-    :signed-beginning-line 
-    "^-----BEGIN PGP SIGNED MESSAGE-----\r?$"
-    :signed-end-line
-    "^-----END PGP SIGNATURE-----\r?$"
-    :key-beginning-line 
-    "^-----BEGIN PGP PUBLIC KEY BLOCK-----\r?$"
-    :key-end-line 
-    "^-----END PGP PUBLIC KEY BLOCK-----\r?$")
-  "Message delimiters")
-
-(luna-define-method initialize-instance :before ((scheme pgg-scheme) 
-						 &rest init-args)
-  (let ((luna-current-method-arguments 
-	 (cons scheme (or init-args  
-			  pgg-scheme-message-delimiters))))
-    (luna-call-next-method)))
 
 ;;; @ interface functions
 ;;;
