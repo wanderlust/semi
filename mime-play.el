@@ -209,6 +209,13 @@ window.")
     (select-window the-win)
     ))
 
+(defsubst mime-hide-echo-buffer ()
+  "Hide mime-echo buffer."
+  (let ((win (get-buffer-window mime-echo-buffer-name)))
+    (if win
+	(delete-window win)
+      )))
+
 
 ;;; @ file name
 ;;;
