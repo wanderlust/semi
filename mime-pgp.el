@@ -121,6 +121,9 @@
 ;;;
 ;;; It is based on RFC 2015.
 
+(defvar mime-pgp-command "pgp"
+  "*Name of the PGP command.")
+
 (defvar mime-pgp-default-language 'en
   "*Symbol of language for pgp.
 It should be ISO 639 2 letter language code such as en, ja, ...")
@@ -139,11 +142,10 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
     (erase-buffer)
     )
   (let* ((lang (or mime-pgp-default-language 'en))
-	 (status
-	  (call-process-region (point-min)(point-max)
-			       "pgp" nil output-buffer nil orig-file
-			       (format "+language=%s" lang)
-			       ))
+	 (status (call-process-region (point-min)(point-max)
+				      mime-pgp-command
+				      nil output-buffer nil
+				      orig-file (format "+language=%s" lang)))
 	 (regexp (cdr (assq lang mime-pgp-good-signature-regexp-alist)))
 	 )
     (if (= status 0)
@@ -157,8 +159,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 		  (buffer-substring (match-beginning 0) (match-end 0))
 		  )
 		 (t
-		  "Bad signature"
-		  )))
+		  "Bad signature")))
 	  ))))
 
 (defun mime-article/check-pgp-signature (beg end cal)
