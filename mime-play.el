@@ -238,8 +238,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
   (let ((mother mime::preview/mother-buffer)
 	(win-conf mime::preview/original-window-configuration)
 	)
-    (kill-buffer
-     (mime::preview-content-info/buffer (car mime::preview/content-list)))
+    (kill-buffer mime::preview/article-buffer)
     (mime-view-kill-buffer)
     (set-window-configuration win-conf)
     (pop-to-buffer mother)
