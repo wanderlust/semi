@@ -1287,8 +1287,17 @@ If there is no upper entity, call function `mime-preview-quit'."
 	(while (setq point (previous-single-property-change
 			    (point) 'mime-view-entity))
 	  (goto-char point)
-	  (if (eq r (get-text-property (point) 'mime-view-entity))
-	      (throw 'tag t)
+	  (when (eq r (get-text-property (point) 'mime-view-entity))
+	    (if (or (eq mime-preview-move-scroll t)
+		    (and mime-preview-move-scroll
+			 (>= point
+			     (save-excursion
+			       (move-to-window-line -1)
+			       (forward-line (* -1 next-screen-context-lines))
+			       (beginning-of-line)
+			       (point)))))
+		(recenter next-screen-context-lines))
+	    (throw 'tag t)
 	    )
 	  )
 	(mime-preview-quit)

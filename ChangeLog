@@ -1,3 +1,8 @@
+1999-10-06  Yoshiki Hayashi  <t90553@mail.ecc.u-tokyo.ac.jp>
+
+	* mime-view.el (mime-preview-move-to-upper): Scroll
+	according to mime-preview-move-scroll.
+
 1999-10-05  Yoshiki Hayashi  <t90553@mail.ecc.u-tokyo.ac.jp>
 
 	* mime-view.el (mime-preview-scroll-down-entity,
