@@ -1,6 +1,6 @@
 2000-12-27  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
-	* mime-play.el (mime-play-message-coding-system): Renamed from
+	* mime-play.el (mime-play-messages-coding-system): Renamed from
 	`mime-mailcap-method-messages-coding-system'.
 
 	* pgg-def.el (pgg-messages-coding-system): Change default value to
