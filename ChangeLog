@@ -1,5 +1,7 @@
 1998-04-29  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* SEMI-CFG: Modify messages for APEL 8.7.
+
 	* README.en (Required environment): Modify for APEL 8.7.
 
 1998-04-29  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
