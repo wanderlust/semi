@@ -513,8 +513,11 @@ If it is not specified for a major-mode,
 (defconst mime-edit-split-ignored-field-regexp
   "\\(^Content-\\|^Subject:\\|^Mime-Version:\\|Message-Id:\\)")
 
-(defvar mime-edit-split-blind-field-regexp
-  "\\(^[BDFbdf]cc:\\|^cc:[ \t]*$\\)")
+(defcustom mime-edit-split-blind-field-regexp
+  "\\(^[BDFbdf]cc:\\|^cc:[ \t]*$\\)"
+  "*Regular expression to match field-name to be ignored when split sending."
+  :group 'mime-edit
+  :type 'regexp)
 
 (defvar mime-edit-split-message-sender-alist nil)
 
