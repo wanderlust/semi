@@ -474,7 +474,8 @@ If SEPARATOR is not nil, it is used as header separator."
 		       (save-restriction
 			 (narrow-to-region beg (1+ end))
 			 (goto-char p)
-			 (eword-decode-region beg (point-max) 'unfold)
+			 (let ((default-mime-charset default-charset))
+			   (eword-decode-region beg (point-max) 'unfold))
 			 (goto-char (point-max))
 			 )))))
 	  (eword-decode-region (point-min) (point-max) t)
