@@ -441,18 +441,6 @@ The compressed face will be piped to this command.")
 	  ))))
 
 
-;;; @@ utility
-;;;
-
-(defun mime-preview/get-original-major-mode ()
-  (if mime-mother-buffer
-      (save-excursion
-	(set-buffer mime-mother-buffer)
-	(mime-preview/get-original-major-mode)
-	)
-    mime-view-original-major-mode))
-
-
 ;;; @ buffer setup
 ;;;
 
@@ -854,6 +842,10 @@ button-2	Move to point under the mouse cursor
       (run-hooks 'mime-view-mode-hook)
       )))
 
+
+;;; @@ playing
+;;;
+
 (autoload 'mime-view-play-current-entity "mime-play" "Play current entity." t)
 
 (defun mime-view-extract-current-entity ()
@@ -873,6 +865,21 @@ It decodes current entity to call internal or external method as
   (interactive)
   (mime-view-play-current-entity "print")
   )
+
+
+;;; @@ following
+;;;
+
+(defun mime-view-get-original-major-mode ()
+  "Return major-mode of original buffer.
+If a current buffer has mime-mother-buffer, return original major-mode
+of the mother-buffer."
+  (if mime-mother-buffer
+      (save-excursion
+	(set-buffer mime-mother-buffer)
+	(mime-view-get-original-major-mode)
+	)
+    mime-view-original-major-mode))
 
 (defun mime-view-follow-current-entity ()
   "Write follow message to current entity.
@@ -928,7 +935,7 @@ It calls following-method selected from variable
 		 (setq p-end (point-max))
 		 ))
 	     ))
-      (let* ((mode (mime-preview/get-original-major-mode))
+      (let* ((mode (mime-view-get-original-major-mode))
 	     (new-name (format "%s-%s" (buffer-name) (reverse rcnum)))
 	     new-buf
 	     (the-buf (current-buffer))
@@ -1004,12 +1011,20 @@ It calls following-method selected from variable
 	    ))
 	))))
 
+
+;;; @@ X-Face
+;;;
+
 (defun mime-view-display-x-face ()
   (interactive)
   (save-window-excursion
     (set-buffer mime-raw-buffer)
     (mime-view-x-face-function)
     ))
+
+
+;;; @@ moving
+;;;
 
 (defun mime-view-move-to-upper ()
   "Move to upper entity.
@@ -1131,6 +1146,10 @@ If reached to (point-min), it calls function registered in variable
   (interactive)
   (mime-view-scroll-down-entity 1)
   )
+
+
+;;; @@ quitting
+;;;
 
 (defun mime-view-quit ()
   "Quit from MIME-View buffer.
