@@ -3,6 +3,12 @@ Copyright (C) 1998 Free Software Foundation, Inc.
 
 * Changes in SEMI 1.5
 
+** mime-w3
+
+  Add inline text/html preview feature using w3.  If
+`mime-setup-enable-inline-html' is not nil, semi-setup.el sets up it.
+
+
 ** `pgp-elkins' -> `pgp-mime'
 
   Rename `pgp-elkins' -> `pgp-mime'.  Variable
@@ -32,6 +38,7 @@ text presentation.  So SEMI was changed to use
 body-presentation-method to display text entity.  In this purpose, old
 text decoding features were abolished and introduces news features
 (cf. next section).
+
 
 ** mime-raw-representation-type and mime-raw-representation-type-alist
 
