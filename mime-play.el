@@ -455,57 +455,54 @@ window.")
 ;;; @ file detection
 ;;;
 
-(defvar mime-file-content-type-alist
-  '(("JPEG"		image jpeg)
-    ("GIF"		image gif)
-    ("Standard MIDI"	audio midi)
+(defvar mime-magic-type-alist
+  '(("^\377\330\377[\340\356]..JFIF"	image jpeg)
+    ("^\211PNG"				image png)
+    ("^GIF8[79]"			image gif)
+    ("^II\\*\000"			image tiff)
+    ("^MM\000\\*"			image tiff)
+    ("^MThd"				audio midi)
+    ("^\000\000\001\263"		video mpeg)
     )
-  "*Alist of \"file\" output patterns vs. corresponding media-types.
+  "*Alist of regexp about magic-number vs. corresponding media-types.
 Each element looks like (REGEXP TYPE SUBTYPE).
-REGEXP is pattern for \"file\" command output.
+REGEXP is a regular expression to match against the beginning of the
+file.
 TYPE is symbol to indicate primary type of media-type.
 SUBTYPE is symbol to indicate subtype of media-type.")
 
 (defun mime-detect-content (entity situation)
-  (let ((beg (mime-entity-point-min entity))
-	(end (mime-entity-point-max entity)))
-    (goto-char beg)
-    (let* ((name (save-restriction
-		   (narrow-to-region beg end)
-		   (mime-entity-safe-filename entity)
-		   ))
-	   (encoding (or (cdr (assq 'encoding situation)) "7bit"))
-	   (filename (if (and name (not (string-equal name "")))
-			 (expand-file-name name mime-temp-directory)
-		       (make-temp-name
-			(expand-file-name "EMI" mime-temp-directory)))))
-      (mime-write-decoded-region (mime-entity-body-start entity) end
-				 filename encoding)
-      (let (type subtype)
-	(with-temp-buffer
-	  (call-process "file" nil t nil filename)
-	  (goto-char (point-min))
-	  (if (search-forward (concat filename ": ") nil t)
-	      (let ((rest mime-file-content-type-alist))
-		(while (not (let ((cell (car rest)))
-			      (if cell
-				  (if (looking-at (car cell))
-				      (setq type (nth 1 cell)
-					    subtype (nth 2 cell))
-				    )
-				t)))
-		  (setq rest (cdr rest))))))
-	(if type
-	    (mime-raw-play-entity
-	     entity nil
-	     (put-alist 'type type
-			(put-alist 'subtype subtype
-				   (del-alist 'method
-					      (copy-alist situation))))
-	     (cdr (assq 'ignore-examples situation))
-	     'mime-detect-content)
-	  ))
-      )))
+  (let (type subtype)
+    (let ((mdata (save-excursion
+		   ;;(set-buffer (mime-entity-buffer entity))
+		   (let* ((start (mime-entity-body-start entity))
+			  (end (progn
+				 (goto-char start)
+				 (end-of-line)
+				 (point))))
+		     (mime-decode-string (buffer-substring start end)
+					 (mime-entity-encoding entity))
+		     )))
+	  (rest mime-magic-type-alist))
+      (while (not (let ((cell (car rest)))
+		    (if cell
+			(if (string-match (car cell) mdata)
+			    (setq type (nth 1 cell)
+				  subtype (nth 2 cell))
+			  )
+		      t)))
+	(setq rest (cdr rest))))
+    (if type
+	(mime-raw-play-entity
+	 entity nil
+	 (put-alist 'type type
+		    (put-alist 'subtype subtype
+			       (del-alist 'method
+					  (copy-alist situation))))
+	 (cdr (assq 'ignore-examples situation))
+	 'mime-detect-content)
+      ))
+  )
 
 
 ;;; @ mail/news message
