@@ -503,7 +503,7 @@ The compressed face will be piped to this command.")
 	 (ctype (mime::content-info/type content))
 	 (params (mime::content-info/parameters content))
 	 (encoding (mime::content-info/encoding content))
-	 (rcnum (mime::content-info/rcnum content))
+	 (rcnum (mime-entity-info-rnum content))
 	 he e nb ne subj)
     (set-buffer ibuf)
     (goto-char beg)
@@ -652,7 +652,7 @@ The compressed face will be piped to this command.")
       )
   (find-if (function
 	    (lambda (ci)
-	      (equal (mime::content-info/rcnum ci) rcnum)
+	      (equal (mime-entity-info-rnum ci) rcnum)
 	      ))
 	   (mime/flatten-content-info cinfo)
 	   ))
@@ -919,7 +919,7 @@ It calls following-method selected from variable
       )
     (let* ((p-beg (previous-single-property-change (point) 'mime-view-cinfo))
 	   p-end
-	   (rcnum (mime::content-info/rcnum cinfo))
+	   (rcnum (mime-entity-info-rnum cinfo))
 	   (len (length rcnum))
 	   )
       (cond ((null p-beg)
@@ -950,7 +950,7 @@ It calls following-method selected from variable
 				(next-single-property-change
 				 (point) 'mime-view-cinfo))
 		     (goto-char e)
-		     (let ((rc (mime::content-info/rcnum
+		     (let ((rc (mime-entity-info-rnum
 				(get-text-property (point)
 						   'mime-view-cinfo))))
 		       (or (equal rcnum (nthcdr (- (length rc) len) rc))
@@ -981,7 +981,7 @@ It calls following-method selected from variable
 	  (goto-char (point-min))
 	  (insert "\n")
 	  (goto-char (point-min))
-	  (let ((rcnum (mime::content-info/rcnum cinfo)) ci str)
+	  (let ((rcnum (mime-entity-info-rnum cinfo)) ci str)
 	    (while (progn
 		     (setq str
 			   (save-excursion
@@ -1061,7 +1061,7 @@ If there is no upper entity, call function `mime-view-quit'."
       (backward-char)
       )
     (let ((r (mime-article/rcnum-to-cinfo
-	      (cdr (mime::content-info/rcnum cinfo))
+	      (cdr (mime-entity-info-rnum cinfo))
 	      (get-text-property 1 'mime-view-cinfo)))
 	  point)
       (catch 'tag
