@@ -464,10 +464,10 @@ Each elements are regexp of field-name.")
     (mime-temp-message-mode     . binary)
     (t                          . cooked)
     )
-  "Alist of major-mode vs. presentation-type of mime-raw-buffer.
-Each element looks like (SYMBOL . MODE).  SYMBOL is major-mode or t.
-t means default.  MODE must be `binary' or `cooked'.
-
+  "Alist of major-mode vs. representation-type of mime-raw-buffer.
+Each element looks like (SYMBOL . REPRESENTATION-TYPE).  SYMBOL is
+major-mode or t.  t means default.  REPRESENTATION-TYPE must be
+`binary' or `cooked'.
 This value is overridden by buffer local variable
 `mime-raw-representation-type' if it is not nil.")
 
