@@ -25,14 +25,11 @@
 ;;; Code:
 
 (require 'poe)
-
 (eval-when-compile (require 'cl))
-
 (require 'custom)
-
 (require 'widget)
-
 (eval-when-compile (require 'static))
+(require 'alist)
 
 (defconst mime-user-interface-product ["WEMI" (1 13 7) "Shimada"]
   "Product name, version number and code name of MIME-kernel package.")
@@ -80,7 +77,7 @@
 	  (delete-region start end))))
   (insert "\n"))
 
-(static-when (featurep 'xemacs)
+(static-when (and (featurep 'xemacs) (featurep 'xpm))
   (defcustom mime-xpm-button-shadow-thickness 3
     "A number of pixels should be used for the shadows on the edges of
 the buttons."
@@ -97,38 +94,45 @@ the buttons."
     :group 'mime
     :type 'string)
 
+  (defvar mime-xpm-button-glyph-cache nil)
+
   (defun mime-create-xpm-button (string function)
     (set-extent-properties (make-extent (point)
 					(progn
 					  (insert "[" string "]")
 					  (point)))
 			   '(invisible t intangible t))
-    (let* ((button (xpm-button-create string
-				      mime-xpm-button-shadow-thickness
-				      mime-xpm-button-foreground
-				      mime-xpm-button-background))
-	   (extent (make-extent (point) (point)))
-	   (down-glyph (make-glyph (car (cdr button))))
-	   (up-glyph (make-glyph (car button)))
-	   (down-func `(lambda (event)
+    (let* ((spec (list string
+		       mime-xpm-button-shadow-thickness
+		       mime-xpm-button-foreground
+		       mime-xpm-button-background))
+	   (button (cdr (assoc spec mime-xpm-button-glyph-cache))))
+      (or button
+	  (set-alist 'mime-xpm-button-glyph-cache spec
+		     (setq button (apply (function xpm-button-create)
+					 spec))))
+      (let* ((extent (make-extent (point) (point)))
+	     (down-glyph (make-glyph (car (cdr button))))
+	     (up-glyph (make-glyph (car button)))
+	     (down-func `(lambda (event)
+			   (interactive "e")
+			   (set-extent-begin-glyph ,extent ,down-glyph)))
+	     (up-func `(lambda (event)
 			 (interactive "e")
-			 (set-extent-begin-glyph ,extent ,down-glyph)))
-	   (up-func `(lambda (event)
-		       (interactive "e")
-		       (mouse-set-point event)
-		       (set-extent-begin-glyph ,extent ,up-glyph)
-		       (,function)))
-	   (keymap (make-sparse-keymap)))
-      (define-key keymap 'button1 down-func)
-      (define-key keymap 'button2 down-func)
-      (define-key keymap 'button1up up-func)
-      (define-key keymap 'button2up up-func)
-      (set-extent-begin-glyph extent up-glyph)
-      (set-extent-property extent 'keymap keymap))
-    (insert "\n"))
+			 (mouse-set-point event)
+			 (set-extent-begin-glyph ,extent ,up-glyph)
+			 (,function)))
+	     (keymap (make-sparse-keymap)))
+	(define-key keymap 'button1 down-func)
+	(define-key keymap 'button2 down-func)
+	(define-key keymap 'button1up up-func)
+	(define-key keymap 'button2up up-func)
+	(set-extent-begin-glyph extent up-glyph)
+	(set-extent-property extent 'keymap keymap))
+      (insert "\n")))
   )
 
-(static-if (featurep 'xemacs)
+(static-if (and (featurep 'xemacs) (featurep 'xpm))
     (defcustom mime-create-button-function 'mime-create-widget-button
       "A function called to create the content button."
       :group 'mime
@@ -148,7 +152,13 @@ the buttons."
     (narrow-to-region (point) (point))
     (mapcar (function
 	     (lambda (line)
-	       (funcall mime-create-button-function line function)))
+	       (static-if (featurep 'xemacs)
+		   (if (and (not (device-on-window-system-p))
+			    (eq 'mime-create-xpm-button
+				mime-create-button-function))
+		       (mime-create-widget-button line function)
+		     (funcall mime-create-button-function line function))
+		 (funcall mime-create-button-function line function))))
 	    (split-string string "\n"))))
 
 (defvar mime-button-mother-dispatcher nil)

@@ -1,5 +1,14 @@
 1999-11-05  Katsumi Yamaoka   <yamaoka@jpl.org>
 
+	* semi-def.el (mime-insert-button): Don't use xpm buttons under TTY.
+	(mime-create-xpm-button): Use `mime-xpm-button-glyph-cache'.
+	(mime-xpm-button-glyph-cache): New variable.
+	(TopLevel): Don't use xpm buttons if the feature `xpm' is not
+	provided.
+	(TopLevel): Require `alist'.
+
+1999-11-05  Katsumi Yamaoka   <yamaoka@jpl.org>
+
 	* semi-def.el (mime-insert-button): Funcall
 	`mime-create-button-function'.
 	(mime-create-button-function): New user option.
