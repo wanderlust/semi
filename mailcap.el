@@ -166,6 +166,21 @@ order.  Otherwise result is not sorted."
 	    (t entries)
 	    ))))
 
+(defvar mailcap-file "~/.mailcap"
+  "*File name of user's mailcap file.")
+
+(defun mailcap-parse-file (&optional filename order)
+  "Parse FILENAME as a mailcap, and return the result.
+If optional argument ORDER is a function, result is sorted by it.
+If optional argument ORDER is not specified, result is sorted original
+order.  Otherwise result is not sorted."
+  (or filename
+      (setq filename mailcap-file))
+  (with-temp-buffer
+    (insert-file-contents filename)
+    (mailcap-parse-buffer (current-buffer) order)
+    ))
+
 
 ;;; @ end
 ;;;
