@@ -56,6 +56,11 @@
   :group 'mime-view
   :type 'boolean)
 
+(defcustom mime-view-acting-example-file "~/.mime-example"
+  "*File name of example about acting-situation demonstrated by user."
+  :group 'mime-view
+  :type 'file)
+
 
 ;;; @ buffer local variables
 ;;;
