@@ -28,7 +28,7 @@
 ;;; Code:
 
 (require 'std11)
-(require 'mime-lib)
+(require 'mime)
 (require 'semi-def)
 (require 'calist)
 (require 'alist)
@@ -243,22 +243,13 @@ If optional argument MESSAGE-INFO is not specified,
 
 (defun mime-entity-filename (entity)
   (or (mime-entity-uu-filename entity)
-      (let ((ret (mime-entity-content-disposition entity)))
-	(and ret
-	     (setq ret (mime-content-disposition-filename ret))
-	     (std11-strip-quoted-string ret)
-	     ))
-      (let ((ret (mime-entity-content-type entity)))
-	(and ret
-	     (setq ret
-		   (cdr
-		    (let ((param (mime-content-type-parameters ret)))
-		      (or (assoc "name" param)
-			  (assoc "x-name" param))
-		      )))
-	     (std11-strip-quoted-string ret)
-	     ))
-      ))
+      (mime-content-disposition-filename
+       (mime-entity-content-disposition entity))
+      (cdr (let ((param (mime-content-type-parameters
+			 (mime-entity-content-type entity))))
+	     (or (assoc "name" param)
+		 (assoc "x-name" param))
+	     ))))
 
 (defun mime-view-entity-title (entity)
   (or (mime-entity-read-field entity 'Content-Description)
