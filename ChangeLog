@@ -1,3 +1,11 @@
+1998-03-21  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+
+	* eword-decode.el (eword-lexical-analyze-internal): Fixed return
+	value.
+
+	* mime-view.el (mime-view-body-visible-condition): text media-
+	type is always visible.
+
 1998-03-21  Tanaka Akira  <akr@jaist.ac.jp>
 
 	* eword-decode.el (eword-decode-sticked-encoded-word): Add

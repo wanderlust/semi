@@ -552,7 +552,7 @@ be the result."
 			  (null (setq r (funcall func string must-unfold)))
 			  )
 		(setq rest (cdr rest)))
-	      (or r '((error) . ""))
+	      (or r `((error . ,string) . ""))
 	      ))
       (setq dest (cons (car ret) dest))
       (setq string (cdr ret))
