@@ -1,3 +1,10 @@
+1999-05-17  KOSEKI Yoshinori  <kose@yk.NetLaputa.ne.jp>
+
+	* mime-pgp.el (mime-verify-application/pgp-signature): Specify the
+	name of `sig-file' explicitly for `mime-pgp-check-signature'.
+	(mime-pgp-check-signature): Accept new arg `sig-file' and feed its
+	value to the verify command.
+
 1999-05-13  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-edit.el (mime-edit-decode-message-in-buffer): Call
