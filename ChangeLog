@@ -1,3 +1,10 @@
+1999-12-28  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-user-agent-value): Use `error' instead of
+	`file-error' for the handler of `condition-case' because XEmacs
+	does not signal an error named `file-error' if the required feature
+	is not provided.
+
 1999-12-16  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* semi-setup.el (mime-setup-decode-message-header): Comment out.
@@ -7,9 +14,9 @@
 
 1999-12-14  Akihiro Arisawa   <ari@atesoft.advantest.co.jp>
 
-	* mime-view.el (mime-preview-follow-current-entity): Fetch field
-	of `mime-view-following-required-fields-list' from parent entity
-	if it is not exist in current entity.
+	* mime-view.el (mime-preview-follow-current-entity): Fetch field of
+	`mime-view-following-required-fields-list' from parent entity if it
+	is not exist in current entity.
 
 1999-12-13  Katsumi Yamaoka   <yamaoka@jpl.org>
 
