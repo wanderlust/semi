@@ -1,3 +1,8 @@
+1998-08-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-text.el (mime-text-insert-decoded-body): Specify line break
+	code type as CRLF.
+
 1998-08-10  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
 
 	* mime-edit.el (mime-edit-normalize-body): Failed to canonicalize
