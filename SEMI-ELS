@@ -27,7 +27,7 @@
 	       )
 	     )))
 	'((mailcrypt	mime-pgp mime-mc)
-	  (bbdb		tm-bbdb)
+	  (bbdb		mime-bbdb)
 	  ))
 
 (if (or (string-match "XEmacs" emacs-version)
