@@ -852,10 +852,14 @@ This can only handle gzipped contents."
   "Ungzip gzipped part and display."
     (insert
      (with-temp-buffer
-       ;; I really hate this brain-damaged function.
-       (when (fboundp 'set-buffer-multibyte)
-	 (set-buffer-multibyte nil))
-       (insert (mime-entity-content entity))
+       ;; #### Kludge to make FSF Emacs happy.
+       (if (featurep 'xemacs)
+	   (insert (mime-entity-content entity))
+	 (let ((content (mime-entity-content entity)))
+	   (if (not (multibyte-string-p content))
+	       ;; I really hate this brain-damaged function.
+	       (set-buffer-multibyte nil))
+	   (insert content)))
        (as-binary-process
 	(call-process-region (point-min) (point-max) "gzip" t t
 			     nil "-cd"))
