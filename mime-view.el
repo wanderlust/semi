@@ -368,6 +368,8 @@ Each elements are regexp of field-name.")
 ;;; @@@ predicate function
 ;;;
 
+(in-calist-package 'mime-view)
+
 (defun mime-calist::field-match-method-as-default-rule (calist
 							field-type field-value)
   (let ((s-field (assq field-type calist)))
@@ -738,6 +740,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	 e nb ne nhb nbb)
     (set-buffer raw-buffer)
     (goto-char start)
+    (in-calist-package 'mime-view)
     (or situation
 	(setq situation
 	      (or (ctree-match-calist mime-preview-condition
