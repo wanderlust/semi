@@ -246,6 +246,14 @@
 	(mime-pgp-check-signature): Use `with-current-buffer' instead of
 	`save-current-buffer'; add comment about PGP 5.0i.
 
+1999-05-19  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-display-entity): Put text-property
+	`mime-view-entity-header' and `mime-view-entity-body' to header
+	and body; run `mime-display-header-hook' before insert "\n".
+	(mime-preview-follow-current-entity): Use text-property
+	`mime-view-entity-header'.
+
 
 1999-05-12  MORIOKA Tomohiko  <tomo@m17n.org>
 
