@@ -75,23 +75,27 @@
   "Insert STRING as button with callback FUNCTION and DATA."
   (save-restriction
     (narrow-to-region (point)(point))
-    (widget-create 'push-button
-		   :action `(lambda (widget &optional event)
-			      (,function)
-			      )
-		   :mouse-down-action `(lambda (widget event)
-					 (let (buf point)
-					   (save-window-excursion
-					     (mouse-set-point event)
-					     (setq buf (current-buffer)
-						   point (point)))
-					   (save-excursion
-					     (set-buffer buf)
-					     (goto-char point)
-					     (,function)
-					     )))
-		   string)
-    (insert "\n")
+    (mapcar #'(lambda (line)
+		(widget-create
+		 'push-button
+		 :action `(lambda (widget &optional event)
+			    (,function)
+			    )
+		 :mouse-down-action `(lambda (widget event)
+				       (let (buf point)
+					 (save-window-excursion
+					   (mouse-set-point event)
+					   (setq buf (current-buffer)
+						 point (point)))
+					 (save-excursion
+					   (set-buffer buf)
+					   (goto-char point)
+					   (,function)
+					   )))
+		 line)
+		(insert "\n")
+		)
+	    (split-string string "\n"))
     ;;(mime-add-button (point-min)(point-max) function data)
     ))
 
