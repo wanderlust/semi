@@ -1,3 +1,11 @@
+2001-11-27   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-w3.el: Don't use `url-register-protocol' if it is not fboundp;
+	announce `url-cid' feature instead.
+	[cf. <Wanderlust:8566>]
+
+	(url-cid): Change return value for the current URL package.
+
 2001-11-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* mime-play.el (mime-play-entity): Use return value of
