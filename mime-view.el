@@ -76,24 +76,36 @@ Please use reference function `mime-entity-SLOT' to get value of SLOT.
 
 Following is a list of slots of the structure:
 
-node-id		reversed entity-number (list of integers)
-point-min	beginning point of region in raw-buffer
-point-max	end point of region in raw-buffer
-type		media-type (symbol)
-subtype		media-subtype (symbol)
-type/subtype	media-type/subtype (string or nil)
-parameters	parameter of Content-Type field (association list)
-encoding	Content-Transfer-Encoding (string or nil)
-children	entities included in this entity (list of content-infos)
+node-id			reversed entity-number (list of integers)
+header-start		minimum point of header in raw-buffer
+header-end		maximum point of header in raw-buffer
+body-start		minimum point of body in raw-buffer
+body-end		maximum point of body in raw-buffer
+content-type		content-type (content-type)
+content-disposition	content-disposition (content-disposition)
+encoding		Content-Transfer-Encoding (string or nil)
+children		entities included in this entity (list of entity)
 
 If an entity includes other entities in its body, such as multipart or
 message/rfc822, `mime-entity' structures of them are included in
 `children', so the `mime-entity' structure become a tree.")
 (make-variable-buffer-local 'mime-raw-message-info)
 
+
 (defvar mime-preview-buffer nil
   "MIME-preview buffer corresponding with the (raw) buffer.")
 (make-variable-buffer-local 'mime-preview-buffer)
+
+
+(defvar mime-raw-representation-type nil
+  "Representation-type of mime-raw-buffer.
+It must be nil, `binary' or `cooked'.
+If it is nil, `mime-raw-representation-type-alist' is used as default
+value.
+Notice that this variable is usually used as buffer local variable in
+raw-buffer.")
+
+(make-variable-buffer-local 'mime-raw-representation-type)
 
 (defvar mime-raw-representation-type-alist
   '((mime-show-message-mode     . binary)
