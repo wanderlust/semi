@@ -27,6 +27,14 @@
 (require 'w3)
 (require 'mime-text)
 
+(defmacro mime-put-keymap-region (start end keymap)
+  `(put-text-property ,start ,end
+		      ',(if (featurep 'xemacs)
+			    'keymap
+			  'local-map)
+		      ,keymap)
+  )
+
 (defun mime-preview-text/html (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
@@ -34,6 +42,7 @@
     (let ((beg (point-min)))
       (remove-text-properties beg (point-max) '(face nil))
       (w3-region beg (point-max))
+      (mime-put-keymap-region beg (point-max) w3-mode-map)
       )))
 
 
