@@ -1,3 +1,8 @@
+2002-11-05  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* mime-view.el (mime-preview-find-boundary-info): Change the name of
+	the argument from get-mother to with-children along its effect.
+
 2002-11-03  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* mime-edit.el (mime-edit-decode-single-part-in-buffer): Decode text
