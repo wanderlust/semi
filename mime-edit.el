@@ -340,7 +340,7 @@ To insert a signature file automatically, call the function
 
     ;;  Pure binary
 
-    ("\\.jpg$"
+    ("\\.jpg$\\|\\.jpeg$"
      "image"	"jpeg"		nil
      "base64"
      "inline"		(("filename" . file))
@@ -2940,15 +2940,16 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 			(setq encoded t
 			      encoding nil)
 			)))))))
-    (if (or encoded (not not-decode-text))
- 	(progn
- 	  (save-excursion
- 	    (goto-char (point-min))
- 	    (while (re-search-forward "\r\n" nil t)
- 	      (replace-match "\n")
- 	      ))
- 	  (decode-mime-charset-region (point-min)(point-max)
- 				      (or charset default-mime-charset))
+    (if (and (eq type 'text)
+	     (or encoded (not not-decode-text)))
+	(progn
+	  (save-excursion
+	    (goto-char (point-min))
+	    (while (re-search-forward "\r\n" nil t)
+	      (replace-match "\n")
+	      ))
+	  (decode-mime-charset-region (point-min)(point-max)
+				      (or charset default-mime-charset))
 	  ))
     (let ((he (if (re-search-forward "^$" nil t)
 		  (match-end 0)
