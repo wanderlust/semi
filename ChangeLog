@@ -1,3 +1,22 @@
+1999-06-27  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-user-agent-value): Include UTF-2000-MULE
+	version if it exists.
+
+1999-06-25  Kenichi OKADA     <kokada@vlsi.kuee.kyoto-u.ac.jp>
+
+	* semi-def.el (widget-mime-url-link-action): New function.
+	(mime-url-link): New widget.
+	(mime-add-url-buttons): Use `widget-convert-button' instead of
+	`widget-convert-text'.
+	(TopLevel): Autoload "wid-edit" for `widget-convert-button'
+	instead of `widget-convert-text'.
+
+1999-06-04  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-edit.el (mime-edit-user-agent-value): Modify code to get
+	version number of XEmacs. [cf. <tm-ja:4561>]
+
 1999-06-04  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-edit.el (mime-edit-user-agent-value): Ignore parenthesis in
