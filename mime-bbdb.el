@@ -8,7 +8,7 @@
 ;;         Artur Pioro <artur@flugor.if.uj.edu.pl>
 ;; Maintainer: Shuhei KOBAYASHI <shuhei-k@jaist.ac.jp>
 ;; Version: $Id$
-;; Keywords: mail, news, MIME, multimedia, multilingual, BBDB
+;; Keywords: BBDB, MIME, multimedia, multilingual, mail, news
 
 ;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
 
