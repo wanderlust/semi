@@ -124,6 +124,10 @@
   "PGP signature of current region." t)
 (autoload 'pgg-insert-key "pgg"
   "Insert PGP public key at point." t)
+(autoload 'smime-encrypt-region "smime"
+  "S/MIME encryption of current region." t)
+(autoload 'smime-sign-region "smime"
+  "S/MIME signature of current region." t)
 
 
 ;;; @ version
@@ -1719,6 +1723,12 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 		((string-equal type "kazu-encrypted")
 		 (mime-edit-encrypt-pgp-kazu bb eb boundary)
 		 )
+		((string-equal type "smime-signed")
+		 (mime-edit-sign-smime bb eb boundary)
+		 )
+		((string-equal type "smime-encrypted")
+		 (mime-edit-encrypt-smime bb eb boundary)
+		 )
 		(t
 		 (setq boundary
 		       (nth 2 (mime-edit-translate-region bb eb
@@ -1936,7 +1946,7 @@ Content-Transfer-Encoding: 7bit
 	      (insert (format "Content-Transfer-Encoding: %s\n" encoding))
 	    )
 	  (insert "\n")
-	  (or (pgg-sign-region beg (point-max) recipients)
+	  (or (pgg-encrypt-region beg (point-max) recipients)
 	      (throw 'mime-edit-error 'pgp-error)
 	      )
 	  (goto-char beg)
@@ -1944,6 +1954,76 @@ Content-Transfer-Encoding: 7bit
 	   "--[[application/pgp; format=mime][7bit]]\n")
 	  ))
       )))
+
+(defun mime-edit-sign-smime (beg end boundary)
+  (save-excursion
+    (save-restriction
+      (let* ((ret (progn 
+		    (narrow-to-region beg end)
+		    (mime-edit-translate-region beg end boundary)))
+	     (ctype    (car ret))
+	     (encoding (nth 1 ret))
+	     (smime-boundary (concat "smime-sign-" boundary)))
+	(goto-char beg)
+	(insert (format "Content-Type: %s\n" ctype))
+	(if encoding
+	    (insert (format "Content-Transfer-Encoding: %s\n" encoding))
+	  )
+	(insert "\n")
+	(let (buffer-undo-list)
+	  (goto-char (point-min))
+	  (while (progn (end-of-line) (not (eobp)))
+	    (insert "\r")
+	    (forward-line 1))
+	  (or (prog1 (smime-sign-region (point-min)(point-max))
+		(push nil buffer-undo-list)
+		(ignore-errors (undo)))
+	      (throw 'mime-edit-error 'pgp-error)
+	      ))
+	(goto-char beg)
+	(insert (format "--[[multipart/signed;
+ boundary=\"%s\"; micalg=sha1;
+ protocol=\"application/x-pkcs7-signature\"][7bit]]
+--%s
+" smime-boundary smime-boundary))
+	(goto-char (point-max))
+	(insert "\n--" smime-boundary "\n")
+	(insert-buffer-substring smime-output-buffer)
+	(goto-char (point-max))
+	(insert (format "\n--%s--\n" smime-boundary))
+	))))
+
+(defun mime-edit-encrypt-smime (beg end boundary)
+  (save-excursion
+    (save-restriction
+      (let* ((ret (progn 
+		    (narrow-to-region beg end)
+		    (mime-edit-translate-region beg end boundary)))
+	     (ctype    (car ret))
+	     (encoding (nth 1 ret)))
+	(goto-char beg)
+	(insert (format "Content-Type: %s\n" ctype))
+	(if encoding
+	    (insert (format "Content-Transfer-Encoding: %s\n" encoding))
+	  )
+	(insert "\n")
+	(goto-char (point-min))
+	(while (progn (end-of-line) (not (eobp)))
+	  (insert "\r")
+	  (forward-line 1))
+	(or (smime-encrypt-region (point-min)(point-max))
+	    (throw 'mime-edit-error 'pgp-error)
+	    )
+	(delete-region (point-min)(point-max))
+	(with-current-buffer smime-output-buffer
+	  (goto-char (point-min))
+	  (delete-region (point-min) (progn
+				       (re-search-forward "^$" nil t)
+				       (point))))
+	(insert "--[[application/x-pkcs7-mime
+Content-Disposition: attachment; filename=\"smime.p7m\"][base64]]\n")
+	(insert-buffer-substring smime-output-buffer)
+	))))
 
 (defsubst replace-space-with-underline (str)
   (mapconcat (function
@@ -2360,6 +2440,16 @@ and insert data encoded as ENCODING."
 (defun mime-edit-enclose-kazu-encrypted-region (beg end)
   (interactive "*r")
   (mime-edit-enclose-region-internal 'kazu-encrypted beg end)
+  )
+
+(defun mime-edit-enclose-smime-signed-region (beg end)
+  (interactive "*r")
+  (mime-edit-enclose-region-internal 'smime-signed beg end)
+  )
+
+(defun mime-edit-enclose-smime-encrypted-region (beg end)
+  (interactive "*r")
+  (mime-edit-enclose-region-internal 'smime-encrypted beg end)
   )
 
 (defun mime-edit-insert-key (&optional arg)
