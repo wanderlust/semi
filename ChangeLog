@@ -1,3 +1,8 @@
+2004-08-03  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* mime-edit.el (mime-edit-mime-version-field-for-message/partial):
+	Fix usage of mime-encode-field-body.
+
 2004-07-24  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* mime-view.el (mime-display-multipart/related): Do nothing when
