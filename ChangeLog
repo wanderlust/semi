@@ -1,3 +1,42 @@
+2000-12-15  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* smime.el (smime-process-region): Don't use `as-binary-process'.
+	(smime-verify-region): Use `binary-write-region' instead of
+	`write-region-as-binary'; use `binary-insert-file-contents'
+	instead of `insert-file-contents-as-binary'.
+
+	* semi-def.el: Don't require `poe'.
+
+	* pgg-pgp5.el (pgg-pgp5-process-region): Don't use
+	`as-binary-process'.
+	(pgg-scheme-verify-region): Use `binary-write-region' instead of
+	`write-region-as-binary'.
+	(pgg-scheme-snarf-keys-region): Don't use
+	`write-region-as-raw-text-CRLF'.
+
+	* pgg-pgp.el (pgg-pgp-process-region): Don't use
+	`as-binary-process'.
+	(pgg-scheme-verify-region): Use `binary-write-region' instead of
+	`write-region-as-binary'.
+	(pgg-scheme-snarf-keys-region): Don't use
+	`write-region-as-raw-text-CRLF'.
+
+	* pgg-parse.el: Don't require `poem'; require `custom' instead of
+	`pcustom'.
+
+	* pgg-gpg.el (pgg-gpg-process-region): Don't use
+	`as-binary-output-file' and
+	`insert-file-contents-as-raw-text-CRLF'.
+
+	* mime-view.el: Don't require `emu'.
+	(mouse-button-3): New variable.
+
+	* mime-play.el (mime-store-message/partial-piece): Use
+	`binary-insert-file-contents' instead of
+	`insert-file-contents-as-binary'; don't use
+	`as-binary-input-file'; use `binary-write-region' instead of
+	`write-region-as-binary'.
+
 2000-12-07  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
 	* mime-w3.el: Avoid error even if `w3' is not found.
