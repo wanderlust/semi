@@ -61,9 +61,9 @@
 	  (forward-char)
 	  (let ((subtype (mailcap-look-at-token)))
 	    (if subtype
-		(cons (cons 'type type)
+		(cons (cons 'type (intern type))
 		      (unless (string= subtype "*")
-			(list (cons 'subtype subtype))
+			(list (cons 'subtype (intern subtype)))
 			))))))))
 
 
