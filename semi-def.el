@@ -30,7 +30,7 @@
 
 (require 'custom)
 
-(defconst mime-user-interface-product ["EMIKO" (1 13 11) "Euglena viridis"]
+(defconst mime-user-interface-product ["EMIKO" (1 13 12) "Euglena sociabilis"]
   "Product name, version number and code name of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
