@@ -709,22 +709,25 @@ The compressed face will be piped to this command.")
     )
   "Menu for MIME Viewer")
 
-(if running-xemacs
-    (progn
-      (defvar mime-view-xemacs-popup-menu
-	(cons mime-view-menu-title
-	      (mapcar (function
-		       (lambda (item)
-			 (vector (nth 1 item)(nth 2 item) t)
-			 ))
-		      mime-view-menu-list)))
-      (defun mime-view-xemacs-popup-menu (event)
-	"Popup the menu in the MIME Viewer buffer"
-	(interactive "e")
-	(select-window (event-window event))
-	(set-buffer (event-buffer event))
-	(popup-menu 'mime-view-xemacs-popup-menu))
-      ))
+(cond (running-xemacs
+       (defvar mime-view-xemacs-popup-menu
+	 (cons mime-view-menu-title
+	       (mapcar (function
+			(lambda (item)
+			  (vector (nth 1 item)(nth 2 item) t)
+			  ))
+		       mime-view-menu-list)))
+       (defun mime-view-xemacs-popup-menu (event)
+	 "Popup the menu in the MIME Viewer buffer"
+	 (interactive "e")
+	 (select-window (event-window event))
+	 (set-buffer (event-buffer event))
+	 (popup-menu 'mime-view-xemacs-popup-menu))
+       (defvar mouse-button-2 'button2)
+       )
+      (t
+       (defvar mouse-button-2 [mouse-2])
+       ))
 
 (defun mime-view-define-keymap (&optional default)
   (let ((mime-view-mode-map (if (keymapp default)
