@@ -248,14 +248,15 @@ If optional argument MESSAGE-INFO is not specified,
 	      mime-view-uuencode-encoding-name-list)
       (save-excursion
 	(set-buffer (mime-entity-buffer entity))
-	(if (re-search-forward "^begin [0-9]+ " nil t)
+	(goto-char (mime-entity-body-start entity))
+	(if (re-search-forward "^begin [0-9]+ "
+			       (mime-entity-body-end entity) t)
 	    (if (looking-at ".+$")
 		(buffer-substring (match-beginning 0)(match-end 0))
 	      )))))
 
-(defun mime-view-entity-title (entity)
-  (or (mime-entity-read-field entity 'Content-Description)
-      (mime-entity-read-field entity 'Subject)
+(defun mime-entity-filename (entity)
+  (or (mime-entity-uu-filename entity)
       (let ((ret (mime-entity-content-disposition entity)))
 	(and ret
 	     (setq ret (mime-content-disposition-filename ret))
@@ -271,7 +272,12 @@ If optional argument MESSAGE-INFO is not specified,
 		      )))
 	     (std11-strip-quoted-string ret)
 	     ))
-      (mime-entity-uu-filename entity)
+      ))
+
+(defun mime-view-entity-title (entity)
+  (or (mime-entity-read-field entity 'Content-Description)
+      (mime-entity-read-field entity 'Subject)
+      (mime-entity-filename entity)
       ""))
 
 
@@ -772,14 +778,9 @@ The compressed face will be piped to this command.")
       (setq preview-buffer (current-buffer)))
   (let* ((raw-buffer (mime-entity-buffer entity))
 	 (start (mime-entity-point-min entity))
-	 (end (mime-entity-point-max entity))
-	 e nb ne subj)
+	 e nb ne)
     (set-buffer raw-buffer)
     (goto-char start)
-    (save-restriction
-      (narrow-to-region start end)
-      (setq subj (mime-view-entity-title entity))
-      )
     (or situation
 	(setq situation
 	      (or (ctree-match-calist mime-preview-condition
@@ -801,7 +802,8 @@ The compressed face will be piped to this command.")
       (narrow-to-region nb nb)
       (or button-is-invisible
 	  (if (mime-view-entity-button-visible-p entity)
-	      (mime-view-insert-entity-button entity subj)
+	      (mime-view-insert-entity-button entity
+					      (mime-view-entity-title entity))
 	    ))
       (when header-is-visible
 	(if header-presentation-method
@@ -820,21 +822,14 @@ The compressed face will be piped to this command.")
 	(run-hooks 'mime-display-header-hook)
 	)
       (cond (children)
-            ;; ((eq body-presentation-method 'with-filter)
-            ;;  (let ((body-filter (cdr (assq 'body-filter situation))))
-            ;;    (save-restriction
-            ;;      (narrow-to-region (point-max)(point-max))
-            ;;      (insert-buffer-substring
-            ;;       raw-buffer (mime-entity-body-start entity) end)
-            ;;      (funcall body-filter situation)
-            ;;      )))
-	    ((functionp body-presentation-method)
+            ((functionp body-presentation-method)
 	     (funcall body-presentation-method entity situation)
 	     )
 	    (t
 	     (when button-is-invisible
 	       (goto-char (point-max))
-	       (mime-view-insert-entity-button entity subj)
+	       (mime-view-insert-entity-button entity
+					       (mime-view-entity-title entity))
 	       )
 	     (or header-is-visible
 		 (progn
