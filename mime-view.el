@@ -504,7 +504,13 @@ The compressed face will be piped to this command.")
   "Display entity from content-info CONTENT."
   (let* ((beg (mime-entity-info-point-min content))
 	 (end (mime-entity-info-point-max content))
-	 (ctype (mime-entity-info-type/subtype content))
+	 (media-type (mime-entity-info-media-type content))
+	 (media-subtype (mime-entity-info-media-subtype content))
+	 (ctype (if media-type
+		    (if media-subtype
+			(format "%s/%s" media-type media-subtype)
+		      (symbol-name media-type)
+		      )))
 	 (params (mime-entity-info-parameters content))
 	 (encoding (mime-entity-info-encoding content))
 	 (rcnum (mime-entity-info-rnum content))
