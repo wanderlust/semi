@@ -32,6 +32,8 @@
 
 (eval-when-compile (require 'mime-text))
 
+(defvar mime-user-acting-condition nil)
+
   
 ;;; @ content decoder
 ;;;
@@ -89,19 +91,28 @@ specified, play as it.  Default MODE is \"play\"."
       (if mode
 	  (setq cal (cons (cons 'mode mode) cal))
 	)
-      (setq ret (ctree-find-calist mime-acting-condition cal 'all))
-      (if (cdr ret)
-	  (setq ret (select-menu-alist
-		     "Methods"
-		     (mapcar (function
-			      (lambda (situation)
-				(cons
-				 (format "%s"
-					 (cdr (assq 'method situation)))
-				 situation)))
-			     ret)))
-	(setq ret (car ret))
-	)
+      (setq ret
+	    (or (ctree-match-calist mime-user-acting-condition cal)
+		cal))
+      (setq ret
+	    (or (ctree-find-calist mime-acting-condition ret 'all)
+		(ctree-find-calist mime-acting-condition cal 'all)
+		))
+      (cond ((cdr ret)
+	     (setq ret (select-menu-alist
+			"Methods"
+			(mapcar (function
+				 (lambda (situation)
+				   (cons
+				    (format "%s"
+					    (cdr (assq 'method situation)))
+				    situation)))
+				ret)))
+	     (ctree-set-calist-strictly 'mime-user-acting-condition ret)
+	     )
+	    (t
+	     (setq ret (car ret))
+	     ))
       (setq method (cdr (assq 'method ret)))
       (cond ((and (symbolp method)
 		  (fboundp method))
