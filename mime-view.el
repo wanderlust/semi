@@ -498,8 +498,8 @@ The compressed face will be piped to this command.")
 
 (defun mime-view-display-entity (content cinfo ibuf obuf)
   "Display entity from content-info CONTENT."
-  (let* ((beg (mime::content-info/point-min content))
-	 (end (mime::content-info/point-max content))
+  (let* ((beg (mime-entity-info-point-min content))
+	 (end (mime-entity-info-point-max content))
 	 (ctype (mime::content-info/type content))
 	 (params (mime::content-info/parameters content))
 	 (encoding (mime::content-info/encoding content))
@@ -628,8 +628,8 @@ The compressed face will be piped to this command.")
   (or cinfo
       (setq cinfo mime::article/content-info)
       )
-  (let ((b (mime::content-info/point-min cinfo))
-	(e (mime::content-info/point-max cinfo))
+  (let ((b (mime-entity-info-point-min cinfo))
+	(e (mime-entity-info-point-max cinfo))
 	(c (mime::content-info/children cinfo))
 	)
     (if (and (<= b p)(<= p e))
@@ -989,8 +989,8 @@ It calls following-method selected from variable
 			     (setq ci (mime-article/rcnum-to-cinfo rcnum))
 			     (save-restriction
 			       (narrow-to-region
-				(mime::content-info/point-min ci)
-				(mime::content-info/point-max ci)
+				(mime-entity-info-point-min ci)
+				(mime-entity-info-point-max ci)
 				)
 			       (std11-header-string-except
 				(concat "^"
