@@ -1,9 +1,21 @@
 1997-09-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-view-body-visible-p,
+	mime-view-display-entity): Use `mime-entity-info-encoding' instead
+	of `mime::content-info/encoding'.
+
+	* mime-play.el (mime-display-content): Use
+	`mime-entity-info-encoding' instead of
+	`mime::content-info/encoding'.
+
+	* mime-parse.el (mime-entity-info-encoding): New inline function.
+
+1997-09-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-view-display-entity), mime-partial.el
-	(mime-combine-message/partials-automatically): Use
-	`mime-entity-info-parameters' instead of
-	`mime::content-info/parameters'.
+	(mime-combine-message/partials-automatically), mime-play.el
+	(mime-display-content): Use `mime-entity-info-parameters' instead
+	of `mime::content-info/parameters'.
 
 	* mime-parse.el (mime-entity-info-parameters): New inline
 	function.
