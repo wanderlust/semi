@@ -510,7 +510,7 @@ media-type/subtype $BEy$N(B entity $B$N9=B$!&7A<0$K4X$9$k>pJs$KBP$7$F!"I=<((
 	$BHs(B nil $B$N>l9g!"(Bentity-button $B$rI=<($9$k$3$H$rI=$9!#(B
 
 
-[$B4X?t(B] mime-view-insert-entity-button (ENTITY MESSAGE-INFO SUBJECT)
+[$B4X?t(B] mime-view-insert-entity-button (ENTITY SUBJECT)
 
 	ENTITY $B$N(B entity-button $B$rA^F~$9$k!#(B
 
