@@ -730,13 +730,14 @@ The compressed face will be piped to this command.")
 	(popup-menu 'mime-view-xemacs-popup-menu))
       ))
 
-(defun mime-view-define-keymap (&optional mother default-function)
-  (let ((mime-view-mode-map (if mother
-				  (copy-keymap mother)
-				(make-sparse-keymap)
-				)))
-    (or mother default-function
-	(suppress-keymap mime-view-mode-map))
+(defun mime-view-define-keymap (&optional default)
+  (let ((mime-view-mode-map (if (keymapp default)
+				(copy-keymap default)
+			      (make-sparse-keymap)
+			      )))
+    (or (keymapp default)
+	(suppress-keymap mime-view-mode-map)
+	)
     (define-key mime-view-mode-map
       "u"        (function mime-view-up-content))
     (define-key mime-view-mode-map
@@ -779,11 +780,10 @@ The compressed face will be piped to this command.")
       ">"        (function end-of-buffer))
     (define-key mime-view-mode-map
       "?"        (function describe-mode))
-    (if default-function
+    (if (functionp default)
 	(setq mime-view-mode-map
-	      (append mime-view-mode-map
-		      (list (cons t default-function))
-		      )))
+	      (append mime-view-mode-map (list (cons t default)))
+	      ))
     (if mouse-button-2
 	(define-key mime-view-mode-map
 	  mouse-button-2 (function tm:button-dispatcher))
@@ -811,7 +811,7 @@ The compressed face will be piped to this command.")
     ))
 
 (defun mime-view-mode (&optional mother ctl encoding ibuf obuf
-				   mother-keymap default-function)
+				 default-keymap-or-function)
   "Major mode for viewing MIME message.
 
 Here is a list of the standard keys for mime-view-mode.
@@ -852,7 +852,7 @@ button-2	Move to point under the mouse cursor
 	  (progn
 	    (setq mime::preview/mother-buffer mother)
 	    ))
-      (mime-view-define-keymap mother-keymap default-function)
+      (mime-view-define-keymap default-keymap-or-function)
       (setq mime::preview/content-list (nth 1 ret))
       (goto-char
        (let ((ce (mime::preview-content-info/point-max
