@@ -1739,9 +1739,9 @@ If LINES is negative, scroll up LINES lines."
 	  ;; might be specified by `universal-coding-system-argument'.
 	  (and coding-system-for-read
 	       (coding-system-to-mime-charset coding-system-for-read)))
-      (mime-content-type-parameter
-       (mime-entity-content-type entity)
-       "charset")
+      (intern (mime-content-type-parameter
+	       (mime-entity-content-type entity)
+	       "charset"))
       default-mime-charset))
 
 (defun mime-view-read-mime-charset (entity situation)
