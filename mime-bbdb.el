@@ -167,7 +167,7 @@ the user confirms the creation."
                 (null (setq addr (car (mime-entity-read-field message 'From))))
                 (string-match (bbdb-user-mail-names)
 			      (std11-address-string addr)))
-            (setq from (or (mime-fetch-field 'To message)
+            (setq from (or (mime-entity-fetch-field message 'To)
 			   from))
 	  )
         (if from
