@@ -1149,7 +1149,7 @@ It calls following-method selected from variable
 		    ))
 	      (setq rest (cdr rest))
 	      ))
-	  (eword-decode-header)
+	  (mime-decode-header-in-buffer)
 	  )
 	(let ((f (cdr (assq mode mime-preview-following-method-alist))))
 	  (if (functionp f)
