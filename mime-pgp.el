@@ -121,8 +121,8 @@
   "Internal method to verify multipart/signed."
   (mime-raw-play-entity
    ;; entity-info of signature
-   (mime-raw-reversed-entity-number-to-entity-info
-    ;; reversed-entity-number of signature
+   (mime-raw-entity-node-id-to-entity-info
+    ;; entity-node-id of signature
     (cons 1 (reverse (mime-raw-point-to-entity-number start)))
     mime-raw-message-info)
    (cdr (assq 'mode cal)) ; play-mode
@@ -178,14 +178,14 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
   "Internal method to check PGP/MIME signature."
   (let* ((encoding (cdr (assq 'encoding cal)))
 	 (entity-number (mime-raw-point-to-entity-number start))
-	 (reversed-entity-number (reverse entity-number))
-	 (rmcnum (cdr reversed-entity-number))
-	 (knum (car reversed-entity-number))
+	 (entity-node-id (reverse entity-number))
+	 (rmcnum (cdr entity-node-id))
+	 (knum (car entity-node-id))
 	 (onum (if (> knum 0)
 		   (1- knum)
 		 (1+ knum)))
 	 (raw-buf (current-buffer))
-	 (oinfo (mime-raw-reversed-entity-number-to-entity-info
+	 (oinfo (mime-raw-entity-node-id-to-entity-info
 		 (cons onum rmcnum) mime-raw-message-info))
 	 kbuf
 	 (basename (expand-file-name "tm" mime-temp-directory))
@@ -263,13 +263,13 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 
 (defun mime-method-to-decrypt-application/pgp-encrypted (start end cal)
   (let* ((entity-number (mime-raw-point-to-entity-number start))
-	 (reversed-entity-number (reverse entity-number))
-	 (rmcnum (cdr reversed-entity-number))
-	 (knum (car reversed-entity-number))
+	 (entity-node-id (reverse entity-number))
+	 (rmcnum (cdr entity-node-id))
+	 (knum (car entity-node-id))
 	 (onum (if (> knum 0)
 		   (1- knum)
 		 (1+ knum)))
-	 (oinfo (mime-raw-reversed-entity-number-to-entity-info
+	 (oinfo (mime-raw-entity-node-id-to-entity-info
 		 (cons onum rmcnum) mime-raw-message-info))
 	 (obeg (mime-entity-info-point-min oinfo))
 	 (oend (mime-entity-info-point-max oinfo))

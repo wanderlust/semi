@@ -218,7 +218,7 @@ Please redefine this function if you want to change default setting."
 	   (or (eq media-subtype 'x-selection)
 	       (and (eq media-subtype 'octet-stream)
 		    (let ((entity-info
-			   (mime-raw-reversed-entity-number-to-entity-info
+			   (mime-raw-entity-node-id-to-entity-info
 			    (cdr rcnum) cinfo)))
 		      (and (eq (mime-entity-info-media-type entity-info)
 			       'multipart)
@@ -602,9 +602,9 @@ If optional argument MESSAGE-INFO is not specified,
 		  )))
 	    t))))
 
-(defsubst mime-raw-reversed-entity-number-to-entity-info
-  (entity-number &optional message-info)
-  "Return entity-info from REVERSED-ENTITY-NUMBER in mime-raw-buffer.
+(defsubst mime-raw-entity-node-id-to-entity-info (entity-number
+						  &optional message-info)
+  "Return entity-info from ENTITY-NODE-ID in mime-raw-buffer.
 If optional argument MESSAGE-INFO is not specified,
 `mime-raw-message-info' is used."
   (mime-raw-entity-number-to-entity-info (reverse entity-number) message-info))
@@ -648,7 +648,7 @@ If optional argument MESSAGE-INFO is not specified,
   "Return non-nil if header of current entity is visible."
   (or (null rcnum)
       (member (mime-entity-info-type/subtype
-	       (mime-raw-reversed-entity-number-to-entity-info
+	       (mime-raw-entity-node-id-to-entity-info
 		(cdr rcnum) cinfo))
 	      mime-view-childrens-header-showing-Content-Type-list)
       ))
@@ -663,7 +663,7 @@ If optional argument MESSAGE-INFO is not specified,
 	 (if (and (eq media-type 'application)
 		  (eq media-subtype 'octet-stream))
 	     (let ((ccinfo
-		    (mime-raw-reversed-entity-number-to-entity-info
+		    (mime-raw-entity-node-id-to-entity-info
 		     rcnum cinfo)))
 	       (member (mime-entity-info-encoding ccinfo)
 		       '(nil "7bit" "8bit"))
@@ -977,7 +977,7 @@ It calls following-method selected from variable
 			(set-buffer a-buf)
 			(setq
 			 ci
-			 (mime-raw-reversed-entity-number-to-entity-info
+			 (mime-raw-entity-node-id-to-entity-info
 			  rcnum))
 			(save-restriction
 			  (narrow-to-region
@@ -1054,7 +1054,7 @@ If there is no upper entity, call function `mime-preview-quit'."
 		       (get-text-property (point) 'mime-view-entity-info)))
       (backward-char)
       )
-    (let ((r (mime-raw-reversed-entity-number-to-entity-info
+    (let ((r (mime-raw-entity-node-id-to-entity-info
 	      (cdr (mime-entity-info-node-id cinfo))
 	      (get-text-property 1 'mime-view-entity-info)))
 	  point)
