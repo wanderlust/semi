@@ -65,12 +65,12 @@
        ;;
        (autoload 'highlight-headers "highlight-headers")
        
-       (defun mime-preview/x-face-function-use-highlight-headers ()
+       (defun mime-preview-x-face-function-use-highlight-headers ()
 	 (highlight-headers (point-min) (re-search-forward "^$" nil t) t)
 	 )
        
        (add-hook 'mime-view-content-header-filter-hook
-		 'mime-preview/x-face-function-use-highlight-headers)
+		 'mime-preview-x-face-function-use-highlight-headers)
        
        )
       ((featurep 'mule)

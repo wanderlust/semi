@@ -34,7 +34,7 @@
 ;;; @ content decoder
 ;;;
 
-(defvar mime-preview/after-decoded-position nil)
+(defvar mime-preview-after-decoded-position nil)
 
 (defun mime-view-play-current-entity (&optional mode)
   "Play current entity.
@@ -50,13 +50,13 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	(let ((the-buf (current-buffer))
 	      (raw-buffer (get-text-property (point) 'mime-view-raw-buffer))
 	      )
-	  (setq mime-preview/after-decoded-position (point))
+	  (setq mime-preview-after-decoded-position (point))
 	  (set-buffer raw-buffer)
 	  (mime-playback-entity cinfo mode)
 	  (if (eq (current-buffer) raw-buffer)
 	      (progn
 		(set-buffer the-buf)
-		(goto-char mime-preview/after-decoded-position)
+		(goto-char mime-preview-after-decoded-position)
 		))
 	  ))))
 
