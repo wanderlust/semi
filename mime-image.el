@@ -95,7 +95,7 @@
 	  (if (nothing-image-instance-p (glyph-image-instance glyph)) nil
 	    glyph)))
 
-      (defun mime-image-insert (image string &optional area)
+      (defun mime-image-insert (image &optional string area)
 	(let ((extent (make-extent (point) (progn (insert string)(point)))))
 	  (set-extent-property extent 'invisible t)
 	  (set-extent-end-glyph extent image))))
@@ -128,12 +128,12 @@
 				     (bitmap-read-xbm-buffer
 				      (current-buffer))) nil) "\n")
 	       (error nil)))
-	   (defun mime-image-insert (image string &optional area)
+	   (defun mime-image-insert (image &optional string area)
 	     (insert image)))
        (error
 	(defalias 'mime-image-read-xbm-buffer
 	  'mime-image-normalize-xbm-buffer)
-	(defun mime-image-insert (image string &optional area)
+	(defun mime-image-insert (image &optional string area)
 	  (save-restriction
 	    (narrow-to-region (point)(point))
 	    (let ((face (gensym "mii")))
@@ -191,7 +191,7 @@
     (if (null image)
 	(message "Invalid glyph!")
       (save-excursion
-	(mime-image-insert image "x")
+	(mime-image-insert image)
 	(insert "\n")
 	(message "Decoding image... done")))))
 
