@@ -1,6 +1,6 @@
 ;;; mime-view.el --- interactive MIME viewer for GNU Emacs
 
-;; Copyright (C) 1995,1996,1997,1998 Free Software Foundation, Inc.
+;; Copyright (C) 1995,1996,1997,1998,1999 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Created: 1994/07/13
@@ -27,6 +27,7 @@
 
 ;;; Code:
 
+(require 'emu)
 (require 'mime)
 (require 'semi-def)
 (require 'calist)
