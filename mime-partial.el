@@ -30,12 +30,13 @@
 (require 'mime-view)
 (require 'mime-play)
 
-(defvar mime-partial/preview-article-method-alist nil)
-   
+(defvar mime-view-partial-message-method-alist nil
+  "Alist major-mode vs. function to view partial message for mime-partial.")
+
 ;; display Article at the cursor in Subject buffer.
-(defun mime-partial/preview-article (target)
+(defsubst mime-partial/preview-article (target)
   (save-window-excursion
-    (let ((f (assq target mime-partial/preview-article-method-alist)))
+    (let ((f (assq target mime-view-partial-message-method-alist)))
       (if f
 	  (funcall (cdr f))
 	(error "Fatal. Unsupported mode")
