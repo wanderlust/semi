@@ -1,5 +1,16 @@
 1998-06-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el (mime-raw-write-region): New implementation; refer
+	`mime-raw-representation-type' or
+	`mime-raw-representation-type-alist' instead of
+	`mime-raw-buffer-coding-system-alist'.
+
+	* mime-view.el: Abolish variable
+	`mime-raw-buffer-coding-system-alist'.
+
+
+1998-06-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* REMI: Version 1.5.0 (Shimao) released.
 
 1998-06-02  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
