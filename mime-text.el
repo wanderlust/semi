@@ -88,7 +88,7 @@ variable `mime-text-decoder' and variable `mime-text-decoder-alist'."
   (mime-decode-region (point-min) (point-max) encoding)
   (let ((text-decoder
 	 (save-excursion
-	   (set-buffer mime::preview/article-buffer)
+	   (set-buffer mime-raw-buffer)
 	   (or mime-text-decoder
 	       (cdr (or (assq major-mode mime-text-decoder-alist)
 			(assq t mime-text-decoder-alist)))

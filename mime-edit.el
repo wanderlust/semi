@@ -2410,7 +2410,8 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
     ))
 
 (defun mime-edit-quitting-method ()
-  (let ((temp mime::preview/article-buffer)
+  "Quitting method for mime-view."
+  (let ((temp mime-raw-buffer)
 	buf)
     (mime-view-kill-buffer)
     (set-buffer temp)
