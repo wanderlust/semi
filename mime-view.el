@@ -264,17 +264,17 @@ Please redefine this function if you want to change default setting."
 ;;; @@@ predicate function
 ;;;
 
-(defvar mime-view-childrens-header-showing-Content-Type-list
-  '("message/rfc822" "message/news"))
+;; (defvar mime-view-childrens-header-showing-Content-Type-list
+;;   '("message/rfc822" "message/news"))
 
-(defun mime-view-header-visible-p (entity message-info)
-  "Return non-nil if header of ENTITY is visible."
-  (let ((entity-node-id (mime-entity-node-id entity)))
-    (member (mime-entity-type/subtype
-	     (mime-raw-find-entity-from-node-id
-	      (cdr entity-node-id) message-info))
-	    mime-view-childrens-header-showing-Content-Type-list)
-    ))
+;; (defun mime-view-header-visible-p (entity message-info)
+;;   "Return non-nil if header of ENTITY is visible."
+;;   (let ((entity-node-id (mime-entity-node-id entity)))
+;;     (member (mime-entity-type/subtype
+;;              (mime-raw-find-entity-from-node-id
+;;               (cdr entity-node-id) message-info))
+;;             mime-view-childrens-header-showing-Content-Type-list)
+;;     ))
 
 ;;; @@@ entity header filter
 ;;;
@@ -387,14 +387,6 @@ Each elements are regexp of field-name.")
 			   (body . visible)))
 
 (ctree-set-calist-strictly
- 'mime-preview-condition '((type . message)(subtype . rfc822)
-			   (childrens-situation (header . visible))))
-
-(ctree-set-calist-strictly
- 'mime-preview-condition '((type . message)(subtype . news)
-			   (childrens-situation (header . visible))))
-
-(ctree-set-calist-strictly
  'mime-preview-condition '((body . visible)
 			   (body-presentation-method . with-filter)
 			   (body-filter . mime-preview-filter-for-text/plain)))
@@ -429,6 +421,18 @@ Each elements are regexp of field-name.")
  'mime-preview-condition '((type . message)(subtype . partial)
 			   (body-presentation-method
 			    . mime-view-insert-message/partial-button)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . message)(subtype . rfc822)
+			   (body-presentation-method . nil)
+			   (childrens-situation (header . visible)
+						(entity-button . invisible))))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . message)(subtype . news)
+			   (body-presentation-method . nil)
+			   (childrens-situation (header . visible)
+						(entity-button . invisible))))
 
 
 ;;; @@@ entity filter
@@ -697,7 +701,7 @@ The compressed face will be piped to this command.")
 	    (cdr (assq 'message-button situation)))
 	   (body-presentation-method
 	    (cdr (assq 'body-presentation-method situation))))
-      (when message-button
+      (when (eq message-button 'visible)
 	(goto-char (point-max))
 	(mime-view-insert-entity-button message-info message-info subj)
 	)
@@ -752,12 +756,6 @@ The compressed face will be piped to this command.")
 	    (eword-decode-string
 	     (mime-raw-get-subject params encoding)))
       )
-    (set-buffer obuf)
-    (setq nb (point))
-    (narrow-to-region nb nb)
-    (if (mime-view-entity-button-visible-p entity message-info)
-	(mime-view-insert-entity-button entity message-info subj)
-      )
     (let* ((situation
 	    (ctree-match-calist mime-preview-condition
 				(list* (cons 'type       media-type)
@@ -766,10 +764,19 @@ The compressed face will be piped to this command.")
 				       (cons 'major-mode major-mode)
 				       (append params
 					       default-situation))))
+	   (button-is-invisible
+	    (eq (cdr (assq 'entity-button situation)) 'invisible))
 	   (header-is-visible
-	    (cdr (assq 'header situation)))
+	    (eq (cdr (assq 'header situation)) 'visible))
 	   (body-presentation-method
 	    (cdr (assq 'body-presentation-method situation))))
+      (set-buffer obuf)
+      (setq nb (point))
+      (narrow-to-region nb nb)
+      (or button-is-invisible
+	  (if (mime-view-entity-button-visible-p entity message-info)
+	      (mime-view-insert-entity-button entity message-info subj)
+	    ))
       (if header-is-visible
 	  (save-restriction
 	    (narrow-to-region (point)(point))
@@ -1133,14 +1140,14 @@ It calls following-method selected from variable
 	  (erase-buffer)
 	  (insert-buffer-substring the-buf p-beg p-end)
 	  (goto-char (point-min))
-	  (if (mime-view-header-visible-p entity message-info)
-	      (delete-region (goto-char (point-min))
-			     (if (re-search-forward "^$" nil t)
-				 (match-end 0)
-			       (point-min)))
-	    )
-	  (goto-char (point-min))
-	  (insert "\n")
+          ;; (if (mime-view-header-visible-p entity message-info)
+          ;;     (delete-region (goto-char (point-min))
+          ;;                    (if (re-search-forward "^$" nil t)
+          ;;                        (match-end 0)
+          ;;                      (point-min)))
+          ;;   )
+	  ;;(goto-char (point-min))
+	  ;;(insert "\n")
 	  (goto-char (point-min))
 	  (let ((entity-node-id (mime-entity-node-id entity)) ci str)
 	    (while (progn

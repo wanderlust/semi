@@ -1,0 +1,179 @@
+SEMI NEWS --- history of major-changes.
+Copyright (C) 1998 Free Software Foundation, Inc.
+
+* Changes in SEMI 1.2
+
+** User setting
+
+*** hooks
+
+  'mime-view-plain-text-preview-hook was renamed to
+'mime-preview-text/plain-hook.
+
+*** Variable
+
+  Variable 'mime-view-childrens-header-showing-Content-Type-list was
+abolished.  Please use 'mime-preview-condition instead.
+
+*** API about visible-predicates were abolished
+
+  Following functions were abolished:
+
+    mime-view-header-visible-p (entity message-info)
+
+    mime-view-body-visible-p (entity message-info)
+
+    mime-view-entity-separator-visible-p (entity message-info)
+
+Please use 'mime-preview-condition instead.
+
+  Function 'mime-view-entity-button-visible-p is not abolished, but it
+is obsoleted.
+
+*** mime-preview-condition
+
+  Following are added as pre-defined keys:
+
+	'childrens-situation	default preview-situation for children
+	'message-button		to specify to display message-button
+				    nil:	default (invisible)
+				    'visible:	visible
+				    'invisible:	invisible
+	'entity-button		to specify to display entity-button
+				    nil:	default (visible)
+				    'visible:	visible
+				    'invisible:	invisible
+	'header			to specify to display header
+				    nil:	default (invisible)
+				    'visible:	visible
+				    'invisible:	invisible
+
+** API
+
+*** Interface for body-filter
+
+  'mime-view-filter-for-* was renamed to 'mime-preview-filter-for-*.
+
+
+*** mime-text-decode-body
+
+  Function 'mime-decode-text-body was renamed to
+'mime-text-decode-body and changed interface.  New interface is
+following:
+
+	mime-text-decode-body (SITUATION)
+
+SITUATION is preview-situation.  Content-Transfer-Encoding and
+MIME-charset are specified in field of it.
+
+
+* Changes in SEMI 1.1
+
+** User setting
+
+*** Setting variable about visible body
+
+  'mime-view-visible-media-type-list and
+'mime-view-content-filter-alist were abolished.  Please use
+'mime-preview-condition instead.
+
+  Notice that 'mime-preview-condition is not list of
+media-type/subtype string nor association-list.  It uses new
+data-structure `ctree' (condition-tree; it is introduced to replace
+`atype').  Function 'ctree-set-calist-strictly and
+'ctree-set-calist-with-default may be useful to modify it (`calist'
+(condition-alist) is as same as `atype').
+
+
+*** API about visible-predicates
+
+  Interface of visible-predicates for entity elements were changed.
+New interfaces are following:
+
+    mime-view-entity-button-visible-p (entity message-info)
+
+    mime-view-header-visible-p (entity message-info)
+
+    mime-view-body-visible-p (entity message-info)
+
+    mime-view-entity-separator-visible-p (entity message-info)
+
+
+** API
+
+*** entity representation
+
+  Structure 'mime-entity-info was renamed to 'mime-entity.  So various
+functions were renamed too.
+
+
+*** Interface for entity-button generators
+
+  Interface of entity-button generators was changed.  New interfaces
+is following:
+
+    mime-view-insert-entity-button (entity message-info subject)
+
+
+*** mime-preview-condition and preview-situation
+
+  Conditions about preview generation are unified to
+'mime-preview-condition.  Namely other variables, such as
+'mime-view-visible-media-type-list, 'mime-view-content-filter-alist,
+'mime-view-image-converter-alist were abolished.
+
+  Preview-situation is generated from entity information, running
+environment and 'mime-preview-condition.  These elements are checked
+to match with each other. (it is similar to acting-situation)
+
+  Format of preview-situation is association-list.  Following key is
+pre-defined:
+
+	'type			  media-type
+	'subtype		  media-subtype
+	'encoding		  content-transfer-encoding
+	'major-mode		  major-mode of MUA
+	<STRING>		  attribute of Content-Type field.
+	'body-presentation-method body-presentation-method
+
+If 'body-presentation-method is 'with-filter, 'body-filter is used to
+specify body-filter function.  If 'body-presentation-method is
+function, it is called to generate presentation of entity body.
+
+Body-filter function 'mime-view-filter-for-image refers 'image-format.
+
+Setting for message/partial button is specified by
+'mime-preview-condition instead of hard-coding.
+
+
+*** Interface for body-filter
+
+  Interface of body-filter was changed.  New interfaces is following:
+
+    <body-filter> (situation)
+
+Current pre-defined filters are following:
+
+	mime-view-filter-for-text/plain (situation)
+	mime-view-filter-for-text/richtext (situation)
+	mime-view-filter-for-text/enriched (situation)
+	mime-view-filter-for-image (situation) ; if available
+
+'mime-view-filter-for-application/postscript was abolished.
+
+
+*** Format of mime-acting-condition (acting-situation)
+
+  Format of `mime-acting-condition' were changed.  `type' and
+`subtype' are separated and changed to symbol.
+
+
+*** Renaming
+
+- mime-view-buffer -> mime-preview-buffer
+
+
+Local variables:
+mode: outline
+paragraph-separate: "[ 	]*$"
+end:
