@@ -1,3 +1,19 @@
+1999-11-13   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg-def.el (pgg-default-keyserver-address): Default to
+	`wwwkeys.pgp.net'.
+
+	* pgg.el (pgg-save-coding-system): New macro.
+	(pgg-display-output-buffer): New function.
+	(pgg-encrypt-region): Add documentation string; use
+	`pgg-save-coding-system'.
+	(pgg-decrypt-region): Ditto.
+	(pgg-sign-region): Ditto.
+	(pgg-verify-region): Ditto.
+	(pgg-insert-key): Add documentation string.
+	(pgg-snarf-keys-region): Ditto.
+	(pgg-fetch-key): Fix documentation.
+
 1999-11-11   Akihiro Arisawa   <ari@atesoft.advantest.co.jp>
 
 	* mime-image.el (image-normalize): Use `write-region-as-binary'.
