@@ -1,3 +1,15 @@
+2001-11-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mime-play.el (mime-play-entity): Use return value of
+	`mime-entity-situation' to get content type information;
+	Fix problem when method is invoked at menu selection;
+	Fix the message displayed on echo buffer when no method is specified;
+	Clear minibuffer after `y-or-n-p'.
+
+	* semi-def.el (mime-should-use-popup-menu) [Emacs]: Use
+	`event-basic-type' instead of `event-modifiers' to detect mouse
+	operation.
+
 2001-10-02   Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-view.el: Add `mime-view-maybe-inherit-widget-keymap' to

@@ -84,22 +84,23 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 It decodes the entity to call internal or external method.  The method
 is selected from variable `mime-acting-condition'.  If MODE is
 specified, play as it.  Default MODE is \"play\"."
-  (let ((ret
-	 (mime-unify-situations (mime-entity-situation entity situation)
-				mime-acting-condition
-				mime-acting-situation-example-list
-				'method ignored-method
-				mime-play-find-every-situations))
-	method menu)
+  (let* ((entity-situation (mime-entity-situation entity situation))
+	 (ret (mime-unify-situations entity-situation
+				     mime-acting-condition
+				     mime-acting-situation-example-list
+				     'method ignored-method
+				     mime-play-find-every-situations))
+	 method menu s)
     (setq mime-acting-situation-example-list (cdr ret)
 	  ret (car ret))
     (cond ((cdr ret)
 	   (while ret
 	     (or (vassoc (setq method
 			       (format "%s"
-				       (cdr (assq 'method (pop ret)))))
+				       (cdr (assq 'method
+						  (setq s (pop ret))))))
 			 menu)
-		 (push (vector method situation t) menu)))
+		 (push (vector method s t) menu)))
 	   (setq ret (mime-sort-situation
 		      (mime-menu-select "Play entity with: "
 					(cons "Methods" menu))))
@@ -116,12 +117,13 @@ specified, play as it.  Default MODE is \"play\"."
           ;;  (mime-activate-external-method entity ret)
           ;;  )
 	  (t
-	   (mime-show-echo-buffer "No method are specified for %s\n"
+	   (mime-show-echo-buffer "No method is specified for %s\n"
 				  (mime-type/subtype-string
-				   (cdr (assq 'type situation))
-				   (cdr (assq 'subtype situation))))
-	   (if (y-or-n-p "Do you want to save current entity to disk?")
-	       (mime-save-content entity situation))))))
+				   (cdr (assq 'type entity-situation))
+				   (cdr (assq 'subtype entity-situation))))
+	   (when (y-or-n-p "Do you want to save current entity to disk?")
+	     (message "")
+	     (mime-save-content entity entity-situation))))))
 
 
 ;;; @ external decoder

@@ -139,7 +139,7 @@
     (defun mime-should-use-popup-menu ()
       (mouse-event-p last-command-event))
   (defun mime-should-use-popup-menu ()
-    (memq 'click (event-modifiers last-command-event))))
+    (memq (event-basic-type last-command-event) '(mouse-1 mouse-2 mouse-3))))
 
 (defun mime-menu-select (prompt menu &optional event)
   (if (mime-should-use-popup-menu)
