@@ -2,7 +2,8 @@
 # Makefile for SEMI kernel.
 #
 
-VERSION = 1.4.2
+VERSION = 1.4.0
+PACKAGE = remi
 
 SHELL	= /bin/sh
 MAKE	= make
@@ -57,14 +58,14 @@ clean:
 
 tar:
 	cvs commit
-	sh -c 'cvs tag -RF semi-`echo $(VERSION) \
+	sh -c 'cvs tag -RF $(PACKAGE)-`echo $(VERSION) \
 				| sed s/\\\\./_/ | sed s/\\\\./_/`; \
 	cd /tmp; \
 	cvs -d :pserver:anonymous@chamonix.jaist.ac.jp:/hare/cvs/root \
-		export -d semi-$(VERSION) \
-		-r semi-`echo $(VERSION) \
+		export -d $(PACKAGE)-$(VERSION) \
+		-r $(PACKAGE)-`echo $(VERSION) \
 			| sed s/\\\\./_/ | sed s/\\\\./_/` semi'
-	$(RM) /tmp/semi-$(VERSION)/ftp.in
-	cd /tmp; $(TAR) cvzf semi-$(VERSION).tar.gz semi-$(VERSION)
-	cd /tmp; $(RM) -r semi-$(VERSION)
+	$(RM) /tmp/$(PACKAGE)-$(VERSION)/ftp.in
+	cd /tmp; $(TAR) cvzf $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION)
+	cd /tmp; $(RM) -r $(PACKAGE)-$(VERSION)
 	sed "s/VERSION/$(VERSION)/" < ftp.in > ftp
