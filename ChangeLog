@@ -1,3 +1,7 @@
+2000-05-25  Tanaka Akira      <akr@m17n.org>
+
+        * README.en: Update for CVS via SSH.
+
 2000-04-28  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
 	* mime-edit.el (mime-charset-type-list): Add `iso-2022-jp-3'.
