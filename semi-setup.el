@@ -1,4 +1,4 @@
-;;; mime-setup.el --- setup file for MIME-View.
+;;; semi-setup.el --- setup file for MIME-View.
 
 ;; Copyright (C) 1994,1995,1996,1997 Free Software Foundation, Inc.
 
@@ -25,7 +25,21 @@
 
 ;;; Code:
 
-(require 'tl-misc)
+;;; @ Utility
+;;;
+
+(defun call-after-loaded (module func &optional hook-name)
+  "If MODULE is provided, then FUNC is called.
+Otherwise func is set to MODULE-load-hook.
+If optional argument HOOK-NAME is specified,
+it is used as hook to set."
+  (if (featurep module)
+      (funcall func)
+    (or hook-name
+	(setq hook-name (intern (concat (symbol-name module) "-load-hook")))
+	)
+    (add-hook hook-name func)
+    ))
 
 
 ;;; @ for mime-view
