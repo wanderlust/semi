@@ -1104,10 +1104,12 @@ If reached to (point-max), it calls function registered in variable
       )))
 
 (defun mime-view-scroll-down-entity (&optional h)
-  "Scroll down current entity."
+  "Scroll down current entity.
+If reached to (point-min), it calls function registered in variable
+`mime-view-over-to-previous-method-alist'."
   (interactive)
   (or h
-      (setq h (- (window-height) 1))
+      (setq h (1- (window-height)))
       )
   (if (= (point) (point-min))
       (let ((f (assq mime::preview/original-major-mode
@@ -1115,26 +1117,23 @@ If reached to (point-max), it calls function registered in variable
         (if f
             (funcall (cdr f))
           ))
-    (let ((pcl mime::preview/content-list)
-          (p (point))
-          pp beg)
-      (setq pp
-            (or (let ((i (- (length pcl) 1)))
-                  (catch 'tag
-                    (while (> i 0)
-                      (setq beg (mime::preview-content-info/point-min
-                                 (nth i pcl)))
-                      (if (> p beg)
-                          (throw 'tag beg)
-                        )
-                      (setq i (- i 1))
-                      )))
-                (point-min)))
+    (let (point)
+      (save-excursion
+	(catch 'tag
+	  (while (> (point) 1)
+	    (if (setq point
+		      (previous-single-property-change (point)
+						       'mime-view-cinfo))
+		(throw 'tag t)
+	      )
+	    (backward-char)
+	    )
+	  (setq point (point-min))
+	  ))
       (forward-line (- h))
-      (if (< (point) pp)
-          (goto-char pp)
-        )))
-  )
+      (if (< (point) point)
+          (goto-char point)
+        ))))
 
 (defun mime-view-next-line-content ()
   (interactive)
