@@ -41,6 +41,11 @@
   :group 'pgg
   :type 'string)
 
+(defcustom pgg-default-keyserver-address "pgp.nic.ad.jp"
+  "Host name of keyserver."
+  :group 'pgg
+  :type 'string)
+
 (defvar pgg-status-buffer " *PGG status*")
 (defvar pgg-errors-buffer " *PGG errors*")
 (defvar pgg-output-buffer " *PGG output*")
