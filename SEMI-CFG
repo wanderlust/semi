@@ -22,7 +22,7 @@
 (require 'cl)
 
 (add-path "bitmap-mule")
-(add-path "rime")
+(add-path "flim")
 
 (add-to-list 'load-path (expand-file-name "."))
 
