@@ -99,10 +99,13 @@
 ;;;
 
 (defun mime-setup-set-signature-key ()
-  (let ((key (or (cdr (assq major-mode mime-setup-signature-key-alist))
-		 mime-setup-default-signature-key)))
-    (define-key (current-local-map) key (function insert-signature))
-    ))
+  (let ((keymap (current-local-map)))
+    (if keymap
+	(let ((key
+	       (or (cdr (assq major-mode mime-setup-signature-key-alist))
+		   mime-setup-default-signature-key)))
+	  (define-key keymap key (function insert-signature))
+	  ))))
 
 (if mime-setup-use-signature
     (progn
