@@ -1,3 +1,7 @@
+2000-05-21   Daiki Ueno  <ueno@unixuser.org>
+
+	* pgg-gpg.el (pgg-gpg-process-region): Abolish redundant nconc.
+
 2000-05-16   Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-image.el (mime-image-create) [XEmacs]: Don't call

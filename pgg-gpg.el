@@ -59,11 +59,10 @@
   (let* ((output-file-name
 	  (concat temporary-file-directory (make-temp-name "pgg-output")))
 	 (args
-	  (nconc
-	   `("--status-fd" "2"
-	     ,@(if passphrase '("--passphrase-fd" "0"))
-	     "--output" ,output-file-name ,@pgg-gpg-extra-args)
-	   args))
+	  `("--status-fd" "2"
+	    ,@(if passphrase '("--passphrase-fd" "0"))
+	    "--output" ,output-file-name
+	    ,@pgg-gpg-extra-args ,@args))
 	 (output-buffer pgg-output-buffer)
 	 (errors-buffer pgg-errors-buffer)
 	 (orig-mode (default-file-modes))
