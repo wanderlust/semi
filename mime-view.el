@@ -1070,24 +1070,15 @@ variable `mime-view-over-to-previous-method-alist'."
 If there is no previous entity, it calls function registered in
 variable `mime-view-over-to-next-method-alist'."
   (interactive)
-  (let ((pcl mime::preview/content-list)
-	(p (point))
-	beg)
-    (catch 'tag
-      (while pcl
-	(setq beg (mime::preview-content-info/point-min (car pcl)))
-	(if (< p beg)
-	    (throw 'tag (goto-char beg))
-	  )
-	(setq pcl (cdr pcl))
-	)
+  (let ((point (next-single-property-change (point) 'mime-view-cinfo)))
+    (if point
+	(goto-char point)
       (let ((f (assq mime::preview/original-major-mode
 		     mime-view-over-to-next-method-alist)))
 	(if f
 	    (funcall (cdr f))
 	  ))
-      )
-    ))
+      )))
 
 (defun mime-view-scroll-up-content (&optional h)
   (interactive)
