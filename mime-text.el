@@ -69,7 +69,7 @@
   "\\(http\\|ftp\\|file\\|gopher\\|news\\|telnet\\|wais\\|mailto\\):\\(//[-a-zA-Z0-9_.]+:[0-9]*\\)?[-a-zA-Z0-9_=?#$@~`%&*+|\\/.,]*[-a-zA-Z0-9_=#$@~`%&*+|\\/]"
   "*Regexp to match URL in text/plain body.")
 
-(defun tm:browse-url (&optional url)
+(defun mime-text-browse-url (&optional url)
   (if (fboundp browse-url-browser-function)
       (if url 
         (funcall browse-url-browser-function url)
@@ -96,7 +96,7 @@
 	  (let ((beg (match-beginning 0))
 		(end (match-end 0)))
 	    (tm:add-button beg end
-			   (function tm:browse-url)
+			   (function mime-text-browse-url)
 			   (list (buffer-substring beg end))))
 	  )))
   (run-hooks 'mime-view-plain-text-preview-hook)
