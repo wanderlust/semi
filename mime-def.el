@@ -60,7 +60,7 @@
   "Face used for content-button or URL-button of MIME-Preview buffer.
 \[mime-def.el]")
 
-(defvar tm:mouse-face 'highlight
+(defvar mime-button-mouse-face 'highlight
   "Face used for MIME-preview buffer mouse highlighting. [mime-def.el]")
 
 (defun tm:add-button (from to func &optional data)
@@ -68,11 +68,12 @@
   (and mime-button-face
        (overlay-put (make-overlay from to) 'face mime-button-face))
   (tl:add-text-properties from to
-			  (append (and tm:mouse-face
-				       (list 'mouse-face tm:mouse-face))
-				  (list 'semi-callback func)
-				  (and data (list 'semi-data data))
-				  ))
+			  (nconc
+			   (and mime-button-mouse-face
+				(list 'mouse-face mime-button-mouse-face))
+			   (list 'semi-callback func)
+			   (and data (list 'semi-data data))
+			   ))
   )
 
 (defvar tm:mother-button-dispatcher nil)
