@@ -62,8 +62,8 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	  ))))
 
 (defun mime-display-content (cinfo &optional mode)
-  (let ((beg (mime::content-info/point-min cinfo))
-	(end (mime::content-info/point-max cinfo))
+  (let ((beg (mime-entity-info-point-min cinfo))
+	(end (mime-entity-info-point-max cinfo))
 	(ctype (or (mime::content-info/type cinfo) "text/plain"))
 	(params (mime::content-info/parameters cinfo))
 	(encoding (mime::content-info/encoding cinfo))
