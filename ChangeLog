@@ -1,3 +1,7 @@
+1999-08-25  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* SEMI-CFG: Use `if' instead of `when'.
+
 1999-08-17  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-view.el (mime-preview-original-major-mode): Modify the way
