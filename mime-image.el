@@ -122,7 +122,7 @@
 		   (set-alist 'mime-view-image-converter-alist
 			      ctype format)
 		   (add-to-list
-		    'mime-view-default-showing-Content-Type-list
+		    'mime-view-visible-media-type-list
 		    ctype)
 		   )
 	       ))))
@@ -212,8 +212,7 @@
 	   (function mime-preview/filter-for-application/postscript))
 
 (if (featurep 'gif)
-    (add-to-list 'mime-view-default-showing-Content-Type-list
-		 "application/postscript")
+    (add-to-list 'mime-view-visible-media-type-list "application/postscript")
   )
 
 

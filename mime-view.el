@@ -137,7 +137,7 @@
 (defvar mime-view-childrens-header-showing-Content-Type-list
   '("message/rfc822" "message/news"))
 
-(defvar mime-view-default-showing-Content-Type-list
+(defvar mime-view-visible-media-type-list
   '("text/plain" nil "text/richtext" "text/enriched"
     "text/x-latex" "application/x-latex"
     "message/delivery-status"
@@ -212,7 +212,7 @@ Each elements are regexp of field-name. [mime-view.el]")
 	       (setq ccinfo (mime-article/rcnum-to-cinfo rcnum cinfo))
 	       ))
 	)
-    (and (member ctype mime-view-default-showing-Content-Type-list)
+    (and (member ctype mime-view-visible-media-type-list)
 	 (if (string-equal ctype "application/octet-stream")
 	     (progn
 	       (or ccinfo
