@@ -1,5 +1,11 @@
 1998-05-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* README.en (What's SEMI?): Add description about mailcap.
+	(Documentation): Add RFC 1524; change location of RFC.
+
+
+1998-05-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* SEMI: Version 1.4.0 (Itoigawa) released.
 
 	* README.en (Required environment): Modify for FLIM 1.1.0.
