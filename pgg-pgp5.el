@@ -74,9 +74,6 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
 (defvar pgg-pgp5-user-id nil
   "PGP 5.* ID of your default identity.")
 
-(defvar pgg-pgp5-messages-coding-system pgg-messages-coding-system
-  "Coding system used when reading from a PGP5 external process.")
-
 (defvar pgg-scheme-pgp5-instance nil)
 
 ;;;###autoload
@@ -108,8 +105,7 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
     (unwind-protect
 	(progn
 	  (setq process
-		(apply #'binary-to-text-funcall
-		       pgg-pgp5-messages-coding-system
+		(apply #'binary-funcall
 		       #'start-process-shell-command "*PGP*" output-buffer
 		       program args))
 	  (set-process-sentinel process #'ignore)
