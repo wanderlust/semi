@@ -302,7 +302,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
     (write-region start end file)
     ))
 
-(defun mime-display-message/partial (beg end cal)
+(defun mime-method-to-store-message/partial (beg end cal)
   (goto-char beg)
   (let* ((root-dir
 	  (expand-file-name
