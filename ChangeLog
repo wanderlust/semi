@@ -1,5 +1,22 @@
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el: Rename `mime-view-previous-line-content' ->
+	`mime-preview-previous-line-entity'.
+
+	* mime-view.el: Rename `mime-view-next-line-content' ->
+	`mime-preview-next-line-entity'.
+
+	* mime-view.el: Rename `mime-view-scroll-' ->
+	`mime-preview-scroll-'.
+
+	* mime-view.el: Rename `mime-view-move-to-' ->
+	`mime-preview-move-to-'.
+
+	* mime-play.el, mime-image.el: Rename `mime-preview/' ->
+	`mime-preview-'.
+
+1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-partial.el (mime-method-to-combine-message/partial-pieces):
 	Rename `mime-raw-content-info' -> `mime-raw-entity-info'.
 
