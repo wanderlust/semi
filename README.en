@@ -38,7 +38,7 @@ What's WEMI?
 Required environment
 ====================
 
-  WEMI supports XEmacs 20.3 or later with mule, and Emacs 20.2.
+  WEMI supports XEmacs 20.2 or later with mule, and Emacs 20.
 
   WEMI does not support anything older than Emacs 19.28 or XEmacs
   19.14.  WEMI also does not support Emacs 19.29 to 19.34, XEmacs

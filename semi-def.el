@@ -28,6 +28,7 @@
 
 (eval-when-compile (require 'cl))
 
+(require 'custom)
 
 (defconst mime-user-interface-product '["WEMI" (1 9 0) "Fuji"]
   "Implementation name, version name and numbers of MIME-kernel package.")
