@@ -1,5 +1,7 @@
 1998-04-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* SEMI: Version 1.2.4 (Arimagawa) was released.
+
 	* NEWS: Modify for SEMI 1.2.4 (Arimagawa).
 
 	* mime-view.el (mime-view-display-message): Check 'message-button
