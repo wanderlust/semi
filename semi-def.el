@@ -30,7 +30,7 @@
 
 (require 'custom)
 
-(defconst mime-user-interface-version '("SEMI" "Fukuoka" 1 8 6)
+(defconst mime-user-interface-version '("SEMI" "Isurugi" 1 8 7 0)
   "Implementation name, version name and numbers of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
