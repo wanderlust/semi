@@ -1,3 +1,10 @@
+1998-09-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* README.en (Installation): Add description for `run in expanded
+	place' and `install as a XEmacs package'.
+
+	* README.en (Required environment): Require FLIM 1.9.2 or later.
+
 1998-09-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-edit.el (mime-file-types): Abolish setting for
