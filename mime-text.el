@@ -29,7 +29,7 @@
 ;;; @ code conversion
 ;;;
 
-(defvar mime-view-code-converter-alist
+(defvar mime-text-decoder-alist
   '((mime/show-message-mode      . mime-charset/decode-buffer)
     (mime/temporary-message-mode . mime-charset/decode-buffer)
     (t				 . mime-charset/maybe-decode-buffer)
@@ -51,8 +51,8 @@
 	 (m (or (save-excursion
 		  (set-buffer mime::preview/article-buffer)
 		  mime::article/code-converter)
-		(cdr (or (assq mode mime-view-code-converter-alist)
-			 (assq t mime-view-code-converter-alist)))
+		(cdr (or (assq mode mime-text-decoder-alist)
+			 (assq t mime-text-decoder-alist)))
 		))
 	 )
     (and (functionp m)
@@ -84,7 +84,7 @@
 
 (defun mime-preview/filter-for-text/richtext (ctype params encoding)
   (let* ((mode mime::preview/original-major-mode)
-	 (m (assq mode mime-view-code-converter-alist))
+	 (m (assq mode mime-text-decoder-alist))
 	 (charset (cdr (assoc "charset" params)))
 	 (beg (point-min))
 	 )
@@ -95,7 +95,7 @@
 
 (defun mime-preview/filter-for-text/enriched (ctype params encoding)
   (let* ((mode mime::preview/original-major-mode)
-	 (m (assq mode mime-view-code-converter-alist))
+	 (m (assq mode mime-text-decoder-alist))
 	 (charset (cdr (assoc "charset" params)))
 	 (beg (point-min))
 	 )
