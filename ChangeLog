@@ -1,3 +1,7 @@
+1998-06-30  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.8.1 (Kureha) released.
+
 1998-06-29  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-play.el (mime-save-content): Use
