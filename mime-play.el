@@ -46,6 +46,9 @@ If t, it means current directory."
 (defvar mime-play-find-every-situations t
   "*Find every available situations if non-nil.")
 
+(defvar mime-play-messages-coding-system nil
+  "Coding system to be used for external MIME playback method.")
+
 
 ;;; @ content decoder
 ;;;
@@ -142,8 +145,7 @@ specified, play as it.  Default MODE is \"play\"."
 	  (if (and name (not (string= name "")))
 	      (expand-file-name name temporary-file-directory)
 	    (make-temp-name
-	     (expand-file-name "EMI" temporary-file-directory))
-	    ))
+	     (expand-file-name "EMI" temporary-file-directory))))
     (mime-write-entity-content entity name)
     (message "External method is starting...")
     (let ((process
@@ -151,13 +153,12 @@ specified, play as it.  Default MODE is \"play\"."
 		  (mime-format-mailcap-command
 		   method
 		   (cons (cons 'filename name) situation))))
-	     (start-process command mime-echo-buffer-name
-			    shell-file-name shell-command-switch command)
-	     )))
+	     (binary-to-text-funcall
+	      mime-play-messages-coding-system
+	      #'start-process command mime-echo-buffer-name
+	      shell-file-name shell-command-switch command))))
       (set-alist 'mime-mailcap-method-filename-alist process name)
-      (set-process-sentinel process 'mime-mailcap-method-sentinel)
-      )
-    ))
+      (set-process-sentinel process 'mime-mailcap-method-sentinel))))
 
 (defun mime-mailcap-method-sentinel (process event)
   (let ((file (cdr (assq process mime-mailcap-method-filename-alist))))
@@ -369,7 +370,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	  (save-window-excursion
 	    (set-buffer full-buf)
 	    (erase-buffer)
-	    (insert-file-contents-as-binary file)
+	    (binary-insert-encoded-file file)
 	    (setq major-mode 'mime-show-message-mode)
 	    (mime-view-buffer (current-buffer) nil mother)
 	    (setq pbuf (current-buffer))
@@ -420,24 +421,21 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 		    (or (file-exists-p file)
 			(throw 'tag nil)
 			)
-		    (as-binary-input-file (insert-file-contents file))
+		    (binary-insert-encoded-file file)
 		    (goto-char (point-max))
-		    (setq i (1+ i))
-		    ))
-		(write-region-as-binary (point-min)(point-max)
-					(expand-file-name "FULL" root-dir))
+		    (setq i (1+ i))))
+		(binary-write-decoded-region
+		 (point-min)(point-max)
+		 (expand-file-name "FULL" root-dir))
 		(let ((i 1))
 		  (while (<= i total)
 		    (let ((file (format "%s/%d" root-dir i)))
 		      (and (file-exists-p file)
-			   (delete-file file)
-			   ))
-		    (setq i (1+ i))
-		    ))
+			   (delete-file file)))
+		    (setq i (1+ i))))
 		(let ((file (expand-file-name "CT" root-dir)))
 		  (and (file-exists-p file)
-		       (delete-file file)
-		       ))
+		       (delete-file file)))
 		(let ((buf (current-buffer))
 		      (pwin (or (get-buffer-window mother)
 				(get-largest-window)))

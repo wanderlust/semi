@@ -110,7 +110,6 @@
 (require 'sendmail)
 (require 'mail-utils)
 (require 'mel)
-(require 'eword-encode) ; eword-encode-field-body
 (require 'mime-view)
 (require 'signature)
 (require 'alist)
@@ -711,7 +710,7 @@ Tspecials means any character that matches with it in header must be quoted.")
 
 (defconst mime-edit-mime-version-field-for-message/partial
   (concat "MIME-Version:"
-	  (eword-encode-field-body
+	  (mime-encode-field-body
 	   (concat " 1.0 (split by " mime-edit-version ")\n")
 	   "MIME-Version:"))
   "MIME version field for message/partial.")
@@ -1648,9 +1647,8 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 
 (defun mime-edit-translate-header ()
   "Encode the message header into network representation."
-  (eword-encode-header 'code-conversion)
-  (run-hooks 'mime-edit-translate-header-hook)
-  )
+  (mime-encode-header-in-buffer 'code-conversion)
+  (run-hooks 'mime-edit-translate-header-hook))
 
 (defun mime-edit-translate-buffer ()
   "Encode the tagged MIME message in current buffer in MIME compliant message."
@@ -1874,7 +1872,7 @@ Content-Transfer-Encoding: 7bit
               (insert (format "Content-Transfer-Encoding: %s\n" encoding))
             )
           (insert "\n")
-	  (eword-encode-header)
+	  (mime-encode-header-in-buffer)
 	  (or (let ((pgg-default-user-id 
 		     (or mime-edit-pgp-user-id
 			 (if from 
@@ -2122,8 +2120,7 @@ Content-Description: S/MIME Encrypted Message][base64]]\n")
 	    (insert "Content-Type: " contype "\n")
 	    (if encoding
 		(insert "Content-Transfer-Encoding: " encoding "\n"))
-	    (eword-encode-header)
-	    )
+	    (mime-encode-header-in-buffer))
 	  (cons (and contype
 		     (downcase contype))
 		(and encoding

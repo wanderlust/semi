@@ -25,6 +25,7 @@
 
 ;;; Code:
 
+(require 'mel) ; binary-to-text-funcall, binary-write-decoded-region
 (eval-when-compile (require 'pgg))
 
 (defgroup pgg-pgp ()
@@ -88,10 +89,10 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
       (setenv "PGPPASSFD" "0"))
     (unwind-protect
 	(progn
-	  (as-binary-process
-	   (setq process
-		 (apply #'start-process-shell-command "*PGP*" output-buffer
-			program args)))
+	  (setq process
+		(apply #'binary-funcall
+		       #'start-process-shell-command "*PGP*" output-buffer
+		       program args))
 	  (set-process-sentinel process #'ignore)
 	  (when passphrase
 	    (process-send-string process (concat passphrase "\n")))
@@ -198,7 +199,7 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
     (unwind-protect
 	(progn
 	  (set-default-file-modes 448)
-	  (write-region-as-binary start end orig-file))
+	  (binary-write-decoded-region start end orig-file))
       (set-default-file-modes orig-mode))
     (when (stringp signature)
       (copy-file signature (setq signature (concat orig-file ".asc")))
@@ -234,7 +235,8 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
 	 (args
 	  (list "+verbose=1" "+batchmode" "+language=us" "-kaf"
 		key-file)))
-    (write-region-as-raw-text-CRLF start end key-file)
+    (let ((coding-system-for-write 'raw-text-dos))
+      (write-region start end key-file))
     (pgg-pgp-process-region start end nil pgg-pgp-program args)
     (delete-file key-file)
     (pgg-process-when-success nil)))

@@ -1,6 +1,6 @@
 ;;; pgg-gpg.el --- GnuPG support for PGG.
 
-;; Copyright (C) 1999,2000 Daiki Ueno
+;; Copyright (C) 1999,2000 Free Software Foundation, Inc.
 
 ;; Author: Daiki Ueno <ueno@unixuser.org>
 ;; Created: 1999/10/28
@@ -25,6 +25,7 @@
 
 ;;; Code:
 
+(require 'mel) ; binary-to-text-funcall
 (eval-when-compile (require 'pgg))
 
 (defgroup pgg-gpg ()
@@ -46,6 +47,9 @@
 
 (defvar pgg-gpg-user-id nil
   "GnuPG ID of your default identity.")
+
+(defvar pgg-gpg-messages-coding-system pgg-messages-coding-system
+  "Coding system used when reading from a GnuPG external process.")
 
 (defvar pgg-scheme-gpg-instance nil)
 
@@ -74,9 +78,11 @@
     (unwind-protect
 	(progn
 	  (set-default-file-modes 448)
-	  (as-binary-output-file
-	   (setq process
-		 (apply #'start-process "*GnuPG*" errors-buffer program args)))
+	  (setq process
+		(apply #'binary-to-text-funcall
+		       pgg-gpg-messages-coding-system
+		       #'start-process "*GnuPG*" errors-buffer
+		       program args))
 	  (set-process-sentinel process #'ignore)
 	  (when passphrase
 	    (process-send-string process (concat passphrase "\n")))
@@ -91,7 +97,8 @@
 	    (buffer-disable-undo)
 	    (erase-buffer)
 	    (if (file-exists-p output-file-name)
-		(insert-file-contents-as-raw-text-CRLF output-file-name))
+		(let ((coding-system-for-read 'raw-text-dos))
+		  (insert-file-contents output-file-name)))
 	    (set-buffer errors-buffer)
 	    (if (memq status '(stop signal))
 		(error "%s exited abnormally: '%s'" program exit-status))
@@ -185,6 +192,7 @@
   (let ((args '("--batch" "--verify")))
     (when (stringp signature)
       (setq args (append args (list signature))))
+    (setq args (append args '("-")))
     (pgg-gpg-process-region start end nil pgg-gpg-program args)
     (with-current-buffer pgg-errors-buffer
       (goto-char (point-min))
