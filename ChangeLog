@@ -1,3 +1,11 @@
+1999-07-07  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-edit.el (mime-edit-quitting-method): Don't refer
+	`mime-raw-buffer'.
+
+	* mime-view.el (mime-preview-follow-current-entity): Don't refer
+	`mime-raw-buffer'.
+
 1999-06-17  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-edit.el (mime-edit-user-agent-value): Modify for XEmacs
