@@ -52,7 +52,7 @@
 (defun mime-display-text/x-vcard (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
-    (let ((vcard-standard-filters mime-display-text/x-vcard-filters))
+    (let ((vcard-standard-filters mime-vcard-standard-filters))
       (insert
        (string-as-multibyte
 	(vcard-format-string
