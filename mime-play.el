@@ -330,12 +330,12 @@ It is registered to variable `mime-preview-quitting-method-alist'."
   "Write current region into specified file.
 When called from a program, takes three arguments:
 START, END and FILENAME.  START and END are buffer positions.
-It refer `mime-raw-coding-system-alist' to choose coding-system to
-write."
+It refer `mime-raw-buffer-coding-system-alist' to choose coding-system
+to write."
   (let ((coding-system-for-write
 	 (cdr
-	  (or (assq major-mode mime-raw-coding-system-alist)
-	      (assq t mime-raw-coding-system-alist)
+	  (or (assq major-mode mime-raw-buffer-coding-system-alist)
+	      (assq t mime-raw-buffer-coding-system-alist)
 	      ))))
     (write-region start end filename)
     ))
