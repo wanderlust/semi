@@ -229,7 +229,7 @@ specified, play as it.  Default MODE is \"play\"."
 	(if (cdr ret)
 	    (let ((rest ret)
 		  (max-score 0)
-		  max-escore
+		  (max-escore 0)
 		  max-examples
 		  max-situations)
 	      (while rest
