@@ -15,7 +15,6 @@ XEMACS	= xemacs
 FLAGS   = -batch -q -no-site-file -l SEMI-MK
 
 PREFIX	= NONE
-EXEC_PREFIX = NONE
 LISPDIR = NONE
 PACKAGEDIR = NONE
 VERSION_SPECIFIC_LISPDIR = NONE
@@ -28,13 +27,11 @@ ARC_DIR = /pub/mule/semi/semi-$(API)-for-flim-1.12
 
 elc:
 	$(EMACS) $(FLAGS) -f compile-semi \
-		$(PREFIX) $(EXEC_PREFIX) $(LISPDIR) \
-		$(VERSION_SPECIFIC_LISPDIR)
+		$(PREFIX) $(LISPDIR) $(VERSION_SPECIFIC_LISPDIR)
 
 install-elc:	elc
 	$(EMACS) $(FLAGS) -f install-semi \
-		$(PREFIX) $(EXEC_PREFIX) $(LISPDIR) \
-		$(VERSION_SPECIFIC_LISPDIR)
+		$(PREFIX) $(LISPDIR) $(VERSION_SPECIFIC_LISPDIR)
 
 install:	install-elc
 
