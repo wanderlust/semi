@@ -89,7 +89,19 @@ specified, play as it.  Default MODE is \"play\"."
       (if mode
 	  (setq cal (cons (cons 'mode mode) cal))
 	)
-      (setq ret (ctree-match-calist mime-acting-condition cal))
+      (setq ret (ctree-find-calist mime-acting-condition cal 'all))
+      (if (cdr ret)
+	  (setq ret (select-menu-alist
+		     "Methods"
+		     (mapcar (function
+			      (lambda (situation)
+				(cons
+				 (format "%s"
+					 (cdr (assq 'method situation)))
+				 situation)))
+			     ret)))
+	(setq ret (car ret))
+	)
       (setq method (cdr (assq 'method ret)))
       (cond ((and (symbolp method)
 		  (fboundp method))
@@ -262,16 +274,18 @@ window.")
 	 (filename
           (if (and name (not (string-equal name "")))
 	      (expand-file-name name
-				(call-interactively
-				 (function
-				  (lambda (dir)
-				    (interactive "DDirectory: ")
-				    dir))))
-	    (call-interactively
-	     (function
-	      (lambda (file)
-		(interactive "FFilename: ")
-		(expand-file-name file))))))
+				(save-window-excursion
+				  (call-interactively
+				   (function
+				    (lambda (dir)
+				      (interactive "DDirectory: ")
+				      dir)))))
+	    (save-window-excursion
+	      (call-interactively
+	       (function
+		(lambda (file)
+		  (interactive "FFilename: ")
+		  (expand-file-name file)))))))
 	 )
     (if (file-exists-p filename)
         (or (yes-or-no-p (format "File %s exists. Save anyway? " filename))
