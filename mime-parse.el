@@ -171,13 +171,16 @@ and return parsed it. [mime-parse.el]"
 (defsubst mime-entity-encoding (entity-info)      (aref entity-info 6))
 (defsubst mime-entity-children (entity-info)      (aref entity-info 7))
 
+(defsubst mime-type/subtype-string (type &optional subtype)
+  "Return type/subtype string from TYPE and SUBTYPE."
+  (if type
+      (if subtype
+	  (format "%s/%s" type subtype)
+	(format "%s" type))))
+
 (defsubst mime-entity-type/subtype (entity-info)
-  (let ((type (mime-entity-media-type entity-info)))
-    (if type
-	(let ((subtype (mime-entity-media-subtype entity-info)))
-	  (if subtype
-	      (format "%s/%s" type subtype)
-	    (symbol-name type))))))
+  (mime-type/subtype-string (mime-entity-media-type entity-info)
+			    (mime-entity-media-subtype entity-info)))
 
 (defun mime-parse-multipart (boundary primtype subtype params encoding rcnum)
   (goto-char (point-min))
