@@ -12,7 +12,8 @@
 	`mime-method-to-verify-application/pgp-signature' to
 	`mime-verify-application/pgp-signature'.
 
-	* mime-pgp.el: Rename `mime-method-to-verify-multipart/signed' to
+	* semi-setup.el, mime-pgp.el: Rename
+	`mime-method-to-verify-multipart/signed' to
 	`mime-verify-multipart/signed'.
 
 	* semi-setup.el, mime-pgp.el: Rename
