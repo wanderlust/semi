@@ -92,7 +92,7 @@
 ;;
 ;; This is a conventional plain text.  It should be translated into
 ;; text/plain.
-;; 
+;;
 ;;--[[text/plain]]
 ;; This is also a plain text.  But, it is explicitly specified as is.
 ;;--[[text/plain; charset=ISO-8859-1]]
@@ -695,7 +695,7 @@ Tspecials means any character that matches with it in header must be quoted.")
 				  ))
 			       mime-edit-menu-list)))
 		)))
-       
+
        ;; modified by Steven L. Baur <steve@miranova.com>
        ;;	1995/12/6 (c.f. [tm-en:209])
        (or (boundp 'mime-edit-popup-menu-for-xemacs)
@@ -895,20 +895,20 @@ User customizable variables (not documented all of them):
   (if mime-edit-mode-flag
       (error "You are already editing a MIME message.")
     (setq mime-edit-mode-flag t)
-    
+
     ;; Set transfer level into mode line
     ;;
     (setq mime-transfer-level-string
  	  (mime-encoding-name mime-transfer-level 'not-omit))
     (force-mode-line-update)
-    
+
     ;; Define menu for XEmacs.
     (if running-xemacs
 	(mime-edit-define-menu-for-xemacs)
       )
-    
+
     (enable-invisible)
-    
+
     ;; I don't care about saving these.
     (setq paragraph-start
 	  (regexp-or mime-edit-single-part-tag-regexp
@@ -1203,7 +1203,7 @@ Optional argument ENCODING specifies an encoding method such as base64."
 	    (t
 	     (goto-char (point-max))
 	     ))
-      ;; Then search for the beginning. 
+      ;; Then search for the beginning.
       (re-search-backward mime-edit-end-tag-regexp nil t)
       (or (looking-at mime-edit-beginning-tag-regexp)
 	  ;; Restore previous point.
@@ -2212,7 +2212,7 @@ and insert data encoded as ENCODING."
 (defun mime-edit-set-split (arg)
   (interactive
    (list
-    (y-or-n-p "Do you want to enable split?")
+    (y-or-n-p "Do you want to enable split? ")
     ))
   (setq mime-edit-split-message arg)
   (if arg
@@ -2257,7 +2257,7 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
 (defun mime-edit-set-sign (arg)
   (interactive
    (list
-    (y-or-n-p "Do you want to sign?")
+    (y-or-n-p "Do you want to sign? ")
     ))
   (if arg
       (if mime-edit-signing-type
@@ -2276,7 +2276,7 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
 (defun mime-edit-set-encrypt (arg)
   (interactive
    (list
-    (y-or-n-p "Do you want to encrypt?")
+    (y-or-n-p "Do you want to encrypt? ")
     ))
   (if arg
       (if mime-edit-encrypting-type
@@ -2338,7 +2338,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	    (or (cdr (assq major-mode mime-edit-message-max-lines-alist))
 		mime-edit-message-default-max-lines))
       )
-  (let* ((mime-edit-draft-file-name 
+  (let* ((mime-edit-draft-file-name
 	  (or (buffer-file-name)
 	      (make-temp-name
 	       (expand-file-name "mime-draft" mime-temp-directory))))
@@ -2469,7 +2469,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
     (setq mail-header-separator separator)
     (make-local-variable 'mime-edit-buffer)
     (setq mime-edit-buffer the-buf)
-    
+
     (run-hooks 'mime-edit-translate-hook)
     (mime-edit-translate-buffer)
     (goto-char (point-min))
