@@ -496,35 +496,39 @@ when Subject field is encoded by `eword-encode-header'.")
 ;;; @ application interfaces
 ;;;
 
-(defun eword-encode-field (str)
-  (setq str (std11-unfold-string str))
-  (let ((ret (string-match std11-field-head-regexp str)))
+(defun eword-encode-field (string)
+  "Encode header field STRING, and return the result.
+A lexical token includes non-ASCII character is encoded as MIME
+encoded-word.  ASCII token is not encoded."
+  (setq string (std11-unfold-string string))
+  (let ((ret (string-match std11-field-head-regexp string)))
     (or (if ret
-	    (let ((field-name (substring str 0 (1- (match-end 0))))
+	    (let ((field-name (substring string 0 (1- (match-end 0))))
 		  (field-body (eliminate-top-spaces
-			       (substring str (match-end 0))))
-		  fname)
+			       (substring string (match-end 0))))
+		  )
 	      (if (setq ret
 			(cond ((string-equal field-body "") "")
-			      ((member (setq fname (downcase field-name))
-				       '("reply-to" "from" "sender"
-					 "resent-reply-to" "resent-from"
-					 "resent-sender" "to" "resent-to"
-					 "cc" "resent-cc"
-					 "bcc" "resent-bcc" "dcc")
-				       )
+			      ((memq (intern (downcase field-name))
+				     '(reply-to
+				       from sender
+				       resent-reply-to resent-from
+				       resent-sender to resent-to
+				       cc resent-cc
+				       bcc resent-bcc dcc)
+				     )
 			       (car (tm-eword::encode-address-list
 				     (+ (length field-name) 2) field-body))
 			       )
 			      (t
 			       (car (tm-eword::encode-string
-				     (+ (length field-name) 1)
+				     (1+ (length field-name))
 				     field-body 'text))
 			       ))
 			)
 		  (concat field-name ": " ret)
 		)))
-	(car (tm-eword::encode-string 0 str))
+	(car (tm-eword::encode-string 0 string))
 	)))
 
 (defun eword-in-subject-p ()
