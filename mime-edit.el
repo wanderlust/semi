@@ -478,9 +478,9 @@ Each elements are regexp of field-name. [mime-edit.el]")
 (defconst mime-editor/quoted-single-part-tag-regexp
   (concat "- " (substring mime-editor/single-part-tag-regexp 1)))
 
-(defconst mime-editor/multipart-beginning-regexp "^--<<\\([^<>]+\\)>>-{\n")
+(defconst mime-editor/multipart-beginning-regexp "--<<\\([^<>]+\\)>>-{\n")
 
-(defconst mime-editor/multipart-end-regexp "^--}-<<\\([^<>]+\\)>>\n")
+(defconst mime-editor/multipart-end-regexp "--}-<<\\([^<>]+\\)>>\n")
 
 (defconst mime-editor/beginning-tag-regexp
   (regexp-or mime-editor/single-part-tag-regexp
@@ -1414,7 +1414,7 @@ while if FLAG is `\\^M' (control-M) the text is hidden."
 	    (be (match-end 0))
 	    (type (buffer-substring (match-beginning 1)(match-end 1)))
 	    end-exp eb ee)
-	(setq end-exp (format "^--}-<<%s>>\n" type))
+	(setq end-exp (format "--}-<<%s>>\n" type))
 	(widen)
 	(if (re-search-forward end-exp nil t)
 	    (progn
@@ -1934,10 +1934,8 @@ Content-Transfer-Encoding: 7bit
 	  (setq encoding "7bit")
 	  ;; Insert the trailer.
 	  (goto-char (point-max))
-	  (if multipart
-	      (insert "--" boundary "--\n")
-	    (insert "\n--" boundary "--\n")
-	    )))
+	  (insert "\n--" boundary "--\n")
+	  ))
 	(list contype encoding boundary nparts)
 	))))
 
@@ -2142,24 +2140,18 @@ a recording host instead of local host."
 (defun mime-editor/enclose-region (type beg end)
   (save-excursion
     (goto-char beg)
-    (let ((current (point))
-	  need-new-line)
-      (or (bolp)
-	  (setq need-new-line t))
+    (let ((current (point)))
       (save-restriction
 	(narrow-to-region beg end)
-	(if need-new-line
-	    (insert "\n")
-	  )
 	(insert (format "--<<%s>>-{\n" type))
 	(goto-char (point-max))
-	(insert (format "\n--}-<<%s>>\n" type))
+	(insert (format "--}-<<%s>>\n" type))
 	(goto-char (point-max))
 	)
-      (if (and (not (looking-at mime-editor/single-part-tag-regexp))
-	       (not (eobp)))
+      (or (looking-at mime-editor/beginning-tag-regexp)
+	  (eobp)
 	  (insert (mime-make-text-tag) "\n")
-	)
+	  )
       )))
 
 (defun mime-editor/enclose-quote-region (beg end)
