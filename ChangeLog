@@ -2,6 +2,7 @@
 
 	* mime-view.el (mime-display-entity): Catch error when
 	`debug-on-error' is `nil'.
+	(mime-view-error-message-face): New face.
 
 1999-03-04  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
 
