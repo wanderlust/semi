@@ -1,3 +1,8 @@
+1999-11-04   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg.el (pgg-verify-region): Ignore all errors encountered on
+	calling `pgg-fetch-key'.
+
 1999-11-04  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* mime-pgp.el (mime-verify-application/pgp-signature): Enclose
