@@ -1,5 +1,12 @@
 1999-02-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-edit.el (mime-content-types): Add definition of
+	application/vnd.ms-powerpoint for myself :-P
+	(mime-file-types): Add setting of *.ppt for
+	application/vnd.ms-powerpoint.
+
+1999-02-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-partial.el
 	(mime-combine-message/partial-pieces-automatically): Call
 	`mime-store-message/partial-piece' in the buffer when it is
