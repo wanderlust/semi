@@ -1,5 +1,13 @@
 1999-11-05   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* pgg-pgp.el (sign-region): Fix regexp for the beginning of armor.
+
+	* pgg-gpg.el (encrypt-region): Don't use "--textmode" in GPG
+	arguments, replace line break code with CRLF while signing
+	instead.
+
+1999-11-05   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
 	* mime-pgp.el (mime-verify-application/pgp-signature): Copy the
 	messages in PGG buffers to MIME-echo buffer instead of binding
 	`pgg-output-buffer'.
