@@ -71,7 +71,6 @@
 	 (new-name (format "%s-%s" (buffer-name) entity-number))
 	 (the-buf (current-buffer))
 	 (mother mime-preview-buffer)
-	 (mode major-mode)
 	 representation-type)
     (set-buffer (get-buffer-create new-name))
     (erase-buffer)
@@ -94,9 +93,7 @@
 	   (while (re-search-forward "^- -" nil t)
 	     (replace-match "-")
 	     )
-	   (setq representation-type
-		 (cdr (or (assq mode mime-raw-representation-type-alist)
-			  (assq t    mime-raw-representation-type-alist))))
+	   (setq representation-type (mime-entity-representation-type entity))
 	   )
 	  ((progn
 	     (goto-char (point-min))
@@ -107,7 +104,7 @@
 			  (and
 			   (search-forward "\n\n")
 			   (match-end 0)))
-	   (setq representation-type (function mime-text-decode-buffer))
+	   (setq representation-type 'binary)
 	   ))
     (setq major-mode 'mime-show-message-mode)
     (setq mime-raw-representation-type representation-type)
@@ -168,14 +165,14 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	 (onum (if (> knum 0)
 		   (1- knum)
 		 (1+ knum)))
-	 (oinfo (mime-raw-find-entity-from-node-id
-		 (cons onum mother-node-id) mime-raw-message-info))
+	 (orig-entity (mime-raw-find-entity-from-node-id
+		       (cons onum mother-node-id) mime-message-structure))
 	 (basename (expand-file-name "tm" mime-temp-directory))
 	 (orig-file (make-temp-name basename))
 	 (sig-file (concat orig-file ".sig"))
 	 )
-    (mime-raw-write-region (mime-entity-point-min oinfo)
-			   (mime-entity-point-max oinfo)
+    (mime-raw-write-region (mime-entity-point-min orig-entity)
+			   (mime-entity-point-max orig-entity)
 			   orig-file)
     (save-excursion (mime-show-echo-buffer))
     (mime-write-decoded-region (save-excursion
@@ -228,9 +225,9 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	 (onum (if (> knum 0)
 		   (1- knum)
 		 (1+ knum)))
-	 (oinfo (mime-raw-find-entity-from-node-id
-		 (cons onum mother-node-id) mime-raw-message-info)))
-    (mime-view-application/pgp oinfo situation)
+	 (orig-entity (mime-raw-find-entity-from-node-id
+		       (cons onum mother-node-id) mime-message-structure)))
+    (mime-view-application/pgp orig-entity situation)
     ))
 
 

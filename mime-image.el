@@ -138,15 +138,7 @@
 (defun mime-display-image (entity situation)
   (message "Decoding image...")
   (let ((gl (image-normalize (cdr (assq 'image-format situation))
-			     (with-temp-buffer
-			       (insert-buffer-substring
-				(mime-entity-buffer entity)
-				(mime-entity-body-start entity)
-				(mime-entity-body-end entity))
-			       (mime-decode-region
-				(point-min)(point-max)
-				(mime-entity-encoding entity))
-			       (buffer-string)))))
+			     (mime-entity-content entity))))
     (cond ((image-invalid-glyph-p gl)
 	   (setq gl nil)
 	   (message "Invalid glyph!")

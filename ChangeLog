@@ -1,3 +1,109 @@
+1998-06-23  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* WEMI: Version 1.7.1 (Kan'nami) released.
+
+1998-06-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* README.en (Required environment): Delete description about
+	`enable-multibyte-characters'; modify for FLIM 1.5.0.
+
+1998-06-22  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+
+	* mime-edit.el (mime-content-types): Add "url" access-type and
+	"subject" parameter of "mail-server" access-type to
+	message/external-body media-type.
+	(mime-edit-define-menu-for-xemacs): Doc-string fix.
+
+1998-06-22  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+
+	* SEMI-CFG: Support run-in-place installation of BBDB and
+	Emacs/W3.
+
+1998-06-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el: Don't require `std11'.
+
+	* mime-view.el: Require `mime' instead of `mime-lib'.
+	(mime-entity-filename): Don't use `std11-strip-quoted-string'.
+
+	* mime-edit.el: Don't require `eword-encode'.
+
+1998-06-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-partial.el
+	(mime-combine-message/partial-pieces-automatically): Fixed.
+
+	* mime-pgp.el (mime-view-application/pgp): Use function
+	`mime-entity-representation-type'.
+
+	* mime-play.el (mime-view-message/rfc822): Use function
+	`mime-entity-representation-type'.
+	(mime-store-message/partial-piece): `mime-entity-body-start' and
+	`mime-entity-body-end'.
+
+	* mime-text.el (mime-text-insert-decoded-body): Use function
+	`mime-entity-cooked-p'.
+
+	* mime-view.el (mime-entity-representation-type): New function.
+	(mime-entity-cooked-p): New function.
+	(mime-display-entity): Use function `mime-entity-cooked-p'.
+
+1998-06-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-text.el (mime-text-insert-decoded-body): Use
+	`mime-entity-content'.
+
+	* mime-image.el (mime-display-image): Use `mime-entity-content'.
+
+1998-06-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-entity-safe-filename): New implementation.
+
+1998-06-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-text.el (mime-text-insert-decoded-body): Delete unnecessary
+	`save-restriction'.
+
+1998-06-20  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+
+	* semi-def.el: Require 'custom.
+
+1998-06-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el: Don't require `mime-parse'.
+
+1998-06-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI-CFG: - Modify for FLIM 1.5.0.
+		    - Don't signal error if tm is found in load-path.
+
+1998-06-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-save-content): Use `mime-entity-body-start'
+	and `mime-entity-body-end'.
+
+1998-06-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el (mime-view-application/pgp): fixed.
+	(mime-verify-application/pgp-signature): Use
+	`mime-message-structure' instead of `mime-raw-message-info'.
+	(mime-decrypt-application/pgp-encrypted): Use
+	`mime-message-structure' instead of `mime-raw-message-info'.
+
+	* mime-view.el (mime-display-message): Use `mime-parse-buffer';
+	abolish variable `mime-raw-message-info'; use
+	`mime-message-structure' instead of `mime-raw-message-info'.
+
+1998-06-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-bbdb.el (mime-bbdb/update-record): Use
+	`mime-entity-fetch-field' and `mime-entity-read-field'.
+
+1998-06-19  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+
+	* SEMI-CFG: Require 'cl first.
+
+
 1998-06-19  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* WEMI: Version 1.7.0 (Atami) released.

@@ -1,14 +1,13 @@
 ;;; mime-bbdb.el --- SEMI shared module for BBDB
 
 ;; Copyright (C) 1995,1996,1997 Shuhei KOBAYASHI
-;; Copyright (C) 1997 MORIOKA Tomohiko
+;; Copyright (C) 1997,1998 MORIOKA Tomohiko
 
 ;; Author: Shuhei KOBAYASHI <shuhei-k@jaist.ac.jp>
 ;; Maintainer: Shuhei KOBAYASHI <shuhei-k@jaist.ac.jp>
-;; Version: $Id$
 ;; Keywords: BBDB, MIME, multimedia, multilingual, mail, news
 
-;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
+;; This file is part of SEMI (Suite of Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -156,22 +155,25 @@ Creating or modifying it as necessary. A record will be created if
 mime-bbdb/auto-create-p is non-nil, or if OFFER-TO-CREATE is non-nil and
 the user confirms the creation."
   (save-excursion
-    (if (and mime-view-buffer
-             (get-buffer mime-view-buffer))
-        (set-buffer mime-view-buffer))
+    (if (and mime-preview-buffer
+             (get-buffer mime-preview-buffer))
+        (set-buffer mime-preview-buffer))
     (if bbdb-use-pop-up
         (mime-bbdb/pop-up-bbdb-buffer offer-to-create)
-      (let* ((from (std11-field-body "From"))
-             (addr (if from
-		       (car (cdr (mail-extract-address-components from))))))
-        (if (or (null from)
-                (null addr)
-                (string-match (bbdb-user-mail-names) addr))
-            (setq from (or (std11-field-body "To") from))
+      (let* ((message (get-text-property (point-min) 'mime-view-entity))
+	     (from (mime-entity-fetch-field message 'From))
+	     addr)
+	(if (or (null from)
+                (null
+		 (setq addr (car (mime-entity-read-field message 'From))))
+                (string-match (bbdb-user-mail-names)
+			      (std11-address-string addr)))
+            (setq from (or (mime-entity-fetch-field message 'To)
+			   from))
 	  )
         (if from
             (bbdb-annotate-message-sender
-             from t
+             (eword-decode-structured-field-body from) t
              (or (bbdb-invoke-hook-for-value mime-bbdb/auto-create-p)
                  offer-to-create)
              offer-to-create))

@@ -4,6 +4,8 @@
 
 ;;; Code:
 
+(require 'cl)
+
 (defvar default-load-path load-path)
 
 (add-to-list 'load-path
@@ -20,7 +22,6 @@
 (condition-case nil
     (require 'install)
   (error (error "Please install APEL 8.7 or later.")))
-(require 'cl)
 
 (add-path "bitmap-mule")
 (add-path "flim")
@@ -29,10 +30,10 @@
 
 (or (module-installed-p 'calist)
     (error "Please install APEL 8.7 or later."))
-(or (module-installed-p 'mel)
-    (error "Please install FLIM 1.1.0 or later."))
+(or (module-installed-p 'mime-lib)
+    (error "Please install FLIM 1.5.0 or later."))
 (if (module-installed-p 'tm-view)
-    (error "Please remove tm from load-path."))
+    (message "Please remove tm from load-path."))
 
 
 ;;; @ Please specify optional package directory if you use them.
@@ -72,12 +73,27 @@
 ;;;
 
 (let ((path (get-latest-path "bbdb" 'all-paths)))
-  (if path
-      (add-path path)
+  (when path
+    (add-path path)
+    (add-path (expand-file-name "lisp" path)) ; run-in-place installation
     ))
 
 ;; Or please specify path.
 ;; (add-path "bbdb-1.50" 'all-paths)
+
+
+;;;
+;;; @@ Please specify Emacs/W3 path.
+;;;
+
+(let ((path (get-latest-path "w3" 'all-paths)))
+  (when path
+    (add-path path)
+    (add-path (expand-file-name "lisp" path)) ; run-in-place installation
+    ))
+
+;; Or please specify path.
+;; (add-path "w3-4.0pre.20" 'all-paths)
 
 
 ;;; @ shell

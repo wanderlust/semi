@@ -112,7 +112,6 @@
 (require 'mail-utils)
 (require 'mel)
 (require 'mime-view)
-(require 'eword-encode)
 (require 'signature)
 (require 'alist)
 
@@ -215,9 +214,13 @@ To insert a signature file automatically, call the function
        ("tftp"        ("site") ("name"))
        ("afs"         ("site") ("name"))
        ("local-file"  ("site") ("name"))
-       ("mail-server" ("server" "ftpmail@nic.karrn.ad.jp"))
+       ("mail-server"
+	("server" "ftpmail@nic.karrn.ad.jp")
+	("subject"))
+       ("url"         ("url"))
        ))
      ("rfc822")
+     ("news")
      )
     ("application"
      ("octet-stream" ("type" "" "tar" "shar"))
@@ -698,7 +701,7 @@ Tspecials means any character that matches with it in header must be quoted.")
        ;; modified by Pekka Marjola <pema@iki.fi>
        ;;	1995/9/5 (c.f. [tm-en:69])
        (defun mime-edit-define-menu-for-xemacs ()
-	 "Define menu for Emacs 19."
+	 "Define menu for XEmacs."
 	 (cond ((featurep 'menubar)
 		(make-local-variable 'current-menubar)
 		(set-buffer-menubar current-menubar)

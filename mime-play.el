@@ -295,49 +295,49 @@ window.")
 	  "\\(\\." mime-view-file-name-char-regexp "+\\)*"))
 
 (defun mime-entity-safe-filename (entity)
-  (replace-as-filename
-   (or (mime-entity-filename entity)
-       (let ((ret (or (mime-entity-read-field entity 'Content-Description)
-		      (mime-entity-read-field entity 'Subject))))
-	 (if (or (string-match mime-view-file-name-regexp-1 ret)
-		 (string-match mime-view-file-name-regexp-2 ret))
-	     (substring ret (match-beginning 0)(match-end 0))
-	   )))))
+  (let ((filename
+	 (or (mime-entity-filename entity)
+	     (let ((subj
+		    (or (mime-entity-read-field entity 'Content-Description)
+			(mime-entity-read-field entity 'Subject))))
+	       (if (and subj
+			(or (string-match mime-view-file-name-regexp-1 subj)
+			    (string-match mime-view-file-name-regexp-2 subj)))
+		   (substring subj (match-beginning 0)(match-end 0))
+		 )))))
+    (if filename
+	(replace-as-filename filename)
+      )))
 
 
 ;;; @ file extraction
 ;;;
 
-(defun mime-save-content (entity cal)
-  (let ((beg (mime-entity-point-min entity))
-	(end (mime-entity-point-max entity)))
-    (goto-char beg)
-    (let* ((name (save-restriction
-		   (narrow-to-region beg end)
-		   (mime-entity-safe-filename entity)
-		   ))
-	   (encoding (or (cdr (assq 'encoding cal)) "7bit"))
-	   (filename (if (and name (not (string-equal name "")))
-			 (expand-file-name name
-					   (save-window-excursion
-					     (call-interactively
-					      (function
-					       (lambda (dir)
-						 (interactive "DDirectory: ")
-						 dir)))))
-		       (save-window-excursion
-			 (call-interactively
-			  (function
-			   (lambda (file)
-			     (interactive "FFilename: ")
-			     (expand-file-name file)))))))
-	   )
-      (if (file-exists-p filename)
-	  (or (yes-or-no-p (format "File %s exists. Save anyway? " filename))
-	      (error "")))
-      (re-search-forward "\n\n")
-      (mime-write-decoded-region (match-end 0) end filename encoding)
-      )))
+(defun mime-save-content (entity situation)
+  (let* ((name (mime-entity-safe-filename entity))
+	 (encoding (or (mime-entity-encoding entity) "7bit"))
+	 (filename (if (and name (not (string-equal name "")))
+		       (expand-file-name name
+					 (save-window-excursion
+					   (call-interactively
+					    (function
+					     (lambda (dir)
+					       (interactive "DDirectory: ")
+					       dir)))))
+		     (save-window-excursion
+		       (call-interactively
+			(function
+			 (lambda (file)
+			   (interactive "FFilename: ")
+			   (expand-file-name file)))))))
+	 )
+    (if (file-exists-p filename)
+	(or (yes-or-no-p (format "File %s exists. Save anyway? " filename))
+	    (error "")))
+    (mime-write-decoded-region (mime-entity-body-start entity)
+			       (mime-entity-body-end entity)
+			       filename encoding)
+    ))
 
 
 ;;; @ file detection
@@ -411,9 +411,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	 (cnum (mime-raw-point-to-entity-number beg))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (mother mime-preview-buffer)
-	 (representation-type
-	  (cdr (or (assq major-mode mime-raw-representation-type-alist)
-		   (assq t mime-raw-representation-type-alist))))
+	 (representation-type (mime-entity-representation-type entity))
 	 str)
     (setq str (buffer-substring beg end))
     (switch-to-buffer new-name)
@@ -486,10 +484,9 @@ saved as binary.  Otherwise the region is saved by `write-region'."
 			       mime-preview-buffer))
 	  (select-window pwin)
 	  )
-      (re-search-forward "^$")
-      (goto-char (1+ (match-end 0)))
       (setq file (concat root-dir "/" number))
-      (mime-raw-write-region (point) (mime-entity-point-max entity) file)
+      (mime-raw-write-region (mime-entity-body-start entity)
+			     (mime-entity-body-end entity) file)
       (let ((total-file (concat root-dir "/CT")))
 	(setq total
 	      (if total

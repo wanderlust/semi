@@ -66,22 +66,23 @@ partial messages using mime-view."
 	    (not (y-or-n-p "Merge partials?"))
 	    )
 	(mime-store-message/partial-piece entity cal)
-      (let (the-id parameters)
-	(setq subject-id (std11-field-body "Subject"))
-	(if (string-match "[0-9\n]+" subject-id)
-	    (setq subject-id (substring subject-id 0 (match-beginning 0)))
-	  )
-	(save-excursion
-	  (set-buffer subject-buf)
-	  (while (search-backward subject-id nil t))
-	  (catch 'tag
-	    (while t
-	      (mime-view-partial-message target)
-	      (set-buffer article-buffer)
-	      (setq parameters (mime-entity-parameters entity))
-	      (setq the-id (cdr (assoc "id" parameters)))
+      (setq subject-id (mime-entity-read-field entity 'Subject))
+      (if (string-match "[0-9\n]+" subject-id)
+	  (setq subject-id (substring subject-id 0 (match-beginning 0)))
+	)
+      (save-excursion
+	(set-buffer subject-buf)
+	(while (search-backward subject-id nil t))
+	(catch 'tag
+	  (while t
+	    (mime-view-partial-message target)
+	    (set-buffer article-buffer)
+	    (let* ((situation
+		    (mime-entity-situation mime-message-structure))
+		   (the-id (cdr (assoc "id" situation))))
 	      (when (string= the-id id)
-		(mime-store-message/partial-piece entity parameters)
+		(mime-store-message/partial-piece mime-message-structure
+						  situation)
 		(if (file-exists-p full-file)
 		    (throw 'tag nil)
 		  ))
@@ -92,8 +93,8 @@ partial messages using mime-view."
 			 ))
 		  (error "not found")
 		)
-	      )
-	    ))))))
+	      ))
+	  )))))
 
 
 ;;; @ end
