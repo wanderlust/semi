@@ -96,7 +96,7 @@ specified, play as it.  Default MODE is \"play\"."
     (setq mime-acting-situation-example-list (cdr ret)
 	  ret (car ret))
     (cond ((cdr ret)
-	   (setq ret (select-menu-alist
+	   (setq ret (mime-select-menu-alist
 		      "Methods"
 		      (mapcar (function
 			       (lambda (situation)

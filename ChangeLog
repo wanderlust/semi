@@ -1,5 +1,12 @@
 2003-02-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* semi-def.el (mime-should-use-popup-menu): New function.
+	(mime-select-menu-alist): Renamed from select-menu-alist, change
+	its behavior according to mime-should-use-popup-menu.
+	* mime-play.el (mime-play-entity): Change accordingly.
+
+2003-02-08  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
 	* mime-view.el (mime-save-situation-examples): Bind print-length
 	and print-level.
 
