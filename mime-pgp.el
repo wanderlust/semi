@@ -1,6 +1,6 @@
 ;;; mime-pgp.el --- mime-view internal methods for PGP.
 
-;; Copyright (C) 1995,1996,1997 MORIOKA Tomohiko
+;; Copyright (C) 1995,1996,1997,1998 MORIOKA Tomohiko
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Created: 1995/12/7
@@ -111,6 +111,24 @@
 (set-atype 'mime-acting-condition
 	   '((type . "text/x-pgp")
 	     (method . mime-process-application/pgp)
+	     ))
+
+
+;;; @ Internal method for multipart/signed
+;;;
+
+(defun mime-check-multipart/signed (beg end cal)
+  "Internal method to check multipart/signed."
+  (let* ((rcnum (reverse (mime-article/point-content-number beg)))
+	 (oinfo (mime-article/rcnum-to-cinfo (cons '1 rcnum)
+					     mime-raw-content-info))
+	 )
+    (mime-display-content oinfo (cdr (assq 'mode cal)))
+    ))
+
+(set-atype 'mime-acting-condition
+	   '((type . "multipart/signed")
+	     (method . mime-check-multipart/signed)
 	     ))
 
 
