@@ -25,7 +25,7 @@
 ;;; Code:
 
 (require 'w3)
-(require 'mime-text)
+(require 'mime)
 
 (defmacro mime-put-keymap-region (start end keymap)
   `(put-text-property ,start ,end
@@ -51,7 +51,8 @@
     (mime-save-background-color
      (save-restriction
        (narrow-to-region p p)
-       (mime-text-insert-decoded-body entity)
+       (mime-insert-text-content entity)
+       (run-hooks 'mime-text-decode-hook)
        (w3-region p (point-max))
        (mime-put-keymap-region p (point-max) w3-mode-map)
        ))))

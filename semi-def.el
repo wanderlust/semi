@@ -24,13 +24,13 @@
 
 ;;; Code:
 
-(require 'emu)
+(require 'poe)
 
 (eval-when-compile (require 'cl))
 
 (require 'custom)
 
-(defconst mime-user-interface-product ["SEMI" (1 9 1) "Kurikara"]
+(defconst mime-user-interface-product ["SEMI" (1 10 2) "Higashi-Kanazawa"]
   "Product name, version number and code name of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"

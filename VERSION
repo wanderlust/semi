@@ -67,9 +67,9 @@
 1.8.6	Fukuoka			$(BJ!2,(B
 1.9.0	Isurugi			$(B@PF0(B
 1.9.1	Kurikara		$(B6fMx2@Me(B
------	Tsubata			$(BDEH((B
------	Morimoto		$(B?9K\(B
--------	Higashi-Kanazawa	$(BEl6bBt(B
+1.10.0	Tsubata			$(BDEH((B
+1.10.1	Morimoto		$(B?9K\(B
+1.10.2	Higashi-Kanazawa	$(BEl6bBt(B
 -------	Kanazawa		$(B6bBt(B		; <=> $(BKLN&E4F;(B $(BKLE46bBt(B
 -------	Nishi-Kanazawa		$(B@>6bBt(B		; <=> $(BKLN&E4F;(B $(B?7@>6bBt(B
 -------	(JR) Nonoichi		$(BLn!9;T(B
@@ -127,47 +127,47 @@
 1.8.5	Higashi-Tagonoura	$(BElED;R%N1:(B
 1.8.6	Yoshiwara		$(B5H86(B	; = $(B3YFnE4F;(B
 1.9.0	Fuji			$(BIY;N(B	; = JR $(B?H1d@~(B
------	Fujikawa		$(BIY;N@n(B
------	Shin-Kambara		$(B?73w86(B
------	Kambara			$(B3w86(B
------	Yui			$(BM3Hf(B
------	Okitsu			$(B6=DE(B
------	Shimizu			$(B@6?e(B
------	Kusanagi		$(BApFe(B
------	Shizuoka		$(B@E2,(B
------	Abekawa			$(B0BG\@n(B
------	Mochimune		$(BMQ=!(B
------	Yaizu			$(B>FDE(B
------	Nishi-Yaizu		$(B@>>FDE(B
------	Fijieda			$(BF#;^(B
------	Rokug-Dò-A			$(BO;9g(B
------	Shimada			$(BEgED(B
------	Kanaya			$(B6bC+(B	; = $(BBg0f@nE4F;(B
------	Kikugawa		$(B5F@n(B
------	Kakegawa		$(B3]@n(B	; = $(BE7N5IML>8PE4F;(B
+1.9.1	Fujikawa		$(BIY;N@n(B
+1.10.0	Shin-Kambara		$(B?73w86(B
+1.10.1	Kambara			$(B3w86(B
+------	Yui			$(BM3Hf(B
+------	Okitsu			$(B6=DE(B
+------	Shimizu			$(B@6?e(B
+------	Kusanagi		$(BApFe(B
+------	Shizuoka		$(B@E2,(B
+------	Abekawa			$(B0BG\@n(B
+------	Mochimune		$(BMQ=!(B
+------	Yaizu			$(B>FDE(B
+------	Nishi-Yaizu		$(B@>>FDE(B
+------	Fijieda			$(BF#;^(B
+------	Rokug-Dò-A			$(BO;9g(B
+------	Shimada			$(BEgED(B
+------	Kanaya			$(B6bC+(B	; = $(BBg0f@nE4F;(B
+------	Kikugawa		$(B5F@n(B
+------	Kakegawa		$(B3]@n(B	; = $(BE7N5IML>8PE4F;(B
 :	:			:
------	Kanayama		$(B6b;3(B	; =$(B!J(BJR $(BCf1{K\@~!K(B
------	Ot-Dòbashi-A		$(BHxF,66(B
------	Nagoya			$(BL>8E20(B	; = JR $(B4X@>K\@~!J!&Cf1{K\@~!K(B
+------	Kanayama		$(B6b;3(B	; =$(B!J(BJR $(BCf1{K\@~!K(B
+------	Ot-Dòbashi-A		$(BHxF,66(B
+------	Nagoya			$(BL>8E20(B	; = JR $(B4X@>K\@~!J!&Cf1{K\@~!K(B
 :	:			:
------	Gifu			$(B4tIl(B	; = JR $(B9b;3K\@~(B
+------	Gifu			$(B4tIl(B	; = JR $(B9b;3K\@~(B
 :	:			:
------	Samegai			$(B@C%v0f(B
+------	Samegai			$(B@C%v0f(B
 ;;-------------------------------------------------------------------------
 ;;	West Japan Railway	$(B@>F|K\N95RE4F;(B	http://www.westjr.co.jp/
 ;;-------------------------------------------------------------------------
------	Maibara			$(BJF86(B	; = JR $(BKLN&K\@~(B
+------	Maibara			$(BJF86(B	; = JR $(BKLN&K\@~(B
 :	:			:
------	Kusatsu			$(BApDE(B	; = JR $(BApDE@~(B
+------	Kusatsu			$(BApDE(B	; = JR $(BApDE@~(B
 :	:			:
------	Yamashina		$(B;32J(B	; = JR $(B8P@>@~(B
------	Ky-Dòto-A			$(B5~ET(B	; = JR $(BF`NI@~!&;31"K\@~(B
+------	Yamashina		$(B;32J(B	; = JR $(B8P@>@~(B
+------	Ky-Dòto-A			$(B5~ET(B	; = JR $(BF`NI@~!&;31"K\@~(B
 					; <=> $(B6aE4(B $(B5~ET@~!"5~ET;T8rDL6I(B $(B1(4]@~(B
 :	:			:
------	-DÒsaka-A			$(BBg:e(B	; = JR $(BBg:e4D>u@~(B <=> JR $(BEl@>@~(B $(BKL?7CO(B
+------	-DÒsaka-A			$(BBg:e(B	; = JR $(BBg:e4D>u@~(B <=> JR $(BEl@>@~(B $(BKL?7CO(B
 					;   <=> $(BBg:e;T8rDL6I!":e?@!":e5^(B $(BG_ED(B
 :	:			:
------	K-Dòbe-A			$(B?@8M(B	; = JR $(B;3M[K\@~(B
+------	K-Dòbe-A			$(B?@8M(B	; = JR $(B;3M[K\@~(B
 
 
 [REMI version names]

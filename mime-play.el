@@ -31,7 +31,6 @@
 (require 'filename)
 
 (eval-when-compile
-  (require 'mime-text)
   (condition-case nil
       (require 'bbdb)
     (error (defvar bbdb-buffer-name nil)))
@@ -229,7 +228,7 @@ specified, play as it.  Default MODE is \"play\"."
 	(if (cdr ret)
 	    (let ((rest ret)
 		  (max-score 0)
-		  max-escore
+		  (max-escore 0)
 		  max-examples
 		  max-situations)
 	      (while rest
@@ -325,9 +324,9 @@ specified, play as it.  Default MODE is \"play\"."
 	      (name (mime-entity-safe-filename entity)))
 	  (setq name
 		(if (and name (not (string= name "")))
-		    (expand-file-name name mime-temp-directory)
+		    (expand-file-name name temporary-file-directory)
 		  (make-temp-name
-		   (expand-file-name "EMI" mime-temp-directory))
+		   (expand-file-name "EMI" temporary-file-directory))
 		  ))
           (mime-write-entity-content entity name)
 	  (message "External method is starting...")
@@ -544,7 +543,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
   (goto-char (mime-entity-point-min entity))
   (let* ((root-dir
 	  (expand-file-name
-	   (concat "m-prts-" (user-login-name)) mime-temp-directory))
+	   (concat "m-prts-" (user-login-name)) temporary-file-directory))
 	 (id (cdr (assoc "id" cal)))
 	 (number (cdr (assoc "number" cal)))
 	 (total (cdr (assoc "total" cal)))
@@ -705,7 +704,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
       )
     (setq buffer-read-only nil)
     (erase-buffer)
-    (mime-text-insert-decoded-body entity)
+    (mime-insert-text-content entity)
     (mule-caesar-region (point-min) (point-max))
     (set-buffer-modified-p nil)
     (set-buffer mother)

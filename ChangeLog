@@ -1,3 +1,116 @@
+1998-10-31  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.10.2 (Higashi-Kanazawa) released.
+
+1998-10-29  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS (Abolish variable `mime-temp-directory'): New subsection.
+
+1998-10-27  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-decode-buffer): Limit search bound for
+	"Content-Transfer-Encoding:".
+
+
+1998-10-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.10.1 (Morimoto) released.
+
+	* README.ja, README.en (Required environment): Modify for APEL 9.6
+	and FLIM 1.11.2.
+
+1998-10-24  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el, mime-pgp.el, mime-partial.el, mime-image.el,
+	mime-edit.el: Use `temporary-file-directory' instead of
+	`mime-temp-directory'.
+
+
+1998-10-23  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.10.0 (Tsubata) released.
+
+1998-10-22  Yoshiki Hayashi   <g740685@komaba.ecc.u-tokyo.ac.jp>
+
+	* README.ja: New file.
+
+1998-10-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el, mime-view.el: Use `(featurep 'xemacs)' instead of
+	`running-xemacs'.
+
+1998-10-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el, SEMI-ELS: Move function `mime-display-text/plain',
+	`mime-display-text/enriched' and `mime-display-text/richtext' from
+	mime-text to mime-view.el; abolish mime-text.el.
+
+	* mime-play.el: Don't Require `mime-text' when compiling.
+
+	* mime-w3.el: Require `mime' instead of `mime-text'.
+
+1998-10-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* semi-setup.el (mime-setup-enable-inline-image): Use `(featurep
+	'xemacs)' instead of `running-xemacs'.
+
+1998-10-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* README.en (Required environment): Modify to require APEL 9.5 and
+	FLIM 1.11.1.
+
+	* mime-edit.el: - Don't require emu.
+	                - Require invisible.
+
+	* semi-def.el: Require poe instead of emu.
+
+1998-10-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-decode-buffer): Convert encoding to
+	lower case.
+
+1998-10-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-ignored-field-list): Modify each element
+	of initial value to include `:'.
+	(mime-view-visible-field-list): Likewise.
+	(mime-display-entity): Use `mime-insert-header' instead of
+	`mime-insert-decoded-header'.
+
+1998-10-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-decode-buffer): Call
+	`mule-caesar-region' for text/x-rot13-47-48 entity.
+
+1998-09-22  Shozo UEHARA      <uehara@eken.phys.nagoya-u.ac.jp>
+
+	* mime-play.el (mime-raw-play-entity): Initialize `max-escore' by
+	0. <cf. [tm-ja:3432]>
+
+1998-10-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS (Changes in SEMI 1.10): New section.
+
+	* NEWS (Changes in SEMI 1.9): New section.
+
+	* NEWS (User-Agent field): New subsection.
+
+1998-10-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-view-caesar): Use `mime-insert-text-content'
+	instead of `mime-text-insert-decoded-body'.
+
+	* mime-w3.el (mime-preview-text/html): Use
+	`mime-insert-text-content' instead of
+	`mime-text-insert-decoded-body'.
+
+	* mime-text.el: Abolish function `mime-text-insert-decoded-body'.
+	(mime-display-text/plain): Use `mime-insert-text-content' instead
+	of `mime-text-insert-decoded-body'.
+	(mime-display-text/richtext): Likewise.
+	(mime-display-text/enriched): Likewise.
+
+
 1998-10-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.9.1 (Kurikara) released.
@@ -71,7 +184,7 @@
 	`mime-product-name', `mime-product-version' and
 	`mime-product-code-name'.
 
-	* semi-def.el (mime-user-interface-product): New variable; abolish
+	* semi-def.el (mime-user-interface-product): New constant; abolish
 	`mime-user-interface-version'.
 
 1998-10-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>

@@ -107,13 +107,13 @@
 
 ;;; Code:
 
-(require 'emu)
 (require 'sendmail)
 (require 'mail-utils)
 (require 'mel)
 (require 'mime-view)
 (require 'signature)
 (require 'alist)
+(require 'invisible)
 
 
 ;;; @ version
@@ -764,7 +764,7 @@ Tspecials means any character that matches with it in header must be quoted.")
     )
   "MIME-edit menubar entry.")
 
-(cond (running-xemacs
+(cond ((featurep 'xemacs)
        ;; modified by Pekka Marjola <pema@iki.fi>
        ;;	1995/9/5 (c.f. [tm-en:69])
        (defun mime-edit-define-menu-for-xemacs ()
@@ -962,7 +962,7 @@ User customizable variables (not documented all of them):
       )))
 
 
-(cond (running-xemacs
+(cond ((featurep 'xemacs)
        (add-minor-mode 'mime-edit-mode-flag
 		       '((" MIME-Edit "  mime-transfer-level-string))
 		       mime-edit-mode-map
@@ -994,7 +994,7 @@ User customizable variables (not documented all of them):
     (force-mode-line-update)
 
     ;; Define menu for XEmacs.
-    (if running-xemacs
+    (if (featurep 'xemacs)
 	(mime-edit-define-menu-for-xemacs)
       )
 
@@ -1032,7 +1032,7 @@ just return to previous mode."
 	  (mime-edit-translate-buffer)))
     ;; Restore previous state.
     (setq mime-edit-mode-flag nil)
-    (if (and running-xemacs
+    (if (and (featurep 'xemacs)
 	     (featurep 'menubar))
 	(delete-menu-item (list mime-edit-menu-title))
       )
@@ -2413,7 +2413,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
   (let* ((mime-edit-draft-file-name
 	  (or (buffer-file-name)
 	      (make-temp-name
-	       (expand-file-name "mime-draft" mime-temp-directory))))
+	       (expand-file-name "mime-draft" temporary-file-directory))))
 	 (separator mail-header-separator)
 	 (id (concat "\""
 		     (replace-space-with-underline (current-time-string))
@@ -2657,17 +2657,21 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 					  ))))
 				   params "")))
 		     encoding
-		     encoded)
+		     encoded
+		     (limit (save-excursion
+			      (if (search-forward "\n\n" nil t)
+				  (1- (point))))))
 		(save-excursion
 		  (if (re-search-forward
-		       "Content-Transfer-Encoding:" nil t)
+		       "^Content-Transfer-Encoding:" limit t)
 		      (let ((beg (match-beginning 0))
 			    (hbeg (match-end 0))
 			    (end (std11-field-end)))
 			(setq encoding
-			      (eliminate-top-spaces
-			       (std11-unfold-string
-				(buffer-substring hbeg end))))
+			      (downcase
+			       (eliminate-top-spaces
+				(std11-unfold-string
+				 (buffer-substring hbeg end)))))
 			(if (or charset (eq type 'text))
 			    (progn
 			      (delete-region beg (1+ end))
@@ -2689,6 +2693,10 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 			   (match-end 0)
 			 (point-min)
 			 )))
+		  (if (and (eq type 'text)
+			   (eq stype 'x-rot13-47-48))
+		      (mule-caesar-region he (point-max))
+		    )
 		  (if (= (point-min) 1)
 		      (progn
 			(goto-char he)

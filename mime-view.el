@@ -295,15 +295,15 @@ SYMBOL must be major mode in raw-buffer or t.  t means default.
 Interface of FUNCTION must be (ENTITY SITUATION).")
 
 (defvar mime-view-ignored-field-list
-  '(".*Received" ".*Path" ".*Id" "References"
-    "Replied" "Errors-To"
-    "Lines" "Sender" ".*Host" "Xref"
-    "Content-Type" "Precedence"
-    "Status" "X-VM-.*")
+  '(".*Received:" ".*Path:" ".*Id:" "^References:"
+    "^Replied:" "^Errors-To:"
+    "^Lines:" "^Sender:" ".*Host:" "^Xref:"
+    "^Content-Type:" "^Precedence:"
+    "^Status:" "^X-VM-.*:")
   "All fields that match this list will be hidden in MIME preview buffer.
 Each elements are regexp of field-name.")
 
-(defvar mime-view-visible-field-list '("Dnas.*" "Message-Id")
+(defvar mime-view-visible-field-list '("^Dnas.*:" "^Message-Id:")
   "All fields that match this list will be displayed in MIME preview buffer.
 Each elements are regexp of field-name.")
 
@@ -421,9 +421,38 @@ Each elements are regexp of field-name.")
 ;;; @@@ entity presentation
 ;;;
 
-(autoload 'mime-display-text/plain "mime-text")
-(autoload 'mime-display-text/enriched "mime-text")
-(autoload 'mime-display-text/richtext "mime-text")
+(defun mime-display-text/plain (entity situation)
+  (save-restriction
+    (narrow-to-region (point-max)(point-max))
+    (mime-insert-text-content entity)
+    (run-hooks 'mime-text-decode-hook)
+    (goto-char (point-max))
+    (if (not (eq (char-after (1- (point))) ?\n))
+	(insert "\n")
+      )
+    (mime-add-url-buttons)
+    (run-hooks 'mime-display-text/plain-hook)
+    ))
+
+(defun mime-display-text/richtext (entity situation)
+  (save-restriction
+    (narrow-to-region (point-max)(point-max))
+    (mime-insert-text-content entity)
+    (run-hooks 'mime-text-decode-hook)
+    (let ((beg (point-min)))
+      (remove-text-properties beg (point-max) '(face nil))
+      (richtext-decode beg (point-max))
+      )))
+
+(defun mime-display-text/enriched (entity situation)
+  (save-restriction
+    (narrow-to-region (point-max)(point-max))
+    (mime-insert-text-content entity)
+    (run-hooks 'mime-text-decode-hook)
+    (let ((beg (point-min)))
+      (remove-text-properties beg (point-max) '(face nil))
+      (enriched-decode beg (point-max))
+      )))
 
 (defvar mime-view-announcement-for-message/partial
   (if (and (>= emacs-major-version 19) window-system)
@@ -681,9 +710,9 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
       (when header-is-visible
 	(if header-presentation-method
 	    (funcall header-presentation-method entity situation)
-	  (mime-insert-decoded-header entity
-				      mime-view-ignored-field-list
-				      mime-view-visible-field-list))
+	  (mime-insert-header entity
+			      mime-view-ignored-field-list
+			      mime-view-visible-field-list))
 	(goto-char (point-max))
 	(insert "\n")
 	(run-hooks 'mime-display-header-hook)
@@ -731,7 +760,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
     )
   "Menu for MIME Viewer")
 
-(cond (running-xemacs
+(cond ((featurep 'xemacs)
        (defvar mime-view-xemacs-popup-menu
 	 (cons mime-view-menu-title
 	       (mapcar (function
@@ -801,7 +830,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
     (define-key mime-view-mode-map
       [backspace] (function mime-preview-scroll-down-entity))
     (if (functionp default)
-	(cond (running-xemacs
+	(cond ((featurep 'xemacs)
 	       (set-keymap-default-binding mime-view-mode-map default)
 	       )
 	      (t
@@ -812,7 +841,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	(define-key mime-view-mode-map
 	  mouse-button-2 (function mime-button-dispatcher))
       )
-    (cond (running-xemacs
+    (cond ((featurep 'xemacs)
 	   (define-key mime-view-mode-map
 	     mouse-button-3 (function mime-view-xemacs-popup-menu))
 	   )
