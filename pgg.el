@@ -23,6 +23,10 @@
 ;; Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 ;; Boston, MA 02111-1307, USA.
 
+
+;;; Commentary:
+;; 
+
 ;;; Code:
 
 (require 'calist)
@@ -33,7 +37,7 @@
 (require 'pgg-parse)
 
 (eval-when-compile
-  (ignore-errors 
+  (ignore-errors
     (require 'w3)
     (require 'url)))
 
@@ -124,14 +128,14 @@
   "Make detached signature from text between START and END.")
 
 (luna-define-generic verify-region (scheme start end &optional signature)
-  "Verify region between START and END 
+  "Verify region between START and END
 as the detached signature SIGNATURE.")
 
 (luna-define-generic insert-key (scheme)
   "Insert public key at point.")
 
 (luna-define-generic snarf-keys-region (scheme start end)
-  "Add all public keys in region between START 
+  "Add all public keys in region between START
 and END to the keyring.")
 
 ;;; @ interface functions
@@ -142,29 +146,57 @@ and END to the keyring.")
 (defmacro pgg-make-scheme (scheme)
   `(progn
      (require (intern (format "pgg-%s" ,scheme)))
-     (funcall (intern (format "pgg-make-scheme-%s" 
+     (funcall (intern (format "pgg-make-scheme-%s"
 			      ,scheme)))))
+
+(put 'pgg-save-coding-system 'lisp-indent-function 2)
+
+(defmacro pgg-save-coding-system (start end &rest body)
+  `(if (interactive-p)
+       (let ((buffer (current-buffer)))
+	 (with-temp-buffer
+	   (let ((,start ,start) (,end ,end) buffer-undo-list)
+	     (set-buffer-multibyte nil)
+	     (insert-buffer-substring buffer ,start ,end)
+	     (encode-coding-region (point-min)(point-max)
+				   buffer-file-coding-system)
+	     (setq ,start (point-min) ,end (point-max))
+	     (prog1 (save-excursion ,@body)
+	       (push nil buffer-undo-list)
+	       (ignore-errors (undo)))
+	     )))
+     ,@body))
+
+(defun pgg-display-output-buffer (start end status)
+  (if status
+      (progn
+	(delete-region start end)
+	(insert-buffer-substring pgg-output-buffer)
+	(decode-coding-region start (point)
+			      buffer-file-coding-system)
+	)
+    (with-output-to-temp-buffer pgg-echo-buffer
+      (set-buffer standard-output)
+      (insert-buffer-substring pgg-errors-buffer)
+      )))
 
 ;;;###autoload
 (defun pgg-encrypt-region (start end rcpts)
+  "Encrypt the current region between START and END for RCPTS."
   (interactive
    (list (region-beginning)(region-end)
 	 (split-string (read-string "Recipients: ") "[ \t,]+")))
   (let* ((entity (pgg-make-scheme pgg-default-scheme))
-	 (status (luna-send entity 'encrypt-region 
-			    entity start end rcpts)))
+	 (status (pgg-save-coding-system start end
+		   (luna-send entity 'encrypt-region entity
+			      start end rcpts))))
     (when (interactive-p)
-      (if status
-	  (progn
-	    (delete-region start end)
-	    (insert-buffer-substring pgg-output-buffer))
-	(with-output-to-temp-buffer pgg-echo-buffer
-	  (set-buffer standard-output)
-	  (insert-buffer-substring pgg-errors-buffer))))
+      (pgg-display-output-buffer start end status))
     status))
 
 ;;;###autoload
 (defun pgg-decrypt-region (start end)
+  "Decrypt the current region between START and END."
   (interactive "r")
   (let* ((packet (cdr (assq 1 (pgg-parse-armor-region start end))))
 	 (scheme
@@ -176,36 +208,34 @@ and END to the keyring.")
 					       packet))))
 	      pgg-default-scheme))
 	 (entity (pgg-make-scheme scheme))
-	 (status (luna-send entity 'decrypt-region entity start end)))
+	 (status (pgg-save-coding-system start end
+		   (luna-send entity 'decrypt-region entity start end))))
     (when (interactive-p)
-      (if status
-	  (progn
-	    (delete-region start end)
-	    (insert-buffer-substring pgg-output-buffer))
-	(with-output-to-temp-buffer pgg-echo-buffer
-	  (set-buffer standard-output)
-	  (insert-buffer-substring pgg-errors-buffer))))
+      (pgg-display-output-buffer start end status))
     status))
 
 ;;;###autoload
 (defun pgg-sign-region (start end &optional cleartext)
+  "Make the signature from text between START and END.
+If the optional 3rd argument CLEARTEXT is non-nil, it does not create
+a detached signature."
   (interactive "r")
   (let* ((entity (pgg-make-scheme pgg-default-scheme))
-	 (status (luna-send entity 'sign-region 
-			    entity start end 
-			    (or (interactive-p) cleartext))))
+	 (status (pgg-save-coding-system start end
+		   (luna-send entity 'sign-region entity start end
+			      (or (interactive-p) cleartext)))))
     (when (interactive-p)
-      (if status
-	  (progn
-	    (delete-region start end)
-	    (insert-buffer-substring pgg-output-buffer))
-	(with-output-to-temp-buffer pgg-echo-buffer
-	  (set-buffer standard-output)
-	  (insert-buffer-substring pgg-errors-buffer))))
+      (pgg-display-output-buffer start end status))
     status))
 
 ;;;###autoload
 (defun pgg-verify-region (start end &optional signature fetch)
+  "Verify the current region between START and END.
+If the optional 3rd argument SIGNATURE is non-nil, it is treated as
+the detached signature of the current region.
+
+If the optional 4th argument FETCH is non-nil, we attempt to fetch the
+signer's public key from `pgg-default-keyserver-address'."
   (interactive "r")
   (let* ((packet
 	  (if (null signature) nil
@@ -215,7 +245,7 @@ and END to the keyring.")
 	      (insert-file-contents signature)
 	      (cdr (assq 2 (pgg-decode-armor-region (point-min)(point-max))))
 	      )))
-	 (scheme 
+	 (scheme
 	  (or pgg-scheme
 	      (cdr (assq 'scheme
 			 (progn
@@ -225,46 +255,42 @@ and END to the keyring.")
 	      pgg-default-scheme))
 	 (entity (pgg-make-scheme scheme))
 	 (key (cdr (assq 'key-identifier packet)))
-	 keyserver
-	 status)
+	 status keyserver)
     (and (stringp key)
 	 (setq key (concat "0x" (pgg-truncate-key-identifier key)))
 	 (null (let ((pgg-scheme scheme))
 		 (pgg-lookup-key-string key)))
 	 (or fetch (interactive-p))
 	 (y-or-n-p (format "Key %s not found; attempt to fetch? " key))
-	 (setq keyserver 
+	 (setq keyserver
 	       (or (cdr (assq 'preferred-key-server packet))
 		   pgg-default-keyserver-address))
 	 (pgg-fetch-key keyserver key))
-    (setq status (luna-send entity 'verify-region 
-			    entity start end signature))
+    (setq status (pgg-save-coding-system start end
+		   (luna-send entity 'verify-region
+			      entity start end signature)))
     (when (interactive-p)
       (with-output-to-temp-buffer pgg-echo-buffer
 	(set-buffer standard-output)
-	(insert-buffer-substring 
-	 (if status pgg-output-buffer pgg-errors-buffer))
+	(insert-buffer-substring (if status pgg-output-buffer
+				   pgg-errors-buffer))
 	))
     status))
 
 ;;;###autoload
 (defun pgg-insert-key ()
+  "Insert the ASCII armored public key."
   (interactive)
   (let ((entity (pgg-make-scheme (or pgg-scheme pgg-default-scheme))))
     (luna-send entity 'insert-key entity)))
 
 ;;;###autoload
 (defun pgg-snarf-keys-region (start end)
+  "Import public keys in the current region between START and END."
   (interactive "r")
-  (let* ((entity (pgg-make-scheme (or pgg-scheme pgg-default-scheme)))
-	 (status (luna-send entity 'snarf-keys-region entity start end)))
-    (when (interactive-p)
-      (with-output-to-temp-buffer pgg-echo-buffer
-	(set-buffer standard-output)
-	(insert-buffer-substring 
-	 (if status pgg-output-buffer pgg-errors-buffer))
-	))
-    status))
+  (let ((entity (pgg-make-scheme (or pgg-scheme pgg-default-scheme))))
+    (pgg-save-coding-system start end
+      (luna-send entity 'snarf-keys-region entity start end))))
 
 (defun pgg-lookup-key-string (string &optional type)
   (let ((entity (pgg-make-scheme (or pgg-scheme pgg-default-scheme))))
@@ -286,7 +312,7 @@ and END to the keyring.")
 	process)
     (insert
      (with-temp-buffer
-       (setq process 
+       (setq process
 	     (apply #'start-process " *PGG url*" (current-buffer)
 		    pgg-insert-url-program (nconc args (list url))))
        (set-process-sentinel process #'ignore)
@@ -299,7 +325,7 @@ and END to the keyring.")
     ))
 
 (defun pgg-fetch-key (keyserver key)
-  "Attempt to fetch a key for addition to PGP or GnuPG keyring."
+  "Attempt to fetch a KEY from KEYSERVER for addition to PGP or GnuPG keyring."
   (with-current-buffer (get-buffer-create pgg-output-buffer)
     (buffer-disable-undo)
     (erase-buffer)
@@ -357,8 +383,8 @@ and END to the keyring.")
      (goto-char ,start)
      (case ,lbt
        (CRLF
-	(while (progn 
-		 (end-of-line) 
+	(while (progn
+		 (end-of-line)
 		 (> (marker-position pgg-conversion-end) (point)))
 	  (insert "\r")
 	  (forward-line 1)))
@@ -377,7 +403,7 @@ and END to the keyring.")
      (let ((,end (point)))
        ,@body)
      (push nil buffer-undo-list)
-     (undo)))
+     (ignore-errors (undo))))
 
 
 ;;; @ postprocess macros
