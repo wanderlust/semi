@@ -4,6 +4,8 @@
 
 ;;; Code:
 
+(require 'cl)
+
 (defvar default-load-path load-path)
 
 (add-to-list 'load-path
@@ -11,12 +13,11 @@
 (add-to-list 'load-path
 	     (expand-file-name "." data-directory))
 
-(if (boundp 'LISPDIR)
-    (progn
-      (add-to-list 'default-load-path LISPDIR)
-      (add-to-list 'load-path LISPDIR)
-      (add-to-list 'load-path (expand-file-name "apel" LISPDIR))
-      ))
+(when (boundp 'LISPDIR)
+  (add-to-list 'default-load-path LISPDIR)
+  (add-to-list 'load-path LISPDIR)
+  (add-to-list 'load-path (expand-file-name "apel" LISPDIR))
+  )
 
 (condition-case nil
     (require 'install)
