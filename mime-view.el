@@ -276,7 +276,7 @@ Each elements are regexp of field-name. [mime-view.el]")
 	       (insert rest)
 	       ))))
     (mime-add-button (point-min)(1- (point-max))
-		     (function mime-view-play-content))
+		     (function mime-play-entity))
     ))
 
 (defun mime-preview/default-content-button-function
@@ -591,7 +591,7 @@ The compressed face will be piped to this command.")
       (narrow-to-region be be)
       (insert mime-view-announcement-for-message/partial)
       (mime-add-button (point-min)(point-max)
-		       (function mime-view-play-content))
+		       (function mime-play-entity))
       )))
 
 (defun mime-article/get-uu-filename (param &optional encoding)
@@ -715,7 +715,7 @@ The compressed face will be piped to this command.")
     (next	 "Move to next content"	      mime-view-next-content)
     (scroll-down "Scroll to previous content" mime-view-scroll-down-content)
     (scroll-up	 "Scroll to next content"     mime-view-scroll-up-content)
-    (play	 "Play Content"               mime-view-play-content)
+    (play	 "Play Content"               mime-play-entity)
     (extract	 "Extract Content"            mime-view-extract-content)
     (print	 "Print"                      mime-view-print-content)
     (x-face	 "Show X Face"                mime-view-display-x-face)
@@ -768,7 +768,7 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       "\C-\M-m"  (function mime-view-previous-line-content))
     (define-key mime-view-mode-map
-      "v"        (function mime-view-play-content))
+      "v"        (function mime-play-entity))
     (define-key mime-view-mode-map
       "e"        (function mime-view-extract-content))
     (define-key mime-view-mode-map
@@ -895,23 +895,18 @@ button-2	Move to point under the mouse cursor
 	(setq rpcl (cdr rpcl))
 	))))
 
-(autoload 'mime-play-content "mime-play")
+(autoload 'mime-play-entity "mime-play")
 
 (defvar mime-view-decoding-mode "play" "MIME body decoding mode")
 
-(defun mime-view-play-content ()
-  (interactive)
-  (mime-play-content "play")
-  )
-
 (defun mime-view-extract-content ()
   (interactive)
-  (mime-play-content "extract")
+  (mime-play-entity "extract")
   )
 
 (defun mime-view-print-content ()
   (interactive)
-  (mime-play-content "print")
+  (mime-play-entity "print")
   )
 
 (defun mime-view-follow-content ()
