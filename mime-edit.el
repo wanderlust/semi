@@ -2141,7 +2141,7 @@ and insert data encoded as ENCODING."
 ;;; @ multipart enclosure
 ;;;
 
-(defun mime-edit-enclose-region (type beg end)
+(defun mime-edit-enclose-region-internal (type beg end)
   (save-excursion
     (goto-char beg)
     (let ((current (point)))
@@ -2160,40 +2160,40 @@ and insert data encoded as ENCODING."
 
 (defun mime-edit-enclose-quote-region (beg end)
   (interactive "*r")
-  (mime-edit-enclose-region 'quote beg end)
+  (mime-edit-enclose-region-internal 'quote beg end)
   )
 
 (defun mime-edit-enclose-mixed-region (beg end)
   (interactive "*r")
-  (mime-edit-enclose-region 'mixed beg end)
+  (mime-edit-enclose-region-internal 'mixed beg end)
   )
 
 (defun mime-edit-enclose-parallel-region (beg end)
   (interactive "*r")
-  (mime-edit-enclose-region 'parallel beg end)
+  (mime-edit-enclose-region-internal 'parallel beg end)
   )
 
 (defun mime-edit-enclose-digest-region (beg end)
   (interactive "*r")
-  (mime-edit-enclose-region 'digest beg end)
+  (mime-edit-enclose-region-internal 'digest beg end)
   )
 
 (defun mime-edit-enclose-alternative-region (beg end)
   (interactive "*r")
-  (mime-edit-enclose-region 'alternative beg end)
+  (mime-edit-enclose-region-internal 'alternative beg end)
   )
 
 (defun mime-edit-enclose-signed-region (beg end)
   (interactive "*r")
   (if mime-edit-signing-type
-      (mime-edit-enclose-region 'signed beg end)
+      (mime-edit-enclose-region-internal 'signed beg end)
     (message "Please specify signing type.")
     ))
 
 (defun mime-edit-enclose-encrypted-region (beg end)
   (interactive "*r")
   (if mime-edit-signing-type
-      (mime-edit-enclose-region 'encrypted beg end)
+      (mime-edit-enclose-region-internal 'encrypted beg end)
     (message "Please specify encrypting type.")
     ))
 
