@@ -106,9 +106,8 @@
 	  exit-status (process-exit-status process))
     (delete-process process)
     (with-current-buffer output-buffer
-      (goto-char (point-min))
-      (while (search-forward "\r$" nil t)
-	(replace-match ""))
+      (pgg-convert-lbt-region (point-min)(point-max) 'LF)
+
       (if (memq status '(stop signal))
 	  (error "%s exited abnormally: '%s'" program exit-status))
       (if (= 127 exit-status)
@@ -163,22 +162,13 @@
 			 (mapcar (lambda (rcpt) 
 				   (list "--remote-user" 
 					 (concat "\"" rcpt "\""))) 
-				 recipients)))))
-	 (inhibit-read-only t)
-	 buffer-read-only)
-    (goto-char start)
-    (setq end (set-marker (make-marker) (point-max)))
-    (while (progn (end-of-line) (> (marker-position end) (point)))
-      (insert "\r")
-      (forward-line 1))
-    (pgg-gpg-process-region start end passphrase pgg-gpg-program args)
-    (goto-char start)
-    (while (re-search-forward "\r$" end t)
-      (replace-match ""))
+				 recipients))))))
+    (pgg-as-lbt start end 'CRLF
+      (pgg-gpg-process-region start end passphrase 
+			      pgg-gpg-program args)
+      )
     (pgg-process-when-success
-      (goto-char (point-min))
-      (while (re-search-forward "\r$" nil t)
-	(replace-match ""))
+      (pgg-convert-lbt-region (point-min)(point-max) 'LF)
       (let ((packet 
 	     (cdr (assq 1 (pgg-parse-armor-region 
 			   (point-min)(point-max))))))
@@ -214,19 +204,11 @@
 		"--local-user" pgg-gpg-user-id))
 	 (inhibit-read-only t)
 	 buffer-read-only)
-    (goto-char start)
-    (setq end (set-marker (make-marker) (point-max)))
-    (while (progn (end-of-line) (> (marker-position end) (point)))
-      (insert "\r")
-      (forward-line 1))
-    (pgg-gpg-process-region start end passphrase pgg-gpg-program args)
-    (goto-char start)
-    (while (re-search-forward "\r$" end t)
-      (replace-match ""))
+    (pgg-as-lbt start end 'CRLF
+      (pgg-gpg-process-region start end passphrase pgg-gpg-program args)
+      )
     (pgg-process-when-success
-      (goto-char (point-min))
-      (while (re-search-forward "\r$" nil t)
-	(replace-match ""))
+      (pgg-convert-lbt-region (point-min)(point-max) 'LF)
       (when (re-search-forward "^-+BEGIN PGP SIGNATURE" nil t);XXX
 	(let ((packet 
 	       (cdr (assq 2 (pgg-parse-armor-region 

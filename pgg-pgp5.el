@@ -115,9 +115,8 @@
 	  exit-status (process-exit-status process))
     (delete-process process)
     (with-current-buffer output-buffer
-      (goto-char (point-min))
-      (while (search-forward "\r$" nil t)
-	(replace-match ""))
+      (pgg-convert-lbt-region (point-min)(point-max) 'LF)
+
       (if (memq status '(stop signal))
 	  (error "%s exited abnormally: '%s'" program exit-status))
       (if (= 127 exit-status)
@@ -154,11 +153,6 @@
 (luna-define-method encrypt-region ((scheme pgg-scheme-pgp5) 
 				    start end recipients)
   (let* ((pgg-pgp5-user-id pgg-default-user-id)
-	 (passphrase
-	  (pgg-read-passphrase 
-	   (format "PGP passphrase for %s: " pgg-pgp5-user-id)
-	   (luna-send scheme 'lookup-key-string 
-		      scheme pgg-pgp5-user-id 'encrypt)))
 	 (args 
 	  `("+NoBatchInvalidKeys=off" "-fat" "+batchmode=1"
 	    ,@(if recipients
@@ -167,24 +161,9 @@
 				   (list "-r" 
 					 (concat "\"" rcpt "\""))) 
 				 recipients))))))
-    (pgg-pgp5-process-region start end passphrase 
+    (pgg-pgp5-process-region start end nil
 			     pgg-pgp5-pgpe-program args)
-    (with-current-buffer pgg-output-buffer
-      (if (zerop (buffer-size))
-	  (insert-buffer-substring pgg-errors-buffer)
-	(let ((packet 
-	       (cdr (assq 1 (pgg-parse-armor-region 
-			     (point-min)(point-max))))))
-	  (pgg-add-passphrase-cache 
-	   (cdr (assq 'key-identifier packet))
-	   passphrase))))
-    (pgg-process-when-success
-      (let ((packet 
-	     (cdr (assq 1 (pgg-parse-armor-region 
-			   (point-min)(point-max))))))
-	(pgg-add-passphrase-cache 
-	 (cdr (assq 'key-identifier packet))
-	 passphrase)))
+    (pgg-process-when-success nil)
     ))
 
 (luna-define-method decrypt-region ((scheme pgg-scheme-pgp5) 
@@ -214,12 +193,12 @@
 	  (list (if clearsign "-fat" "-fbat")
 		"+verbose=1" "+language=us" "+batchmode=1"
 		"-u" pgg-pgp5-user-id)))
-    (pgg-pgp5-process-region start end passphrase 
-			     pgg-pgp5-pgps-program args)
+    (pgg-as-lbt start end 'CRLF
+      (pgg-pgp5-process-region start end passphrase 
+			       pgg-pgp5-pgps-program args)
+      )
     (pgg-process-when-success
-      (goto-char (point-min))
-      (while (re-search-forward "\r$" nil t)
-	(replace-match ""))
+      (pgg-convert-lbt-region (point-min)(point-max) 'LF)
       (when (re-search-forward "^-+BEGIN PGP SIGNATURE" nil t);XXX
 	(let ((packet 
 	       (cdr (assq 2 (pgg-parse-armor-region 

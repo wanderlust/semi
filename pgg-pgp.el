@@ -100,9 +100,8 @@
 	  exit-status (process-exit-status process))
     (delete-process process)
     (with-current-buffer output-buffer
-      (goto-char (point-min))
-      (while (search-forward "\r$" nil t)
-	(replace-match ""))
+      (pgg-convert-lbt-region (point-min)(point-max) 'LF)
+
       (if (memq status '(stop signal))
 	  (error "%s exited abnormally: '%s'" program exit-status))
       (if (= 127 exit-status)
@@ -143,26 +142,15 @@
 (luna-define-method encrypt-region ((scheme pgg-scheme-pgp) 
 				    start end recipients)
   (let* ((pgg-pgp-user-id pgg-default-user-id)
-	 (passphrase
-	  (pgg-read-passphrase 
-	   (format "PGP passphrase for %s: " pgg-pgp-user-id)
-	   (luna-send scheme 'lookup-key-string 
-		      scheme pgg-pgp-user-id 'encrypt)))
 	 (args 
 	  `("+encrypttoself=off +verbose=1" "+batchmode"
 	    "+language=us" "-fate"
 	    ,@(if recipients
 		  (mapcar (lambda (rcpt) (concat "\"" rcpt "\""))
 			  recipients)))))
-    (pgg-pgp-process-region start end passphrase 
+    (pgg-pgp-process-region start end nil
 			    pgg-pgp-program args)
-    (pgg-process-when-success
-      (let ((packet 
-	     (cdr (assq 1 (pgg-parse-armor-region 
-			   (point-min)(point-max))))))
-	(pgg-add-passphrase-cache 
-	 (cdr (assq 'key-identifier packet))
-	 passphrase)))
+    (pgg-process-when-success nil)
     ))
 
 (luna-define-method decrypt-region ((scheme pgg-scheme-pgp) 
@@ -191,10 +179,15 @@
 	 (args 
 	  (list (if clearsign "-fast" "-fbast")
 		"+verbose=1" "+language=us" "+batchmode"
-		"-u" pgg-pgp-user-id)))
-    (pgg-pgp-process-region start end passphrase 
-			     pgg-pgp-program args)
+		"-u" pgg-pgp-user-id))
+	 (inhibit-read-only t)
+	 buffer-read-only)
+    (pgg-as-lbt start end 'CRLF
+      (pgg-pgp-process-region start end passphrase 
+			      pgg-pgp-program args)
+      )
     (pgg-process-when-success
+      (pgg-convert-lbt-region (point-min)(point-max) 'LF)
       (goto-char (point-min))
       (when (re-search-forward "^-+BEGIN PGP" nil t);XXX
 	(let ((packet 
@@ -221,7 +214,17 @@
 			    pgg-pgp-program args)
     (delete-file orig-file)
     (if signature (delete-file signature))
-    (pgg-process-when-success nil)
+    (pgg-process-when-success
+      (goto-char (point-min))
+      (let ((case-fold-search t))
+	(while (re-search-forward "^warning: " nil t)
+	  (delete-region (match-beginning 0)
+			 (progn (beginning-of-line 2) (point)))))
+      (goto-char (point-min))
+      (when (re-search-forward "^\\.$" nil t)
+	(delete-region (point-min) 
+		       (progn (beginning-of-line 2)
+			      (point)))))
     ))
 
 (luna-define-method insert-key ((scheme pgg-scheme-pgp))
