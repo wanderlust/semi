@@ -1,3 +1,7 @@
+2000-07-12  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* REMI: Version 1.14.2 (Hokuhoku--DÒshima)-A released.
+
 2000-07-11  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
 	* mime-pgp.el (mime-view-application/pgp): Setup local variable
