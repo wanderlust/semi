@@ -38,14 +38,6 @@
     ;; for message/partial
     (require 'mime-partial)
     
-    ;; for anonymous ftp
-    (set-atype 'mime/content-decoding-condition
-	       '((type . "message/external-body")
-		 ("access-type" . "anon-ftp")
-		 (method . mime-article/decode-message/external-ftp)
-		 ))
-    (autoload 'mime-article/decode-message/external-ftp "tm-ftp")
-    
     ;; for LaTeX
     (set-atype 'mime/content-decoding-condition
 	       '((type . "text/x-latex")
