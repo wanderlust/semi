@@ -1,3 +1,8 @@
+1999-03-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-charset-type-list): Add `tis-620'.
+
+
 1999-02-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.13.3 (Komaiko) released.
