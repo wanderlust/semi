@@ -401,12 +401,7 @@ Each elements are regexp of field-name. [mime-edit.el]")
   "\\(^[BDFbdf]cc:\\|^cc:[ \t]*$\\)")
 
 (defvar mime-editor/split-message-sender-alist
-  '((mail-mode
-     . (lambda ()
-	 (interactive)
-	 (sendmail-send-it)
-	 ))
-    (mh-letter-mode
+  '((mh-letter-mode
      . (lambda (&optional arg)
 	 (interactive "P")
 	 (write-region (point-min) (point-max)
