@@ -1,3 +1,9 @@
+2001-07-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* mime-edit.el (mime-edit-translate-body): Revert; insert
+	User-Agent field.
+	(mime-edit-insert-user-agent-field): Revert docstring.
+
 2001-06-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* mime-edit.el (mime-edit-translate-body): Don't insert User-Agent
