@@ -1,3 +1,12 @@
+1999-05-20  MORIOKA Tomohiko  <morioka@mulelab3>
+
+	* NEWS (Text property `mime-view-entity-{header|body}'): New
+	subsection.
+	(Behavior change about `mime-display-header-hook'): Likewise.
+
+	* mime-view.el (mime-display-entity): Don't move to (point-max)
+	before run `mime-display-header-hook)'.
+
 1999-05-19  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-view.el (mime-display-entity): Put text-property
