@@ -1605,8 +1605,9 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 	    (insert (format "Content-Transfer-Encoding: %s\n" encoding))
 	  )
 	(insert "\n")
-	(or (funcall (pgp-function 'mime-sign)
-		     (point-min)(point-max) nil nil pgp-boundary)
+	(or (as-binary-process
+	     (funcall (pgp-function 'mime-sign)
+		      (point-min)(point-max) nil nil pgp-boundary))
 	    (throw 'mime-edit-error 'pgp-error)
 	    )
 	))))
