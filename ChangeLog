@@ -1,3 +1,8 @@
+2003-12-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mime-play.el (mime-require-safe-directory): Check the owner of the
+	directory if it already exists.
+
 2003-12-06  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* mime-play.el 	(mime-require-safe-directory): New function.

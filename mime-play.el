@@ -351,11 +351,13 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 The permission of the created directory becomes `700' (for the owner only).
 If the directory already exists and is writable by other users, an error
 occurs."
-  (let ((orig-modes (default-file-modes)))
-    (if (file-directory-p dir)
+  (let ((attr (file-attributes dir))
+	(orig-modes (default-file-modes)))
+    (if (and attr (eq (car attr) t)) ; directory already exists.
 	(unless (or (memq system-type '(windows-nt ms-dos OS/2 emx))
-		    (eq (file-modes dir) 448))
-	  (error "Invalid permission for %s" dir))
+		    (and (eq (nth 2 attr) (user-real-uid))
+			 (eq (file-modes dir) 448)))
+	  (error "Invalid owner or permission for %s" dir))
       (unwind-protect
 	  (progn
 	    (set-default-file-modes 448)
