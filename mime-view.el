@@ -830,7 +830,9 @@ The compressed face will be piped to this command.")
 	  (let ((win (get-buffer-window buf)))
 	    (if win
 		(delete-window win)
-	      ))))))
+	      ))
+	  (bury-buffer buf)
+	  ))))
 
 (defun mime-view-mode (&optional mother ctl encoding ibuf obuf
 				 default-keymap-or-function)
