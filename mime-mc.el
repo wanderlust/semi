@@ -25,6 +25,10 @@
 
 ;;; Code:
 
+(eval-when-compile
+  (load "expect" t)
+  )
+
 (require 'semi-def)
 (require 'mailcrypt)
 
