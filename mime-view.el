@@ -8,7 +8,7 @@
 ;;	Renamed: 1997/02/19 from tm-view.el
 ;; Keywords: MIME, multimedia, mail, news
 
-;; This file is part of SEMI (Sophisticated Emacs MIME Interfaces).
+;; This file is part of SEMI (Sample of Elastic MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
