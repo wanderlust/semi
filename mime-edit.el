@@ -49,13 +49,13 @@
 ;; News mode.  First of all, you need the following autoload
 ;; definition to load mime-edit-mode automatically:
 ;;
-;; (autoload 'mime-edit-mode "mime-edit"
+;; (autoload 'turn-on-mime-edit "mime-edit"
 ;;           "Minor mode for editing MIME message." t)
 ;;
 ;; In case of Mail mode (includes VM mode), you need the following
 ;; hook definition:
 ;;
-;; (add-hook 'mail-mode-hook 'mime-edit-mode)
+;; (add-hook 'mail-mode-hook 'turn-on-mime-edit)
 ;; (add-hook 'mail-send-hook 'mime-edit-maybe-translate)
 ;;
 ;; In case of MH-E, you need the following hook definition:
@@ -63,7 +63,7 @@
 ;; (add-hook 'mh-letter-mode-hook
 ;;           (function
 ;;            (lambda ()
-;;              (mime-edit-mode)
+;;              (turn-on-mime-edit)
 ;;              (make-local-variable 'mail-header-separator)
 ;;              (setq mail-header-separator "--------")
 ;;              ))))
@@ -71,7 +71,7 @@
 ;;
 ;; In case of News mode, you need the following hook definition:
 ;;
-;; (add-hook 'news-reply-mode-hook 'mime-edit-mode)
+;; (add-hook 'news-reply-mode-hook 'turn-on-mime-edit)
 ;; (add-hook 'news-inews-hook 'mime-edit-maybe-translate)
 ;;
 ;; In case of Emacs 19, it is possible to emphasize the message tags
@@ -654,19 +654,12 @@ Tspecials means any character that matches with it in header must be quoted.")
 	       )
        ))
 
-(defun mime-edit-toggle-mode ()
-  (interactive)
-  (if mime-edit-mode-flag
-      (mime-edit-exit 'nomime)
-    (mime-edit-mode)
-    ))
-
 (cond (running-xemacs
        (add-minor-mode 'mime-edit-mode-flag
 		       '((" MIME-Edit "  mime-transfer-level-string))
 		       mime-edit-mode-map
 		       nil
-		       'mime-edit-toggle-mode)
+		       'mime-edit-mode)
        )
       (t
        (set-alist 'minor-mode-alist
@@ -815,6 +808,20 @@ User customizable variables (not documented all of them):
     non-nil."
   (interactive)
   (if mime-edit-mode-flag
+      (mime-edit-exit)
+    (if (and (boundp 'mime-edit-touched-flag)
+	     mime-edit-touched-flag)
+	(mime-edit-again)
+      (make-local-variable 'mime-edit-touched-flag)
+      (setq mime-edit-touched-flag t)
+      (turn-on-mime-edit)
+      )))
+
+;;;###autoload
+(defun turn-on-mime-edit ()
+  "Unconditionally turn on MIME-Edit mode."
+  (interactive)
+  (if mime-edit-mode-flag
       (error "You are already editing a MIME message.")
     (setq mime-edit-mode-flag t)
     
@@ -824,15 +831,10 @@ User customizable variables (not documented all of them):
  	  (mime-encoding-name mime-transfer-level 'not-omit))
     (force-mode-line-update)
     
-    ;; Define menu.  Menus for other emacs implementations are
-    ;; welcome.
-    (cond (running-xemacs
-	   (mime-edit-define-menu-for-xemacs))
-          ;; ((>= emacs-major-version 19)
-          ;;  (mime-edit-define-menu-for-emacs19)
-          ;;  )
-	  )
-    ;; end
+    ;; Define menu for XEmacs.
+    (if running-xemacs
+	(mime-edit-define-menu-for-xemacs)
+      )
     
     (enable-invisible)
     
@@ -850,8 +852,7 @@ User customizable variables (not documented all of them):
     ))
 
 ;;;###autoload
-(defalias 'edit-mime 'mime-edit-mode)		; for convenience
-(defalias 'mime-mode 'mime-edit-mode)		; for convenience
+(defalias 'edit-mime 'turn-on-mime-edit) ; for convenience
 
 (defun mime-edit-exit (&optional nomime no-error)
   "Translate the tagged MIME message into a MIME compliant message.
@@ -2564,7 +2565,7 @@ converted to MIME-Edit tags."
 	   (replace-match mail-header-separator)
 	   ))
   (or no-mode
-      (mime-edit-mode)
+      (turn-on-mime-edit)
       ))
 
 
