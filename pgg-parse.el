@@ -28,7 +28,7 @@
 ;;    This module is based on
 
 ;;	[OpenPGP] RFC 2440: "OpenPGP Message Format"
-;;	    by John W. Noerenberg, II <jwn2@qualcomm.com>, 
+;;	    by John W. Noerenberg, II <jwn2@qualcomm.com>,
 ;;          Jon Callas <jon@pgp.com>, Lutz Donnerhacke <lutz@iks-jena.de>,
 ;;          Hal Finney <hal@pgp.com> and Rodney Thayer <rodney@unitran.com>
 ;;	    (1998/11)
@@ -72,7 +72,7 @@
     (2 . ZLIB))
   "Alist of the assigned number to the compression algorithm."
   :group 'pgg-parse
-  :type 'alist) 
+  :type 'alist)
 
 (defcustom pgg-parse-signature-type-alist
   '((0 . "Signature of a binary document")
@@ -81,7 +81,7 @@
     (16 . "Generic certification of a User ID and Public Key packet")
     (17 . "Persona certification of a User ID and Public Key packet")
     (18 . "Casual certification of a User ID and Public Key packet")
-    (19 . "Positive certification of a User ID and Public Key packet")  
+    (19 . "Positive certification of a User ID and Public Key packet")
     (24 . "Subkey Binding Signature")
     (31 . "Signature directly on a key")
     (32 . "Key revocation signature")
@@ -102,7 +102,7 @@
     "^-----BEGIN PGP PUBLIC KEY BLOCK-----\r?$"
     "^-----BEGIN PGP PRIVATE KEY BLOCK-----\r?$"
     "^-----BEGIN PGP SIGNATURE-----\r?$")
-  "Armor headers")
+  "Armor headers.")
 
 (defmacro pgg-format-key-identifier (string)
   `(upcase (apply #'format "%02x%02x%02x%02x%02x%02x%02x%02x"
@@ -122,7 +122,7 @@
   `(char-int (char-after (prog1 (point) (forward-char)))))
 
 (defmacro pgg-read-bytes-string (nbytes)
-  `(buffer-substring 
+  `(buffer-substring
     (point) (prog1 (+ ,nbytes (point))
 	      (forward-char ,nbytes))))
 
@@ -171,14 +171,13 @@
       (format "%c%c%c"
 	      (logand (aref h 1) 255)
 	      (logand (lsh (aref h 2) -8) 255)
-	      (logand (aref h 2) 255))))
-  )
+	      (logand (aref h 2) 255)))))
 
 (defmacro pgg-parse-length-type (c)
-  `(cond 
+  `(cond
     ((< ,c 192) (cons ,c 1))
     ((< ,c 224)
-     (cons (+ (lsh (- ,c 192) 8) 
+     (cons (+ (lsh (- ,c 192) 8)
 	      (pgg-byte-after (+ 2 (point)))
 	      192)
 	   2))
@@ -202,12 +201,11 @@
 		packet-bytes 0
 		header-bytes (1+ length-type))
 	  (dotimes (i length-type)
-	    (setq packet-bytes 
-		  (logior (lsh packet-bytes 8) 
-			  (pgg-byte-after (+ 1 i (point))))))
-	  )
+	    (setq packet-bytes
+		  (logior (lsh packet-bytes 8)
+			  (pgg-byte-after (+ 1 i (point)))))))
       (setq content-tag (logand 63 ptag)
-	    length-type (pgg-parse-length-type 
+	    length-type (pgg-parse-length-type
 			 (pgg-byte-after (1+ (point))))
 	    packet-bytes (car length-type)
 	    header-bytes (1+ (cdr length-type))))
@@ -236,23 +234,23 @@
     ;; 12       -- Trust Packet
     (13 ;User ID Packet
      (pgg-read-body-string ptag))
-    ;; 14       -- Public Subkey Packet 
+    ;; 14       -- Public Subkey Packet
     ;; 60 .. 63 -- Private or Experimental Values
     ))
 
 (defun pgg-parse-packets (&optional header-parser body-parser)
   (let ((header-parser
-	 (or header-parser 
+	 (or header-parser
 	     (function pgg-parse-packet-header)))
 	(body-parser
-	 (or body-parser 
+	 (or body-parser
 	     (function pgg-parse-packet)))
 	result ptag)
     (while (> (point-max) (1+ (point)))
       (setq ptag (funcall header-parser))
       (pgg-skip-header ptag)
-      (push (cons (car ptag) 
-		  (save-excursion 
+      (push (cons (car ptag)
+		  (save-excursion
 		    (funcall body-parser ptag)))
 	    result)
       (if (zerop (nth 1 ptag))
@@ -269,11 +267,11 @@
 (defun pgg-parse-signature-subpacket (ptag)
   (case (car ptag)
     (2 ;signature creation time
-     (cons 'creation-time 
+     (cons 'creation-time
 	   (let ((bytes (pgg-read-bytes 4)))
 	     (pgg-parse-time-field bytes))))
     (3 ;signature expiration time
-     (cons 'signature-expiry 
+     (cons 'signature-expiry
 	   (let ((bytes (pgg-read-bytes 4)))
 	     (pgg-parse-time-field bytes))))
     (4 ;exportable certification
@@ -281,12 +279,12 @@
     (5 ;trust signature
      (cons 'trust-level (pgg-read-byte)))
     (6 ;regular expression
-     (cons 'regular-expression 
+     (cons 'regular-expression
  	   (pgg-read-body-string ptag)))
     (7 ;revocable
      (cons 'revocability (pgg-read-byte)))
     (9 ;key expiration time
-     (cons 'key-expiry 
+     (cons 'key-expiry
 	   (let ((bytes (pgg-read-bytes 4)))
 	     (pgg-parse-time-field bytes))))
     ;; 10 = placeholder for backward compatibility
@@ -304,13 +302,12 @@
      (cons 'notation
 	   (let ((name-bytes (pgg-read-bytes 2))
 		 (value-bytes (pgg-read-bytes 2)))
-	     (cons (pgg-read-bytes-string 
+	     (cons (pgg-read-bytes-string
 		    (logior (lsh (car name-bytes) 8)
 			    (nth 1 name-bytes)))
-		   (pgg-read-bytes-string 
+		   (pgg-read-bytes-string
 		    (logior (lsh (car value-bytes) 8)
-			    (nth 1 value-bytes))))))
-     )
+			    (nth 1 value-bytes)))))))
     (21 ;preferred hash algorithms
      (cons 'preferred-hash-algorithm
  	   (cdr (assq (pgg-read-byte)
@@ -338,16 +335,16 @@
   (let* ((signature-version (pgg-byte-after))
 	 (result (list (cons 'version signature-version)))
 	 hashed-material field n)
-    (cond 
+    (cond
      ((= signature-version 3)
       (pgg-skip-bytes 2)
       (setq hashed-material (pgg-read-bytes 5))
-      (pgg-set-alist result 
-		     'signature-type 
+      (pgg-set-alist result
+		     'signature-type
 		     (cdr (assq (pop hashed-material)
 				pgg-parse-signature-type-alist)))
       (pgg-set-alist result
-		     'creation-time  
+		     'creation-time
 		     (pgg-parse-time-field hashed-material))
       (pgg-set-alist result
 		     'key-identifier
@@ -356,16 +353,15 @@
       (pgg-set-alist result
 		     'public-key-algorithm (pgg-read-byte))
       (pgg-set-alist result
-		     'hash-algorithm (pgg-read-byte))
-      )
+		     'hash-algorithm (pgg-read-byte)))
      ((= signature-version 4)
       (pgg-skip-bytes 1)
       (pgg-set-alist result
-		     'signature-type 
+		     'signature-type
 		     (cdr (assq (pgg-read-byte)
 				pgg-parse-signature-type-alist)))
       (pgg-set-alist result
-		     'public-key-algorithm 
+		     'public-key-algorithm
 		     (pgg-read-byte))
       (pgg-set-alist result
 		     'hash-algorithm (pgg-read-byte))
@@ -376,11 +372,10 @@
 	  (narrow-to-region (point)(+ n (point)))
 	  (nconc result
 		 (mapcar (function cdr) ;remove packet types
-			 (pgg-parse-packets 
+			 (pgg-parse-packets
 			  #'pgg-parse-signature-subpacket-header
 			  #'pgg-parse-signature-subpacket)))
-	  (goto-char (point-max)))
-	)
+	  (goto-char (point-max))))
       (when (>= 10000 (setq n (pgg-read-bytes 2)
 			    n (logior (lsh (car n) 8)
 				      (nth 1 n))))
@@ -388,11 +383,9 @@
 	  (narrow-to-region (point)(+ n (point)))
 	  (nconc result
 		 (mapcar (function cdr) ;remove packet types
-			 (pgg-parse-packets 
+			 (pgg-parse-packets
 			  #'pgg-parse-signature-subpacket-header
-			  #'pgg-parse-signature-subpacket)))
-	  ))
-      ))
+			  #'pgg-parse-signature-subpacket)))))))
 
     (setcdr (setq field (assq 'public-key-algorithm
 			      result))
@@ -410,7 +403,7 @@
 		   'version (pgg-read-byte))
     (pgg-set-alist result
 		   'key-identifier
-		   (pgg-format-key-identifier 
+		   (pgg-format-key-identifier
 		    (pgg-read-bytes-string 8)))
     (pgg-set-alist result
 		   'public-key-algorithm
@@ -442,16 +435,14 @@
       (pgg-set-alist result
 		     'key-expiry (pgg-read-bytes 2))
       (pgg-set-alist result
-		     'public-key-algorithm (pgg-read-byte))
-      )
+		     'public-key-algorithm (pgg-read-byte)))
      ((= 4 key-version)
       (pgg-set-alist result
 		     'creation-time
 		     (let ((bytes (pgg-read-bytes 4)))
 		       (pgg-parse-time-field bytes)))
       (pgg-set-alist result
-		     'public-key-algorithm (pgg-read-byte))
-      ))
+		     'public-key-algorithm (pgg-read-byte))))
 
     (setcdr (setq field (assq 'public-key-algorithm
 			      result))
@@ -469,12 +460,12 @@
     (mime-decode-region (point-min) marker "base64")
     (static-when (fboundp 'pgg-parse-crc24-string )
       (or pgg-ignore-packet-checksum
-	  (string-equal 
+	  (string-equal
 	   (funcall (mel-find-function 'mime-encode-string "base64")
-		    (pgg-parse-crc24-string 
+		    (pgg-parse-crc24-string
 		     (buffer-substring (point-min)(point-max))))
 	   checksum)
-	  (error "PGP packet checksum does not match.")))))
+	  (error "PGP packet checksum does not match")))))
 
 (defun pgg-decode-armor-region (start end)
   (save-restriction

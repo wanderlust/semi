@@ -1,4 +1,4 @@
-;;; mime-pgp.el --- mime-view internal methods foro PGP.
+;;; mime-pgp.el --- mime-view internal methods for PGP.
 
 ;; Copyright (C) 1995,1996,1997,1998,1999 MORIOKA Tomohiko
 
