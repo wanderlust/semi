@@ -41,8 +41,6 @@
     )))
 
 
-(defvar running-xemacs (string-match "XEmacs" emacs-version))
-
 ;; for image/* and X-Face
 (defvar mime-setup-enable-inline-image
   (and window-system
@@ -72,19 +70,6 @@
 			  (require 'mime-pgp)
 			  )))
   )
-
-
-;;; @ for mh-e
-;;;
-
-(defun semi-setup-load-emh ()
-  (require 'emh)
-  )
-
-(call-after-loaded 'mh-e 'semi-setup-load-emh 'mh-folder-mode-hook)
-(or (featurep 'mh-e)
-    (add-hook 'mh-letter-mode-hook 'semi-setup-load-emh)
-    )
 
 
 ;;; @ for Gnus
