@@ -1,3 +1,10 @@
+2004-09-27  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* mime-edit.el (mime-edit-temp-message-buffer): Define.
+	* mime-play.el (mime-view-temp-message-buffer): Ditto.
+	(mime-preview-quitting-method-for-mime-show-message-mode): Change
+	accordingly.
+
 2004-09-27  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* README.en (CVS based development): Mention anonymous CVS access;
