@@ -1,3 +1,9 @@
+2000-10-19  Takanori Saneto  <sanewo@ba2.so-net.ne.jp>
+
+	* pgg-pgp.el (pgg-pgp-process-region): bind process-environment
+	locally so that setenv's effect won't last forever.
+	pgg-pgp5.el (pgg-pgp5-process-region): Ditto.
+
 2000-09-13   Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-play.el (mime-play-entity): Pass easymenu-style menu to
