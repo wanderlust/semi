@@ -52,11 +52,11 @@
 ;;; @ User Variables
 ;;;
 
-(defvar mime-bbdb-use-mail-extr t
+(defvar mime-bbdb/use-mail-extr t
   "*If non-nil, `mail-extract-address-components' is used.
-Otherwise `mime-bbdb-extract-address-components' overrides it.")
+Otherwise `mime-bbdb/extract-address-components' overrides it.")
 
-(defvar mime-bbdb-auto-create-p nil
+(defvar mime-bbdb/auto-create-p nil
   "*If t, create new BBDB records automatically.
 If function, then it is called with no arguments to decide whether an
 entry should be automatically creaded.
@@ -64,7 +64,7 @@ entry should be automatically creaded.
 mime-bbdb uses this variable instead of `bbdb/mail-auto-create-p' or
 `bbdb/news-auto-create-p' unless other tm-MUA overrides it.")
 
-(defvar mime-bbdb-delete-empty-window nil
+(defvar mime-bbdb/delete-empty-window nil
   "*If non-nil, delete empty BBDB window.
 All bbdb-MUAs but bbdb-gnus display BBDB window even if it is empty.
 If you prefer behavior of bbdb-gnus, set this variable to t.
@@ -74,11 +74,11 @@ For framepop users: If empty, `framepop-banish' is used instead.")
 ;;; @ mail-extr
 ;;;
 
-(defun mime-bbdb-extract-address-components (str)
+(defun mime-bbdb/extract-address-components (str)
   (let* ((ret     (std11-extract-address-components str))
          (phrase  (car ret))
          (address (car (cdr ret)))
-         (methods mime-bbdb-canonicalize-full-name-methods))
+         (methods mime-bbdb/canonicalize-full-name-methods))
     (while (and phrase methods)
       (setq phrase  (funcall (car methods) phrase)
             methods (cdr methods)))
@@ -87,14 +87,14 @@ For framepop users: If empty, `framepop-banish' is used instead.")
     (list phrase address)
     ))
 
-(or mime-bbdb-use-mail-extr
+(or mime-bbdb/use-mail-extr
     (progn
       (require 'mail-extr) ; for `what-domain'
       (or (fboundp 'tm:mail-extract-address-components)
           (fset 'tm:mail-extract-address-components
                 (symbol-function 'mail-extract-address-components)))
       (fset 'mail-extract-address-components
-	    (symbol-function 'mime-bbdb-extract-address-components))
+	    (symbol-function 'mime-bbdb/extract-address-components))
       ))
 
 
@@ -119,7 +119,7 @@ For framepop users: If empty, `framepop-banish' is used instead.")
 ;;; @ full-name canonicalization methods
 ;;;
 
-(defun mime-bbdb-canonicalize-spaces (str)
+(defun mime-bbdb/canonicalize-spaces (str)
   (let (dest)
     (while (string-match "\\s +" str)
       (setq dest (cons (substring str 0 (match-beginning 0)) dest))
@@ -131,7 +131,7 @@ For framepop users: If empty, `framepop-banish' is used instead.")
     (mapconcat 'identity dest " ")
     ))
 
-(defun mime-bbdb-canonicalize-dots (str)
+(defun mime-bbdb/canonicalize-dots (str)
   (let (dest)
     (while (string-match "\\." str)
       (setq dest (cons (substring str 0 (match-end 0)) dest))
@@ -143,26 +143,26 @@ For framepop users: If empty, `framepop-banish' is used instead.")
     (mapconcat 'identity dest " ")
     ))
 
-(defvar mime-bbdb-canonicalize-full-name-methods
+(defvar mime-bbdb/canonicalize-full-name-methods
   '(eword-decode-string
-    mime-bbdb-canonicalize-dots
-    mime-bbdb-canonicalize-spaces))
+    mime-bbdb/canonicalize-dots
+    mime-bbdb/canonicalize-spaces))
 
 
 ;;; @ BBDB functions for mime-view-mode
 ;;;
 
-(defun mime-bbdb-update-record (&optional offer-to-create)
+(defun mime-bbdb/update-record (&optional offer-to-create)
   "Return the record corresponding to the current MIME previewing message.
 Creating or modifying it as necessary. A record will be created if
-mime-bbdb-auto-create-p is non-nil, or if OFFER-TO-CREATE is non-nil and
+mime-bbdb/auto-create-p is non-nil, or if OFFER-TO-CREATE is non-nil and
 the user confirms the creation."
   (save-excursion
     (if (and mime::article/preview-buffer
              (get-buffer mime::article/preview-buffer))
         (set-buffer mime::article/preview-buffer))
     (if bbdb-use-pop-up
-        (mime-bbdb-pop-up-bbdb-buffer offer-to-create)
+        (mime-bbdb/pop-up-bbdb-buffer offer-to-create)
       (let* ((from (std11-field-body "From"))
              (addr (if from
 		       (car (cdr (mail-extract-address-components from))))))
@@ -174,41 +174,41 @@ the user confirms the creation."
         (if from
             (bbdb-annotate-message-sender
              from t
-             (or (bbdb-invoke-hook-for-value mime-bbdb-auto-create-p)
+             (or (bbdb-invoke-hook-for-value mime-bbdb/auto-create-p)
                  offer-to-create)
              offer-to-create))
         ))))
 
-(defun mime-bbdb-annotate-sender (string)
+(defun mime-bbdb/annotate-sender (string)
   "Add a line to the end of the Notes field of the BBDB record
 corresponding to the sender of this message."
   (interactive
    (list (if bbdb-readonly-p
              (error "The Insidious Big Brother Database is read-only.")
            (read-string "Comments: "))))
-  (bbdb-annotate-notes (mime-bbdb-update-record t) string))
+  (bbdb-annotate-notes (mime-bbdb/update-record t) string))
 
-(defun mime-bbdb-edit-notes (&optional arg)
+(defun mime-bbdb/edit-notes (&optional arg)
   "Edit the notes field or (with a prefix arg) a user-defined field
 of the BBDB record corresponding to the sender of this message."
   (interactive "P")
-  (let ((record (or (mime-bbdb-update-record t)
+  (let ((record (or (mime-bbdb/update-record t)
                     (error ""))))
     (bbdb-display-records (list record))
     (if arg
 	(bbdb-record-edit-property record nil t)
       (bbdb-record-edit-notes record t))))
 
-(defun mime-bbdb-show-sender ()
+(defun mime-bbdb/show-sender ()
   "Display the contents of the BBDB for the sender of this message.
 This buffer will be in bbdb-mode, with associated keybindings."
   (interactive)
-  (let ((record (mime-bbdb-update-record t)))
+  (let ((record (mime-bbdb/update-record t)))
     (if record
 	(bbdb-display-records (list record))
 	(error "unperson"))))
 
-(defun mime-bbdb-pop-up-bbdb-buffer (&optional offer-to-create)
+(defun mime-bbdb/pop-up-bbdb-buffer (&optional offer-to-create)
   "Make the *BBDB* buffer be displayed along with the MIME preview window(s),
 displaying the record corresponding to the sender of the current message."
   (let ((framepop (eq temp-buffer-show-function 'framepop-display-buffer)))
@@ -223,7 +223,7 @@ displaying the record corresponding to the sender of the current message."
     (let ((bbdb-gag-messages t)
           (bbdb-use-pop-up nil)
           (bbdb-electric-p nil))
-      (let ((record (mime-bbdb-update-record offer-to-create))
+      (let ((record (mime-bbdb/update-record offer-to-create))
             (bbdb-elided-display (bbdb-pop-up-elided-display))
             (b (current-buffer)))
         (if framepop
@@ -232,18 +232,18 @@ displaying the record corresponding to the sender of the current message."
               (framepop-banish))
           (bbdb-display-records (if record (list record) nil))
           (if (and (null record)
-                   mime-bbdb-delete-empty-window)
+                   mime-bbdb/delete-empty-window)
               (delete-windows-on (get-buffer "*BBDB*"))))
         (set-buffer b)
         record))))
 
-(defun mime-bbdb-define-keys ()
+(defun mime-bbdb/define-keys ()
   (let ((mime-view-mode-map (current-local-map)))
-    (define-key mime-view-mode-map ";" 'mime-bbdb-edit-notes)
-    (define-key mime-view-mode-map ":" 'mime-bbdb-show-sender)
+    (define-key mime-view-mode-map ";" 'mime-bbdb/edit-notes)
+    (define-key mime-view-mode-map ":" 'mime-bbdb/show-sender)
     ))
 
-(add-hook 'mime-view-define-keymap-hook 'mime-bbdb-define-keys)
+(add-hook 'mime-view-define-keymap-hook 'mime-bbdb/define-keys)
 
 
 ;;; @ for signature.el
