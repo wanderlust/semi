@@ -1,3 +1,8 @@
+1999-04-14  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-translate-buffer): Do `undo-boundary'
+	before translating.
+
 1999-04-13  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-mc.el (mime-mc-pgp50-sign-region, mime-mc-gpg-sign-region):

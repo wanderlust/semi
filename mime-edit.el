@@ -1625,6 +1625,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 (defun mime-edit-translate-buffer ()
   "Encode the tagged MIME message in current buffer in MIME compliant message."
   (interactive)
+  (undo-boundary)
   (if (catch 'mime-edit-error
 	(save-excursion
 	  (run-hooks 'mime-edit-translate-buffer-hook)
