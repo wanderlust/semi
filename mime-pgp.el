@@ -168,16 +168,17 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	 )
     (save-excursion (mime-show-echo-buffer))
     (mime-write-entity-content entity sig-file)
-    (with-temp-buffer
-      (mime-insert-entity orig-entity)
-      (goto-char (point-min))
-      (while (progn (end-of-line) (not (eobp)))
-	(insert "\r")
-	(forward-line 1))
-      (let ((pgg-output-buffer mime-echo-buffer-name))
-	(funcall (pgp-function 'verify) 
-		 (point-min)(point-max) sig-file 'fetch)))
-    (delete-file sig-file)
+    (unwind-protect
+	(with-temp-buffer
+	  (mime-insert-entity orig-entity)
+	  (goto-char (point-min))
+	  (while (progn (end-of-line) (not (eobp)))
+	    (insert "\r")
+	    (forward-line 1))
+	  (let ((pgg-output-buffer mime-echo-buffer-name))
+	    (funcall (pgp-function 'verify) 
+		     (point-min)(point-max) sig-file 'fetch)))
+      (delete-file sig-file))
     ))
 
 
