@@ -1,6 +1,7 @@
 ;;; mime-edit.el --- Simple MIME Composer for GNU Emacs
 
-;; Copyright (C) 1993,94,95,96,97,98,99,2000 Free Software Foundation, Inc.
+;; Copyright (C) 1993,94,95,96,97,98,99,2000,01,02,03
+;;   Free Software Foundation, Inc.
 
 ;; Author: UMEDA Masanobu <umerin@mse.kyutech.ac.jp>
 ;;	MORIOKA Tomohiko <tomo@kanji.zinbun.kyoto-u.ac.jp>
@@ -650,7 +651,10 @@ If it is not specified for a major-mode,
 	  (if (fboundp 'apel-version)
 	      (concat (apel-version) " "))
 	  (if (featurep 'xemacs)
-	      (concat (cond ((featurep 'utf-2000)
+	      (concat (cond ((and (featurep 'chise)
+				  (boundp 'xemacs-chise-version))
+			     (concat "CHISE-MULE/" xemacs-chise-version))
+			    ((featurep 'utf-2000)
 			     (concat "UTF-2000-MULE/" utf-2000-version))
 			    ((featurep 'mule) "MULE"))
 		      " XEmacs"
