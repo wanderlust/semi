@@ -329,14 +329,14 @@ composer です。
 
 @menu
 * mime-edit-mode::              MIME message を編集するための minor-mode
-* single-part operations::      single-part に対する操作
-* enclosure operation::         enclosure に対する操作
-* other operations of mime-edit-mode::  mime-edit-mode におけるその他の操作
-* tag specification for inserted file::  挿入される file に対する tag の決定
+* single-part tags::            single-part に対する操作
+* enclosure tags::              enclosure に対する操作
+* other MIME-Edit operations::  mime-edit-mode におけるその他の操作
+* file-type specification::     挿入される file に対する tag の決定
 * transfer level::              
 @end menu
 
-@node mime-edit-mode, single-part operations, MIME-Edit, MIME-Edit
+@node mime-edit-mode, single-part tags, MIME-Edit, MIME-Edit
 @section MIME message を編集するための minor-mode
 @cindex enclosure
 @cindex multi-part 終了 tag
@@ -405,7 +405,7 @@ part の終了を示す tag があります。
 @strong{enclosure} と呼びます。
 
 
-@node single-part operations, enclosure operation, mime-edit-mode, MIME-Edit
+@node single-part tags, enclosure tags, mime-edit-mode, MIME-Edit
 @section single-part に対する操作
 
 single-part を作るための操作には以下のようなものがあります。
@@ -445,7 +445,7 @@ PGP (@ref{PGP}) の公開鍵を挿入します。
 
 
 
-@node enclosure operation, other operations of mime-edit-mode, single-part operations, MIME-Edit
+@node enclosure tags, other MIME-Edit operations, single-part tags, MIME-Edit
 @section enclosure に対する操作
 
 enclosure を作るための操作としては以下のようなものがあります。
@@ -478,7 +478,7 @@ enclosure を作るための操作としては以下のようなものがあります。
 
 
 
-@node other operations of mime-edit-mode, tag specification for inserted file, enclosure operation, MIME-Edit
+@node other MIME-Edit operations, file-type specification, enclosure tags, MIME-Edit
 @section mime-edit-mode におけるその他の操作
 
 mime-edit-mode におけるその他の操作を説明します。
@@ -518,11 +518,11 @@ help message を表示します。
 
 
 
-@node tag specification for inserted file, transfer level, other operations of mime-edit-mode, MIME-Edit
+@node file-type specification, transfer level, other MIME-Edit operations, MIME-Edit
 @section 挿入される file に対する tag の決定
 
-@kbd{C-c C-x C-i} (@code{mime-editor/insert-file}) を実行した時、挿入さ
-れる file に対する media-type や encoding などの tag の情報は変数 
+@kbd{C-c C-x C-i} (@code{mime-edit-insert-file}) を実行した時、挿入され
+る file に対する media-type や encoding などの tag の情報は変数 
 @code{mime-file-types} によって file 名から推測されます。@refill
 
 前に @kbd{C-u} を付けた時、および、適当な値が見付からなかった場合、user 
@@ -587,7 +587,7 @@ Content-Disposition field の parameter
 
 
 
-@node transfer level,  , tag specification for inserted file, MIME-Edit
+@node transfer level,  , file-type specification, MIME-Edit
 @section transfer level
 @cindex transfer level
 
