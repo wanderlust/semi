@@ -25,7 +25,7 @@
 ;;; Code:
 
 (require 'w3)
-(require 'mime-text)
+(require 'mime)
 
 (defmacro mime-put-keymap-region (start end keymap)
   `(put-text-property ,start ,end

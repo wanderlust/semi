@@ -31,7 +31,6 @@
 (require 'filename)
 
 (eval-when-compile
-  (require 'mime-text)
   (condition-case nil
       (require 'bbdb)
     (error (defvar bbdb-buffer-name nil)))

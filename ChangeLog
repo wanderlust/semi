@@ -1,3 +1,18 @@
+1998-10-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el, SEMI-ELS: Move function `mime-display-text/plain',
+	`mime-display-text/enriched' and `mime-display-text/richtext' from
+	mime-text to mime-view.el; abolish mime-text.el.
+
+	* mime-play.el: Don't Require `mime-text' when compiling.
+
+	* mime-w3.el: Require `mime' instead of `mime-text'.
+
+1998-10-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* semi-setup.el (mime-setup-enable-inline-image): Use `(featurep
+	'xemacs)' instead of `running-xemacs'.
+
 1998-10-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* README.en (Required environment): Modify to require APEL 9.5 and
