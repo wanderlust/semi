@@ -634,65 +634,59 @@ Tspecials means any character that matches with it in header must be quoted.")
 (defvar mime-edit-mode-flag nil)
 (make-variable-buffer-local 'mime-edit-mode-flag)
 
+(defvar mime-edit-mode-entity-prefix "\C-c\C-x"
+  "Keymap prefix for MIME-Edit mode commands to insert entity or set status.")
+(defvar mime-edit-mode-entity-map (make-sparse-keymap)
+  "Keymap for MIME-Edit mode commands to insert entity or set status.")
+
+(define-key mime-edit-mode-entity-map "\C-t" 'mime-edit-insert-text)
+(define-key mime-edit-mode-entity-map "\C-i" 'mime-edit-insert-file)
+(define-key mime-edit-mode-entity-map "\C-e" 'mime-edit-insert-external)
+(define-key mime-edit-mode-entity-map "\C-v" 'mime-edit-insert-voice)
+(define-key mime-edit-mode-entity-map "\C-y" 'mime-edit-insert-message)
+(define-key mime-edit-mode-entity-map "\C-m" 'mime-edit-insert-mail)
+(define-key mime-edit-mode-entity-map "\C-w" 'mime-edit-insert-signature)
+(define-key mime-edit-mode-entity-map "\C-s" 'mime-edit-insert-signature)
+(define-key mime-edit-mode-entity-map "\C-k" 'mime-edit-insert-key)
+(define-key mime-edit-mode-entity-map "t"    'mime-edit-insert-tag)
+
+(define-key mime-edit-mode-entity-map "7" 'mime-edit-set-transfer-level-7bit)
+(define-key mime-edit-mode-entity-map "8" 'mime-edit-set-transfer-level-8bit)
+(define-key mime-edit-mode-entity-map "/" 'mime-edit-set-split)
+(define-key mime-edit-mode-entity-map "s" 'mime-edit-set-sign)
+(define-key mime-edit-mode-entity-map "v" 'mime-edit-set-sign)
+(define-key mime-edit-mode-entity-map "e" 'mime-edit-set-encrypt)
+(define-key mime-edit-mode-entity-map "h" 'mime-edit-set-encrypt)
+(define-key mime-edit-mode-entity-map "p" 'mime-edit-preview-message)
+(define-key mime-edit-mode-entity-map "\C-z" 'mime-edit-exit)
+(define-key mime-edit-mode-entity-map "?" 'mime-edit-help)
+
+(defvar mime-edit-mode-enclosure-prefix "\C-c\C-m"
+  "Keymap prefix for MIME-Edit mode commands about enclosure.")
+(defvar mime-edit-mode-enclosure-map (make-sparse-keymap)
+  "Keymap for MIME-Edit mode commands about enclosure.")
+
+(define-key mime-edit-mode-enclosure-map
+  "\C-a" 'mime-edit-enclose-alternative-region)
+(define-key mime-edit-mode-enclosure-map
+  "\C-p" 'mime-edit-enclose-parallel-region)
+(define-key mime-edit-mode-enclosure-map
+  "\C-m" 'mime-edit-enclose-mixed-region)
+(define-key mime-edit-mode-enclosure-map
+  "\C-d" 'mime-edit-enclose-digest-region)
+(define-key mime-edit-mode-enclosure-map
+  "\C-s" 'mime-edit-enclose-signed-region)
+(define-key mime-edit-mode-enclosure-map
+  "\C-e" 'mime-edit-enclose-encrypted-region)
+(define-key mime-edit-mode-enclosure-map
+  "\C-q" 'mime-edit-enclose-quote-region)
+
 (defvar mime-edit-mode-map (make-sparse-keymap)
   "Keymap for MIME-Edit mode commands.")
-
 (define-key mime-edit-mode-map
-  "\C-c\C-x\C-t"	'mime-edit-insert-text)
+  mime-edit-mode-entity-prefix mime-edit-mode-entity-map)
 (define-key mime-edit-mode-map
-  "\C-c\C-x\C-i"	'mime-edit-insert-file)
-(define-key mime-edit-mode-map
-  "\C-c\C-x\C-e"	'mime-edit-insert-external)
-(define-key mime-edit-mode-map
-  "\C-c\C-x\C-v"	'mime-edit-insert-voice)
-(define-key mime-edit-mode-map
-  "\C-c\C-x\C-y"	'mime-edit-insert-message)
-(define-key mime-edit-mode-map
-  "\C-c\C-x\C-m"	'mime-edit-insert-mail)
-(define-key mime-edit-mode-map
-  "\C-c\C-x\C-w"	'mime-edit-insert-signature)
-(define-key mime-edit-mode-map
-  "\C-c\C-x\C-s"	'mime-edit-insert-signature)
-(define-key mime-edit-mode-map
-  "\C-c\C-x\C-k"	'mime-edit-insert-key)
-(define-key mime-edit-mode-map
-  "\C-c\C-xt"		'mime-edit-insert-tag)
-
-(define-key mime-edit-mode-map
-  "\C-c\C-m\C-a"	'mime-edit-enclose-alternative-region)
-(define-key mime-edit-mode-map
-  "\C-c\C-m\C-p"	'mime-edit-enclose-parallel-region)
-(define-key mime-edit-mode-map
-  "\C-c\C-m\C-m"	'mime-edit-enclose-mixed-region)
-(define-key mime-edit-mode-map
-  "\C-c\C-m\C-d"	'mime-edit-enclose-digest-region)
-(define-key mime-edit-mode-map
-  "\C-c\C-m\C-s"	'mime-edit-enclose-signed-region)
-(define-key mime-edit-mode-map
-  "\C-c\C-m\C-e"	'mime-edit-enclose-encrypted-region)
-(define-key mime-edit-mode-map
-  "\C-c\C-m\C-q"	'mime-edit-enclose-quote-region)
-
-(define-key mime-edit-mode-map
-  "\C-c\C-x7"		'mime-edit-set-transfer-level-7bit)
-(define-key mime-edit-mode-map
-  "\C-c\C-x8"		'mime-edit-set-transfer-level-8bit)
-(define-key mime-edit-mode-map
-  "\C-c\C-x/"		'mime-edit-set-split)
-(define-key mime-edit-mode-map
-  "\C-c\C-xs"		'mime-edit-set-sign)
-(define-key mime-edit-mode-map
-  "\C-c\C-xv"		'mime-edit-set-sign)
-(define-key mime-edit-mode-map
-  "\C-c\C-xe"		'mime-edit-set-encrypt)
-(define-key mime-edit-mode-map
-  "\C-c\C-xh"		'mime-edit-set-encrypt)
-(define-key mime-edit-mode-map
-  "\C-c\C-x\C-p"	'mime-edit-preview-message)
-(define-key mime-edit-mode-map
-  "\C-c\C-x\C-z"	'mime-edit-exit)
-(define-key mime-edit-mode-map
-  "\C-c\C-x?"		'mime-edit-help)
+  mime-edit-mode-enclosure-prefix mime-edit-mode-enclosure-map)
 
 (defconst mime-edit-menu-title "MIME-Edit")
 
