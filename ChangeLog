@@ -1,3 +1,16 @@
+1998-06-24  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+
+	* semi-def.el (mime-browse-url-regexp): Renamed from
+	`mime-text-url-regexp'.
+	(mime-browse-url): Renamed from `mime-text-browse-url'.
+	(mime-browse-add-url-buttons): Renamed from
+	`mime-text-add-url-buttons'.
+	(mime-browse-add-url-buttons-maybe): Renamed from
+	`mime-text-add-url-buttons-maybe'.
+
+	* mime-text.el: Moved URL stuff to semi-def.el.
+
+
 1998-06-24  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.8.0 (Toyama) released.
@@ -737,7 +750,7 @@
 	`bbdb-buffer-name' to avoid compiler warning.
 
 	(mime-method-to-display-caesar): Abolish unused local variable.
-	
+
 	Use `eval-buffer' to eval contents of
 	`mime-acting-situation-examples-file'.
 
@@ -922,7 +935,7 @@
 
 	* mime-parse.el: Move 'regexp-* and 'regexp-or to mime-def.el of
 	FLIM (Chao); move 'std11-quoted-pair-regexp, 'std11-qtext-regexp
-	and 'std11-quoted-string-regexp to mime-def.el of FLIM (Chao).	
+	and 'std11-quoted-string-regexp to mime-def.el of FLIM (Chao).
 
 1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -948,7 +961,7 @@
 
 	* mime-play.el (mime-raw-play-entity): Abolish point correcting
 	procedures for VM.
-	
+
 	* mime-play.el (mime-preview-play-current-entity): Do widen befor
 	playing the entity.
 
@@ -1101,7 +1114,7 @@
 
 	* mime-view.el (mime-raw-get-subject): Use
 	'mime-content-disposition-parameters.
-	
+
 	* mime-play.el (mime-raw-get-original-filename): Use
 	'mime-content-disposition-parameters.
 
@@ -1740,7 +1753,7 @@
 
 	* mime-view.el (mime-view-body-visible-condition): New variable.
 	(mime-view-body-visible-p): Use `mime-view-body-visible-condition'
- 	instead of `mime-view-visible-media-type-list'.  	
+ 	instead of `mime-view-visible-media-type-list'.
 	Abolish `mime-view-visible-media-type-list'.
 
 	* mime-parse.el (mime-type/subtype-string): New function.
@@ -2442,12 +2455,12 @@
 1997-09-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-parse.el: Abolish macro `define-structure'.
-	
+
 	(make-mime-entity-info, mime-entity-info-rnum,
 	mime-entity-info-point-min, mime-entity-info-point-max,
 	mime-entity-info-parameters, mime-entity-info-encoding,
 	mime-entity-info-children): New implementation.
-	
+
 	(mime-entity-info-media-type, mime-entity-info-media-subtype): New
 	inline function.
 
@@ -2716,7 +2729,7 @@
 
 	* mime-view.el (mime-view-insert-entity-button,
 	mime-preview/display-message/partial): Use `mime-insert-button'.
-	
+
 	(mime-view-setup-buffers): Enclose codes to display preview-buffer
 	by `(let ((inhibit-read-only t)) ...)'.
 
@@ -2868,7 +2881,7 @@ Wed May  7 10:04:36 1997  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 Wed May  7 09:37:54 1997  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-play.el: Don't require `view'.
-	
+
 	Constant `mime-view-text/plain-mode-map' was abolished.
 
 	Function `mime-view-text/plain-mode' and
@@ -3480,7 +3493,7 @@ Mon Mar 10 15:16:26 1997  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-edit.el: `mime-edit-mode' -> `turn-on-mime-edit';
  	`mime-edit-toggle-mode' -> `mime-edit-mode'.
-  	
+
 	Alias `mime-mode' was abolished.
 
 1997-03-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
@@ -3623,14 +3636,14 @@ Sat Mar  1 03:39:01 1997  Tomohiko Morioka  <tmorioka@mule.etl.go.jp>
 	(invisible-region, invisible-p, next-visible-point): New function;
  	copied from emu-19.el and emu-xemacs.el.
 	(visible-region): New function; copied from emu-19.el.
-		
+
 	* mime-edit.el (mime-edit-make-boundary): New function.
 	(mime-edit-translate-body, mime-edit-translate-region): Use
 	`mime-edit-make-boundary'.
-	
+
 	* mime-edit.el (replace-space-with-underline): New inline
 	function; copied from tl-str.el.
-	
+
 Sat Mar  1 02:07:00 1997  Tomohiko Morioka  <tmorioka@mule.etl.go.jp>
 
 	* eword-encode.el (find-non-ascii-charset-region): New
@@ -3779,11 +3792,11 @@ Thu Feb 27 06:38:44 1997  Tomohiko Morioka  <tmorioka@mule.etl.go.jp>
 
 	* mime-text.el: `tm:mother-button-dispatcher' ->
  	`mime-button-mother-dispatcher'.
-	
+
 	* mime-def.el, mime-text.el (mime-preview/filter-for-text/plain),
  	mime-view.el, mime-tar.el (mime-tar-set-properties):
  	`tm:add-button' -> `mime-add-button'.
-	
+
 	* mime-file.el: Renamed from tm-file.el.
 
 Wed Feb 26 13:01:25 1997  Tomohiko Morioka  <tmorioka@mule.etl.go.jp>
@@ -3948,20 +3961,20 @@ Mon Feb 24 09:04:48 1997  Tomohiko Morioka  <tmorioka@mule.etl.go.jp>
  	quoted-printable-octet-regexp, eword-Q-encoded-text-regexp,
  	eword-Q-encoding-and-encoded-text-regexp): New constant; moved
  	from mime-def.el.
-	
+
 	* mime-def.el (quoted-printable-hex-chars,
  	quoted-printable-octet-regexp, eword-Q-encoded-text-regexp,
  	eword-Q-encoding-and-encoded-text-regexp): Moved to
  	eword-decode.el.
-	
+
 	* eword-decode.el (base64-token-regexp,
  	base64-token-padding-regexp, eword-B-encoded-text-regexp): New
  	constant; moved from mime-def.el.
-	
+
 	* mime-def.el: Constant `base64-token-regexp',
  	`base64-token-padding-regexp' and `eword-B-encoded-text-regexp'
  	were moved to eword-decode.el.
-	
+
 	* mime-def.el: Constant `eword-B-encoding-and-encoded-text-regexp'
  	was abolished.
 
@@ -4052,7 +4065,7 @@ Sat Feb 22 17:30:15 1997  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
  	from `mime/field-encoding-method-alist'.
 
 	* eword-encode.el: Renamed from tm-ew-e.el.
-	
+
 	* eword-decode.el: Renamed from tm-ew-d.el.
 
 	* mime-view.el: Don't require tm-def.
@@ -4085,7 +4098,7 @@ Sat Feb 22 17:30:15 1997  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
  	from `mime/field-encoding-method-alist'.
 
 	* eword-encode.el: Renamed from tm-ew-e.el.
-	
+
 	* eword-decode.el: Renamed from tm-ew-d.el.
 
 	* mime-view.el: Don't require tm-def.
@@ -4303,7 +4316,7 @@ Sat May 25 16:04:28 1996  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-edit.el (mime-editor/enquote-region): New command; bound to
  	`C-c C-x q'.
-	
+
 	(mime-editor/menu-list): New item for function
  	`mime-editor/enquote-region'.
 
