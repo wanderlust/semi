@@ -766,8 +766,8 @@ Each elements are regexp of field-name.")
     (condition-case nil
 	(if (and mime-preview-inline-fontify
 		 (mime-entity-filename entity))	;should be an attachment.
-	    (mime-display-inline-fontify entity)
-	  (mime-insert-text-content entity))
+	    (mime-view-insert-fontified-text-content entity situation)
+	  (mime-view-insert-text-content entity situation))
       (error (progn
 	       (message "Can't decode current entity.")
 	       (sit-for 1))))
@@ -784,7 +784,7 @@ Each elements are regexp of field-name.")
 (defun mime-display-text/richtext (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
-    (mime-insert-text-content entity)
+    (mime-view-insert-text-content entity situation)
     (run-hooks 'mime-text-decode-hook)
     (let ((beg (point-min)))
       (remove-text-properties beg (point-max) '(face nil))
@@ -793,7 +793,7 @@ Each elements are regexp of field-name.")
 (defun mime-display-text/enriched (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
-    (mime-insert-text-content entity)
+    (mime-view-insert-text-content entity situation)
     (run-hooks 'mime-text-decode-hook)
     (let ((beg (point-min)))
       (remove-text-properties beg (point-max) '(face nil))
@@ -906,8 +906,21 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	      (cons original-major-mode-cell default-situation)))
     (mime-display-entity start nil default-situation)))
 
+(defun mime-view-insert-text-content (entity situation)
+  (if (eq last-command 'universal-coding-system-argument)
+      (insert
+       (decode-coding-string
+	(mime-decode-string
+	 (mime-entity-body entity)
+	 (or (cdr (assq 'encoding situation))
+	     (mime-entity-encoding entity)
+	     "7bit"))
+	coding-system-for-read))
+    (mime-insert-text-content entity)))
+
 ;;; stolen (and renamed) from mm-view.el.
-(defun mime-display-inline-fontify (entity &optional mode)
+(defun mime-view-insert-fontified-text-content (entity situation
+						       &optional mode)
   ;; XEmacs @#$@ version of font-lock refuses to fully turn itself
   ;; on for buffers whose name begins with " ".  That's why we use
   ;; save-current-buffer/get-buffer-create rather than
@@ -919,7 +932,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
       (buffer-disable-undo)
       (kill-all-local-variables)
       (erase-buffer)
-      (mime-insert-text-content entity)
+      (mime-view-insert-text-content entity situation)
       (unwind-protect
 	  (progn
 	    (if mode
@@ -944,7 +957,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 (defun mime-display-application/emacs-lisp (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
-    (mime-display-inline-fontify entity 'emacs-lisp-mode)
+    (mime-view-insert-fontified-text-content entity situation 'emacs-lisp-mode)
     (run-hooks 'mime-text-decode-hook 'mime-display-text/plain-hook)))
 
 
