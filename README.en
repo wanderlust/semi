@@ -45,8 +45,9 @@ Required environment
   nil. (Maybe non mule setting requires to modify emu.  In addition,
   it is better to use terminal-coding-system feature)
 
-  SEMI requires APEL (8.7 or later) and FLIM package.  Please install
-  them before installing it.  APEL package is available at:
+  SEMI requires APEL (8.7 or later) and FLIM (1.1.0 or later) package.
+  Please install them before installing it.  APEL package is available
+  at:
 
 	ftp://ftp.jaist.ac.jp/pub/GNU/elisp/apel/
 
