@@ -1,5 +1,10 @@
 1997-09-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-def.el (butlast): New function; imported from cl.el.
+	(nbutlast): New function; imported from cl.el.
+
+1997-09-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-view-cut-header): Don't use `member-if'.
 
 	* mime-def.el: Don't require cl.
