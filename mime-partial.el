@@ -50,7 +50,7 @@
 	 (subject-buf (eval (cdr (assq 'summary-buffer-exp cal))))
 	 subject-id
 	 (root-dir (expand-file-name
-		    (concat "m-prts-" (user-login-name)) mime/tmp-dir))
+		    (concat "m-prts-" (user-login-name)) mime-temp-directory))
 	 full-file)
     (setq root-dir (concat root-dir "/" (replace-as-filename id)))
     (setq full-file (concat root-dir "/FULL"))
