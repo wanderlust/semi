@@ -455,7 +455,7 @@ MODE is allows `text', `comment', `phrase' or nil.  Default value is
 	 (list (list (concat "<" (std11-addr-to-string route) ">") nil nil))
 	 ))))
 
-(defun tm-eword::addr-spec-to-rwl (addr-spec)
+(defun eword-addr-spec-to-rwl (addr-spec)
   (if (eq (car addr-spec) 'addr-spec)
       (list (list (std11-addr-to-string (cdr addr-spec)) nil nil))
     ))
@@ -465,7 +465,7 @@ MODE is allows `text', `comment', `phrase' or nil.  Default value is
 	(comment (nth 2 mbox))
 	dest)
     (setq dest (or (tm-eword::phrase-route-addr-to-rwl addr)
-		   (tm-eword::addr-spec-to-rwl addr)
+		   (eword-addr-spec-to-rwl addr)
 		   ))
     (if comment
 	(setq dest
