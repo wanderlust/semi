@@ -42,7 +42,7 @@
 ;;; @ variables
 ;;;
 
-(defvar mime/field-encoding-method-alist
+(defvar eword-field-encoding-method-alist
   (if (boundp 'mime/no-encoding-header-fields)
       (nconc
        (mapcar (function
@@ -556,14 +556,14 @@ when Subject field is encoded by `eword-encode-message-header'.")
 	  (setq end (std11-field-end))
 	  (and (find-non-ascii-charset-region beg end)
 	       (let ((ret (or (ASSOC (downcase field-name)
-				     mime/field-encoding-method-alist
+				     eword-field-encoding-method-alist
 				     :test (function
 					    (lambda (str1 str2)
 					      (and (stringp str2)
 						   (string= str1
 							    (downcase str2))
 						   ))))
-			      (assq t mime/field-encoding-method-alist)
+			      (assq t eword-field-encoding-method-alist)
 			      )))
 		 (if ret
 		     (let ((method (cdr ret)))
@@ -598,7 +598,7 @@ when Subject field is encoded by `eword-encode-message-header'.")
 				  str
 				  (or (cdr (ASSOC
 					    "x-nsubject"
-					    mime/field-encoding-method-alist
+					    eword-field-encoding-method-alist
 					    :test
 					    (function
 					     (lambda (str1 str2)
