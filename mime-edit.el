@@ -1898,46 +1898,61 @@ Content-Transfer-Encoding: 7bit
 	(while (re-search-forward mime-editor/single-part-tag-regexp nil t)
 	  (setq nparts (1+ nparts)))
 	;; Begin translation.
-	(cond ((and (<= nparts 1)(not multipart))
-	       ;; It's a singular message.
-	       (goto-char (point-min))
-	       (while (re-search-forward
-		       mime-editor/single-part-tag-regexp nil t)
-		 (setq tag
-		       (buffer-substring (match-beginning 0) (match-end 0)))
-		 (delete-region (match-beginning 0) (1+ (match-end 0)))
-		 (setq contype (mime-editor/get-contype tag))
-		 (setq encoding (mime-editor/get-encoding tag))
-		 ))
-	      (t
-	       ;; It's a multipart message.
-	       (goto-char (point-min))
-	       (while (re-search-forward
-		       mime-editor/single-part-tag-regexp nil t)
-		 (setq tag
-		       (buffer-substring (match-beginning 0) (match-end 0)))
-		 (delete-region (match-beginning 0) (match-end 0))
-		 (setq contype (mime-editor/get-contype tag))
-		 (setq encoding (mime-editor/get-encoding tag))
-		 (insert "--" boundary "\n")
-		 (insert "Content-Type: " contype "\n")
-		 (if encoding
-		     (insert "Content-Transfer-Encoding: " encoding "\n"))
-		 )
-	       ;; Define Content-Type as "multipart/mixed".
-	       (setq contype
-		     (concat "multipart/mixed;\n boundary=\"" boundary "\""))
-	       ;; Content-Transfer-Encoding must be "7bit".
-	       ;; The following encoding can be `nil', but is
-	       ;; specified as is since there is no way that a user
-	       ;; specifies it.
-	       (setq encoding "7bit")
-	       ;; Insert the trailer.
-	       (goto-char (point-max))
-	       (if multipart
-		   (insert "--" boundary "--\n")
-		 (insert "\n--" boundary "--\n")
-		 )))
+	(cond
+	 ((and (<= nparts 1)(not multipart))
+	  ;; It's a singular message.
+	  (goto-char (point-min))
+	  (while (re-search-forward
+		  mime-editor/single-part-tag-regexp nil t)
+	    (setq tag
+		  (buffer-substring (match-beginning 0) (match-end 0)))
+	    (delete-region (match-beginning 0) (1+ (match-end 0)))
+	    (setq contype (mime-editor/get-contype tag))
+	    (setq encoding (mime-editor/get-encoding tag))
+	    ))
+	 (t
+	  ;; It's a multipart message.
+	  (goto-char (point-min))
+	  (if (re-search-forward
+	       mime-editor/single-part-tag-regexp nil t)
+	      (progn
+		(setq tag
+		      (buffer-substring
+		       (match-beginning 0) (match-end 0)))
+		(delete-region (match-beginning 0) (match-end 0))
+		(setq contype (mime-editor/get-contype tag))
+		(setq encoding (mime-editor/get-encoding tag))
+		(insert "--" boundary "\n")
+		(insert "Content-Type: " contype "\n")
+		(if encoding
+		    (insert "Content-Transfer-Encoding: " encoding "\n"))
+		
+		(while (re-search-forward
+			mime-editor/single-part-tag-regexp nil t)
+		  (setq tag
+			(buffer-substring (match-beginning 0) (match-end 0)))
+		  (delete-region (match-beginning 0) (match-end 0))
+		  (setq contype (mime-editor/get-contype tag))
+		  (setq encoding (mime-editor/get-encoding tag))
+		  (insert "\n--" boundary "\n")
+		  (insert "Content-Type: " contype "\n")
+		  (if encoding
+		      (insert "Content-Transfer-Encoding: " encoding "\n"))
+		  )))
+	  ;; Define Content-Type as "multipart/mixed".
+	  (setq contype
+		(concat "multipart/mixed;\n boundary=\"" boundary "\""))
+	  ;; Content-Transfer-Encoding must be "7bit".
+	  ;; The following encoding can be `nil', but is
+	  ;; specified as is since there is no way that a user
+	  ;; specifies it.
+	  (setq encoding "7bit")
+	  ;; Insert the trailer.
+	  (goto-char (point-max))
+	  (if multipart
+	      (insert "--" boundary "--\n")
+	    (insert "\n--" boundary "--\n")
+	    )))
 	(list contype encoding boundary nparts)
 	))))
 
