@@ -35,6 +35,11 @@
   (delq 'ascii (find-charset-string string))
   )
 
+(defsubst find-non-ascii-charset-region (start end)
+  "Return a list of charsets except ascii in the region between START and END."
+  (delq 'ascii (find-charset-string (buffer-substring start end)))
+  )
+
 
 ;;; @ version
 ;;;
