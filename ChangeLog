@@ -1,3 +1,9 @@
+1999-12-08   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* SEMI-ELS (semi-modules-to-compile): Add smime.el.
+
+	* smime.el: New file.
+
 1999-11-30  Tsukamoto Tetsuo  <czkmt@remus.dti.ne.jp>
 
 	* mime-edit.el (mime-edit-decode-message-in-buffer): Don't decode
