@@ -27,20 +27,6 @@
 (require 'mime-view)
 
 
-;;; @ buffer local variables in raw-buffer
-;;;
-
-(defvar mime-raw-representation-type nil
-  "Representation-type of mime-raw-buffer.
-It must be nil, `binary' or `cooked'.
-If it is nil, `mime-raw-representation-type-alist' is used as default
-value.
-Notice that this variable is usually used as buffer local variable in
-raw-buffer.")
-
-(make-variable-buffer-local 'mime-raw-representation-type)
-
-
 ;;; @ code conversion
 ;;;
 
