@@ -210,8 +210,7 @@ If is is not found, return DEFAULT-ENCODING."
   (let* ((dash-boundary
 	  (concat "--"
 		  (std11-strip-quoted-string
-		   (cdr (assoc "boundary"
-			       (mime-content-type-parameters content-type))))))
+		   (mime-content-type-parameter content-type "boundary"))))
 	 (delimiter       (concat "\n" (regexp-quote dash-boundary)))
 	 (close-delimiter (concat delimiter "--[ \t]*$"))
 	 (beg (point-min))
