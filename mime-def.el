@@ -548,6 +548,12 @@ ROT47 will be performed for Japanese text in any case."
 ;;; @ Other Utility
 ;;;
 
+(defsubst eliminate-top-spaces (string)
+  "Eliminate top sequence of space or tab in STRING."
+  (if (string-match "^[ \t]+" string)
+      (substring string (match-end 0))
+    string))
+
 (defun call-after-loaded (module func &optional hook-name)
   "If MODULE is provided, then FUNC is called.
 Otherwise func is set to MODULE-load-hook.
