@@ -506,6 +506,27 @@ such as a version of Net$cape)."
 	    ))))
     result))
 
+(defun eword-decode-and-unfold-structured-field (string)
+  "Decode and unfold STRING as structured field body.
+It decodes non us-ascii characters in FULL-NAME encoded as
+encoded-words or invalid \"raw\" string.  \"Raw\" non us-ascii
+characters are regarded as variable `default-mime-charset'.
+
+If an encoded-word is broken or your emacs implementation can not
+decode the charset included in it, it is not decoded."
+  (let ((tokens (eword-lexical-analyze string 'must-unfold))
+	(result ""))
+    (while tokens
+      (let* ((token (car tokens))
+	     (type (car token)))
+	(setq tokens (cdr tokens))
+	(setq result
+	      (if (eq type 'spaces)
+		  (concat result " ")
+		(concat result (eword-decode-token token))
+		))))
+    result))
+
 (defun eword-decode-structured-field-body (string &optional must-unfold
 						  start-column max-column)
   "Decode non us-ascii characters in STRING as structured field body.
