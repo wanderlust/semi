@@ -661,23 +661,16 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 
 (defun mime-view-caesar (entity situation)
   "Internal method for mime-view to display ROT13-47-48 message."
-  (let* ((new-name (format "%s-%s" (buffer-name)
-			   (mime-entity-number entity)))
-	 (mother (current-buffer)))
-    (let ((pwin (or (get-buffer-window mother)
-		    (get-largest-window)))
-	  (buf (get-buffer-create new-name)))
-      (set-window-buffer pwin buf)
-      (set-buffer buf)
-      (select-window pwin)
+  (let ((buf (get-buffer-create
+	      (format "%s-%s" (buffer-name) (mime-entity-number entity)))))
+    (with-current-buffer buf
+      (setq buffer-read-only nil)
+      (erase-buffer)
+      (mime-insert-text-content entity)
+      (mule-caesar-region (point-min) (point-max))
+      (set-buffer-modified-p nil)
       )
-    (setq buffer-read-only nil)
-    (erase-buffer)
-    (mime-insert-text-content entity)
-    (mule-caesar-region (point-min) (point-max))
-    (set-buffer-modified-p nil)
-    (set-buffer mother)
-    (view-buffer new-name)
+    (view-buffer buf)
     ))
 
 
