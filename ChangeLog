@@ -1,4 +1,4 @@
-1998-11-17  Kazuhiro Ohta  <ohta@ele.cst.nihon-u.ac.jp>
+1998-11-17  Kazuhiro Ohta     <ohta@ele.cst.nihon-u.ac.jp>
 
 	* mime-partial.el
 	(mime-combine-message/partial-pieces-automatically): Fix
