@@ -1,5 +1,29 @@
 1998-10-31  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-edit.el (mime-edit-decode-multipart-in-buffer): Change
+	interface.
+	(mime-edit-decode-single-part-in-buffer): New function.
+	(mime-edit-decode-message-in-buffer): Swap arguments; use function
+	`mime-edit-decode-single-part-in-buffer'.
+	(mime-edit-again): Modify for
+	`mime-edit-decode-message-in-buffer'.
+
+1998-10-31  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-decode-multipart-in-buffer): New
+	function.
+	(mime-edit-decode-message-in-buffer): Add new optional argument
+	`default-content-type'; use function
+	`mime-edit-decode-multipart-in-buffer'; add autoload cookie.
+	(mime-edit-again): Add autoload cookie.
+
+	* mime-edit.el (mime-edit-decode-message-in-buffer): Renamed from
+	`mime-edit-decode-buffer'; change `not-decode-text' to optional
+	argument.
+
+
+1998-10-31  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* SEMI: Version 1.10.2 (Higashi-Kanazawa) released.
 
 1998-10-29  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
