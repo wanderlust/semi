@@ -1,3 +1,19 @@
+1999-04-08  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-mc.el (mime-mc-pgp50-sign-region, mime-mc-gpg-sign-region):
+	Detect and cache the value of message integrity check algorithm
+	before signing if the value of `mime-mc-ommit-micalg' is nil.
+	(mime-mc-gpg-process-region): Show boundary in
+	`mc-gpg-debug-buffer'.
+	(mime-mc-pgp-process-region, mime-mc-pgp50-process-region,
+	mime-mc-gpg-process-region): Add doc string.
+	(mime-mc-micalg-alist): New variable.
+	(mime-mc-ommit-micalg): New user option.
+	(TopLevel): Require `alist' and `std11'.
+
+	* mime-pgp.el (TopLevel): Add comment that this module is based on
+	draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME) as well.
+
 1999-04-06  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-pgp.el (mime-pgp-bad-signature-post-function-pgp50-us): New

@@ -42,6 +42,10 @@
 ;;	    by Kazuhiko Yamamoto <kazu@is.aist-nara.ac.jp> (1995/10;
 ;;	    expired)
 
+;;	[OpenPGP/MIME] draft-yamamoto-openpgp-mime-00.txt: "MIME
+;;	    Security with OpenPGP (OpenPGP/MIME)" by Kazuhiko YAMAMOTO
+;;	    <kazu@iijlab.net> (1998/1)
+
 ;;; Code:
 
 (require 'std11)
@@ -114,27 +118,12 @@
     (set-window-buffer p-win mime-preview-buffer)
     ))
 
-(defun mime-pgp-detect-version (entity)
-  "Detect PGP version from detached signature."
-  (with-temp-buffer
-    (mime-insert-entity-content entity)
-    (std11-narrow-to-header)
-    (let ((version (std11-fetch-field "Version")))
-      (cond ((not version)
-	     pgp-version)
-	    ((string-match "GnuPG" version)
-	     'gpg)
-	    ((string-match "5\\.0i" version)
-	     'pgp50)
-	    ((string-match "2\\.6" version)
-	     'pgp)
-	    (t
-	     pgp-version)))))
-
 
 ;;; @ Internal method for application/pgp-signature
 ;;;
-;;; It is based on RFC 2015 (PGP/MIME).
+;;; It is based on RFC 2015 (PGP/MIME) and
+;;; draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME).
+
 
 (defcustom mime-pgp-command-alist '((gpg   . "gpg")
 				    (pgp50 . "pgp")
@@ -306,6 +295,23 @@ or \"v\" for choosing a command of PGP 5.0i."
 	      (cdr (assq pgp-version mime-pgp-key-expected-regexp-alist))
 	      )))
 
+(defun mime-pgp-detect-version (entity)
+  "Detect PGP version from detached signature."
+  (with-temp-buffer
+    (mime-insert-entity-content entity)
+    (std11-narrow-to-header)
+    (let ((version (std11-fetch-field "Version")))
+      (cond ((not version)
+	     pgp-version)
+	    ((string-match "GnuPG" version)
+	     'gpg)
+	    ((string-match "5\\.0i" version)
+	     'pgp50)
+	    ((string-match "2\\.6" version)
+	     'pgp)
+	    (t
+	     pgp-version)))))
+
 (defun mime-pgp-check-signature (output-buffer orig-file)
   (with-current-buffer output-buffer
     (erase-buffer)
@@ -464,7 +470,8 @@ key-ID if it is found."
 
 ;;; @ Internal method for application/pgp-encrypted
 ;;;
-;;; It is based on RFC 2015 (PGP/MIME).
+;;; It is based on RFC 2015 (PGP/MIME) and
+;;; draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME).
 
 (defun mime-decrypt-application/pgp-encrypted (entity situation)
   (let* ((entity-node-id (mime-entity-node-id entity))
@@ -481,7 +488,8 @@ key-ID if it is found."
 
 ;;; @ Internal method for application/pgp-keys
 ;;;
-;;; It is based on RFC 2015 (PGP/MIME).
+;;; It is based on RFC 2015 (PGP/MIME) and
+;;; draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME).
 
 (defun mime-add-application/pgp-keys (entity situation)
   (let* ((start (mime-entity-point-min entity))

@@ -25,6 +25,8 @@
 
 ;;; Code:
 
+(require 'alist)
+(require 'std11)
 (require 'semi-def)
 (require 'mailcrypt)
 
@@ -46,6 +48,29 @@
      (mc-snarf-keys		"mc-toplev")
      )))
 
+(defcustom mime-mc-shell-file-name "/bin/sh"
+  "File name to load inferior shells from.  Bourne shell or its equivalent
+\(not tcsh) is needed for \"2>\"."
+  :group 'mime
+  :type 'file)
+
+(defcustom mime-mc-ommit-micalg nil
+  "Non-nil value means to ommit the micalg parameter for multipart/signed.
+See draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME) for more information."
+  :group 'mime
+  :type 'boolean)
+
+
+;;; @ Internal variable
+;;;
+
+(defvar mime-mc-micalg-alist nil
+  "Alist of KeyID and the value of message integrity check algorithm.")
+
+
+;;; @ External variables (for avoid byte compile warnings)
+;;;
+
 (defvar mc-gpg-comment)
 (defvar mc-gpg-extra-args)
 (defvar mc-gpg-path)
@@ -56,12 +81,6 @@
 (defvar mc-pgp-comment)
 (defvar mc-pgp-path)
 (defvar mc-pgp-user-id)
-
-(defcustom mime-mc-shell-file-name "/bin/sh"
-  "File name to load inferior shells from.  Bourne shell or its equivalent
-\(not tcsh) is needed for \"2>\"."
-  :group 'mime
-  :type 'file)
 
 
 ;;; @ Generic functions
@@ -124,6 +143,8 @@ VERSION should be a string or a symbol."
 
 (defun mime-mc-gpg-process-region
   (beg end passwd program args parser bufferdummy boundary)
+  "Similar to `mc-gpg-process-region', however enclose an processed data
+with BOUNDARY if it is specified."
   (let ((obuf (current-buffer))
 	(process-connection-type nil)
 	(shell-file-name mime-mc-shell-file-name)
@@ -134,8 +155,9 @@ VERSION should be a string or a symbol."
 	proc rc status parser-result
 	)
     (mc-gpg-debug-print (format
-			 "(mc-gpg-process-region beg=%s end=%s passwd=%s program=%s args=%s parser=%s bufferdummy=%s)"
-			 beg end passwd program args parser bufferdummy))
+			 "(mc-gpg-process-region beg=%s end=%s passwd=%s program=%s args=%s parser=%s bufferdummy=%s boundary=%s)"
+			 beg end passwd program args parser bufferdummy
+			 boundary))
     (setq stderr-tempfilename
 	  (make-temp-name (expand-file-name "mailcrypt-gpg-stderr-"
 					    mc-temp-directory)))
@@ -283,31 +305,53 @@ Content-Transfer-Encoding: 7bit
 	passwd args key
 	(parser (function mc-gpg-insert-parser))
 	(pgp-path mc-gpg-path)
-	)
+	micalg)
     (setq key (mc-gpg-lookup-key (or id mc-gpg-user-id)))
     (setq passwd
 	  (mc-activate-passwd
 	   (cdr key)
 	   (format "GnuPG passphrase for %s (%s): " (car key) (cdr key))))
-    (setq args
-	  (cons
-	   (if boundary
-	       "--detach-sign"
-	     (if unclear
-		 "--sign"
-	       "--clearsign"))
-	   (list "--armor" "--batch" "--textmode" "--verbose"
-		 "--local-user" (cdr key))))
+    (setq args (cons
+		(if boundary
+		    "--detach-sign"
+		  (if unclear
+		      "--sign"
+		    "--clearsign")
+		  )
+		(list "--armor" "--batch" "--textmode" "--verbose"
+		      "--local-user" (cdr key))
+		))
     (if mc-gpg-comment
 	(setq args (nconc args
 			  (list "--comment"
 				(format "\"%s\"" mc-gpg-comment))))
       )
-    (if (and boundary
-	     (string-match "^pgp-" boundary))
-	(setq boundary
-	      (concat "gpg-" (substring boundary (match-end 0))))
-      )
+    (if boundary
+	(progn
+	  (if (string-match "^pgp-" boundary)
+	      (setq boundary
+		    (concat "gpg-" (substring boundary (match-end 0))))
+	    )
+	  (if (not (or mime-mc-ommit-micalg
+		       (setq micalg
+			     (cdr (assoc (cdr key) mime-mc-micalg-alist)))
+		       ))
+	      (with-temp-buffer
+		(message "Detecting the value of `micalg'...")
+		(insert "\n")
+		(mime-mc-gpg-process-region
+		 1 2 passwd pgp-path
+		 (list "--clearsign" "--armor" "--batch" "--textmode"
+		       "--verbose" "--local-user" (cdr key))
+		 parser buffer nil
+		 )
+		(std11-narrow-to-header)
+		(setq micalg
+		      (downcase (or (std11-fetch-field "Hash") "md5"))
+		      )
+		(set-alist 'mime-mc-micalg-alist (cdr key) micalg)
+		))
+	  ))
     (message "Signing as %s ..." (car key))
     (if (mime-mc-gpg-process-region
 	 start end passwd pgp-path args parser buffer boundary)
@@ -318,8 +362,13 @@ Content-Transfer-Encoding: 7bit
 		(insert
 		 (format "\
 --[[multipart/signed; protocol=\"application/pgp-signature\";
- boundary=\"%s\"; micalg=pgp-sha1][7bit]]\n" boundary))
-		))
+ boundary=\"%s\"%s][7bit]]\n"
+			 boundary
+			 (if mime-mc-ommit-micalg
+			     ""
+			   (concat "; micalg=pgp-" micalg)
+			   )
+			 ))))
 	  (message "Signing as %s ... Done." (car key))
 	  t)
       nil)))
@@ -342,6 +391,8 @@ Content-Transfer-Encoding: 7bit
 
 (defun mime-mc-pgp50-process-region
   (beg end passwd program args parser &optional buffer boundary)
+  "Similar to `mc-pgp50-process-region', however enclose an processed data
+with BOUNDARY if it is specified."
   (let ((obuf (current-buffer))
 	(process-connection-type nil)
 	(shell-file-name mime-mc-shell-file-name)
@@ -525,24 +576,40 @@ Content-Transfer-Encoding: 7bit
 		    (function mime-mc-pgp50-sign-parser)
 		  (function mc-pgp50-sign-parser)))
 	(pgp-path mc-pgp50-pgps-path)
-	)
+	micalg)
     (setq key (mc-pgp50-lookup-key (or id mc-pgp50-user-id)))
     (setq passwd
 	  (mc-activate-passwd
 	   (cdr key)
 	   (format "PGP passphrase for %s (%s): " (car key) (cdr key))))
     (setenv "PGPPASSFD" "0")
-    (setq args
-	  (cons
-	   (if boundary
-	       "-fbat"
-	     "-fat")
-	   (list "+verbose=1" "+language=us"
-		 (format "+clearsig=%s" (if unclear "off" "on"))
-		 "+batchmode" "-u" (cdr key))))
+    (setq args (if boundary
+		   (list "-fbat" "+verbose=1" "+language=us" "+batchmode"
+			 "-u" (cdr key))
+		 (list "-fat" "+verbose=1" "+language=us"
+		       (format "+clearsig=%s" (if unclear "off" "on"))
+		       "+batchmode" "-u" (cdr key))
+		 ))
     (if mc-pgp50-comment
 	(setq args (cons (format "+comment=\"%s\"" mc-pgp50-comment) args))
       )
+    (if (and boundary
+	     (not (or mime-mc-ommit-micalg
+		      (setq micalg
+			    (cdr (assoc (cdr key) mime-mc-micalg-alist)))
+		      )))
+	(with-temp-buffer
+	  (message "Detecting the value of `micalg'...")
+	  (insert "\n")
+	  (mime-mc-pgp50-process-region
+	   1 2 passwd pgp-path
+	   (list "-fat" "+verbose=1" "+language=us" "+clearsig=on"
+		 "+batchmode" "-u" (cdr key))
+	   (function mc-pgp50-sign-parser) buffer nil)
+	  (std11-narrow-to-header)
+	  (setq micalg (downcase (or (std11-fetch-field "Hash") "md5")))
+	  (set-alist 'mime-mc-micalg-alist (cdr key) micalg)
+	  ))
     (message "Signing as %s ..." (car key))
     (if (mime-mc-pgp50-process-region
 	 start end passwd pgp-path args parser buffer boundary)
@@ -553,8 +620,13 @@ Content-Transfer-Encoding: 7bit
 		(insert
 		 (format "\
 --[[multipart/signed; protocol=\"application/pgp-signature\";
- boundary=\"%s\"; micalg=pgp-sha1][7bit]]\n" boundary))
-		))
+ boundary=\"%s\"%s][7bit]]\n"
+			 boundary
+			 (if mime-mc-ommit-micalg
+			     ""
+			   (concat "; micalg=pgp-" micalg)
+			   )
+			 ))))
 	  (message "Signing as %s ... Done." (car key))
 	  t)
       nil)))
@@ -577,6 +649,8 @@ Content-Transfer-Encoding: 7bit
 
 (defun mime-mc-process-region
   (beg end passwd program args parser &optional buffer boundary)
+  "Similar to `mc-pgp-process-region', however enclose an processed data
+with BOUNDARY if it is specified."
   (let ((obuf (current-buffer))
 	(process-connection-type nil)
 	mybuf result rgn proc)
@@ -682,8 +756,13 @@ Content-Transfer-Encoding: 7bit
 		(insert
 		 (format "\
 --[[multipart/signed; protocol=\"application/pgp-signature\";
- boundary=\"%s\"; micalg=pgp-md5][7bit]]\n" boundary))
-		))
+ boundary=\"%s\"%s][7bit]]\n"
+			 boundary
+			 (if mime-mc-ommit-micalg
+			     ""
+			   "; micalg=pgp-md5"
+			   )
+			 ))))
 	  (message "Signing as %s ... Done." (car key))
 	  t)
       nil)))
