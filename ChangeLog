@@ -1,3 +1,8 @@
+1998-10-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-decode-buffer): Call
+	`mule-caesar-region' for text/x-rot13-47-48 entity.
+
 1998-09-22  Shozo UEHARA      <uehara@eken.phys.nagoya-u.ac.jp>
 
 	* mime-play.el (mime-raw-play-entity): Initialize `max-escore' by
