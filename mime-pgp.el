@@ -95,7 +95,7 @@
 			  (and
 			   (search-forward "\n\n")
 			   (match-end 0)))
-	   (setq text-decoder (function mime-charset/decode-buffer))
+	   (setq text-decoder (function mime-text-decode-buffer))
 	   ))
     (setq major-mode 'mime/show-message-mode)
     (setq mime-text-decoder text-decoder)
