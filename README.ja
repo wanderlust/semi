@@ -43,7 +43,7 @@ SEMI とは?
  SEMI は、Emacs 19.29 から 19.34, XEmacs 19.15 または XEmacs 20.2 につ
  いても対応はしていませんが、動くかもしれません。
 
- SEMI は、APEL (9.22 以降) と FLIM (1.14.2 以降) を必要とします。 SEMI 
+ SEMI は、APEL (9.22 以降) と FLIM (1.14.2 以降) を必要とします。 SEMI
  をインストールする前に、これらをインストールしてください。APEL は、以
  下で入手可能です。:
 
@@ -103,9 +103,9 @@ SEMI とは?
 
         % make install LISPDIR=~/share/emacs/lisp
 
- もし、`LISPDIR=...' が省略されると、指定した emacs コマンドの 
+ もし、`LISPDIR=...' が省略されると、指定した emacs コマンドの
  site-lisp ディレクトリが使用されます(たぶん、
- /usr/local/share/emacs/site-lisp または 
+ /usr/local/share/emacs/site-lisp または
  /usr/local/lib/xemacs/site-lisp)。
 
  もし、emu モジュール (APEL に含まれている)が一般的ではないディレクト
@@ -140,7 +140,7 @@ SEMI とは?
 (a,b,c)
 
  あなたは、${archive}/SEMI-CFG というファイルを書き換えることにより、
- 他のオプションの設定を指定することができます。${archive}/README.en と 
+ 他のオプションの設定を指定することができます。${archive}/README.en と
  ${archive}/SEMI-CFG のコメントを読んでください。
 
 初期化
@@ -176,7 +176,7 @@ SEMI とは?
         emacs-mime-en@m17n.org  (英語)
         emacs-mime-ja@m17n.org  (日本語)
 
- EMACS-MIME ML を経由して、あなたは SEMI のバグを報告することや、SEMI 
+ EMACS-MIME ML を経由して、あなたは SEMI のバグを報告することや、SEMI
  の最新版の入手、SEMI の将来の強化について議論することなどができます。
  EMACS-MIME ML に加入するためには、本文に
 
@@ -214,11 +214,6 @@ CVS に基づいた開発
         cvs@cvs.m17n.org
 
  CVSROOT は、:ext:cvs@cvs.m17n.org:/cvs/root です。
-
- もし、あなたが ssh を使用できないのであれば、UNIX の /etc/passwd 型に暗号
- 化されたパスワードを送信してください。あなたは CVSROOT を
- :pserver:<accountname>@cvs.m17n.org:/cvs/root
- として参加することができます。
 
  我々は、あなたが開かれた開発に参加してくださることを期待しています。
 
