@@ -25,6 +25,7 @@
 ;;; Code:
 
 (require 'semi-setup)
+(require 'alist)
 
 
 (autoload 'turn-on-mime-edit "mime-edit"
