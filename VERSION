@@ -59,8 +59,10 @@
 1.7.0	Mizuhashi		$(B?e66(B
 1.7.1	Higashi-Toyama		$(BElIY;3(B
 1.8.0	Toyama			$(BIY;3(B		; = JR $(B9b;3K\@~!"IY;39A@~(B
-:	:			:
--------	Takaoka			$(B9b2,(B		; = JR $(BI98+@~!">kC<@~(B
+1.8.1	Kureha			$(B8b1)(B
+-----	Kosugi			$(B>.?y(B
+-----	Ecch-Dþ-Daimon-A		$(B1[CfBgLg(B
+-----	Takaoka			$(B9b2,(B		; = JR $(BI98+@~!">kC<@~(B
 :	:			:
 -------	Higashi-Kanazawa	$(BEl6bBt(B
 -------	Kanazawa		$(B6bBt(B		; <=> $(BKLN&E4F;(B $(BKLE46bBt(B
@@ -87,61 +89,62 @@
 ;;	East Japan Railway	$(BElF|K\N95RE4F;(B	http://www.jreast.co.jp/
 ;;	T-Dòkaidò-A Line		$(BEl3$F;K\@~(B
 ;;-------------------------------------------------------------------------
-1.2.0	T-Dòkyò-A		$(BEl5~(B
-1.2.1	Shinbashi	$(B?766(B	; = JR $(B;3<j@~!"2#?\2l@~(B
-1.2.2	Shinagawa	$(BIJ@n(B	; = JR $(B;3<j@~!"2#?\2l@~(B
-1.2.3	Kawasaki	$(B@n:j(B	; = JR $(BFnIp@~(B
-1.2.4	Yokohama	$(B2#IM(B	; = JR $(B5~IMElKL@~!&:,4_@~!"2#?\2l@~(B
-1.3.0	Totsuka		$(B8MDM(B	; = JR $(B2#?\2l@~(B
-1.3.1	-DÒfuna-A		$(BBgA%(B	; = JR $(B:,4_@~!"2#?\2l@~(B
-1.4.0	Fujisawa	$(BF#Bt(B	; <=> $(B>.ED5^EEE4(B $(B9>%NEg@~!"9>%NEgEEE4(B
-1.4.1	Tsujid-Dò-A		$(@DT$(BF2(B	; $(B!J!V$(@DT$(B!W(B= J90@B-4454:128b$(B!K(B
-1.4.2	Chigasaki	$(B3}%v:j(B	; = JR $(BAjLO@~(B
-1.4.3	Hiratsuka	$(BJ?DM(B
-1.4.4	-DÒiso-A		$(BBg0k(B
-1.4.5	Ninomiya	$(BFs5\(B
-1.4.6	K-Dòzu-A		$(B9qI\DE(B	; = JR $(B8fEB>l@~(B
-1.5.0	Kamonomiya	$(B3{5\(B
-1.5.1	Odawara		$(B>.ED86(B	; <=> $(B>.ED5^!"H":,EP;3E4F;!"0KF&H":,E4F;(B
-1.5.2	Hayakawa	$(BAa@n(B
-1.5.3	Nebukawa	$(B:,I\@n(B
-1.5.4	Manazuru	$(B??Da(B
-1.6.0	Yugawara	$(BEr2O86(B
-1.7.0	Atami		$(BG.3$(B	; = JR $(B0KEl@~(B
+1.2.0	T-Dòkyò-A			$(BEl5~(B
+1.2.1	Shinbashi		$(B?766(B	; = JR $(B;3<j@~!"2#?\2l@~(B
+1.2.2	Shinagawa		$(BIJ@n(B	; = JR $(B;3<j@~!"2#?\2l@~(B
+1.2.3	Kawasaki		$(B@n:j(B	; = JR $(BFnIp@~(B
+1.2.4	Yokohama		$(B2#IM(B	; = JR $(B5~IMElKL@~!&:,4_@~!"2#?\2l@~(B
+1.3.0	Totsuka			$(B8MDM(B	; = JR $(B2#?\2l@~(B
+1.3.1	-DÒfuna-A			$(BBgA%(B	; = JR $(B:,4_@~!"2#?\2l@~(B
+1.4.0	Fujisawa		$(BF#Bt(B	; <=> $(B>.ED5^EEE4(B $(B9>%NEg@~!"9>%NEgEEE4(B
+1.4.1	Tsujid-Dò-A			$(@DT$(BF2(B	; $(B!J!V$(@DT$(B!W(B= J90@B-4454:128b$(B!K(B
+1.4.2	Chigasaki		$(B3}%v:j(B	; = JR $(BAjLO@~(B
+1.4.3	Hiratsuka		$(BJ?DM(B
+1.4.4	-DÒiso-A			$(BBg0k(B
+1.4.5	Ninomiya		$(BFs5\(B
+1.4.6	K-Dòzu-A			$(B9qI\DE(B	; = JR $(B8fEB>l@~(B
+1.5.0	Kamonomiya		$(B3{5\(B
+1.5.1	Odawara			$(B>.ED86(B	; <=> $(B>.ED5^!"H":,EP;3E4F;!"(B
+					;     $(B0KF&H":,E4F;(B
+1.5.2	Hayakawa		$(BAa@n(B
+1.5.3	Nebukawa		$(B:,I\@n(B
+1.5.4	Manazuru		$(B??Da(B
+1.6.0	Yugawara		$(BEr2O86(B
+1.7.0	Atami			$(BG.3$(B	; = JR $(B0KEl@~(B
 ;;-------------------------------------------------------------------------
 ;;	Central Japan Railway	$(BEl3$N95RE4F;(B
 ;;-------------------------------------------------------------------------
-1.7.1	Kan'nami	$(BH!Fn(B
-1.8.0	Mishima		$(B;0Eg(B	; = $(B0KF&H":,E4F;(B
------	Numazu		$(B>BDE(B	; = JR $(B8fEB>l@~(B
------	Katahama	$(BJRIM(B
------	Hara		$(B86(B
+1.7.1	Kan'nami		$(BH!Fn(B
+1.8.0	Mishima			$(B;0Eg(B	; = $(B0KF&H":,E4F;(B
+-----	Numazu			$(B>BDE(B	; = JR $(B8fEB>l@~(B
+-----	Katahama		$(BJRIM(B
+-----	Hara			$(B86(B
 -----	Higashi-Tagonoura	$(BElED;R%N1:(B
------	Yoshiwara	$(B5H86(B	; = $(B3YFnE4F;(B
------	Fuji		$(BIY;N(B	; = JR $(B?H1d@~(B
-:	:		:
------	Kanayama	$(B6b;3(B	; =$(B!J(BJR $(BCf1{K\@~!K(B
------	Ot-Dòbashi-A	$(BHxF,66(B
------	Nagoya		$(BL>8E20(B	; = JR $(B4X@>K\@~!J!&Cf1{K\@~!K(B
-:	:		:
------	Gifu		$(B4tIl(B	; = JR $(B9b;3K\@~(B
-:	:		:
------	Samegai		$(B@C%v0f(B
+-----	Yoshiwara		$(B5H86(B	; = $(B3YFnE4F;(B
+-----	Fuji			$(BIY;N(B	; = JR $(B?H1d@~(B
+:	:			:
+-----	Kanayama		$(B6b;3(B	; =$(B!J(BJR $(BCf1{K\@~!K(B
+-----	Ot-Dòbashi-A		$(BHxF,66(B
+-----	Nagoya			$(BL>8E20(B	; = JR $(B4X@>K\@~!J!&Cf1{K\@~!K(B
+:	:			:
+-----	Gifu			$(B4tIl(B	; = JR $(B9b;3K\@~(B
+:	:			:
+-----	Samegai			$(B@C%v0f(B
 ;;-------------------------------------------------------------------------
 ;;	West Japan Railway	$(B@>F|K\N95RE4F;(B	http://www.westjr.co.jp/
 ;;-------------------------------------------------------------------------
------	Maibara		$(BJF86(B	; = JR $(BKLN&K\@~(B
-:	:		:
------	Kusatsu		$(BApDE(B	; = JR $(BApDE@~(B
-:	:		:
------	Yamashina	$(B;32J(B	; = JR $(B8P@>@~(B
------	Ky-Dòto-A		$(B5~ET(B	; = JR $(BF`NI@~!&;31"K\@~(B
-				;   <=> $(B6aE4(B $(B5~ET@~!"5~ET;T8rDL6I(B $(B1(4]@~(B
-:	:		:
------	-DÒsaka-A		$(BBg:e(B	; = JR $(BBg:e4D>u@~(B <=> JR $(BEl@>@~(B $(BKL?7CO(B
-				;   <=> $(BBg:e;T8rDL6I!":e?@!":e5^(B $(BG_ED(B
-:	:		:
------	K-Dòbe-A		$(B?@8M(B	; = JR $(B;3M[K\@~(B
+-----	Maibara			$(BJF86(B	; = JR $(BKLN&K\@~(B
+:	:			:
+-----	Kusatsu			$(BApDE(B	; = JR $(BApDE@~(B
+:	:			:
+-----	Yamashina		$(B;32J(B	; = JR $(B8P@>@~(B
+-----	Ky-Dòto-A			$(B5~ET(B	; = JR $(BF`NI@~!&;31"K\@~(B
+					; <=> $(B6aE4(B $(B5~ET@~!"5~ET;T8rDL6I(B $(B1(4]@~(B
+:	:			:
+-----	-DÒsaka-A			$(BBg:e(B	; = JR $(BBg:e4D>u@~(B <=> JR $(BEl@>@~(B $(BKL?7CO(B
+					;   <=> $(BBg:e;T8rDL6I!":e?@!":e5^(B $(BG_ED(B
+:	:			:
+-----	K-Dòbe-A			$(B?@8M(B	; = JR $(B;3M[K\@~(B
 
 
 [REMI version names]
@@ -153,11 +156,11 @@
 1.4.0	Himi			$(BI98+(B
 1.5.0	Shimao			$(BEgHx(B
 1.6.0	Amaharashi		$(B1+@2(B
-1.7.0	Ecch-Dþ-Kokubu-A		$(B1[Cf9qJ,(B
--------	Fushiki			$(BIzLZ(B
+1.8.0	Ecch-Dþ-Kokubu-A		$(B1[Cf9qJ,(B
+1.8.1	Fushiki			$(BIzLZ(B	; <=> $(B%&%i%8%*%9%C%H%C%/9RO)(B
 -------	Noumachi		$(BG=D.(B
 -------	Ecch-Dþ-Nakagawa-A		$(B1[CfCf@n(B
-	(Takaoka)		($(B9b2,(B)		; = JR $(BKLN&K\@~!">kC<@~(B
+	(Takaoka)		($(B9b2,(B)	; = JR $(BKLN&K\@~!">kC<@~(B
 
 
 [etc.]
@@ -169,4 +172,4 @@
 -------	(-DÒmi-Shiotsu)-A		($(B6a9>1vDE(B)	; = JR $(BKLN&K\@~(B
 :	:			:
 -------	Nishi--DÒtsu-A		$(B@>BgDE(B
-	(Yamashina)		($(B;32J(B)		; = JR $(BEl3$F;K\@~(B
+	(Yamashina)		($(B;32J(B)	; = JR $(BEl3$F;K\@~(B

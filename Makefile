@@ -3,7 +3,7 @@
 #
 
 PACKAGE = semi
-VERSION = 1.8.0
+VERSION = 1.8.1
 
 SHELL	= /bin/sh
 MAKE	= make

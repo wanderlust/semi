@@ -313,7 +313,6 @@ window.")
 
 (defun mime-save-content (entity situation)
   (let* ((name (mime-entity-safe-filename entity))
-	 (encoding (or (mime-entity-encoding entity) "7bit"))
 	 (filename (if (and name (not (string-equal name "")))
 		       (expand-file-name name
 					 (save-window-excursion
@@ -332,9 +331,7 @@ window.")
     (if (file-exists-p filename)
 	(or (yes-or-no-p (format "File %s exists. Save anyway? " filename))
 	    (error "")))
-    (mime-write-decoded-region (mime-entity-body-start entity)
-			       (mime-entity-body-end entity)
-			       filename encoding)
+    (mime-write-entity-content entity filename)
     ))
 
 
@@ -403,46 +400,25 @@ It is registered to variable `mime-preview-quitting-method-alist'."
     (pop-to-buffer mother)
     ))
 
-(defun mime-view-message/rfc822 (entity cal)
-  (let* ((beg (mime-entity-point-min entity))
-	 (end (mime-entity-point-max entity))
-	 (cnum (mime-raw-point-to-entity-number beg))
-	 (new-name (format "%s-%s" (buffer-name) cnum))
+(defun mime-view-message/rfc822 (entity situation)
+  (let* ((new-name
+	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
 	 (mother mime-preview-buffer)
-	 (representation-type (mime-entity-representation-type entity))
-	 str)
-    (setq str (buffer-substring beg end))
-    (switch-to-buffer new-name)
+	 (children (car (mime-entity-children entity))))
+    (set-buffer (get-buffer-create new-name))
     (erase-buffer)
-    (insert str)
-    (goto-char (point-min))
-    (if (re-search-forward "^\n" nil t)
-	(delete-region (point-min) (match-end 0))
-      )
+    (insert-buffer-substring (mime-entity-buffer children)
+			     (mime-entity-point-min children)
+			     (mime-entity-point-max children))
+    (setq mime-message-structure children)
     (setq major-mode 'mime-show-message-mode)
-    (setq mime-raw-representation-type representation-type)
-    (mime-view-mode mother)
+    (mime-view-buffer (current-buffer) nil mother
+		      nil (if (mime-entity-cooked-p entity) 'cooked))
     ))
 
 
 ;;; @ message/partial
 ;;;
-
-(defun mime-raw-write-region (start end filename)
-  "Write current region into specified file.
-When called from a program, takes three arguments:
-START, END and FILENAME.  START and END are buffer positions.
-It refer `mime-raw-representation-type' or `major-mode
-mime-raw-representation-type-alist'.  If it is `binary', region is
-saved as binary.  Otherwise the region is saved by `write-region'."
-  (let ((presentation-type
-	 (or mime-raw-representation-type
-	     (cdr (or (assq major-mode mime-raw-representation-type-alist)
-		      (assq t mime-raw-representation-type-alist))))))
-    (if (eq presentation-type 'binary)
-	(write-region-as-binary start end filename)
-      (write-region start end filename)
-      )))
 
 (defun mime-store-message/partial-piece (entity cal)
   (goto-char (mime-entity-point-min entity))
@@ -483,8 +459,7 @@ saved as binary.  Otherwise the region is saved by `write-region'."
 	  (select-window pwin)
 	  )
       (setq file (concat root-dir "/" number))
-      (mime-raw-write-region (mime-entity-body-start entity)
-			     (mime-entity-body-end entity) file)
+      (mime-write-entity-body entity file)
       (let ((total-file (concat root-dir "/CT")))
 	(setq total
 	      (if total
