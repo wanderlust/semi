@@ -643,9 +643,10 @@ be the result."
   (std11-analyze-special string))
 
 (defun eword-analyze-encoded-word (string &optional must-unfold)
-  (let ((decoded (eword-decode-first-encoded-words string
+  (let ((decoded (eword-decode-first-encoded-words
+  		   string
 		   eword-encoded-word-in-phrase-regexp
-                   eword-after-encoded-word-in-phrase-regexp
+		   eword-after-encoded-word-in-phrase-regexp
 		   must-unfold)))
     (if decoded
       (cons (cons 'atom (car decoded)) (cdr decoded)))))
@@ -653,6 +654,11 @@ be the result."
 (defun eword-analyze-atom (string &optional must-unfold)
   (if (string-match std11-atom-regexp string)
       (let ((end (match-end 0)))
+	(if (and eword-decode-sticked-encoded-word
+		 (string-match eword-encoded-word-in-phrase-regexp
+		 	       (substring string 0 end))
+		 (< 0 (match-beginning 0)))
+	    (setq end (match-beginning 0)))
 	(cons (cons 'atom (decode-mime-charset-string
 			   (substring string 0 end)
 			   default-mime-charset))

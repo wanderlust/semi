@@ -1,5 +1,10 @@
 1998-03-22  Tanaka Akira  <akr@jaist.ac.jp>
 
+	* eword-decode.el (eword-analyze-atom): Treat encoded-word immediately
+	after an atom.
+
+1998-03-22  Tanaka Akira  <akr@jaist.ac.jp>
+
 	* eword-decode.el (eword-after-encoded-word-regexp): New constant.
 	eword-encoded-text-in-phrase-regexp: New constant.
 	eword-encoded-word-in-phrase-regexp: New constant.
