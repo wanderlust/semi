@@ -149,12 +149,9 @@
   `(setq ,alist (nconc ,alist (list (cons ,key ,value)))))
 
 (unless-broken ccl-usable
-  (check-broken-facility ccl-cascading-read)
-
   (define-ccl-program pgg-parse-crc24
     '(1
-      ((r1 = 183) (r2 = 1230)
-       (loop
+      ((loop
 	(read r0) (r1 ^= r0) (r2 ^= 0)
 	(r5 = 0)
 	(loop
@@ -166,18 +163,15 @@
 	 (if (r5 < 7)
 	     ((r5 += 1)
 	      (repeat))))
-	(repeat)))
-      ((r1 &= 255) 
-       (r3 = (r2 & 255))
-       (r2 = ((r2 >> 8) & 255))
-       (write r1 r2 r3))))
-
-  (make-ccl-coding-system 
-   'pgg-parse-crc24 ?C "CRC24 checker"
-   'pgg-parse-crc24 'pgg-parse-crc24)
+	(repeat)))))
 
   (defun pgg-parse-crc24-string (string)
-    (encode-coding-string string 'pgg-parse-crc24))
+    (let ((h (vector nil 183 1230 nil nil nil nil nil nil)))
+      (ccl-execute-on-string pgg-parse-crc24 h string)
+      (format "%c%c%c"
+	      (logand (aref h 1) 255)
+	      (logand (lsh (aref h 2) -8) 255)
+	      (logand (aref h 2) 255))))
   )
 
 (defmacro pgg-parse-length-type (c)
