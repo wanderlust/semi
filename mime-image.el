@@ -180,7 +180,7 @@
 	   '(body . visible)
 	   (cons 'body-presentation-method #'mime-display-image)
 	   (cons 'image-format (nth 2 rule))))))
-    
+
 
 ;;; @ content filter for images
 ;;;
@@ -196,7 +196,7 @@
       (save-excursion
 	(mime-image-insert image)
 	(insert "\n")
-	(message "Decoding image... done")))))
+	(message "Decoding image...done")))))
 
 ;;; @ end
 ;;;
