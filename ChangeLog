@@ -1,5 +1,11 @@
 1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-parse.el: Move 'regexp-* and 'regexp-or to mime-def.el of
+	FLIM (Chao); move 'std11-quoted-pair-regexp, 'std11-qtext-regexp
+	and 'std11-quoted-string-regexp to mime-def.el of FLIM (Chao).	
+
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-parse.el: Rename 'rfc822/quoted-string-regexp ->
 	'std11-quoted-string-regexp.
 
