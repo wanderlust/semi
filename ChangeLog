@@ -1,3 +1,8 @@
+2000-12-28  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-view.el (mime-view-read-situation-examples-file): Display
+	warning. [cf. <emacs-mime-ja:680>]
+
 2000-12-27  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
 	* mime-view.el (mime-view-mailcap-files): New user option.
