@@ -32,6 +32,11 @@
 (require 'pgg-def)
 (require 'pgg-parse)
 
+(eval-when-compile
+  (ignore-errors 
+    (require 'w3)
+    (require 'url)))
+
 (in-calist-package 'pgg)
 
 (defun pgg-field-match-method-with-containment
@@ -106,7 +111,7 @@
   (luna-define-internal-accessors 'pgg-scheme)
   )
 
-(luna-define-generic lookup-key (scheme string)
+(luna-define-generic lookup-key-string (scheme string &optional type)
   "Search keys associated with STRING")
 
 (luna-define-generic encrypt-region (scheme start end recipients)
@@ -179,12 +184,41 @@ and END to the keyring.")
     (luna-send entity 'verify-region entity start end signature)))
 
 (defun pgg-insert-key ()
-  (let ((entity (pgg-make-scheme pgg-default-scheme)))
+  (let ((entity (pgg-make-scheme (or pgg-scheme pgg-default-scheme))))
     (luna-send entity 'insert-key entity)))
 
 (defun pgg-snarf-keys-region (start end)
-  (let ((entity (pgg-make-scheme pgg-default-scheme)))
-    (luna-send entity 'snarf-keys-region start end)))
+  (let ((entity (pgg-make-scheme (or pgg-scheme pgg-default-scheme))))
+    (luna-send entity 'snarf-keys-region entity start end)))
+
+(defun pgg-lookup-key-string (string &optional type)
+  (let ((entity (pgg-make-scheme (or pgg-scheme pgg-default-scheme))))
+    (luna-send entity 'lookup-key-string entity string type)))
+
+(defun pgg-fetch-key (url)
+  (require 'w3)
+  (require 'url)
+  (with-current-buffer (get-buffer-create pgg-output-buffer)
+    (buffer-disable-undo)
+    (erase-buffer)
+    (let ((proto (url-type (url-generic-parse-url url))))
+      (unless (memq (intern proto) '(http finger))
+	(insert (format "Protocol %s is not supported.\n" proto)))
+      (url-insert-file-contents url)
+      (if (re-search-forward "^-+BEGIN" nil 'last)
+	  (progn
+	    (delete-region (point-min) (match-beginning 0))
+	    (when (re-search-forward "^-+END" nil t)
+	      (delete-region (progn (beginning-of-line 2)
+				    (point))
+			     (point-max)))
+	    (with-temp-buffer
+	      (insert-buffer-substring pgg-output-buffer)
+	      (pgg-snarf-keys-region (point-min)(point-max))))
+	(erase-buffer)
+	(insert "Cannot retrieve public key from URL (" url ")\n")))
+    ))
+
 
 ;;; @ utility functions
 ;;;
@@ -201,12 +235,12 @@ and END to the keyring.")
 	    (setq pgg-read-passphrase 'read-passwd)
 	  (autoload 'ange-ftp-read-passwd "ange-ftp")
 	  (setq pgg-read-passphrase 'ange-ftp-read-passwd))))
-  (or (and key (setq key (if (> (length key) 8) (substring key 8) key))
+  (or (and key (setq key (pgg-truncate-key-identifier key))
 	   (symbol-value (intern-soft key pgg-passphrase-cache)))
       (funcall pgg-read-passphrase prompt)))
 
 (defun pgg-add-passphrase-cache (key passphrase)
-  (setq key (if (> (length key) 8) (substring key 8) key))
+  (setq key (pgg-truncate-key-identifier key))
   (set (intern key pgg-passphrase-cache)
        passphrase)
   (run-at-time pgg-passphrase-cache-expiry nil
