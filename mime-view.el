@@ -617,55 +617,6 @@ The compressed face will be piped to this command.")
 ;;; @ entity information
 ;;;
 
-(defun mime-raw-point-to-entity-number (position &optional message-info)
-  "Return entity-number from POTION in mime-raw-buffer.
-If optional argument MESSAGE-INFO is not specified,
-`mime-raw-message-info' is used."
-  (or message-info
-      (setq message-info mime-raw-message-info))
-  (let ((b (mime-entity-point-min message-info))
-	(e (mime-entity-point-max message-info))
-	(c (mime-entity-children message-info))
-	)
-    (if (and (<= b position)(<= position e))
-	(or (let (entity ret (sn 0))
-	      (catch 'tag
-		(while c
-		  (setq entity (car c))
-		  (setq ret (mime-raw-point-to-entity-number position entity))
-		  (cond ((eq ret t) (throw 'tag (list sn)))
-			(ret (throw 'tag (cons sn ret)))
-			)
-		  (setq c (cdr c))
-		  (setq sn (1+ sn))
-		  )))
-	    t))))
-
-(defun mime-raw-point-to-entity-node-id (position &optional message-info)
-  "Return entity-node-id from POTION in mime-raw-buffer.
-If optional argument MESSAGE-INFO is not specified,
-`mime-raw-message-info' is used."
-  (reverse (mime-raw-point-to-entity-number position message-info)))
-
-(defun mime-raw-find-entity-from-point (point &optional message-info)
-  "Return entity from POINT in mime-raw-buffer.
-If optional argument MESSAGE-INFO is not specified,
-`mime-raw-message-info' is used."
-  (or message-info
-      (setq message-info mime-raw-message-info))
-  (if (and (<= (mime-entity-point-min message-info) point)
-	   (<= point (mime-entity-point-max message-info)))
-      (let ((children (mime-entity-children message-info)))
-	(catch 'tag
-	  (while children
-	    (let ((ret
-		   (mime-raw-find-entity-from-point point (car children))))
-	      (if ret
-		  (throw 'tag ret)
-		))
-	    (setq children (cdr children)))
-	  message-info))))
-
 (defsubst mime-raw-find-entity-from-node-id (entity-node-id
 					     &optional message-info)
   "Return entity from ENTITY-NODE-ID in mime-raw-buffer.
@@ -689,6 +640,37 @@ If optional argument MESSAGE-INFO is not specified,
 	      (mime-raw-find-entity-from-number (cdr entity-number) rc)
 	    ))
 	))))
+
+(defun mime-raw-find-entity-from-point (point &optional message-info)
+  "Return entity from POINT in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (or message-info
+      (setq message-info mime-raw-message-info))
+  (if (and (<= (mime-entity-point-min message-info) point)
+	   (<= point (mime-entity-point-max message-info)))
+      (let ((children (mime-entity-children message-info)))
+	(catch 'tag
+	  (while children
+	    (let ((ret
+		   (mime-raw-find-entity-from-point point (car children))))
+	      (if ret
+		  (throw 'tag ret)
+		))
+	    (setq children (cdr children)))
+	  message-info))))
+
+(defsubst mime-raw-point-to-entity-node-id (point &optional message-info)
+  "Return entity-node-id from POINT in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (mime-entity-node-id (mime-raw-find-entity-from-point point message-info)))
+
+(defsubst mime-raw-point-to-entity-number (point &optional message-info)
+  "Return entity-number from POINT in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (reverse (mime-raw-point-to-entity-node-id point message-id)))
 
 (defun mime-raw-flatten-message-info (&optional message-info)
   "Return list of entity in mime-raw-buffer.
