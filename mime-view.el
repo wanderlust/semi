@@ -755,10 +755,10 @@ The compressed face will be piped to this command.")
       "h"        (function mime-view-show-summary))
     (define-key mime-view-mode-map
       "\C-c\C-x" (function mime-view-kill-buffer))
-    (define-key mime-view-mode-map
-      "<"        (function beginning-of-buffer))
-    (define-key mime-view-mode-map
-      ">"        (function end-of-buffer))
+    ;; (define-key mime-view-mode-map
+    ;;   "<"        (function beginning-of-buffer))
+    ;; (define-key mime-view-mode-map
+    ;;   ">"        (function end-of-buffer))
     (define-key mime-view-mode-map
       "?"        (function describe-mode))
     (if (functionp default)
