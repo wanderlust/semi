@@ -184,9 +184,6 @@ To insert a signature file automatically, call the function
      ("plain"
       ;;("charset" "" "ISO-2022-JP" "US-ASCII" "ISO-8859-1" "ISO-8859-8")
       )
-     ("richtext"
-      ;;("charset" "" "ISO-2022-JP" "US-ASCII" "ISO-8859-1" "ISO-8859-8")
-      )
      ("enriched"
       ;;("charset" "" "ISO-2022-JP" "US-ASCII" "ISO-8859-1" "ISO-8859-8")
       )
@@ -194,6 +191,12 @@ To insert a signature file automatically, call the function
       ;;("charset" "" "ISO-2022-JP" "US-ASCII" "ISO-8859-1" "ISO-8859-8")
       )
      ("html"
+      ;;("charset" "" "ISO-2022-JP" "US-ASCII" "ISO-8859-1" "ISO-8859-8")
+      )
+     ("css"   ;; rfc2318
+      ;;("charset" "" "ISO-2022-JP" "US-ASCII" "ISO-8859-1" "ISO-8859-8")
+      )
+     ("xml"   ;; rfc2376
       ;;("charset" "" "ISO-2022-JP" "US-ASCII" "ISO-8859-1" "ISO-8859-8")
       )
      ("x-rot13-47-48")
