@@ -1,3 +1,8 @@
+1998-10-19  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* semi-setup.el (mime-edit-mode-hook): Don't add
+	`mime-setup-decode-message-header'.
+
 1998-10-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.9.1 (Kurikara) released.

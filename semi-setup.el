@@ -146,7 +146,7 @@ it is used as hook to set."
       (set-buffer-modified-p nil)
       )))
 
-(add-hook 'mime-edit-mode-hook 'mime-setup-decode-message-header)
+;;(add-hook 'mime-edit-mode-hook 'mime-setup-decode-message-header)
 
 
 ;;; @@ variables
