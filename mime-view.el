@@ -765,8 +765,6 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       "\C-c\C-p" (function mime-view-print-content))
     (define-key mime-view-mode-map
-      "x"        (function mime-view-display-x-face))
-    (define-key mime-view-mode-map
       "a"        (function mime-view-follow-content))
     (define-key mime-view-mode-map
       "q"        (function mime-view-quit))
