@@ -344,7 +344,7 @@ part の終了を示す tag があります。
 
 
 <h2> single-part に対する操作
-<node> single-part operations
+<node> single-part tags
 <p>
 single-part を作るための操作には以下のようなものがあります。
 
@@ -392,7 +392,7 @@ signature を挿入します。
 
 
 <h2> enclosure に対する操作
-<node> enclosure operation
+<node> enclosure tags
 <p>
 enclosure を作るための操作としては以下のようなものがあります。
 
@@ -429,7 +429,7 @@ enclosure を作るための操作としては以下のようなものがあります。
 
 
 <h2> mime-edit-mode におけるその他の操作
-<node> other operations of mime-edit-mode
+<node> other MIME-Edit operations
 <p>
 mime-edit-mode におけるその他の操作を説明します。
 
@@ -473,11 +473,11 @@ help message を表示します。
 
 
 <h2> 挿入される file に対する tag の決定
-<node> tag specification for inserted file
+<node> file-type specification
 <p>
-<kbd>C-c C-x C-i</kbd> (<code>mime-editor/insert-file</code>) を実行し
-た時、挿入される file に対する media-type や encoding などの tag の情
-報は変数 <code>mime-file-types</code> によって file 名から推測されます。
+<kbd>C-c C-x C-i</kbd> (<code>mime-edit-insert-file</code>) を実行した時、
+挿入される file に対する media-type や encoding などの tag の情報は変数 
+<code>mime-file-types</code> によって file 名から推測されます。
 <p>
 前に <kbd>C-u</kbd> を付けた時、および、適当な値が見付からなかった場合、
 user に対して値の入力を促します。（前に <kbd>C-u</kbd> を付けた時、推
