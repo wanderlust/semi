@@ -28,7 +28,6 @@
 
 ;;; Code:
 
-(require 'cl)
 (require 'std11)
 (require 'mel)
 (require 'eword-decode)
@@ -638,7 +637,7 @@ The compressed face will be piped to this command.")
       ""))
 
 
-;;; @ content information
+;;; @ entity information
 ;;;
 
 (defun mime-article/point-content-number (p &optional cinfo)
@@ -663,16 +662,9 @@ The compressed face will be piped to this command.")
 		  )))
 	    t))))
 
-(defun mime-article/rcnum-to-cinfo (rcnum &optional cinfo)
-  (or cinfo
-      (setq cinfo mime::article/content-info)
-      )
-  (find-if (function
-	    (lambda (ci)
-	      (equal (mime-entity-info-rnum ci) rcnum)
-	      ))
-	   (mime/flatten-content-info cinfo)
-	   ))
+(defsubst mime-article/rcnum-to-cinfo (rnum &optional cinfo)
+  (mime-article/cnum-to-cinfo (reverse rnum) cinfo)
+  )
 
 (defun mime-article/cnum-to-cinfo (cn &optional cinfo)
   (or cinfo
