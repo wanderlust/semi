@@ -288,15 +288,16 @@ mother-buffer."
 	      )))
   )
 
-(defun mime-unify-situations (entity-situation condition situation-examples
-					       &optional ignored-method)
+(defun mime-unify-situations (entity-situation
+			      condition situation-examples
+			      &optional required-name ignored-value)
   (let (ret)
     (in-calist-package 'mime-view)
     (setq ret
-	  (mime-delq-null-situation
-	   (ctree-find-calist condition entity-situation
-			      mime-view-find-every-situations)
-	   'method ignored-method))
+	  (ctree-find-calist condition entity-situation
+			     mime-view-find-every-situations))
+    (if required-name
+	(setq ret (mime-delq-null-situation required-name ignored-value)))
     (or (assq 'ignore-examples entity-situation)
 	(if (cdr ret)
 	    (let ((rest ret)
@@ -813,10 +814,15 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	  (mapcar (function
 		   (lambda (child)
 		     (let ((situation
-			    (or (ctree-match-calist
-				 mime-preview-condition
-				 (append (mime-entity-situation child)
-					 default-situation))
+			    (or (let ((ret
+				       (mime-unify-situations
+					(append (mime-entity-situation child)
+						default-situation)
+					mime-preview-condition
+					mime-preview-situation-example-list)))
+				  (setq mime-preview-situation-example-list
+					(cdr ret))
+				  (caar ret))
 				default-situation)))
 		       (if (cdr (assq 'body-presentation-method situation))
 			   (let ((score
@@ -983,9 +989,15 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
     (in-calist-package 'mime-view)
     (or situation
 	(setq situation
-	      (or (ctree-match-calist mime-preview-condition
-				      (append (mime-entity-situation entity)
-					      default-situation))
+	      (or (let ((ret 
+			 (mime-unify-situations
+			  (append (mime-entity-situation entity)
+				  default-situation)
+			  mime-preview-condition
+			  mime-preview-situation-example-list)))
+		    (setq mime-preview-situation-example-list
+			  (cdr ret))
+		    (caar ret))
 		  default-situation)))
     (let ((button-is-invisible
 	   (eq (cdr (assq 'entity-button situation)) 'invisible))
