@@ -194,9 +194,6 @@
       (save-excursion
 	(mime-image-insert image "x")
 	(insert "\n")
-	(save-window-excursion
-	  (set-window-buffer (selected-window)(current-buffer))
-	  (sit-for 0))
 	(message "Decoding image... done")))))
 
 ;;; @ end
