@@ -346,6 +346,22 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 ;;; @ message/partial
 ;;;
 
+(defun mime-require-safe-directory (dir)
+  "Create a directory DIR safely.
+The permission of the created directory becomes `700' (for the owner only).
+If the directory already exists and is writable by other users, an error
+occurs."
+  (let ((orig-modes (default-file-modes)))
+    (if (file-directory-p dir)
+	(unless (or (memq system-type '(windows-nt ms-dos OS/2 emx))
+		    (eq (file-modes dir) 448))
+	  (error "Invalid permission for %s" dir))
+      (unwind-protect
+	  (progn
+	    (set-default-file-modes 448)
+	    (make-directory dir))
+	(set-default-file-modes orig-modes)))))
+
 (defun mime-store-message/partial-piece (entity cal)
   (let* ((root-dir
 	  (expand-file-name
@@ -356,6 +372,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	 file
 	 (mother (current-buffer))
 	 (orig-modes (default-file-modes)))
+    (mime-require-safe-directory root-dir)
     (or (file-exists-p root-dir)
 	(unwind-protect
 	    (progn
