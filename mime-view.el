@@ -588,7 +588,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 					       (copy-alist situation))))
 	)
       (setq children (cdr children)
-	    situation (cdr situations)
+	    situations (cdr situations)
 	    i (1+ i))
       )))
 
