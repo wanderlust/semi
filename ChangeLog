@@ -1,3 +1,32 @@
+1998-02-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* eword-decode.el (eword-decode-version): Use `semi-version';
+	abolish `eword-decode-RCS-ID'.
+
+	* mime-view.el (mime-view-version-string): Use `semi-version';
+	abolish `mime-view-version' and `mime-view-RCS-ID'.
+
+	* mime-edit.el (mime-edit-version-string): Use `semi-version';
+	abolish `mime-edit-version' and `mime-edit-RCS-ID'.
+
+	* mime-def.el (semi-version): New constant; abolish constant
+	`semi-version-name'.
+
+	* mime-view.el: Rename `mime-view-version-name' ->
+	`mime-view-version-string'.
+
+	* mime-edit.el: Rename `mime-edit-version-name' ->
+	`mime-edit-version-string'.
+
+	* eword-decode.el (eword-lexical-analyzers): New variable.
+	(eword-analyze-quoted-string): Add second argument.
+	(eword-analyze-domain-literal): New function.
+	(eword-analyze-spaces): New function.
+	(eword-analyze-special): New function.
+	(eword-analyze-atom): Add second argument.
+	(eword-lexical-analyze-internal): Use `eword-lexical-analyzers'.
+
+
 1998-02-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 0.118.2 (Otomaru) was released.
