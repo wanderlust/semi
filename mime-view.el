@@ -301,16 +301,17 @@ Each element looks like (TYPE/SUBTYPE . FUNCTION) or (t . FUNCTION).
 TYPE/SUBTYPE is a string of media-type and FUNCTION is a filter
 function.  t means default media-type.")
 
-(defun mime-view-display-body (beg end entity-node-id cinfo
-				   ctype params subj encoding)
+(defun mime-view-display-body (start end entity message-info subj)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
-    (insert-buffer-substring mime-raw-buffer beg end)
-    (let ((f (cdr (or (assoc ctype mime-view-content-filter-alist)
-		      (assq t mime-view-content-filter-alist)))))
+    (insert-buffer-substring mime-raw-buffer start end)
+    (let* ((ctype (mime-entity-type/subtype entity))
+	   (params (mime-entity-parameters entity))
+	   (encoding (mime-entity-encoding entity))
+	   (f (cdr (or (assoc ctype mime-view-content-filter-alist)
+		       (assq t mime-view-content-filter-alist)))))
       (and (functionp f)
-	   (funcall f ctype params encoding)
-	   )
+	   (funcall f ctype params encoding))
       )))
 
 (defvar mime-view-announcement-for-message/partial
@@ -494,8 +495,8 @@ The compressed face will be piped to this command.")
   (or mime-view-redisplay
       (setq mime-raw-message-info (mime-parse-message ctl encoding))
       )
-  (let* ((cinfo mime-raw-message-info)
-	 (pcl (mime-raw-flatten-message-info cinfo))
+  (let* ((message-info mime-raw-message-info)
+	 (pcl (mime-raw-flatten-message-info message-info))
 	 (the-buf (current-buffer))
 	 (mode major-mode)
 	 )
@@ -511,7 +512,7 @@ The compressed face will be piped to this command.")
       (setq major-mode 'mime-view-mode)
       (setq mode-name "MIME-View")
       (while pcl
-	(mime-view-display-entity (car pcl) cinfo the-buf obuf)
+	(mime-view-display-entity (car pcl) message-info the-buf obuf)
 	(setq pcl (cdr pcl))
 	)
       (set-buffer-modified-p nil)
@@ -566,9 +567,7 @@ The compressed face will be piped to this command.")
 	  (mime-view-insert-entity-button entity message-info subj)
 	  ))
     (cond ((mime-view-body-visible-p entity message-info)
-	   (mime-view-display-body he end
-				   entity-node-id message-info
-				   ctype params subj encoding)
+	   (mime-view-display-body he end entity message-info subj)
 	   )
 	  ((and (eq media-type 'message)(eq media-subtype 'partial))
 	   (mime-view-insert-message/partial-button)
