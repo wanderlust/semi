@@ -92,12 +92,13 @@
     (with-current-buffer (get-buffer-create output-buffer)
       (buffer-disable-undo)
       (erase-buffer))
+    (when passphrase
+      (setenv "PGPPASSFD" "0"))
     (setq process
 	  (apply #'start-process-shell-command "*PGP*" output-buffer
 		 program args))
     (set-process-sentinel process 'ignore)
     (when passphrase
-      (setenv "PGPPASSFD" "0")
       (process-send-string process (concat passphrase "\n")))
     (process-send-region process start end)
     (process-send-eof process)
