@@ -74,8 +74,8 @@
       (if url 
         (funcall browse-url-browser-function url)
       (call-interactively browse-url-browser-function))
-    (if (fboundp tm:mother-button-dispatcher)
-	(call-interactively tm:mother-button-dispatcher)
+    (if (fboundp mime-button-mother-dispatcher)
+	(call-interactively mime-button-mother-dispatcher)
       )
     ))
 
