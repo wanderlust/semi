@@ -1,5 +1,17 @@
 1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-view-header-visible-p): Change interface.
+	(mime-view-body-visible-p): Change interface.
+
+	* mime-view.el (mime-view-insert-entity-button): Change interface.
+	(mime-view-entity-button-function): Change interface.
+
+	* mime-view.el (mime-view-body-visible-p): Add DOC-string.
+
+	* mime-view.el: `rcnum' -> `entity-node-id'.
+
+1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-pgp.el (mime-method-to-verify-application/pgp-signature):
 	Don't use temporary buffer for signed entity.
 
