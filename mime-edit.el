@@ -1165,10 +1165,11 @@ Optional argument ENCODING specifies an encoding method such as base64."
 	(let ((tag (buffer-substring (match-beginning 0) (match-end 0))))
 	  (delete-region (match-beginning 0) (match-end 0))
 	  (insert
-	   (mime-create-tag (mime-set-parameter
-			     (mime-editor/get-contype tag) "charset" charset)
-			    (mime-editor/get-encoding tag))))
-      )))
+	   (mime-create-tag
+	    (mime-editor/set-parameter
+	     (mime-editor/get-contype tag) "charset" charset)
+	    (mime-editor/get-encoding tag)))
+	  ))))
 
 (defun mime-editor/define-encoding (encoding)
   "Set encoding of current tag to ENCODING."
@@ -1239,7 +1240,7 @@ Nil if no such parameter."
     nil					;No such parameter
     ))
 
-(defun mime-set-parameter (contype parameter value)
+(defun mime-editor/set-parameter (contype parameter value)
   "For given CONTYPE set PARAMETER to VALUE."
   (let (ctype opt-fields)
     (if (string-match "\n[^ \t\n\r]+:" contype)
