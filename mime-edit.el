@@ -1979,6 +1979,33 @@ Content-Transfer-Encoding: 7bit
 		   )
 	      (encode-mime-charset-region beg (mime-edit-content-end)
 					  charset)
+	      ;; Protect "From " in beginning of line
+	      (save-restriction
+		(narrow-to-region beg (mime-edit-content-end))
+		(goto-char beg)
+		(if (re-search-forward "^From " nil t)
+		    (unless encoding
+		      (if (memq charset '(iso-2022-jp
+					  iso-2022-jp-2
+					  iso-2022-int-1
+					  x-ctext))
+			  (while (progn
+				   (replace-match "\e(BFrom ")
+				   (re-search-forward "^From " nil t)
+				   ))
+			(setq encoding "quoted-printable")
+			))))
+	      ;; canonicalize line break code
+	      (or (member encoding '(nil "7bit" "8bit" "quoted-printable"))
+		  (save-restriction
+		    (narrow-to-region beg (mime-edit-content-end))
+		    (goto-char beg)
+		    (while (re-search-forward "\\([^\r]\\)\n" nil t)
+		      (replace-match
+		       (concat (buffer-substring (match-beginning 0)
+						 (match-end 1)) "\r\n"))
+		      )))
+	      (goto-char beg)
 	      (mime-encode-region beg (mime-edit-content-end) encoding)
 	      (mime-edit-define-encoding encoding)
 	      ))
