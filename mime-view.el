@@ -3,8 +3,8 @@
 ;; Copyright (C) 1995,1996,1997,1998 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
-;; Created: 1994/7/13
-;;	Renamed: 1994/8/31 from tm-body.el
+;; Created: 1994/07/13
+;;	Renamed: 1994/08/31 from tm-body.el
 ;;	Renamed: 1997/02/19 from tm-view.el
 ;; Keywords: MIME, multimedia, mail, news
 
@@ -378,33 +378,33 @@ Each elements are regexp of field-name.")
 (ctree-set-calist-strictly
  'mime-preview-condition '((body . visible)
 			   (body-presentation-method . with-filter)
-			   (body-filter . mime-view-filter-for-text/plain)))
+			   (body-filter . mime-preview-filter-for-text/plain)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . nil)
 			   (body . visible)
 			   (body-presentation-method . with-filter)
-			   (body-filter . mime-view-filter-for-text/plain)))
+			   (body-filter . mime-preview-filter-for-text/plain)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . text)(subtype . enriched)
 			   (body . visible)
 			   (body-presentation-method . with-filter)
 			   (body-filter
-			    . mime-view-filter-for-text/enriched)))
+			    . mime-preview-filter-for-text/enriched)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . text)(subtype . richtext)
 			   (body . visible)
 			   (body-presentation-method . with-filter)
 			   (body-filter
-			    . mime-view-filter-for-text/richtext)))
+			    . mime-preview-filter-for-text/richtext)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . text)(subtype . t)
 			   (body . visible)
 			   (body-presentation-method . with-filter)
-			   (body-filter . mime-view-filter-for-text/plain)))
+			   (body-filter . mime-preview-filter-for-text/plain)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . message)(subtype . partial)
@@ -424,9 +424,9 @@ Each elements are regexp of field-name.")
 ;;; @@@ entity filter
 ;;;
 
-(autoload 'mime-view-filter-for-text/plain "mime-text")
-(autoload 'mime-view-filter-for-text/enriched "mime-text")
-(autoload 'mime-view-filter-for-text/richtext "mime-text")
+(autoload 'mime-preview-filter-for-text/plain "mime-text")
+(autoload 'mime-preview-filter-for-text/enriched "mime-text")
+(autoload 'mime-preview-filter-for-text/richtext "mime-text")
 
 (defvar mime-text-decoder-alist
   '((mime-show-message-mode	. mime-text-decode-buffer)

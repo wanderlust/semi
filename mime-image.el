@@ -116,8 +116,7 @@
 		  (list (cons 'type type)(cons 'subtype subtype)
 			'(body . visible)
 			'(body-presentation-method . with-filter)
-			(cons 'body-filter
-			      #'mime-view-filter-for-image)
+			(cons 'body-filter #'mime-preview-filter-for-image)
 			(cons 'image-format format))
 		  )))))
 	'((image jpeg		jpeg)
@@ -137,7 +136,7 @@
 ;;;
 ;;    (for XEmacs 19.12 or later)
 
-(defun mime-view-filter-for-image (situation)
+(defun mime-preview-filter-for-image (situation)
   (let ((beg (point-min))
 	(end (point-max)))
     (remove-text-properties beg end '(face nil))
@@ -181,7 +180,7 @@
 
 ;; (defvar mime-view-ps-to-gif-command "pstogif")
 
-;; (defun mime-view-filter-for-application/postscript (ctype params encoding)
+;; (defun mime-preview-filter-for-application/postscript (ctype params encoding)
 ;;   (let* ((beg (point-min)) (end (point-max))
 ;;          (file-base
 ;;           (make-temp-name (expand-file-name "tm" mime-temp-directory)))
@@ -207,7 +206,7 @@
 
 ;; (set-alist 'mime-view-content-filter-alist
 ;;            "application/postscript"
-;;            (function mime-view-filter-for-application/postscript))
+;;            (function mime-preview-filter-for-application/postscript))
 
 ;; (if (featurep 'gif)
 ;;     (add-to-list
