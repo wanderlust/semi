@@ -1757,9 +1757,7 @@ Content-Transfer-Encoding: 7bit
       (let* ((ret
 	      (mime-edit-translate-region beg end boundary))
 	     (ctype    (car ret))
-	     (encoding (nth 1 ret))
-	     (parts    (nth 3 ret))
-	     )
+	     (encoding (nth 1 ret)))
 	(goto-char beg)
 	(insert (format "Content-Type: %s\n" ctype))
 	(if encoding
@@ -1779,10 +1777,9 @@ Content-Transfer-Encoding: 7bit
 
 (defun mime-edit-encrypt-pgp-kazu (beg end boundary)
   (save-excursion
-    (let (from recipients header)
+    (let (recipients header)
       (let ((ret (mime-edit-make-encrypt-recipient-header)))
-	(setq from (aref ret 0)
-	      recipients (aref ret 1)
+	(setq recipients (aref ret 1)
 	      header (aref ret 2))
 	)
       (save-restriction
@@ -1790,9 +1787,7 @@ Content-Transfer-Encoding: 7bit
 	(let* ((ret
 		(mime-edit-translate-region beg end boundary))
 	       (ctype    (car ret))
-	       (encoding (nth 1 ret))
-	       (parts    (nth 3 ret))
-	       )
+	       (encoding (nth 1 ret)))
 	  (goto-char beg)
 	  (insert header)
 	  (insert (format "Content-Type: %s\n" ctype))
