@@ -2539,22 +2539,21 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	  )
 	))))
 
-(defun mime-edit-again (&optional code-conversion no-separator no-mode)
+(defun mime-edit-again (&optional not-decode-text no-separator not-turn-on)
   "Convert current buffer to MIME-Edit buffer and turn on MIME-Edit mode.
 Content-Type and Content-Transfer-Encoding header fields will be
 converted to MIME-Edit tags."
   (interactive)
-  (mime-editor::edit-again code-conversion)
+  (goto-char (point-min))
+  (if (search-forward
+       (concat "\n" (regexp-quote mail-header-separator) "\n")
+       nil t)
+      (replace-match "\n\n")
+    )
+  (mime-editor::edit-again (not not-decode-text))
   (goto-char (point-min))
   (save-restriction
-    (narrow-to-region
-     (point-min)
-     (if (re-search-forward
-	  (concat "^\\(" (regexp-quote mail-header-separator) "\\)?$")
-	  nil t)
-	 (match-end 0)
-       (point-max)
-       ))
+    (std11-narrow-to-header)
     (goto-char (point-min))
     (while (re-search-forward
 	    "^\\(Content-.*\\|Mime-Version\\):" nil t)
@@ -2564,7 +2563,7 @@ converted to MIME-Edit tags."
       (and (re-search-forward "^$")
 	   (replace-match mail-header-separator)
 	   ))
-  (or no-mode
+  (or not-turn-on
       (turn-on-mime-edit)
       ))
 
