@@ -57,8 +57,8 @@
 ;;; @ definitions about MIME
 ;;;
 
-(defconst mime/tspecials "][\000-\040()<>@,\;:\\\"/?.=")
-(defconst mime/token-regexp (concat "[^" mime/tspecials "]+"))
+(defconst mime-tspecials "][\000-\040()<>@,\;:\\\"/?.=")
+(defconst mime/token-regexp (concat "[^" mime-tspecials "]+"))
 (defconst mime-charset-regexp mime/token-regexp)
 
 (defconst mime/content-type-subtype-regexp
