@@ -191,8 +191,6 @@
 (setq EMH_RELATIVE_DIR		SEMI_KERNEL_RELATIVE_DIR)
 (setq Gnus_MIME_RELATIVE_DIR	SEMI_KERNEL_RELATIVE_DIR)
 
-(setq BIN_SRC_DIR "src")
-(setq BINS '("ol2" "decode-b"))
 (setq METHOD_SRC_DIR "methods")
 (setq METHODS
       '("tm-au" "tm-file" "tm-html" "tm-image" "tm-mpeg"
