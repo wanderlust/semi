@@ -1,3 +1,34 @@
+1998-05-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el (make-mime-content-type): New function.
+	(mime-parse-Content-Type): Use 'make-mime-content-type.
+	(mime-parse-multipart): Use 'make-mime-content-type.
+
+1998-05-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el: Change data format of mime-content-disposition.
+
+1998-05-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el: Rename 'mime/Content-Transfer-Encoding ->
+	'mime-read-Content-Transfer-Encoding.
+
+1998-05-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-raw-get-subject): Use
+	'mime-content-disposition-parameters.
+	
+	* mime-play.el (mime-raw-get-original-filename): Use
+	'mime-content-disposition-parameters.
+
+	* mime-parse.el (mime-content-disposition-type): New function.
+	(mime-content-disposition-parameters): New function.
+
+1998-05-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el, mime-play.el, mime-view.el: Rename
+	'mime/Content-Disposition -> 'mime-read-Content-Disposition.
+
 1998-05-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* Makefile (PACKAGE): New variable.
