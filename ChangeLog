@@ -1,4 +1,4 @@
-1999-05-20  MORIOKA Tomohiko  <morioka@mulelab3>
+1999-05-20  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* NEWS (Text property `mime-view-entity-{header|body}'): New
 	subsection.
