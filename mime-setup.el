@@ -125,13 +125,6 @@
 (add-hook 'mh-before-send-letter-hook 'mime-editor/maybe-translate)
 
 
-;;; @ for GNUS
-;;;
-
-(add-hook 'news-reply-mode-hook 'mime/editor-mode)
-(add-hook 'news-inews-hook      'mime-editor/maybe-translate)
-
-
 ;;; @ for message (September Gnus 0.58 or later)
 ;;;
 
