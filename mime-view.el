@@ -470,7 +470,7 @@ The compressed face will be piped to this command.")
     (let ((drest dest))
       (while pcl
 	(setcar drest
-		(mime-preview/display-content (car pcl) cinfo the-buf obuf))
+		(mime-view-display-entity (car pcl) cinfo the-buf obuf))
 	(setq pcl (cdr pcl)
 	      drest (cdr drest))
 	))
@@ -480,7 +480,8 @@ The compressed face will be piped to this command.")
     (list obuf dest)
     ))
 
-(defun mime-preview/display-content (content cinfo ibuf obuf)
+(defun mime-view-display-entity (content cinfo ibuf obuf)
+  "Display entity from content-info CONTENT."
   (let* ((beg (mime::content-info/point-min content))
 	 (end (mime::content-info/point-max content))
 	 (ctype (mime::content-info/type content))
