@@ -250,14 +250,6 @@ buffer です。MIME 書面は entity を単位とする木構造ですが、この
 	用いる。
 
 
-[関数] mime-raw-entity-parent (ENTITY &optional MESSAGE-INFO)
-
-	書面構造 MESSAGE-INFO において ENTITY の親の entity を返す。
-       
-	MESSAGE-INFO が省略された場合は `mime-raw-message-info' の値を
-	用いる。
-
-
 [関数] mime-raw-flatten-message-info (&optional message-info)
 
 	書面構造 MESSAGE-INFO に含まれる全ての entity の list を返す。
@@ -443,6 +435,16 @@ entity-number と呼びます。entity-number は S 式としては (1 2 3
 			 children)
 
 	entity の生成子。
+
+
+[関数] mime-entity-parent (ENTITY &optional MESSAGE-INFO)
+
+	ENTITY の親の entity を返す。
+
+	MESSAGE-INFO が省略された場合は ENTITY が存在する buffer にお
+	ける `mime-raw-message-info' の値を用いる。
+
+	MESSAGE-INFO が指定された場合、これを根と見倣す。
 
 
 [関数] mime-root-entity-p (ENTITY)
