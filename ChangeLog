@@ -1,3 +1,29 @@
+1999-11-04  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg.el (pgg-encrypt-region): Add interactive spec.
+	(pgg-decrypt-region): Ditto.
+	(pgg-sign-region): Ditto.
+	(pgg-verify-region): Add optional argument `fetch' to fetch
+	signer's public key.
+
+	* pgg-def.el (pgg-default-keyserver-address): New variable.
+
+	* semi-def.el (pgp-function-alist): Remove `lookup-key'.
+
+	* mime-pgp.el (mime-display-application/pgp-signature): Abolish.
+	(mime-display-application/pgp-encrypted): Abolish.
+	(mime-display-application/pgp-keys): Abolish.
+	(mime-pgp-keyserver-url-template): Abolish.
+	(mime-pgp-keyserver-address): Abolish.
+	(mime-pgp-keyserver-port): Abolish.
+	(mime-pgp-keyserver-protocol): Abolish.
+	(mime-pgp-fetch-key): Abolish.
+
+	* semi-setup.el: Delete default setting of
+	`mime-display-application/pgp-signature', 
+	`mime-display-application/pgp-encrypted',
+	`mime-display-application/pgp-keys'
+
 1999-11-03  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* pgg.el (pgg-fetch-key): Protect `buffer-file-name'.
