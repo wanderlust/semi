@@ -308,36 +308,31 @@ window.")
 ;;; @ file extraction
 ;;;
 
-(defun mime-save-content (entity cal)
-  (let ((beg (mime-entity-point-min entity))
-	(end (mime-entity-point-max entity)))
-    (goto-char beg)
-    (let* ((name (save-restriction
-		   (narrow-to-region beg end)
-		   (mime-entity-safe-filename entity)
-		   ))
-	   (encoding (or (cdr (assq 'encoding cal)) "7bit"))
-	   (filename (if (and name (not (string-equal name "")))
-			 (expand-file-name name
-					   (save-window-excursion
-					     (call-interactively
-					      (function
-					       (lambda (dir)
-						 (interactive "DDirectory: ")
-						 dir)))))
-		       (save-window-excursion
-			 (call-interactively
-			  (function
-			   (lambda (file)
-			     (interactive "FFilename: ")
-			     (expand-file-name file)))))))
-	   )
-      (if (file-exists-p filename)
-	  (or (yes-or-no-p (format "File %s exists. Save anyway? " filename))
-	      (error "")))
-      (re-search-forward "\n\n")
-      (mime-write-decoded-region (match-end 0) end filename encoding)
-      )))
+(defun mime-save-content (entity situation)
+  (let* ((name (mime-entity-safe-filename entity))
+	 (encoding (or (mime-entity-encoding entity) "7bit"))
+	 (filename (if (and name (not (string-equal name "")))
+		       (expand-file-name name
+					 (save-window-excursion
+					   (call-interactively
+					    (function
+					     (lambda (dir)
+					       (interactive "DDirectory: ")
+					       dir)))))
+		     (save-window-excursion
+		       (call-interactively
+			(function
+			 (lambda (file)
+			   (interactive "FFilename: ")
+			   (expand-file-name file)))))))
+	 )
+    (if (file-exists-p filename)
+	(or (yes-or-no-p (format "File %s exists. Save anyway? " filename))
+	    (error "")))
+    (mime-write-decoded-region (mime-entity-body-start entity)
+			       (mime-entity-body-end entity)
+			       filename encoding)
+    ))
 
 
 ;;; @ file detection
