@@ -1,3 +1,24 @@
+1997-07-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el, mime-play.el: `mime-article/view-message/rfc822'
+	-> `mime-display-message/rfc822'.
+
+1997-07-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* eword-encode.el (eword-phrase-route-addr-to-rwl): Use function
+	`eword-addr-seq-to-rwl'.
+
+	* eword-encode.el: `tm-eword::phrase-route-addr-to-rwl' ->
+	`eword-phrase-route-addr-to-rwl'.
+
+	* eword-encode.el (eword-addr-seq-to-rwl): New function.
+	(eword-addr-spec-to-rwl): Use function `eword-addr-seq-to-rwl'.
+
+	* eword-encode.el (eword-addr-spec-to-rwl): New implementation.
+
+	* eword-encode.el: `tm-eword::addr-spec-to-rwl' ->
+	`eword-addr-spec-to-rwl'.
+
 1997-07-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-parse.el: Constant `mime::ctype-regexp' was abolished.
