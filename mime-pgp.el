@@ -59,13 +59,21 @@
   "PGP verification of current region." t)
 (autoload 'pgg-snarf-keys-region "pgg"
   "Snarf PGP public keys in current region." t)
-(autoload 'smime-decrypt-region "smime"
+(autoload 'smime-decrypt-buffer "smime"
   "S/MIME decryption of current region.")
-(autoload 'smime-verify-region "smime"
-  "S/MIME verification of current region.")
-(defvar smime-output-buffer)
-(defvar smime-errors-buffer)
-
+(autoload 'smime-verify-buffer "smime"
+  "Verify integrity of S/MIME message in BUFFER.")
+(autoload 'smime-noverify-buffer "smime"
+  "Verify integrity of S/MIME message in BUFFER.")
+(autoload 'smime-pkcs7-region "smime"
+  "Convert S/MIME message into a PKCS7 message.")
+(autoload 'smime-pkcs7-certificates-region "smime"
+  "Extract any certificates enclosed in PKCS7 message.")
+(autoload 'smime-pkcs7-email-region "smime"
+  "Get email addresses contained in certificate.")
+(defvar smime-details-buffer)
+(defvar smime-CA-file)
+(defvar smime-CA-directory)
 
 ;;; @ Internal method for multipart/signed
 ;;;
@@ -210,41 +218,52 @@
 
 ;;; @ Internal method for application/pkcs7-signature
 ;;;
-;;; It is based on RFC 2633 (S/MIME version 3).
+;;; It is based on the S/MIME user interface in Gnus.
 
 (defun mime-verify-application/pkcs7-signature (entity situation)
   "Internal method to check S/MIME signature."
-  (let* ((entity-node-id (mime-entity-node-id entity))
-	 (mother (mime-entity-parent entity))
-	 (knum (car entity-node-id))
-	 (onum (if (> knum 0)
-		   (1- knum)
-		 (1+ knum)))
-	 (orig-entity (nth onum (mime-entity-children mother)))
-	 (basename (expand-file-name "tm" temporary-file-directory))
-	 (sig-file (concat (make-temp-name basename) ".asc"))
-	 status)
-    (save-excursion 
-      (mime-show-echo-buffer)
-      (set-buffer mime-echo-buffer-name)
-      (set-window-start 
-       (get-buffer-window mime-echo-buffer-name)
-       (point-max)))
-    (mime-write-entity entity sig-file)
-    (unwind-protect
-	(with-temp-buffer
-	  (mime-insert-entity orig-entity)
-	  (goto-char (point-min))
-	  (while (progn (end-of-line) (not (eobp)))
-	    (insert "\r")
-	    (forward-line 1))
-	  (setq status (smime-verify-region (point-min)(point-max) 
-					    sig-file))
-	  (save-excursion 
+  (with-temp-buffer
+    (mime-insert-entity (mime-find-root-entity entity))
+    (let ((good-signature (smime-noverify-buffer))
+	  (good-certificate
+	   (and (or smime-CA-file smime-CA-directory)
+		(smime-verify-buffer))))
+      (if (not good-signature)
+	  ;; we couldn't verify message, fail with openssl output as message
+	  (save-excursion
+	    (mime-show-echo-buffer)
 	    (set-buffer mime-echo-buffer-name)
-	    (insert-buffer-substring (if status smime-output-buffer
-				       smime-errors-buffer))))
-      (delete-file sig-file))))
+	    (set-window-start 
+	     (get-buffer-window mime-echo-buffer-name)
+	     (point-max))
+            (insert-buffer-substring smime-details-buffer))
+	;; verify mail addresses in mail against those in certificate
+	(when (and (smime-pkcs7-region (point-min)(point-max))
+		   (smime-pkcs7-certificates-region (point-min)(point-max)))
+	  (if (not (member
+		    (downcase 
+		     (nth 1 (std11-extract-address-components
+			     (mime-entity-fetch-field
+			      (mime-find-root-entity entity) "From"))))
+		    (mime-smime-pkcs7-email-buffer (current-buffer))))
+	      (message "Sender address forged")
+	    (if good-certificate
+		(message "Ok (sender authenticated)")
+	      (message "Integrity OK (sender unknown)"))))))))
+
+(defun mime-smime-pkcs7-email-buffer (buffer)
+  (with-temp-buffer
+    (insert-buffer-substring buffer)
+    (goto-char (point-min))
+    (let (addresses)
+      (while (re-search-forward "-----END CERTIFICATE-----" nil t)
+	(if (smime-pkcs7-email-region (point-min)(point))
+	    (setq addresses (append (split-string
+				     (buffer-substring (point-min)(point))
+				     "[\n\r]+")
+				    addresses)))
+	(delete-region (point-min)(point)))
+      (mapcar #'downcase addresses))))
 
 
 ;;; @ Internal method for application/pkcs7-mime
@@ -266,9 +285,7 @@
 	    buffer-read-only)
 	(erase-buffer)
 	(mime-insert-entity entity)
-	(smime-decrypt-region (point-min)(point-max))
-	(delete-region (point-min)(point-max))
-	(insert-buffer smime-output-buffer))
+	(smime-decrypt-buffer))
       (setq major-mode 'mime-show-message-mode)
       (save-window-excursion
 	(mime-view-buffer nil preview-buffer mother

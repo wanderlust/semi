@@ -122,12 +122,10 @@
   "PGP signature of current region." t)
 (autoload 'pgg-insert-key "pgg"
   "Insert PGP public key at point." t)
-(autoload 'smime-encrypt-region "smime"
-  "S/MIME encryption of current region.")
-(autoload 'smime-sign-region "smime"
-  "S/MIME signature of current region.")
-(defvar smime-output-buffer)
-(defvar smime-errors-buffer)
+(autoload 'smime-encrypt-buffer "smime"
+  "S/MIME encryption of current buffer.")
+(autoload 'smime-sign-buffer "smime"
+  "S/MIME signature of current buffer.")
 
 
 ;;; @ version
@@ -1825,7 +1823,7 @@ Content-Transfer-Encoding: 7bit
 	  (while (progn (end-of-line) (not (eobp)))
 	    (insert "\r")
 	    (forward-line 1))
-	  (or (prog1 (smime-sign-region (point-min)(point-max))
+	  (or (prog1 (smime-sign-buffer)
 		(push nil buffer-undo-list)
 		(ignore-errors (undo)))
 	      (throw 'mime-edit-error 'pgp-error)))
@@ -1843,7 +1841,6 @@ Content-Disposition: attachment; filename=\"smime.p7s\"
 Content-Description: S/MIME Cryptographic Signature
 
 "  smime-boundary))
-	(insert-buffer-substring smime-output-buffer)
 	(goto-char (point-max))
 	(insert (format "\n--%s--\n" smime-boundary))))))
 
@@ -1864,13 +1861,12 @@ Content-Description: S/MIME Cryptographic Signature
 	(while (progn (end-of-line) (not (eobp)))
 	  (insert "\r")
 	  (forward-line 1))
-	(or (smime-encrypt-region (point-min)(point-max))
+	(or (smime-encrypt-buffer)
 	    (throw 'mime-edit-error 'pgp-error))
-	(delete-region (point-min)(point-max))
+	(goto-char beg)
 	(insert "--[[application/pkcs7-mime; name=\"smime.p7m\"
 Content-Disposition: attachment; filename=\"smime.p7m\"
-Content-Description: S/MIME Encrypted Message][base64]]\n")
-	(insert-buffer-substring smime-output-buffer)))))
+Content-Description: S/MIME Encrypted Message][base64]]\n")))))
 
 (defsubst replace-space-with-underline (str)
   (mapconcat (function

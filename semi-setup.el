@@ -137,6 +137,12 @@ it is used as hook to set."
 
 	 (mime-add-condition
 	  'action
+	  '((type . application)(subtype . x-pkcs7-signature)
+	    (method . mime-verify-application/pkcs7-signature))
+	  'strict "mime-pgp")
+
+	 (mime-add-condition
+	  'action
 	  '((type . application)(subtype . pkcs7-mime)
 	    (method . mime-view-application/pkcs7-mime))
 	  'strict "mime-pgp"))))
