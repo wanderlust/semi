@@ -1,5 +1,37 @@
 1998-06-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-mc.el: Use `eval-and-compile' to load "mc-pgp".
+
+	* mime-view.el (mime-preview-multipart/mixed): Modify for
+	`mime-view-display-entity'; don't refer `mime-raw-buffer'.
+	(mime-preview-multipart/alternative): Modify for
+	`mime-view-display-entity'; don't refer `mime-raw-buffer'.
+	(mime-view-display-entity): Change interface to abolish argument
+	for raw-buffer; don't refer `mime-raw-buffer'.
+	(mime-view-display-message): Abolish variable
+	`mime-preview-original-major-mode'; modify for
+	`mime-view-display-entity'.
+	(mime-preview-original-major-mode): New implementation; add
+	optional argument `recursive'.
+	(mime-preview-follow-current-entity): Modify for
+	`mime-preview-original-major-mode'.
+	(mime-preview-move-to-next): Use function
+	`mime-preview-original-major-mode'.
+	(mime-preview-scroll-up-entity): Use function
+	`mime-preview-original-major-mode'.
+	(mime-preview-scroll-down-entity): Use function
+	`mime-preview-original-major-mode'.
+	(mime-preview-quit): Use function
+	`mime-preview-original-major-mode'.
+	(mime-preview-show-summary): Use function
+	`mime-preview-original-major-mode'.
+
+	* mime-view.el (mime-view-display-message): New function; abolish
+	function `mime-view-setup-buffers'.
+	(mime-view-mode): Use `mime-view-display-message'.
+
+1998-06-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-play.el (mime-raw-play-entity): Use
 	`mime-entity-situation'.
 
