@@ -337,7 +337,7 @@ Please redefine this function if you want to change default setting."
 ;;; @@@ in raw buffer
 ;;;
 
-(defvar mime::article/content-info
+(defvar mime-raw-content-info
   "Information about structure of message.
 Please use reference function `mime::content-info/SLOT-NAME' to
 reference slot of content-info.  Their argument is only content-info.
@@ -355,7 +355,7 @@ children	entities included in this entity (list of content-infos)
 If a entity includes other entities in its body, such as multipart or
 message/rfc822, content-infos of other entities are included in
 `children', so content-info become a tree.")
-(make-variable-buffer-local 'mime::article/content-info)
+(make-variable-buffer-local 'mime-raw-content-info)
 
 (defvar mime-view-buffer nil
   "MIME View buffer corresponding with the (raw) buffer.")
@@ -449,9 +449,9 @@ The compressed face will be piped to this command.")
 	(set-buffer ibuf)
 	))
   (or mime-view-redisplay
-      (setq mime::article/content-info (mime-parse-message ctl encoding))
+      (setq mime-raw-content-info (mime-parse-message ctl encoding))
       )
-  (let* ((cinfo mime::article/content-info)
+  (let* ((cinfo mime-raw-content-info)
 	 (pcl (mime/flatten-content-info cinfo))
 	 (the-buf (current-buffer))
 	 (mode major-mode)
@@ -617,7 +617,7 @@ The compressed face will be piped to this command.")
 
 (defun mime-article/point-content-number (p &optional cinfo)
   (or cinfo
-      (setq cinfo mime::article/content-info)
+      (setq cinfo mime-raw-content-info)
       )
   (let ((b (mime-entity-info-point-min cinfo))
 	(e (mime-entity-info-point-max cinfo))
@@ -643,7 +643,7 @@ The compressed face will be piped to this command.")
 
 (defun mime-article/cnum-to-cinfo (cn &optional cinfo)
   (or cinfo
-      (setq cinfo mime::article/content-info)
+      (setq cinfo mime-raw-content-info)
       )
   (if (eq cn t)
       cinfo
@@ -658,7 +658,7 @@ The compressed face will be piped to this command.")
 
 (defun mime/flatten-content-info (&optional cinfo)
   (or cinfo
-      (setq cinfo mime::article/content-info)
+      (setq cinfo mime-raw-content-info)
       )
   (let ((dest (list cinfo))
 	(rcl (mime-entity-info-children cinfo))
