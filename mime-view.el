@@ -672,7 +672,7 @@ The compressed face will be piped to this command.")
     (scroll-up	 "Scroll-up"               mime-preview-scroll-up-entity)
     (play	 "Play current entity"     mime-preview-play-current-entity)
     (extract	 "Extract current entity"  mime-preview-extract-current-entity)
-    (print	 "Print current entity"    mime-view-print-current-entity)
+    (print	 "Print current entity"    mime-preview-print-current-entity)
     (x-face	 "Show X Face"             mime-view-display-x-face)
     )
   "Menu for MIME Viewer")
@@ -727,7 +727,7 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       "e"        (function mime-preview-extract-current-entity))
     (define-key mime-view-mode-map
-      "\C-c\C-p" (function mime-view-print-current-entity))
+      "\C-c\C-p" (function mime-preview-print-current-entity))
     (define-key mime-view-mode-map
       "a"        (function mime-view-follow-current-entity))
     (define-key mime-view-mode-map
@@ -859,7 +859,7 @@ It decodes current entity to call internal or external method as
   (mime-preview-play-current-entity "extract")
   )
 
-(defun mime-view-print-current-entity ()
+(defun mime-preview-print-current-entity ()
   "Print current entity (maybe).
 It decodes current entity to call internal or external method as
 \"print\" mode.  The method is selected from variable
