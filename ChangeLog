@@ -1,3 +1,13 @@
+2000-05-22  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* semi-def.el (mime-create-xpm-button): Define it if the feature
+	`xpm' is provided even if the TTY frame is used; call
+	`mime-create-widget-button' if the TTY frame is used.
+	(mime-create-widget-button): Replace a string behind the widget
+	button with the entity info; add comment about it.
+	(mime-button-mouse-face): Refer to `widget-mouse-face' in doc.
+	(mime-button-face): Refer to `widget-button-face' in doc.
+
 2000-05-21   Daiki Ueno  <ueno@unixuser.org>
 
 	* pgg-gpg.el (pgg-gpg-process-region): Abolish redundant nconc.

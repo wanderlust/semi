@@ -50,12 +50,14 @@
 ;;;
 
 (defcustom mime-button-face 'bold
-  "Face used for content-button or URL-button of MIME-Preview buffer."
+  "Face used for content-button or URL-button of MIME-Preview buffer.
+Variable `widget-button-face' is equivalent for it if widget is used."
   :group 'mime
   :type 'face)
 
 (defcustom mime-button-mouse-face 'highlight
-  "Face used for MIME-preview buffer mouse highlighting."
+  "Face used for MIME-preview buffer mouse highlighting.
+Variable `widget-mouse-face' is equivalent for it if widget is used."
   :group 'mime
   :type 'face)
 
@@ -84,14 +86,16 @@ provided or the TTY frame is used."
 			       (goto-char point)
 			       (,function))))
      string)
-    ;; #### ???
-;;    (static-when (featurep 'xemacs)
-;;      (let ((end (point))
-;;	    extent)
-;;	(insert "[" string "]")
-;;	(while (setq extent (extent-at start nil nil extent))
-;;	  (set-extent-endpoints extent end (point)))
-;;	(delete-region start end))))
+    ;; There may be only one string "*" behind the widget button.  We
+    ;; should replace it with the string as it can be seen because it
+    ;; will be yanked into the reply messages.
+    (static-when (featurep 'xemacs)
+      (let ((end (point))
+	    extent)
+	(insert "[" string "]")
+	(while (setq extent (extent-at start nil nil extent))
+	  (set-extent-endpoints extent end (point)))
+	(delete-region start end)))
     (add-text-properties start (point)
 			 (list 'start-open t
 			       'mime-button t)))
@@ -116,45 +120,49 @@ the buttons."
 
   (defvar mime-xpm-button-glyph-cache nil)
 
-  ;; #### device-on-widow-system-p must be checked at run-time.
-  (if (and (featurep 'xpm) (device-on-window-system-p))
+  (if (featurep 'xpm)
       (defun mime-create-xpm-button (string function)
 	"Display STRING as a XPM button with the callback FUNCTION.
 It might be identical to the function `mime-create-widget-button'
-if the feature `xpm' is not provided or the TTY frame is used."
-	(set-extent-properties (make-extent (point)
-					    (progn
-					      (insert "[" string "]")
-					      (point)))
-			       '(invisible t intangible t))
-	(let* ((spec (list string
-			   mime-xpm-button-shadow-thickness
-			   mime-xpm-button-foreground
-			   mime-xpm-button-background))
-	       (button (cdr (assoc spec mime-xpm-button-glyph-cache))))
-	  (or button
-	      (set-alist 'mime-xpm-button-glyph-cache spec
-			 (setq button (apply (function xpm-button-create)
-					     spec))))
-	  (let* ((extent (make-extent (point) (point)))
-		 (down-glyph (make-glyph (car (cdr button))))
-		 (up-glyph (make-glyph (car button)))
-		 (down-func `(lambda (event)
-			       (interactive "e")
-			       (set-extent-begin-glyph ,extent ,down-glyph)))
-		 (up-func `(lambda (event)
-			     (interactive "e")
-			     (mouse-set-point event)
-			     (set-extent-begin-glyph ,extent ,up-glyph)
-			     (,function)))
-		 (keymap (make-sparse-keymap)))
-	    (define-key keymap 'button1 down-func)
-	    (define-key keymap 'button2 down-func)
-	    (define-key keymap 'button1up up-func)
-	    (define-key keymap 'button2up up-func)
-	    (set-extent-begin-glyph extent up-glyph)
-	    (set-extent-property extent 'keymap keymap))
-	  (insert "\n")))
+if the TTY frame is used."
+	;; `device-on-widow-system-p' must be checked at run-time.
+	(if (device-on-window-system-p)
+	    (progn
+	      (set-extent-properties (make-extent (point)
+						  (progn
+						    (insert "[" string "]")
+						    (point)))
+				     '(invisible t intangible t))
+	      (let* ((spec (list string
+				 mime-xpm-button-shadow-thickness
+				 mime-xpm-button-foreground
+				 mime-xpm-button-background))
+		     (button (cdr (assoc spec mime-xpm-button-glyph-cache))))
+		(or button
+		    (set-alist 'mime-xpm-button-glyph-cache spec
+			       (setq button (apply (function xpm-button-create)
+						   spec))))
+		(let* ((extent (make-extent (point) (point)))
+		       (down-glyph (make-glyph (car (cdr button))))
+		       (up-glyph (make-glyph (car button)))
+		       (down-func `(lambda (event)
+				     (interactive "e")
+				     (set-extent-begin-glyph ,extent
+							     ,down-glyph)))
+		       (up-func `(lambda (event)
+				   (interactive "e")
+				   (mouse-set-point event)
+				   (set-extent-begin-glyph ,extent ,up-glyph)
+				   (,function)))
+		       (keymap (make-sparse-keymap)))
+		  (define-key keymap 'button1 down-func)
+		  (define-key keymap 'button2 down-func)
+		  (define-key keymap 'button1up up-func)
+		  (define-key keymap 'button2up up-func)
+		  (set-extent-begin-glyph extent up-glyph)
+		  (set-extent-property extent 'keymap keymap))
+		(insert "\n")))
+	  (mime-create-widget-button string function)))
     (fset 'mime-create-xpm-button 'mime-create-widget-button)))
 
 (defcustom mime-create-button-function 'mime-create-widget-button
