@@ -1,5 +1,51 @@
 SEMI NEWS --- history of major-changes.
 Copyright (C) 1998 Free Software Foundation, Inc.
+
+* Changes in SEMI 1.4
+
+** mailcap
+
+  mailcap was supported to set up 'mime-acting-condition.
+
+  tm-external-method scripts written by born shell were abolished.
+
+
+** mime-add-condition
+
+  New function to set up 'mime-preview-condition and/or
+'mime-acting-condition.
+
+
+** signature setting in semi-setup.el
+
+  Abolish MUA depended signature setting.
+
+  Setting for mail-mode were moved to mail-mime-setup.el.
+
+
+* Changes in SEMI 1.3
+
+** mime-acting-condition
+
+  Format of variable 'mime-acting-condition was changed from `atype'
+to `condition tree'.  Its format is as same as
+'mime-preview-condition.
+
+  If there are two or more conditions are found when matching, menu
+pops up to select method to run.  Selected situation will be added to
+example database. (cf. mime-acting-situation-examples-file)
+
+** New variables
+
+*** mime-view-find-every-acting-situation
+
+	Find every available acting-situation if non-nil.
+
+*** mime-acting-situation-examples-file
+
+	File name of example about acting-situation demonstrated by
+	user.
+
 
 * Changes in SEMI 1.2
 
