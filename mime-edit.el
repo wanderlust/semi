@@ -1167,6 +1167,12 @@ Content-Transfer-Encoding and Content-Disposition headers."
 	      (setq candidate (if (listp candidates)
 				  (car candidates)
 				candidates))
+	      (if (memq (static-if (featurep 'xemacs)
+			    (coding-system-name candidate)
+			  candidate)
+			'(undecided undecided-unix
+				    undecided-dos undecided-mac))
+		  (setq candidate 'raw-text))
 	      (setq eol (coding-system-eol-type candidate))
 	      (cond ((eq eol
 			 (static-if (featurep 'xemacs)
