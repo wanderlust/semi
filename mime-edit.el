@@ -361,8 +361,21 @@ If encoding is nil, it is determined from its contents.")
   "*A string formatted version of mime/defaul-transfer-level")
 (make-variable-buffer-local 'mime-editor/transfer-level-string)
 
+(defun mime-editor/make-charset-default-encoding-alist (transfer-level)
+  (mapcar (function
+	   (lambda (charset-type)
+	     (let ((charset  (car charset-type))
+		   (type     (nth 1 charset-type))
+		   (encoding (nth 2 charset-type))
+		   )
+	       (if (<= type transfer-level)
+		   (cons charset (mime/encoding-name type))
+		 (cons charset encoding)
+		 ))))
+	  mime-charset-type-list))
+
 (defvar mime-editor/charset-default-encoding-alist
-  (mime/make-charset-default-encoding-alist mime-editor/transfer-level))
+  (mime-editor/make-charset-default-encoding-alist mime-editor/transfer-level))
 (make-variable-buffer-local 'mime-editor/charset-default-encoding-alist)
 
 ;;; @@ about message inserting
@@ -2215,7 +2228,7 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
       (setq mime-editor/transfer-level 7)
       ))
   (setq mime-editor/charset-default-encoding-alist
-	(mime/make-charset-default-encoding-alist
+	(mime-editor/make-charset-default-encoding-alist
 	 mime-editor/transfer-level))
   (message (format "Current transfer-level is %d bit"
 		   mime-editor/transfer-level))
