@@ -84,7 +84,7 @@
 
 	* semi-def.el: Don't require 'browse-url.
 	Abolish `mime-browse-add-url-buttons-maybe' and `mime-browse-url'.
-	(mime-browse-url-function): New function.
+	(mime-browse-url-function): New variable.
 	(mime-add-url-buttons): Renamed from `mime-browse-add-url-button'.
 	Use `mime-browse-url-function'.
 
