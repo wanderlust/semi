@@ -1,3 +1,7 @@
+1998-04-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.2.1 (Nomachi) was released.
+
 1998-04-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el (mime-view-setup-buffers): Don't use
