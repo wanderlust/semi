@@ -33,6 +33,7 @@
 (require 'mime-parse)
 (require 'semi-def)
 (require 'calist)
+(require 'mailcap)
 
 
 ;;; @ version
@@ -506,6 +507,35 @@ if it is not nil.")
 
 (defvar mime-acting-condition nil
   "Condition-tree about how to process entity.")
+
+(if (file-readable-p mailcap-file)
+    (let ((entries (mailcap-parse-file)))
+      (while entries
+	(let ((entry (car entries))
+	      view print shared)
+	  (while entry
+	    (let* ((field (car entry))
+		   (field-type (car field)))
+	      (cond ((eq field-type 'view)  (setq view field))
+		    ((eq field-type 'print) (setq print field))
+		    ((memq field-type '(compose composetyped edit)))
+		    (t (setq shared (cons field shared))))
+	      )
+	    (setq entry (cdr entry))
+	    )
+	  (setq shared (nreverse shared))
+	  (ctree-set-calist-strictly
+	   'mime-acting-condition
+	   (append shared (list '(mode . "play")(cons 'method (cdr view)))))
+	  (if print
+	      (ctree-set-calist-strictly
+	       'mime-acting-condition
+	       (append shared
+		       (list '(mode . "print")(cons 'method (cdr view))))
+	       ))
+	  )
+	(setq entries (cdr entries))
+	)))
 
 (ctree-set-calist-strictly
  'mime-acting-condition
