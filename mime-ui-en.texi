@@ -711,6 +711,17 @@ The value should be a symbol.  Allowed versions are @code{gpg},
 @end defvar
 
 
+@defvar pgg-insert-url-function
+
+The function to fetch public key from the keyserver.
+Use Emacs/W3 by the default setting. To use emacs-w3m
+instead, set as follows:
+@lisp
+(setq pgg-insert-url-function #'w3m-retrieve)
+@end lisp
+@end defvar
+
+
 
 @node Buttons, Acting-condition configuration, PGP, Various
 @section Mouse button

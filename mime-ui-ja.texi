@@ -716,6 +716,17 @@ mime-edit では @strong{PGP/MIME} (RFC 2015) および@strong{PGP-kazu}
 @end defvar
 
 
+@defvar pgg-insert-url-function
+
+鍵サーバから公開鍵を取り寄せる際に使う関数です。デフォルトでは
+Emacs/W3 を使う設定になっています。emacs-w3m を使う場合には
+次のように設定します。
+@lisp
+(setq pgg-insert-url-function #'w3m-retrieve)
+@end lisp
+@end defvar
+
+
 
 @node Buttons, Acting-condition configuration, PGP, Various
 @section 押釦
