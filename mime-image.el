@@ -56,7 +56,7 @@
 		    (vector type (if data-p :data :file) file-or-data)
 		  file-or-data)
 		nil nil 'noerror)))
-	  (if (eq 'nothing (image-instance-type instance)) nil
+	  (if (nothing-image-instance-p instance) nil
 	    (make-glyph instance))))
 
       (defun mime-image-insert (image string &optional area)
@@ -168,9 +168,11 @@
   (let ((format (cdr (assq 'image-format situation)))
 	(image-file
 	 (make-temp-name (expand-file-name "tm" temporary-file-directory)))
+	(orig-mode (default-file-modes))
 	image)
     (unwind-protect
 	(progn
+	  (set-default-file-modes 448)
 	  (mime-write-entity-content entity image-file)
 	  (if (null (setq image (mime-image-create image-file format)))
 	      (message "Invalid glyph!")
@@ -181,6 +183,7 @@
 		(set-window-buffer (selected-window)(current-buffer))
 		(sit-for 0))
 	      (message "Decoding image... done"))))
+      (set-default-file-modes orig-mode)
       (condition-case nil
 	  (delete-file image-file)
 	(error nil)))))
