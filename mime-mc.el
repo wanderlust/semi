@@ -130,7 +130,7 @@ Content-Transfer-Encoding: 7bit
     (if mc-pgp-comment
 	(setq args (cons (format "+comment=%s" mc-pgp-comment) args))
       )
-    (message "Signing as %s ..." (car key))
+    (message "Signing as %s..." (car key))
     (if (mime-mc-process-region
 	 start end passwd pgp-path args parser buffer boundary)
 	(progn
@@ -142,7 +142,7 @@ Content-Transfer-Encoding: 7bit
 --[[multipart/signed; protocol=\"application/pgp-signature\";
  boundary=\"%s\"; micalg=pgp-md5][7bit]]\n" boundary))
 		))
-	  (message "Signing as %s ... Done." (car key))
+	  (message "Signing as %s...done" (car key))
 	  t)
       nil)))
 

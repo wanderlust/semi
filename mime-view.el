@@ -450,7 +450,7 @@ You can customize the visibility by changing `mime-view-button-place-alist'."
 			"\n\t")
 		    rest))))))
       (if body-is-invisible
-	  " ..."
+	  "..."
 	""))
      (function mime-preview-play-current-entity))))
 
