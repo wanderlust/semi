@@ -1103,7 +1103,6 @@ v		Decode current content as `play mode'
 e		Decode current content as `extract mode'
 C-c C-p		Decode current content as `print mode'
 a		Followup to current content.
-x		Display X-Face
 q		Quit
 button-2	Move to point under the mouse cursor
         	and decode current content as `play mode'
