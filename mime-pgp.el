@@ -157,7 +157,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 		 (t "Bad signature")))
 	  ))))
 
-(defun mime-method-to-verify-application/pgp-signature (entity situation)
+(defun mime-verify-application/pgp-signature (entity situation)
   "Internal method to check PGP/MIME signature."
   (let* ((start (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))

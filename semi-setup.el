@@ -96,7 +96,7 @@
 	 (mime-add-condition
 	  'action
 	  '((type . application)(subtype . pgp-signature)
-	    (method . mime-method-to-verify-application/pgp-signature))
+	    (method . mime-verify-application/pgp-signature))
 	  'strict "mime-pgp")
 	 
 	 (mime-add-condition
