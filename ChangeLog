@@ -1,3 +1,7 @@
+2000-06-05  Shugo Maeda <shugo@ruby-lang.org>
+
+	* pgg-gpg.el (pgg-scheme-insert-key): Don't quote user id.
+
 2000-05-25  Tanaka Akira      <akr@m17n.org>
 
         * README.en: Update for CVS via SSH.
