@@ -1,3 +1,8 @@
+1998-03-23  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* eword-decode.el (eword-decode-header): Set default-mime-charset when
+	calling `eword-decode-region'.
+
 1998-03-22  Tanaka Akira  <akr@jaist.ac.jp>
 
 	* eword-decode.el (eword-analyze-atom): Treat encoded-word immediately
