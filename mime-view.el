@@ -967,7 +967,6 @@ The compressed face will be piped to this command.")
 	(setq preview-buffer
 	      (concat "*Preview-" (buffer-name raw-buffer) "*")))
     (set-buffer raw-buffer)
-    (mime-parse-buffer)
     (setq mime-preview-buffer preview-buffer)
     (let ((inhibit-read-only t))
       (switch-to-buffer preview-buffer)
