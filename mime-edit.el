@@ -465,23 +465,6 @@ If encoding is nil, it is determined from its contents."
   "A string formatted version of mime-transfer-level")
 (make-variable-buffer-local 'mime-transfer-level-string)
 
-(defun mime-make-charset-default-encoding-alist (transfer-level)
-  (mapcar (function
-	   (lambda (charset-type)
-	     (let ((charset  (car charset-type))
-		   (type     (nth 1 charset-type))
-		   (encoding (nth 2 charset-type))
-		   )
-	       (if (<= type transfer-level)
-		   (cons charset (mime-encoding-name type))
-		 (cons charset encoding)
-		 ))))
-	  mime-charset-type-list))
-
-(defvar mime-edit-charset-default-encoding-alist
-  (mime-make-charset-default-encoding-alist mime-transfer-level))
-(make-variable-buffer-local 'mime-edit-charset-default-encoding-alist)
-
 
 ;;; @@ about message inserting
 ;;;
@@ -2044,11 +2027,16 @@ Content-Transfer-Encoding: 7bit
 	;; Define encoding and encode text if necessary.
 	(or encoding	;Encoding is not specified.
 	    (let* ((encoding
-		    (or (cdr (assq charset
-				   mime-edit-charset-default-encoding-alist))
-			(if (< mime-transfer-level 8)
-			    "quoted-printable"
-			  "8bit")))
+		    (let (bits conv)
+		      (let ((ret (cdr (assq charset mime-charset-type-list))))
+			(if ret
+			    (setq bits (car ret)
+				  conv (nth 1 ret))
+			  (setq bits 8
+				conv "quoted-printable")))
+		      (if (<= bits mime-transfer-level)
+			  (mime-encoding-name bits)
+			conv)))
 		   (beg (mime-edit-content-beginning)))
 	      (encode-mime-charset-region beg (mime-edit-content-end)
 					  charset)
@@ -2264,8 +2252,6 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
 	(setq mime-transfer-level 8)
       (setq mime-transfer-level 7)
       ))
-  (setq mime-edit-charset-default-encoding-alist
-	(mime-make-charset-default-encoding-alist mime-transfer-level))
   (message (format "Current transfer-level is %d bit"
 		   mime-transfer-level))
   (setq mime-transfer-level-string
