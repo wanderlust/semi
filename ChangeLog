@@ -1,5 +1,8 @@
 1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el: Rename `mime-raw-entity-number-to-entity-info' ->
+	`mime-raw-find-entity-from-number'.
+
 	* mime-pgp.el, mime-view.el: Rename
 	`mime-raw-entity-node-id-to-entity-info' ->
 	`mime-raw-find-entity-from-node-id'.
