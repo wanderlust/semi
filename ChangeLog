@@ -1,3 +1,20 @@
+1999-05-22  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-entity-situation): Don't refer `major-mode'
+	of a mime-entity-buffer.
+	(mime-display-multipart/mixed): Add `major-mode' of SITUATION to
+	default-situation of children.
+	(mime-display-multipart/alternative): Likewise.
+	(mime-display-entity): Don't refer `raw-buffer'; use
+	`mime-goto-header-start-point'.
+	(mime-display-message): Add new optional argument
+	`original-major-mode'; don't refer `raw-buffer'; use
+	`mime-entity-name' to make name of `preview-buffer'; don't set up
+	`mime-raw-buffer' of `preview-buffer'; use `original-major-mode'
+	as value of `major-mode' field of default-situation; don't pop up
+	`preview-buffer' in suitable window; return `preview-buffer'.
+	(mime-view-buffer): Pop up `preview-buffer' in suitable window.
+
 1999-05-31  Keiichi Suzuki  <keiichi@nanap.org>
 
 	* mime-play.el (mime-show-echo-buffer): Bind `buffer-read-only' to
