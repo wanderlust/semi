@@ -88,7 +88,7 @@
 		  (if (featurep 'xemacs)
 		      (progn
 			(setq end (point))
-			(insert (concat "[" line "]"))
+			(insert "[" line "]")
 			(while (setq extent (extent-at start nil nil extent))
 			  (set-extent-endpoints extent end (point)))
 			(delete-region start end)))
