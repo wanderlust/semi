@@ -1,3 +1,19 @@
+1997-06-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* eword-encode.el: `tm-eword::encode-encoded-text' ->
+	`eword-encode-text'
+
+	* mime-view.el (mime-view-insert-entity-button,
+	mime-preview/display-message/partial): Use `mime-insert-button'.
+	
+	(mime-view-setup-buffers): Enclose codes to display preview-buffer
+	by `(let ((inhibit-read-only t)) ...)'.
+
+	* mime-def.el (mime-insert-button): New inline function.
+
+	* mime-def.el (mime-add-button): Argument `func' was renamed to
+	`function'; Use overlay for `mime-button-mouse-face'.
+
 1997-06-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 0.92 was released.
