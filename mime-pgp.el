@@ -1,6 +1,6 @@
 ;;; mime-pgp.el --- mime-view internal methods for PGP.
 
-;; Copyright (C) 1995,1996,1997,1998 MORIOKA Tomohiko
+;; Copyright (C) 1995,1996,1997,1998,1999 MORIOKA Tomohiko
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Created: 1995/12/7
@@ -52,9 +52,9 @@
 
 (defun mime-verify-multipart/signed (entity situation)
   "Internal method to verify multipart/signed."
-  (mime-raw-play-entity
+  (mime-play-entity
    (nth 1 (mime-entity-children entity)) ; entity-info of signature
-   (cdr (assq 'mode situation)) ; play-mode
+   (list (assq 'mode situation)) ; play-mode
    ))
 
 
@@ -63,17 +63,15 @@
 ;;; It is based on draft-kazu-pgp-mime-00.txt (PGP-kazu).
 
 (defun mime-view-application/pgp (entity situation)
-  (let* ((p-win (or (get-buffer-window mime-preview-buffer)
+  (let* ((p-win (or (get-buffer-window (current-buffer))
 		    (get-largest-window)))
 	 (new-name
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
-	 (the-buf (current-buffer))
-	 (mother mime-preview-buffer)
+	 (mother (current-buffer))
 	 representation-type)
     (set-buffer (get-buffer-create new-name))
     (erase-buffer)
-    (insert-buffer-substring
-     the-buf (mime-entity-point-min entity) (mime-entity-point-max entity))
+    (mime-insert-entity entity)
     (cond ((progn
 	     (goto-char (point-min))
 	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
@@ -132,7 +130,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
   '((en . "Key matching expected Key ID \\(\\S +\\) not found"))
   "Alist of language vs regexp to detect ``Key expected''.")
 
-(defun mime-pgp-check-signature (output-buffer orig-file)
+(defun mime-pgp-check-signature (output-buffer sig-file orig-file)
   (save-excursion
     (set-buffer output-buffer)
     (erase-buffer))
@@ -140,7 +138,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	 (status (call-process-region (point-min)(point-max)
 				      mime-pgp-command
 				      nil output-buffer nil
-				      orig-file (format "+language=%s" lang)))
+				      sig-file orig-file (format "+language=%s" lang)))
 	 (regexp (cdr (assq lang mime-pgp-good-signature-regexp-alist))))
     (if (= status 0)
 	(save-excursion
@@ -156,10 +154,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 
 (defun mime-verify-application/pgp-signature (entity situation)
   "Internal method to check PGP/MIME signature."
-  (let* ((start (mime-entity-point-min entity))
-	 (end (mime-entity-point-max entity))
-	 (encoding (cdr (assq 'encoding situation)))
-	 (entity-node-id (mime-raw-point-to-entity-node-id start))
+  (let* ((entity-node-id (mime-entity-node-id entity))
 	 (mother (mime-entity-parent entity))
 	 (knum (car entity-node-id))
 	 (onum (if (> knum 0)
@@ -172,12 +167,8 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	 )
     (mime-write-entity orig-entity orig-file)
     (save-excursion (mime-show-echo-buffer))
-    (mime-write-decoded-region (save-excursion
-				 (goto-char start)
-				 (and (search-forward "\n\n")
-				      (match-end 0))
-				 ) end sig-file encoding)
-    (or (mime-pgp-check-signature mime-echo-buffer-name orig-file)
+    (mime-write-entity-content entity sig-file)
+    (or (mime-pgp-check-signature mime-echo-buffer-name sig-file orig-file)
 	(let (pgp-id)
 	  (save-excursion
 	    (set-buffer mime-echo-buffer-name)
@@ -234,7 +225,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 (defun mime-add-application/pgp-keys (entity situation)
   (let* ((start (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))
-	 (entity-number (mime-raw-point-to-entity-number start))
+	 (entity-number (mime-entity-number entity))
 	 (new-name (format "%s-%s" (buffer-name) entity-number))
 	 (encoding (cdr (assq 'encoding situation)))
 	 str)

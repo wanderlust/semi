@@ -1,8 +1,8 @@
-;;; semi-def.el --- definition module for SEMI
+;;; semi-def.el --- definition module for SEMI -*- coding: iso-8859-4; -*-
 
-;; Copyright (C) 1995,1996,1997,1998 Free Software Foundation, Inc.
+;; Copyright (C) 1995,1996,1997,1998,1999 Free Software Foundation, Inc.
 
-;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;; Author: MORIOKA Tomohiko <tomo@m17n.org>
 ;; Keywords: definition, MIME, multimedia, mail, news
 
 ;; This file is part of SEMI (Sample of Emacs MIME Implementation).
@@ -30,7 +30,7 @@
 
 (require 'custom)
 
-(defconst mime-user-interface-product ["SEMI" (1 12 1) "[JR] Nonoichi"]
+(defconst mime-user-interface-product ["SEMI" (1 13 7) "Awazu"]
   "Product name, version number and code name of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"

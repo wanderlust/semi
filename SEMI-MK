@@ -11,11 +11,6 @@
 	     (defvar PREFIX prefix)
 	     ))
     (setq command-line-args-left (cdr command-line-args-left))
-    (and (setq exec-prefix (car command-line-args-left))
-	 (or (string-equal "NONE" exec-prefix)
-	     (defvar EXEC_PREFIX exec-prefix)
-	     ))
-    (setq command-line-args-left (cdr command-line-args-left))
     (and (setq lisp-dir (car command-line-args-left))
 	 (or (string-equal "NONE" lisp-dir)
 	     (defvar LISPDIR lisp-dir)
@@ -32,8 +27,8 @@
     )
   (load-file "SEMI-CFG")
   (load-file "SEMI-ELS")
-  (princ (format "PREFIX=%s\tEXEC_PREFIX=%s
-LISPDIR=%s\n" PREFIX EXEC_PREFIX LISPDIR))
+  (princ (format "PREFIX=%s
+LISPDIR=%s\n" PREFIX LISPDIR))
   )
 
 (defun directory= (dir1 dir2)
@@ -83,14 +78,14 @@ LISPDIR=%s\n" PREFIX EXEC_PREFIX LISPDIR))
   (Custom-make-dependencies)
 
   (compile-elisp-modules (append semi-modules-to-compile
-				 '(auto-autoloads custom-load))
+				 '(mime-setup auto-autoloads custom-load))
 			 ".")
   )
 
 (defun install-semi-package ()
   (config-semi-package)
   (install-elisp-modules (append semi-modules
-				 '(mime auto-autoloads custom-load))
+				 '(mime-setup auto-autoloads custom-load))
 			 "./"
 			 (expand-file-name SEMI_PREFIX
 					   (expand-file-name "lisp"

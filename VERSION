@@ -73,7 +73,14 @@
 1.11.0	Kanazawa		$(B6bBt(B		; <=> $(BKLN&E4F;(B $(BKLE46bBt(B
 1.12.0	Nishi-Kanazawa		$(B@>6bBt(B		; <=> $(BKLN&E4F;(B $(B?7@>6bBt(B
 1.12.1	[JR] Nonoichi		[JR] $(BLn!9;T(B
-------	Matt-Dò-A			$(B>>G$(B
+1.13.0	Matt-Dò-A			$(B>>G$(B
+1.13.1	Kaga-Kasama		$(B2C2l3^4V(B
+1.13.2	Mikawa			$(BH~@n(B
+1.13.3	Komaiko			$(B>.Iq;R(B
+1.13.4	Terai			$(B;{0f(B
+1.13.5	Meih-Dò-A			$(BL@Jv(B
+1.13.6	Komatsu			$(B>.>>(B
+1.13.7	Awazu			$(B0@DE(B
 :	:			:
 -------	Tsuruga			$(BFX2l(B		; = JR $(B>.IM@~(B
 -------	Shin-Hikida		$(B?7I%ED(B
@@ -135,17 +142,30 @@
 1.11.0	Okitsu			$(B6=DE(B
 1.12.0	Shimizu			$(B@6?e(B
 1.12.1	Kusanagi		$(BApFe(B
-------	Shizuoka		$(B@E2,(B
-------	Abekawa			$(B0BG\@n(B
-------	Mochimune		$(BMQ=!(B
-------	Yaizu			$(B>FDE(B
-------	Nishi-Yaizu		$(B@>>FDE(B
-------	Fijieda			$(BF#;^(B
-------	Rokug-Dò-A			$(BO;9g(B
-------	Shimada			$(BEgED(B
+1.13.0	Shizuoka		$(B@E2,(B
+1.13.1	Abekawa			$(B0BG\@n(B
+1.13.2	Mochimune		$(BMQ=!(B
+1.13.3	Yaizu			$(B>FDE(B
+1.13.4	Nishi-Yaizu		$(B@>>FDE(B
+1.13.5	Fijieda			$(BF#;^(B
+1.13.6	Rokug-Dò-A			$(BO;9g(B
+1.13.7	Shimada			$(BEgED(B
 ------	Kanaya			$(B6bC+(B	; = $(BBg0f@nE4F;(B
 ------	Kikugawa		$(B5F@n(B
 ------	Kakegawa		$(B3]@n(B	; = $(BE7N5IML>8PE4F;(B
+------	Fukuroi			$(BB^0f(B
+------	Iwata			$(BHXED(B
+------	Toyodach-Dò-A		$(BK-EDD.(B
+------	Tenry-Dþgawa-A		$(BE7N5@n(B
+------	Hamamatsu		$(BIM>>(B	; = $(B1s=#E4F;(B
+------	Takatsuka		$(B9bDM(B
+------	Maisaka			$(BIq:e(B
+------	Bentenjima		$(BJ[E7Eg(B
+------	Araimachi		$(B?75oD.(B
+------	Wasizu			$(BOIDE(B
+------	Shinjohara		$(B?7=j86(B	; = $(BE7N5IML>8PE4F;(B
+------	Futagawa		$(BFs2O(B
+------	Toyohashi		$(BK-66(B	; = JR $(BHSED@~(B
 :	:			:
 ------	Kanayama		$(B6b;3(B	; =$(B!J(BJR $(BCf1{K\@~!K(B
 ------	Ot-Dòbashi-A		$(BHxF,66(B
@@ -185,6 +205,15 @@
 1.8.2	N-Dòmachi-A			$(BG=D.(B
 1.8.3	Ecch-Dþ-Nakagawa-A		$(B1[CfCf@n(B
 1.8.4	Takaoka			$(B9b2,(B	; = JR $(BKLN&K\@~!">kC<@~(B
+
+;;-------------------------------------------------------------------------
+;;	Hokuetsu Express	$(BKL1[5^9T(B
+;;		http://www.tiara.or.jp/~tokamaci/hokuhoku/hokuhoku.html
+;;	Hokuhoku Line		$(B$[$/$[$/@~(B
+;;-------------------------------------------------------------------------
+1.13.0	Saigata			$(B:T3c(B	; = JR $(B?.1[K\@~(B
+1.13.1	Kubiki			$(B$/$S$-(B
+1.13.2	-DÒike-Ikoinomori-A		$(BBgCS$$$3$$$N?9(B
 
 
 [etc.]

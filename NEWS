@@ -1,6 +1,80 @@
 SEMI NEWS --- history of major-changes.
-Copyright (C) 1998 Free Software Foundation, Inc.
+Copyright (C) 1998,1999 Free Software Foundation, Inc.
 
+* Changes in SEMI 1.13
+
+** Requires FLIM 1.13 API
+
+
+** Don't expect raw-buffer
+
+In FLIM 1.13 API, existence of a raw-buffer corresponding to each
+entity is not guaranteed.
+
+*** Now acting-method must not expect to run in raw-buffer
+
+Function `mime-play-entity' was changed to permit to run in any buffer
+(may be called in preview-buffer).  So each acting-method is called in
+any buffer.
+
+*** Don't refer variable `mime-raw-buffer'
+
+Preview-buffer's local variable `mime-raw-buffer' is deleted.  So
+don't refer it.
+
+*** Don't refer variable `mime-preview-buffer'
+
+There are no guarantee about existence of a raw-buffer corresponding
+to each entity, so don't refer buffer local variables of the
+raw-buffer, e.g. `mime-preview-buffer'.
+
+
+** Function `mime-play-entity'
+
+Function `mime-play-entity' was renamed from `mime-raw-play-entity'
+and changed interface.
+
+Current interface is:
+
+    mime-play-entity (entity &optional situation ignored-method)
+
+Please use `situation' if you would like to specify `mode' and
+`ignore-examples'.
+
+
+** Text property `mime-view-entity-{header|body}'
+
+Now mime-view put text property `mime-view-entity-header' and
+`mime-view-entity-body' in header and body of each entity.
+
+
+** Behavior change about `mime-display-header-hook'
+
+Function `mime-display-entity' runs `mime-display-header-hook' before
+it inserts "\n".
+
+In addition, now it is cleared that current point means beginning of
+header when `mime-display-entity' runs `mime-display-header-hook'.
+Therefore header-presentation-method must not change current point.
+
+
+** New variable `mime-preview-move-scroll'
+
+This variables decides how to scroll in the MIME-View-mode
+when mime-preview-move-upper, mime-preview-move-previous,
+mime-preview-move-next is called. Those are bound to `u', `p', `n',
+respectively.
+
+
+* Changes in SEMI 1.12
+
+There are no user-visible changes.
+
+** New function `eliminate-top-spaces'
+
+Now mime-edit has it.
+
+
 * Changes in SEMI 1.11
 
 ** New function `mime-edit-decode-message-in-buffer'

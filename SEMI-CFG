@@ -77,10 +77,11 @@
 ;;;
 
 (let ((path (get-latest-path "bbdb" 'all-paths)))
-  (when path
-    (add-path path)
-    (add-path (expand-file-name "lisp" path)) ; run-in-place installation
-    ))
+  (if path
+      (progn
+	(add-path path)
+	(add-path (expand-file-name "lisp" path)) ; run-in-place installation
+	)))
 
 ;; Or please specify path.
 ;; (add-path "bbdb-1.50" 'all-paths)
@@ -91,10 +92,11 @@
 ;;;
 
 (let ((path (get-latest-path "w3" 'all-paths)))
-  (when path
-    (add-path path)
-    (add-path (expand-file-name "lisp" path)) ; run-in-place installation
-    ))
+  (if path
+      (progn
+	(add-path path)
+	(add-path (expand-file-name "lisp" path)) ; run-in-place installation
+	)))
 
 ;; Or please specify path.
 ;; (add-path "w3-4.0pre.20" 'all-paths)
@@ -115,13 +117,6 @@
 (defvar PREFIX install-prefix)
 ;;(setq PREFIX "~/")
 
-;; Please specify install path prefix for binaries.
-(defvar EXEC_PREFIX
-  (if (or running-emacs-18 running-xemacs)
-      (expand-file-name "../../.." exec-directory)
-    (expand-file-name "../../../.." exec-directory)
-    ))
-
 ;; Please specify emu prefix [optional]
 (setq EMU_PREFIX
       (if (string-match "XEmacs" emacs-version)
@@ -134,9 +129,6 @@
 
 ;;; @ executables
 ;;;
-
-;; Please specify binary path.
-(defvar BIN_DIR (expand-file-name "bin" EXEC_PREFIX))
 
 ;; Please specify binary path. (for external method scripts)
 (setq METHOD_DIR (expand-file-name "share/semi" PREFIX))

@@ -1,3 +1,501 @@
+1999-10-16  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* SEMI: Version 1.13.7 (Awazu) released.
+
+1999-10-06  Yoshiki Hayashi  <t90553@mail.ecc.u-tokyo.ac.jp>
+
+	* mime-view.el (mime-preview-move-to-upper): Scroll
+	according to mime-preview-move-scroll.
+
+1999-10-05  Yoshiki Hayashi  <t90553@mail.ecc.u-tokyo.ac.jp>
+
+	* mime-view.el (mime-preview-scroll-down-entity,
+	mime-preview-scroll-up-entity): Recenter when moving to
+	a next entity.
+	(mime-preview-move-scroll): New variable.
+	(mime-preview-move-to-previous, mime-preview-move-to-next):
+	Recenter according to the variable mime-preview-move-scroll.
+
+1999-10-04  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-view.el (mime-preview-move-to-next): Attempt to go to the
+	next page if the return value of `next-single-property-change' is
+	greater than `point-max'.
+	(mime-preview-move-to-previous): Don't move backward at the
+	beginning of the buffer; attempt to go to the previous page if the
+	return value of `previous-single-property-change' is less than
+	`point-min'.
+
+1999-09-29  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-display-multipart/mixed): Share cell of
+	`major-mode'.
+	(mime-display-multipart/alternative): Likewise.
+	(mime-display-entity): Refer `major-mode' value of a situation
+	instead of buffer-local-variable `major-mode'.
+
+1999-09-29  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el (mime-preview-play-current-entity): Use
+	text-property `mime-view-situation' as the initial value of
+	acting-situation to add major-mode.
+
+1999-09-29  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-edit.el (mime-content-types): Delete text/x-rot13-47-48 in
+	default definition. [cf. <tm-ja:4904>, <tm-ja:4907>]
+
+1999-09-27  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-user-agent-value): Include
+	`emacs-patch-level'.  It exists in XEmacs 21.1.1 or later.
+
+1999-09-20  Yoshiki Hayashi <t90553@mail.ecc.u-tokyo.ac.jp>
+
+	* mime-view.el (mime-preview-scroll-up-entitiy,
+	mime-preview-scroll-down-entity): Use scroll-up and scroll-down
+	instead of forward-line.
+	(mime-preview-next-line-entity,
+	mime-preview-previous-line-entity): Add optional argument LINES
+	and scroll LINES lines if specified. Add doc-string.
+
+
+1999-09-13  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* SEMI: Version 1.13.6 (Komatsu) released.
+
+1999-08-30  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-edit.el (mime-edit-mime-version-field-for-message/partial):
+	Encode `mime-edit-version'.
+
+1999-08-28  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el (mime-store-message/partial-piece): Use
+	`directory-files' to check number of pieces.
+
+1999-08-26  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el (mime-store-message/partial-piece): Don't refer
+	`mime-preview-buffer'.
+
+1999-08-25  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* SEMI-CFG: Use `if' instead of `when'.
+
+
+1999-08-18  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* REMI: Version 1.13.2 (-DÒike-Ikoinomori)-A released.
+
+1999-08-17  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-view.el (mime-preview-original-major-mode): Modify the way
+	of checking for the end of the buffer.
+
+1999-08-17  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-view.el (mime-preview-original-major-mode): Don't use
+	`get-text-property' at the end of the buffer.
+
+1999-08-02  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-preview-follow-current-entity): Don't use
+	`mime-entity-buffer'.
+
+1999-05-17  KOSEKI Yoshinori  <kose@yk.NetLaputa.ne.jp>
+
+	* mime-pgp.el (mime-verify-application/pgp-signature): Specify the
+	name of `sig-file' explicitly for `mime-pgp-check-signature'.
+	(mime-pgp-check-signature): Accept new arg `sig-file' and feed its
+	value to the verify command.
+
+1999-07-29  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el (mime-play-entity): Get media-type from situation
+	instead of entity; display prompt and call `mime-save-content' if
+	method is not found.
+	(mime-detect-content): Call `mime-play-entity' even if media-type
+	specification is not found in `mime-magic-type-alist'.
+
+1999-07-28  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-view-entity-title): Use
+	`mime-entity-read-field' instead of `mime-read-field'.
+	(mime-display-message): Use `major-mode' of
+	mime-entity-header-buffer as the default value of
+	original-major-mode.
+
+	* mime-play.el (mime-entity-safe-filename): Use
+	`mime-entity-read-field' instead of `mime-read-field'.
+	(mime-view-message/rfc822): New implementation.
+
+	* mime-pgp.el (mime-add-application/pgp-keys): Use
+	`mime-entity-number' instead of `mime-raw-point-to-entity-number'.
+
+	* mime-partial.el
+	(mime-combine-message/partial-pieces-automatically): Use
+	`mime-entity-read-field' instead of `mime-read-field'.
+
+	* mime-bbdb.el (mime-bbdb/update-record): Use
+	`mime-entity-read-field' instead of `mime-read-field'; use
+	`mime-entity-fetch-field' instead of `mime-fetch-field'.
+
+1999-07-28  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-raw-find-entity-from-point): Deleted.
+	(mime-raw-buffer): Deleted.
+	(mime-preview-original-major-mode): Add new optional argument
+	`point'; refer text-property `mime-view-situation' instead of
+	using `mime-entity-buffer'.
+	(mime-raw-point-to-entity-node-id): Deleted.
+	(mime-raw-point-to-entity-number): Deleted.
+	(mime-raw-flatten-message-info): Deleted.
+	(mime-display-entity): Add text-property `mime-view-situation' to
+	each entity.
+
+
+1999-07-27  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* SEMI: Version 1.13.5 (Meih-Dò)-A released.
+
+1999-07-27  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* NEWS (Don't expect raw-buffer): New subsection.
+	(Now acting-method must not expect to run in raw-buffer): Changed
+	as a subsubsection of subsection `Don't expect raw-buffer'.
+	(Don't refer variable `mime-raw-buffer'): New subsubsection.
+	(Don't refer variable `mime-preview-buffer'): New subsubsection.
+
+	* NEWS (Requires FLIM 1.13 API): New subsection.
+
+1999-07-23  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* README.en (Required environment): Change required FLIM to
+	1.13.1; change location of APEL and FLIM.
+
+
+1999-07-22  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* REMI: Version 1.13.1 (Kubiki) released.
+
+1999-07-22  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el
+	(mime-preview-quitting-method-for-mime-show-message-mode): Don't
+	refer `mime-raw-buffer'.
+
+1999-07-21  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el (mime-store-message/partial-piece): Don't refer
+	`mime-preview-buffer'.
+
+
+1999-07-21  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* REMI: Version 1.13.0 (Saigata) released.
+
+1999-07-21  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* Makefile (EXEC_PREFIX): Deleted.
+	(elc): Change command-line interface to delete `EXEC_PREFIX'.
+	(install-elc): Likewise.
+
+	* SEMI-MK (config-semi): Change command-line interface to delete
+	`EXEC_PREFIX'.
+
+	* SEMI-CFG (EXEC_PREFIX): Deleted.
+
+1999-07-07  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-edit.el (mime-edit-quitting-method): Don't refer
+	`mime-raw-buffer'.
+
+	* mime-view.el (mime-preview-follow-current-entity): Don't refer
+	`mime-raw-buffer'.
+
+1999-06-17  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-edit.el (mime-edit-user-agent-value): Modify for XEmacs
+	UTF-2000-MULE.
+
+1999-06-04  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-edit.el (mime-edit-user-agent-value): Modify code to get
+	version number of XEmacs. [cf. <tm-ja:4561>]
+
+1999-05-22  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-entity-situation): Don't refer `major-mode'
+	of a mime-entity-buffer.
+	(mime-display-multipart/mixed): Add `major-mode' of SITUATION to
+	default-situation of children.
+	(mime-display-multipart/alternative): Likewise.
+	(mime-display-entity): Don't refer `raw-buffer'; use
+	`mime-goto-header-start-point'.
+	(mime-display-message): Add new optional argument
+	`original-major-mode'; don't refer `raw-buffer'; use
+	`mime-entity-name' to make name of `preview-buffer'; don't set up
+	`mime-raw-buffer' of `preview-buffer'; use `original-major-mode'
+	as value of `major-mode' field of default-situation; don't pop up
+	`preview-buffer' in suitable window; return `preview-buffer'.
+	(mime-view-buffer): Pop up `preview-buffer' in suitable window.
+
+1999-05-31  Keiichi Suzuki  <keiichi@nanap.org>
+
+	* mime-play.el (mime-show-echo-buffer): Bind `buffer-read-only' to
+	nil, while insert messages.
+
+1999-05-28  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* README.en (Required environment): Require APEL 9.20.
+
+1999-05-27  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el (mime-play-entity): Enter to the calist-package
+	`mime-view' before call `ctree-find-calist'.
+
+	* mime-view.el (mime-view): New calist-package.
+	(mime-display-entity): Enter to the calist-package `mime-view'
+	before call `ctree-match-calist'.
+
+1999-05-23  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-edit.el (mime-edit-mime-version-value): Don't use
+	`eval-when-compile' to avoid problem with XEmacs-MULE.
+	(mime-edit-mime-version-field-for-message/partial): Likewise.
+
+1999-05-20  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* NEWS (Text property `mime-view-entity-{header|body}'): New
+	subsection.
+	(Behavior change about `mime-display-header-hook'): Likewise.
+
+	* mime-view.el (mime-display-entity): Don't move to (point-max)
+	before run `mime-display-header-hook)'.
+
+1999-05-19  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-display-entity): Put text-property
+	`mime-view-entity-header' and `mime-view-entity-body' to header
+	and body; run `mime-display-header-hook' before insert "\n".
+	(mime-preview-follow-current-entity): Use text-property
+	`mime-view-entity-header'.
+
+
+1999-05-12  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* SEMI: Version 1.13.4 (Terai) released.
+
+1999-04-06  Shuhei KOBAYASHI  <shuhei@aqua.ocn.ne.jp>
+
+	* mime-edit.el (mime-delete-field): Use `std11-field-end'.
+
+1999-03-30  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
+
+	* mime-edit.el (mime-edit-decode-single-part-in-buffer): Normalize
+	EOL code in MIME encoded text part.
+
+1999-03-27  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-preview-follow-current-entity): Don't copy
+	header if current entity is root.
+
+1999-03-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-charset-type-list): Add `tis-620'.
+
+
+1999-02-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.13.3 (Komaiko) released.
+
+1999-02-26  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* SEMI-MK (install-semi-package): Install mime-setup.el(c).
+	(compile-semi-package): Compile mime-setup.el as well.
+
+1999-02-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-content-types): Add definition of
+	application/vnd.ms-powerpoint for myself :-P
+	(mime-file-types): Add setting of *.ppt for
+	application/vnd.ms-powerpoint.
+
+1999-02-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-partial.el
+	(mime-combine-message/partial-pieces-automatically): Call
+	`mime-store-message/partial-piece' in the buffer when it is
+	called.
+
+	* mime-play.el (mime-store-message/partial-piece): Don't move to
+	point-min.
+
+	* mime-play.el (mime-store-message/partial-piece): Don't expect
+	called in raw-buffer.
+
+
+1999-01-27  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.13.2 (Mikawa) released.
+
+1999-01-26  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* README.en: Notice that 1.12.5 or later of FLIM is required.
+
+1999-01-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-preview-play-current-entity): Add autoload
+	cookie.
+	(mime-play-entity): Likewise.
+
+	* mime-view.el (mime-display-message): Add autoload cookie; add
+	DOC-string.
+	(mime-view-buffer): Add autoload cookie.
+
+1999-01-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-reduce-acting-situation-examples): New
+	implementation.
+
+1999-01-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-view-caesar): Select window which displays
+	current-buffer if it is not selected <to fix problem with mouse
+	operations>.
+
+1999-01-26  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-decode-single-part-in-buffer): Limit the
+	search bound for the end of "Content-Transfer-Encoding" field.
+
+1999-01-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-view-caesar): New implementation.
+
+1999-01-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-view-caesar): Don't expect called in
+	raw-buffer; use `mime-insert-entity'.
+
+1999-01-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-w3.el (mime-preview-text/html): Display err if error occurs
+	in `w3-region'.
+
+	* mime-w3.el (mime-preview-text/html): Guard from error of
+	`w3-region'.
+
+
+1999-01-24  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.13.1 (Kaga-Kasama) released.
+
+1999-01-24  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* TODO (Don't expect raw-buffer): New item.
+	(lazy generating of situations from mime-entity information): New
+	item.
+
+	* TODO (Don't use filter-model): finished.
+
+	* TODO (multipart/related support): virtually finished.
+
+1999-01-24  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* Delete README.ja until it is fixed.
+
+	* mime-w3.el (url-cid): Use `mime-insert-entity-content'.
+
+	* README.ja, README.en (Required environment): Require FLIM
+	1.12.4.
+
+	* mime-w3.el (mime-w3-message-structure): New variable.
+	(mime-preview-text/html): Set up `mime-w3-message-structure'.
+	(url-cid): New function; set up as registered-protocol of url.
+
+1999-01-23  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* README.ja: Modify title.
+
+	* README.ja: Add notice about translation.
+
+	* README.ja, README.en (Required environment): Require FLIM
+	1.12.3; delete description about enriched.el because anything
+	older than Emacs 19.28 are not supported.
+
+	* mime-pgp.el (mime-view-application/pgp): Don't expect called in
+	raw-buffer; use `mime-insert-entity'.
+
+	* mime-play.el (mime-view-message/rfc822): Use
+	`mime-insert-entity'.
+
+1999-01-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS (Function `mime-play-entity'): Sync with latest
+	specification.
+
+	* mime-pgp.el (mime-verify-multipart/signed): Modify for interface
+	change of `mime-play-entity'.
+
+	* mime-play.el (mime-preview-play-current-entity): Modify for
+	interface change of `mime-play-entity'.
+	(mime-play-entity): Change interface; abolish optional arguments
+	`mode' and `ignore-example'.
+	(mime-detect-content): Modify for interface change of
+	`mime-play-entity'.
+
+	* mime-view.el (mime-entity-situation): Add new optional argument
+	`situation'; it is preferred to attributes of entity.
+
+1999-01-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-version): Don't use `eval-when-compile'
+	to avoid to break product-code-name.
+
+	* mime-edit.el (mime-edit-version): Don't use `eval-when-compile'
+	to avoid to break product-code-name.
+
+
+1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.13.0 (Matt-Dò)-A released.
+
+1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-view-message/rfc822): Don't expect called in
+	raw-buffer.
+
+1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS (Function `mime-play-entity'): Add description about
+	interface change of `mime-play-entity'.
+
+	* mime-play.el (mime-play-entity): Change interface.
+
+1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS (Changes in SEMI 1.13): New section.
+
+	* NEWS (Changes in SEMI 1.12): New section.
+
+1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el (mime-view-application/pgp): Don't expect called in
+	raw-buffer.
+	(mime-verify-application/pgp-signature): Likewise.
+
+	* mime-play.el: Abolish variable
+	`mime-preview-after-decoded-position'.
+	(mime-preview-play-current-entity): Use `mime-play-entity' simply;
+	don't switch to raw-buffer.
+	(mime-play-entity): renamed from `mime-raw-play-entity'; don't
+	expect called in raw-buffer.
+	(mime-activate-mailcap-method): Don't expect called in raw-buffer.
+	(mime-show-echo-buffer): Permit to run in preview-buffer.
+
+
 1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.12.1 ([JR] Nonoichi) released.
