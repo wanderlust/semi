@@ -175,6 +175,12 @@ To insert a signature file automatically, call the function
   :group 'mime-edit
   :type 'hook)
 
+(defcustom mime-edit-line-break-type 'LF
+  "*Line break code type of encoded message. `LF' is default."
+  :group 'mime-edit
+  :type '(choice (const LF)
+		 (const :tag "CR + LF" CRLF)))
+
 (defcustom mime-edit-exit-hook nil
   "*Hook called when exit MIME mode."
   :group 'mime-edit
@@ -2111,8 +2117,12 @@ Content-Transfer-Encoding: 7bit
 			  (mime-encoding-name bits)
 			conv)))
 		   (beg (mime-edit-content-beginning)))
-	      (encode-mime-charset-region beg (mime-edit-content-end)
-					  charset)
+	      (encode-mime-charset-region
+	       beg (mime-edit-content-end)
+	       charset
+	       (if (member encoding '(nil "7bit" "8bit" "quoted-printable"))
+		   mime-edit-line-break-type
+		 'CRLF))
 	      ;; Protect "From " in beginning of line
 	      (save-restriction
 		(narrow-to-region beg (mime-edit-content-end))
@@ -2130,13 +2140,6 @@ Content-Transfer-Encoding: 7bit
 				     ))
 			  (setq encoding "quoted-printable")
 			  )))))
-	      ;; canonicalize line break code
-	      (or (member encoding '(nil "7bit" "8bit" "quoted-printable"))
-		  (save-restriction
-		    (narrow-to-region beg (mime-edit-content-end))
-		    (goto-char beg)
-		    (while (re-search-forward "\\(\\=\\|[^\r]\\)\n" nil t)
-		      (replace-match "\\1\r\n"))))
 	      (goto-char beg)
 	      (mime-encode-region beg (mime-edit-content-end)
 				  (or encoding "7bit"))
