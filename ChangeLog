@@ -1,3 +1,8 @@
+1999-11-10  Yoshiki Hayashi  <t90553@mail.ecc.u-tokyo.ac.jp>
+
+	* mime-play.el: (mime-save-directory): New variable.
+	(mime-save-content): Don't force filename parameter to be used.
+
 1999-11-09   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* pgg-pgp.el, pgg-pgp5.el
