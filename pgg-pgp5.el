@@ -216,7 +216,12 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
     (if signature (delete-file signature))
     (with-current-buffer pgg-errors-buffer
       (goto-char (point-min))
-      (re-search-forward "^Good signature" nil t))))
+      (if (re-search-forward "^Good signature" nil t)
+	  (progn
+	    (set-buffer pgg-output-buffer)
+	    (insert-buffer-substring pgg-errors-buffer)
+	    t)
+	nil))))
 
 (luna-define-method pgg-scheme-insert-key ((scheme pgg-scheme-pgp5))
   (let* ((pgg-pgp5-user-id (or pgg-pgp5-user-id pgg-default-user-id))

@@ -1,3 +1,8 @@
+2000-02-02  Nakagawa, Makoto  <Makoto.Nakagawa@jp.compaq.com>
+
+	* pgg-pgp5.el (pgg-scheme-verify-region): Copy the contents of
+	`pgg-errors-buffer' to `pgg-output-buffer'.
+
 2000-02-21   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* mime-pgp.el: When it is compiled, define `smime-output-buffer'
