@@ -1,3 +1,14 @@
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el: Rename 'rfc822/quoted-string-regexp ->
+	'std11-quoted-string-regexp.
+
+	* mime-parse.el: Rename 'rfc822/qtext-regexp ->
+	'std11-qtext-regexp.
+
+	* mime-parse.el: Rename 'rfc822/quoted-pair-regexp ->
+	'std11-quoted-pair-regexp.
+
 1998-05-25  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-play.el (mime-raw-play-entity): Abolish point correcting
