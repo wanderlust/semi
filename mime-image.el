@@ -69,7 +69,7 @@
 	 (highlight-headers (point-min) (re-search-forward "^$" nil t) t)
 	 )
        
-       (add-hook 'mime-view-content-header-filter-hook
+       (add-hook 'mime-display-header-hook
 		 'mime-preview-x-face-function-use-highlight-headers)
        
        )
@@ -92,7 +92,7 @@
        ;; X-Face
        ;;
        (if (exec-installed-p uncompface-program exec-path)
-	   (add-hook 'mime-view-content-header-filter-hook
+	   (add-hook 'mime-display-header-hook
 		     'x-face-decode-message-header)
 	 )
        ))
