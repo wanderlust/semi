@@ -1,6 +1,6 @@
 ;;; mime-edit.el --- Simple MIME Composer for GNU Emacs
 
-;; Copyright (C) 1993,1994,1995,1996,1997,1998 Free Software Foundation, Inc.
+;; Copyright (C) 1993,94,95,96,97,98,99 Free Software Foundation, Inc.
 
 ;; Author: UMEDA Masanobu <umerin@mse.kyutech.ac.jp>
 ;;         MORIOKA Tomohiko <morioka@jaist.ac.jp>
