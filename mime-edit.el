@@ -2580,6 +2580,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	 (buf-name (buffer-name))
 	 (temp-buf-name (concat "*temp-article:" buf-name "*"))
 	 (buf (get-buffer temp-buf-name))
+	 (pgp-processing mime-edit-pgp-processing)
 	 )
     (if buf
 	(progn
@@ -2595,6 +2596,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
     (setq mail-header-separator separator)
     (make-local-variable 'mime-edit-buffer)
     (setq mime-edit-buffer the-buf)
+    (setq mime-edit-pgp-processing pgp-processing)
 
     (run-hooks 'mime-edit-translate-hook)
     (mime-edit-translate-buffer)
