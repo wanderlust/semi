@@ -1,3 +1,10 @@
+2003-12-12  ARISAWA Akihiro  <ari@mbf.sphere.ne.jp>
+
+	* mime-play.el (mime-play-delete-file-immediately): New user option.
+	(mime-mailcap-method-sentinel): Use it.
+	(mime-mailcap-delete-played-files): New function; set up for
+	`kill-emacs-hook'.
+
 2002-05-18  ARISAWA Akihiro  <ari@mbf.sphere.ne.jp>
 
 	* mime-play.el (mime-activate-mailcap-method): Don't use

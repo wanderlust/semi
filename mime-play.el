@@ -43,6 +43,11 @@ If t, it means current directory."
   :type '(choice (const :tag "Current directory" t)
 		 (directory)))
 
+(defcustom mime-play-delete-file-immediately t
+  "If non-nil, delete played file immediately."
+  :group 'mime-view
+  :type 'boolean)
+
 (defvar mime-play-find-every-situations t
   "*Find every available situations if non-nil.")
 
@@ -159,13 +164,19 @@ specified, play as it.  Default MODE is \"play\"."
       (set-process-sentinel process 'mime-mailcap-method-sentinel))))
 
 (defun mime-mailcap-method-sentinel (process event)
-  (let ((file (cdr (assq process mime-mailcap-method-filename-alist))))
-    (when (file-exists-p file)
-      (ignore-errors
-	(delete-file file)
-	(delete-directory (file-name-directory file)))))
-  (remove-alist 'mime-mailcap-method-filename-alist process)
-  (message "%s %s" process event))
+  (when mime-play-delete-file-immediately
+    (let ((file (cdr (assq process mime-mailcap-method-filename-alist))))
+      (if (file-exists-p file)
+	  (delete-file file)))
+    (remove-alist 'mime-mailcap-method-filename-alist process))
+  (message (format "%s %s" process event)))
+
+(defun mime-mailcap-delete-played-files ()
+  (dolist (elem mime-mailcap-method-filename-alist)
+    (when (file-exists-p (cdr elem))
+      (delete-file (cdr elem)))))
+
+(add-hook 'kill-emacs-hook 'mime-mailcap-delete-played-files)
 
 (defvar mime-echo-window-is-shared-with-bbdb
   (module-installed-p 'bbdb)
