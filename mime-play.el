@@ -342,8 +342,10 @@ window.")
   (concat (regexp-* mime-view-file-name-char-regexp)
 	  "\\(\\." mime-view-file-name-char-regexp "+\\)*"))
 
-(defun mime-raw-get-original-filename (param &optional encoding)
-  (or (mime-raw-get-uu-filename param encoding)
+(defun mime-raw-get-original-filename (param)
+  (or (if (member (cdr (assq 'encoding param))
+		  mime-view-uuencode-encoding-name-list)
+	  (mime-raw-get-uu-filename))
       (let (ret)
 	(or (if (or (and (setq ret (mime-read-Content-Disposition))
 			 (setq ret
