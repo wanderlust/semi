@@ -1,3 +1,8 @@
+1999-04-06  Keiichi Suzuki  <keiichi@nanap.org>
+
+	* mime-pgp.el (mime-view-application/pgp): Support PGP5.X and
+	GnuPG format.
+
 1999-04-05  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-pgp.el (mime-pgp-parse-verify-error): Use
