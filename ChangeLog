@@ -1,5 +1,18 @@
 1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-preview-condition): Set up for
+	'mime-preview-text/plain instead of
+	'mime-preview-filter-for-text/plain.
+	(mime-view-insert-message/partial-button): Change interface for
+	new spec of body-presentation-method.
+	(mime-view-display-entity): Change interface of
+	body-presentation-method.
+
+	* mime-text.el (mime-preview-text/plain): New function; abolish
+	'mime-preview-filter-for-text/plain.
+
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-parse.el (make-mime-entity): Change format.
 	(mime-entity-header-start): New function.
 	(mime-entity-header-end): New function.
