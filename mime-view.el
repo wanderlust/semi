@@ -297,7 +297,7 @@ Please redefine this function if you want to change default setting."
 ;;; @@@ in raw-buffer
 ;;;
 
-(defvar mime-raw-entity-info
+(defvar mime-raw-message-info
   "Information about structure of message.
 Please use reference function `mime-entity-info-SLOT' to get value of
 SLOT.
@@ -317,7 +317,7 @@ children	entities included in this entity (list of content-infos)
 If an entity includes other entities in its body, such as multipart or
 message/rfc822, entity-infos of other entities are included in
 `children', so entity-info become a tree.")
-(make-variable-buffer-local 'mime-raw-entity-info)
+(make-variable-buffer-local 'mime-raw-message-info)
 
 (defvar mime-preview-buffer nil
   "MIME-preview buffer corresponding with the (raw) buffer.")
@@ -411,9 +411,9 @@ The compressed face will be piped to this command.")
 	(set-buffer ibuf)
 	))
   (or mime-view-redisplay
-      (setq mime-raw-entity-info (mime-parse-message ctl encoding))
+      (setq mime-raw-message-info (mime-parse-message ctl encoding))
       )
-  (let* ((cinfo mime-raw-entity-info)
+  (let* ((cinfo mime-raw-message-info)
 	 (pcl (mime/flatten-content-info cinfo))
 	 (the-buf (current-buffer))
 	 (mode major-mode)
@@ -577,20 +577,23 @@ The compressed face will be piped to this command.")
 ;;; @ entity information
 ;;;
 
-(defun mime-raw-point-to-entity-number (p &optional cinfo)
-  (or cinfo
-      (setq cinfo mime-raw-entity-info)
+(defun mime-raw-point-to-entity-number (position &optional message-info)
+  "Return entity-number from POTION in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (or message-info
+      (setq message-info mime-raw-message-info)
       )
-  (let ((b (mime-entity-info-point-min cinfo))
-	(e (mime-entity-info-point-max cinfo))
-	(c (mime-entity-info-children cinfo))
+  (let ((b (mime-entity-info-point-min message-info))
+	(e (mime-entity-info-point-max message-info))
+	(c (mime-entity-info-children message-info))
 	)
-    (if (and (<= b p)(<= p e))
+    (if (and (<= b position)(<= position e))
 	(or (let (co ret (sn 0))
 	      (catch 'tag
 		(while c
 		  (setq co (car c))
-		  (setq ret (mime-raw-point-to-entity-number p co))
+		  (setq ret (mime-raw-point-to-entity-number position co))
 		  (cond ((eq ret t) (throw 'tag (list sn)))
 			(ret (throw 'tag (cons sn ret)))
 			)
@@ -605,7 +608,7 @@ The compressed face will be piped to this command.")
 
 (defun mime-raw-cnum-to-cinfo (cn &optional cinfo)
   (or cinfo
-      (setq cinfo mime-raw-entity-info)
+      (setq cinfo mime-raw-message-info)
       )
   (if (eq cn t)
       cinfo
@@ -620,7 +623,7 @@ The compressed face will be piped to this command.")
 
 (defun mime/flatten-content-info (&optional cinfo)
   (or cinfo
-      (setq cinfo mime-raw-entity-info)
+      (setq cinfo mime-raw-message-info)
       )
   (let ((dest (list cinfo))
 	(rcl (mime-entity-info-children cinfo))
