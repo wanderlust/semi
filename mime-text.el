@@ -29,12 +29,16 @@
 ;;; @ buffer local variables in raw-buffer
 ;;;
 
-(defvar mime-raw::text-decoder nil
+(defvar mime-text-decoder nil
   "Function to decode text in current buffer.
 Interface of the function is (CHARSET &optional ENCODING).
 CHARSET is symbol of MIME charset and ENCODING is value of
-Content-Transfer-Encoding.")
-(make-variable-buffer-local 'mime-raw::text-decoder)
+Content-Transfer-Encoding.
+
+Notice that this variable is usually used as buffer local variable in
+raw-buffer.")
+
+(make-variable-buffer-local 'mime-text-decoder)
 
 
 ;;; @ code conversion
@@ -58,14 +62,15 @@ Content-Transfer-Encoding.")
 
 (defun mime-preview/decode-text-buffer (charset encoding)
   (mime-decode-region (point-min) (point-max) encoding)
-  (let ((m (save-excursion
-	     (set-buffer mime::preview/article-buffer)
-	     (or mime-raw::text-decoder
-		 (cdr (or (assq major-mode mime-text-decoder-alist)
-			  (assq t mime-text-decoder-alist)))
-		 ))))
-    (and (functionp m)
-	 (funcall m charset encoding)
+  (let ((text-decoder
+	 (save-excursion
+	   (set-buffer mime::preview/article-buffer)
+	   (or mime-text-decoder
+	       (cdr (or (assq major-mode mime-text-decoder-alist)
+			(assq t mime-text-decoder-alist)))
+	       ))))
+    (and (functionp text-decoder)
+	 (funcall text-decoder charset encoding)
 	 )))
 
 
