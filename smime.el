@@ -169,9 +169,10 @@
 	(smime-parse-attribute
 	 (buffer-substring (point)(progn (end-of-line)(point))))))))
 
-(defsubst smime-search-certificate (attr)
+(defsubst smime-find-certificate (attr)
   (let ((files (if (file-directory-p smime-certificate-directory)
-		   (directory-files smime-certificate-directory)
+		   (directory-files smime-certificate-directory
+				    'full nil nil t)
 		 nil)))
     (catch 'found
       (while files
@@ -284,8 +285,7 @@ the detached signature of the current region."
   (let* ((basename (expand-file-name "smime" temporary-file-directory))
 	 (orig-file (make-temp-name basename))
 	 (args (list "-qs" signature))
-	 (orig-mode (default-file-modes))
-	 cert-file)
+	 (orig-mode (default-file-modes)))
     (unwind-protect
 	(progn
 	  (set-default-file-modes 448)
@@ -295,17 +295,14 @@ the detached signature of the current region."
     (with-temp-buffer
       (insert-file-contents-as-binary signature)
       (goto-char (point-max))
-      (insert "\n")
       (insert-file-contents-as-binary
-       (or (smime-search-certificate 
+       (or (smime-find-certificate 
 	    (smime-query-signer (point-min)(point-max)))
 	   (expand-file-name 
 	    (read-file-name "Certificate file: "))))
-      (smime-process-region (point-min)(point-max) smime-program args))
-    (smime-process-when-success 
-      (when smime-cache-passphrase
-	(smime-add-passphrase-cache hash passphrase)))
-    ))
+      (smime-process-region (point-min)(point-max) smime-program 
+			    (list "-dv" orig-file)))
+    (smime-process-when-success nil)))
 
 (provide 'smime)
 
