@@ -152,7 +152,7 @@
     (remove-text-properties beg end '(face nil))
     (message "Decoding image...")
     (mime-decode-region beg end encoding)
-    (let* ((minor (assoc-value ctype mime-view-image-converter-alist))
+    (let* ((minor (cdr (assoc ctype mime-view-image-converter-alist)))
 	   (gl (image-normalize minor (buffer-string)))
 	   e)
       (delete-region (point-min)(point-max))
