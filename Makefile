@@ -4,7 +4,7 @@
 
 PACKAGE = wemi
 API	= 1.13
-RELEASE = 1
+RELEASE = 2
 
 TAR	= tar
 RM	= /bin/rm -f
