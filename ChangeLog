@@ -1,5 +1,8 @@
 2001-05-06   Daiki Ueno  <ueno@unixuser.org>
 
+	* mime-view.el (mime-display-message/partial-button): Don't use
+	`mime-add-button'. [cf. <Elips:4199>]
+
 	* mime-edit.el (mime-edit-normalize-body): Use
 	`remove-text-properties' instead of `visible-region'.
 
