@@ -56,7 +56,7 @@
   "Display STRING as a widget button with the callback FUNCTION.
 Under XEmacs, the function `mime-create-xpm-button' might be identical
 to the function `mime-create-widget-button' if the feature `xpm' is not
-provided and TTY frame is used."
+provided or the TTY frame is used."
   (let ((start (point)))
     (widget-create
      'push-button
@@ -104,7 +104,7 @@ the buttons."
       (defun mime-create-xpm-button (string function)
 	"Display STRING as a XPM button with the callback FUNCTION.
 It might be identical to the function `mime-create-widget-button'
-if the feature `xpm' is not provided and TTY frame is used."
+if the feature `xpm' is not provided or the TTY frame is used."
 	(set-extent-properties (make-extent (point)
 					    (progn
 					      (insert "[" string "]")
