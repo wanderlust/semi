@@ -73,13 +73,13 @@
   "Create a button between FROM and TO with callback FUNC and data DATA."
   (and mime-button-face
        (overlay-put (make-overlay from to) 'face mime-button-face))
-  (tl:add-text-properties from to
-			  (nconc
-			   (and mime-button-mouse-face
-				(list 'mouse-face mime-button-mouse-face))
-			   (list 'mime-button-callback func)
-			   (and data (list 'mime-button-data data))
-			   ))
+  (add-text-properties from to
+		       (nconc
+			(and mime-button-mouse-face
+			     (list 'mouse-face mime-button-mouse-face))
+			(list 'mime-button-callback func)
+			(and data (list 'mime-button-data data))
+			))
   )
 
 (defvar mime-button-mother-dispatcher nil)
