@@ -29,7 +29,7 @@
 (eval-when-compile (require 'cl))
 
 
-(defconst mime-module-version '("SEMI" "Itoigawa" 1 4 0)
+(defconst mime-module-version '("SEMI" ".DNRmi" 1 4 1)
   "Implementation name, version name and numbers of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
