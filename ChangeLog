@@ -1,5 +1,11 @@
 1997-11-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-edit.el (mime-edit-split-message): Use `defcustom'.
+	(mime-edit-message-default-max-lines): Use `defcustom'.
+	(mime-edit-message-max-lines-alist): Use `defcustom'.
+
+1997-11-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* Makefile: Abolish `execs' and `install-execs'.
 
 1997-11-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
