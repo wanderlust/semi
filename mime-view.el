@@ -305,7 +305,7 @@ SLOT.
 
 Following is a list of slots of the structure:
 
-reversed-number	reversed entity-number (list of integers or t)
+node-id		reversed entity-number (list of integers or t)
 point-min	beginning point of region in raw-buffer
 point-max	end point of region in raw-buffer
 type		media-type (symbol)
@@ -455,7 +455,7 @@ The compressed face will be piped to this command.")
 		      )))
 	 (params (mime-entity-info-parameters content))
 	 (encoding (mime-entity-info-encoding content))
-	 (rcnum (mime-entity-info-reversed-number content))
+	 (rcnum (mime-entity-info-node-id content))
 	 he e nb ne subj)
     (set-buffer ibuf)
     (goto-char beg)
@@ -907,7 +907,7 @@ It calls following-method selected from variable
       )
     (let* ((p-beg (previous-single-property-change (point) 'mime-view-entity-info))
 	   p-end
-	   (rcnum (mime-entity-info-reversed-number cinfo))
+	   (rcnum (mime-entity-info-node-id cinfo))
 	   (len (length rcnum))
 	   )
       (cond ((null p-beg)
@@ -938,7 +938,7 @@ It calls following-method selected from variable
 				(next-single-property-change
 				 (point) 'mime-view-entity-info))
 		     (goto-char e)
-		     (let ((rc (mime-entity-info-reversed-number
+		     (let ((rc (mime-entity-info-node-id
 				(get-text-property (point)
 						   'mime-view-entity-info))))
 		       (or (equal rcnum (nthcdr (- (length rc) len) rc))
@@ -969,7 +969,7 @@ It calls following-method selected from variable
 	  (goto-char (point-min))
 	  (insert "\n")
 	  (goto-char (point-min))
-	  (let ((rcnum (mime-entity-info-reversed-number cinfo)) ci str)
+	  (let ((rcnum (mime-entity-info-node-id cinfo)) ci str)
 	    (while (progn
 		     (setq
 		      str
@@ -1050,11 +1050,12 @@ It calls following-method selected from variable
 If there is no upper entity, call function `mime-preview-quit'."
   (interactive)
   (let (cinfo)
-    (while (null (setq cinfo (get-text-property (point) 'mime-view-entity-info)))
+    (while (null (setq cinfo
+		       (get-text-property (point) 'mime-view-entity-info)))
       (backward-char)
       )
     (let ((r (mime-raw-reversed-entity-number-to-entity-info
-	      (cdr (mime-entity-info-reversed-number cinfo))
+	      (cdr (mime-entity-info-node-id cinfo))
 	      (get-text-property 1 'mime-view-entity-info)))
 	  point)
       (catch 'tag
@@ -1076,7 +1077,8 @@ variable `mime-view-over-to-previous-method-alist'."
   (while (null (get-text-property (point) 'mime-view-entity-info))
     (backward-char)
     )
-  (let ((point (previous-single-property-change (point) 'mime-view-entity-info)))
+  (let ((point
+	 (previous-single-property-change (point) 'mime-view-entity-info)))
     (if point
 	(goto-char point)
       (let ((f (assq mime-preview-original-major-mode
