@@ -632,12 +632,14 @@ If it is not specified for a major-mode,
 	  (mime-product-code-name mime-library-product)
 	  ") "
 	  (if (featurep 'xemacs)
-	      (concat (if (featurep 'mule) "MULE")
+	      (concat (cond ((boundp 'utf-2000-version)
+			     (concat "UTF-2000-MULE/" utf-2000-version))
+			    ((featurep 'mule) "MULE")
+			    (t ""))
 		      " XEmacs"
-		      (if (string-match "\\s +\\((\\|\\\"\\)" emacs-version)
+		      (if (string-match "^[0-9]+\\(\\.[0-9]+\\)" emacs-version)
 			  (concat "/"
-				  (substring emacs-version 0
-					     (match-beginning 0))
+				  (substring emacs-version 0 (match-end 0))
 				  (if (and (boundp 'xemacs-betaname)
 					   ;; It does not exist in XEmacs
 					   ;; versions prior to 20.3.
