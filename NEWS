@@ -1,6 +1,31 @@
 SEMI NEWS --- history of major-changes.
 Copyright (C) 1998 Free Software Foundation, Inc.
 
+* Changes in SEMI 1.8
+
+** Abolish external X-Face viewer
+
+
+** Abolish obsolete utility for *-field-list and *-field-regexp
+
+  Abolish function `tm:set-fields', `tm:add-fields' and
+`tm:delete-fields'.
+
+
+** Change MUA interface of automatic message/partial combining
+
+  Abolish variable `mime-view-partial-message-method-alist'.
+
+  Instead of it, `request-partial-message-method' in acting-situation
+is available to specify MUA depended implementation.
+
+  Each element of `mime-view-partial-message-method-alist' were
+required to display message at current summary line, and its return
+value were ignored.  On the other hand,
+`request-partial-message-method' is required to return structure of
+message at current summary line.  Format of it is mime-entity.
+
+
 * Changes in SEMI 1.7
 
 ** Header-presentation-method
