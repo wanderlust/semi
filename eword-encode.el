@@ -559,7 +559,8 @@ encoded-word.  ASCII token is not encoded."
 				       resent-reply-to resent-from
 				       resent-sender to resent-to
 				       cc resent-cc
-				       bcc resent-bcc dcc)
+				       bcc resent-bcc dcc
+				       mime-version)
 				     )
 			       (car (tm-eword::encode-address-list
 				     (+ (length field-name) 2) field-body))
