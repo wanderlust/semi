@@ -1,5 +1,18 @@
 1999-05-02  Tanaka Akira  <akr@jaist.ac.jp>
 
+	* mime-view.el (unpack): New macro.
+	(unpack-skip): New function.
+	(unpack-fixed): New function.
+	(unpack-byte): New function.
+	(unpack-short): New function.
+	(unpack-long): New function.
+	(unpack-string): New function.
+	(unpack-string-sjis): New function.
+	(postpet-decode): New function.
+	(mime-display-application/x-postpet): Use `postpet-decode'.
+
+1999-05-02  Tanaka Akira  <akr@jaist.ac.jp>
+
 	* (mime-edit-use-long-mime-charset-comment): Use `defvar' to define.
 
 	* mime-edit.el (mime-edit-define-charset): Check
