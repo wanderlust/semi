@@ -1,5 +1,9 @@
 1998-05-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-setup.el: Avoid warning message of byte-compiler.
+
+1998-05-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-view-setup-buffers): Use
 	'mime-view-display-entity; abolish 'mime-view-display-message.
 	(mime-view-display-entity): fixed.
@@ -62,7 +66,10 @@
 	'mime-entity-media-type, 'mime-entity-media-subtype and
 	'mime-entity-parameters.
 
+
 1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.4.4 (Ecch-Dþ-Miyazaki)-A released.
 
 	* mime-play.el (mime-mailcap-method-filename-alist): New variable.
 	(mime-mailcap-method-sentinel): New function.
