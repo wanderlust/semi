@@ -37,7 +37,7 @@
 
 (defvar mime-preview/after-decoded-position nil)
 
-(defun mime-preview/decode-content ()
+(defun mime-preview/decode-content (&optional mode)
   (interactive)
   (let ((pc (mime-preview/point-pcinfo (point))))
     (if pc
@@ -45,7 +45,7 @@
 	  (setq mime-preview/after-decoded-position (point))
 	  (set-buffer (mime::preview-content-info/buffer pc))
 	  (mime-article/decode-content
-	   (mime::preview-content-info/content-info pc))
+	   (mime::preview-content-info/content-info pc) mode)
 	  (if (eq (current-buffer)
 		  (mime::preview-content-info/buffer pc))
 	      (progn
@@ -54,7 +54,10 @@
 		))
 	  ))))
 
-(defun mime-article/decode-content (cinfo)
+(defun mime-article/decode-content (cinfo &optional mode)
+  (or mode
+      (setq mode mime-view-decoding-mode)
+      )
   (let ((beg (mime::content-info/point-min cinfo))
 	(end (mime::content-info/point-max cinfo))
 	(ctype (or (mime::content-info/type cinfo) "text/plain"))
@@ -73,10 +76,8 @@
 		       (cons 'encoding encoding)
 		       (cons 'major-mode major-mode)
 		       params))
-      (if mime-view-decoding-mode
-	  (setq cal (cons
-		     (cons 'mode mime-view-decoding-mode)
-		     cal))
+      (if mode
+	  (setq cal (cons (cons 'mode mode) cal))
 	)
       (setq ret (mime/get-content-decoding-alist cal))
       (setq method (cdr (assq 'method ret)))
