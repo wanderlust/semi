@@ -30,6 +30,8 @@
 (require 'alist)
 (require 'filename)
 
+(eval-when-compile (require 'mime-text))
+
   
 ;;; @ content decoder
 ;;;
