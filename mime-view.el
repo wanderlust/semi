@@ -672,12 +672,12 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . text)(subtype . x-rot13-47)(mode . "play")
-   (method . mime-method-to-display-caesar)
+   (method . mime-view-caesar)
    ))
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . text)(subtype . x-rot13-47-48)(mode . "play")
-   (method . mime-method-to-display-caesar)
+   (method . mime-view-caesar)
    ))
 
 (ctree-set-calist-strictly
