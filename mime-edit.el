@@ -516,9 +516,6 @@ Tspecials means any character that matches with it in header must be quoted.")
 (defconst mime-editor/mime-map (make-sparse-keymap)
   "Keymap for MIME commands.")
 
-(defconst mime-editor/minor-mime-map nil
-  "Keymap for MIME commands.")
-
 ;;; @ keymap and menu
 ;;;
 
@@ -553,12 +550,6 @@ Tspecials means any character that matches with it in header must be quoted.")
 
 (mime-editor/define-keymap mime-editor/mime-map)
 
-(if mime-editor/minor-mime-map
-    ()
-  (setq mime-editor/minor-mime-map 
-	(make-sparse-keymap 'mime-editor/minor-mime-map))
-  (define-key mime-editor/minor-mime-map mime-prefix mime-editor/mime-map))
-
 (defun mime-editor/toggle-mode ()
   (interactive)
   (if mime/editor-mode-flag
@@ -566,15 +557,26 @@ Tspecials means any character that matches with it in header must be quoted.")
     (mime/editor-mode)
     ))
 
-(if running-xemacs
-    (add-minor-mode 'mime/editor-mode-flag
-		    '((" MIME-Edit "  mime-editor/transfer-level-string))
-		    mime-editor/minor-mime-map
-		    nil
-		    'mime-editor/toggle-mode)
-  (set-alist 'minor-mode-alist
-	     'mime/editor-mode-flag
-	     '((" MIME-Edit "  mime-editor/transfer-level-string))))
+(cond (running-xemacs
+       (defconst mime-editor/minor-mime-map nil "Keymap for MIME commands.")
+       (or mime-editor/minor-mime-map
+	   (progn
+	     (setq mime-editor/minor-mime-map 
+		   (make-sparse-keymap 'mime-editor/minor-mime-map))
+	     (define-key
+	       mime-editor/minor-mime-map mime-prefix mime-editor/mime-map)
+	     ))
+       (add-minor-mode 'mime/editor-mode-flag
+		       '((" MIME-Edit "  mime-editor/transfer-level-string))
+		       mime-editor/minor-mime-map
+		       nil
+		       'mime-editor/toggle-mode)
+       )
+      (t
+       (set-alist 'minor-mode-alist
+		  'mime/editor-mode-flag
+		  '((" MIME-Edit "  mime-editor/transfer-level-string))))
+      )
 
 (defconst mime-editor/menu-title "MIME-Edit")
 
