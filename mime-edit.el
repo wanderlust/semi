@@ -2595,13 +2595,13 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	      (let ((boundary (assoc-value "boundary" params)))
 		(re-search-forward (concat "\n--" boundary) nil t)
 		(let ((bb (match-beginning 0)) eb tag)
-		  (setq tag (format "\n--<<%s>>-{" stype))
+		  (setq tag (format "\n--<<%s>>-{\n" stype))
 		  (goto-char bb)
 		  (insert tag)
 		  (setq bb (+ bb (length tag)))
 		  (re-search-forward (concat "\n--" boundary "--") nil t)
 		  (setq eb (match-beginning 0))
-		  (replace-match (format "\n--}-<<%s>>" stype))
+		  (replace-match (format "--}-<<%s>>" stype))
 		  (save-restriction
 		    (narrow-to-region bb eb)
 		    (goto-char (point-min))
@@ -2684,18 +2684,13 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 		      (progn
 			(goto-char he)
 			(insert
-			 (concat
-			  "\n"
-			  (mime-create-tag
-			   (concat type "/" stype pstr) encoding)
-			  ))
-			)
+			 (mime-create-tag
+			  (concat type "/" stype pstr) encoding)
+			 ))
 		    (delete-region (point-min) he)
 		    (insert
-		     (concat "\n"
-			     (mime-create-tag
-			      (concat type "/" stype pstr) encoding)
-			     ))
+		     (mime-create-tag
+		      (concat type "/" stype pstr) encoding))
 		    ))
 		))))
 	(if code-conversion
