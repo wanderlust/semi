@@ -1,5 +1,10 @@
 1998-04-29  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-view-find-every-acting-situation): Change
+ 	default value to 't.
+
+1998-04-29  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-play.el (mime-save-acting-situation-examples): New
  	function; set up for 'kill-emacs-hook.
 
