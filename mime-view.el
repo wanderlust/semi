@@ -582,8 +582,11 @@ The compressed face will be piped to this command.")
     (if (not (search-backward "\n\n" nil t))
 	(insert "\n")
       )
-    (mime-insert-button mime-view-announcement-for-message/partial
-			(function mime-view-play-current-entity))
+    (goto-char (point-max))
+    (narrow-to-region (point-max)(point-max))
+    (insert mime-view-announcement-for-message/partial)
+    (mime-add-button (point-min)(point-max)
+		     (function mime-view-play-current-entity))
     ))
 
 (defun mime-article/get-uu-filename (param &optional encoding)
