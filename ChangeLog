@@ -1,5 +1,13 @@
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-partial.el (mime-method-to-combine-message/partial-pieces):
+	Rename `mime-raw-content-info' -> `mime-raw-entity-info'.
+
+	* mime-pgp.el, mime-view.el: Rename `mime-raw-content-info' ->
+	`mime-raw-entity-info'.
+
+1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-raw-content-info): Modify DOC-string.
 
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
