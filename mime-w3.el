@@ -67,7 +67,7 @@
 	 (mime-find-entity-from-content-id (mime-uri-parse-cid url)
 					   mime-w3-message-structure)))
     (when entity
-      (insert (mime-entity-content entity))
+      (mime-insert-entity-content entity)
       (setq url-current-mime-type (mime-entity-type/subtype entity))
       )))
 
