@@ -1,0 +1,39 @@
+[SEMI Version names]
+
+0.72	--------	--------
+0.75	--------	--------
+0.83	--------	--------
+0.87	--------	--------
+0.88	--------	--------
+0.91	--------	--------
+0.92	--------	--------
+
+
+;; $(BKLN&E4F;(B / $(B@P@n@~(B
+;; Hokuriku Railway / Ishikawa Line
+
+0.96	Kaga-Ichinomiya		$(B2C2l0l$N5\(B	; $(B!JGr;3Hf$(D5/$(B?@<R!K(B
+0.97	Naka-Tsurugi		$(BCfDaMh(B
+0.112	Tsurugi			$(BDaMh(B		; <=> $(B$8$c$$%P%9(B
+0.115	Hinomiko		$(BF|8f;R(B
+0.115.1	Oyanagi			$(B>.Lx(B
+0.115.2	Inokuchi		$(B0f8}(B
+0.116	D-Dòhòji-A			$(BF;K!;{(B
+0.118	Sodani			$(BA>C+(B
+0.118.1	Shijima			$(B;M==K|(B
+0.118.2	Otomaru			$(B254](B
+1.0.0	Nukaj-Dþtaku-mae-A		$(B3[=;BpA0(B
+1.0.1	Magae			$(BGOBX(B
+1.0.2	Nonoichi-K-Dòdaimae-A	$(BLn!9;T9)BgA0(B
+
+1.1.0	Nonoichi		$(BLn!9;T(B
+1.1.1	Oshino			$(B2!Ln(B
+1.1.2	Shin-Nishikanazawa	$(B?7@>6bBt(B	; <=> JR $(B@>6bBt(B
+(1.1.3)	Nishiizumi		$(B@>@t(B
+-------	Nomachi			$(BLnD.(B
+
+
+;; JR / $(BKLN&K\@~(B
+;; JR / Hokuriku Line
+
+	(Maibara)		($(BJF86(B)		; = JR $(BEl3$F;K\@~(B
