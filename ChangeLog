@@ -1,3 +1,28 @@
+1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el (mime-method-to-decrypt-application/pgp-encrypted):
+	Use `mime-raw-point-to-entity-node-id'; abolish `entity-number'.
+
+	* (mime-method-to-verify-application/pgp-signature): Use
+	`mime-raw-point-to-entity-node-id'; abolish `entity-number'.
+
+	* mime-pgp.el (mime-method-to-verify-multipart/signed): Use
+	`mime-raw-point-to-entity-node-id'.
+
+	* mime-view.el (mime-raw-point-to-entity-node-id): New function.
+
+	* mime-view.el, mime-pgp.el: Rename `reversed-entity-number' ->
+	`entity-node-id'.
+
+	* mime-view.el, mime-parse.el: Rename `reversed-number' ->
+	`node-id'.
+
+	* mime-pgp.el: `rcnum' -> `reversed-entity-number'.
+
+	* mime-pgp.el: `cnum' -> `entity-number'.
+
+	* mime-pgp.el: `beg' -> `start'.
+
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mailcap.el (mailcap-look-at-field): Change field-name to symbol.
@@ -145,7 +170,7 @@
 
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae) was released.-A
+	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae)-A was released.
 
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -257,7 +282,7 @@
 
 1998-02-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae) was released.-A
+	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae)-A was released.
 
 	* SEMI-ELS: Remove mime-tar.el.
 
@@ -394,7 +419,7 @@
 
 1997-11-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.116 (D-Dòhòji) was released.-A
+	* SEMI: Version 0.116 (D-Dòhòji)-A was released.
 
 1997-11-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
