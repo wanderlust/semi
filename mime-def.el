@@ -76,19 +76,17 @@
 (defvar mime-button-mouse-face 'highlight
   "Face used for MIME-preview buffer mouse highlighting.")
 
-(defsubst mime-add-button (from to func &optional data)
-  "Create a button between FROM and TO with callback FUNC and data DATA."
-  (and mime-button-face
-       (overlay-put (make-overlay from to) 'face mime-button-face))
-  (let ((props (cons 'mime-button-callback
-		     (cons func
-			   (if data
-			       (list 'mime-button-data data)
-			     )))))
-    (if mime-button-mouse-face
-	(setq props (cons 'mouse-face (cons mime-button-mouse-face props)))
-      )
-    (add-text-properties from to props)
+(defsubst mime-add-button (from to function &optional data)
+  "Create a button between FROM and TO with callback FUNCTION and DATA."
+  (let ((overlay (make-overlay from to)))
+    (and mime-button-face
+	 (overlay-put overlay 'face mime-button-face))
+    (and mime-button-mouse-face
+	 (overlay-put overlay 'mouse-face mime-button-mouse-face))
+    (add-text-properties from to (list 'mime-button-callback function))
+    (and data
+	 (add-text-properties from to (list 'mime-button-data data)))
+    ;;(add-text-properties from to (list 'keymap widget-keymap))
     ))
 
 (defvar mime-button-mother-dispatcher nil)
