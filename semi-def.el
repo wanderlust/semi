@@ -30,7 +30,7 @@
 
 (require 'custom)
 
-(defconst mime-user-interface-product ["EMY" (1 13 5) "Time flies"]
+(defconst mime-user-interface-product ["EMY" (1 13 6) "Life is balance"]
   "Product name, version number and code name of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"

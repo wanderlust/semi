@@ -1,3 +1,7 @@
+2000-05-17  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* EMY 1.13.6 is released.
+
 2000-05-16   Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-image.el (mime-image-create) [XEmacs]: Don't call
