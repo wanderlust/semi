@@ -27,6 +27,15 @@
 (require 'w3)
 (require 'mime)
 
+(eval-when-compile
+  (require 'poe))
+
+(defun-maybe mime-find-root-entity (entity)
+  "Return root entity of entity"
+  (while (not (mime-root-entity-p entity))
+    (setq entity (mime-entity-parent entity)))
+  entity)
+
 (defmacro mime-put-keymap-region (start end keymap)
   `(put-text-property ,start ,end
 		      ',(if (featurep 'xemacs)
@@ -43,12 +52,7 @@
 	   ))
     (cons 'progn body)))
 
-(defvar mime-w3-message-structure nil)
-
 (defun mime-preview-text/html (entity situation)
-  (setq mime-w3-message-structure
-	(with-current-buffer (mime-entity-buffer entity)
-	  mime-message-structure))
   (goto-char (point-max))
   (let ((p (point)))
     (insert "\n")
@@ -61,13 +65,15 @@
        (condition-case err
 	   (w3-region p (point-max))
 	 (error (message (format "%s" err))))
-       (mime-put-keymap-region p (point-max) w3-mode-map)
-       ))))
+       (mime-put-keymap-region p (point-max) w3-mode-map)))))
 
 (defun url-cid (url &optional proxy-info)
   (let ((entity
 	 (mime-find-entity-from-content-id (mime-uri-parse-cid url)
-					   mime-w3-message-structure)))
+					   (mime-find-root-entity
+					    (get-text-property
+					     (point)
+					     'mime-view-entity)))))
     (when entity
       (mime-insert-entity-content entity)
       (setq url-current-mime-type (mime-entity-type/subtype entity))

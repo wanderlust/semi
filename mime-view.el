@@ -72,6 +72,51 @@ buttom. Nil means don't scroll at all."
 		 (const :tag "On" t)
 		 (sexp :tag "Situation" 1)))
 
+(defcustom mime-preview-scroll-full-screen nil
+  "*When non-nil, always scroll full screen.
+If nil, point will be moved to the next entity if exists."
+  :group 'mime-view
+  :type '(choice (const :tag "On" t)
+		 (const :tag "Off" nil)))
+
+(defcustom mime-view-force-inline-types '(text multipart)
+  "*List of MIME types that \"attachment\" should be ignored.
+The element can be type or type/subtype. When t, inline everything
+if possible."
+  :group 'mime-view
+  :type '(choice (const :tag "Nothing" nil)
+		 (const :tag "All" t)
+		 (list (repeat symbol))))
+
+(defcustom mime-view-button-place-alist
+  '((message . around)
+    (application . before)
+    (multipart/alternative . around))
+  "*Alist of MIME type or type/subtype vs. button place.
+When around, button will be inserted before and after that part.
+When after or before, button will be inserted that place.
+If not specified, that type will not have button."
+  :group 'mime-view
+  :type '(choice (const :tag "Nothing" nil)
+		 (list (repeat symbol))))
+
+;; Rename this.
+(defcustom mime-view-type-subtype-score-alist
+  '(((text . enriched) . 3)
+    ((text . richtext) . 2)
+    ((text . plain)    . 1)
+    (t . 0))
+  "Alist MEDIA-TYPE vs corresponding score.
+MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
+  :group 'mime-view
+  :type '(repeat (cons (choice :tag "Media-Type"
+			       (cons :tag "Type/Subtype"
+				     (symbol :tag "Primary-type")
+				     (symbol :tag "Subtype"))
+			       (symbol :tag "Type")
+			       (const :tag "Default" t))
+		       integer)))
+
 ;;; @ in raw-buffer (representation space)
 ;;;
 
@@ -270,78 +315,109 @@ mother-buffer."
 ;;; @@@ predicate function
 ;;;
 
+;; fix flim
+(defun mime-view-entity-type/subtype (entity)
+  (if (not (mime-entity-media-type entity))
+      'text/plain
+    (intern (format "%s/%s"
+		    (mime-entity-media-type entity)
+		    (mime-entity-media-subtype entity)))))
+
 (defun mime-view-entity-button-visible-p (entity)
   "Return non-nil if header of ENTITY is visible.
-Please redefine this function if you want to change default setting."
-  (let ((media-type (mime-entity-media-type entity))
-	(media-subtype (mime-entity-media-subtype entity)))
-    (or (not (eq media-type 'application))
-	(and (not (eq media-subtype 'x-selection))
-	     (or (not (eq media-subtype 'octet-stream))
-		 (let ((mother-entity (mime-entity-parent entity)))
-		   (or (not (eq (mime-entity-media-type mother-entity)
-				'multipart))
-		       (not (eq (mime-entity-media-subtype mother-entity)
-				'encrypted)))
-		   )
-		 )))))
+You can customize the visibility by changing `mime-view-button-place-alist'."
+  (or
+   ;; Check current entity
+   ;; type/subtype
+   (memq (cdr (assq (mime-view-entity-type/subtype entity)
+		    mime-view-button-place-alist))
+	 '(around before))
+   ;; type
+   (memq (cdr (assq (mime-entity-media-type entity)
+		    mime-view-button-place-alist))
+	 '(around before))
+   (and (mime-entity-parent entity)
+   (let ((prev-entity
+	 (cadr (memq entity
+		     (reverse (mime-entity-children
+			       (mime-entity-parent entity)))))))
+     ;; When previous entity exists
+     (and prev-entity
+	  (or
+	   ;; Check previous eneity
+	   ;; type/subtype
+	   (memq (cdr
+		  (assq
+		   (mime-view-entity-type/subtype prev-entity)
+		   mime-view-button-place-alist))
+		 '(around after))
+	   ;; type
+	   (memq (cdr
+		  (assq
+		   (mime-entity-media-type prev-entity)
+		   mime-view-button-place-alist))
+		 '(around after))))))))
 
 ;;; @@@ entity button generator
 ;;;
 
-(defun mime-view-insert-entity-button (entity)
+(defun mime-view-insert-entity-button (entity &optional body-is-invisible)
   "Insert entity-button of ENTITY."
   (let ((entity-node-id (mime-entity-node-id entity))
 	(params (mime-entity-parameters entity))
 	(subject (mime-view-entity-title entity)))
     (mime-insert-button
-     (let ((access-type (assoc "access-type" params))
-	   (num (or (cdr (assoc "x-part-number" params))
-		    (if (consp entity-node-id)
-			(mapconcat (function
-				    (lambda (num)
-				      (format "%s" (1+ num))
-				      ))
-				   (reverse entity-node-id) ".")
-		      "0"))
-		))
-       (cond (access-type
-	      (let ((server (assoc "server" params)))
-		(setq access-type (cdr access-type))
-		(if server
-		    (format "%s %s ([%s] %s)"
-			    num subject access-type (cdr server))
-		(let ((site (cdr (assoc "site" params)))
-		      (dir (cdr (assoc "directory" params)))
-		      (url (cdr (assoc "url" params)))
-		      )
-		  (if url
-		      (format "%s %s ([%s] %s)"
-			      num subject access-type url)
-		    (format "%s %s ([%s] %s:%s)"
-			    num subject access-type site dir))
-		  )))
-	    )
-	   (t
-	    (let ((media-type (mime-entity-media-type entity))
-		  (media-subtype (mime-entity-media-subtype entity))
-		  (charset (cdr (assoc "charset" params)))
-		  (encoding (mime-entity-encoding entity)))
-	      (concat
-	       num " " subject
-	       (let ((rest
-		      (format " <%s/%s%s%s>"
-			      media-type media-subtype
-			      (if charset
-				  (concat "; " charset)
-				"")
-			      (if encoding
-				  (concat " (" encoding ")")
-				""))))
-		 (if (>= (+ (current-column)(length rest))(window-width))
-		     "\n\t")
-		 rest)))
-	    )))
+     (concat
+      (let ((access-type (assoc "access-type" params))
+	    (num (or (cdr (assoc "x-part-number" params))
+		     (if (consp entity-node-id)
+			 (mapconcat (function
+				     (lambda (num)
+				       (format "%s" (1+ num))
+				       ))
+				    (reverse entity-node-id) ".")
+		       "0"))
+		 ))
+	(cond (access-type
+	       (let ((server (assoc "server" params)))
+		 (setq access-type (cdr access-type))
+		 (if server
+		     (format "%s %s ([%s] %s)"
+			     num subject access-type (cdr server))
+		   (let ((site (cdr (assoc "site" params)))
+			 (dir (cdr (assoc "directory" params)))
+			 (url (cdr (assoc "url" params)))
+			 )
+		     (if url
+			 (format "%s %s ([%s] %s)"
+				 num subject access-type url)
+		       (format "%s %s ([%s] %s:%s)"
+			       num subject access-type site dir))
+		     )))
+	       )
+	      (t
+	       (let ((media-type (mime-entity-media-type entity))
+		     (media-subtype (mime-entity-media-subtype entity))
+		     (charset (cdr (assoc "charset" params)))
+		     (encoding (mime-entity-encoding entity)))
+		 (concat
+		  num " " subject
+		  (let ((rest
+			 (format " <%s/%s%s%s>"
+				 media-type media-subtype
+				 (if charset
+				     (concat "; " charset)
+				   "")
+				 (if encoding
+				     (concat " (" encoding ")")
+				   ""))))
+		    (if (>= (+ (current-column)(length rest))(window-width))
+			"\n\t")
+		    rest)))
+	       )))
+      (if body-is-invisible
+	  " ..."
+	""))
      (function mime-preview-play-current-entity))
     ))
 
@@ -396,15 +472,15 @@ Each elements are regexp of field-name.")
   "Condition-tree about how to display entity.")
 
 (ctree-set-calist-strictly
- 'mime-preview-condition '((type . application)(subtype . octet-stream)
+ 'mime-preview-condition '((type . application)(subtype . t)
 			   (encoding . nil)
 			   (body . visible)))
 (ctree-set-calist-strictly
- 'mime-preview-condition '((type . application)(subtype . octet-stream)
+ 'mime-preview-condition '((type . application)(subtype . t)
 			   (encoding . "7bit")
 			   (body . visible)))
 (ctree-set-calist-strictly
- 'mime-preview-condition '((type . application)(subtype . octet-stream)
+ 'mime-preview-condition '((type . application)(subtype . t)
 			   (encoding . "8bit")
 			   (body . visible)))
 
@@ -465,6 +541,12 @@ Each elements are regexp of field-name.")
 
 (ctree-set-calist-strictly
  'mime-preview-condition
+ '((type . text)(subtype . x-rot13-47-48)
+   (body . visible)
+   (body-presentation-method . mime-display-text/x-rot13-47-48)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition
  '((type . multipart)(subtype . alternative)
    (body . visible)
    (body-presentation-method . mime-display-multipart/alternative)))
@@ -522,6 +604,16 @@ Each elements are regexp of field-name.")
       (remove-text-properties beg (point-max) '(face nil))
       (enriched-decode beg (point-max))
       )))
+
+(defun mime-display-text/x-rot13-47-48 (entity situation)
+  (save-restriction
+    (narrow-to-region (point-max)(point-max))
+    (mime-insert-text-content entity)
+    (goto-char (point-max))
+    (if (not (eq (char-after (1- (point))) ?\n))
+	(insert "\n"))
+    (mule-caesar-region (point-min) (point-max))
+    (mime-add-url-buttons)))
 
 (put 'unpack 'lisp-indent-function 1)
 (defmacro unpack (string &rest body)
@@ -659,22 +751,6 @@ Each elements are regexp of field-name.")
       (setq children (cdr children))
       )))
 
-(defcustom mime-view-type-subtype-score-alist
-  '(((text . enriched) . 3)
-    ((text . richtext) . 2)
-    ((text . plain)    . 1)
-    (t . 0))
-  "Alist MEDIA-TYPE vs corresponding score.
-MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
-  :group 'mime-view
-  :type '(repeat (cons (choice :tag "Media-Type"
-			       (cons :tag "Type/Subtype"
-				     (symbol :tag "Primary-type")
-				     (symbol :tag "Subtype"))
-			       (symbol :tag "Type")
-			       (const :tag "Default" t))
-		       integer)))
-
 (defun mime-display-multipart/alternative (entity situation)
   (let* ((children (mime-entity-children entity))
 	 (original-major-mode-cell (assq 'major-mode situation))
@@ -733,6 +809,159 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	    i (1+ i))
       )))
 
+(defun mime-preview-inline ()
+  "View part as text without code conversion"
+  (interactive)
+  (let ((inhibit-read-only t)
+	(entity (get-text-property (point) 'mime-view-entity))
+	(situation (get-text-property (point) 'mime-view-situation))
+	start end)
+    (when (and entity
+	       (not (get-text-property (point) 'mime-view-entity-header))
+	       (not (memq (mime-entity-media-type entity)
+			  '(multipart message))))
+      (setq start (or (and (not (mime-entity-parent entity))
+			   (1+ (previous-single-property-change
+				(point)
+				'mime-view-entity-header)))
+		      (and (not (eq (point) (point-min)))
+			   (not (eq (get-text-property (1- (point))
+						       'mime-view-entity)
+				    entity))
+			   (point))
+		      (previous-single-property-change (point)
+						   'mime-view-entity)
+		      (point)))
+      (delete-region start
+		     (1-
+		      (or (next-single-property-change (point)
+						       'mime-view-entity)
+			  (point-max))))
+      (setq start (point))
+      (if (mime-view-entity-button-visible-p entity)
+	  (mime-view-insert-entity-button entity))
+      (insert (mime-entity-content entity))
+      (if (and (bolp) (eolp))
+	  (delete-char 1)
+	(forward-char 1))
+      (add-text-properties start (point)
+			   (list 'mime-view-entity entity
+				 'mime-view-situation situation))
+      (goto-char start))))
+
+(defun mime-preview-text (&optional ask-coding)
+  "View part as text. MIME charset will be guessed automatically.
+With prefix, it prompts for coding-system."
+  (interactive "P")
+  (let ((inhibit-read-only t)
+	(entity (get-text-property (point) 'mime-view-entity))
+	(situation (get-text-property (point) 'mime-view-situation))
+	(coding (if ask-coding
+		    (or (read-coding-system "Coding system: ")
+			'undecided)
+		  'undecided)))
+    (when (and entity
+	       (not (get-text-property (point) 'mime-view-entity-header))
+	       (not (memq (mime-entity-media-type entity)
+			  '(multipart message))))
+      (setq start (or (and (not (mime-entity-parent entity))
+			   (1+ (previous-single-property-change
+				(point)
+				'mime-view-entity-header)))
+		      (and (not (eq (point) (point-min)))
+			   (not (eq (get-text-property (1- (point))
+						       'mime-view-entity)
+				    entity))
+			   (point))
+		      (previous-single-property-change (point)
+						       'mime-view-entity)
+		      (point)))
+      (delete-region start
+		     (1-
+		      (or (next-single-property-change (point)
+						       'mime-view-entity)
+			  (point-max))))
+      (setq start (point))
+      (if (mime-view-entity-button-visible-p entity)
+	  (mime-view-insert-entity-button entity))
+      (insert (decode-coding-string (mime-entity-content entity) coding))
+      (if (and (bolp) (eolp))
+	  (delete-char 1)
+	(forward-char 1))
+      (add-text-properties start (point)
+			   (list 'mime-view-entity entity
+				 'mime-view-situation situation))
+      (goto-char start))))
+	      
+
+(defun mime-preview-type ()
+  "View part as text without code conversion"
+  (interactive)
+  (let ((inhibit-read-only t)
+	(entity (get-text-property (point) 'mime-view-entity))
+	(situation (get-text-property (point) 'mime-view-situation))
+	(mime-view-force-inline-types t)
+	start end)
+    (when (and entity
+	       (not (get-text-property (point) 'mime-view-entity-header))
+	       (not (memq (mime-entity-media-type entity)
+			  '(multipart message))))
+      (setq start (or (and (not (mime-entity-parent entity))
+			   (1+ (previous-single-property-change
+				(point)
+			       'mime-view-entity-header)))
+		      (and (not (eq (point) (point-min)))
+			   (not (eq (get-text-property (1- (point))
+						       'mime-view-entity)
+				    entity))
+			   (point))
+		      (previous-single-property-change (point)
+						   'mime-view-entity)
+		      (point)))
+      (delete-region start
+		     (1-
+		      (or (next-single-property-change (point)
+						       'mime-view-entity)
+			  (point-max))))
+      (save-excursion
+	(save-restriction
+	  (narrow-to-region (point) (point))
+	  (mime-display-entity entity (if (eq (assq 'body situation)
+					      'invisible)
+					  situation
+					(put-alist 'body 'visible
+						   situation))))
+	(if (and (bolp) (eolp))
+	      (delete-char 1))))))
+
+(defun mime-preview-buttonize ()
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (let ((inhibit-read-only t)
+	  point)
+      (while (setq point (next-single-property-change
+			  (point) 'mime-view-entity))
+	(goto-char point)
+	(unless (get-text-property (point) 'mime-button-callback)
+	  (mime-view-insert-entity-button
+	   (get-text-property (point) 'mime-view-entity)))))))
+
+(defun mime-preview-unbuttonize ()
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (let ((inhibit-read-only t)
+	  point)
+      (while (setq point (next-single-property-change
+			  (point) 'mime-view-entity))
+	(goto-char point)
+	(if (get-text-property (point) 'mime-button-callback)
+	    (delete-region (point) (save-excursion
+				     (goto-char
+				      (next-single-property-change
+				       (point) 'mime-button-callback)))))))))
+	  
 
 ;;; @ acting-condition
 ;;;
@@ -856,7 +1085,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 				   default-situation preview-buffer)
   (or preview-buffer
       (setq preview-buffer (current-buffer)))
-  (let* (e nb ne nhb nbb)
+  (let (e nb ne nhb nbb)
     (mime-goto-header-start-point entity)
     (in-calist-package 'mime-view)
     (or situation
@@ -866,53 +1095,75 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 					      default-situation))
 		  default-situation)))
     (let ((button-is-invisible
-	   (eq (cdr (assq 'entity-button situation)) 'invisible))
-	  (header-is-visible
-	   (eq (cdr (assq 'header situation)) 'visible))
-	  (header-presentation-method
-	   (or (cdr (assq 'header-presentation-method situation))
-	       (cdr (assq (cdr (assq 'major-mode situation))
-			  mime-header-presentation-method-alist))))
-	  (body-presentation-method
-	   (cdr (assq 'body-presentation-method situation)))
-	  (children (mime-entity-children entity)))
+	   (or (eq (cdr (assq 'entity-button situation)) 'invisible)
+	       (not (mime-view-entity-button-visible-p entity))))
+	   (header-is-visible
+	    (eq (cdr (assq 'header situation)) 'visible))
+	   (header-presentation-method
+	    (or (cdr (assq 'header-presentation-method situation))
+		(cdr (assq (cdr (assq 'major-mode situation))
+			   mime-header-presentation-method-alist))))
+	   (body-is-visible
+	    (eq (cdr (assq 'body situation)) 'visible))
+	   (body-presentation-method
+	    (cdr (assq 'body-presentation-method situation)))
+	   (children (mime-entity-children entity)))
+      ;; Check if attachment is specified.
+      ;; if inline is forced or not.
+      (if (not (or (eq t mime-view-force-inline-types)
+		   (memq (mime-entity-media-type entity)
+			 mime-view-force-inline-types)
+		   (memq (mime-view-entity-type/subtype entity)
+			 mime-view-force-inline-types)
+		   ;; whether Content-Disposition header exists.
+		   (not (and
+			 (mime-entity-content-disposition entity)
+			 (eq 'inline
+			     (mime-content-disposition-type
+			      (mime-entity-content-disposition entity)))))))
+	  ;; This is attachment
+	  (setq header-is-visible nil
+		body-is-visible nil))
       (set-buffer preview-buffer)
       (setq nb (point))
-      (narrow-to-region nb nb)
-      (or button-is-invisible
-	  (if (mime-view-entity-button-visible-p entity)
-	      (mime-view-insert-entity-button entity)
-	    ))
-      (when header-is-visible
-	(setq nhb (point))
-	(if header-presentation-method
-	    (funcall header-presentation-method entity situation)
-	  (mime-insert-header entity
-			      mime-view-ignored-field-list
-			      mime-view-visible-field-list))
-	(run-hooks 'mime-display-header-hook)
-	(put-text-property nhb (point-max) 'mime-view-entity-header entity)
-	(goto-char (point-max))
-	(insert "\n")
-	)
-      (setq nbb (point))
-      (cond (children)
-            ((functionp body-presentation-method)
-	     (funcall body-presentation-method entity situation)
-	     )
-	    (t
-	     (when button-is-invisible
-	       (goto-char (point-max))
-	       (mime-view-insert-entity-button entity)
-	       )
-	     (or header-is-visible
-		 (progn
-		   (goto-char (point-max))
-		   (insert "\n")
-		   ))
-	     ))
-      (setq ne (point-max))
-      (widen)
+      (save-restriction
+	(narrow-to-region nb nb)
+	(or button-is-invisible
+	    (if (mime-view-entity-button-visible-p entity)
+		(mime-view-insert-entity-button entity
+						;; work around composite type
+						(not (or children
+							 body-is-visible)))))
+	(when header-is-visible
+	  (setq nhb (point))
+	  (if header-presentation-method
+	      (funcall header-presentation-method entity situation)
+	    (mime-insert-header entity
+				mime-view-ignored-field-list
+				mime-view-visible-field-list))
+	  (run-hooks 'mime-display-header-hook)
+	  (put-text-property nhb (point-max) 'mime-view-entity-header entity)
+	  (goto-char (point-max))
+	  (insert "\n"))
+	(setq nbb (point))
+	(cond (children)
+	      ((and body-is-visible
+		    (functionp body-presentation-method))
+	       (funcall body-presentation-method entity situation))
+	      (t
+	       (when button-is-invisible
+		 (goto-char (point-max))
+		 (mime-view-insert-entity-button entity
+						 ;; work around composite type
+						 (not (or children
+							  body-is-visible))))
+	       (or header-is-visible
+		   (progn
+		     (goto-char (point-max))
+		     (insert "\n")
+		     ))
+	       ))
+	(setq ne (point-max)))
       (put-text-property nb ne 'mime-view-entity entity)
       (put-text-property nb ne 'mime-view-situation situation)
       (put-text-property nbb ne 'mime-view-entity-body entity)
@@ -920,9 +1171,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
       (if children
 	  (if (functionp body-presentation-method)
 	      (funcall body-presentation-method entity situation)
-	    (mime-display-multipart/mixed entity situation)
-	    ))
-      )))
+	    (mime-display-multipart/mixed entity situation))))))
 
 
 ;;; @ MIME viewer mode
@@ -938,6 +1187,9 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
     (play	 "Play current entity"     mime-preview-play-current-entity)
     (extract	 "Extract current entity"  mime-preview-extract-current-entity)
     (print	 "Print current entity"    mime-preview-print-current-entity)
+    (raw "View text without code conversion" mime-preview-inline)
+    (text "View text with code conversion" mime-preview-text)
+    (type "View internally as type" mime-preview-type)
     )
   "Menu for MIME Viewer")
 
@@ -990,6 +1242,16 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
       "v"        (function mime-preview-play-current-entity))
     (define-key mime-view-mode-map
       "e"        (function mime-preview-extract-current-entity))
+    (define-key mime-view-mode-map
+      "i"        (function mime-preview-inline))
+    (define-key mime-view-mode-map
+      "c"        (function mime-preview-text))
+    (define-key mime-view-mode-map
+      "t"        (function mime-preview-type))
+    (define-key mime-view-mode-map
+      "b"        (function mime-preview-buttonize))
+    (define-key mime-view-mode-map
+      "B"        (function mime-preview-unbuttonize))
     (define-key mime-view-mode-map
       "\C-c\C-p" (function mime-preview-print-current-entity))
     (define-key mime-view-mode-map
@@ -1384,8 +1646,7 @@ If there is no upper entity, call function `mime-preview-quit'."
   (let (cinfo)
     (while (null (setq cinfo
 		       (get-text-property (point) 'mime-view-entity)))
-      (backward-char)
-      )
+      (backward-char))
     (let ((r (mime-entity-parent cinfo))
 	  point)
       (catch 'tag
@@ -1402,11 +1663,8 @@ If there is no upper entity, call function `mime-preview-quit'."
 			       (beginning-of-line)
 			       (point)))))
 		(recenter next-screen-context-lines))
-	    (throw 'tag t)
-	    )
-	  )
-	(mime-preview-quit)
-	))))
+	    (throw 'tag t)))
+	(mime-preview-quit)))))
 
 (defun mime-preview-move-to-previous ()
   "Move to previous entity.
@@ -1431,16 +1689,14 @@ variable `mime-preview-over-to-previous-method-alist'."
 				  (forward-line next-screen-context-lines)
 				  (end-of-line)
 				  (point)))))
-			(recenter (* -1 next-screen-context-lines))))
+			(recenter next-screen-context-lines)))
 	  (goto-char (1- point))
 	  (mime-preview-move-to-previous)
 	  )
       (let ((f (assq (mime-preview-original-major-mode)
 		     mime-preview-over-to-previous-method-alist)))
 	(if f
-	    (funcall (cdr f))
-	  ))
-      )))
+	    (funcall (cdr f)))))))
 
 (defun mime-preview-move-to-next ()
   "Move to next entity.
@@ -1449,8 +1705,7 @@ variable `mime-preview-over-to-next-method-alist'."
   (interactive)
   (while (and (not (eobp))
 	      (null (get-text-property (point) 'mime-view-entity)))
-    (forward-char)
-    )
+    (forward-char))
   (let ((point (next-single-property-change (point) 'mime-view-entity)))
     (if (and point
 	     (<= point (point-max)))
@@ -1468,14 +1723,11 @@ variable `mime-preview-over-to-next-method-alist'."
 			    (* -1 next-screen-context-lines))
 			   (beginning-of-line)
 			   (point)))))
-		 (recenter next-screen-context-lines))
-	    ))
+		 (recenter next-screen-context-lines))))
       (let ((f (assq (mime-preview-original-major-mode)
 		     mime-preview-over-to-next-method-alist)))
 	(if f
-	    (funcall (cdr f))
-	  ))
-      )))
+	    (funcall (cdr f)))))))
 
 (defun mime-preview-scroll-up-entity (&optional h)
   "Scroll up current entity.
@@ -1486,21 +1738,20 @@ If reached to (point-max), it calls function registered in variable
       (let ((f (assq (mime-preview-original-major-mode)
 		     mime-preview-over-to-next-method-alist)))
 	(if f
-	    (funcall (cdr f))
-	  ))
+	    (funcall (cdr f))))
     (let ((point
 	   (or (next-single-property-change (point) 'mime-view-entity)
 	       (point-max)))
 	  (bottom (window-end (selected-window))))
       (if (and (not h)
-	       (> bottom point))
+	       (> bottom point)
+	       (not mime-preview-scroll-full-screen))
 	  (progn (goto-char point)
 		 (recenter next-screen-context-lines))
 	(condition-case nil
 	    (scroll-up h)
 	  (end-of-buffer
-	   (goto-char (point-max)))))
-      )))
+	   (goto-char (point-max))))))))
 
 (defun mime-preview-scroll-down-entity (&optional h)
   "Scroll down current entity.
@@ -1511,35 +1762,32 @@ If reached to (point-min), it calls function registered in variable
       (let ((f (assq (mime-preview-original-major-mode)
 		     mime-preview-over-to-previous-method-alist)))
 	(if f
-	    (funcall (cdr f))
-	  ))
+	    (funcall (cdr f))))
     (let ((point
 	   (or (previous-single-property-change (point) 'mime-view-entity)
 	       (point-min)))
 	  (top (window-start (selected-window))))
       (if (and (not h)
-	       (< top point))
+	       (< top point)
+	       (not mime-preview-scroll-full-screen))
 	  (progn (goto-char point)
 		 (recenter (* -1 next-screen-context-lines)))
 	(condition-case nil
 	    (scroll-down h)
 	  (beginning-of-buffer
-	   (goto-char (point-min)))))
-      )))
+	   (goto-char (point-min))))))))
 
 (defun mime-preview-next-line-entity (&optional lines)
   "Scroll up one line (or prefix LINES lines).
 If LINES is negative, scroll down LINES lines."
   (interactive "p")
-  (mime-preview-scroll-up-entity (or lines 1))
-  )
+  (mime-preview-scroll-up-entity (or lines 1)))
 
 (defun mime-preview-previous-line-entity (&optional lines)
   "Scrroll down one line (or prefix LINES lines).
 If LINES is negative, scroll up LINES lines."
   (interactive "p")
-  (mime-preview-scroll-down-entity (or lines 1))
-  )
+  (mime-preview-scroll-down-entity (or lines 1)))
 
 ;;; @@ quitting
 ;;;

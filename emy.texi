@@ -1,0 +1,280 @@
+\input texinfo.tex              @c -*- texinfo -*-
+
+@setfilename emy
+
+@set VERSION 1.13
+
+@dircategory Emacs/MIME
+@direntry
+* EMY: (emy).   User guide for EMY.
+@end direntry
+
+@settitle EMY @value{VERSION}
+
+@ifinfo
+This file describes how to use EMY, MIME user interface which
+implements SEMI API.
+
+Copyright (C) 1993, 94, 95, 96, 97, 98, 99 Free Software Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+@ignore
+Permission is granted to process this file through TeX and print the
+results, provided the printed document carries copying permission
+notice identical to this one except for the removal of this paragraph
+(this paragraph not being relevant to the printed manual).
+
+@end ignore
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation approved
+by the Free Software Foundation.
+@end ifinfo
+
+@titlepage
+@title EMY
+@subtitle MIME User Interface implements SEMI API
+@author Yoshiki Hayashi
+@page
+@vskip 0pt plus 1filll
+Copyright @copyright{} 1993, 94, 95, 96, 97, 98, 99 Free Software
+Foundation, Inc.
+
+Permission is granted to make and distribute verbatim copies of
+this manual provided the copyright notice and this permission notice
+are preserved on all copies.
+
+Permission is granted to copy and distribute modified versions of this
+manual under the conditions for verbatim copying, provided that the entire
+resulting derived work is distributed under the terms of a permission
+notice identical to this one.
+
+Permission is granted to copy and distribute translations of this manual
+into another language, under the above conditions for modified versions,
+except that this permission notice may be stated in a translation approved
+by the Free Software Foundation.
+@end titlepage
+
+@ifnottex
+@node Top
+@top EMY: An Introduction
+
+EMY is a MIME interface for Emacs. EMY provides SEMI API, which
+is specified in a separate document.
+@c @xref{(semi-api)Top}.
+
+This manual correspond to EMY version @value{VERSION}.
+@end ifnottex
+
+@menu
+* MIME::                Overview of MIME.
+* Overview::            What EMY does and doesn't.
+* MIME-View::           How to View MIME messages.
+* MIME-Edit::           How to compose MIME messages.
+@end menu
+
+@node MIME
+@chapter Overview of MIME
+
+MIME stands for Multipurpose Internet Mail Extensions. 
+
+MIME is built on top of STD11.  MIME enhances semantics of STD11 so that
+you can send messages other than text/plain and US-ASCII.  MIME does not
+prohibit use of local conventions.  However, its use is discouraged.
+It would be nice if all MUA uses MIME to specify character set etc.
+Then you don't have to be aware of all local conventions in the world.
+
+Don't assume every MUA can handle MIME correctly.  They might even don't
+understand MIME.  EMY takes interoperability the first priority.  You
+must be carefull to choose format that is easy to understand for
+everyone.  But you don't have to be afraid.  MIME is written in such a
+way that it can be viewed with non-MIME MUA if its well written.
+
+EMY is here to make your life easier.  It provides some way to ignore
+standards to cooperate with broken world.  However, it doesn't allow
+you to send broken MIME messages.  If you want to same brokenness like
+them, EMY is not a candidate.  If you really thinks it's needed, you can
+try persuading me.  Warning: `It's de facto standard' is not enough.
+
+@menu
+* Text::                What you normally do.
+* Content-Types::       You can create messages other than text/plain.
+@end menu
+
+@node Text
+@section Writing text
+
+(I'll write this sections later).
+
+@node Content-Types
+@section Types of message you can use
+
+@menu
+* Content-Type::        Details of interpreting Content-Type.
+@end menu
+
+@node Content-Type
+@subsection How things are interpretes with each types
+
+@node Overview
+@chapter Some basic things about EMY
+
+(Not yet written).
+
+@menu
+* Customize::           How to customize EMY.
+@end menu
+
+@node Customize
+@section What you should care
+
+@node MIME-View
+@chapter Viewing MIME messages
+
+Right now only differences between SEMI and EMY are documented.
+
+@menu
+* Manipulating an Entity::     Changing representation of the part
+* Changing Entity Button::      Where to add button indicating that entity.
+* Adding Buttons::              Where you want to see buttons.
+@end menu
+
+@node Manipulating an Entity
+@section Playing with an entity
+
+You can change the representation of given part in the preview buffer.
+Following commands are available in preview buffer.
+
+@table @code
+
+@item c
+@kindex c (MIME-View)
+@findex mime-preview-text
+Display the part as text/plain with automatic MIME charset
+detection.  You can specify coding-system if you give a numerical
+prefix (@code{mime-preview-text}).
+
+@item i
+@kindex i (MIME-View)
+@findex mime-preview-inline
+Show the contents of the part without code-conversion.  @code{C-u c
+binary RET} does the same thing (@code{mime-preview-inline}).
+
+@item t
+@kindex t (MIME-View)
+@findex mime-preview-type
+Represent the part using the method specified by
+@code{mime-preview-condition}.  When there's no presentation method for
+given part, nothing is performed (@code{mime-preview-type}).
+
+@item e
+@kindex e (MIME-View)
+@findex mime-preview-extract-current-entity
+Save content of the part to a file.  It will prompt for you to enter
+file name (@code{mime-preview-extract-current-entity}).
+
+@item v
+@kindex v (MIME-View)
+@findex mime-preview-play-current-entity
+Pass the entity to an external program specified by mailcap file
+(@code{mime-preview-play-current-entity}).
+@c Need more documentation about mailcap.
+
+@item b
+@kindex b (MIME-View)
+@findex mime-preview-buttonize
+Buttonize article (@code{mime-preview-buttonize}).
+
+@item B
+@kindex B (MIME-View)
+@findex mime-preview-unbuttonize
+Unbuttonize article (@code{mime-preview-unbuttonize}).
+
+@end table
+
+@node Changing Entity Button
+@section How buttons look like
+
+Not yet written.
+
+@node Adding Buttons
+@section Add button before, after or around an entity
+
+@vindex mime-view-button-place-alist
+You can customize where to add buttons and where to not with
+@code{mime-view-button-place-alist}.  Unfortunately, there's no variable
+to change content of the button. It must be an alist of type or
+type/subtype vs. keywords.
+
+Three legal keywords are:
+
+@table @code
+@item before
+Add button before given types.
+
+@item after
+Add button when another part follows that type.
+
+@item around
+Do both @code{before} and @code{after}.
+
+@end table
+
+Notice when deciding whether inserting button or not, an entity of same
+level is consulted as a previous entity.  Let's say a message has
+following structure and nothing is specified for text/xml.
+
+@example
+message/rfc822
+  multipart/mixed
+    text/plain
+    image/jpeg
+  text/xml
+@end example
+
+When MIME-View decides text/xml part should have button or not, it
+checks multipart/mixed has @code{after} or @code{around}, not
+image/jpeg. This behaviour may be confusing.  In the future version, the
+very last part's value will be used as well.
+
+Default value is:
+
+@lisp
+((message . around)
+ (application . before)
+ (multipart/alternative . around))
+@end lisp
+
+This means you will have buttons around message/* and
+multipart/alternative, and before application/*.
+
+@node MIME-Edit
+@chapter Composing MIME messages.
+
+@vindex mime-edit-attach-at-end-type (MIME-Edit)
+When you are editing MIME message, you might want to insert some part at
+the end of your message.  Some MUA are known to have some problems when
+last part is not an attachment. 
+
+If you want to do this, @code{mime-edit-attach-at-end-type} is your
+friend. This variable is list of MIME types or type/subtypes inserted
+at the last part. When only type is specified, it will affect all
+subtypes of that type.
+
+If you want insert application/* and message/rfc822 at the end,
+you can do like this:
+
+@lisp
+(setq mime-edit-attach-at-end-types
+      '(application message/rfc822))
+@end lisp
+
+@bye

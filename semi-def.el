@@ -1,4 +1,4 @@
-;;; semi-def.el --- definition module for SEMI -*- coding: iso-8859-4; -*-
+;;; semi-def.el --- definition module for SEMI
 
 ;; Copyright (C) 1995,1996,1997,1998,1999 Free Software Foundation, Inc.
 
@@ -30,7 +30,7 @@
 
 (require 'custom)
 
-(defconst mime-user-interface-product ["SEMI" (1 13 7) "Awazu"]
+(defconst mime-user-interface-product ["EMY" (1 13 0) "No pain no gain"]
   "Product name, version number and code name of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
@@ -61,23 +61,23 @@
 
 (defsubst mime-add-button (from to function &optional data)
   "Create a button between FROM and TO with callback FUNCTION and DATA."
-  (let ((overlay (make-overlay from to)))
-    (and mime-button-face
-	 (overlay-put overlay 'face mime-button-face))
-    (and mime-button-mouse-face
-	 (overlay-put overlay 'mouse-face mime-button-mouse-face))
-    (add-text-properties from to (list 'mime-button-callback function))
-    (and data
-	 (add-text-properties from to (list 'mime-button-data data)))
-    ))
+  (and mime-button-face
+       (put-text-property from to 'face mime-button-face))
+  (and mime-button-mouse-face
+       (put-text-property from to 'mouse-face mime-button-mouse-face))
+  (add-text-properties from to (list 'mime-button-callback function
+				     'start-open t))
+  (and data
+       (add-text-properties from to (list 'mime-button-data data))))
 
 (defsubst mime-insert-button (string function &optional data)
   "Insert STRING as button with callback FUNCTION and DATA."
+  (unless (bolp)
+    (insert "\n"))
   (save-restriction
     (narrow-to-region (point)(point))
     (insert (concat "[" string "]\n"))
-    (mime-add-button (point-min)(point-max) function data)
-    ))
+    (mime-add-button (point-min)(point-max) function data)))
 
 (defvar mime-button-mother-dispatcher nil)
 
