@@ -1,3 +1,17 @@
+2000-09-13   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-view.el (mime-view-xemacs-popup-menu): Abolish.
+	(mime-view-menu-title): Abolish.
+	(mime-view-menu-list): Rewrite in easymenu-style.
+	(mime-view-popup-menu): New function.
+	(mime-view-define-keymap): Simplify; don't check `emacs-major-version'.
+
+	* semi-def.el (mime-menu-bogus-filter-constructor): New macro.
+	(mime-menu-popup): New macro.
+	(select-menu-alist): Rewrite with `defun-maybe-cond'.
+	(mime-insert-button): Use `widget-convert-button'.
+	(mime-url-link): New widget.
+
 2000-09-12   Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-view.el (widget-keymap): Declare.
