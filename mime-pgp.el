@@ -133,7 +133,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
   '((en . "Key matching expected Key ID \\(\\S +\\) not found"))
   "Alist of language vs regexp to detect ``Key expected''.")
 
-(defun mime::article/call-pgp-to-check-signature (output-buffer orig-file)
+(defun mime-pgp-check-signature (output-buffer orig-file)
   (save-excursion
     (set-buffer output-buffer)
     (erase-buffer)
@@ -203,7 +203,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	)
       (mime-decode-region (point-min)(point-max) encoding)
       (as-binary-output-file (write-region (point-min)(point-max) sig-file))
-      (or (mime::article/call-pgp-to-check-signature
+      (or (mime-pgp-check-signature
 	   mime-echo-buffer-name orig-file)
 	  (let (pgp-id)
 	    (save-excursion
@@ -227,7 +227,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 		     )
 		(progn
 		  (funcall (pgp-function 'fetch-key) (cons nil pgp-id))
-		  (mime::article/call-pgp-to-check-signature
+		  (mime-pgp-check-signature
 		   mime-echo-buffer-name orig-file)
 		  ))
 	    ))
