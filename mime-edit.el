@@ -2533,7 +2533,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
   "Quitting method for mime-view."
   (let ((temp mime-raw-buffer)
 	buf)
-    (mime-view-kill-buffer)
+    (mime-preview-kill-buffer)
     (set-buffer temp)
     (setq buf mime-edit-buffer)
     (kill-buffer temp)

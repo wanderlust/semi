@@ -296,7 +296,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
 	(win-conf mime::preview/original-window-configuration)
 	)
     (kill-buffer mime-raw-buffer)
-    (mime-view-kill-buffer)
+    (mime-preview-kill-buffer)
     (set-window-configuration win-conf)
     (pop-to-buffer mother)
     ))

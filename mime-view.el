@@ -735,7 +735,7 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       "h"        (function mime-preview-show-summary))
     (define-key mime-view-mode-map
-      "\C-c\C-x" (function mime-view-kill-buffer))
+      "\C-c\C-x" (function mime-preview-kill-buffer))
     ;; (define-key mime-view-mode-map
     ;;   "<"        (function beginning-of-buffer))
     ;; (define-key mime-view-mode-map
@@ -1176,7 +1176,7 @@ It calls function registered in variable
 	(funcall (cdr r))
       )))
 
-(defun mime-view-kill-buffer ()
+(defun mime-preview-kill-buffer ()
   (interactive)
   (kill-buffer (current-buffer))
   )
