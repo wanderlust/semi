@@ -103,7 +103,7 @@
 	  (goto-char (point-max))
 	  (if (not (bolp))
 	      (insert "\n"))
-	  (delete-blank-lines)
+	  ;;(delete-blank-lines)
 	  (insert-file-contents signature)
 	  (set-buffer-modified-p (buffer-modified-p))
 					; force mode line update
