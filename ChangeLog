@@ -1,5 +1,17 @@
 2000-01-17  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* mime-view.el (mime-preview-situation-example-condition): New
+	variable.
+	(mime-find-entity-preview-situation): New function.
+	(mime-display-multipart/alternative): Use
+	`mime-find-entity-preview-situation'.
+	(mime-display-entity): Likewise; prefer`*entity-button' and
+	`*header'.
+	(mime-preview-toggle-header): Modify `*header' instead of
+	`header'; update `mime-preview-situation-example-list'.
+
+2000-01-17  MORIOKA Tomohiko  <tomo@m17n.org>
+
 	* mime-view.el (mime-unify-situations): Fixed.
 	(mime-view-define-keymap): Add new binding
 	`mime-preview-toggle-header' for C-c h.
