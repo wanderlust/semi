@@ -1,3 +1,8 @@
+1999-09-27  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-user-agent-value): Include
+	`emacs-patch-level'.  It exists in XEmacs 21.1.1 or later.
+
 1999-09-20  Yoshiki Hayashi <t90553@mail.ecc.u-tokyo.ac.jp>
 
 	* mime-view.el (mime-preview-scroll-up-entitiy,
