@@ -254,10 +254,10 @@ FUNCTION.")
   (concat "=[" quoted-printable-hex-chars
 	  "][" quoted-printable-hex-chars "]"))
 
-(defconst mime/Q-encoded-text-regexp
+(defconst eword-Q-encoded-text-regexp
   (concat "\\([^=?]\\|" quoted-printable-octet-regexp "\\)+"))
-(defconst mime/Q-encoding-and-encoded-text-regexp
-  (concat "\\(Q\\)\\?" mime/Q-encoded-text-regexp))
+(defconst eword-Q-encoding-and-encoded-text-regexp
+  (concat "\\(Q\\)\\?" eword-Q-encoded-text-regexp))
 
 
 ;;; @ rot13-47
