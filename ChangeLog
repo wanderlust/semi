@@ -1,3 +1,12 @@
+1999-01-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-w3.el (mime-preview-text/html): Display err if error occurs
+	in `w3-region'.
+
+	* mime-w3.el (mime-preview-text/html): Guard from error of
+	`w3-region'.
+
+
 1999-01-24  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* WEMI: Version 1.13.1 (Abekawa) released.
