@@ -847,17 +847,6 @@ button-2	Move to point under the mouse cursor
       (run-hooks 'mime-view-mode-hook)
       )))
 
-(defun mime-preview/cinfo-to-pcinfo (cinfo)
-  (let ((rpcl mime::preview/content-list) cell)
-    (catch 'tag
-      (while rpcl
-	(setq cell (car rpcl))
-	(if (eq cinfo (mime::preview-content-info/content-info cell))
-	    (throw 'tag cell)
-	  )
-	(setq rpcl (cdr rpcl))
-	))))
-
 (autoload 'mime-view-play-current-entity "mime-play" "Play current entity." t)
 
 (defun mime-view-extract-current-entity ()
