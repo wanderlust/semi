@@ -1,6 +1,6 @@
 <!doctype sinfo system>
 <head>
-<title>SEMI 1.8 説明書
+<title>SEMI 1.14 説明書
 <author>守岡 知彦 <mail>morioka@jaist.ac.jp</mail>
 <date>1998/07/03
 
@@ -591,33 +591,32 @@ file="mime-ja">STD 11</dref> を拡張しているが、message header では
 <p>
 <defvar name="mime-edit-split-message">
 <p>
-Split large message if it is non-nil.
+Non-nil ならば大きなメッセージを分割して送信します。
 </defvar>
 
 <defvar name="mime-edit-message-default-max-lines">
 <p>
-Default maximum lines of a message.
+メッセージの最大行数のデフォルト値です。
 </defvar>
 
 <defvar name="mime-edit-message-max-lines-alist">
 <p>
-Alist of major-mode vs maximum lines of a message.
+メジャーモード対メッセージの最大行数から成る連想リストです。
 <p>
-If it is not specified for a major-mode,
-<code>mime-edit-message-default-max-lines</code> is used.
+メジャーモードがここで指定されてない場合には
+<code>mime-edit-message-default-max-lines</code> を用います。
 </defvar>
 
 <defvar name="mime-edit-split-blind-field-regexp">
 <p>
-Regular expression to match field-name to be ignored when split
-sending.
+分割送信の際に無視されるフィールド名にマッチする正規表現です。
 </defvar>
 
 
 <h1> その他
 <node> Various
 <p>
-<h2> PGP
+<h2> 暗号化、署名
 <node> PGP
 <p>
 mime-edit では <concept>PGP/MIME</concept> (RFC 2015) および
@@ -628,16 +627,16 @@ mime-edit では <concept>PGP/MIME</concept> (RFC 2015) および
 
 <defvar name="pgg-default-scheme">
 <p>
-Version of PGP or GnuPG command to be used for encryption or sign.
-The value should be a symbol.  Allowed versions are <code>gpg</code>,
-<code>pgp</code> or <code>pgp5</code>.
+暗号化もしくは署名に用いる PGP もしくは GnuPG コマンドのバージョンです。
+値は symbol を指定します。使えるバージョンは <code>gpg</code>、
+<code>pgp</code> もしくは <code>pgp5</code> です。
 </defvar>
 
 <defvar name="pgg-scheme">
 <p>
-Version of PGP or GnuPG command to be used for decryption or verification.
-The value should be a symbol.  Allowed versions are <code>gpg</code>,
-<code>pgp</code> or <code>pgp5</code>.
+復号もしくは検証に用いる PGP もしくは GnuPG コマンドのバージョンです。
+値は symbol を指定します。使えるバージョンは <code>gpg</code>、
+<code>pgp</code> もしくは <code>pgp5</code> です。
 </defvar>
 
 
@@ -646,17 +645,18 @@ The value should be a symbol.  Allowed versions are <code>gpg</code>,
 <p>
 <defvar name="mime-button-face">
 <p>
-Face used for content-button or URL-button of MIME-Preview buffer.
+MIME-Preview バッファで  content-button もしくは URL-button  に用いる
+face です。
 </defvar>
 
 <defvar name="mime-button-mouse-face">
 <p>
-Face used for MIME-preview buffer mouse highlighting.
+MIME-preview バッファでマウスをハイライトする際に用いる face です。
 </defvar>
 
 <defvar name="mime-browse-url-function">
 <p>
-Function to browse URL.
+URL をブラウズする関数です。
 </defvar>
 
 
