@@ -335,10 +335,11 @@ Please redefine this function if you want to change default setting."
 ;;; @@@ entity button generator
 ;;;
 
-(defun mime-view-insert-entity-button (entity subject)
+(defun mime-view-insert-entity-button (entity)
   "Insert entity-button of ENTITY."
   (let ((entity-node-id (mime-entity-node-id entity))
-	(params (mime-entity-parameters entity)))
+	(params (mime-entity-parameters entity))
+	(subject (mime-view-entity-title entity)))
     (mime-insert-button
      (let ((access-type (assoc "access-type" params))
 	   (num (or (cdr (assoc "x-part-number" params))
@@ -802,8 +803,7 @@ The compressed face will be piped to this command.")
       (narrow-to-region nb nb)
       (or button-is-invisible
 	  (if (mime-view-entity-button-visible-p entity)
-	      (mime-view-insert-entity-button entity
-					      (mime-view-entity-title entity))
+	      (mime-view-insert-entity-button entity)
 	    ))
       (when header-is-visible
 	(if header-presentation-method
@@ -828,8 +828,7 @@ The compressed face will be piped to this command.")
 	    (t
 	     (when button-is-invisible
 	       (goto-char (point-max))
-	       (mime-view-insert-entity-button entity
-					       (mime-view-entity-title entity))
+	       (mime-view-insert-entity-button entity)
 	       )
 	     (or header-is-visible
 		 (progn
