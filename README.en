@@ -96,6 +96,14 @@ Installation
 	/usr/local/share/emacs/site-lisp/mel/    --- MEL
 	/usr/local/share/emacs/site-lisp/semi/   --- SEMI
 
+  You can specify site-lisp directory, for example
+
+	% make install LISPDIR=~/share/emacs/lisp
+
+  If `LISPDIR=...' is omitted, site-lisp directory of the specified
+  emacs command is used (perhaps /usr/local/share/emacs/site-lisp or
+  /usr/local/lib/xemacs/site-lisp).
+
   You can specify other optional settings by editing the file
   semi/SEMI-CFG.  Please read semi/README.en and comments in
   semi/TM-CFG.
