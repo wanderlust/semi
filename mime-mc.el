@@ -28,6 +28,7 @@
 (require 'alist)
 (require 'std11)
 (require 'semi-def)
+(require 'mime-def)
 (require 'mailcrypt)
 
 (eval-when-compile
@@ -60,6 +61,36 @@ See draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME) for more information."
   :group 'mime
   :type 'boolean)
 
+(defcustom mime-mc-comment-alist
+  (let ((product-name (mime-product-name mime-user-interface-product))
+	(version (mapconcat
+		  (function number-to-string)
+		  (mime-product-version mime-user-interface-product)
+		  "."))
+	(codename (mime-product-code-name mime-user-interface-product))
+	string)
+    (setq string (format "Processed by Mailcrypt %s under %s %s%s"
+			 mc-version product-name version
+			 (if (string-match "^[ -~]+$" codename)
+			     (concat " - \"" codename "\"")
+			   "")))
+    (list (cons 'gpg string)
+	  (cons 'pgp50 string)
+	  (cons 'pgp string)))
+  "Alist of the schemes and strings of the comment field to appear in ASCII
+armor output."
+  :group 'mime
+  :type '(repeat (cons :format "%v"
+		       (choice (choice-item :tag "GnuPG" gpg)
+			       (choice-item :tag "PGP 5.0i" pgp50)
+			       (choice-item :tag "PGP 2.6" pgp))
+		       (string :tag "Comment"))))
+
+(defmacro mime-mc-comment ()
+  "Return a string of the comment field."
+  '(or (cdr (assq pgp-version mime-mc-comment-alist))
+       (symbol-value (intern (format "mc-%s-comment" pgp-version)))))
+
 
 ;;; @ Internal variable
 ;;;
@@ -71,14 +102,11 @@ See draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME) for more information."
 ;;; @ External variables (for avoid byte compile warnings)
 ;;;
 
-(defvar mc-gpg-comment)
 (defvar mc-gpg-extra-args)
 (defvar mc-gpg-path)
 (defvar mc-gpg-user-id)
-(defvar mc-pgp50-comment)
 (defvar mc-pgp50-pgps-path)
 (defvar mc-pgp50-user-id)
-(defvar mc-pgp-comment)
 (defvar mc-pgp-path)
 (defvar mc-pgp-user-id)
 
@@ -116,11 +144,56 @@ VERSION should be a string or a symbol."
     (message "PGP version set to %s." (car (rassq pgp-version table)))
     ))
 
-(defun mime-mc-insert-public-key (&optional userid scheme)
-  (mc-insert-public-key
-   userid
-   (or scheme (intern (format "mc-scheme-%s" pgp-version)))
-   ))
+(defun mime-mc-replace-comment-field (comment &optional start end)
+  (let ((regexp (if (eq 'pgp pgp-version)
+		    "-----BEGIN PGP.*-----\nVersion:"
+		  "^-----BEGIN PGP.*\n")))
+    (save-excursion
+      (save-restriction
+	(narrow-to-region (or start (point-min)) (or end (point-max)))
+	(goto-char (point-min))
+	(while (re-search-forward regexp nil t)
+	  (forward-line 1)
+	  (save-restriction
+	    (narrow-to-region (point)
+			      (if (search-forward "\n\n" nil t)
+				  (point)
+				(point-max)))
+	    (goto-char (point-min))
+	    (if (re-search-forward "^Comment:.*$" nil t)
+		(replace-match (concat "Comment: " comment))
+	      )))
+	(point-max)))))
+
+(defun mime-mc-insert-public-key (&optional userid)
+  (let ((not-loaded (not (fboundp (intern (format "mc-%s-insert-public-key"
+						  pgp-version)))))
+	(comment (mime-mc-comment))
+	(scheme (intern (format "mc-scheme-%s" pgp-version))))
+    (cond ((eq 'gpg pgp-version)
+	   (if not-loaded
+	       (load "mc-gpg")
+	     )
+	   (let ((mc-gpg-comment (if comment "DUMMY")))
+	     (mc-insert-public-key userid scheme))
+	   )
+	  ((eq 'pgp50 pgp-version)
+	   (if not-loaded
+	       (load "mc-pgp5")
+	     )
+	   (let ((mc-pgp50-comment (if comment "DUMMY")))
+	     (mc-insert-public-key userid scheme))
+	   )
+	  (t
+	   (if not-loaded
+	       (load "mc-pgp")
+	     )
+	   (let ((mc-pgp-comment (if comment "DUMMY")))
+	     (mc-insert-public-key userid scheme))
+	   ))
+    (if comment
+	(mime-mc-replace-comment-field comment)
+      )))
 
 (defun mime-mc-verify ()
   (let ((mc-default-scheme (intern (format "mc-scheme-%s" pgp-version))))
@@ -142,26 +215,27 @@ VERSION should be a string or a symbol."
 ;;;
 
 (defun mime-mc-gpg-process-region
-  (beg end passwd program args parser bufferdummy boundary)
+  (beg end passwd program args parser bufferdummy &optional boundary comment)
   "Similar to `mc-gpg-process-region', however enclose an processed data
-with BOUNDARY if it is specified."
+with BOUNDARY if it is specified and replace the comment field with the
+optional argument COMMENT if it is specified."
   (let ((obuf (current-buffer))
 	(process-connection-type nil)
 	(shell-file-name mime-mc-shell-file-name)
 	; other local vars
-	mybuf
+	mybuf 
 	stderr-tempfilename stderr-buf
 	status-tempfilename status-buf
 	proc rc status parser-result
 	)
-    (mc-gpg-debug-print (format
-			 "(mc-gpg-process-region beg=%s end=%s passwd=%s program=%s args=%s parser=%s bufferdummy=%s boundary=%s)"
+    (mc-gpg-debug-print (format 
+			 "(mc-gpg-process-region beg=%s end=%s passwd=%s program=%s args=%s parser=%s bufferdummy=%s boundary=%s comment=%s)"
 			 beg end passwd program args parser bufferdummy
-			 boundary))
-    (setq stderr-tempfilename
+			 boundary comment))
+    (setq stderr-tempfilename 
 	  (make-temp-name (expand-file-name "mailcrypt-gpg-stderr-"
 					    mc-temp-directory)))
-    (setq status-tempfilename
+    (setq status-tempfilename 
 	  (make-temp-name (expand-file-name "mailcrypt-gpg-status-"
 					    mc-temp-directory)))
     (unwind-protect
@@ -179,17 +253,21 @@ with BOUNDARY if it is specified."
 	  (setq args (append (list (concat "3>" status-tempfilename)) args))
 	  (setq args (append '("--status-fd" "3") args))
 
+	  (if comment
+	      (setq args (append '("--comment" "DUMMY") args))
+	    )
+
 	  (if mc-gpg-extra-args
 	      (setq args (append mc-gpg-extra-args args)))
 
-	  (mc-gpg-debug-print (format "prog is %s, args are %s"
-				      program
-				      (mapconcat '(lambda (x)
-						    (format "'%s'" x))
+	  (mc-gpg-debug-print (format "prog is %s, args are %s" 
+				      program 
+				      (mapconcat '(lambda (x) 
+						    (format "'%s'" x)) 
 						 args " ")))
 
 	  (setq proc
-		(apply 'start-process-shell-command "*GPG*" mybuf
+		(apply 'start-process-shell-command "*GPG*" mybuf 
 		       program args))
 	  ;; send in passwd if necessary
 	  (if passwd
@@ -245,8 +323,13 @@ with BOUNDARY if it is specified."
 	  (erase-buffer)
 	  (insert-file-contents status-tempfilename)
 
-	  ;; feed the parser
+	  ;; replace comment string
 	  (set-buffer mybuf)
+	  (if comment
+	      (mime-mc-replace-comment-field comment)
+	    )
+
+	  ;; feed the parser
 	  (setq parser-result (funcall parser mybuf stderr-buf status-buf rc))
 	  (mc-gpg-debug-print (format " parser returned %s" parser-result))
 
@@ -305,7 +388,9 @@ Content-Transfer-Encoding: 7bit
 	passwd args key
 	(parser (function mc-gpg-insert-parser))
 	(pgp-path mc-gpg-path)
-	micalg)
+	micalg
+	(comment (mime-mc-comment))
+	)
     (setq key (mc-gpg-lookup-key (or id mc-gpg-user-id)))
     (setq passwd
 	  (mc-activate-passwd
@@ -321,11 +406,6 @@ Content-Transfer-Encoding: 7bit
 		(list "--armor" "--batch" "--textmode" "--verbose"
 		      "--local-user" (cdr key))
 		))
-    (if mc-gpg-comment
-	(setq args (nconc args
-			  (list "--comment"
-				(format "\"%s\"" mc-gpg-comment))))
-      )
     (if boundary
 	(progn
 	  (if (string-match "^pgp-" boundary)
@@ -354,7 +434,7 @@ Content-Transfer-Encoding: 7bit
 	  ))
     (message "Signing as %s ..." (car key))
     (if (mime-mc-gpg-process-region
-	 start end passwd pgp-path args parser buffer boundary)
+	 start end passwd pgp-path args parser buffer boundary comment)
 	(progn
 	  (if boundary
 	      (progn
@@ -379,24 +459,32 @@ Content-Transfer-Encoding: 7bit
     )
   (let ((mc-pgp-always-sign (if (eq sign 'maybe)
 				mc-pgp-always-sign
-			      'never)))
-    (mc-gpg-encrypt-region
-     (mc-split "\\([ \t\n]*,[ \t\n]*\\)+" recipients)
-     start end id nil)
-    ))
+			      'never))
+	(comment (mime-mc-comment)))
+    (prog1
+	(mc-gpg-encrypt-region
+	 (mc-split "\\([ \t\n]*,[ \t\n]*\\)+" recipients)
+	 start end id nil)
+      (if comment
+	  (mime-mc-replace-comment-field comment)
+	))))
 
 
 ;;; @ PGP 5.0i functions
 ;;;
 
 (defun mime-mc-pgp50-process-region
-  (beg end passwd program args parser &optional buffer boundary)
+  (beg end passwd program args parser &optional buffer boundary comment)
   "Similar to `mc-pgp50-process-region', however enclose an processed data
-with BOUNDARY if it is specified."
+with BOUNDARY if it is specified and replace the comment field with the
+optional argument COMMENT if it is specified."
   (let ((obuf (current-buffer))
 	(process-connection-type nil)
 	(shell-file-name mime-mc-shell-file-name)
 	mybuf result rgn proc results)
+    (if comment
+	(setq args (cons "+comment=DUMMY" args))
+      )
     (unwind-protect
 	(progn
 	  (setq mybuf (or buffer (generate-new-buffer " *mailcrypt temp")))
@@ -405,7 +493,7 @@ with BOUNDARY if it is specified."
 	  (set-buffer obuf)
 	  (buffer-disable-undo mybuf)
 	  (setq proc
-		(apply 'start-process-shell-command "*PGP*" mybuf program
+		(apply 'start-process-shell-command "*PGP*" mybuf program 
 		       "2>&1" args))
 
 	  ;; Now hand the process to the parser, which returns the exit
@@ -418,14 +506,20 @@ with BOUNDARY if it is specified."
 	  ;; Hack to force a status_notify() in Emacs 19.29
 	  (set-buffer mybuf)
 
+	  ;; replace comment string
+	  (if comment
+	      (setcdr rgn (mime-mc-replace-comment-field
+			   comment (car rgn) (cdr rgn)))
+	    )
+
 	  ;; Hurm.  FIXME; must get better result codes.
 	  (if (stringp result)
 	      (mc-message result))
 
-	  ;; If the parser found something, migrate it to the old
-	  ;; buffer.  In particular, the parser's job is to return
-	  ;; a cons of the form ( beg . end ) delimited the result
-	  ;; of PGP in the new buffer.
+	    ;; If the parser found something, migrate it to the old
+	    ;; buffer.  In particular, the parser's job is to return
+	    ;; a cons of the form ( beg . end ) delimited the result
+	    ;; of PGP in the new buffer.
 	  (if (consp rgn)
 	      (progn
 		(set-buffer obuf)
@@ -576,7 +670,9 @@ Content-Transfer-Encoding: 7bit
 		    (function mime-mc-pgp50-sign-parser)
 		  (function mc-pgp50-sign-parser)))
 	(pgp-path mc-pgp50-pgps-path)
-	micalg)
+	micalg
+	(comment (mime-mc-comment))
+	)
     (setq key (mc-pgp50-lookup-key (or id mc-pgp50-user-id)))
     (setq passwd
 	  (mc-activate-passwd
@@ -590,9 +686,6 @@ Content-Transfer-Encoding: 7bit
 		       (format "+clearsig=%s" (if unclear "off" "on"))
 		       "+batchmode" "-u" (cdr key))
 		 ))
-    (if mc-pgp50-comment
-	(setq args (cons (format "+comment=\"%s\"" mc-pgp50-comment) args))
-      )
     (if (and boundary
 	     (not (or mime-mc-omit-micalg
 		      (setq micalg
@@ -612,7 +705,7 @@ Content-Transfer-Encoding: 7bit
 	  ))
     (message "Signing as %s ..." (car key))
     (if (mime-mc-pgp50-process-region
-	 start end passwd pgp-path args parser buffer boundary)
+	 start end passwd pgp-path args parser buffer boundary comment)
 	(progn
 	  (if boundary
 	      (progn
@@ -637,23 +730,32 @@ Content-Transfer-Encoding: 7bit
     )
   (let ((mc-pgp-always-sign (if (eq sign 'maybe)
 				mc-pgp-always-sign
-			      'never)))
-    (mc-pgp50-encrypt-region
-     (mc-split "\\([ \t\n]*,[ \t\n]*\\)+" recipients)
-     start end id nil)
-    ))
+			      'never))
+	(comment (mime-mc-comment))
+	(mc-pgp50-comment "DUMMY"))
+    (prog1
+	(mc-pgp50-encrypt-region
+	 (mc-split "\\([ \t\n]*,[ \t\n]*\\)+" recipients)
+	 start end id nil)
+      (if comment
+	  (mime-mc-replace-comment-field comment)
+	))))
 
 
 ;;; @ PGP 2.6 functions
 ;;;
 
 (defun mime-mc-process-region
-  (beg end passwd program args parser &optional buffer boundary)
+  (beg end passwd program args parser &optional buffer boundary comment)
   "Similar to `mc-pgp-process-region', however enclose an processed data
-with BOUNDARY if it is specified."
+with BOUNDARY if it is specified and replace the comment field with the
+optional argument COMMENT if it is specified."
   (let ((obuf (current-buffer))
 	(process-connection-type nil)
 	mybuf result rgn proc)
+    (if comment
+	(setq args (cons "+comment=DUMMY" args))
+      )
     (unwind-protect
 	(progn
 	  (setq mybuf (or buffer (generate-new-buffer " *mailcrypt temp")))
@@ -685,6 +787,10 @@ with BOUNDARY if it is specified."
 	  ;; Hurm.  FIXME; must get better result codes.
 	  (if (stringp result)
 	      (error "%s exited abnormally: '%s'" program result)
+	    ;; replace comment string
+	    (if comment
+		(mime-mc-replace-comment-field comment)
+	      )
 	    (setq rgn (funcall parser result))
 	    ;; If the parser found something, migrate it
 	    (if (consp rgn)
@@ -728,6 +834,7 @@ Content-Transfer-Encoding: 7bit
 	passwd args key
 	(parser (function mc-pgp-generic-parser))
 	(pgp-path mc-pgp-path)
+	(comment (mime-mc-comment))
 	)
     (setq key (mc-pgp-lookup-key (or id mc-pgp-user-id)))
     (setq passwd
@@ -743,12 +850,9 @@ Content-Transfer-Encoding: 7bit
 	   (list "+verbose=1" "+language=en"
 		 (format "+clearsig=%s" (if unclear "off" "on"))
 		 "+batchmode" "-u" (cdr key))))
-    (if mc-pgp-comment
-	(setq args (cons (format "+comment=%s" mc-pgp-comment) args))
-      )
     (message "Signing as %s ..." (car key))
     (if (mime-mc-process-region
-	 start end passwd pgp-path args parser buffer boundary)
+	 start end passwd pgp-path args parser buffer boundary comment)
 	(progn
 	  (if boundary
 	      (progn
@@ -773,11 +877,16 @@ Content-Transfer-Encoding: 7bit
     )
   (let ((mc-pgp-always-sign (if (eq sign 'maybe)
 				mc-pgp-always-sign
-			      'never)))
-    (mc-pgp-encrypt-region
-     (mc-split "\\([ \t\n]*,[ \t\n]*\\)+" recipients)
-     start end id nil)
-    ))
+			      'never))
+	(comment (mime-mc-comment))
+	(mc-pgp-comment "DUMMY"))
+    (prog1
+	(mc-pgp-encrypt-region
+	 (mc-split "\\([ \t\n]*,[ \t\n]*\\)+" recipients)
+	 start end id nil)
+      (if comment
+	  (mime-mc-replace-comment-field comment)
+	))))
 
 
 ;;; @ end
