@@ -2577,10 +2577,58 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	  "\\):")
   "Regexp for deleted header fields when `mime-edit-again' is called.")
 
-(defun mime-edit-decode-message-in-buffer (&optional not-decode-text)
+(defun mime-edit-decode-multipart-in-buffer (subtype boundary
+					     &optional not-decode-text)
+  (let* ((boundary-pat (concat "\n--" (regexp-quote boundary) "[ \t]*\n")))
+    (re-search-forward boundary-pat nil t)
+    (let ((bb (match-beginning 0)) eb tag)
+      (setq tag (format "\n--<<%s>>-{\n" subtype))
+      (goto-char bb)
+      (insert tag)
+      (setq bb (+ bb (length tag)))
+      (re-search-forward
+       (concat "\n--" (regexp-quote boundary) "--[ \t]*\n")
+       nil t)
+      (setq eb (match-beginning 0))
+      (replace-match (format "--}-<<%s>>\n" subtype))
+      (save-restriction
+	(narrow-to-region bb eb)
+	(goto-char (point-min))
+	(while (re-search-forward boundary-pat nil t)
+	  (let ((beg (match-beginning 0))
+		end)
+	    (delete-region beg (match-end 0))
+	    (save-excursion
+	      (if (re-search-forward boundary-pat nil t)
+		  (setq end (match-beginning 0))
+		(setq end (point-max))
+		)
+	      (save-restriction
+		(narrow-to-region beg end)
+		(mime-edit-decode-message-in-buffer
+		 not-decode-text
+		 (if (eq subtype 'digest)
+		     (eval-when-compile
+		       (make-mime-content-type 'message 'rfc822))))
+		(goto-char (point-max))
+		))))
+	))
+    (goto-char (point-min))
+    (or (= (point-min) 1)
+	(delete-region (point-min)
+		       (if (search-forward "\n\n" nil t)
+			   (match-end 0)
+			 (point-min)
+			 )))
+    ))
+
+;;;###autoload
+(defun mime-edit-decode-message-in-buffer (&optional not-decode-text
+						     default-content-type)
   (save-excursion
     (goto-char (point-min))
-    (let ((ctl (mime-read-Content-Type)))
+    (let ((ctl (or (mime-read-Content-Type)
+		   default-content-type)))
       (if ctl
 	  (let ((type (mime-content-type-primary-type ctl))
 		(stype (mime-content-type-subtype ctl))
@@ -2590,47 +2638,9 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	      (delete-region (point-min)(point-max))
 	      )
 	     ((eq type 'multipart)
-	      (let* ((boundary (cdr (assoc "boundary" params)))
-		     (boundary-pat
-		      (concat "\n--" (regexp-quote boundary) "[ \t]*\n"))
-		     )
-		(re-search-forward boundary-pat nil t)
-		(let ((bb (match-beginning 0)) eb tag)
-		  (setq tag (format "\n--<<%s>>-{\n" stype))
-		  (goto-char bb)
-		  (insert tag)
-		  (setq bb (+ bb (length tag)))
-		  (re-search-forward
-		   (concat "\n--" (regexp-quote boundary) "--[ \t]*\n")
-		   nil t)
-		  (setq eb (match-beginning 0))
-		  (replace-match (format "--}-<<%s>>\n" stype))
-		  (save-restriction
-		    (narrow-to-region bb eb)
-		    (goto-char (point-min))
-		    (while (re-search-forward boundary-pat nil t)
-		      (let ((beg (match-beginning 0))
-			    end)
-			(delete-region beg (match-end 0))
-			(save-excursion
-			  (if (re-search-forward boundary-pat nil t)
-			      (setq end (match-beginning 0))
-			    (setq end (point-max))
-			    )
-			  (save-restriction
-			    (narrow-to-region beg end)
-			    (mime-edit-decode-message-in-buffer not-decode-text)
-			    (goto-char (point-max))
-			    ))))
-		    ))
-		(goto-char (point-min))
-		(or (= (point-min) 1)
-		    (delete-region (point-min)
-				   (if (search-forward "\n\n" nil t)
-				       (match-end 0)
-				     (point-min)
-				     )))
-		))
+	      (mime-edit-decode-multipart-in-buffer
+	       stype (cdr (assoc "boundary" params)) not-decode-text)
+	      )
 	     (t
 	      (let* ((ctype (format "%s/%s" type stype))
 		     charset
@@ -2719,6 +2729,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	    )
 	))))
 
+;;;###autoload
 (defun mime-edit-again (&optional not-decode-text no-separator not-turn-on)
   "Convert current buffer to MIME-Edit buffer and turn on MIME-Edit mode.
 Content-Type and Content-Transfer-Encoding header fields will be
