@@ -1,6 +1,5 @@
 [README for SEMI kernel package (English Version)]
 by MORIOKA Tomohiko <morioka@jaist.ac.jp>
-$Id$
 
 What's SEMI?
 ------------
@@ -98,8 +97,8 @@ Installation
   /usr/local/lib/xemacs/site-lisp).
 
   You can specify other optional settings by editing the file
-  semi/SEMI-CFG.  Please read semi/README.en and comments in
-  semi/SEMI-CFG.
+  ${archive}/SEMI-CFG.  Please read ${archive}/README.en and comments
+  in ${archive}/SEMI-CFG.
 
 
 Initialization
@@ -129,7 +128,7 @@ Initialization
 Documentation
 -------------
 
-  To get started, please read semi/README.en.
+  To get started, please read ${archive}/README.en.
 
   RFC's 822, 1806, 1847, 1896, 2015, 2045, 2046, 2047, 2048 and 2049
   are available via anonymous ftp:
