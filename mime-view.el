@@ -415,7 +415,7 @@ The compressed face will be piped to this command.")
       (setq mime-raw-message-info (mime-parse-message ctl encoding))
       )
   (let* ((cinfo mime-raw-message-info)
-	 (pcl (mime/flatten-content-info cinfo))
+	 (pcl (mime-raw-flatten-message-info cinfo))
 	 (the-buf (current-buffer))
 	 (mode major-mode)
 	 )
@@ -627,17 +627,17 @@ If optional argument MESSAGE-INFO is not specified,
 	    ))
 	))))
 
-(defun mime/flatten-content-info (&optional cinfo)
-  (or cinfo
-      (setq cinfo mime-raw-message-info)
-      )
-  (let ((dest (list cinfo))
-	(rcl (mime-entity-info-children cinfo))
-	)
+(defun mime-raw-flatten-message-info (&optional message-info)
+  "Return list of entity-infos in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (or message-info
+      (setq message-info mime-raw-message-info))
+  (let ((dest (list message-info))
+	(rcl (mime-entity-info-children message-info)))
     (while rcl
-      (setq dest (nconc dest (mime/flatten-content-info (car rcl))))
-      (setq rcl (cdr rcl))
-      )
+      (setq dest (nconc dest (mime-raw-flatten-message-info (car rcl))))
+      (setq rcl (cdr rcl)))
     dest))
 
 
