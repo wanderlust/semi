@@ -1106,7 +1106,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	  (setq mime-view-mode-map
 		(append mime-view-mode-map (list (cons t default))))))
     (define-key mime-view-mode-map
-      mouse-button-3 (function mime-view-popup-menu))
+      [down-mouse-3] (function mime-view-popup-menu))
     (use-local-map mime-view-mode-map)
     (run-hooks 'mime-view-define-keymap-hook)))
 
