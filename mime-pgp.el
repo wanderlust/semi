@@ -50,7 +50,6 @@
 
 (defun mime-article/view-application/pgp (beg end cal)
   (let* ((cnum (mime-article/point-content-number beg))
-	 (cur-buf (current-buffer))
 	 (p-win (or (get-buffer-window mime::article/preview-buffer)
 		    (get-largest-window)))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
@@ -279,7 +278,6 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 
 (defun mime-article/add-pgp-keys (beg end cal)
   (let* ((cnum (mime-article/point-content-number beg))
-	 (cur-buf (current-buffer))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (mother mime::article/preview-buffer)
 	 (charset (cdr (assoc "charset" cal)))
