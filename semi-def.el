@@ -24,7 +24,7 @@
 
 ;;; Code:
 
-(require 'emu)
+(require 'poe)
 
 (eval-when-compile (require 'cl))
 

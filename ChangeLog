@@ -1,3 +1,26 @@
+1998-10-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* README.en (Required environment): Modify to require APEL 9.5 and
+	FLIM 1.11.1.
+
+	* mime-edit.el: - Don't require emu.
+	                - Require invisible.
+
+	* semi-def.el: Require poe instead of emu.
+
+1998-10-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-decode-buffer): Convert encoding to
+	lower case.
+
+1998-10-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-ignored-field-list): Modify each element
+	of initial value to include `:'.
+	(mime-view-visible-field-list): Likewise.
+	(mime-display-entity): Use `mime-insert-header' instead of
+	`mime-insert-decoded-header'.
+
 1998-10-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-edit.el (mime-edit-decode-buffer): Call

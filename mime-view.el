@@ -295,15 +295,15 @@ SYMBOL must be major mode in raw-buffer or t.  t means default.
 Interface of FUNCTION must be (ENTITY SITUATION).")
 
 (defvar mime-view-ignored-field-list
-  '(".*Received" ".*Path" ".*Id" "References"
-    "Replied" "Errors-To"
-    "Lines" "Sender" ".*Host" "Xref"
-    "Content-Type" "Precedence"
-    "Status" "X-VM-.*")
+  '(".*Received:" ".*Path:" ".*Id:" "^References:"
+    "^Replied:" "^Errors-To:"
+    "^Lines:" "^Sender:" ".*Host:" "^Xref:"
+    "^Content-Type:" "^Precedence:"
+    "^Status:" "^X-VM-.*:")
   "All fields that match this list will be hidden in MIME preview buffer.
 Each elements are regexp of field-name.")
 
-(defvar mime-view-visible-field-list '("Dnas.*" "Message-Id")
+(defvar mime-view-visible-field-list '("^Dnas.*:" "^Message-Id:")
   "All fields that match this list will be displayed in MIME preview buffer.
 Each elements are regexp of field-name.")
 
@@ -682,9 +682,9 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
       (when header-is-visible
 	(if header-presentation-method
 	    (funcall header-presentation-method entity situation)
-	  (mime-insert-decoded-header entity
-				      mime-view-ignored-field-list
-				      mime-view-visible-field-list))
+	  (mime-insert-header entity
+			      mime-view-ignored-field-list
+			      mime-view-visible-field-list))
 	(goto-char (point-max))
 	(insert "\n")
 	(run-hooks 'mime-display-header-hook)
