@@ -440,6 +440,7 @@ Each elements are regexp of field-name.")
     (run-hooks 'mime-display-text/plain-hook)
     ))
 
+<<<<<<< mime-view.el
 (defun mime-display-text/richtext (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
@@ -463,8 +464,7 @@ Each elements are regexp of field-name.")
 (defun mime-display-text/x-vcard (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
-    (mime-insert-text-content entity)
-    (run-hooks 'mime-text-decode-hook)
+    (insert (string-as-multibyte (mime-entity-content entity)))
     (goto-char (point-min))
     (while (re-search-forward
             "\\(;\\(encoding=\\)?quoted-printable:\\)\\(\\(=[0-9A-F][0-9A-F]\\|=\r\n\\|[^\r\n]\\)*\\)"
