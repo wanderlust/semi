@@ -61,7 +61,7 @@ network-code.
 
 If method is nil, this field will not be encoded.")
 
-(defvar mime/generate-X-Nsubject
+(defvar eword-generate-X-Nsubject
   (and (boundp 'mime/use-X-Nsubject)
        mime/use-X-Nsubject)
   "*If it is not nil, X-Nsubject field is generated
@@ -575,7 +575,7 @@ when Subject field is encoded by `eword-encode-message-header'.")
 		       ))
 		 ))
 	  ))
-      (and mime/generate-X-Nsubject
+      (and eword-generate-X-Nsubject
 	   (or (std11-field-body "X-Nsubject")
 	       (let ((str (mime/exist-encoded-word-in-subject)))
 		 (if str
