@@ -2,6 +2,10 @@
 
 	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae)-A was released.
 
+	* SEMI-ELS: Remove mime-tar.el.
+
+1998-02-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* eword-decode.el (eword-decode-version): Use `semi-version';
 	abolish `eword-decode-RCS-ID'.
 
