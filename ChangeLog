@@ -1,4 +1,9 @@
-2000-03-01  Yoshiki Hayashi <yoshiki@xemacs.org>
+2000-03-14  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-display-gzipped): Remove arguments.
+	autodetect coding system.
+
+2000-03-01  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* mime-image.el (mime-display-image): Don't wait for redisplay.
 

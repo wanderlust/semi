@@ -856,7 +856,7 @@ This can only handle gzipped contents."
        (as-binary-process
 	(call-process-region (point-min) (point-max) "gzip" t t
 			     nil "-cd"))
-       (buffer-string (point-min) (point-max))))
+       (buffer-string)))
     t)
 
 (defun mime-preview-inline ()
