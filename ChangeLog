@@ -1,5 +1,25 @@
 1998-06-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el (mime-activate-mailcap-method): Use
+	`mime-entity-body-start'.
+
+	* mime-play.el (mime-activate-external-method): Change interface.
+
+	* mime-play.el (mime-activate-mailcap-method): Change interface.
+
+1998-06-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* MIME-View-API-ja.ol (mime-preview-buffer): Delete description
+	about text-property `mime-view-raw-buffer'.
+
+	* mime-play.el (mime-preview-play-current-entity): Don't refer
+	text-property `mime-view-raw-buffer'.
+
+	* mime-view.el (mime-view-display-entity): Don't set up
+	text-property `mime-view-raw-buffer'.
+
+1998-06-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* MIME-View-API-ja.ol: Abolish description about
 	`mime-preview-original-major-mode'.
 
