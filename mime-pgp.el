@@ -298,22 +298,30 @@ or \"v\" for choosing a command of PGP 5.0i."
 	      (cdr (assq pgp-version mime-pgp-key-expected-regexp-alist))
 	      )))
 
-(defun mime-pgp-detect-version (entity)
-  "Detect PGP version from detached signature."
+(defun mime-pgp-detect-version ()
+  "Detect PGP version in the buffer. The buffer is expected to be narrowed
+to just an ascii armor."
+  (std11-narrow-to-header)
+  (let ((version (std11-fetch-field "Version")))
+    (cond ((not version)
+	   pgp-version)
+	  ((string-match "GnuPG" version)
+	   'gpg)
+	  ((string-match "5\\.0i" version)
+	   'pgp50)
+	  ((string-match "2\\.6" version)
+	   'pgp)
+	  (t
+	   pgp-version))))
+
+(defun mime-entity-detect-pgp-version (entity situation)
+  "Detect PGP version from entity content."
   (with-temp-buffer
     (mime-insert-entity-content entity)
-    (std11-narrow-to-header)
-    (let ((version (std11-fetch-field "Version")))
-      (cond ((not version)
-	     pgp-version)
-	    ((string-match "GnuPG" version)
-	     'gpg)
-	    ((string-match "5\\.0i" version)
-	     'pgp50)
-	    ((string-match "2\\.6" version)
-	     'pgp)
-	    (t
-	     pgp-version)))))
+    (mime-decode-region (point-min) (point-max)
+			(cdr (assq 'encoding situation)))
+    (mime-pgp-detect-version)
+    ))
 
 (defun mime-pgp-check-signature (output-buffer orig-file)
   (with-current-buffer output-buffer
@@ -423,7 +431,7 @@ key-ID if it is found."
 	 (basename (expand-file-name "tm" temporary-file-directory))
 	 (orig-file (make-temp-name basename))
 	 (sig-file (concat orig-file ".sig"))
-	 (pgp-version (mime-pgp-detect-version entity))
+	 (pgp-version (mime-entity-detect-pgp-version entity situation))
 	 (parser (intern (format "mime-pgp-parse-verify-error-for-%s"
 				 pgp-version)))
 	 pgp-id done)
@@ -479,7 +487,9 @@ key-ID if it is found."
 		   (1- knum)
 		 (1+ knum)))
 	 (orig-entity (nth onum (mime-entity-children mother)))
-	 (pgp-version (mime-pgp-detect-version orig-entity)))
+	 (pgp-version (mime-entity-detect-pgp-version
+		       orig-entity situation))
+	 )
     (mime-view-application/pgp orig-entity situation)
     ))
 
@@ -490,25 +500,13 @@ key-ID if it is found."
 ;;; draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME).
 
 (defun mime-add-application/pgp-keys (entity situation)
-  (let* ((start (mime-entity-point-min entity))
-	 (entity-number (mime-raw-point-to-entity-number start entity))
-	 (new-name (format "%s-%s"
-			   (buffer-name (mime-entity-buffer entity))
-			   entity-number))
-	 (encoding (cdr (assq 'encoding situation)))
-	 )
-    (switch-to-buffer new-name)
-    (setq buffer-read-only nil)
-    (erase-buffer)
+  (with-temp-buffer
     (mime-insert-entity-content entity)
-    (goto-char (point-min))
-    (if (re-search-forward "^\n" nil t)
-	(delete-region (point-min) (match-end 0))
-      )
-    (mime-decode-region (point-min)(point-max) encoding)
-    (funcall (pgp-function 'snarf-keys))
-    (kill-buffer (current-buffer))
-    ))
+    (mime-decode-region (point-min) (point-max)
+			(cdr (assq 'encoding situation)))
+    (let ((pgp-version (mime-pgp-detect-version)))
+      (funcall (pgp-function 'snarf-keys))
+      )))
 
 
 ;;; @ Internal method for fetching a public key

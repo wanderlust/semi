@@ -1,7 +1,16 @@
 1999-04-15  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-pgp.el (mime-add-application/pgp-keys): Use
-	`mime-insert-entity-content' to get public keys.
+	`mime-insert-entity-content' and `mime-pgp-detect-version' to get
+	public keys.
+	(mime-decrypt-application/pgp-encrypted): Use
+	`mime-entity-detect-pgp-version' instead of
+	`mime-pgp-detect-version'.
+	(mime-verify-application/pgp-signature): Likewise.
+	(mime-entity-detect-pgp-version): Function to detect PGP version
+	from entity content; renamed from `mime-pgp-detect-version'.
+	(mime-pgp-detect-version): New function to detect PGP version in
+	the buffer.
 
 1999-04-13  Hirokazu FUKUI    <fukui@atesoft.advantest.co.jp>
 
