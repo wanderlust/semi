@@ -352,7 +352,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
 		    (or (file-exists-p total-file)
 			(save-excursion
 			  (set-buffer
-			   (get-buffer-create mime/temp-buffer-name))
+			   (get-buffer-create mime-temp-buffer-name))
 			  (erase-buffer)
 			  (insert total)
 			  (write-file total-file)
@@ -375,7 +375,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
       (if (and total (> total 0))
 	  (catch 'tag
 	    (save-excursion
-	      (set-buffer (get-buffer-create mime/temp-buffer-name))
+	      (set-buffer (get-buffer-create mime-temp-buffer-name))
 	      (let ((full-buf (current-buffer)))
 		(erase-buffer)
 		(let ((i 1))
