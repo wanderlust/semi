@@ -63,11 +63,11 @@
 ;;; @ for URL
 ;;;
 
+(require 'browse-url)
+
 (defvar mime-text-url-regexp
   "\\(http\\|ftp\\|file\\|gopher\\|news\\|telnet\\|wais\\|mailto\\):\\(//[-a-zA-Z0-9_.]+:[0-9]*\\)?[-a-zA-Z0-9_=?#$@~`%&*+|\\/.,]*[-a-zA-Z0-9_=#$@~`%&*+|\\/]"
   "*Regexp to match URL in text/plain body.")
-
-(defvar browse-url-browser-function nil)
 
 (defun tm:browse-url (&optional url)
   (if (fboundp browse-url-browser-function)
