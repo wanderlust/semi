@@ -1,3 +1,8 @@
+2003-06-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* pgg-gpg.el (pgg-gpg-process-region): Undo the last change;
+	Add --yes option to overwrite existing output file.
+
 2003-05-29  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* pgg-gpg.el (pgg-gpg-process-region): Undo the last change.
