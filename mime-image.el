@@ -125,6 +125,7 @@
 		    'mime-preview-condition
 		    (list (cons 'type type)(cons 'subtype subtype)
 			  '(body . visible)
+			  '(body-presentation-method . with-filter)
 			  (cons 'body-filter
 				#'mime-view-filter-for-image)))
 		   )
