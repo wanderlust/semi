@@ -481,7 +481,7 @@ Each elements are regexp of field-name.")
  'mime-preview-condition
  '((type . text)(subtype . richtext)
    (body . visible)
-   (body-presentation-method . mime-preview-text/richtext)))
+   (body-presentation-method . mime-display-text/richtext)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
@@ -518,7 +518,7 @@ Each elements are regexp of field-name.")
 
 (autoload 'mime-display-text/plain "mime-text")
 (autoload 'mime-preview-text/enriched "mime-text")
-(autoload 'mime-preview-text/richtext "mime-text")
+(autoload 'mime-display-text/richtext "mime-text")
 
 (defvar mime-view-announcement-for-message/partial
   (if (and (>= emacs-major-version 19) window-system)
