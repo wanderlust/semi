@@ -26,6 +26,7 @@
 ;;; Code:
 
 (require 'cl)
+(require 'emu)
 
 
 ;;; @ variables
@@ -66,132 +67,8 @@
 (defconst mime/disposition-type-regexp mime/token-regexp)
 
 
-;;; @ MIME charset
-;;;
-
-(defvar charsets-mime-charset-alist
-  '(((ascii)						. us-ascii)
-    ((ascii latin-iso8859-1)				. iso-8859-1)
-    ((ascii latin-iso8859-2)				. iso-8859-2)
-    ((ascii latin-iso8859-3)				. iso-8859-3)
-    ((ascii latin-iso8859-4)				. iso-8859-4)
-;;; ((ascii cyrillic-iso8859-5)				. iso-8859-5)
-    ((ascii cyrillic-iso8859-5)				. koi8-r)
-    ((ascii arabic-iso8859-6)				. iso-8859-6)
-    ((ascii greek-iso8859-7)				. iso-8859-7)
-    ((ascii hebrew-iso8859-8)				. iso-8859-8)
-    ((ascii latin-iso8859-9)				. iso-8859-9)
-    ((ascii latin-jisx0201
-	    japanese-jisx0208-1978 japanese-jisx0208)	. iso-2022-jp)
-    ((ascii korean-ksc5601)				. euc-kr)
-    ((ascii chinese-gb2312)				. cn-gb-2312)
-    ((ascii chinese-big5-1 chinese-big5-2)		. cn-big5)
-    ((ascii latin-iso8859-1 greek-iso8859-7
-	    latin-jisx0201 japanese-jisx0208-1978
-	    chinese-gb2312 japanese-jisx0208
-	    korean-ksc5601 japanese-jisx0212)		. iso-2022-jp-2)
-    ((ascii latin-iso8859-1 greek-iso8859-7
-	    latin-jisx0201 japanese-jisx0208-1978
-	    chinese-gb2312 japanese-jisx0208
-	    korean-ksc5601 japanese-jisx0212
-	    chinese-cns11643-1 chinese-cns11643-2)	. iso-2022-int-1)
-    ((ascii latin-iso8859-1 latin-iso8859-2
-	    cyrillic-iso8859-5 greek-iso8859-7
-	    latin-jisx0201 japanese-jisx0208-1978
-	    chinese-gb2312 japanese-jisx0208
-	    korean-ksc5601 japanese-jisx0212
-	    chinese-cns11643-1 chinese-cns11643-2
-	    chinese-cns11643-3 chinese-cns11643-4
-	    chinese-cns11643-5 chinese-cns11643-6
-	    chinese-cns11643-7)				. iso-2022-cjk)
-    ))
-
-(defvar default-mime-charset 'x-ctext)
-
-(defvar mime-charset-coding-system-alist
-  '((x-ctext		. ctext)
-    (gb2312		. cn-gb-2312)
-    (iso-2022-jp-2	. iso-2022-ss2-7)
-    ))
-
-(defun mime-charset-to-coding-system (charset &optional lbt)
-  (if (stringp charset)
-      (setq charset (intern (downcase charset)))
-    )
-  (let ((cs
-	 (or (cdr (assq charset mime-charset-coding-system-alist))
-	     (and (coding-system-p charset) charset)
-	     )))
-    (if lbt
-	(intern (concat (symbol-name cs) "-" (symbol-name lbt)))
-      cs)))
-
-(defun charsets-to-mime-charset (charsets)
-  "Return MIME charset from list of charset CHARSETS.
-This function refers variable `charsets-mime-charset-alist'
-and `default-mime-charset'. [emu.el]"
-  (if charsets
-      (or (catch 'tag
-	    (let ((rest charsets-mime-charset-alist)
-		  cell csl)
-	      (while (setq cell (car rest))
-		(if (catch 'not-subset
-		      (let ((set1 charsets)
-			    (set2 (car cell))
-			    obj)
-			(while set1
-			  (setq obj (car set1))
-			  (or (memq obj set2)
-			      (throw 'not-subset nil)
-			      )
-			  (setq set1 (cdr set1))
-			  )
-			t))
-		    (throw 'tag (cdr cell))
-		  )
-		(setq rest (cdr rest))
-		)))
-	  default-mime-charset)))
-
-(defun detect-mime-charset-region (start end)
-  "Return MIME charset for region between START and END."
-  (charsets-to-mime-charset
-   (find-charset-string (buffer-substring start end))
-   ))
-
-(defun encode-mime-charset-region (start end charset)
-  "Encode the text between START and END as MIME CHARSET."
-  (let ((cs (mime-charset-to-coding-system charset)))
-    (if cs
-	(encode-coding-region start end cs)
-      )))
-
-(defun decode-mime-charset-region (start end charset)
-  "Decode the text between START and END as MIME CHARSET."
-  (let ((cs (mime-charset-to-coding-system charset)))
-    (if cs
-	(decode-coding-region start end cs)
-      )))
-
-(defun encode-mime-charset-string (string charset)
-  "Encode the STRING as MIME CHARSET."
-  (let ((cs (mime-charset-to-coding-system charset)))
-    (if cs
-	(encode-coding-string string cs)
-      string)))
-
-(defun decode-mime-charset-string (string charset)
-  "Decode the STRING as MIME CHARSET."
-  (let ((cs (mime-charset-to-coding-system charset)))
-    (if cs
-	(decode-coding-string string cs)
-      string)))
-
-
 ;;; @ button
 ;;;
-
-(defvar running-xemacs (string-match "XEmacs" emacs-version))
 
 (if running-xemacs
     (require 'overlay)
@@ -593,28 +470,6 @@ it is used as hook to set."
 	)
     (add-hook hook-name func)
     ))
-
-(defmacro defun-maybe (name &rest everything-else)
-  (or (and (fboundp name)
-	   (not (get name 'defun-maybe))
-	   )
-      `(or (fboundp (quote ,name))
-	   (progn
-	     (defun ,name ,@everything-else)
-	     (put (quote ,name) 'defun-maybe t)
-	     ))
-      ))
-
-(put 'defun-maybe 'lisp-indent-function 'defun)
-
-(defun-maybe functionp (obj)
-  "Returns t if OBJ is a function, nil otherwise.
-\[XEmacs emulating function]"
-  (or (subrp obj)
-      (byte-code-function-p obj)
-      (and (symbolp obj)(fboundp obj))
-      (and (consp obj)(eq (car obj) 'lambda))
-      ))
 
 
 ;;; @ end
