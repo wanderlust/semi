@@ -102,10 +102,12 @@
 ;;;
 
 (defvar eword-decode-sticked-encoded-word nil
-  "*If non-nil, decode encoded-words sticked on atoms, other encoded-words, etc.")
+  "*If non-nil, decode encoded-words sticked on atoms, other encoded-words, etc.
+however this behaviour violates RFC2047.")
 
 (defvar eword-decode-quoted-encoded-word nil
-  "*If non-nil, decode encoded-words in quoted-string.")
+  "*If non-nil, decode encoded-words in quoted-string 
+however this behaviour violates RFC2047.")
 
 (defun eword-decode-first-encoded-words (string after-regexp &optional must-unfold)
   (if eword-decode-sticked-encoded-word (setq after-regexp ""))

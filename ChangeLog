@@ -1,5 +1,12 @@
 1998-03-21  Tanaka Akira  <akr@jaist.ac.jp>
 
+	* eword-decode.el (eword-decode-sticked-encoded-word): Add
+	document for relation of RFC2047.
+	(eword-decode-quoted-encoded-word): Add document for relation of
+	RFC2047.
+
+1998-03-21  Tanaka Akira  <akr@jaist.ac.jp>
+
 	* eword-decode.el (eword-decode-quoted-encoded-word): New variable.
 	(eword-decode-quoted-string): New function. It has facility that
 	decode encodes-words in quoted-string.
