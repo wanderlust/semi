@@ -1,3 +1,105 @@
+1998-06-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view-ja.texi, mime-view-ja.sgml: New files.
+
+	* mime-view.el (mime-view-mode): Fix DOC-string.
+
+1998-06-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-file-content-type-alist): Renamed from
+	`mime-file-type-regexp-type-subtype-alist'.
+
+1998-06-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS: Add description about
+	`mime-preview-over-to-{previous|next}-method-alist'.
+
+	* mime-view.el (mime-preview-over-to-previous-method-alist):
+	Add DOC-string.
+	(mime-preview-over-to-next-method-alist): Add DOC-string.
+
+	* mime-view.el (mime-preview-over-to-previous-method-alist):
+	Renamed from `mime-view-over-to-previous-method-alist'.
+	(mime-preview-over-to-next-method-alist): Renamed from
+	`mime-view-over-to-next-method-alist'.
+
+1998-06-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-w3.el (mime-save-background-color): Fixed.
+
+	* mime-view.el (mime-acting-condition): Set up
+	`mime-method-to-detect' for application/octet-stream in "play"
+	mode.
+
+	* mime-play.el (mime-file-type-regexp-type-subtype-alist): New
+	variable.
+	(mime-method-to-detect): New function.
+
+1998-06-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-sort-situation): Modify for
+	Content-Disposition information.
+
+1998-06-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el: Abolish variable `mime-view-show-summary-method'
+	and function `mime-preview-show-summary'.
+
+1998-06-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-entity-situation): Add information of
+	Content-Disposition.
+
+1998-06-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* MIME-View-API-ja.ol (mime-preview-buffer): Add description about
+	`mime-preview-original-major-mode'.
+
+	* mime-view.el (mime-preview-original-major-mode): Modify
+	DOC-string.
+
+	* NEWS: Add description about abolishment of tm-compatible
+	external method support.
+
+	* mime-play.el (mime-raw-play-entity): Abolish tm-compatible
+	external method support; abolish function
+	`mime-activate-external-method' and
+	`mime-make-external-method-args'.
+
+1998-06-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-activate-mailcap-method): Use
+	`mime-entity-body-start'.
+
+	* mime-play.el (mime-activate-external-method): Change interface.
+
+	* mime-play.el (mime-activate-mailcap-method): Change interface.
+
+1998-06-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* MIME-View-API-ja.ol (mime-preview-buffer): Delete description
+	about text-property `mime-view-raw-buffer'.
+
+	* mime-play.el (mime-preview-play-current-entity): Don't refer
+	text-property `mime-view-raw-buffer'.
+
+	* mime-view.el (mime-view-display-entity): Don't set up
+	text-property `mime-view-raw-buffer'.
+
+1998-06-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* MIME-View-API-ja.ol: Abolish description about
+	`mime-preview-original-major-mode'.
+
+	* NEWS (Changes in SEMI 1.6): New chapter.
+
+	* TODO (multipart/related support): New item.
+
+1998-06-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS: Add description about mime-w3.el.
+
+
 1998-06-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* REMI: Version 1.6.0 (Amaharashi) released.
