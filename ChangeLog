@@ -1,5 +1,13 @@
 2000-02-17  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* mime-view.el (mime-view-define-keymap): Add new binding
+	`mime-preview-toggle-body' for C-c C-t C-b.
+	(mime-preview-toggle-body): New command.
+
+	* semi-def.el (mime-add-button): Don't use overlay.
+
+2000-02-17  MORIOKA Tomohiko  <tomo@m17n.org>
+
 	* mime-view.el (mime-preview-condition): Add default setting of
 	multipart; declare body of message/partial, message/rfc822 and
 	message/news are visible.
