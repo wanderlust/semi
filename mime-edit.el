@@ -519,19 +519,22 @@ If it is not specified for a major-mode,
   "*If non-nil, insert X-Emacs header field.")
 
 (defvar mime-edit-x-emacs-value
-  (if running-xemacs
-      (concat emacs-version
-	      (if (featurep 'mule)
-		  " with mule"
-		" without mule"))
+  (if (featurep 'xemacs)
+      (concat emacs-version (if (featurep 'mule)
+				" with mule"
+			      " without mule"))
     (let ((ver (if (string-match "\\.[0-9]+$" emacs-version)
 		   (substring emacs-version 0 (match-beginning 0))
 		 emacs-version)))
       (if (featurep 'mule)
-	  (if (featurep 'meadow)
-	      (concat "Emacs " ver ", MULE " mule-version ", " (Meadow-version))
-	    (concat "Emacs " ver ", MULE " mule-version))
-	ver))))
+	  (concat "Emacs " ver ", MULE " mule-version
+		  (if (featurep 'meadow)
+		      (concat ", " (Meadow-version))
+		    ))
+	ver)))
+  "Body of X-Emacs field.
+If variable `mime-edit-insert-x-emacs-field' is not nil, it is
+inserted into message header.")
 
 
 ;;; @ constants
