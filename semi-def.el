@@ -30,6 +30,8 @@
 
 (require 'custom)
 
+(require 'widget)
+
 (defconst mime-user-interface-product ["WEMI" (1 13 5) "Fijieda"]
   "Product name, version number and code name of MIME-kernel package.")
 

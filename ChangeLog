@@ -1,3 +1,7 @@
+1999-07-08  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* semi-def.el (TopLevel): Require `widget' for old Emacsen.
+
 1999-06-17  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-edit.el (mime-edit-user-agent-value): Modify for XEmacs
