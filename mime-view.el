@@ -243,12 +243,15 @@ If optional argument MESSAGE-INFO is not specified,
 
 (defvar mime-view-uuencode-encoding-name-list '("x-uue" "x-uuencode"))
 
-(defun mime-raw-get-uu-filename ()
-  (save-excursion
-    (if (re-search-forward "^begin [0-9]+ " nil t)
-	(if (looking-at ".+$")
-	    (buffer-substring (match-beginning 0)(match-end 0))
-	  ))))
+(defun mime-entity-uu-filename (entity)
+  (if (member (mime-entity-encoding entity)
+	      mime-view-uuencode-encoding-name-list)
+      (save-excursion
+	(set-buffer (mime-entity-buffer entity))
+	(if (re-search-forward "^begin [0-9]+ " nil t)
+	    (if (looking-at ".+$")
+		(buffer-substring (match-beginning 0)(match-end 0))
+	      )))))
 
 (defun mime-view-entity-title (entity)
   (or (mime-entity-read-field entity 'Content-Description)
@@ -268,9 +271,7 @@ If optional argument MESSAGE-INFO is not specified,
 		      )))
 	     (std11-strip-quoted-string ret)
 	     ))
-      (if (member (mime-entity-encoding entity)
-		  mime-view-uuencode-encoding-name-list)
-	  (mime-raw-get-uu-filename))
+      (mime-entity-uu-filename entity)
       ""))
 
 
