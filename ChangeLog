@@ -1,3 +1,8 @@
+2001-05-06   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-edit.el (mime-edit-normalize-body): Use
+	`remove-text-properties' instead of `visible-region'.
+
 2001-05-05   Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-edit.el (mime-edit-sign-smime): Use OpenSSL output as it is.
