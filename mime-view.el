@@ -1,6 +1,6 @@
 ;;; mime-view.el --- interactive MIME viewer for GNU Emacs
 
-;; Copyright (C) 1995,1996,1997,1998,1999,2000 Free Software Foundation, Inc.
+;; Copyright (C) 1995,96,97,98,99,2000 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <tomo@m17n.org>
 ;; Created: 1994/07/13
@@ -1142,6 +1142,8 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
     (define-key mime-view-mode-map
       "\C-c\C-t\C-h" (function mime-preview-toggle-header))
     (define-key mime-view-mode-map
+      "\C-c\C-t\C-b" (function mime-preview-toggle-body))
+    (define-key mime-view-mode-map
       "a"        (function mime-preview-follow-current-entity))
     (define-key mime-view-mode-map
       "q"        (function mime-preview-quit))
@@ -1701,7 +1703,31 @@ If LINES is negative, scroll up LINES lines."
       (let ((inhibit-read-only t))
 	(delete-region p-beg p-end)
 	(mime-display-entity entity situation)))
-    ;; (ctree-set-calist-strictly 'mime-preview-condition situation)
+    (let ((ret (assoc situation mime-preview-situation-example-list)))
+      (if ret
+	  (setcdr ret (1+ (cdr ret)))
+	(add-to-list 'mime-preview-situation-example-list
+		     (cons situation 0))))))
+
+(defun mime-preview-toggle-body ()
+  (interactive)
+  (let ((situation (mime-preview-find-boundary-info))
+	entity p-beg p-end)
+    (setq p-beg (aref situation 0)
+	  p-end (aref situation 1)
+	  entity (aref situation 2)
+	  situation (get-text-property p-beg 'mime-view-situation))
+    (let ((cell (assq '*body situation)))
+      (if (null cell)
+	  (setq cell (assq 'body situation)))
+      (if (eq (cdr cell) 'visible)
+	  (setq situation (put-alist '*body 'invisible situation))
+	(setq situation (put-alist '*body 'visible situation))))
+    (save-excursion
+      (let ((inhibit-read-only t))
+	(delete-region p-beg p-end)
+	(mime-display-entity entity situation)
+	))
     (let ((ret (assoc situation mime-preview-situation-example-list)))
       (if ret
 	  (setcdr ret (1+ (cdr ret)))
