@@ -372,7 +372,8 @@ mother-buffer."
 (defun mime-view-read-situation-examples-file (&optional file)
   (or file
       (setq file mime-situation-examples-file))
-  (if (file-readable-p file)
+  (if (and file
+	   (file-readable-p file))
       (with-temp-buffer
 	(insert-file-contents file)
 	(setq mime-situation-examples-file-coding-system
@@ -1855,6 +1856,11 @@ It calls function registered in variable
 ;;;
 
 (provide 'mime-view)
+
+(eval-when-compile
+  (setq mime-situation-examples-file nil)
+  ;; to avoid to read situation-examples-file at compile time.
+  )
 
 (mime-view-read-situation-examples-file)
 
