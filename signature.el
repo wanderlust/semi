@@ -41,7 +41,7 @@
 ;;;
 
 (defvar signature-insert-at-eof nil
-  "*Insert signature at the end of file if non-nil.")
+  "*If non-nil, insert signature at the end of file.")
 
 (defvar signature-delete-blank-lines-at-eof nil
   "*If non-nil, signature-insert-at-eof deletes blank lines at the end
@@ -127,7 +127,7 @@ of file.")
 
 (defun insert-signature (&optional arg)
   "Insert the file named by signature-file-name.
-It is inserted at the end of file if signature-insert-at-eof in non-nil,
+It is inserted at the end of file if signature-insert-at-eof is non-nil,
 and otherwise at the current point.  A prefix argument enables user to
 specify a file named <signature-file-name>-DISTRIBUTION interactively."
   (interactive "P")
@@ -145,7 +145,7 @@ specify a file named <signature-file-name>-DISTRIBUTION interactively."
         (progn
           (goto-char (point-max))
           (or (bolp) (insert "\n"))
-          (or signature-delete-blank-lines-at-eof (delete-blank-lines))
+          (if signature-delete-blank-lines-at-eof (delete-blank-lines))
           ))
     (run-hooks 'signature-insert-hook)
     (insert-file-contents signature-file-name)
