@@ -1,3 +1,29 @@
+1997-06-18  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 0.91 was released.
+
+	* eword-decode.el (eword-decode-structured-field-body): fixed.
+
+1997-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* eword-decode.el (eword-lexical-analyze-cache): New variable.
+	(eword-lexical-analyze-cache-max): New variable.
+	(eword-analyze-quoted-string): New function.
+	(eword-analyze-comment): New function.
+	(eword-analyze-encoded-word): New function.
+	(eword-lexical-analyze-internal): New function.
+	(eword-lexical-analyze): New function.
+	(eword-decode-structured-field-body): New function.
+	(eword-decode-unstructured-field-body): New function.
+	(eword-extract-address-components): New function.
+
+1997-06-11  Steven L Baur     <steve@xemacs.org>
+
+	* eword-encode.el (tm-eword::char-type, tm-eword::encode-rwl,
+	tm-eword::encode-rwl): Clean up Ebola
+	infection. (cf.[tm-en:1346],[xemacs-beta:9333])
+
+
 1997-05-30  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 0.91 was released.
