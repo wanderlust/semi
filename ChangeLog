@@ -1,3 +1,10 @@
+2000-02-10  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-preview-find-boundary-info): Fix problem when
+	entity is in boundary of mother entity.
+	(mime-preview-follow-current-entity): Check header information of
+	`mime-view-situation' property.
+
 2000-02-09  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-view.el (mime-preview-find-boundary-info): Use <last point>
