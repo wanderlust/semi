@@ -716,7 +716,7 @@ The compressed face will be piped to this command.")
     (scroll-down "Scroll to previous content" mime-view-scroll-down-content)
     (scroll-up	 "Scroll to next content"     mime-view-scroll-up-content)
     (play	 "Play Content"               mime-view-play-current-entity)
-    (extract	 "Extract Content"            mime-extract-entity)
+    (extract	 "Extract Content"            mime-view-extract-current-entity)
     (print	 "Print"                      mime-print-entity)
     (x-face	 "Show X Face"                mime-view-display-x-face)
     )
@@ -770,7 +770,7 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       "v"        (function mime-view-play-current-entity))
     (define-key mime-view-mode-map
-      "e"        (function mime-extract-entity))
+      "e"        (function mime-view-extract-current-entity))
     (define-key mime-view-mode-map
       "\C-c\C-p" (function mime-print-entity))
     (define-key mime-view-mode-map
@@ -897,7 +897,7 @@ button-2	Move to point under the mouse cursor
 
 (autoload 'mime-view-play-current-entity "mime-play" "Play current entity." t)
 
-(defun mime-extract-entity ()
+(defun mime-view-extract-current-entity ()
   "Extract current entity into file (maybe).
 It decodes current entity to call internal or external method as
 \"extract\" mode.  The method is selected from variable
