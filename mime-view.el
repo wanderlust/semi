@@ -37,11 +37,12 @@
 ;;; @ version
 ;;;
 
-(defconst mime-view-version-string
-  `,(concat (car mime-user-interface-version) " MIME-View "
+(defconst mime-view-version
+  (eval-when-compile
+    (concat (mime-product-name mime-user-interface-product) " MIME-View "
 	    (mapconcat #'number-to-string
-		       (cddr mime-user-interface-version) ".")
-	    " (" (cadr mime-user-interface-version) ")"))
+		       (mime-product-version mime-user-interface-product) ".")
+	    " (" (mime-product-code-name mime-user-interface-product) ")")))
 
 
 ;;; @ variables
