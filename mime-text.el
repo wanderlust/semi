@@ -111,8 +111,9 @@ variable `mime-text-decoder' and variable `mime-text-decoder-alist'."
 ;;; @ content filters for mime-text
 ;;;
 
-(defun mime-view-filter-for-text/plain (ctype params encoding)
-  (mime-decode-text-body (cdr (assoc "charset" params)) encoding)
+(defun mime-view-filter-for-text/plain (situation)
+  (mime-decode-text-body (cdr (assoc "charset" situation))
+			 (cdr (assq 'encoding situation)))
   (goto-char (point-max))
   (if (not (eq (char-after (1- (point))) ?\n))
       (insert "\n")
@@ -130,21 +131,19 @@ variable `mime-text-decoder' and variable `mime-text-decoder-alist'."
   (run-hooks 'mime-view-plain-text-preview-hook)
   )
 
-(defun mime-view-filter-for-text/richtext (ctype params encoding)
-  (let* ((charset (cdr (assoc "charset" params)))
-	 (beg (point-min))
-	 )
+(defun mime-view-filter-for-text/richtext (situation)
+  (let* ((beg (point-min)))
     (remove-text-properties beg (point-max) '(face nil))
-    (mime-decode-text-body charset encoding)
+    (mime-decode-text-body (cdr (assoc "charset" situation))
+			   (cdr (assq 'encoding situation)))
     (richtext-decode beg (point-max))
     ))
 
-(defun mime-view-filter-for-text/enriched (ctype params encoding)
-  (let* ((charset (cdr (assoc "charset" params)))
-	 (beg (point-min))
-	 )
+(defun mime-view-filter-for-text/enriched (situation)
+  (let* ((beg (point-min)))
     (remove-text-properties beg (point-max) '(face nil))
-    (mime-decode-text-body charset encoding)
+    (mime-decode-text-body (cdr (assoc "charset" situation))
+			   (cdr (assq 'encoding situation)))
     (enriched-decode beg (point-max))
     ))
 
