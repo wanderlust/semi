@@ -1,5 +1,7 @@
 1998-06-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* SEMI: Version 1.5.4 (Higashi-Namerikawa) released.
+
 	* mime-edit.el (mime-edit-normalize-body): Abolish unused local
 	variable.
 
