@@ -52,7 +52,7 @@
 	     x))))
   )
 
-(defconst semi-version-name "Sodani")
+(defconst semi-version-name "Shijima")
 
 (autoload 'mule-caesar-region "mule-caesar"
   "Caesar rotation of current region." t)
