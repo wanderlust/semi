@@ -109,6 +109,12 @@ Installation
   emacs command is used (perhaps /usr/local/share/emacs/site-lisp or
   /usr/local/lib/xemacs/site-lisp).
 
+  If the emu modules (included in APEL package) have been installed in
+  the non-standard directory, you should specify where they will be
+  found, for example:
+
+	% make install VERSION_SPECIFIC_LISPDIR=~/elisp
+
 (c) install as a XEmacs package
 
   If you want to install to XEmacs package directory, please do

@@ -18,6 +18,11 @@
       (add-to-list 'load-path (expand-file-name "apel" LISPDIR))
       ))
 
+(defvar VERSION_SPECIFIC_LISPDIR nil)
+
+(if VERSION_SPECIFIC_LISPDIR
+    (add-to-list 'load-path VERSION_SPECIFIC_LISPDIR))
+
 (condition-case nil
     (require 'install)
   (error (error "Please install APEL 8.7 or later.")))
