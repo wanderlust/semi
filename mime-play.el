@@ -405,8 +405,15 @@ window.")
 ;;; @ file detection
 ;;;
 
-(defvar mime-file-type-regexp-type-subtype-alist
-  '(("JPEG" image jpeg)))
+(defvar mime-file-content-type-alist
+  '(("JPEG"	image jpeg)
+    ("GIF"	image gif)
+    )
+  "*Alist of \"file\" output patterns vs. corresponding media-types.
+Each element looks like (REGEXP TYPE SUBTYPE).
+REGEXP is pattern for \"file\" command output.
+TYPE is symbol to indicate primary type of media-type.
+SUBTYPE is symbol to indicate subtype of media-type.")
 
 (defun mime-method-to-detect (entity situation)
   (let ((beg (mime-entity-point-min entity))
@@ -428,7 +435,7 @@ window.")
 	  (call-process "file" nil t nil filename)
 	  (goto-char (point-min))
 	  (if (search-forward (concat filename ": ") nil t)
-	      (let ((rest mime-file-type-regexp-type-subtype-alist))
+	      (let ((rest mime-file-content-type-alist))
 		(while (not (let ((cell (car rest)))
 			      (if (looking-at (car cell))
 				  (setq type (nth 1 cell)
