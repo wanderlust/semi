@@ -202,6 +202,9 @@ and return parsed it. [mime-parse.el]"
 			       children)
     ))
 
+(defsubst mime-entity-info-rnum (entity-info)
+  (mime::content-info/rcnum entity-info))
+
 (defsubst mime-entity-info-point-min (entity-info)
   (mime::content-info/point-min entity-info))
 
