@@ -180,21 +180,26 @@ If is is not found, return DEFAULT-ENCODING."
 ;;; @ message parser
 ;;;
 
-(defsubst make-mime-entity (node-id
-			    point-min point-max
-			    content-type content-disposition encoding
-			    children)
-  (vector node-id point-min point-max
+(defsubst make-mime-entity (node-id header-start header-end
+				    body-start body-end
+				    content-type content-disposition
+				    encoding children)
+  (vector node-id
+	  header-start header-end body-start body-end
 	  content-type content-disposition encoding children))
 
 (defsubst mime-entity-node-id (entity)             (aref entity 0))
-(defsubst mime-entity-point-min (entity)           (aref entity 1))
-(defsubst mime-entity-point-max (entity)           (aref entity 2))
-(defsubst mime-entity-content-type (entity)        (aref entity 3))
-(defsubst mime-entity-content-disposition (entity) (aref entity 4))
-(defsubst mime-entity-encoding (entity)            (aref entity 5))
-(defsubst mime-entity-children (entity)            (aref entity 6))
+(defsubst mime-entity-header-start (entity)        (aref entity 1))
+(defsubst mime-entity-header-end (entity)          (aref entity 2))
+(defsubst mime-entity-body-start (entity)          (aref entity 3))
+(defsubst mime-entity-body-end (entity)            (aref entity 4))
+(defsubst mime-entity-content-type (entity)        (aref entity 5))
+(defsubst mime-entity-content-disposition (entity) (aref entity 6))
+(defsubst mime-entity-encoding (entity)            (aref entity 7))
+(defsubst mime-entity-children (entity)            (aref entity 8))
 
+(defalias 'mime-entity-point-min 'mime-entity-header-start)
+(defalias 'mime-entity-point-max 'mime-entity-body-end)
 (defsubst mime-entity-media-type (entity)
   (mime-content-type-primary-type (mime-entity-content-type entity)))
 (defsubst mime-entity-media-subtype (entity)
@@ -215,13 +220,6 @@ If is is not found, return DEFAULT-ENCODING."
 		   (mime-content-type-parameter content-type "boundary"))))
 	 (delimiter       (concat "\n" (regexp-quote dash-boundary)))
 	 (close-delimiter (concat delimiter "--[ \t]*$"))
-	 ;;(beg (point-min))
-         ;;(end (progn
-         ;;        (goto-char (point-max))
-         ;;        (if (re-search-backward close-delimiter nil t)
-         ;;            (match-beginning 0)
-         ;;          (point-max)
-         ;;          )))
 	 (rsep (concat delimiter "[ \t]*\n"))
 	 (dc-ctl
 	  (if (eq (mime-content-type-subtype content-type) 'digest)
@@ -234,9 +232,7 @@ If is is not found, return DEFAULT-ENCODING."
 	(setq body-end (match-beginning 0))
       )
     (save-restriction
-      ;;(narrow-to-region beg end)
       (narrow-to-region body-start body-end)
-      ;;(goto-char beg)
       (goto-char body-start)
       (re-search-forward rsep nil t)
       (setq cb (match-end 0))
@@ -259,10 +255,9 @@ If is is not found, return DEFAULT-ENCODING."
 	)
       (setq children (cons ret children))
       )
-    ;; (make-mime-entity node-id beg (point-max)
-    ;;                   content-type content-disposition encoding
-    ;;                   (nreverse children))
-    (make-mime-entity node-id header-start body-end
+    (make-mime-entity node-id
+		      header-start header-end
+		      body-start body-end
 		      content-type content-disposition encoding
 		      (nreverse children))
     ))
@@ -314,7 +309,9 @@ mime-{parse|read}-Content-Type."
 		(memq (mime-content-type-subtype content-type)
 		      '(rfc822 news)
 		      ))
-	   (make-mime-entity node-id (point-min) (point-max)
+           (make-mime-entity node-id
+			     header-start header-end
+			     body-start body-end
 			     content-type content-disposition encoding
 			     (save-restriction
 			       (narrow-to-region body-start body-end)
@@ -323,7 +320,9 @@ mime-{parse|read}-Content-Type."
 			       ))
 	   )
 	  (t 
-	   (make-mime-entity node-id (point-min) (point-max)
+           (make-mime-entity node-id
+			     header-start header-end
+			     body-start body-end
 			     content-type content-disposition encoding nil)
 	   ))
     ))
