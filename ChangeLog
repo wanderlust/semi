@@ -1,3 +1,10 @@
+1997-07-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el: (mime-edit-normalize-body):
+	- Protect "From " in beginning of line (insert `ESC ( B' before it
+	  if possible, otherwise encode by quoted-printable)
+	- canonicalize line break code for base64
+
 1997-07-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* signature.el (signature-separator): New variable.
