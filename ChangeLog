@@ -1,5 +1,26 @@
 1999-11-02  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* pgg-parse.el
+	(pgg-parse-public-key-encrypted-session-key-packet):
+	Rename tag `public-key-identifier' to `key-identifier'.
+
+	* mime-pgp.el
+	(mime-display-application/pgp-encrypted): Refer it.
+
+	* pgg.el (pgg-passphrase-cache-expiry): New variable.
+	(pgg-passphrase-cache): New variable.
+	(pgg-read-passphrase): Add optional argument `key'.
+	(pgg-add-passphrase-cache): New function.
+	(pgg-remove-passphrase-cache): New function.
+
+	* pgg-gpg.el (lookup-key): New generic method.
+	(encrypt-region): Use `lookup-key'; cache passphrase if the
+	encryption has been done successfully.
+	(sign-region): Likewise.
+	(decrypt-region): Use `lookup-key'.
+
+1999-11-02  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
 	* pgg-parse.el (pgg-parse-length-type): Fix typo.
 	(pgg-parse-public-key-encrypted-session-key-packet): Use
 	`pgg-read-bytes-string' instead of `pgg-read-bytes'.
