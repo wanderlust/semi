@@ -2733,6 +2733,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 ;;;
 
 (defvar mime-edit-buffer nil) ; buffer local variable
+(defvar mime-edit-temp-message-buffer nil) ; buffer local variable
 
 (defun mime-edit-preview-message ()
   "preview editing MIME message."

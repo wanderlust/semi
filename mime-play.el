@@ -332,8 +332,7 @@ SUBTYPE is symbol to indicate subtype of media-type.")
 It is registered to variable `mime-preview-quitting-method-alist'."
   (let ((mother mime-mother-buffer)
 	(win-conf mime-preview-original-window-configuration))
-    (if (and (boundp 'mime-view-temp-message-buffer)
-	     (buffer-live-p mime-view-temp-message-buffer))
+    (if (buffer-live-p mime-view-temp-message-buffer)
 	(kill-buffer mime-view-temp-message-buffer))
     (mime-preview-kill-buffer)
     (set-window-configuration win-conf)
@@ -377,6 +376,8 @@ occurs."
 	    (set-default-file-modes 448)
 	    (make-directory dir))
 	(set-default-file-modes orig-modes)))))
+
+(defvar mime-view-temp-message-buffer nil) ; buffer local variable
 
 (defun mime-store-message/partial-piece (entity cal)
   (let ((root-dir
