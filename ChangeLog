@@ -1,3 +1,10 @@
+1998-06-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.7.1 (Higashi-Toyama) released.
+
+	* README.en (Required environment): Delete description about
+	`enable-multibyte-characters'; modify for FLIM 1.5.0.
+
 1998-06-22  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
 
 	* mime-edit.el (mime-content-types): Add "url" access-type and
