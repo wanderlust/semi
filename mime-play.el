@@ -705,7 +705,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
       )
     (setq buffer-read-only nil)
     (erase-buffer)
-    (mime-text-insert-decoded-body entity)
+    (mime-insert-text-content entity)
     (mule-caesar-region (point-min) (point-max))
     (set-buffer-modified-p nil)
     (set-buffer mother)
