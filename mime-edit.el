@@ -2474,21 +2474,15 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
     (goto-char (point-min))
     (let ((ctl (mime-read-Content-Type)))
       (if ctl
-	  (let ((ctype (car ctl))
-		(params (cdr ctl))
-		type stype)
-	    (if (string-match "/" ctype)
-		(progn
-		  (setq type (substring ctype 0 (match-beginning 0)))
-		  (setq stype (substring ctype (match-end 0)))
-		  )
-	      (setq type ctype)
-	      )
+	  (let ((type (car ctl))
+		(stype (car (cdr ctl)))
+		(params (cdr (cdr ctl)))
+		)
 	    (cond
-	     ((string= ctype "application/pgp-signature")
+	     ((and (eq type 'application)(eq stype 'pgp-signature))
 	      (delete-region (point-min)(point-max))
 	      )
-	     ((string= type "multipart")
+	     ((eq type 'multipart)
 	      (let* ((boundary (cdr (assoc "boundary" params)))
 		     (boundary-pat
 		      (concat "\n--" (regexp-quote boundary) "[ \t]*\n"))
@@ -2531,12 +2525,13 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 				     )))
 		))
 	     (t
-	      (let* (charset
+	      (let* ((ctype (format "%s/%s" type stype))
+		     charset
 		     (pstr
 		      (let ((bytes (+ 14 (length ctype))))
 			(mapconcat (function
 				    (lambda (attr)
-				      (if (string-equal (car attr) "charset")
+				      (if (string= (car attr) "charset")
 					  (progn
 					    (setq charset (cdr attr))
 					    "")
@@ -2566,7 +2561,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 			      (eliminate-top-spaces
 			       (std11-unfold-string
 				(buffer-substring hbeg end))))
-			(if (or charset (string-equal type "text"))
+			(if (or charset (eq type 'text))
 			    (progn
 			      (delete-region beg (1+ end))
 			      (goto-char (point-min))
@@ -2593,12 +2588,14 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 			(insert
 			 (concat "\n"
 				 (mime-create-tag
-				  (concat type "/" stype pstr) encoding)))
+				  (format "%s/%s%s" type stype pstr)
+				  encoding)))
 			)
 		    (delete-region (point-min) he)
 		    (insert
 		     (mime-create-tag
-		      (concat type "/" stype pstr) encoding))
+		      (format "%s/%s%s" type stype pstr)
+		      encoding))
 		    ))
 		))))
 	(or not-decode-text
