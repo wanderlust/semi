@@ -767,6 +767,8 @@ Tspecials means any character that matches with it in header must be quoted.")
 ;;; @ functions
 ;;;
 
+(defvar mime-edit-touched-flag nil)
+
 ;;;###autoload
 (defun mime-edit-mode ()
   "MIME minor mode for editing the tagged MIME message.
@@ -902,8 +904,7 @@ User customizable variables (not documented all of them):
   (interactive)
   (if mime-edit-mode-flag
       (mime-edit-exit)
-    (if (and (boundp 'mime-edit-touched-flag)
-	     mime-edit-touched-flag)
+    (if mime-edit-touched-flag
 	(mime-edit-again)
       (make-local-variable 'mime-edit-touched-flag)
       (setq mime-edit-touched-flag t)
