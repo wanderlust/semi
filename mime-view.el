@@ -936,7 +936,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
     (set-buffer raw-buffer)
     (setq mime-preview-buffer preview-buffer)
     (let ((inhibit-read-only t))
-      (switch-to-buffer preview-buffer)
+      (set-buffer (get-buffer-create preview-buffer))
       (widen)
       (erase-buffer)
       (setq mime-raw-buffer raw-buffer)
@@ -959,19 +959,21 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	  (search-forward "\n\n" nil t)
 	  ))
       (run-hooks 'mime-view-mode-hook)
-      ))
-  (set-buffer-modified-p nil)
-  (setq buffer-read-only t)
-  )
+      (set-buffer-modified-p nil)
+      (setq buffer-read-only t)
+      (or (get-buffer-window preview-buffer)
+	  (let ((r-win (get-buffer-window raw-buffer)))
+	    (if r-win
+		(set-window-buffer r-win preview-buffer)
+	      (switch-to-buffer preview-buffer)
+	      )))
+      )))
 
 (defun mime-view-buffer (&optional raw-buffer preview-buffer mother
 				   default-keymap-or-function)
   (interactive)
   (mime-display-message
-   (save-excursion
-     (if raw-buffer (set-buffer raw-buffer))
-     (mime-parse-message)
-     )
+   (mime-parse-buffer raw-buffer)
    preview-buffer mother default-keymap-or-function))
 
 (defun mime-view-mode (&optional mother ctl encoding
@@ -1004,7 +1006,7 @@ button-2	Move to point under the mouse cursor
    (save-excursion
      (if raw-buffer (set-buffer raw-buffer))
      (or mime-view-redisplay
-	 (mime-parse-message ctl encoding))
+	 (setq mime-message-structure (mime-parse-message ctl encoding)))
      )
    preview-buffer mother default-keymap-or-function))
 
