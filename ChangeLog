@@ -1,5 +1,9 @@
 1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-view-insert-entity-button): Change interface.
+
+1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-entity-filename): Moved from mime-play.el.
 	(mime-view-entity-title): Use `mime-entity-filename'.
 
