@@ -99,8 +99,32 @@ message/partial, it is called `mother-buffer'.")
 ;;; @ entity-button
 ;;;
 
+;;; @@ predicate function
+;;;
+
 (defvar mime-view-content-button-visible-ctype-list
   '("application/pgp"))
+
+(defun mime-view-entity-button-visible-p (entity message-info)
+  "Return non-nil if header of ENTITY is visible.
+Please redefine this function if you want to change default setting."
+  (and (not (mime-root-entity-p entity))
+       (let ((media-type (mime-entity-media-type entity))
+	     (media-subtype (mime-entity-media-subtype entity)))
+	 (or (not (eq media-type 'application))
+	     (and (not (eq media-subtype 'x-selection))
+		  (or (not (eq media-subtype 'octet-stream))
+		      (let ((mother-entity
+			     (mime-raw-entity-parent entity message-info)))
+			(or (not (eq (mime-entity-media-type mother-entity)
+				     'multipart))
+			    (not (eq (mime-entity-media-subtype mother-entity)
+				     'encrypted)))
+			)
+		      ))))))
+
+;;; @@ entity button generator
+;;;
 
 (defun mime-view-insert-entity-button (entity message-info subj)
   "Insert entity-button of ENTITY."
@@ -151,31 +175,6 @@ message/partial, it is called `mother-buffer'.")
 		 rest)))
 	    )))
      (function mime-preview-play-current-entity))
-    ))
-
-(defun mime-view-entity-button-visible-p (entity message-info)
-  "Return non-nil if header of ENTITY is visible.
-Please redefine this function if you want to change default setting."
-  (and (not (mime-root-entity-p entity))
-       (let ((media-type (mime-entity-media-type entity))
-	     (media-subtype (mime-entity-media-subtype entity)))
-	 (or (not (eq media-type 'application))
-	     (and (not (eq media-subtype 'x-selection))
-		  (or (not (eq media-subtype 'octet-stream))
-		      (let ((mother-entity
-			     (mime-raw-entity-parent entity message-info)))
-			(or (not (eq (mime-entity-media-type mother-entity)
-				     'multipart))
-			    (not (eq (mime-entity-media-subtype mother-entity)
-				     'encrypted)))
-			)
-		      ))))))
-
-(defun mime-view-entity-button-function (entity message-info subj)
-  "Insert entity-button of ENTITY conditionally.
-Please redefine this function if you want to change default setting."
-  (if (mime-view-entity-button-visible-p entity message-info)
-      (mime-view-insert-entity-button entity message-info subj)
     ))
 
 
@@ -596,11 +595,13 @@ The compressed face will be piped to this command.")
     (set-buffer obuf)
     (setq nb (point))
     (narrow-to-region nb nb)
-    (mime-view-entity-button-function entity message-info subj)
+    (if (mime-view-entity-button-visible-p entity message-info)
+	(mime-view-insert-entity-button entity message-info subj)
+      )
     (if (mime-view-header-visible-p entity message-info)
 	(mime-view-display-header beg he)
       )
-    (if (and (null entity-node-id)
+    (if (and (mime-root-entity-p entity)
 	     (member
 	      ctype mime-view-content-button-visible-ctype-list))
 	(save-excursion
@@ -717,8 +718,8 @@ If optional argument MESSAGE-INFO is not specified,
   "Return mother entity of ENTITY.
 If optional argument MESSAGE-INFO is not specified,
 `mime-raw-message-info' is used."
-  (mime-raw-find-entity-from-node-id
-   (cdr (mime-entity-node-id entity) message-info)))
+  (mime-raw-find-entity-from-node-id (cdr (mime-entity-node-id entity))
+				     message-info))
 
 (defun mime-raw-flatten-message-info (&optional message-info)
   "Return list of entity in mime-raw-buffer.
