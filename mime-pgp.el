@@ -104,17 +104,17 @@
     (set-window-buffer p-win mime-preview-buffer)
     ))
 
-(ctree-set-calist-strictly
- 'mime-preview-condition '((type . application)(subtype . pgp)
-			   (message-button . visible)))
+;; (ctree-set-calist-strictly
+;;  'mime-preview-condition '((type . application)(subtype . pgp)
+;;                            (message-button . visible)))
 
-(ctree-set-calist-strictly
- 'mime-acting-condition '((type . application)(subtype . pgp)
-			  (method . mime-method-for-application/pgp)))
+;; (ctree-set-calist-strictly
+;;  'mime-acting-condition '((type . application)(subtype . pgp)
+;;                           (method . mime-method-for-application/pgp)))
 
-(ctree-set-calist-strictly
- 'mime-acting-condition '((type . text)(subtype . x-pgp)
-			  (method . mime-method-for-application/pgp)))
+;; (ctree-set-calist-strictly
+;;  'mime-acting-condition '((type . text)(subtype . x-pgp)
+;;                           (method . mime-method-for-application/pgp)))
 
 
 ;;; @ Internal method for multipart/signed
@@ -131,10 +131,10 @@
    (cdr (assq 'mode cal)) ; play-mode
    ))
 
-(ctree-set-calist-strictly
- 'mime-acting-condition
- '((type . multipart)(subtype . signed)
-   (method . mime-method-to-verify-multipart/signed)))
+;; (ctree-set-calist-strictly
+;;  'mime-acting-condition
+;;  '((type . multipart)(subtype . signed)
+;;    (method . mime-method-to-verify-multipart/signed)))
 
 
 ;;; @ Internal method for application/pgp-signature
@@ -235,10 +235,10 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
     (delete-file sig-file)
     ))
 
-(ctree-set-calist-strictly
- 'mime-acting-condition
- '((type . application)(subtype . pgp-signature)
-   (method . mime-method-to-verify-application/pgp-signature)))
+;; (ctree-set-calist-strictly
+;;  'mime-acting-condition
+;;  '((type . application)(subtype . pgp-signature)
+;;    (method . mime-method-to-verify-application/pgp-signature)))
 
 
 ;;; @ Internal method for application/pgp-encrypted
@@ -260,10 +260,10 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
     (mime-method-for-application/pgp obeg oend cal)
     ))
 
-(ctree-set-calist-strictly
- 'mime-acting-condition
- '((type . application)(subtype . pgp-encrypted)
-   (method . mime-method-to-decrypt-application/pgp-encrypted)))
+;; (ctree-set-calist-strictly
+;;  'mime-acting-condition
+;;  '((type . application)(subtype . pgp-encrypted)
+;;    (method . mime-method-to-decrypt-application/pgp-encrypted)))
 
 
 ;;; @ Internal method for application/pgp-keys
@@ -289,10 +289,10 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
     (kill-buffer (current-buffer))
     ))
 
-(ctree-set-calist-strictly
- 'mime-acting-condition
- '((type . application)(subtype . pgp-keys)
-   (method . mime-method-to-add-application/pgp-keys)))
+;; (ctree-set-calist-strictly
+;;  'mime-acting-condition
+;;  '((type . application)(subtype . pgp-keys)
+;;    (method . mime-method-to-add-application/pgp-keys)))
 
 	 
 ;;; @ end

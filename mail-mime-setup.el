@@ -49,6 +49,14 @@
                          )))
 
 
+;;; @ for signature
+;;;
+
+(if mime-setup-use-signature
+    (setq mail-signature nil)
+  )
+
+
 ;;; @ end
 ;;;
 
