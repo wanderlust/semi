@@ -1,3 +1,11 @@
+1998-05-25  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-play.el (mime-raw-play-entity): Abolish point correcting
+	procedures for VM.
+	
+	* mime-play.el (mime-preview-play-current-entity): Do widen befor
+	playing the entity.
+
 1998-05-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.4.5 (Tomari) released.
