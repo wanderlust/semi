@@ -290,9 +290,6 @@ Each elements are regexp of field-name. [mime-view.el]")
        rcnum cinfo ctype params subj encoding)
     ))
 
-(defvar mime-preview/content-button-function
-  (function mime-preview/default-content-button-function))
-
 
 ;;; @@ content header filter
 ;;;
@@ -520,8 +517,8 @@ The compressed face will be piped to this command.")
     (set-buffer obuf)
     (setq nb (point))
     (narrow-to-region nb nb)
-    (funcall mime-preview/content-button-function
-	     rcnum cinfo ctype params subj encoding)
+    (mime-preview/default-content-button-function
+     rcnum cinfo ctype params subj encoding)
     (if (mime-view-header-visible-p rcnum cinfo ctype)
 	(mime-preview/display-header beg he)
       )
