@@ -2,6 +2,9 @@
 
 	* SEMI: Version 1.11.0 (Kanazawa) released.
 
+	* README.ja, README.en (Required environment): Modify for APEL
+	9.11 and FLIM 1.12.0.
+
 1998-11-12  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-edit.el (mime-edit-split-ignored-field-regexp): Add "^".
