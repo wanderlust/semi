@@ -100,25 +100,6 @@
 	))))
 
 
-;;; @ for URL
-;;;
-
-(defvar tm:URL-regexp
-  "\\(http\\|ftp\\|file\\|gopher\\|news\\|telnet\\|wais\\|mailto\\):\\(//[-a-zA-Z0-9_.]+:[0-9]*\\)?[-a-zA-Z0-9_=?#$@~`%&*+|\\/.,]*[-a-zA-Z0-9_=#$@~`%&*+|\\/]")
-
-(defvar browse-url-browser-function nil)
-
-(defun tm:browse-url (&optional url)
-  (if (fboundp browse-url-browser-function)
-      (if url 
-        (funcall browse-url-browser-function url)
-      (call-interactively browse-url-browser-function))
-    (if (fboundp tm:mother-button-dispatcher)
-	(call-interactively tm:mother-button-dispatcher)
-      )
-    ))
-
-
 ;;; @ PGP
 ;;;
 
