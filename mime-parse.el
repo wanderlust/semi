@@ -27,7 +27,7 @@
 
 (require 'std11)
 (require 'tl-misc)
-(require 'tm-def)
+(require 'mime-def)
 
 
 ;;; @ field parser
