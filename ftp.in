@@ -2,11 +2,15 @@
 
   It is available from
 
+    ftp://ftp.m17n.org/pub/mule/semi/semi-API-for-flim-FLIM_API
+
+or
+
     ftp://ftp.etl.go.jp/pub/mule/semi/semi-API-for-flim-FLIM_API
 
 --[[message/external-body;
 	access-type=anon-ftp;
-	site="ftp.etl.go.jp";
+	site="ftp.m17n.org";
 	directory="/pub/mule/semi/semi-API-for-flim-FLIM_API";
 	name="PACKAGE-VERSION.tar.gz";
 	mode=image]]
