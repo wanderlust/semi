@@ -1,17 +1,12 @@
-1999-06-27  Katsumi Yamaoka   <yamaoka@jpl.org>
+1999-06-17  MORIOKA Tomohiko  <tomo@m17n.org>
 
-	* mime-edit.el (mime-edit-user-agent-value): Include UTF-2000-MULE
-	version if it exists.
+	* mime-edit.el (mime-edit-user-agent-value): Modify for XEmacs
+	UTF-2000-MULE.
 
 1999-06-04  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-edit.el (mime-edit-user-agent-value): Modify code to get
 	version number of XEmacs. [cf. <tm-ja:4561>]
-
-1999-06-04  Katsumi Yamaoka   <yamaoka@jpl.org>
-
-	* mime-edit.el (mime-edit-user-agent-value): Ignore parenthesis in
-	`emacs-version' for XEmacs 21.2.15.
 
 1999-05-31  Keiichi Suzuki  <keiichi@nanap.org>
 
