@@ -6,7 +6,7 @@
 ;; Created: 1995/9/26 (separated from tm-view.el)
 ;;	Renamed: 1997/2/21 from tm-play.el
 ;; Version: $Id$
-;; Keywords: mail, news, MIME, multimedia
+;; Keywords: MIME, multimedia, mail, news
 
 ;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
 
@@ -468,7 +468,7 @@ return new alist whose car is the new pair and cdr is ALIST.
       )
     (setq major-mode 'mime/show-message-mode)
     (setq mime::article/code-converter code-converter)
-    (mime/viewer-mode mother)
+    (mime-view-mode mother)
     ))
 
 
@@ -544,7 +544,7 @@ return new alist whose car is the new pair and cdr is ALIST.
 	    (erase-buffer)
 	    (as-binary-input-file (insert-file-contents file))
 	    (setq major-mode 'mime/show-message-mode)
-	    (mime/viewer-mode mother)
+	    (mime-view-mode mother)
 	    )
 	  (set-window-buffer pwin
 			     (save-excursion
@@ -614,7 +614,7 @@ return new alist whose car is the new pair and cdr is ALIST.
 		       ))
 		(save-window-excursion
 		  (setq major-mode 'mime/show-message-mode)
-		  (mime/viewer-mode mother)
+		  (mime-view-mode mother)
 		  )
 		(let ((pwin (or (get-buffer-window mother)
 				(get-largest-window)
