@@ -26,17 +26,23 @@
 
 ;;; Commentary:
 
-;;    This module is based on 2 drafts about PGP MIME integration:
+;;    This module is based on
 
-;;	- RFC 2015: "MIME Security with Pretty Good Privacy (PGP)"
-;;		by Michael Elkins <elkins@aero.org> (1996/6)
-;;
-;;	- draft-kazu-pgp-mime-00.txt: "PGP MIME Integration"
-;;		by Kazuhiko Yamamoto <kazu@is.aist-nara.ac.jp>
-;;			(1995/10; expired)
-;;
-;;    These drafts may be contrary to each other.  You should decide
-;;  which you support.  (Maybe you should use PGP/MIME)
+;;	[security-multipart] RFC 1847: "Security Multiparts for MIME:
+;;	    Multipart/Signed and Multipart/Encrypted" by
+;;          Jim Galvin <galvin@tis.com>, Sandy Murphy <sandy@tis.com>,
+;;	    Steve Crocker <crocker@cybercash.com> and
+;;          Ned Freed <ned@innosoft.com> (1995/10)
+
+;;	[PGP/MIME] RFC 2015: "MIME Security with Pretty Good Privacy
+;;	    (PGP)" by Michael Elkins <elkins@aero.org> (1996/6)
+
+;;	[PGP-kazu] draft-kazu-pgp-mime-00.txt: "PGP MIME Integration"
+;;	    by Kazuhiko Yamamoto <kazu@is.aist-nara.ac.jp> (1995/10;
+;;	    expired)
+
+;;  PGP/MIME and PGP-kazu may be contrary to each other.  You should
+;;  decide which you support (Maybe you should not use PGP-kazu).
 
 ;;; Code:
 
@@ -45,7 +51,7 @@
 
 ;;; @ internal method for application/pgp
 ;;;
-;;; It is based on draft-kazu-pgp-mime-00.txt
+;;; It is based on draft-kazu-pgp-mime-00.txt (PGP-kazu).
 
 (defun mime-method-for-application/pgp (beg end cal)
   (let* ((cnum (mime-raw-point-to-entity-number beg))
@@ -115,6 +121,7 @@
 
 ;;; @ Internal method for multipart/signed
 ;;;
+;;; It is based on RFC 1847 (security-multipart).
 
 (defun mime-method-to-verify-multipart/signed (start end cal)
   "Internal method to verify multipart/signed."
@@ -135,7 +142,7 @@
 
 ;;; @ Internal method for application/pgp-signature
 ;;;
-;;; It is based on RFC 2015.
+;;; It is based on RFC 2015 (PGP/MIME).
 
 (defvar mime-pgp-command "pgp"
   "*Name of the PGP command.")
@@ -185,8 +192,8 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 		   (1- knum)
 		 (1+ knum)))
 	 (raw-buf (current-buffer))
-	 (oinfo (mime-raw-reversed-entity-number-to-entity-info (cons onum rmcnum)
-					     mime-raw-message-info))
+	 (oinfo (mime-raw-reversed-entity-number-to-entity-info
+		 (cons onum rmcnum) mime-raw-message-info))
 	 kbuf
 	 (basename (expand-file-name "tm" mime-temp-directory))
 	 (orig-file (make-temp-name basename))
@@ -260,7 +267,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 
 ;;; @ Internal method for application/pgp-encrypted
 ;;;
-;;; It is based on RFC 2015.
+;;; It is based on RFC 2015 (PGP/MIME).
 
 (defun mime-method-to-decrypt-application/pgp-encrypted (beg end cal)
   (let* ((cnum (mime-raw-point-to-entity-number beg))
@@ -286,7 +293,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 
 ;;; @ Internal method for application/pgp-keys
 ;;;
-;;; It is based on RFC 2015.
+;;; It is based on RFC 2015 (PGP/MIME).
 
 (defun mime-method-to-add-application/pgp-keys (beg end cal)
   (let* ((cnum (mime-raw-point-to-entity-number beg))
