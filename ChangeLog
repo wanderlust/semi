@@ -3,6 +3,11 @@
 	* mime-view.el (mime-display-text/plain): Display warning message
 	when `mime-insert-text-content' fails.
 
+2000-08-04   Daiki Ueno  <ueno@unixuser.org>
+
+	* pgg-gpg.el (pgg-gpg-process-region): Don't bind
+	coding-system-for-read.
+
 
 2000-07-12  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
@@ -26,6 +31,16 @@
 	`(as-binary-output-file (write-region ...)); setup local variable
 	`mime-view-temp-message-buffer' of preview-buffer.
 
+2000-07-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mime-image.el (mime-image-insert) [XEmacs]:
+	Insert `string' only if it is non-nil.
+
+2000-06-27   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-image.el (mime-image-insert): Synch with the latest image.el.
+	(mime-display-image): Don't pass underlying string "x".
+
 2000-06-23  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
 	* mime-edit.el (mime-edit-preview-message): Set up local variable
@@ -43,13 +58,49 @@
 	* mime-w3.el (mime-preview-text/html): Use
 	`mime-find-root-entity'.
 
+2000-06-09   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-edit.el (mime-edit-insert-key): Insert a text tag when
+	the buffer has any trailing text.
+
+2000-06-05  Shugo Maeda <shugo@ruby-lang.org>
+
+	* pgg-gpg.el (pgg-scheme-insert-key): Don't quote user id.
+
 2000-05-25  Tanaka Akira      <akr@m17n.org>
 
         * README.en: Update for CVS via SSH.
 
+2000-05-21   Daiki Ueno  <ueno@unixuser.org>
+
+	* pgg-gpg.el (pgg-gpg-process-region): Abolish redundant nconc.
+
+2000-05-16   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-image.el (mime-image-create) [XEmacs]: Don't call
+	`make-image-instance' directly.
+
+2000-05-02   Daiki Ueno  <ueno@unixuser.org>
+
+	* pgg-gpg.el (pgg-scheme-encrypt-region): Don't quote recipient;
+	concatenate all arguments destructively.
+
 2000-04-28  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
 	* mime-edit.el (mime-charset-type-list): Add `iso-2022-jp-3'.
+
+2000-04-13   Daiki Ueno  <ueno@unixuser.org>
+
+	* pgg-gpg.el: Fix author's mailing address.
+	(pgg-gpg-process-region): Add --output option; set status fd to 2.
+	(pgg-gpg-possibly-cache-passphrase): New function.
+	(pgg-gpg-shell-file-name): Abolish.
+	(pgg-gpg-shell-command-switch): Abolish.
+	(pgg-scheme-lookup-key): Work on temp buffer.
+
+2000-03-01  Yoshiki Hayashi <yoshiki@xemacs.org>
+
+	* mime-image.el (mime-display-image): Don't wait for redisplay.
 
 
 2000-03-01  MORIOKA Tomohiko  <tomo@m17n.org>
