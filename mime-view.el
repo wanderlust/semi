@@ -725,7 +725,7 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       "v"        (function mime-preview-play-current-entity))
     (define-key mime-view-mode-map
-      "e"        (function mime-view-extract-current-entity))
+      "e"        (function mime-preview-extract-current-entity))
     (define-key mime-view-mode-map
       "\C-c\C-p" (function mime-view-print-current-entity))
     (define-key mime-view-mode-map
@@ -850,7 +850,7 @@ button-2	Move to point under the mouse cursor
 (autoload 'mime-preview-play-current-entity "mime-play"
   "Play current entity." t)
 
-(defun mime-view-extract-current-entity ()
+(defun mime-preview-extract-current-entity ()
   "Extract current entity into file (maybe).
 It decodes current entity to call internal or external method as
 \"extract\" mode.  The method is selected from variable
