@@ -35,6 +35,7 @@ automatically."
   (let* ((id (cdr (assoc "id" situation)))
 	 (target (cdr (assq 'major-mode situation)))
 	 (subject-buf (eval (cdr (assq 'summary-buffer-exp situation))))
+	 (mother (current-buffer))
 	 subject-id
 	 (root-dir (expand-file-name
 		    (concat "m-prts-" (user-login-name))
@@ -71,8 +72,7 @@ automatically."
 		   (situation (mime-entity-situation message))
 		   (the-id (cdr (assoc "id" situation))))
 	      (when (string= the-id id)
-		(save-excursion
-		  (set-buffer (mime-entity-buffer message))
+		(with-current-buffer mother
 		  (mime-store-message/partial-piece message situation)
 		  )
 		(if (file-exists-p full-file)

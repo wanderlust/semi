@@ -545,7 +545,6 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 ;;;
 
 (defun mime-store-message/partial-piece (entity cal)
-  (goto-char (mime-entity-point-min entity))
   (let* ((root-dir
 	  (expand-file-name
 	   (concat "m-prts-" (user-login-name)) temporary-file-directory))
@@ -553,7 +552,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	 (number (cdr (assoc "number" cal)))
 	 (total (cdr (assoc "total" cal)))
 	 file
-	 (mother mime-preview-buffer)
+	 (mother (current-buffer))
 	 )
     (or (file-exists-p root-dir)
 	(make-directory root-dir)

@@ -1,3 +1,17 @@
+1999-02-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-partial.el
+	(mime-combine-message/partial-pieces-automatically): Call
+	`mime-store-message/partial-piece' in the buffer when it is
+	called.
+
+	* mime-play.el (mime-store-message/partial-piece): Don't move to
+	point-min.
+
+	* mime-play.el (mime-store-message/partial-piece): Don't expect
+	called in raw-buffer.
+
+
 1999-01-27  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* WEMI: Version 1.13.2 (Mochimune) released.
