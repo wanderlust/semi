@@ -105,31 +105,21 @@
 	  ))
     )
 
-(defvar mime-view-image-converter-alist nil)
-
 (mapcar (function
 	 (lambda (rule)
 	   (let ((type    (car rule))
 		 (subtype (nth 1 rule))
 		 (format  (nth 2 rule)))
 	     (if (image-inline-p format)
-		 (let ((type/subtype (mime-type/subtype-string type subtype)))
-                   ;; (set-alist 'mime-view-content-filter-alist
-                   ;;            type/subtype #'mime-view-filter-for-image)
-		   (set-alist 'mime-view-image-converter-alist
-			      type/subtype format)
-                   ;; (add-to-list
-                   ;;  'mime-view-visible-media-type-list
-                   ;;  ctype)
-		   (ctree-set-calist-strictly
-		    'mime-preview-condition
-		    (list (cons 'type type)(cons 'subtype subtype)
-			  '(body . visible)
-			  '(body-presentation-method . with-filter)
-			  (cons 'body-filter
-				#'mime-view-filter-for-image)))
-		   )
-	       ))))
+		 (ctree-set-calist-strictly
+		  'mime-preview-condition
+		  (list (cons 'type type)(cons 'subtype subtype)
+			'(body . visible)
+			'(body-presentation-method . with-filter)
+			(cons 'body-filter
+			      #'mime-view-filter-for-image)
+			(cons 'image-format format))
+		  )))))
 	'((image jpeg		jpeg)
 	  (image gif		gif)
 	  (image tiff		tiff)
@@ -142,8 +132,6 @@
 	  (image png		png)
 	  ))
 
-;; (defvar mime-view-ps-to-gif-command "pstogif")
-
 
 ;;; @ content filter for images
 ;;;
@@ -155,12 +143,8 @@
     (remove-text-properties beg end '(face nil))
     (message "Decoding image...")
     (mime-decode-region beg end (cdr (assq 'encoding situation)))
-    (let* ((minor (cdr (assoc (mime-type/subtype-string
-			       (cdr (assq 'type situation))
-			       (cdr (assq 'subtype situation)))
-			      mime-view-image-converter-alist)))
-	   (gl (image-normalize minor (buffer-string)))
-	   e)
+    (let ((gl (image-normalize (cdr (assq 'image-format situation))
+			       (buffer-string))))
       (delete-region (point-min)(point-max))
       (cond ((image-invalid-glyph-p gl)
 	     (setq gl nil)
@@ -181,8 +165,9 @@
 	     )
 	    (t
 	     (setq gl (make-glyph gl))
-	     (setq e (make-extent (point) (point)))
-	     (set-extent-end-glyph e gl)
+	     (let ((e (make-extent (point) (point))))
+	       (set-extent-end-glyph e gl)
+	       )
 	     (message "Decoding image... done")
 	     ))
       )
@@ -193,6 +178,8 @@
 ;;; @ content filter for Postscript
 ;;;
 ;;    (for XEmacs 19.14 or later)
+
+;; (defvar mime-view-ps-to-gif-command "pstogif")
 
 ;; (defun mime-view-filter-for-application/postscript (ctype params encoding)
 ;;   (let* ((beg (point-min)) (end (point-max))
