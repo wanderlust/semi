@@ -581,63 +581,67 @@ Each elements are regexp of field-name.")
   (decode-mime-charset-string (unpack-string) 'shift_jis))
 
 (defun postpet-decode (string)
-  (unpack string
-    (let ((res))
-      (unpack-skip 4)
-      (set-alist 'res 'carryingcount (unpack-long))
-      (unpack-skip 8)
-      (set-alist 'res 'sentyear (unpack-short))
-      (set-alist 'res 'sentmonth (unpack-short))
-      (set-alist 'res 'sentday (unpack-short))
-      (unpack-skip 8)
-      (set-alist 'res 'petname (unpack-string-sjis))
-      (set-alist 'res 'owner (unpack-string-sjis))
-      (set-alist 'res 'pettype (unpack-fixed 4))
-      (set-alist 'res 'health (unpack-short))
-      (unpack-skip 2)
-      (set-alist 'res 'sex (unpack-long))
-      (unpack-skip 1)
-      (set-alist 'res 'brain (unpack-byte))
-      (unpack-skip 39)
-      (set-alist 'res 'happiness (unpack-byte))
-      (unpack-skip 14)
-      (set-alist 'res 'petbirthyear (unpack-short))
-      (set-alist 'res 'petbirthmonth (unpack-short))
-      (set-alist 'res 'petbirthday (unpack-short))
-      (unpack-skip 8)
-      (set-alist 'res 'from (unpack-string))
-      (unpack-skip 5)
-      (unpack-skip 160)
-      (unpack-skip 4)
-      (unpack-skip 8)
-      (unpack-skip 8)
-      (unpack-skip 26)
-      (set-alist 'res 'treasure (unpack-short))
-      (set-alist 'res 'money (unpack-long))
-      res)))
+  (condition-case nil
+      (unpack string
+	(let ((res))
+	  (unpack-skip 4)
+	  (set-alist 'res 'carryingcount (unpack-long))
+	  (unpack-skip 8)
+	  (set-alist 'res 'sentyear (unpack-short))
+	  (set-alist 'res 'sentmonth (unpack-short))
+	  (set-alist 'res 'sentday (unpack-short))
+	  (unpack-skip 8)
+	  (set-alist 'res 'petname (unpack-string-sjis))
+	  (set-alist 'res 'owner (unpack-string-sjis))
+	  (set-alist 'res 'pettype (unpack-fixed 4))
+	  (set-alist 'res 'health (unpack-short))
+	  (unpack-skip 2)
+	  (set-alist 'res 'sex (unpack-long))
+	  (unpack-skip 1)
+	  (set-alist 'res 'brain (unpack-byte))
+	  (unpack-skip 39)
+	  (set-alist 'res 'happiness (unpack-byte))
+	  (unpack-skip 14)
+	  (set-alist 'res 'petbirthyear (unpack-short))
+	  (set-alist 'res 'petbirthmonth (unpack-short))
+	  (set-alist 'res 'petbirthday (unpack-short))
+	  (unpack-skip 8)
+	  (set-alist 'res 'from (unpack-string))
+	  (unpack-skip 5)
+	  (unpack-skip 160)
+	  (unpack-skip 4)
+	  (unpack-skip 8)
+	  (unpack-skip 8)
+	  (unpack-skip 26)
+	  (set-alist 'res 'treasure (unpack-short))
+	  (set-alist 'res 'money (unpack-long))
+	  res))
+    (error nil)))
 
 (defun mime-display-application/x-postpet (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
     (let ((pet (postpet-decode (mime-entity-content entity))))
-      (insert "Petname: " (cdr (assq 'petname pet)) "\n"
-	      "Owner: " (cdr (assq 'owner pet)) "\n"
-	      "Pettype: " (cdr (assq 'pettype pet)) "\n"
-	      "From: " (cdr (assq 'from pet)) "\n"
-	      "CarryingCount: " (int-to-string (cdr (assq 'carryingcount pet))) "\n"
-	      "SentYaer: " (int-to-string (cdr (assq 'sentyear pet))) "\n"
-	      "SentMonth: " (int-to-string (cdr (assq 'sentmonth pet))) "\n"
-	      "Sentday: " (int-to-string (cdr (assq 'sentday pet))) "\n"
-	      "PetbirthYear: " (int-to-string (cdr (assq 'petbirthyear pet))) "\n"
-	      "PetbirthMonth: " (int-to-string (cdr (assq 'petbirthmonth pet))) "\n"
-	      "PetbirthDay: " (int-to-string (cdr (assq 'petbirthday pet))) "\n"
-	      "Health: " (int-to-string (cdr (assq 'health pet))) "\n"
-	      "Sex: " (int-to-string (cdr (assq 'sex pet))) "\n"
-	      "Brain: " (int-to-string (cdr (assq 'brain pet))) "\n"
-	      "Happiness: " (int-to-string (cdr (assq 'happiness pet))) "\n"
-	      "Treasure: " (int-to-string (cdr (assq 'treasure pet))) "\n"
-	      "Money: " (int-to-string (cdr (assq 'money pet))) "\n"
-	      )
+      (if pet
+	  (insert "Petname: " (cdr (assq 'petname pet)) "\n"
+		  "Owner: " (cdr (assq 'owner pet)) "\n"
+		  "Pettype: " (cdr (assq 'pettype pet)) "\n"
+		  "From: " (cdr (assq 'from pet)) "\n"
+		  "CarryingCount: " (int-to-string (cdr (assq 'carryingcount pet))) "\n"
+		  "SentYaer: " (int-to-string (cdr (assq 'sentyear pet))) "\n"
+		  "SentMonth: " (int-to-string (cdr (assq 'sentmonth pet))) "\n"
+		  "Sentday: " (int-to-string (cdr (assq 'sentday pet))) "\n"
+		  "PetbirthYear: " (int-to-string (cdr (assq 'petbirthyear pet))) "\n"
+		  "PetbirthMonth: " (int-to-string (cdr (assq 'petbirthmonth pet))) "\n"
+		  "PetbirthDay: " (int-to-string (cdr (assq 'petbirthday pet))) "\n"
+		  "Health: " (int-to-string (cdr (assq 'health pet))) "\n"
+		  "Sex: " (int-to-string (cdr (assq 'sex pet))) "\n"
+		  "Brain: " (int-to-string (cdr (assq 'brain pet))) "\n"
+		  "Happiness: " (int-to-string (cdr (assq 'happiness pet))) "\n"
+		  "Treasure: " (int-to-string (cdr (assq 'treasure pet))) "\n"
+		  "Money: " (int-to-string (cdr (assq 'money pet))) "\n"
+		  )
+	(insert "Invalid format\n"))
       (run-hooks 'mime-display-application/x-postpet-hook))))
 
 (defvar mime-view-announcement-for-message/partial

@@ -1,5 +1,11 @@
 1999-05-02  Tanaka Akira  <akr@jaist.ac.jp>
 
+	* mime-view.el (postpet-decode): Returns nil if input is invalid.
+	(mime-display-application/x-postpet): Check `postpet-decode' returns
+	nil or not.
+
+1999-05-02  Tanaka Akira  <akr@jaist.ac.jp>
+
 	* mime-view.el (unpack): New macro.
 	(unpack-skip): New function.
 	(unpack-fixed): New function.
