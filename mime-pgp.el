@@ -104,6 +104,10 @@
     (set-window-buffer p-win mime-preview-buffer)
     ))
 
+(ctree-set-calist-strictly
+ 'mime-preview-condition '((type . application)(subtype . pgp)
+			   (message-button . visible)))
+
 (set-atype 'mime-acting-condition
 	   '((type . application)(subtype . pgp)
 	     (method . mime-method-for-application/pgp)))
