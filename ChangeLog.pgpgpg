@@ -1,3 +1,8 @@
+1999-09-08  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-play.el (mime-show-echo-buffer): Don't specify the negative
+	number to `enlarge-window'.
+
 1999-07-02  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-pgp.el (mime-view-application/pgp): Specify preview buffer
