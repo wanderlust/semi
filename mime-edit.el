@@ -1,62 +1,61 @@
-;;;
 ;;; mime-edit.el --- Simple MIME Composer for GNU Emacs
-;;;
-;;; Copyright (C) 1993 UMEDA Masanobu
-;;; Copyright (C) 1994 .. 1996 MORIOKA Tomohiko
-;;;
-;;; Author: UMEDA Masanobu <umerin@mse.kyutech.ac.jp>
-;;;         MORIOKA Tomohiko <morioka@jaist.ac.jp>
-;;; Maintainer: MORIOKA Tomohiko <morioka@jaist.ac.jp>
-;;; Created: 1994/08/21 renamed from UMEDA Masanobu's mime.el
-;;;          1996/05/24 renamed from tm-edit.el
-;;; Version: $Revision$
-;;; Keywords: mail, news, MIME, multimedia, multilingual
-;;;
-;;; This file is part of SEMI (September, Emacs MIME Interface)
-;;;
-;;; This program is free software; you can redistribute it and/or
-;;; modify it under the terms of the GNU General Public License as
-;;; published by the Free Software Foundation; either version 2, or
-;;; (at your option) any later version.
-;;;
-;;; This program is distributed in the hope that it will be useful,
-;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;;; General Public License for more details.
-;;;
-;;; You should have received a copy of the GNU General Public License
-;;; along with This program.  If not, write to the Free Software
-;;; Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+
+;; Copyright (C) 1993,1994,1995,1996,1997 Free Software Foundation, Inc.
+
+;; Author: UMEDA Masanobu <umerin@mse.kyutech.ac.jp>
+;;         MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;; Maintainer: MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;; Created: 1994/08/21 renamed from mime.el
+;;	Renamed: 1997/2/21 from tm-edit.el
+;; Version: $Revision$
+;; Keywords: MIME, multimedia, multilingual, mail, news
+
+;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
+
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation; either version 2, or (at
+;; your option) any later version.
+
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with GNU Emacs; see the file COPYING.  If not, write to the
+;; Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;; Boston, MA 02111-1307, USA.
 
 ;;; Commentary:
 
 ;; This is an Emacs minor mode for editing Internet multimedia
-;; messages formatted in MIME (RFC 1521 and RFC 1522). All messages in
-;; this mode are composed in the tagged MIME format, that are
-;; described in the following examples. The messages composed in the
-;; tagged MIME format are automatically translated into a MIME
-;; compliant message when exiting the mode.
+;; messages formatted in MIME (RFC 2045, 2046, 2047, 2048 and 2049).
+;; All messages in this mode are composed in the tagged MIME format,
+;; that are described in the following examples.  The messages
+;; composed in the tagged MIME format are automatically translated
+;; into a MIME compliant message when exiting the mode.
 
 ;; Mule (a multilingual extension to Emacs 18 and 19) has a capability
 ;; of handling multilingual text in limited ISO-2022 manner that is
 ;; based on early experiences in Japanese Internet community and
-;; resulted in RFC 1468 (ISO-2022-JP charset for MIME). In order to
+;; resulted in RFC 1468 (ISO-2022-JP charset for MIME).  In order to
 ;; enable multilingual capability in single text message in MIME,
 ;; charset of multilingual text written in Mule is declared as either
-;; `ISO-2022-JP-2' [RFC 1554] or `ISO-2022-INT-1'. Mule is required
-;; for reading the such messages.
+;; `ISO-2022-JP-2' [RFC 1554].  Mule is required for reading the such
+;; messages.
 
 ;; This MIME composer can work with Mail mode, mh-e letter Mode, and
 ;; News mode.  First of all, you need the following autoload
-;; definition to load mime/editor-mode automatically:
+;; definition to load mime-edit-mode automatically:
 ;;
-;; (autoload 'mime/editor-mode "mime-edit"
+;; (autoload 'mime-edit-mode "mime-edit"
 ;;           "Minor mode for editing MIME message." t)
 ;;
 ;; In case of Mail mode (includes VM mode), you need the following
 ;; hook definition:
 ;;
-;; (add-hook 'mail-mode-hook 'mime/editor-mode)
+;; (add-hook 'mail-mode-hook 'mime-edit-mode)
 ;; (add-hook 'mail-send-hook 'mime-editor/maybe-translate)
 ;;
 ;; In case of MH-E, you need the following hook definition:
@@ -64,7 +63,7 @@
 ;; (add-hook 'mh-letter-mode-hook
 ;;           (function
 ;;            (lambda ()
-;;              (mime/editor-mode)
+;;              (mime-edit-mode)
 ;;              (make-local-variable 'mail-header-separator)
 ;;              (setq mail-header-separator "--------")
 ;;              ))))
@@ -72,13 +71,13 @@
 ;;
 ;; In case of News mode, you need the following hook definition:
 ;;
-;; (add-hook 'news-reply-mode-hook 'mime/editor-mode)
+;; (add-hook 'news-reply-mode-hook 'mime-edit-mode)
 ;; (add-hook 'news-inews-hook 'mime-editor/maybe-translate)
 ;;
 ;; In case of Emacs 19, it is possible to emphasize the message tags
 ;; using font-lock mode as follows:
 ;;
-;; (add-hook 'mime/editor-mode-hook
+;; (add-hook 'mime-edit-mode-hook
 ;;           (function
 ;;            (lambda ()
 ;;              (font-lock-mode 1)
@@ -96,11 +95,11 @@
 ;; 
 ;;--[[text/plain]]
 ;; This is also a plain text.  But, it is explicitly specified as is.
+;;--[[text/plain; charset=ISO-8859-1]]
+;; This is also a plain text.  But charset is specified as iso-8859-1.
 ;;
-;;--[[text/plain; charset=ISO-2022-JP]]
-;; $B$3$l$O(B charset $B$r(B ISO-2022-JP $B$K;XDj$7$?F|K\8l$N(B plain $B%F%-%9%H$G$9(B.
-;;
-;;--[[text/richtext]]
+;; ¡Hola!  Buenos días.  ¿Cómo está usted?
+;;--[[text/enriched]]
 ;; <center>This is a richtext.</center>
 ;;
 ;;--[[image/gif][base64]]^M...image encoded in base64 comes here...
@@ -112,9 +111,8 @@
 (require 'sendmail)
 (require 'mail-utils)
 (require 'mel)
-(require 'tl-822)
 (require 'tl-list)
-(require 'tm-view)
+(require 'mime-view)
 (require 'tm-ew-e)
 (require 'signature)
 
@@ -128,7 +126,7 @@
 (defconst mime-editor/version (get-version-string mime-editor/RCS-ID))
 
 (defconst mime-editor/version-name
-  (concat "SEMI mime-edit " mime-editor/version))
+  (concat "SEMI MIME-Edit " mime-editor/version))
 
 
 ;;; @ variables
@@ -150,11 +148,11 @@ If non-nil, the text tag is not inserted unless something different.")
 (defvar mime-auto-hide-body t
   "*Hide non-textual body encoded in base64 after insertion if non-nil.")
 
-(defvar mime-voice-recorder
-  (function mime-voice-recorder-for-sun)
-  "*Function to record a voice message and return a buffer that contains it.")
+(defvar mime-editor/voice-recorder
+  (function mime-editor/voice-recorder-for-sun)
+  "*Function to record a voice message and encode it. [mime-edit.el]")
 
-(defvar mime/editor-mode-hook nil
+(defvar mime-edit-mode-hook nil
   "*Hook called when enter MIME mode.")
 
 (defvar mime-editor/translate-hook nil
@@ -295,42 +293,42 @@ To insert a signature file automatically, call the function
      )
     ("\\.tar\\.gz$"
      "application" "octet-stream" (("type" . "tar+gzip"))
-     nil
+     "base64"
      "attachment"	(("filename" . file))
      )
     ("\\.tgz$"
      "application" "octet-stream" (("type" . "tar+gzip"))
-     nil
+     "base64"
      "attachment"	(("filename" . file))
      )
     ("\\.tar\\.Z$"
      "application" "octet-stream" (("type" . "tar+compress"))
-     nil
+     "base64"
      "attachment"	(("filename" . file))
      )
     ("\\.taz$"
      "application" "octet-stream" (("type" . "tar+compress"))
-     nil
+     "base64"
      "attachment"	(("filename" . file))
      )
     ("\\.gz$"
      "application" "octet-stream" (("type" . "gzip"))
-     nil
+     "base64"
      "attachment"	(("filename" . file))
      )
     ("\\.Z$"
      "application" "octet-stream" (("type" . "compress"))
-     nil
+     "base64"
      "attachment"	(("filename" . file))
      )
     ("\\.lzh$"
      "application" "octet-stream" (("type" . "lha"))
-     nil
+     "base64"
      "attachment"	(("filename" . file))
      )
     ("\\.zip$"
      "application" "zip" nil
-     nil
+     "base64"
      "attachment"	(("filename" . file))
      )
     ("\\.diff$"
@@ -341,7 +339,7 @@ To insert a signature file automatically, call the function
     ("\\.patch$"
      "application" "octet-stream" (("type" . "patch"))
      nil
-     "attachment"      (("filename" . file))
+     "attachment"	(("filename" . file))
      )
     ("\\.signature"
      "text"	"plain"		nil	nil)
@@ -358,7 +356,7 @@ If encoding is nil, it is determined from its contents.")
 ;;;
 
 (defvar mime-editor/transfer-level 7
-  "*A number of network transfer level. It should be bigger than 7.")
+  "*A number of network transfer level.  It should be bigger than 7.")
 (make-variable-buffer-local 'mime-editor/transfer-level)
 
 (defvar mime-editor/transfer-level-string
@@ -387,7 +385,8 @@ If encoding is nil, it is determined from its contents.")
 ;;;
 
 (defvar mime-editor/yank-ignored-field-list
-  '("Received" "Approved" "Path" "Replied" "Status" "X-VM-.*" "X-UIDL")
+  '("Received" "Approved" "Path" "Replied" "Status"
+    "Xref" "X-UIDL" "X-Filter" "X-Gnus-.*" "X-VM-.*")
   "Delete these fields from original message when it is inserted
 as message/rfc822 part.
 Each elements are regexp of field-name. [mime-edit.el]")
@@ -406,11 +405,14 @@ Each elements are regexp of field-name. [mime-edit.el]")
 (defvar mime-editor/split-message t
   "*Split large message if it is non-nil. [mime-edit.el]")
 
-(defvar mime-editor/message-default-max-length 1000
-  "*Default maximum size of a message. [mime-edit.el]")
+(defvar mime-editor/message-default-max-lines 1000
+  "*Default maximum lines of a message. [mime-edit.el]")
 
-(defvar mime-editor/message-max-length-alist
-  '((news-reply-mode . 500)))
+(defvar mime-editor/message-max-lines-alist
+  '((news-reply-mode . 500))
+  "Alist of major-mode vs maximum lines of a message.
+If it is not specified for a major-mode,
+`mime-editor/message-default-max-lines' is used. [mime-edit.el]")
 
 (defconst mime-editor/split-ignored-field-regexp
   "\\(^Content-\\|^Subject:\\|^Mime-Version:\\)")
@@ -418,29 +420,7 @@ Each elements are regexp of field-name. [mime-edit.el]")
 (defvar mime-editor/split-blind-field-regexp
   "\\(^[BDFbdf]cc:\\|^cc:[ \t]*$\\)")
 
-(defvar mime-editor/split-message-sender-alist
-  '((mh-letter-mode
-     . (lambda (&optional arg)
-	 (interactive "P")
-	 (write-region (point-min) (point-max)
-		       mime-editor/draft-file-name nil 'no-message)
-	 (cond (arg
-		(pop-to-buffer "MH mail delivery")
-		(erase-buffer)
-		(mh-exec-cmd-output mh-send-prog t "-watch" "-nopush"
-				    "-nodraftfolder"
-				    mh-send-args mime-editor/draft-file-name)
-		(goto-char (point-max))	; show the interesting part
-		(recenter -1)
-		(sit-for 1))
-	       (t
-		(apply 'mh-exec-cmd-quiet t mh-send-prog 
-		       (mh-list-to-string
-			(list "-nopush" "-nodraftfolder"
-			      "-noverbose" "-nowatch"
-			      mh-send-args mime-editor/draft-file-name)))))
-	 ))
-    ))
+(defvar mime-editor/split-message-sender-alist nil)
 
 (defvar mime-editor/news-reply-mode-server-running nil)
 
@@ -448,15 +428,11 @@ Each elements are regexp of field-name. [mime-edit.el]")
 ;;; @@ about PGP
 ;;;
 
-(defvar mime-editor/signing-type nil
+(defvar mime-editor/signing-type 'pgp-elkins
   "*PGP signing type (pgp-elkins, pgp-kazu or nil). [mime-edit.el]")
 
-(defvar mime-editor/encrypting-type nil
+(defvar mime-editor/encrypting-type 'pgp-elkins
   "*PGP encrypting type (pgp-elkins, pgp-kazu or nil). [mime-edit.el]")
-
-(if (or mime-editor/signing-type mime-editor/encrypting-type)
-    (require 'mailcrypt)
-  )
 
 
 ;;; @@ about tag
@@ -502,8 +478,7 @@ Each elements are regexp of field-name. [mime-edit.el]")
 ;;; @@ buffer local variables
 ;;;
 
-(defvar mime/editor-mode-old-local-map nil)
-(defvar mime/editor-mode-old-selective-display nil)
+(defvar mime-edit-mode-old-local-map nil)
 (defvar mime/editing-buffer nil)
 
 
@@ -515,7 +490,7 @@ Each elements are regexp of field-name. [mime-edit.el]")
 Tspecials means any character that matches with it in header must be quoted.")
 
 (defconst mime-editor/mime-version-value
-  (concat "1.0 (" mime-editor/version-name ")")
+  (concat "1.0 (generated by " mime-editor/version-name ")")
   "MIME version number.")
 
 (defconst mime-editor/mime-map (make-sparse-keymap)
@@ -524,8 +499,8 @@ Tspecials means any character that matches with it in header must be quoted.")
 ;;; @ keymap and menu
 ;;;
 
-(defvar mime/editor-mode-flag nil)
-(make-variable-buffer-local 'mime/editor-mode-flag)
+(defvar mime-edit-mode-flag nil)
+(make-variable-buffer-local 'mime-edit-mode-flag)
 
 (defun mime-editor/define-keymap (keymap)
   "Add mime-editor commands to KEYMAP."
@@ -548,6 +523,11 @@ Tspecials means any character that matches with it in header must be quoted.")
     (define-key keymap "s"    'mime-editor/enclose-signed-region)
     (define-key keymap "e"    'mime-editor/enclose-encrypted-region)
     (define-key keymap "q"    'mime-editor/enclose-quote-region)
+    (define-key keymap "7"    'mime-editor/set-transfer-level-7bit)
+    (define-key keymap "8"    'mime-editor/set-transfer-level-8bit)
+    (define-key keymap "/"    'mime-editor/set-split)
+    (define-key keymap "v"    'mime-editor/set-sign)
+    (define-key keymap "h"    'mime-editor/set-encrypt)
     (define-key keymap "\C-p" 'mime-editor/preview-message)
     (define-key keymap "\C-z" 'mime-editor/exit)
     (define-key keymap "?"    'mime-editor/help)
@@ -557,9 +537,9 @@ Tspecials means any character that matches with it in header must be quoted.")
 
 (defun mime-editor/toggle-mode ()
   (interactive)
-  (if mime/editor-mode-flag
+  (if mime-edit-mode-flag
       (mime-editor/exit 'nomime)
-    (mime/editor-mode)
+    (mime-edit-mode)
     ))
 
 (cond (running-xemacs
@@ -571,7 +551,7 @@ Tspecials means any character that matches with it in header must be quoted.")
 	     (define-key
 	       mime-editor/minor-mime-map mime-prefix mime-editor/mime-map)
 	     ))
-       (add-minor-mode 'mime/editor-mode-flag
+       (add-minor-mode 'mime-edit-mode-flag
 		       '((" MIME-Edit "  mime-editor/transfer-level-string))
 		       mime-editor/minor-mime-map
 		       nil
@@ -579,7 +559,7 @@ Tspecials means any character that matches with it in header must be quoted.")
        )
       (t
        (set-alist 'minor-mode-alist
-		  'mime/editor-mode-flag
+		  'mime-edit-mode-flag
 		  '((" MIME-Edit "  mime-editor/transfer-level-string))))
       )
 
@@ -639,7 +619,7 @@ Tspecials means any character that matches with it in header must be quoted.")
 			    (mapcar (function
 				     (lambda (item)
 				       (vector (nth 1 item)(nth 2 item)
-					       mime/editor-mode-flag)
+					       mime-edit-mode-flag)
 				       ))
 				    mime-editor/menu-list)))
 	 )))
@@ -662,38 +642,54 @@ Tspecials means any character that matches with it in header must be quoted.")
 ;;;
 
 ;;;###autoload
-(defun mime/editor-mode ()
+(defun mime-edit-mode ()
   "MIME minor mode for editing the tagged MIME message.
 
 In this mode, basically, the message is composed in the tagged MIME
-format.  The message tag looks like:
+format. The message tag looks like:
 
-	`--[[text/plain; charset=ISO-2022-JP][7bit]]'.
+	--[[text/plain; charset=ISO-2022-JP][7bit]]
 
 The tag specifies the MIME content type, subtype, optional parameters
-and transfer encoding of the message following the tag.  Messages
-without any tag are treated as `text/plain' by default.  Charset and
+and transfer encoding of the message following the tag. Messages
+without any tag are treated as `text/plain' by default. Charset and
 transfer encoding are automatically defined unless explicitly
-specified.  Binary messages such as audio and image are usually hidden
-using selective-display facility.  The messages in the tagged MIME
-format are automatically translated into a MIME compliant message when
-exiting this mode.
+specified. Binary messages such as audio and image are usually hidden.
+The messages in the tagged MIME format are automatically translated
+into a MIME compliant message when exiting this mode.
 
-Available charsets depend on Emacs version being used.  The following
+Available charsets depend on Emacs version being used. The following
 lists the available charsets of each emacs.
 
-Emacs18:	US-ASCII is only available.
+EMACS 18:	US-ASCII is only available.
 NEmacs:		US-ASCII and ISO-2022-JP are available.
-Emacs19:	US-ASCII and ISO-8859-1 are available.
-Mule:		US-ASCII, ISO-8859-* (except for ISO-8859-6),
-		ISO-2022-JP, ISO-2022-JP-2 and ISO-2022-INT-1 are available.
+EMACS 19:	US-ASCII and ISO-8859-1 (or other charset) are available.
+XEmacs 19:	US-ASCII and ISO-8859-1 (or other charset) are available.
+Mule:		US-ASCII, ISO-8859-* (except for ISO-8859-5), KOI8-R,
+		ISO-2022-JP, ISO-2022-JP-2, ISO-2022-KR, BIG5 and
+		ISO-2022-INT-1 are available.
 
-ISO-2022-JP-2 and ISO-2022-INT-1 charsets used in Mule is expected to
-be used to represent multilingual text in intermixed manner.  Any
+ISO-2022-JP-2 and ISO-2022-INT-1 charsets used in mule is expected to
+be used to represent multilingual text in intermixed manner. Any
 languages that has no registered charset are represented as either
-ISO-2022-JP-2 or ISO-2022-INT-1 in Mule.
+ISO-2022-JP-2 or ISO-2022-INT-1 in mule.
+
+If you want to use non-ISO-8859-1 charset in EMACS 19 or XEmacs 19,
+please set variable `default-mime-charset'. This variable must be
+symbol of which name is a MIME charset.
+
+If you want to add more charsets in mule, please set variable
+`charsets-mime-charset-alist'. This variable must be alist of which
+key is list of leading-char/charset and value is symbol of MIME
+charset. (leading-char is a term of MULE 1.* and 2.*. charset is a
+term of XEmacs/mule, mule merged EMACS and MULE 3.*) If name of
+coding-system is different as MIME charset, please set variable
+`mime-charset-coding-system-alist'. This variable must be alist of
+which key is MIME charset and value is coding-system.
 
 Following commands are available in addition to major mode commands:
+
+\[make single part\]
 \\[mime-editor/insert-text]	insert a text message.
 \\[mime-editor/insert-file]	insert a (binary) file.
 \\[mime-editor/insert-external]	insert a reference to external body.
@@ -701,18 +697,28 @@ Following commands are available in addition to major mode commands:
 \\[mime-editor/insert-message]	insert a mail or news message.
 \\[mime-editor/insert-mail]	insert a mail message.
 \\[mime-editor/insert-signature]	insert a signature file at end.
+\\[mime-editor/insert-key]	insert PGP public key.
 \\[mime-editor/insert-tag]	insert a new MIME tag.
+
+\[make enclosure (maybe multipart)\]
 \\[mime-editor/enclose-alternative-region]	enclose as multipart/alternative.
 \\[mime-editor/enclose-parallel-region]	enclose as multipart/parallel.
 \\[mime-editor/enclose-mixed-region]	enclose as multipart/mixed.
 \\[mime-editor/enclose-digest-region]	enclose as multipart/digest.
 \\[mime-editor/enclose-signed-region]	enclose as PGP signed.
 \\[mime-editor/enclose-encrypted-region]	enclose as PGP encrypted.
-\\[mime-editor/insert-key]	insert PGP public key.
+\\[mime-editor/enclose-quote-region]	enclose as verbose mode (to avoid to expand tags)
+
+\[other commands\]
+\\[mime-editor/set-transfer-level-7bit]	set transfer-level as 7.
+\\[mime-editor/set-transfer-level-8bit]	set transfer-level as 8.
+\\[mime-editor/set-split]	set message splitting mode.
+\\[mime-editor/set-sign]	set PGP-sign mode.
+\\[mime-editor/set-encrypt]	set PGP-encryption mode.
 \\[mime-editor/preview-message]	preview editing MIME message.
 \\[mime-editor/exit]	exit and translate into a MIME compliant message.
-\\[mime-editor/maybe-translate]	exit and translate if in MIME mode, then split.
 \\[mime-editor/help]	show this help.
+\\[mime-editor/maybe-translate]	exit and translate if in MIME mode, then split.
 
 Additional commands are available in some major modes:
 C-c C-c		exit, translate and run the original command.
@@ -726,13 +732,15 @@ TABs at the beginning of the line are not a part of the message:
 	--[[text/plain]]
 	This is also a plain text.  But, it is explicitly specified as
 	is.
-	--[[text/plain; charset=ISO-2022-JP]]
-	$B$3$l$O(B charset $B$r(B ISO-2022-JP $B$K;XDj$7$?F|K\8l$N(B plain $B%F%-%9(B
-	$B%H$G$9(B.
-	--[[text/richtext]]
-	<center>This is a richtext.</center>
-	--[[image/gif][base64]]^M...image encoded in base64 here...
-	--[[audio/basic][base64]]^M...audio encoded in base64 here...
+	--[[text/plain; charset=ISO-8859-1]]
+	This is also a plain text.  But charset is specified as
+	iso-8859-1.
+
+	¡Hola!  Buenos días.  ¿Cómo está usted?
+	--[[text/enriched]]
+	This is a <bold>enriched text</bold>.
+	--[[image/gif][base64]]...image encoded in base64 here...
+	--[[audio/basic][base64]]...audio encoded in base64 here...
 
 User customizable variables (not documented all of them):
  mime-prefix
@@ -744,20 +752,21 @@ User customizable variables (not documented all of them):
  mime-ignore-trailing-spaces
     Trailing white spaces in a message body are ignored if non-nil.
 
- mime-auto-fill-header
-    Fill header fields that contain encoded-words if non-nil.
-
  mime-auto-hide-body
     Hide a non-textual body message encoded in base64 after insertion
     if non-nil.
 
- mime-voice-recorder
-    Specifies a function to record a voice message and return a buffer
-    that contains it.  The function mime-voice-recorder-for-sun is for
-    Sun SparcStations.
+ mime-editor/transfer-level
+    A number of network transfer level.  It should be bigger than 7.
+    If you are in 8bit-through environment, please set 8.
 
- mime/editor-mode-hook
-    Turning on MIME mode calls the value of mime/editor-mode-hook, if
+ mime-editor/voice-recorder
+    Specifies a function to record a voice message and encode it.
+    The function `mime-editor/voice-recorder-for-sun' is for Sun
+    SparcStations.
+
+ mime-edit-mode-hook
+    Turning on MIME mode calls the value of mime-edit-mode-hook, if
     it is non-nil.
 
  mime-editor/translate-hook
@@ -770,16 +779,17 @@ User customizable variables (not documented all of them):
     Turning off MIME mode calls the value of mime-editor/exit-hook, if it is
     non-nil."
   (interactive)
-  (if mime/editor-mode-flag
+  (if mime-edit-mode-flag
       (error "You are already editing a MIME message.")
-    (setq mime/editor-mode-flag t)
+    (setq mime-edit-mode-flag t)
     ;; Remember old key bindings.
     (if running-xemacs
-	nil
-      (make-local-variable 'mime/editor-mode-old-local-map)
-      (setq mime/editor-mode-old-local-map (current-local-map))
+	(use-local-map (or (current-local-map) (make-sparse-keymap)))
+      (make-local-variable 'mime-edit-mode-old-local-map)
+      (setq mime-edit-mode-old-local-map (current-local-map))
       ;; Add MIME commands to current local map.
-      (use-local-map (copy-keymap (current-local-map)))
+      (use-local-map (copy-keymap (or (current-local-map)
+				      (make-sparse-keymap))))
       )
     (if (not (lookup-key (current-local-map) mime-prefix))
 	(define-key (current-local-map) mime-prefix mime-editor/mime-map))
@@ -799,10 +809,8 @@ User customizable variables (not documented all of them):
 	   ))
     ;; end
     
-    ;; Remember old selective-display.
-    (make-local-variable 'mime/editor-mode-old-selective-display)
-    (setq mime/editor-mode-old-selective-display selective-display)
-    (setq selective-display t)
+    (enable-invisible)
+    
     ;; I don't care about saving these.
     (setq paragraph-start
 	  (regexp-or mime-editor/single-part-tag-regexp
@@ -810,22 +818,22 @@ User customizable variables (not documented all of them):
     (setq paragraph-separate
 	  (regexp-or mime-editor/single-part-tag-regexp
 		     paragraph-separate))
-    (run-hooks 'mime/editor-mode-hook)
+    (run-hooks 'mime-edit-mode-hook)
     (message
      (substitute-command-keys
       "Type \\[mime-editor/exit] to exit MIME mode, and type \\[mime-editor/help] to get help."))
     ))
 
 ;;;###autoload
-(defalias 'edit-mime 'mime/editor-mode)		; for convenience
-(defalias 'mime-mode 'mime/editor-mode)		; for convenience
+(defalias 'edit-mime 'mime-edit-mode)		; for convenience
+(defalias 'mime-mode 'mime-edit-mode)		; for convenience
 
 (defun mime-editor/exit (&optional nomime no-error)
   "Translate the tagged MIME message into a MIME compliant message.
 With no argument encode a message in the buffer into MIME, otherwise
 just return to previous mode."
   (interactive "P")
-  (if (not mime/editor-mode-flag)
+  (if (not mime-edit-mode-flag)
       (if (null no-error)
 	  (error "You aren't editing a MIME message.")
 	)
@@ -834,13 +842,14 @@ just return to previous mode."
 	  (run-hooks 'mime-editor/translate-hook)
 	  (mime-editor/translate-buffer)))
     ;; Restore previous state.
-    (setq mime/editor-mode-flag nil)
+    (setq mime-edit-mode-flag nil)
     (cond (running-xemacs
-	   (delete-menu-item (list mime-editor/menu-title)))
+	   (if (featurep 'menubar) 
+	       (delete-menu-item (list mime-editor/menu-title))))
 	  (t
-	   (use-local-map mime/editor-mode-old-local-map)))
+	   (use-local-map mime-edit-mode-old-local-map)))
     
-    (setq selective-display mime/editor-mode-old-selective-display)
+    (end-of-invisible)
     (set-buffer-modified-p (buffer-modified-p))
     (run-hooks 'mime-editor/exit-hook)
     (message "Exit MIME editor mode.")
@@ -857,47 +866,48 @@ just return to previous mode."
   (interactive)
   (with-output-to-temp-buffer "*Help*"
     (princ "MIME editor mode:\n")
-    (princ (documentation 'mime/editor-mode))
+    (princ (documentation 'mime-edit-mode))
     (print-help-return-message)))
 
 (defun mime-editor/insert-text ()
   "Insert a text message.
-Charset is automatically obtained from the `mime/lc-charset-alist'."
+Charset is automatically obtained from the `charsets-mime-charset-alist'."
   (interactive)
-  (if (and (mime-editor/insert-tag "text" nil nil)
-	   (looking-at mime-editor/single-part-tag-regexp))
+  (let ((ret (mime-editor/insert-tag "text" nil nil)))
+  (if ret
       (progn
-	;; Make a space between the following message.
-	(insert "\n")
-	(forward-char -1)
-	)))
+	(if (looking-at mime-editor/single-part-tag-regexp)
+	    (progn
+	      ;; Make a space between the following message.
+	      (insert "\n")
+	      (forward-char -1)
+	      ))
+	(if (and (member (second ret) '("enriched" "richtext"))
+		 (fboundp 'enriched-mode)
+		 )
+	    (enriched-mode t)
+	  (if (boundp 'enriched-mode)
+	      (enriched-mode nil)
+	    ))))))
 
-(defun mime-editor/insert-file (file)
+(defun mime-editor/insert-file (file &optional verbose)
   "Insert a message from a file."
-  (interactive "fInsert file as MIME message: ")
+  (interactive "fInsert file as MIME message: \nP")
   (let*  ((guess (mime-find-file-type file))
-	  (pritype (nth 0 guess))
+	  (type (nth 0 guess))
 	  (subtype (nth 1 guess))
 	  (parameters (nth 2 guess))
-	  (default (nth 3 guess))	;Guess encoding from its file name.
+	  (encoding (nth 3 guess))
 	  (disposition-type (nth 4 guess))
 	  (disposition-params (nth 5 guess))
-	  (encoding
-	   (if (not (interactive-p))
-	       default
-	     (completing-read
-	      (concat "What transfer encoding"
-		      (if default
-			  (concat " (default "
-				  (if (string-equal default "")
-				      "\"\""
-				    default)
-				  ")"
-				  ))
-		      ": ")
-	      mime-encoding-method-alist nil t nil))))
-    (if (string-equal encoding "")
-	(setq encoding default))
+	  )
+    (if verbose
+	(setq type    (mime-prompt-for-type type)
+	      subtype (mime-prompt-for-subtype type subtype)
+	      ))
+    (if (or (interactive-p) verbose)
+	(setq encoding (mime-prompt-for-encoding encoding))
+      )
     (if (or (consp parameters) (stringp disposition-type))
 	(let ((rest parameters) cell attribute value)
 	  (setq parameters "")
@@ -906,7 +916,7 @@ Charset is automatically obtained from the `mime/lc-charset-alist'."
 	    (setq attribute (car cell))
 	    (setq value (cdr cell))
 	    (if (eq value 'file)
-		(setq value (rfc822/wrap-as-quoted-string
+		(setq value (std11-wrap-as-quoted-string
 			     (file-name-nondirectory file)))
 	      )
 	    (setq parameters (concat parameters "; " attribute "=" value))
@@ -923,7 +933,7 @@ Charset is automatically obtained from the `mime/lc-charset-alist'."
 		  (setq attribute (car cell))
 		  (setq value (cdr cell))
 		  (if (eq value 'file)
-		      (setq value (rfc822/wrap-as-quoted-string
+		      (setq value (std11-wrap-as-quoted-string
 				   (file-name-nondirectory file)))
 		    )
 		  (setq parameters
@@ -932,7 +942,7 @@ Charset is automatically obtained from the `mime/lc-charset-alist'."
 		  )
 		))
 	  ))
-    (mime-editor/insert-tag pritype subtype parameters)
+    (mime-editor/insert-tag type subtype parameters)
     (mime-editor/insert-binary-file file encoding)
     ))
 
@@ -957,12 +967,21 @@ Charset is automatically obtained from the `mime/lc-charset-alist'."
 (defun mime-editor/insert-voice ()
   "Insert a voice message."
   (interactive)
-  (mime-editor/insert-tag "audio" "basic" nil)
-  (let ((buffer (funcall mime-voice-recorder)))
-    (unwind-protect
-	(mime-editor/insert-binary-buffer buffer "base64")
-      (kill-buffer buffer)
-      )))
+  (let ((encoding
+	 (completing-read
+	  "What transfer encoding: "
+	  mime-file-encoding-method-alist nil t nil)))
+    (mime-editor/insert-tag "audio" "basic" nil)
+    (mime-editor/define-encoding encoding)
+    (save-restriction
+      (narrow-to-region (1- (point))(point))
+      (unwind-protect
+	  (funcall mime-editor/voice-recorder encoding)
+	(progn
+	  (insert "\n")
+	  (invisible-region (point-min)(point-max))
+	  (goto-char (point-max))
+	  )))))
 
 (defun mime-editor/insert-signature (&optional arg)
   "Insert a signature file."
@@ -984,6 +1003,15 @@ Charset is automatically obtained from the `mime/lc-charset-alist'."
   "Insert new MIME tag and return a list of PRITYPE, SUBTYPE, and PARAMETERS.
 If nothing is inserted, return nil."
   (interactive)
+  (let ((p (point)))
+    (mime-editor/goto-tag)
+    (if (and (re-search-forward mime-editor/tag-regexp nil t)
+	     (< (match-beginning 0) p)
+	     (< p (match-end 0))
+	     )
+	(goto-char (match-beginning 0))
+      (goto-char p)
+      ))
   (let ((oldtag nil)
 	(newtag nil)
 	(current (point))
@@ -1028,73 +1056,40 @@ If nothing is inserted, return nil."
       )
     ))
 
-;; Insert the binary content after MIME tag.
-;;	modified by MORITA Masahiro <hiro@isl.ntt.JP>
-;;	for x-uue
 (defun mime-editor/insert-binary-file (file &optional encoding)
   "Insert binary FILE at point.
-Optional argument ENCODING specifies an encoding method such as base64."
-  (let ((tmpbuf (get-buffer-create " *MIME insert*")))
-    (save-excursion
-      (set-buffer tmpbuf)
-      (erase-buffer)
-      (let ((mc-flag nil)		;Mule
-	    (file-coding-system-for-read
-	     (if (featurep 'mule) *noconv*))
-	    (kanji-flag nil)		;NEmacs
-	    (emx-binary-mode t)	        ;Stop CRLF to LF conversion in OS/2
-	    )
-	(let (jka-compr-compression-info-list
-	      jam-zcat-filename-list)
-	  (insert-file-contents file))))
-    (prog1
- 	(if (and (stringp encoding)
-		 (string-equal (downcase encoding) "x-uue"))
-	    (progn
-	      (require 'mel-u)
-	      (let ((uuencode-external-encoder
-		     (cons (car uuencode-external-encoder)
-			   (list (file-name-nondirectory file))
-			   )))
-		(mime-editor/insert-binary-buffer tmpbuf encoding)
-		))
- 	  (mime-editor/insert-binary-buffer tmpbuf encoding))
-      (kill-buffer tmpbuf))))
-
-;; Insert the binary content after MIME tag.
-;;	modified by MORITA Masahiro <hiro@isl.ntt.JP>
-;;	for x-uue
-(defun mime-editor/insert-binary-buffer (buffer &optional encoding)
-  "Insert binary BUFFER at point.
 Optional argument ENCODING specifies an encoding method such as base64."
   (let* ((tagend (1- (point)))		;End of the tag
 	 (hide-p (and mime-auto-hide-body
 		      (stringp encoding)
-		      (let ((en (downcase encoding)))
-			(or (string-equal en "base64")
-			    (string-equal en "x-uue")
-			    ))))
+		      (not
+		       (let ((en (downcase encoding)))
+			 (or (string-equal en "7bit")
+			     (string-equal en "8bit")
+			     (string-equal en "binary")
+			     )))))
 	 )
     (save-restriction
-      (narrow-to-region (1- (point)) (point))
-      (let ((start (point))
-	    (emx-binary-mode t))	;Stop LF to CRLF conversion in OS/2
-	(insert-buffer-substring buffer)
-	;; Encode binary message if necessary.
-	(if encoding
-	    (mime-encode-region start (point-max) encoding)
-	  ))
+      (narrow-to-region tagend (point))
+      (mime-insert-encoded-file file encoding)
       (if hide-p
 	  (progn
 	    (invisible-region (point-min) (point-max))
 	    (goto-char (point-max))
 	    )
+	(goto-char (point-max))
 	))
+    (or hide-p
+	(looking-at mime-editor/tag-regexp)
+	(= (point)(point-max))
+	(mime-editor/insert-tag "text" "plain")
+	)
     ;; Define encoding even if it is 7bit.
     (if (stringp encoding)
 	(save-excursion
-	  (goto-char tagend)		;Make sure which line the tag is on.
-	  (mime-editor/define-encoding encoding)))
+	  (goto-char tagend) ; Make sure which line the tag is on.
+	  (mime-editor/define-encoding encoding)
+	  ))
     ))
 
 
@@ -1300,7 +1295,7 @@ Nil if no such parameter."
     guess
     ))
 
-(defun mime-prompt-for-type ()
+(defun mime-prompt-for-type (&optional default)
   "Ask for Content-type."
   (let ((type ""))
     ;; Repeat until primary content type is specified.
@@ -1310,7 +1305,7 @@ Nil if no such parameter."
 			     mime-content-types
 			     nil
 			     'require-match ;Type must be specified.
-			     nil
+			     default
 			     ))
       (if (string-equal type "")
 	  (progn
@@ -1319,19 +1314,22 @@ Nil if no such parameter."
 	    (sit-for 1)
 	    ))
       )
-    type
-    ))
+    type))
 
-(defun mime-prompt-for-subtype (pritype)
-  "Ask for Content-type subtype of Content-Type PRITYPE."
-  (let* ((default (car (car (cdr (assoc pritype mime-content-types)))))
-	 (answer
+(defun mime-prompt-for-subtype (type &optional default)
+  "Ask for subtype of media-type TYPE."
+  (let ((subtypes (cdr (assoc type mime-content-types))))
+    (or (and default
+	     (assoc default subtypes))
+	(setq default (car (car subtypes)))
+	))
+  (let* ((answer
 	  (completing-read
 	   (if default
 	       (concat
 		"What content subtype: (default " default ") ")
 	     "What content subtype: ")
-	   (cdr (assoc pritype mime-content-types))
+	   (cdr (assoc type mime-content-types))
 	   nil
 	   'require-match		;Subtype must be specified.
 	   nil
@@ -1394,17 +1392,17 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 	  (mime-prompt-for-parameters-1 (cdr (assoc answer (cdr parameter)))))
     ))
 
-(defun mime-flag-region (from to flag)
-  "Hides or shows lines from FROM to TO, according to FLAG.
-If FLAG is `\\n' (newline character) then text is shown,
-while if FLAG is `\\^M' (control-M) the text is hidden."
-  (let ((buffer-read-only nil)		;Okay even if write protected.
-	(modp (buffer-modified-p)))
-    (unwind-protect
-        (subst-char-in-region from to
-			      (if (= flag ?\n) ?\^M ?\n)
-			      flag t)
-      (set-buffer-modified-p modp))))
+(defun mime-prompt-for-encoding (default)
+  "Ask for Content-Transfer-Encoding. [mime-edit.el]"
+  (let (encoding)
+    (while (string=
+	    (setq encoding
+		  (completing-read
+		   "What transfer encoding: "
+		   mime-file-encoding-method-alist nil t default)
+		  )
+	    ""))
+    encoding))
 
 
 ;;; @ Translate the tagged MIME messages into a MIME compliant message.
@@ -1412,8 +1410,14 @@ while if FLAG is `\\^M' (control-M) the text is hidden."
 
 (defvar mime-editor/translate-buffer-hook
   '(mime-editor/pgp-enclose-buffer
-    mime/encode-message-header
+    mime-editor/translate-header
     mime-editor/translate-body))
+
+(defun mime-editor/translate-header ()
+  "Encode the message header into network representation."
+  (mime/encode-message-header 'code-conversion)
+  (run-hooks 'mime-editor/translate-header-hook)
+  )
 
 (defun mime-editor/translate-buffer ()
   "Encode the tagged MIME message in current buffer in MIME compliant message."
@@ -1528,129 +1532,6 @@ while if FLAG is `\\^M' (control-M) the text is hidden."
 	  (replace-match (concat "-" (substring tag 2)))
 	  )))))
 
-(autoload 'mc-pgp-lookup-key "mc-pgp")
-(autoload 'mc-pgp-sign-region "mc-pgp")
-(autoload 'mc-pgp-encrypt-region "mc-pgp")
-
-(defun tm:mc-pgp-generic-parser (result)
-  (let ((ret (mc-pgp-generic-parser result)))
-    (if (consp ret)
-	(vector (car ret)(cdr ret))
-      )))
-
-(defun tm:mc-process-region
-  (beg end passwd program args parser &optional buffer boundary)
-  (let ((obuf (current-buffer))
-	(process-connection-type nil)
-	mybuf result rgn proc)
-    (unwind-protect
-	(progn
-	  (setq mybuf (or buffer (generate-new-buffer " *mailcrypt temp")))
-	  (set-buffer mybuf)
-	  (erase-buffer)
-	  (set-buffer obuf)
-	  (buffer-disable-undo mybuf)
-	  (setq proc
-		(apply 'start-process "*PGP*" mybuf program args))
-	  (if passwd
-	      (progn
-		(process-send-string proc (concat passwd "\n"))
-		(or mc-passwd-timeout (mc-deactivate-passwd t))))
-	  (process-send-region proc beg end)
-	  (process-send-eof proc)
-	  (while (eq 'run (process-status proc))
-	    (accept-process-output proc 5))
-	  (setq result (process-exit-status proc))
-	  ;; Hack to force a status_notify() in Emacs 19.29
-	  (delete-process proc)
-	  (set-buffer mybuf)
-	  (goto-char (point-max))
-	  (if (re-search-backward "\nProcess \\*PGP.*\n\\'" nil t)
-	      (delete-region (match-beginning 0) (match-end 0)))
-	  (goto-char (point-min))
-	  ;; CRNL -> NL
-	  (while (search-forward "\r\n" nil t)
-	    (replace-match "\n"))
-	  ;; Hurm.  FIXME; must get better result codes.
-	  (if (stringp result)
-	      (error "%s exited abnormally: '%s'" program result)
-	    (setq rgn (funcall parser result))
-	    ;; If the parser found something, migrate it
-	    (if (consp rgn)
-		(progn
-		  (set-buffer obuf)
-		  (if boundary
-		      (save-restriction
-			(narrow-to-region beg end)
-			(goto-char beg)
-			(insert (format "--%s\n" boundary))
-			(goto-char (point-max))
-			(insert (format "\n--%s
-Content-Type: application/pgp-signature
-Content-Transfer-Encoding: 7bit
-
-" boundary))
-			(insert-buffer-substring mybuf (car rgn) (cdr rgn))
-			(goto-char (point-max))
-			(insert (format "\n--%s--\n" boundary))
-			)
-		    (delete-region beg end)
-		    (goto-char beg)
-		    (insert-buffer-substring mybuf (car rgn) (cdr rgn))
-		    )
-		  (set-buffer mybuf)
-		  (delete-region (car rgn) (cdr rgn)))))
-	  ;; Return nil on failure and exit code on success
-	  (if rgn result))
-      ;; Cleanup even on nonlocal exit
-      (if (and proc (eq 'run (process-status proc)))
-	  (interrupt-process proc))
-      (set-buffer obuf)
-      (or buffer (null mybuf) (kill-buffer mybuf)))))
-
-(defun tm:mc-pgp-sign-region (start end &optional id unclear boundary)
-  (if (not (boundp 'mc-pgp-user-id))
-      (load "mc-pgp")
-    )
-  (let ((process-environment process-environment)
-	(buffer (get-buffer-create mc-buffer-name))
-	passwd args key
-	(parser (function mc-pgp-generic-parser))
-	(pgp-path mc-pgp-path)
-	)
-    (setq key (mc-pgp-lookup-key (or id mc-pgp-user-id)))
-    (setq passwd
-	  (mc-activate-passwd
-	   (cdr key)
-	   (format "PGP passphrase for %s (%s): " (car key) (cdr key))))
-    (setenv "PGPPASSFD" "0")
-    (setq args
-	  (cons
-	   (if boundary
-	       "-fbast"
-	     "-fast")
-	   (list "+verbose=1" "+language=en"
-		 (format "+clearsig=%s" (if unclear "off" "on"))
-		 "+batchmode" "-u" (cdr key))))
-    (if mc-pgp-comment
-	(setq args (cons (format "+comment=%s" mc-pgp-comment) args))
-      )
-    (message "Signing as %s ..." (car key))
-    (if (tm:mc-process-region
-	 start end passwd pgp-path args parser buffer boundary)
-	(progn
-	  (if boundary
-	      (progn
-		(goto-char (point-min))
-		(insert
-		 (format "\
---[[multipart/signed; protocol=\"application/pgp-signature\";
- boundary=\"%s\"; micalg=pgp-md5][7bit]]\n" boundary))
-		))
-	  (message "Signing as %s ... Done." (car key))
-	  t)
-      nil)))
-
 (defun mime-editor/sign-pgp-elkins (beg end boundary)
   (save-excursion
     (save-restriction
@@ -1668,19 +1549,55 @@ Content-Transfer-Encoding: 7bit
 	    (insert (format "Content-Transfer-Encoding: %s\n" encoding))
 	  )
 	(insert "\n")
-	(or (tm:mc-pgp-sign-region (point-min)(point-max)
-				   nil nil pgp-boundary)
+	(or (funcall (pgp-function 'mime-sign)
+		     (point-min)(point-max) nil nil pgp-boundary)
 	    (throw 'mime-editor/error 'pgp-error)
 	    )
 	))))
 
+(defvar mime-editor/encrypt-recipient-fields-list '("To" "cc"))
+
+(defun mime-editor/make-encrypt-recipient-header ()
+  (let* ((names mime-editor/encrypt-recipient-fields-list)
+	 (values
+	  (std11-field-bodies (cons "From" names)
+			      nil mail-header-separator))
+	 (from (prog1
+		   (car values)
+		 (setq values (cdr values))))
+	 (header (and (stringp from)
+		      (if (string-equal from "")
+			  ""
+			(format "From: %s\n" from)
+			)))
+	 recipients)
+    (while (and names values)
+      (let ((name (car names))
+	    (value (car values))
+	    )
+	(and (stringp value)
+	     (or (string-equal value "")
+		 (progn
+		   (setq header (concat header name ": " value "\n")
+			 recipients (if recipients
+					(concat recipients " ," value)
+				      value))
+		   ))))
+      (setq names (cdr names)
+	    values (cdr values))
+      )
+    (vector from recipients header)
+    ))
+
 (defun mime-editor/encrypt-pgp-elkins (beg end boundary)
   (save-excursion
     (save-restriction
-      (let ((from (rfc822/get-field-body "From"))
-	    (to (rfc822/get-field-body "To"))
-	    (cc (rfc822/get-field-body "cc"))
-	    recipients)
+      (let (from recipients header)
+	(let ((ret (mime-editor/make-encrypt-recipient-header)))
+	  (setq from (aref ret 0)
+		recipients (aref ret 1)
+		header (aref ret 2))
+	  )
 	(narrow-to-region beg end)
 	(let* ((ret
 		(mime-editor/translate-region beg end boundary))
@@ -1690,37 +1607,16 @@ Content-Transfer-Encoding: 7bit
 	       (pgp-boundary (concat "pgp-" boundary))
 	       )
 	  (goto-char beg)
-	  (if (and (stringp from)
-		   (not (string-equal from "")))
-	      (insert (format "From: %s\n" from))
-	    )
-	  (if (and (stringp to)
-		   (not (string-equal to "")))
-	      (progn
-		(insert (format "To: %s\n" to))
-		(setq recipients to)
-		))
-	  (if (and (stringp cc)
-		   (not (string-equal cc "")))
-	      (progn
-		(insert (format "cc: %s\n" cc))
-		(if recipients
-		    (setq recipients (concat recipients "," cc))
-		  (setq recipients cc)
-		  )))
+	  (insert header)
 	  (insert (format "Content-Type: %s\n" ctype))
 	  (if encoding
 	      (insert (format "Content-Transfer-Encoding: %s\n" encoding))
 	    )
 	  (insert "\n")
-	  (if (null
-	       (let ((mc-pgp-always-sign 'never))
-		 (mc-pgp-encrypt-region
-		  (mc-split "\\([ \t\n]*,[ \t\n]*\\)+" recipients)
-		  (point-min) (point-max) from nil)
-		 ))
+	  (or (funcall (pgp-function 'encrypt)
+		       recipients (point-min) (point-max) from)
 	      (throw 'mime-editor/error 'pgp-error)
-	    )
+	      )
 	  (goto-char beg)
 	  (insert (format "--[[multipart/encrypted;
  boundary=\"%s\";
@@ -1753,7 +1649,9 @@ Content-Transfer-Encoding: 7bit
 	    (insert (format "Content-Transfer-Encoding: %s\n" encoding))
 	  )
 	(insert "\n")
-	(or (as-binary-process (mc-pgp-sign-region beg (point-max)))
+	(or (as-binary-process
+	     (funcall (pgp-function 'traditional-sign)
+		      beg (point-max)))
 	    (throw 'mime-editor/error 'pgp-error)
 	    )
 	(goto-char beg)
@@ -1764,10 +1662,12 @@ Content-Transfer-Encoding: 7bit
 
 (defun mime-editor/encrypt-pgp-kazu (beg end boundary)
   (save-excursion
-    (let ((from (rfc822/get-field-body "From"))
-	  (to (rfc822/get-field-body "To"))
-	  (cc (rfc822/get-field-body "cc"))
-	  recipients)
+    (let (from recipients header)
+      (let ((ret (mime-editor/make-encrypt-recipient-header)))
+	(setq from (aref ret 0)
+	      recipients (aref ret 1)
+	      header (aref ret 2))
+	)
       (save-restriction
 	(narrow-to-region beg end)
 	(let* ((ret
@@ -1777,33 +1677,15 @@ Content-Transfer-Encoding: 7bit
 	       (parts    (nth 3 ret))
 	       )
 	  (goto-char beg)
-	  (if (and (stringp from)
-		   (not (string-equal from "")))
-	      (insert (format "From: %s\n" from))
-	    )
-	  (if (and (stringp to)
-		   (not (string-equal to "")))
-	      (progn
-		(insert (format "To: %s\n" to))
-		(setq recipients to)
-		))
-	  (if (and (stringp cc)
-		   (not (string-equal cc "")))
-	      (progn
-		(insert (format "cc: %s\n" cc))
-		(if recipients
-		    (setq recipients (concat recipients "," cc))
-		  (setq recipients cc)
-		  )))
+	  (insert header)
 	  (insert (format "Content-Type: %s\n" ctype))
 	  (if encoding
 	      (insert (format "Content-Transfer-Encoding: %s\n" encoding))
 	    )
 	  (insert "\n")
 	  (or (as-binary-process
-	       (mc-pgp-encrypt-region
-		(mc-split "\\([ \t\n]*,[ \t\n]*\\)+" recipients)
-		beg (point-max))
+	       (funcall (pgp-function 'encrypt)
+			recipients beg (point-max) nil 'maybe)
 	       )
 	      (throw 'mime-editor/error 'pgp-error)
 	      )
@@ -1964,11 +1846,13 @@ Content-Transfer-Encoding: 7bit
       (let ((beg (point))
 	    (end (mime-editor/content-end))
 	    )
-	(goto-char end)
-	(or (looking-at mime-editor/beginning-tag-regexp)
-	    (eobp)
-	    (insert (mime-make-text-tag) "\n")
-	    )
+	(if (= end (point-max))
+	    nil
+	  (goto-char end)
+	  (or (looking-at mime-editor/beginning-tag-regexp)
+	      (eobp)
+	      (insert (mime-make-text-tag) "\n")
+	      ))
 	(visible-region beg end)
 	(goto-char beg)
 	)
@@ -1997,6 +1881,14 @@ Content-Transfer-Encoding: 7bit
 			      (point)))
 		       (end (mime-editor/content-end))
 		       )
+		   ;; Patch for hard newlines
+                   ;; (save-excursion
+                   ;;   (goto-char beg)
+                   ;;   (while (search-forward "\n" end t)
+                   ;;     (put-text-property (match-beginning 0)
+                   ;;                        (point)
+                   ;;                        'hard t)))
+		   ;; End patch for hard newlines
 		   (enriched-encode beg end)
 		   (goto-char beg)
 		   (if (search-forward "\n\n")
@@ -2051,46 +1943,13 @@ Content-Transfer-Encoding: 7bit
 
 ;; Sun implementations
 
-(defun mime-voice-recorder-for-sun ()
-  "Record voice in a buffer using Sun audio device, and return the buffer.
-If the environment variable AUDIOHOST is defined, its value is used as
-a recording host instead of local host."
-  (let ((buffer (get-buffer-create " *MIME audio*"))
-	(host (getenv "AUDIOHOST")))
-    (message "Start the recording on %s.  Type C-g to finish the recording..."
-	     (or host (system-name)))
-    (save-excursion
-      (set-buffer buffer)
-      (erase-buffer)
-      (condition-case errorcode
-	  (let ((selective-display nil) ;Disable ^M to nl translation.
-		(mc-flag nil)		;Mule
-		(kanji-flag nil))	;NEmacs
-	    ;; If AUDIOHOST is defined, use the value as recording host.
-	    (cond ((not (null host))
-		   ;; Disable automatic conversion of coding system if Mule.
-		   (if (featurep 'mule)
-		       (define-program-coding-system nil "rsh" *noconv*))
-		   (call-process "rsh"
-				 nil
-				 buffer
-				 nil
-				 host
-				 "cat"
-				 "/dev/audio"
-				 ))
-		  (t
-		   ;; Disable automatic conversion of coding system if Mule.
-		   (if (featurep 'mule)
-		       (define-program-coding-system nil "cat" *noconv*))
-		   (call-process "cat"
-				 "/dev/audio"
-				 buffer
-				 nil
-				 ))))
-	(quit (message "Type C-g to finish recording... done.")
-	      buffer			;Return the buffer
-	      )))))
+(defun mime-editor/voice-recorder-for-sun (encoding)
+  "Record voice in a buffer using Sun audio device,
+and insert data encoded as ENCODING. [mime-edit.el]"
+  (message "Start the recording on %s.  Type C-g to finish the recording..."
+	   (system-name))
+  (mime-insert-encoded-file "/dev/audio" encoding)
+  )
 
 
 ;;; @ Other useful commands.
@@ -2135,7 +1994,7 @@ a recording host instead of local host."
 	(while (and (re-search-forward
 		     mime-editor/yank-ignored-field-regexp nil t)
 		    (setq beg (match-beginning 0))
-		    (setq end (1+ (rfc822/field-end)))
+		    (setq end (1+ (std11-field-end)))
 		    )
 	  (delete-region beg end)
 	  )
@@ -2206,7 +2065,7 @@ a recording host instead of local host."
   (interactive "P")
   (mime-editor/insert-tag "application" "pgp-keys")
   (mime-editor/define-encoding "7bit")
-  (mc-insert-public-key)
+  (funcall (pgp-function 'insert-key))
   )
 
 
@@ -2243,6 +2102,16 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
   (setq mime-editor/transfer-level-string
 	(mime/encoding-name mime-editor/transfer-level 'not-omit))
   (force-mode-line-update)
+  )
+
+(defun mime-editor/set-transfer-level-7bit ()
+  (interactive)
+  (mime-editor/toggle-transfer-level 7)
+  )
+
+(defun mime-editor/set-transfer-level-8bit ()
+  (interactive)
+  (mime-editor/toggle-transfer-level 8)
   )
 
 
@@ -2331,13 +2200,13 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
       )
   (or mime-editor/message-max-length
       (setq mime-editor/message-max-length
-	    (or (cdr (assq major-mode mime-editor/message-max-length-alist))
-		mime-editor/message-default-max-length))
+	    (or (cdr (assq major-mode mime-editor/message-max-lines-alist))
+		mime-editor/message-default-max-lines))
       )
   (let* ((mime-editor/draft-file-name 
 	  (or (buffer-file-name)
 	      (make-temp-name
-	       (expand-file-name "tm-draft" mime/tmp-dir))))
+	       (expand-file-name "mime-draft" mime/tmp-dir))))
 	 (separator mail-header-separator)
 	 (id (concat "\""
 		     (replace-space-with-underline (current-time-string))
@@ -2345,7 +2214,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
     (run-hooks 'mime-editor/before-split-hook)
     (let ((the-buf (current-buffer))
 	  (copy-buf (get-buffer-create " *Original Message*"))
-	  (header (rfc822/get-header-string-except
+	  (header (std11-header-string-except
 		   mime-editor/split-ignored-field-regexp separator))
 	  (subject (mail-fetch-field "subject"))
 	  (total (+ (/ lines mime-editor/message-max-length)
@@ -2356,6 +2225,11 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	       (cdr
 		(assq major-mode
 		      mime-editor/split-message-sender-alist))
+	       (function
+		(lambda ()
+		  (interactive)
+		  (error "Split sender is not specified for `%s'." major-mode)
+		  ))
 	       ))
 	  (mime-editor/partial-number 1)
 	  data)
@@ -2373,7 +2247,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	  (goto-char (point-min))
 	  (while (re-search-forward mime-editor/split-blind-field-regexp nil t)
 	    (delete-region (match-beginning 0)
-			   (1+ (rfc822/field-end)))
+			   (1+ (std11-field-end)))
 	    )))
       (while (< mime-editor/partial-number total)
 	(erase-buffer)
@@ -2421,8 +2295,8 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
   (interactive)
   (run-hooks 'mime-editor/before-send-hook)
   (let ((mime-editor/message-max-length
-	 (or (cdr (assq major-mode mime-editor/message-max-length-alist))
-	     mime-editor/message-default-max-length))
+	 (or (cdr (assq major-mode mime-editor/message-max-lines-alist))
+	     mime-editor/message-default-max-lines))
 	(lines (count-lines (point-min) (point-max)))
 	)
     (if (and (> lines mime-editor/message-max-length)
@@ -2466,20 +2340,20 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	 (concat "^" (regexp-quote separator) "$"))
 	(replace-match "")
       )
-    (mime/viewer-mode)
+    (mime-view-mode)
     ))
 
 (defun mime-editor/quitting-method ()
   (let ((temp mime::preview/article-buffer)
 	buf)
-    (mime-viewer/kill-buffer)
+    (mime-view-kill-buffer)
     (set-buffer temp)
     (setq buf mime/editing-buffer)
     (kill-buffer temp)
     (switch-to-buffer buf)
     ))
 
-(set-alist 'mime-viewer/quitting-method-alist
+(set-alist 'mime-view-quitting-method-alist
 	   'mime/temporary-message-mode
 	   (function mime-editor/quitting-method)
 	   )
@@ -2508,7 +2382,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
     (setq mime::article/draft-header-separator
 	  (buffer-substring (match-beginning 0) (match-end 0)))
     (replace-match "")
-    (mime/viewer-mode (current-buffer))
+    (mime-view-mode (current-buffer))
     (pop-to-buffer (current-buffer))
     ))
 
@@ -2527,16 +2401,16 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	    (insert mime::article/draft-header-separator)
 	    (set-buffer-modified-p (buffer-modified-p))
 	    )))
-    (mime-viewer/kill-buffer)
+    (mime-view-kill-buffer)
     (pop-to-buffer mother)
     ))
 
-(set-alist 'mime-viewer/quitting-method-alist
+(set-alist 'mime-view-quitting-method-alist
 	   'mh-letter-mode
 	   (function mime-viewer::quitting-method/draft-preview)
 	   )
 
-(set-alist 'mime-viewer/quitting-method-alist
+(set-alist 'mime-view-quitting-method-alist
 	   'news-reply-mode
 	   (function mime-viewer::quitting-method/draft-preview)
 	   )
@@ -2561,7 +2435,10 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	      (setq type ctype)
 	      )
 	    (cond
-	     ((string-equal type "multipart")
+	     ((string= ctype "application/pgp-signature")
+	      (delete-region (point-min)(point-max))
+	      )
+	     ((string= type "multipart")
 	      (let* ((boundary (assoc-value "boundary" params))
 		     (boundary-pat
 		      (concat "\n--" (regexp-quote boundary) "[ \t]*\n"))
@@ -2606,18 +2483,27 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	     (t
 	      (let* (charset
 		     (pstr
-		      (mapconcat (function
-				  (lambda (attr)
-				    (if (string-equal (car attr)
-						      "charset")
-					(progn
-					  (setq charset (cdr attr))
-					  "")
-				      (concat ";" (car attr)
-					      "=" (cdr attr))
-				      )
-				    ))
-				 params ""))
+		      (let ((bytes (+ 14 (length ctype))))
+			(mapconcat (function
+				    (lambda (attr)
+				      (if (string-equal (car attr) "charset")
+					  (progn
+					    (setq charset (cdr attr))
+					    "")
+					(let* ((str
+						(concat (car attr)
+							"=" (cdr attr))
+						)
+					       (bs (length str))
+					       )
+					  (setq bytes (+ bytes bs 2))
+					  (if (< bytes 76)
+					      (concat "; " str)
+					    (setq bytes (+ bs 1))
+					    (concat ";\n " str)
+					    )
+					  ))))
+				   params "")))
 		     encoding
 		     encoded)
 		(save-excursion
@@ -2625,10 +2511,10 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 		       "Content-Transfer-Encoding:" nil t)
 		      (let ((beg (match-beginning 0))
 			    (hbeg (match-end 0))
-			    (end (rfc822/field-end)))
+			    (end (std11-field-end)))
 			(setq encoding
 			      (eliminate-top-spaces
-			       (rfc822/unfolding-string
+			       (std11-unfold-string
 				(buffer-substring hbeg end))))
 			(if (or charset (string-equal type "text"))
 			    (progn
@@ -2642,12 +2528,10 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 					  encoding nil)
 				    )))))))
 		(if (or code-conversion encoded)
-		    (if charset
-			(mime-charset-decode-region (point-min)(point-max)
-						    charset)
-		      (character-decode-region (point-min)(point-max)
-					       mime/default-coding-system)
-		      ))
+		    (decode-mime-charset-region
+		     (point-min)(point-max)
+		     (or charset default-mime-charset))
+		  )
 		(let ((he
 		       (if (re-search-forward "^$" nil t)
 			   (match-end 0)
@@ -2668,8 +2552,8 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 		    ))
 		))))
 	(if code-conversion
-	    (character-decode-region (point-min) (point-max)
-				     mime/default-coding-system)
+	    (decode-mime-charset-region (point-min) (point-max)
+					default-mime-charset)
 	  )
 	))))
 
@@ -2689,14 +2573,14 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
     (goto-char (point-min))
     (while (re-search-forward
 	    "^\\(Content-.*\\|Mime-Version\\):" nil t)
-      (delete-region (match-beginning 0) (1+ (rfc822/field-end)))
+      (delete-region (match-beginning 0) (1+ (std11-field-end)))
       ))
   (or no-separator
       (and (re-search-forward "^$")
 	   (replace-match mail-header-separator)
 	   ))
   (or no-mode
-      (mime/editor-mode)
+      (mime-edit-mode)
       ))
 
 
@@ -2704,11 +2588,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 ;;;
 
 (provide 'mime-edit)
-(provide 'tm-edit)
 
-(if (boundp 'mime-edit-load-hook)
-    (run-hooks 'mime-edit-load-hook)
-  (run-hooks 'tm-edit-load-hook)
-  )
+(run-hooks 'mime-edit-load-hook)
 
 ;;; mime-edit.el ends here
