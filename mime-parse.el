@@ -25,6 +25,7 @@
 
 ;;; Code:
 
+(require 'emu)
 (require 'std11)
 (require 'mime-def)
 
@@ -75,11 +76,6 @@ which are string or symbol."
 
 (defsubst regexp-* (regexp)
   (concat regexp "*"))
-
-(defsubst char-list-to-string (char-list)
-  "Convert list of character CHAR-LIST to string."
-  (mapconcat (function char-to-string) char-list "")
-  )
 
 (defconst rfc822/quoted-pair-regexp "\\\\.")
 (defconst rfc822/qtext-regexp
