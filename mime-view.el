@@ -1163,8 +1163,9 @@ It decodes current entity to call internal or external method as
 
 (defun mime-preview-original-major-mode (&optional recursive)
   "Return major-mode of original buffer.
-If a current buffer has mime-mother-buffer, return original major-mode
-of the mother-buffer."
+If optional argument RECURSIVE is non-nil and current buffer has
+mime-mother-buffer, it returns original major-mode of the
+mother-buffer."
   (if (and recursive mime-mother-buffer)
       (save-excursion
 	(set-buffer mime-mother-buffer)
