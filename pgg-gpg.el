@@ -129,8 +129,10 @@
   (let ((args (list "--with-colons" "--no-greeting" "--batch" 
 		    (if type "--list-secret-keys" "--list-keys")
 		    string)))
-    (pgg-gpg-process-region (point)(point) nil pgg-gpg-program args)
-    (with-current-buffer pgg-output-buffer
+    (with-current-buffer (get-buffer-create pgg-output-buffer)
+      (buffer-disable-undo)
+      (erase-buffer)
+      (apply #'call-process pgg-gpg-program nil t args)
       (goto-char (point-min))
       (when (re-search-forward "^\\(sec\\|pub\\):"  nil t)
 	(substring 
@@ -158,15 +160,13 @@
 					 (concat "\"" rcpt "\""))) 
 				 recipients))))))
     (pgg-gpg-process-region start end passphrase pgg-gpg-program args)
-    (with-current-buffer pgg-output-buffer
-      (if (zerop (buffer-size))
-	  (insert-buffer-substring pgg-errors-buffer)
-	(let ((packet 
-	       (cdr (assq 1 (pgg-parse-armor-region 
-			     (point-min)(point-max))))))
-	  (pgg-add-passphrase-cache 
-	   (cdr (assq 'key-identifier packet))
-	   passphrase))))
+    (pgg-process-when-success
+      (let ((packet 
+	     (cdr (assq 1 (pgg-parse-armor-region 
+			   (point-min)(point-max))))))
+	(pgg-add-passphrase-cache 
+	 (cdr (assq 'key-identifier packet))
+	 passphrase)))
     ))
 
 (luna-define-method decrypt-region ((scheme pgg-scheme-gpg) 
@@ -179,13 +179,11 @@
 		      scheme pgg-gpg-user-id 'encrypt)))
 	 (args '("--batch" "--decrypt")))
     (pgg-gpg-process-region start end passphrase pgg-gpg-program args)
-    (with-current-buffer pgg-output-buffer
-      (when (zerop (buffer-size))
-	(insert-buffer-substring pgg-errors-buffer)))
+    (pgg-process-when-success nil)
     ))
 
 (luna-define-method sign-region ((scheme pgg-scheme-gpg) 
-				 start end)
+				 start end &optional cleartext)
   (let* ((pgg-gpg-user-id pgg-default-user-id)
 	 (passphrase
 	  (pgg-read-passphrase 
@@ -193,7 +191,8 @@
 	   (luna-send scheme 'lookup-key-string 
 		      scheme pgg-gpg-user-id 'sign)))
 	 (args 
-	  (list "--detach-sign" "--armor" "--batch" "--verbose" 
+	  (list (if cleartext "--clearsign" "--detach-sign")
+		"--armor" "--batch" "--verbose" 
 		"--local-user" pgg-gpg-user-id)))
     (goto-char start)
     (setq end (set-marker (make-marker) (point-max)))
@@ -204,12 +203,16 @@
     (goto-char start)
     (while (re-search-forward "\r$" end t)
       (replace-match ""))
-    (with-current-buffer pgg-output-buffer
-      (if (zerop (buffer-size))
-	  (insert-buffer-substring pgg-errors-buffer)
+    (pgg-process-when-success
+      (goto-char (point-min))
+      (while (re-search-forward "\r$" end t)
+	(replace-match ""))
+      (when (re-search-forward "^-+BEGIN PGP SIGNATURE" nil t);XXX
 	(let ((packet 
 	       (cdr (assq 2 (pgg-parse-armor-region 
-			     (point-min)(point-max))))))
+			     (progn (beginning-of-line 2)
+				    (point))
+			     (point-max))))))
 	  (pgg-add-passphrase-cache 
 	   (cdr (assq 'key-identifier packet))
 	   passphrase))))
@@ -221,17 +224,22 @@
     (when (stringp signature)
       (setq args (append args (list signature))))
     (pgg-gpg-process-region start end nil pgg-gpg-program args)
-    (set-buffer pgg-errors-buffer)
-    (goto-char (point-min))
-    (while (re-search-forward "^gpg: " nil t)
-      (replace-match ""))
-    (goto-char (point-min))
-    (let ((case-fold-search t))
-      (while (re-search-forward "^warning: " nil t)
-	(delete-region (match-beginning 0)
-		       (progn (beginning-of-line 2) (point)))))
-    (append-to-buffer pgg-output-buffer
-		      (point-min)(point-max))
+    (save-excursion
+      (set-buffer pgg-status-buffer)
+      (goto-char (point-min))
+      (when (re-search-forward "^\\[GNUPG:] +GOODSIG +" nil t)
+	(set-buffer pgg-errors-buffer)
+	(goto-char (point-min))
+	(while (re-search-forward "^gpg: " nil t)
+	  (replace-match ""))
+	(goto-char (point-min))
+	(let ((case-fold-search t))
+	  (while (re-search-forward "^warning: " nil t)
+	    (delete-region (match-beginning 0)
+			   (progn (beginning-of-line 2) (point)))))
+	(append-to-buffer pgg-output-buffer
+			  (point-min)(point-max))
+	t))
     ))
 
 (luna-define-method insert-key ((scheme pgg-scheme-gpg))
@@ -269,8 +277,7 @@
     (append-to-buffer pgg-output-buffer
 		      (point-min)(point-max))
     (with-current-buffer pgg-output-buffer
-      (when (zerop (buffer-size))
-	(insert-buffer-substring pgg-errors-buffer)))
+      (if (zerop (buffer-size)) nil t))
     ))
 
 (provide 'pgg-gpg)
