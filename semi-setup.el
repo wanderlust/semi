@@ -51,11 +51,42 @@
 
 ;; for PGP
 (if mime-setup-enable-pgp
-    (call-after-loaded 'mime-view
-		       (function
-			(lambda ()
-			  (require 'mime-pgp)
-			  )))
+    (eval-after-load "mime-view"
+      '(progn
+	 (mime-add-condition
+	  'preview '((type . application)(subtype . pgp)
+		     (message-button . visible)))
+	 (mime-add-condition
+	  'action '((type . application)(subtype . pgp)
+		    (method . mime-method-for-application/pgp))
+	  'strict "mime-pgp")
+	 (mime-add-condition
+	  'action '((type . text)(subtype . x-pgp)
+		    (method . mime-method-for-application/pgp)))
+	 
+	 (mime-add-condition
+	  'action '((type . multipart)(subtype . signed)
+		    (method . mime-method-to-verify-multipart/signed))
+	  'strict "mime-pgp")
+	 
+	 (mime-add-condition
+	  'action
+	  '((type . application)(subtype . pgp-signature)
+	    (method . mime-method-to-verify-application/pgp-signature))
+	  'strict "mime-pgp")
+	 
+	 (mime-add-condition
+	  'action
+	  '((type . application)(subtype . pgp-encrypted)
+	    (method . mime-method-to-decrypt-application/pgp-encrypted))
+	  'strict "mime-pgp")
+	 
+	 (mime-add-condition
+	  'action
+	  '((type . application)(subtype . pgp-keys)
+	    (method . mime-method-to-add-application/pgp-keys))
+	  'strict "mime-pgp")
+	 ))
   )
 
 
