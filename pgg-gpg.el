@@ -124,17 +124,21 @@
       )
     ))
 
-(luna-define-method lookup-key ((scheme pgg-scheme-gpg) string)
+(luna-define-method lookup-key-string ((scheme pgg-scheme-gpg)
+				       string &optional type)
   (let ((args (list "--with-colons" "--no-greeting" "--batch" 
-		    "--list-secret-keys" string)))
+		    (if type "--list-secret-keys" "--list-keys")
+		    string)))
     (pgg-gpg-process-region (point)(point) nil pgg-gpg-program args)
     (with-current-buffer pgg-output-buffer
       (goto-char (point-min))
       (when (re-search-forward "^\\(sec\\|pub\\):"  nil t)
-	(nth 3 (split-string 
-		(buffer-substring (match-end 0)
-				  (progn (end-of-line)(point)))
-		":"))))
+	(substring 
+	 (nth 3 (split-string 
+		 (buffer-substring (match-end 0)
+				   (progn (end-of-line)(point)))
+		 ":"))
+	 8)))
     ))
 
 (luna-define-method encrypt-region ((scheme pgg-scheme-gpg) 
@@ -143,7 +147,8 @@
 	 (passphrase
 	  (pgg-read-passphrase 
 	   (format "GnuPG passphrase for %s: " pgg-gpg-user-id)
-	   (luna-send scheme 'lookup-key scheme pgg-gpg-user-id)))
+	   (luna-send scheme 'lookup-key-string
+		      scheme pgg-gpg-user-id 'encrypt)))
 	 (args 
 	  `("--batch" "--armor" "--textmode" "--always-trust" "--encrypt"
 	    ,@(if recipients
@@ -170,7 +175,8 @@
 	 (passphrase
 	  (pgg-read-passphrase 
 	   (format "GnuPG passphrase for %s: " pgg-gpg-user-id)
-	   (luna-send scheme 'lookup-key scheme pgg-gpg-user-id)))
+	   (luna-send scheme 'lookup-key-string 
+		      scheme pgg-gpg-user-id 'encrypt)))
 	 (args '("--batch" "--decrypt")))
     (pgg-gpg-process-region start end passphrase pgg-gpg-program args)
     (with-current-buffer pgg-output-buffer
@@ -184,7 +190,8 @@
 	 (passphrase
 	  (pgg-read-passphrase 
 	   (format "GnuPG passphrase for %s: " pgg-gpg-user-id)
-	   (luna-send scheme 'lookup-key scheme pgg-gpg-user-id)))
+	   (luna-send scheme 'lookup-key-string 
+		      scheme pgg-gpg-user-id 'sign)))
 	 (args 
 	  (list "--detach-sign" "--armor" "--batch" "--verbose" 
 		"--local-user" pgg-gpg-user-id)))

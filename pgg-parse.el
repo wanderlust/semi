@@ -234,14 +234,14 @@
     ;; 7        -- Secret Subkey Packet
     ;; 8        -- Compressed Data Packet
     (9 ;Symmetrically Encrypted Data Packet
-     (pgg-read-body ptag))
+     (pgg-read-body-string ptag))
     (10 ;Marker Packet
-     (pgg-read-body ptag))
+     (pgg-read-body-string ptag))
     (11 ;Literal Data Packet
-     (pgg-read-body ptag))
+     (pgg-read-body-string ptag))
     ;; 12       -- Trust Packet
     (13 ;User ID Packet
-     (pgg-read-body ptag))
+     (pgg-read-body-string ptag))
     ;; 14       -- Public Subkey Packet 
     ;; 60 .. 63 -- Private or Experimental Values
     ))
@@ -288,7 +288,7 @@
      (cons 'trust-level (pgg-read-byte)))
     (6 ;regular expression
      (cons 'regular-expression 
- 	   (pgg-read-body ptag)))
+ 	   (pgg-read-body-string ptag)))
     (7 ;revocable
      (cons 'revocability (pgg-read-byte)))
     (9 ;key expiration time
@@ -326,8 +326,11 @@
  	   (cdr (assq (pgg-read-byte)
  		      pgg-parse-compression-algorithm-alist))))
     (23 ;key server preferences
-     )
-    ;; 24 = preferred key server
+     (cons 'key-server-preferences
+	   (pgg-read-body ptag)))
+    (24 ;preferred key server
+     (cons 'preferred-key-server
+	   (pgg-read-body-string ptag)))
     ;; 25 = primary user id
     (26 ;policy URL
      (cons 'policy-url (pgg-read-body-string ptag)))

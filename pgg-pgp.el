@@ -111,7 +111,8 @@
       )
     ))
 
-(luna-define-method lookup-key ((scheme pgg-scheme-pgp) string)
+(luna-define-method lookup-key-string ((scheme pgg-scheme-pgp) 
+				       string &optional type)
   (let ((args (list "+batchmode" "+language=en" "-kv" string)))
     (pgg-pgp-process-region (point)(point) nil
 			    pgg-pgp-program args)
@@ -136,7 +137,8 @@
 	 (passphrase
 	  (pgg-read-passphrase 
 	   (format "PGP passphrase for %s: " pgg-pgp-user-id)
-	   (luna-send scheme 'lookup-key scheme pgg-pgp-user-id)))
+	   (luna-send scheme 'lookup-key-string 
+		      scheme pgg-pgp-user-id 'encrypt)))
 	 (args 
 	  `("+encrypttoself=off +verbose=1" "+batchmode"
 	    "+language=us" "-fate"
@@ -162,7 +164,8 @@
 	 (passphrase
 	  (pgg-read-passphrase 
 	   (format "PGP passphrase for %s: " pgg-pgp-user-id)
-	   (luna-send scheme 'lookup-key scheme pgg-pgp-user-id)))
+	   (luna-send scheme 'lookup-key-string 
+		      scheme pgg-pgp-user-id 'encrypt)))
 	 (args 
 	  '("+verbose=1" "+batchmode" "+language=us" "-f")))
     (pgg-pgp-process-region start end passphrase 
@@ -178,7 +181,8 @@
 	 (passphrase
 	  (pgg-read-passphrase 
 	   (format "PGP passphrase for %s: " pgg-pgp-user-id)
-	   (luna-send scheme 'lookup-key scheme pgg-pgp-user-id)))
+	   (luna-send scheme 'lookup-key-string
+		      scheme pgg-pgp-user-id 'sign)))
 	 (args 
 	  (list "-fbast" "+verbose=1" "+language=us" "+batchmode"
 		"-u" pgg-pgp-user-id)))
