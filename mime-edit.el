@@ -237,8 +237,18 @@ To insert a signature file automatically, call the function
     )
   "*Alist of content-type, subtype, parameters and its values.")
 
-(defvar mime-file-types
-  '(("\\.rtf$"
+(defcustom mime-file-types
+  '(("\\.txt$"
+     "text"	"plain"		nil
+     nil
+     "inline"		(("filename" . file))
+     )
+    ("\\.pln$"
+     "text"	"plain"		nil
+     nil
+     "inline"		(("filename" . file))
+     )
+    ("\\.rtf$"
      "text"	"richtext"	nil
      nil
      nil		nil)
@@ -362,15 +372,56 @@ To insert a signature file automatically, call the function
      "attachment"	(("filename" . file))
      )
     ("\\.signature"
-     "text"	"plain"		nil	nil)
+     "text"	"plain"		nil	nil	nil	nil)
     (".*"
      "application" "octet-stream" nil
      nil
-     "attachment"	(("filename" . file))
-     )
+     "attachment"	(("filename" . file)))
     )
   "*Alist of file name, types, parameters, and default encoding.
-If encoding is nil, it is determined from its contents.")
+If encoding is nil, it is determined from its contents."
+  :type `(repeat
+	  (list regexp
+		;; primary-type
+		(choice :tag "Primary-Type"
+			,@(nconc (mapcar (lambda (cell)
+					   (list 'item (car cell))
+					   )
+					 mime-content-types)
+				 '(string)))
+		;; subtype
+		(choice :tag "Sub-Type"
+			,@(nconc
+			   (apply #'nconc
+				  (mapcar (lambda (cell)
+					    (mapcar (lambda (cell)
+						      (list 'item (car cell))
+						      )
+						    (cdr cell)))
+					  mime-content-types))
+			   '(string)))
+		;; parameters
+		(repeat :tag "Parameters of Content-Type field"
+			(cons string (choice string symbol)))
+		;; content-transfer-encoding
+		(choice :tag "Encoding"
+			,@(cons
+			   '(const nil)
+			   (mapcar (lambda (cell)
+				     (list 'item (car cell))
+				     )
+				   mime-file-encoding-method-alist)))
+		;; disposition-type
+		(choice :tag "Disposition-Type"
+			(item nil)
+			(item "inline")
+			(item "attachment")
+			string)
+		;; parameters
+		(repeat :tag "Parameters of Content-Disposition field"
+			(cons string (choice string symbol)))
+		))
+  :group 'mime-edit)
 
 
 ;;; @@ about charset, encoding and transfer-level
