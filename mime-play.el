@@ -713,7 +713,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
       )
     (setq buffer-read-only nil)
     (erase-buffer)
-    (let ((standard-translation-table-for-decode nil))
+    (let ((enable-character-translation nil))
       (mime-insert-text-content entity))
     (mule-caesar-region (point-min) (point-max))
     (let ((str (buffer-string))

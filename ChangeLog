@@ -1,5 +1,11 @@
 1999-01-17  Tanaka Akira  <akr@jaist.ac.jp>
 
+	* mime-play.el (mime-view-caesar): Use `enable-character-translation'
+	instead of `standard-translation-table-for-decode' to disable 
+	character translation.
+
+1999-01-17  Tanaka Akira  <akr@jaist.ac.jp>
+
 	* AKEMI-VERSION: New file.
 
 	* semi-def.el (mime-user-interface-product): Bump up to
