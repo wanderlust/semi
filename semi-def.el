@@ -32,7 +32,7 @@
 
 (require 'widget)
 
-(defconst mime-user-interface-product ["WEMI" (1 13 5) "Fijieda"]
+(defconst mime-user-interface-product ["WEMI" (1 13 6) "Rokugò"]
   "Product name, version number and code name of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
