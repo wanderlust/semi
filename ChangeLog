@@ -1,5 +1,11 @@
 1999-11-02  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* pgg-parse.el (pgg-parse-length-type): Fix typo.
+	(pgg-parse-public-key-encrypted-session-key-packet): Use
+	`pgg-read-bytes-string' instead of `pgg-read-bytes'.
+
+1999-11-02  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
 	* mime-edit.el (mime-edit-sign-pgp-mime): Rewrite with PGG functions.
 	(mime-edit-encrypt-pgp-mime): Likewise.
 	(mime-edit-encrypt-recipient-fields-list): Return recipients as list.
