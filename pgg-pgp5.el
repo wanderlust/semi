@@ -100,36 +100,39 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
       (erase-buffer))
     (when passphrase
       (setenv "PGPPASSFD" "0"))
-    (as-binary-process
-     (setq process
-	   (apply #'start-process-shell-command "*PGP*" output-buffer
-		  program args)))
-    (set-process-sentinel process #'ignore)
-    (when passphrase
-      (process-send-string process (concat passphrase "\n")))
-    (process-send-region process start end)
-    (process-send-eof process)
-    (while (eq 'run (process-status process))
-      (accept-process-output process 5))
-    (setq status (process-status process)
-	  exit-status (process-exit-status process))
-    (delete-process process)
-    (with-current-buffer output-buffer
-      (pgg-convert-lbt-region (point-min)(point-max) 'LF)
+    (unwind-protect
+	(progn
+	  (as-binary-process
+	   (setq process
+		 (apply #'start-process-shell-command "*PGP*" output-buffer
+			program args)))
+	  (set-process-sentinel process #'ignore)
+	  (when passphrase
+	    (process-send-string process (concat passphrase "\n")))
+	  (process-send-region process start end)
+	  (process-send-eof process)
+	  (while (eq 'run (process-status process))
+	    (accept-process-output process 5))
+	  (setq status (process-status process)
+		exit-status (process-exit-status process))
+	  (delete-process process)
+	  (with-current-buffer output-buffer
+	    (pgg-convert-lbt-region (point-min)(point-max) 'LF)
 
-      (if (memq status '(stop signal))
-	  (error "%s exited abnormally: '%s'" program exit-status))
-      (if (= 127 exit-status)
-	  (error "%s could not be found" program))
+	    (if (memq status '(stop signal))
+		(error "%s exited abnormally: '%s'" program exit-status))
+	    (if (= 127 exit-status)
+		(error "%s could not be found" program))
 
-      (set-buffer (get-buffer-create errors-buffer))
-      (buffer-disable-undo)
-      (erase-buffer)
-      (insert-file-contents errors-file-name)
-      (delete-file errors-file-name)
-      
+	    (set-buffer (get-buffer-create errors-buffer))
+	    (buffer-disable-undo)
+	    (erase-buffer)
+	    (insert-file-contents errors-file-name)))
       (if (and process (eq 'run (process-status process)))
-	  (interrupt-process process)))))
+	  (interrupt-process process))
+      (condition-case nil
+	  (delete-file errors-file-name)
+	(file-error nil)))))
 
 (luna-define-method pgg-scheme-lookup-key ((scheme pgg-scheme-pgp5)
 						  string &optional type)
