@@ -153,23 +153,23 @@ it is used as hook to set."
 ;;; @ for mime-edit
 ;;;
 
-(defun mime-setup-decode-message-header ()
-  (save-excursion
-    (save-restriction
-      (goto-char (point-min))
-      (narrow-to-region
-       (point-min)
-       (if (re-search-forward
-	    (concat "^" (regexp-quote mail-header-separator) "$")
-	    nil t)
-	   (match-beginning 0)
-	 (point-max)
-	 ))
-      (mime-decode-header-in-buffer)
-      (set-buffer-modified-p nil)
-      )))
+;; (defun mime-setup-decode-message-header ()
+;;   (save-excursion
+;;     (save-restriction
+;;       (goto-char (point-min))
+;;       (narrow-to-region
+;;        (point-min)
+;;        (if (re-search-forward
+;;             (concat "^" (regexp-quote mail-header-separator) "$")
+;;             nil t)
+;;            (match-beginning 0)
+;;          (point-max)
+;;          ))
+;;       (mime-decode-header-in-buffer)
+;;       (set-buffer-modified-p nil)
+;;       )))
 
-(add-hook 'mime-edit-mode-hook 'mime-setup-decode-message-header)
+;; (add-hook 'mime-edit-mode-hook 'mime-setup-decode-message-header)
 
 
 ;;; @@ variables
@@ -207,7 +207,7 @@ it is used as hook to set."
 ;;; @ for mu-cite
 ;;;
 
-(add-hook 'mu-cite/pre-cite-hook 'eword-decode-header)
+;; (add-hook 'mu-cite/pre-cite-hook 'eword-decode-header)
 
 
 ;;; @ end
