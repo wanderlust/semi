@@ -1,5 +1,32 @@
 1999-11-06   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* pgg.el (pgg-verify-region): Bind `pgg-scheme' in the predicate
+	of whether to fetch signer's public key.
+	(pgg-convert-lbt-region): New macro.
+	(pgg-as-lbt): New macro.
+
+	* mime-edit.el (mime-edit-encrypt-pgp-mime): Extract canonical
+	address of From field to use it as default user id; tokenize
+	bodies of the recipient fields.
+	(mime-edit-make-encrypt-recipient-header): Undo last change.
+	(mime-edit-translate-buffer): Do `undo-boundary'
+	before translating.
+
+	* pgg-pgp.el (sign-region): Use `pgg-as-lbt'.
+	(pgg-gpg-process-region): Use `pgg-convert-lbt-region'.
+	(encrypt-region): Don't ask passphrase.
+
+	* pgg-pgp5.el (sign-region): Use `pgg-as-lbt'.
+	(pgg-pgp5-process-region): Use `pgg-convert-lbt-region'.
+	(encrypt-region): Don't ask passphrase.
+
+	* pgg-pgp.el (verify-region): Fill errors buffer.
+	(pgg-pgp-process-region): Use `pgg-convert-lbt-region'.
+	(sign-region): Use `pgg-as-lbt'.
+	(encrypt-region): Don't ask passphrase.
+
+1999-11-06   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
 	* pgg-parse.el (pgg-byte-after): Always pass the first argument
 	of `char-after'.
 
