@@ -96,23 +96,26 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 		  (order '((type . 1)
 			   (subtype . 2)
 			   (mode . 3)
-			   (major-mode . 4)))
+			   (method . 4)
+			   (major-mode . 5)
+			   (disposition-type . 6)
+			   ))
 		  a-order b-order)
 	      (if (symbolp a-t)
 		  (let ((ret (assq a-t order)))
 		    (if ret
 			(setq a-order (cdr ret))
-		      (setq a-order 5)
+		      (setq a-order 7)
 		      ))
-		(setq a-order 6)
+		(setq a-order 8)
 		)
 	      (if (symbolp b-t)
 		  (let ((ret (assq b-t order)))
 		    (if ret
 			(setq b-order (cdr ret))
-		      (setq b-order 5)
+		      (setq b-order 7)
 		      ))
-		(setq b-order 6)
+		(setq b-order 8)
 		)
 	      (if (= a-order b-order)
 		  (string< (format "%s" a-t)(format "%s" b-t))
@@ -130,28 +133,29 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
       (setq situations (cdr situations)))
     dest))
 
-(defun mime-raw-play-entity (entity &optional mode)
+(defun mime-raw-play-entity (entity &optional mode situation)
   "Play entity specified by ENTITY.
 It decodes the entity to call internal or external method.  The method
 is selected from variable `mime-acting-condition'.  If MODE is
 specified, play as it.  Default MODE is \"play\"."
-  (let (method cal ret)
-    (setq cal (mime-entity-situation entity))
+  (let (method ret)
+    (or situation
+	(setq situation (mime-entity-situation entity)))
     (if mode
-	(setq cal (cons (cons 'mode mode) cal))
+	(setq situation (cons (cons 'mode mode) situation))
       )
     (setq ret
-	  (or (ctree-match-calist mime-acting-situation-examples cal)
+	  (or (ctree-match-calist mime-acting-situation-examples situation)
 	      (ctree-match-calist-partially mime-acting-situation-examples
-					    cal)
-	      cal))
+					    situation)
+	      situation))
     (setq ret
 	  (or (mime-delq-null-situation
 	       (ctree-find-calist mime-acting-condition ret
 				  mime-view-find-every-acting-situation)
 	       'method)
 	      (mime-delq-null-situation
-	       (ctree-find-calist mime-acting-condition cal
+	       (ctree-find-calist mime-acting-condition situation
 				  mime-view-find-every-acting-situation)
 	       'method)
 	      ))
