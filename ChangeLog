@@ -1,3 +1,13 @@
+1997-10-02  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-def.el: Don't use `third' (don't use cl function).
+
+	* SEMI-CFG: Add current directory to load-path.
+
+	* mime-def.el, mime-edit.el (mime-edit-insert-text): Rename
+ 	`second' -> `cadr' (Don't use cl function).
+
+
 1997-09-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 0.115 (Hinomiko) was released.
