@@ -1,6 +1,6 @@
 ;;; semi-def.el --- definition module for SEMI -*- coding: iso-8859-4; -*-
 
-;; Copyright (C) 1995,1996,1997,1998,1999 Free Software Foundation, Inc.
+;; Copyright (C) 1995,96,97,98,99,2000 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <tomo@m17n.org>
 ;; Keywords: definition, MIME, multimedia, mail, news
@@ -61,15 +61,14 @@
 
 (defsubst mime-add-button (from to function &optional data)
   "Create a button between FROM and TO with callback FUNCTION and DATA."
-  (let ((overlay (make-overlay from to)))
-    (and mime-button-face
-	 (overlay-put overlay 'face mime-button-face))
-    (and mime-button-mouse-face
-	 (overlay-put overlay 'mouse-face mime-button-mouse-face))
-    (add-text-properties from to (list 'mime-button-callback function))
-    (and data
-	 (add-text-properties from to (list 'mime-button-data data)))
-    ))
+  (and mime-button-face
+       (put-text-property from to 'face mime-button-face))
+  (and mime-button-mouse-face
+       (put-text-property from to 'mouse-face mime-button-mouse-face))
+  (put-text-property from to 'mime-button-callback function)
+  (and data
+       (put-text-property from to 'mime-button-data data))
+  )
 
 (defsubst mime-insert-button (string function &optional data)
   "Insert STRING as button with callback FUNCTION and DATA."
