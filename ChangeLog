@@ -1,5 +1,11 @@
 1997-09-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-view-insert-entity-button): Change interface
+	to use `media-type' and `media-subtype' instead of `ctype'.
+	(mime-view-entity-button-function): ditto.
+
+1997-09-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-view-body-visible-p): Change interface to use
 	`media-type' and `media-subtype' instead of `ctype'.
 	(mime-view-entity-separator-function): ditto.
