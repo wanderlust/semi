@@ -1,3 +1,7 @@
+2003-05-22  Daiki Ueno <ueno@unixuser.org>
+
+	* mime-play.el (mime-activate-mailcap-method): Undo the last change.
+
 2003-05-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* mime-edit.el (turn-on-mime-edit): Protect 1st arg of `message'.
