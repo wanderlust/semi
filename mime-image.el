@@ -51,10 +51,8 @@
     (or (memq format image-native-formats)
 	(find-if (function
 		  (lambda (native)
-		    (image-converter-chain format native)
-		    ))
-		 image-native-formats)
-	))
+		    (image-converter-chain format native)))
+		 image-native-formats)))
 
   (image-register-netpbm-utilities)
   (image-register-converter 'pic 'ppm "pictoppm")
@@ -67,14 +65,13 @@
   (defsubst-maybe image-invalid-glyph-p (glyph)
     (or (null (aref glyph 0))
 	(null (aref glyph 2))
-	(equal (aref glyph 2) "")
-	))
-  )
+	(equal (aref glyph 2) ""))))
  ((featurep 'mule)
 
+  (eval-when-compile (ignore-errors (require 'image)))
+
   (eval-and-compile
-    (autoload 'bitmap-insert-xbm-buffer "bitmap")
-    )
+    (autoload 'bitmap-insert-xbm-buffer "bitmap"))
 
   (static-if (fboundp 'image-type-available-p)
       (defalias-maybe 'image-inline-p 'image-type-available-p)
@@ -82,17 +79,28 @@
     (defun-maybe image-inline-p (format)
       (memq format image-native-formats)))
 
+  (static-unless (or (not (fboundp 'create-image))
+		     (memq 'data-p (aref (symbol-function 'create-image) 0)))
+    (defadvice create-image
+      (around data-p (file-or-data &optional type data-p &rest props) activate)
+      (if (ad-get-arg 2)
+	  (setq ad-return-value
+		(nconc 
+		 (list 'image ':type (ad-get-arg 1) ':data (ad-get-arg 0))
+		 props))
+	(ad-set-args 0 (list (ad-get-arg 0) (ad-get-arg 1) (ad-get-arg 3)))
+	ad-do-it)))
+
   (defun-maybe image-normalize (format data)
     (if (memq format '(xbm xpm))
-	(list 'image ':type format ':data data)
+	(create-image data format 'data)
       (let ((image-file
 	     (make-temp-name
 	      (expand-file-name "tm" temporary-file-directory))))
 	(with-temp-buffer
 	  (insert data)
 	  (write-region-as-binary (point-min)(point-max) image-file))
-	(list 'image ':type format ':file image-file)
-	)))
+	(create-image image-file format))))
 
   (defun image-insert-at-point (image)
     (static-if (fboundp 'insert-image)
@@ -109,20 +117,17 @@
 		(sit-for 0)))
 	  (let ((file (plist-get (cdr image) ':file)))
 	    (and file (file-exists-p file)
-		 (delete-file file)
-		 )))
+		 (delete-file file))))
       (when (eq (plist-get (cdr image) ':type) 'xbm)
 	(save-restriction
 	  (narrow-to-region (point)(point))
 	  (insert (plist-get (cdr image) ':data))
 	  (let ((mark (set-marker (make-marker) (point))))
 	    (bitmap-insert-xbm-buffer (current-buffer))
-	    (delete-region (point-min) mark))
-	  ))))
+	    (delete-region (point-min) mark))))))
 
   (defsubst-maybe image-invalid-glyph-p (glyph)
-    (not (eq 'image (nth 0 glyph))))
-  ))
+    (not (eq 'image (nth 0 glyph))))))
 
 ;;
 ;; X-Face
@@ -134,17 +139,14 @@
     (autoload 'highlight-headers "highlight-headers"))
 
   (defun mime-preview-x-face-function-use-highlight-headers ()
-    (highlight-headers (point-min) (re-search-forward "^$" nil t) t)
-    )
+    (highlight-headers (point-min) (re-search-forward "^$" nil t) t))
   (add-hook 'mime-display-header-hook
-	    'mime-preview-x-face-function-use-highlight-headers)
-  )
+	    'mime-preview-x-face-function-use-highlight-headers))
  ((featurep 'mule)
   (require 'x-face-mule)
   (when (exec-installed-p uncompface-program exec-path)
     (add-hook 'mime-display-header-hook
-	      'x-face-decode-message-header))
-  ))
+	      'x-face-decode-message-header))))
 
 (defvar mime-image-format-alist
   '((image jpeg		jpeg)
@@ -168,8 +170,7 @@
        (list (cons 'type type)(cons 'subtype subtype)
 	     '(body . visible)
 	     (cons 'body-presentation-method #'mime-display-image)
-	     (cons 'image-format format))
-       ))))
+	     (cons 'image-format format))))))
 
 
 ;;; @ content filter for images
@@ -206,8 +207,7 @@
 		  (` (vector 'xbm :data
 			     (list width height (read cur))))
 		'(` (image :type xbm :width (, width) :height (, height)
-			   :data (, (read cur))))))))))
-  )
+			   :data (, (read cur)))))))))))
 
 (defun mime-display-image (entity situation)
   (message "Decoding image...")
