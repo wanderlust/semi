@@ -456,7 +456,7 @@ The compressed face will be piped to this command.")
 ;;; @ buffer setup
 ;;;
 
-(defun mime-view-setup-buffer (&optional ctl encoding ibuf obuf)
+(defun mime-view-setup-buffers (&optional ctl encoding ibuf obuf)
   (if ibuf
       (progn
 	(get-buffer ibuf)
@@ -828,7 +828,7 @@ button-2	Move to point under the mouse cursor
 	  (set-buffer buf)
 	  (erase-buffer)
 	  )))
-  (let ((ret (mime-view-setup-buffer ctl encoding ibuf obuf))
+  (let ((ret (mime-view-setup-buffers ctl encoding ibuf obuf))
 	(win-conf (current-window-configuration))
 	)
     (prog1
