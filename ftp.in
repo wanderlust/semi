@@ -2,12 +2,12 @@
 
   It is available from
 
-    ftp://ftp.jaist.ac.jp/pub/GNU/elisp/semi/
+    ftp://ftp.jaist.ac.jp/pub/GNU/elisp/semi/semi-API
 
 --[[message/external-body;
 	access-type=anon-ftp;
 	site="ftp.jaist.ac.jp";
-	directory="/pub/GNU/elisp/semi";
+	directory="/pub/GNU/elisp/semi/semi-API";
 	name="PACKAGE-VERSION.tar.gz";
 	mode=image]]
 Content-Type: application/octet-stream;
