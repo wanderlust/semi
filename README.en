@@ -51,8 +51,6 @@ Required environment
 	http://www.kanji.zinbun.kyoto-u.ac.jp/~tomo/comp/emacsen/lisp/
 							flim/flim-1.14/
 
-  PGP/MIME and application/pgp require mailcrypt or tiny-pgp package.
-
 
 Installation
 ============
