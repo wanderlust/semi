@@ -1,3 +1,13 @@
+1998-04-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI-CFG: Add "flim" instead of "rime" to 'load-path.
+
+1998-04-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-calist::field-match-method-as-default-rule):
+ 	New function; setup for calist-field-match-method for 'header and
+ 	'body.
+
 1998-04-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-pgp.el (mime-preview-condition): Add (message-button
