@@ -238,10 +238,10 @@
 	    (mime-tar-file-name
 	     (expand-file-name
 	      (concat (make-temp-name
-		       (expand-file-name "tm" mime/tmp-dir)) ".tar")))
+		       (expand-file-name "tm" mime-temp-directory)) ".tar")))
 	    (mime-tar-tmp-file-name
-	     (expand-file-name (make-temp-name
-				(expand-file-name "tm" mime/tmp-dir))))
+	     (expand-file-name
+	      (make-temp-name (expand-file-name "tm" mime-temp-directory))))
 	    new-buf)
 	(find-file mime-tar-tmp-file-name)
 	(setq new-buf (current-buffer))
