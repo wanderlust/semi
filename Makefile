@@ -2,8 +2,8 @@
 # Makefile for SEMI kernel.
 #
 
-VERSION = 1.6.0
 PACKAGE = remi
+VERSION = 1.6.1
 
 SHELL	= /bin/sh
 MAKE	= make

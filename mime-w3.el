@@ -40,8 +40,7 @@
       `(let ((color (color-name (face-background 'default))))
 	 (prog1
 	     (progn ,@body)
-	   (font-set-face-background 'default color
-				     (get-buffer gnus-article-buffer))
+	   (font-set-face-background 'default color (current-buffer))
 	   ))
     (cons 'progn body)))
 

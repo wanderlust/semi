@@ -278,8 +278,6 @@ buffer です。MIME 書面は entity を単位とする木構造ですが、この
 
 ** API
 
-*** 一般
-
 [buffer 局所変数] mime-mother-buffer
 
 	対応する親 buffer を示す。
@@ -302,24 +300,23 @@ buffer です。MIME 書面は entity を単位とする木構造ですが、この
 	       可能性があるからである。 
 
 
-[buffer 局所変数] mime-preview-original-major-mode
-
-	対応する mime-raw-buffer における major-mode を示す。
-
-
 [buffer 局所変数] mime-preview-original-window-configuration
 
 	mime-preview-buffer を作る前の window-configuration を収める。
 
 
-[text-property] mime-view-raw-buffer
-
-	この位置に対応する mime-raw-buffer を示す。
-
-
 [text-property] mime-view-entity
 
-	この位置に対応する entity 構造体を示す。
+	現在位置に対応する entity 構造体を示す。
+
+
+[関数] mime-preview-original-major-mode (&optional recursive)
+
+	現在位置に対応する entity の表象が存在する buffer の
+	major-mode を返す。
+
+	RECURSIVE に non-nil が指定された場合、始祖の major-mode を返
+	す。
 
 
 * entity
