@@ -1,5 +1,17 @@
 1999-11-04  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* pgg.el: Rename the field name `cipher-algorithm' to
+	`symmetric-key-algorithm'.
+	(pgg-verify-condition): Fix documentation.
+	(pgg-decrypt-condition): Ditto.
+
+1999-11-04  Katsumi Yamaoka <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-preview-message): Inherit the value of
+	`mime-edit-pgp-processing'.
+
+1999-11-04  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
 	* pgg.el (pgg-encrypt-region): Add interactive spec.
 	(pgg-decrypt-region): Ditto.
 	(pgg-sign-region): Ditto.
