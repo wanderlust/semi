@@ -72,7 +72,7 @@
 	     (method . mime-extract-current-entity)
 	     )
 	   'remove
-	   '((method "mime-file"  nil 'file 'type 'encoding 'mode 'name)
+	   '((method "tm-file"  nil 'file 'type 'encoding 'mode 'name)
 	     (mode . "extract"))
 	   'replacement)
 
