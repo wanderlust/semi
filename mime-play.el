@@ -336,7 +336,10 @@ window.")
   (or (mime-raw-get-uu-filename param encoding)
       (let (ret)
 	(or (if (or (and (setq ret (mime-read-Content-Disposition))
-			 (setq ret (assoc "filename" (cdr ret)))
+			 (setq ret
+			       (assoc
+				"filename"
+				(mime-content-disposition-parameters ret)))
 			 )
 		    (setq ret (assoc "name" param))
 		    (setq ret (assoc "x-name" param))

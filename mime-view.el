@@ -918,7 +918,9 @@ The compressed face will be piped to this command.")
   (or (std11-find-field-body '("Content-Description" "Subject"))
       (let (ret)
 	(if (or (and (setq ret (mime-read-Content-Disposition))
-		     (setq ret (assoc "filename" (cdr ret)))
+		     (setq ret
+			   (assoc "filename"
+				  (mime-content-disposition-parameters ret)))
 		     )
 		(setq ret (assoc "name" param))
 		(setq ret (assoc "x-name" param))
