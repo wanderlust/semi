@@ -185,10 +185,10 @@ To insert a signature file automatically, call the function
       ;;("charset" "" "ISO-2022-JP" "US-ASCII" "ISO-8859-1" "ISO-8859-8")
       )
      ("enriched")
-     ("x-latex")
      ("html")
      ("css") ; rfc2318
      ("xml") ; rfc2376
+     ("x-latex")
      ("x-rot13-47-48")
      )
     ("message"
@@ -245,10 +245,6 @@ To insert a signature file automatically, call the function
      nil
      "inline"		(("filename" . file))
      )
-    ("\\.rtf$"
-     "text"	"richtext"	nil
-     nil
-     nil		nil)
     ("\\.html$"
      "text"	"html"		nil
      nil
@@ -1022,9 +1018,8 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	    (insert "\n")
 	    (forward-char -1)
 	    ))
-      (if (and (member (cadr ret) '("enriched" "richtext"))
-	       (fboundp 'enriched-mode)
-	       )
+      (if (and (member (cadr ret) '("enriched"))
+	       (fboundp 'enriched-mode))
 	  (enriched-mode t)
 	(if (boundp 'enriched-mode)
 	    (enriched-mode -1)
