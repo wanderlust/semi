@@ -1,5 +1,11 @@
 1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* NEWS (Changes in SEMI 1.13): New section.
+
+	* NEWS (Changes in SEMI 1.12): New section.
+
+1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-pgp.el (mime-view-application/pgp): Don't expect called in
 	raw-buffer.
 	(mime-verify-application/pgp-signature): Likewise.
