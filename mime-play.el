@@ -663,7 +663,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
   "Internal method for mime-view to display ROT13-47-48 message."
   (let* ((new-name (format "%s-%s" (buffer-name)
 			   (mime-entity-number entity)))
-	 (mother mime-preview-buffer))
+	 (mother (current-buffer)))
     (let ((pwin (or (get-buffer-window mother)
 		    (get-largest-window)))
 	  (buf (get-buffer-create new-name)))
