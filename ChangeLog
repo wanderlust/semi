@@ -1,5 +1,13 @@
 1999-09-29  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* mime-view.el (mime-display-multipart/mixed): Share cell of
+	`major-mode'.
+	(mime-display-multipart/alternative): Likewise.
+	(mime-display-entity): Refer `major-mode' value of a situation
+	instead of buffer-local-variable `major-mode'.
+
+1999-09-29  MORIOKA Tomohiko  <tomo@m17n.org>
+
 	* mime-play.el (mime-preview-play-current-entity): Use
 	text-property `mime-view-situation' as the initial value of
 	acting-situation to add major-mode.
