@@ -1,3 +1,8 @@
+1998-11-12  Tanaka Akira  <akr@jaist.ac.jp>
+
+        * mime-view.el: (mime-display-text/x-vcard): Fix multibyteness
+	problem.
+
 1998-11-07  Tanaka Akira  <akr@jaist.ac.jp>
 
         * mime-view.el: (mime-display-text/x-vcard): Preserve encoding.

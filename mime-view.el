@@ -463,7 +463,7 @@ Each elements are regexp of field-name.")
 (defun mime-display-text/x-vcard (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
-    (insert (mime-entity-content entity))
+    (insert (string-as-multibyte (mime-entity-content entity)))
     (goto-char (point-min))
     (while (re-search-forward
             "\\(;\\(encoding=\\)?quoted-printable:\\)\\(\\(=[0-9A-F][0-9A-F]\\|=\r\n\\|[^\r\n]\\)*\\)"
