@@ -913,7 +913,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
     (mime-decode-string
      (mime-entity-body entity)
      (mime-view-default-content-transfer-encoding entity situation))
-    (mime-view-default-mime-charset entity situation)
+    (mime-view-default-charset entity situation)
     'CRLF)))
 
 ;;; stolen (and renamed) from mm-view.el.
@@ -1733,8 +1733,9 @@ If LINES is negative, scroll up LINES lines."
 		(string= encoding default-encoding))
       encoding)))
 
-(defun mime-view-default-mime-charset (entity situation)
-  (or (cdr (assq '*mime-charset situation))
+(defun mime-view-default-charset (entity situation)
+  (or (cdr (assq '*charset situation))
+      (cdr (assq 'charset situation))
       (static-if (fboundp 'coding-system-to-mime-charset)
 	  ;; might be specified by `universal-coding-system-argument'.
 	  (and coding-system-for-read
@@ -1747,26 +1748,26 @@ If LINES is negative, scroll up LINES lines."
 	    (intern (downcase charset-param))))
       default-mime-charset))
 
-(defun mime-view-read-mime-charset (entity situation)
+(defun mime-view-read-charset (entity situation)
   (static-if (featurep 'mule)
-      (let* ((default-mime-charset
-	       (mime-view-default-mime-charset entity situation))
-	     (mime-charset
+      (let* ((default-charset
+	       (mime-view-default-charset entity situation))
+	     (charset
 	      (intern (completing-read "MIME-charset: "
 				       (mapcar
 					(lambda (sym)
 					  (list (symbol-name sym)))
 					(mime-charset-list))
 				       nil t
-				       (symbol-name default-mime-charset)))))
-	(unless (eq mime-charset default-mime-charset)
-	  mime-charset))
-    default-mime-charset))
+				       (symbol-name default-charset)))))
+	(unless (eq charset default-charset)
+	  charset))
+    default-charset))
 
 (defun mime-preview-toggle-display (type &optional display)
   (let ((situation (mime-preview-find-boundary-info))
 	(sym (intern (concat "*" (symbol-name type))))
-	entity p-beg p-end encoding mime-charset)
+	entity p-beg p-end encoding charset)
     (setq p-beg (aref situation 0)
 	  p-end (aref situation 1)
 	  entity (aref situation 2)
@@ -1787,9 +1788,9 @@ If LINES is negative, scroll up LINES lines."
 	       (eq (cdr (assq sym situation)) 'visible))
       (if (setq encoding (mime-view-read-content-transfer-encoding
 			  entity situation))
-	  (put-alist '*encoding encoding situation))
-      (if (setq mime-charset (mime-view-read-mime-charset entity situation))
-	  (put-alist '*mime-charset mime-charset situation)))
+	  (setq situation (put-alist '*encoding encoding situation)))
+      (if (setq charset (mime-view-read-charset entity situation))
+	  (setq situation (put-alist '*charset charset situation))))
     (save-excursion
       (let ((inhibit-read-only t))
 	(delete-region p-beg p-end)
