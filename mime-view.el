@@ -383,18 +383,11 @@ Please redefine this function if you want to change default setting."
 ;;; @@ entity-header
 ;;;
 
-;;; @@@ entity header filter
-;;;
-
-(defvar mime-view-content-header-filter-alist nil)
-
-(defun mime-view-default-content-header-filter ()
-  (mime-view-cut-header)
-  (eword-decode-header)
-  )
-
-;;; @@@ entity field cutter
-;;;
+(defvar mime-header-presentation-method-alist nil
+  "Alist of major mode vs. corresponding header-presentation-method functions.
+Each element looks like (SYMBOL . FUNCTION).
+SYMBOL must be major mode in raw-buffer or t.  t means default.
+Interface of FUNCTION must be (ENTITY SITUATION).")
 
 (defvar mime-view-ignored-field-list
   '(".*Received" ".*Path" ".*Id" "References"
@@ -405,35 +398,9 @@ Please redefine this function if you want to change default setting."
   "All fields that match this list will be hidden in MIME preview buffer.
 Each elements are regexp of field-name.")
 
-(defvar mime-view-ignored-field-regexp
-  (concat "^"
-	  (apply (function regexp-or) mime-view-ignored-field-list)
-	  ":"))
-
 (defvar mime-view-visible-field-list '("Dnas.*" "Message-Id")
   "All fields that match this list will be displayed in MIME preview buffer.
 Each elements are regexp of field-name.")
-
-(defun mime-view-cut-header ()
-  (goto-char (point-min))
-  (while (re-search-forward mime-view-ignored-field-regexp nil t)
-    (let* ((beg (match-beginning 0))
-	   (end (match-end 0))
-	   (name (buffer-substring beg end))
-	   )
-      (catch 'visible
-	(let ((rest mime-view-visible-field-list))
-	  (while rest
-	    (if (string-match (car rest) name)
-		(throw 'visible nil)
-	      )
-	    (setq rest (cdr rest))))
-	(delete-region beg
-		       (save-excursion
-			 (if (re-search-forward "^\\([^ \t]\\|$\\)" nil t)
-			     (match-beginning 0)
-			   (point-max))))
-	))))
 
 
 ;;; @@ entity-body
@@ -815,9 +782,8 @@ The compressed face will be piped to this command.")
   (let* ((raw-buffer (mime-entity-buffer entity))
 	 (start (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))
-	 original-major-mode end-of-header e nb ne subj)
+	 end-of-header e nb ne subj)
     (set-buffer raw-buffer)
-    (setq original-major-mode major-mode)
     (goto-char start)
     (setq end-of-header (if (re-search-forward "^$" nil t)
 			    (1+ (match-end 0))
@@ -839,6 +805,9 @@ The compressed face will be piped to this command.")
 	   (eq (cdr (assq 'entity-button situation)) 'invisible))
 	  (header-is-visible
 	   (eq (cdr (assq 'header situation)) 'visible))
+	  (header-presentation-method
+	   (or (cdr (assq 'header-presentation-method situation))
+	       (cdr (assq major-mode mime-header-presentation-method-alist))))
 	  (body-presentation-method
 	   (cdr (assq 'body-presentation-method situation)))
 	  (children (mime-entity-children entity)))
@@ -849,18 +818,20 @@ The compressed face will be piped to this command.")
 	  (if (mime-view-entity-button-visible-p entity)
 	      (mime-view-insert-entity-button entity subj)
 	    ))
-      (if header-is-visible
-	  (save-restriction
-	    (narrow-to-region (point)(point))
-	    (insert-buffer-substring raw-buffer start end-of-header)
-	    (let ((f (cdr (assq original-major-mode
-				mime-view-content-header-filter-alist))))
-	      (if (functionp f)
-		  (funcall f)
-		(mime-view-default-content-header-filter)
-		))
-	    (run-hooks 'mime-view-content-header-filter-hook)
-	    ))
+      (when header-is-visible
+	(if header-presentation-method
+	    (funcall header-presentation-method entity situation)
+	  (mime-insert-decoded-header
+	   entity
+	   mime-view-ignored-field-list mime-view-visible-field-list
+	   (save-excursion
+	     (set-buffer raw-buffer)
+	     (if (eq (cdr (assq major-mode mime-raw-representation-type))
+		     'binary)
+		 default-mime-charset)
+	     )))
+	(insert "\n")
+	)
       (cond ((eq body-presentation-method 'with-filter)
 	     (let ((body-filter (cdr (assq 'body-filter situation))))
 	       (save-restriction
