@@ -1,6 +1,16 @@
 SEMI NEWS --- history of major-changes.
 Copyright (C) 1998 Free Software Foundation, Inc.
 
+* Changes in SEMI 1.10
+
+** Function `mime-text-insert-decoded-body' was abolished
+
+  SEMI 1.9 uses `mime-insert-text-content' of FLIM 1.11 API instead of
+`mime-text-insert-decoded-body'.
+
+  Now `mime-view-caesar' does not run `mime-text-decode-hook'.
+
+
 * Changes in SEMI 1.9
 
 ** User option `mime-encoding-list'
