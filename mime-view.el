@@ -1473,9 +1473,9 @@ button-2	Move to point under the mouse cursor
 ;;; @@ utility
 ;;;
 
-(defun mime-preview-find-boundary-info (&optional get-mother)
+(defun mime-preview-find-boundary-info (&optional with-children)
   "Return boundary information of current part.
-If GET-MOTHER, refer boundary surrounding current part and its branches."
+If WITH-CHILDREN, refer boundary surrounding current part and its branches."
   (let (entity
 	p-beg p-end
 	entity-node-id len)
@@ -1504,7 +1504,7 @@ If GET-MOTHER, refer boundary surrounding current part and its branches."
 	  ((null entity-node-id)
 	   (setq p-end (point-max))
 	   )
-	  (get-mother
+	  (with-children
 	   (save-excursion
 	     (catch 'tag
 	       (let (e i)
