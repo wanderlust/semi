@@ -1,3 +1,8 @@
+2002-08-28  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-user-agent-value): Add
+	`xemacs-extra-name'.
+
 2000-10-19  Takanori Saneto  <sanewo@ba2.so-net.ne.jp>
 
 	* pgg-pgp.el (pgg-pgp-process-region): bind process-environment
