@@ -1,3 +1,24 @@
+1998-05-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-preview-move-to-previous): Must regard
+	previous entity separated by null property region.
+	(mime-preview-move-to-next): Must regard next entity separated by
+	null property region.
+
+1998-05-03  Simon Josefsson  <jas@pdc.kth.se>
+
+       * mime-view.el (mime-preview-move-to-previous): check that new
+       prop is non-null
+
+       * mime-view.el (mime-preview-move-to-next): skip leading null
+       props, check that new prop is non-null
+
+1998-05-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el: Use 'ctree-set-calist-with-default instead of
+	'ctree-set-calist-strictly to set up mailcap entries.
+
+
 1998-05-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* WEMI: Version 1.4.1 (Tsujid-Dò) was released.-A

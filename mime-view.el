@@ -525,11 +525,11 @@ Please press `v' key in this buffer."
 	    (setq entry (cdr entry))
 	    )
 	  (setq shared (nreverse shared))
-	  (ctree-set-calist-strictly
+	  (ctree-set-calist-with-default
 	   'mime-acting-condition
 	   (append shared (list '(mode . "play")(cons 'method (cdr view)))))
 	  (if print
-	      (ctree-set-calist-strictly
+	      (ctree-set-calist-with-default
 	       'mime-acting-condition
 	       (append shared
 		       (list '(mode . "print")(cons 'method (cdr view))))
@@ -1329,10 +1329,13 @@ variable `mime-view-over-to-previous-method-alist'."
   (while (null (get-text-property (point) 'mime-view-entity))
     (backward-char)
     )
-  (let ((point
-	 (previous-single-property-change (point) 'mime-view-entity)))
+  (let ((point (previous-single-property-change (point) 'mime-view-entity)))
     (if point
-	(goto-char point)
+	(if (get-text-property (1- point) 'mime-view-entity)
+	    (goto-char point)
+	  (goto-char (1- point))
+	  (mime-preview-move-to-previous)
+	  )
       (let ((f (assq mime-preview-original-major-mode
 		     mime-view-over-to-previous-method-alist)))
 	(if f
@@ -1345,9 +1348,16 @@ variable `mime-view-over-to-previous-method-alist'."
 If there is no previous entity, it calls function registered in
 variable `mime-view-over-to-next-method-alist'."
   (interactive)
+  (while (null (get-text-property (point) 'mime-view-entity))
+    (forward-char)
+    )
   (let ((point (next-single-property-change (point) 'mime-view-entity)))
     (if point
-	(goto-char point)
+	(progn
+	  (goto-char point)
+	  (if (null (get-text-property point 'mime-view-entity))
+	      (mime-preview-move-to-next)
+	    ))
       (let ((f (assq mime-preview-original-major-mode
 		     mime-view-over-to-next-method-alist)))
 	(if f
