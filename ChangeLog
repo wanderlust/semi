@@ -1,3 +1,8 @@
+1998-09-13  Shin'ichiro Tanaka <tanaka@ifos.se.fujitsu.co.jp>
+
+	* mime-edit.el (mime-content-types): Delete text/richtext and add
+	text/css and text/xml (cf. [tm-ja:3387]).
+
 1998-09-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-edit.el (mime-edit-insert-user-agent-field): New variable
