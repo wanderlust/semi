@@ -70,13 +70,13 @@
        (or running-xemacs
 	   (and (featurep 'mule)(module-installed-p 'bitmap))
 	   ))
-  "*If it is non-nil, semi-setup sets up to use tm-image.")
+  "*If it is non-nil, semi-setup sets up to use mime-image.")
 
 (if mime-setup-enable-inline-image
     (call-after-loaded 'mime-view
 		       (function
 			(lambda ()
-			  (require 'tm-image)
+			  (require 'mime-image)
 			  )))
   )
 
@@ -98,15 +98,14 @@
 ;;; @ for mh-e
 ;;;
 
-(let ((le (function
-	   (lambda ()
-	     (require 'tm-mh-e)
-	     ))
-	  ))
-  (call-after-loaded 'mh-e le 'mh-folder-mode-hook)
-  (if (not (featurep 'mh-e))
-      (add-hook 'mh-letter-mode-hook le)
-    ))
+(defun semi-setup-load-emh ()
+  (require 'emh)
+  )
+
+(call-after-loaded 'mh-e 'semi-setup-load-emh 'mh-folder-mode-hook)
+(or (featurep 'mh-e)
+    (add-hook 'mh-letter-mode-hook 'semi-setup-load-emh)
+    )
 
 
 ;;; @ for Gnus
