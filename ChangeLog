@@ -4,9 +4,6 @@
 
 1999-05-27  MORIOKA Tomohiko  <tomo@m17n.org>
 
-	* semi-def.el (mime-add-condition): Enter to the calist-package
-	`mime-view' before call a seting function.
-
 	* mime-play.el (mime-play-entity): Enter to the calist-package
 	`mime-view' before call `ctree-find-calist'.
 
