@@ -63,17 +63,15 @@
 ;;; It is based on draft-kazu-pgp-mime-00.txt (PGP-kazu).
 
 (defun mime-view-application/pgp (entity situation)
-  (let* ((p-win (or (get-buffer-window mime-preview-buffer)
+  (let* ((p-win (or (get-buffer-window (current-buffer))
 		    (get-largest-window)))
 	 (new-name
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
-	 (mother mime-preview-buffer)
+	 (mother (current-buffer))
 	 representation-type)
     (set-buffer (get-buffer-create new-name))
     (erase-buffer)
-    (insert-buffer-substring (mime-entity-buffer entity)
-			     (mime-entity-point-min entity)
-			     (mime-entity-point-max entity))
+    (mime-insert-entity entity)
     (cond ((progn
 	     (goto-char (point-min))
 	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
