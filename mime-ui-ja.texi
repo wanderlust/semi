@@ -334,6 +334,7 @@ composer です。
 * other MIME-Edit operations::  mime-edit-mode におけるその他の操作
 * file-type specification::     挿入される file に対する tag の決定
 * transfer level::              
+* message/partial sending::     Splitting
 @end menu
 
 @node mime-edit-mode, single-part tags, MIME-Edit, MIME-Edit
@@ -587,7 +588,7 @@ Content-Disposition field の parameter
 
 
 
-@node transfer level,  , file-type specification, MIME-Edit
+@node transfer level, message/partial sending, file-type specification, MIME-Edit
 @section transfer level
 @cindex transfer level
 
@@ -644,6 +645,37 @@ transfer level は message header (@ref{header}) には関係しない。MIME
 body において、8bit の data を使えるように STD 11 (@ref{(mime-ja)STD 11}) を拡張しているが、message header では us-ascii
 (@ref{(mime-ja)us-ascii}) のみを用いることを求めている。
 @end quotation
+
+
+
+@node message/partial sending,  , transfer level, MIME-Edit
+@section Splitting
+
+@defvar mime-edit-split-message
+
+Split large message if it is non-nil.
+@end defvar
+
+
+@defvar mime-edit-message-default-max-lines
+
+Default maximum lines of a message.
+@end defvar
+
+
+@defvar mime-edit-message-max-lines-alist
+
+Alist of major-mode vs maximum lines of a message.@refill
+
+If it is not specified for a major-mode,
+@code{mime-edit-message-default-max-lines} is used.
+@end defvar
+
+
+@defvar mime-edit-split-blind-field-regexp
+
+Regular expression to match field-name to be ignored when split sending.
+@end defvar
 
 
 

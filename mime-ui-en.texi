@@ -331,6 +331,7 @@ URL-button を押せば、その WWW browser が起動される@refill
 * other MIME-Edit operations::  Other operations
 * file-type specification::     How to detect tag for inserted file
 * transfer level::              
+* message/partial sending::     Splitting
 @end menu
 
 @node mime-edit-mode, single-part tags, MIME-Edit, MIME-Edit
@@ -574,7 +575,7 @@ Example: Specify application/rtf as default media type for
 
 
 
-@node transfer level,  , file-type specification, MIME-Edit
+@node transfer level, message/partial sending, file-type specification, MIME-Edit
 @section transfer level
 @cindex transfer level
 
@@ -629,6 +630,37 @@ transfer level is only for body, not for message header (@ref{header}).
 MIME extends RFC 822 (@ref{(mime-en)RFC 822}) to use 8bit data in body,
 but it requires to use us-ascii (@ref{(mime-en)us-ascii}) in header.
 @end quotation
+
+
+
+@node message/partial sending,  , transfer level, MIME-Edit
+@section Splitting
+
+@defvar mime-edit-split-message
+
+Split large message if it is non-nil.
+@end defvar
+
+
+@defvar mime-edit-message-default-max-lines
+
+Default maximum lines of a message.
+@end defvar
+
+
+@defvar mime-edit-message-max-lines-alist
+
+Alist of major-mode vs maximum lines of a message.@refill
+
+If it is not specified for a major-mode,
+@code{mime-edit-message-default-max-lines} is used.
+@end defvar
+
+
+@defvar mime-edit-split-blind-field-regexp
+
+Regular expression to match field-name to be ignored when split sending.
+@end defvar
 
 
 
