@@ -33,6 +33,10 @@
 (autoload 'mule-caesar-region "mule-caesar"
   "Caesar rotation of current region." t)
 
+(or (fboundp 'last*)
+    (defalias 'last* 'last)
+    )
+
 
 ;;; @ variables
 ;;;
