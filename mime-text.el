@@ -139,7 +139,7 @@ local variable `mime-text-decoder' and variable
       (insert "\n")
     )
   (mime-text-add-url-buttons)
-  (run-hooks 'mime-view-plain-text-preview-hook)
+  (run-hooks 'mime-preview-text/plain-hook)
   )
 
 (defun mime-preview-filter-for-text/richtext (situation)
