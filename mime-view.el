@@ -767,7 +767,7 @@ Each elements are regexp of field-name.")
 	(if (and mime-preview-inline-fontify
 		 (mime-entity-filename entity))	;should be an attachment.
 	    (mime-display-inline-fontify entity)
-	  (mime-insert-entity-content entity))
+	  (mime-insert-text-content entity))
       (error (progn
 	       (message "Can't decode current entity.")
 	       (sit-for 1))))
@@ -919,7 +919,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
       (buffer-disable-undo)
       (kill-all-local-variables)
       (erase-buffer)
-      (mime-insert-entity-content entity)
+      (mime-insert-text-content entity)
       (unwind-protect
 	  (progn
 	    (if mode
