@@ -60,7 +60,7 @@ raw-buffer.")
       (mime-text-decode-buffer charset)
       ))
 
-(defun mime-preview/decode-text-buffer (charset encoding)
+(defun mime-decode-text-body (charset encoding)
   (mime-decode-region (point-min) (point-max) encoding)
   (let ((text-decoder
 	 (save-excursion
@@ -98,7 +98,7 @@ raw-buffer.")
 ;;;
 
 (defun mime-preview/filter-for-text/plain (ctype params encoding)
-  (mime-preview/decode-text-buffer (cdr (assoc "charset" params)) encoding)
+  (mime-decode-text-body (cdr (assoc "charset" params)) encoding)
   (goto-char (point-max))
   (if (not (eq (char-after (1- (point))) ?\n))
       (insert "\n")
@@ -121,7 +121,7 @@ raw-buffer.")
 	 (beg (point-min))
 	 )
     (remove-text-properties beg (point-max) '(face nil))
-    (mime-preview/decode-text-buffer charset encoding)
+    (mime-decode-text-body charset encoding)
     (richtext-decode beg (point-max))
     ))
 
@@ -130,7 +130,7 @@ raw-buffer.")
 	 (beg (point-min))
 	 )
     (remove-text-properties beg (point-max) '(face nil))
-    (mime-preview/decode-text-buffer charset encoding)
+    (mime-decode-text-body charset encoding)
     (enriched-decode beg (point-max))
     ))
 
