@@ -260,7 +260,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 ;;;
 ;;; It is based on RFC 2015.
 
-(defun mime-pgp-decrypt-application/pgp-encrypted (beg end cal)
+(defun mime-method-to-decrypt-application/pgp-encrypted (beg end cal)
   (let* ((cnum (mime-article/point-content-number beg))
 	 (rcnum (reverse cnum))
 	 (rmcnum (cdr rcnum))
@@ -278,7 +278,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 
 (set-atype 'mime-acting-condition
 	   '((type . "application/pgp-encrypted")
-	     (method . mime-pgp-decrypt-application/pgp-encrypted)
+	     (method . mime-method-to-decrypt-application/pgp-encrypted)
 	     ))
 
 
