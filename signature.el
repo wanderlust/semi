@@ -61,6 +61,8 @@ if non-nil. [signature.el]")
 ;;;	    (("To" . ("sim" "oku"))   . "~/.signature-formal")
 ;;;	    ))
 
+(autoload 'signature-check-in-bbdb "tm-bbdb")
+
 (defun signature/get-signature-file-name ()
   (catch 'tag
     (let ((r signature-file-alist) cell b f)
@@ -155,38 +157,6 @@ named <signature-file-name>-DISTRIBUTION interactively."
   (if signature-insert-at-eof
 	(call-interactively 'signature/insert-signature-at-eof)
     (call-interactively 'signature/insert-signature-at-point)))
-
-(defun signature-check-in-bbdb (address)
-  "Returns 'sigtype field from BBDB for user specified by ADDRESS"
-  (require 'bbdb)
-  (require 'bbdb-com)
-  (let ((addr-comp (mail-extract-address-components address))
-	full-name net-name records record sigtype)
-    (setq full-name (car addr-comp))
-    (setq net-name (mapconcat (lambda (x) x) (cdr addr-comp) "\\|"))
-    (setq records
-	  (or
-	   (and full-name
-		(bbdb-search (bbdb-records) full-name))
-	   (and net-name
-		(bbdb-search (bbdb-records) nil nil net-name))))
-    (setq record (car records))
-    (setq records (cdr records))
-    (setq sigtype (and record (bbdb-record-getprop record 'sigtype)))
-    (while (and (not sigtype) records)
-      (setq record (car records))
-      (setq records (cdr records))
-      (setq sigtype (bbdb-record-getprop record 'sigtype)))
-    (if sigtype
-	(message (concat "Using signature for: "
-			 (bbdb-record-firstname record) " "
-			 (bbdb-record-lastname record)
-			 (and (bbdb-record-aka record)
-			      (concat " (AKA: "
-				      (car (bbdb-record-aka record))
-				      ")"))
-			 " <" (car (bbdb-record-net record)) ">")))
-    sigtype))
 
 
 ;;; @ end
