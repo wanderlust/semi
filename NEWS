@@ -7,15 +7,15 @@ Copyright (C) 1998 Free Software Foundation, Inc.
 
 *** Setting variable about visible body
 
-  `mime-view-visible-media-type-list' and
-`mime-view-content-filter-alist' were abolished.  Please use
-`mime-preview-condition' instead.
+  'mime-view-visible-media-type-list and
+'mime-view-content-filter-alist were abolished.  Please use
+'mime-preview-condition instead.
 
-  Notice that `mime-preview-condition' is not list of
+  Notice that 'mime-preview-condition is not list of
 media-type/subtype string nor association-list.  It uses new
 data-structure `ctree' (condition-tree; it is introduced to replace
-`atype').  Function `ctree-set-calist-strictly' and
-`ctree-set-calist-with-default' may be useful to modify it (`calist'
+`atype').  Function 'ctree-set-calist-strictly and
+'ctree-set-calist-with-default may be useful to modify it (`calist'
 (condition-alist) is as same as `atype').
 
 
@@ -37,16 +37,61 @@ New interfaces are following:
 
 *** entity representation
 
-  Structure `mime-entity-info' was renamed to `mime-entity'.  So
-various functions were renamed too.
+  Structure 'mime-entity-info was renamed to 'mime-entity.  So various
+functions were renamed too.
 
 
-*** Interface for generators or filters for entity elements
+*** Interface for entity-button generators
 
-  Interface of generators or filters for entity elements were changed.
-New interfaces are following:
+  Interface of entity-button generators was changed.  New interfaces
+is following:
 
-    mime-view-insert-entity-button (entity message-info subj)
+    mime-view-insert-entity-button (entity message-info subject)
+
+
+*** mime-preview-condition and preview-situation
+
+  Conditions about preview generation are unified to
+'mime-preview-condition.  Namely other variables, such as
+'mime-view-visible-media-type-list, 'mime-view-content-filter-alist,
+were abolished.
+
+  Preview-situation is generated from entity information, running
+environment and 'mime-preview-condition.  These elements are checked
+to match with each other. (it is similar to acting-situation)
+
+  Format of preview-situation is association-list.  Following key is
+pre-defined:
+
+	'type			  media-type
+	'subtype		  media-subtype
+	'encoding		  content-transfer-encoding
+	'major-mode		  major-mode of MUA
+	<STRING>		  attribute of Content-Type field.
+	'body-presentation-method body-presentation-method
+
+If 'body-presentation-method is 'with-filter, 'body-filter is used to
+specify body-filter function.  If 'body-presentation-method is
+function, it is called to generate presentation of entity body.
+
+Setting for message/partial button is specified by
+'mime-preview-condition instead of hard-coding.
+
+
+*** Interface for body-filter
+
+  Interface of body-filter was changed.  New interfaces is following:
+
+    <body-filter> (situation)
+
+Current pre-defined filters are following:
+
+	mime-view-filter-for-text/plain (situation)
+	mime-view-filter-for-text/richtext (situation)
+	mime-view-filter-for-text/enriched (situation)
+	mime-view-filter-for-image (situation) ; if available
+
+'mime-view-filter-for-application/postscript was abolished.
 
 
 *** Format of mime-acting-condition (acting-situation)
