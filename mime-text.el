@@ -64,28 +64,33 @@ See also variable `mime-charset-coding-system-alist'."
       (mime-text-decode-buffer charset)
       ))
 
-(defun mime-decode-text-body (charset encoding)
+(defun mime-decode-text-body (situation)
   "Decode current buffer as text body.
-It decodes MIME-encoding as ENCODING then code-converts as MIME
-CHARSET.  CHARSET is SYMBOL and ENCODING is nil or STRING.
-
-It calls text decoder for MIME charset specified by buffer local
-variable `mime-text-decoder' and variable `mime-text-decoder-alist'."
-  (mime-decode-region (point-min) (point-max) encoding)
-  (goto-char (point-min))
-  (while (search-forward "\r\n" nil t)
-    (replace-match "\n")
-    )
-  (let ((text-decoder
-	 (save-excursion
-	   (set-buffer mime-raw-buffer)
-	   (or mime-text-decoder
-	       (cdr (or (assq major-mode mime-text-decoder-alist)
-			(assq t mime-text-decoder-alist)))
-	       ))))
-    (and (functionp text-decoder)
-	 (funcall text-decoder charset encoding)
-	 )))
+It decodes MIME-encoding then code-converts as MIME-charset.
+MIME-encoding is value of field 'encoding of SITUATION.  It must be
+'nil or string.  MIME-charset is value of field \"charset\" of
+SITUATION.  It must be symbol.
+This function calls text-decoder for MIME-charset specified by buffer
+local variable `mime-text-decoder' and variable
+`mime-text-decoder-alist'."
+  (let ((encoding (cdr (assq 'encoding situation))))
+    (mime-decode-region (point-min) (point-max) encoding)
+    (goto-char (point-min))
+    (while (search-forward "\r\n" nil t)
+      (replace-match "\n")
+      )
+    (let ((text-decoder
+	   (save-excursion
+	     (set-buffer mime-raw-buffer)
+	     (or mime-text-decoder
+		 (cdr (or (assq major-mode mime-text-decoder-alist)
+			  (assq t mime-text-decoder-alist)))
+		 ))))
+      (and (functionp text-decoder)
+	   (funcall text-decoder (cdr (assoc "charset" situation)) encoding)
+	   ))
+    (run-hooks 'mime-text-decode-hook)
+    ))
 
 
 ;;; @ for URL
@@ -112,8 +117,7 @@ variable `mime-text-decoder' and variable `mime-text-decoder-alist'."
 ;;;
 
 (defun mime-view-filter-for-text/plain (situation)
-  (mime-decode-text-body (cdr (assoc "charset" situation))
-			 (cdr (assq 'encoding situation)))
+  (mime-decode-text-body situation)
   (goto-char (point-max))
   (if (not (eq (char-after (1- (point))) ?\n))
       (insert "\n")
@@ -132,18 +136,16 @@ variable `mime-text-decoder' and variable `mime-text-decoder-alist'."
   )
 
 (defun mime-view-filter-for-text/richtext (situation)
-  (let* ((beg (point-min)))
+  (let ((beg (point-min)))
     (remove-text-properties beg (point-max) '(face nil))
-    (mime-decode-text-body (cdr (assoc "charset" situation))
-			   (cdr (assq 'encoding situation)))
+    (mime-decode-text-body situation)
     (richtext-decode beg (point-max))
     ))
 
 (defun mime-view-filter-for-text/enriched (situation)
-  (let* ((beg (point-min)))
+  (let ((beg (point-min)))
     (remove-text-properties beg (point-max) '(face nil))
-    (mime-decode-text-body (cdr (assoc "charset" situation))
-			   (cdr (assq 'encoding situation)))
+    (mime-decode-text-body situation)
     (enriched-decode beg (point-max))
     ))
 
