@@ -1,5 +1,8 @@
 1998-06-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* MIME-View-API-ja.ol: Abolish description about
+	`mime-preview-original-major-mode'.
+
 	* NEWS (Changes in SEMI 1.6): New chapter.
 
 	* TODO (multipart/related support): New item.
