@@ -112,7 +112,6 @@
 (require 'mail-utils)
 (require 'mel)
 (require 'mime-view)
-(require 'eword-encode)
 (require 'signature)
 (require 'alist)
 
