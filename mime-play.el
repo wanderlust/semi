@@ -123,14 +123,10 @@ is selected from variable `mime-acting-condition'.  If MODE is
 specified, play as it.  Default MODE is \"play\"."
   (let ((beg (mime-entity-point-min entity-info))
 	(end (mime-entity-point-max entity-info))
-	(c-type (mime-entity-media-type entity-info))
-	(c-subtype (mime-entity-media-subtype entity-info))
-	(params (mime-entity-parameters entity-info))
-	(encoding (mime-entity-encoding entity-info))
-	)
-    (or c-type
-	(setq c-type 'text
-	      c-subtype 'plain))
+	(content-type (mime-entity-content-type entity-info))
+	(encoding (mime-entity-encoding entity-info)))
+    (or content-type
+	(setq content-type (make-mime-content-type 'text 'plain)))
     ;; Check for VM
     (if (< beg (point-min))
 	(setq beg (point-min))
@@ -139,11 +135,9 @@ specified, play as it.  Default MODE is \"play\"."
 	(setq end (point-max))
       )
     (let (method cal ret)
-      (setq cal (list* (cons 'type c-type)
-		       (cons 'subtype c-subtype)
+      (setq cal (list* (cons 'major-mode major-mode)
 		       (cons 'encoding encoding)
-		       (cons 'major-mode major-mode)
-		       params))
+		       content-type))
       (if mode
 	  (setq cal (cons (cons 'mode mode) cal))
 	)
@@ -188,10 +182,11 @@ specified, play as it.  Default MODE is \"play\"."
 	    (t
 	     (mime-show-echo-buffer
 	      "No method are specified for %s\n"
-	      (mime-type/subtype-string c-type c-subtype))
-	     ))
-      )
-    ))
+	      (mime-type/subtype-string
+	       (mime-content-type-primary-type content-type)
+	       (mime-content-type-subtype content-type))
+	      )))
+      )))
 
 
 ;;; @ external decoder
