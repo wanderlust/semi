@@ -1,3 +1,8 @@
+2000-02-15  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-follow-current-entity): Try to be
+	compatible with FSF Emacs.
+
 2000-02-14  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* EMY 1.13.3 is released.

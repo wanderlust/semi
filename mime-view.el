@@ -1517,8 +1517,13 @@ It calls following-method selected from variable
 	(erase-buffer)
 	(unless header-exists
 	  (insert ?\n))
-	(insert (buffer-substring-no-properties (car position)
-						(cdr position) the-buf))
+	;; Compatibility kludge.
+	;; FSF Emacs can only take substring of current-buffer.
+	(insert
+	 (save-excursion
+	   (set-buffer the-buf)
+	   (buffer-substring-no-properties (car position)
+					   (cdr position))))
 	(goto-char (point-min))
 	(let ((current-entity
 	       (if (and (eq (mime-entity-media-type entity) 'message)
