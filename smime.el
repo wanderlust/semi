@@ -193,9 +193,7 @@
 	(pop files)))))
 
 (defun smime-process-region (start end program args)
-  (let* ((errors-file-name
-	  (concat temporary-file-directory 
-		  (make-temp-name "smime-errors")))
+  (let* ((errors-file-name (make-temp-file "smime-errors"))
 	 (args (append args (list (concat "2>" errors-file-name))))
 	 (shell-file-name smime-shell-file-name)
 	 (shell-command-switch smime-shell-command-switch)
@@ -297,8 +295,7 @@ a detached signature."
   "Verify the current region between START and END.
 If the optional 3rd argument SIGNATURE is non-nil, it is treated as
 the detached signature of the current region."
-  (let* ((basename (expand-file-name "smime" temporary-file-directory))
-	 (orig-file (make-temp-name basename))
+  (let* ((orig-file (make-temp-file "smime"))
 	 (orig-mode (default-file-modes)))
     (unwind-protect
 	(progn

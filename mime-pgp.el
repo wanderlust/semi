@@ -141,8 +141,7 @@
 		   (1- knum)
 		 (1+ knum)))
 	 (orig-entity (nth onum (mime-entity-children mother)))
-	 (basename (expand-file-name "tm" temporary-file-directory))
-	 (sig-file (concat (make-temp-name basename) ".asc"))
+	 (sig-file (make-temp-file "tm" nil ".asc"))
 	 status)
     (save-excursion 
       (mime-show-echo-buffer)
@@ -219,8 +218,7 @@
 		   (1- knum)
 		 (1+ knum)))
 	 (orig-entity (nth onum (mime-entity-children mother)))
-	 (basename (expand-file-name "tm" temporary-file-directory))
-	 (sig-file (concat (make-temp-name basename) ".asc"))
+	 (sig-file (make-temp-file "tm" nil ".asc"))
 	 status)
     (save-excursion 
       (mime-show-echo-buffer)

@@ -1,3 +1,31 @@
+2003-05-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* pgg-gpg.el (pgg-gpg-process-region): Use `make-temp-file' instead of
+	`make-temp-name'.
+
+	* pgg-pgp5.el (pgg-pgp5-process-region): Ditto.
+	(pgg-scheme-verify-region): Ditto.
+	(pgg-scheme-snarf-keys-region): Ditto.
+
+	* pgg-pgp.el (pgg-pgp-process-region): Ditto.
+	(pgg-scheme-verify-region): Ditto.
+	(pgg-scheme-snarf-keys-region): Ditto.
+
+	* smime.el (smime-process-region): Ditto.
+	(smime-verify-region): Ditto.
+
+	* mime-pgp.el (mime-verify-application/pgp-signature): Ditto.
+	(mime-verify-application/pkcs7-signature): Ditto.
+
+	* mime-play.el (mime-activate-mailcap-method): Make a temporary
+	directory of a temporary file for the mailcap application.
+	(mime-mailcap-method-sentinel): Follow the change above.
+	(mime-store-message/partial-piece): Set `default-file-modes' for
+	`make-directory'.
+
+	* mime-edit.el (mime-edit-split-and-send): Remove local variable
+	`mime-edit-draft-file-name'.
+
 2003-05-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* mime-edit.el (turn-on-mime-edit): Protect 1st arg of `message'.

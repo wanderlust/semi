@@ -141,11 +141,10 @@ specified, play as it.  Default MODE is \"play\"."
 (defun mime-activate-mailcap-method (entity situation)
   (let ((method (cdr (assoc 'method situation)))
 	(name (mime-entity-safe-filename entity)))
-    (setq name
-	  (if (and name (not (string= name "")))
-	      (expand-file-name name temporary-file-directory)
-	    (make-temp-name
-	     (expand-file-name "EMI" temporary-file-directory))))
+    (setq name (expand-file-name (if (and name (not (string= name "")))
+				     name
+				   (make-temp-name "EMI"))
+				 (make-temp-file "EMI" 'directory)))
     (mime-write-entity-content entity name)
     (message "External method is starting...")
     (let ((process
@@ -162,9 +161,10 @@ specified, play as it.  Default MODE is \"play\"."
 
 (defun mime-mailcap-method-sentinel (process event)
   (let ((file (cdr (assq process mime-mailcap-method-filename-alist))))
-    (if (file-exists-p file)
+    (when (file-exists-p file)
+      (ignore-errors
 	(delete-file file)
-      ))
+	(delete-directory (file-name-directory file)))))
   (remove-alist 'mime-mailcap-method-filename-alist process)
   (message "%s %s" process event))
 
@@ -354,13 +354,24 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	 (number (cdr (assoc "number" cal)))
 	 (total (cdr (assoc "total" cal)))
 	 file
-	 (mother (current-buffer)))
+	 (mother (current-buffer))
+	 orig-modes (default-file-modes))
     (or (file-exists-p root-dir)
-	(make-directory root-dir))
+	(unwind-protect
+	    (progn
+	      (set-default-file-modes 448)
+	      (make-directory root-dir))
+	  (set-default-file-modes orig-modes)))
     (setq id (replace-as-filename id))
     (setq root-dir (concat root-dir "/" id))
+
     (or (file-exists-p root-dir)
-	(make-directory root-dir))
+	(unwind-protect
+	    (progn
+	      (set-default-file-modes 448)
+	      (make-directory root-dir))
+	  (set-default-file-modes orig-modes)))
+
     (setq file (concat root-dir "/FULL"))
     (if (file-exists-p file)
 	(let ((full-buf (get-buffer-create "FULL"))

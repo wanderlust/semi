@@ -2606,11 +2606,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	    (or (cdr (assq major-mode mime-edit-message-max-lines-alist))
 		mime-edit-message-default-max-lines))
       )
-  (let* ((mime-edit-draft-file-name
-	  (or (buffer-file-name)
-	      (make-temp-name
-	       (expand-file-name "mime-draft" temporary-file-directory))))
-	 (separator mail-header-separator)
+  (let* ((separator mail-header-separator)
 	 (id (concat "\""
 		     (replace-space-with-underline (current-time-string))
 		     "@" (system-name) "\"")))

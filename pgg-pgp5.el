@@ -83,9 +83,7 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
 	    (luna-make-entity 'pgg-scheme-pgp5))))
 
 (defun pgg-pgp5-process-region (start end passphrase program args)
-  (let* ((errors-file-name
-	  (concat temporary-file-directory
-		  (make-temp-name "pgg-errors")))
+  (let* ((errors-file-name (make-temp-file "pgg-errors"))
 	 (args
 	  (append args
 		  pgg-pgp5-extra-args
@@ -204,8 +202,7 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
 
 (luna-define-method pgg-scheme-verify-region ((scheme pgg-scheme-pgp5)
 					      start end &optional signature)
-  (let* ((basename (expand-file-name "pgg" temporary-file-directory))
-	 (orig-file (make-temp-name basename))
+  (let* ((orig-file (make-temp-file "pgg"))
 	 (args '("+verbose=1" "+batchmode=1" "+language=us"))
 	 (orig-mode (default-file-modes)))
     (unwind-protect
@@ -239,8 +236,7 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
 (luna-define-method pgg-scheme-snarf-keys-region ((scheme pgg-scheme-pgp5)
 						  start end)
   (let* ((pgg-pgp5-user-id (or pgg-pgp5-user-id pgg-default-user-id))
-	 (basename (expand-file-name "pgg" temporary-file-directory))
-	 (key-file (make-temp-name basename))
+	 (key-file (make-temp-file "pgg"))
 	 (args
 	  (list "+verbose=1" "+batchmode=1" "+language=us" "-a"
 		key-file)))
