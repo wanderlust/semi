@@ -36,6 +36,8 @@
 (autoload 'mule-caesar-region "mule-caesar"
   "Caesar rotation of current region." t)
 
+(autoload 'widget-convert-text "wid-edit")
+
 
 ;;; @ constants
 ;;;

@@ -1,3 +1,7 @@
+1998-10-22  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* semi-def.el: Add autoload setting for `wid-edit.el'.
+
 1998-10-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el, SEMI-ELS: Move function `mime-display-text/plain',
