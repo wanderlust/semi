@@ -1329,8 +1329,12 @@ variable `mime-view-over-to-previous-method-alist'."
     (backward-char)
     )
   (let ((point (previous-single-property-change (point) 'mime-view-entity)))
-    (if (and point (get-text-property (- point 1) 'mime-view-entity))
-	(goto-char point)
+    (if point
+	(if (get-text-property (1- point) 'mime-view-entity)
+	    (goto-char point)
+	  (goto-char (1- point))
+	  (mime-preview-move-to-previous)
+	  )
       (let ((f (assq mime-preview-original-major-mode
 		     mime-view-over-to-previous-method-alist)))
 	(if f
@@ -1347,8 +1351,12 @@ variable `mime-view-over-to-next-method-alist'."
     (forward-char)
     )
   (let ((point (next-single-property-change (point) 'mime-view-entity)))
-    (if (and point (get-text-property point 'mime-view-entity))
-	(goto-char point)
+    (if point
+	(progn
+	  (goto-char point)
+	  (if (null (get-text-property point 'mime-view-entity))
+	      (mime-preview-move-to-next)
+	    ))
       (let ((f (assq mime-preview-original-major-mode
 		     mime-view-over-to-next-method-alist)))
 	(if f
