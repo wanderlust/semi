@@ -27,7 +27,6 @@
 
 ;;; Code:
 
-(require 'std11)
 (require 'mime)
 (require 'semi-def)
 (require 'calist)
