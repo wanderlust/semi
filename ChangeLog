@@ -1,5 +1,11 @@
 1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* semi-setup.el (call-after-loaded): Moved from semi-def.el.
+
+	* semi-def.el: Move `call-after-loaded' to semi-setup.el.
+
+1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-view-insert-entity-button): Change interface.
 
 1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
