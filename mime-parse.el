@@ -91,7 +91,9 @@ are string."
 	  (setq dest (cons (car ret) dest)
 		string (cdr ret))
 	  )
-	(cons (intern type) (cons (intern subtype) (nreverse dest)))
+	(list* (cons 'type (intern type))
+	       (cons 'subtype (intern subtype))
+	       (nreverse dest))
 	)))
 
 (defun mime-read-Content-Type ()
@@ -105,11 +107,11 @@ and return parsed it.  Format of return value is as same as
 
 (defsubst mime-content-type-primary-type (content-type)
   "Return primary-type of CONTENT-TYPE."
-  (car content-type))
+  (cdr (car content-type)))
 
 (defsubst mime-content-type-subtype (content-type)
   "Return primary-type of CONTENT-TYPE."
-  (cadr content-type))
+  (cdr (cadr content-type)))
 
 (defsubst mime-content-type-parameters (content-type)
   "Return primary-type of CONTENT-TYPE."
