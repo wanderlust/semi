@@ -369,7 +369,8 @@ Please redefine this function if you want to change default setting."
 (defvar mime-view-over-to-previous-method-alist nil)
 (defvar mime-view-over-to-next-method-alist nil)
 
-(defvar mime-view-show-summary-method nil)
+(defvar mime-view-show-summary-method nil
+  "Alist of major-mode vs. show-summary-method.")
 
 
 ;;; @@ following method
@@ -1157,14 +1158,12 @@ If reached to (point-min), it calls function registered in variable
       )))
 
 (defun mime-view-show-summary ()
+  "Show summary.
+It calls function registered in variable
+`mime-view-show-summary-method'."
   (interactive)
-  (let ((r (save-excursion
-	     (set-buffer
-	      (mime::preview-content-info/buffer
-	       (mime-preview/point-pcinfo (point)))
-	      )
-	     (assq major-mode mime-view-show-summary-method)
-	     )))
+  (let ((r (assq mime::preview/original-major-mode
+		 mime-view-show-summary-method)))
     (if r
 	(funcall (cdr r))
       )))
