@@ -10,8 +10,6 @@
 	URL*2="comp/emacsen/lisp/";
 	URL*3="semi/semi-API-for-flim-FLIM_API/";
 	URL*4="PACKAGE-VERSION.tar.gz"]]
-Content-Type: application/octet-stream;
-	name="PACKAGE-VERSION.tar.gz";
-	type=tar;
-	conversions=gzip
+Content-Type: application/octet-stream
+Content-Disposition: attachment; filename="PACKAGE-VERSION.tar.gz"
 --}-<<alternative>>
