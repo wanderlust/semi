@@ -485,7 +485,7 @@ Each elements are regexp of field-name.")
 	(default-situation
 	  (cdr (assq 'childrens-situation situation))))
     (while children
-      (mime-view-display-entity (car children) message-info
+      (mime-view-display-entity (car children) mime-raw-message-info
 				mime-raw-buffer (current-buffer)
 				default-situation)
       (setq children (cdr children))
