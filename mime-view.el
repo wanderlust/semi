@@ -360,7 +360,7 @@ message/rfc822, content-infos of other entities are included in
 (make-variable-buffer-local 'mime::article/content-info)
 
 (defvar mime-view-buffer nil
-  "MIME View buffer corresponding with the buffer.")
+  "MIME View buffer corresponding with the (raw) buffer.")
 (make-variable-buffer-local 'mime-view-buffer)
 
 
@@ -369,8 +369,9 @@ message/rfc822, content-infos of other entities are included in
 
 (make-variable-buffer-local 'mime::preview/mother-buffer)
 
-(defvar mime::preview/article-buffer nil)
-(make-variable-buffer-local 'mime::preview/article-buffer)
+(defvar mime-raw-buffer nil
+  "Raw buffer corresponding with the (MIME-View) buffer.")
+(make-variable-buffer-local 'mime-raw-buffer)
 
 (make-variable-buffer-local 'mime::preview/original-major-mode)
 (make-variable-buffer-local 'mime::preview/original-window-configuration)
@@ -472,7 +473,7 @@ The compressed face will be piped to this command.")
     (setq buffer-read-only nil)
     (widen)
     (erase-buffer)
-    (setq mime::preview/article-buffer the-buf)
+    (setq mime-raw-buffer the-buf)
     (setq mime::preview/original-major-mode mode)
     (setq major-mode 'mime-view-mode)
     (setq mode-name "MIME-View")
@@ -548,7 +549,7 @@ The compressed face will be piped to this command.")
 (defun mime-preview/display-header (beg end)
   (save-restriction
     (narrow-to-region (point)(point))
-    (insert-buffer-substring mime::preview/article-buffer beg end)
+    (insert-buffer-substring mime-raw-buffer beg end)
     (let ((f (cdr (assq mime::preview/original-major-mode
 			mime-view-content-header-filter-alist))))
       (if (functionp f)
@@ -562,7 +563,7 @@ The compressed face will be piped to this command.")
 				      rcnum cinfo ctype params subj encoding)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
-    (insert-buffer-substring mime::preview/article-buffer beg end)
+    (insert-buffer-substring mime-raw-buffer beg end)
     (let ((f (cdr (or (assoc ctype mime-view-content-filter-alist)
 		      (assq t mime-view-content-filter-alist)))))
       (and (functionp f)
@@ -918,7 +919,7 @@ It calls following-method selected from variable
 	     (new-name (format "%s-%s" (buffer-name) (reverse rcnum)))
 	     new-buf
 	     (the-buf (current-buffer))
-	     (a-buf mime::preview/article-buffer)
+	     (a-buf mime-raw-buffer)
 	     fields)
 	(save-excursion
 	  (set-buffer (setq new-buf (get-buffer-create new-name)))
@@ -971,7 +972,7 @@ It calls following-method selected from variable
 			      (save-excursion
 				(set-buffer the-buf)
 				(set-buffer mime::preview/mother-buffer)
-				(set-buffer mime::preview/article-buffer)
+				(set-buffer mime-raw-buffer)
 				(std11-field-body field-name)
 				)
 			      "\n")))
@@ -993,7 +994,7 @@ It calls following-method selected from variable
 (defun mime-view-display-x-face ()
   (interactive)
   (save-window-excursion
-    (set-buffer mime::preview/article-buffer)
+    (set-buffer mime-raw-buffer)
     (mime-view-x-face-function)
     ))
 
