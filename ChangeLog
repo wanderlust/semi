@@ -3,9 +3,6 @@
 	* pgg-gpg.el (pgg-gpg-messages-locale): New user option.
 	(pgg-gpg-process-region): Set environment variable LC_ALL when
 	pgg-gpg-messages-locale is specified.
-	(pgg-scheme-verify-region): Don't copy messages from
-	pgg-errors-buffer to pgg-output-buffer.
-	(pgg-scheme-snarf-keys-region): Ditto.
 
 	* pgg-def.el (pgg-messages-locale): New user option.
 

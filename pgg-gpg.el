@@ -207,7 +207,12 @@
       (goto-char (point-min))
       (prog1 (re-search-forward "^\\[GNUPG:] GOODSIG\\>" nil t)
 	(goto-char (point-min))
-	(delete-matching-lines "^\\[GNUPG:] ")))))
+	(delete-matching-lines "^\\[GNUPG:] ")
+	;; XXX: copy contents of pgg-errors-buffer into
+	;; pgg-output-buffer for backward compatibility.
+	(with-current-buffer pgg-output-buffer
+	  (set-buffer-multibyte t)
+	  (insert-buffer-substring pgg-errors-buffer))))))
 
 (luna-define-method pgg-scheme-insert-key ((scheme pgg-scheme-gpg))
   (let* ((pgg-gpg-user-id (or pgg-gpg-user-id pgg-default-user-id))
@@ -238,7 +243,11 @@
 	      (if (zerop (aref status 9))
 		  ""
 		"\tSecret keys are imported.\n"))
-      (append-to-buffer pgg-errors-buffer (point-min)(point-max))
+      ;; XXX: copy contents of pgg-errors-buffer into
+      ;; pgg-output-buffer for backward compatibility.
+      (with-current-buffer pgg-output-buffer
+	(set-buffer-multibyte t)
+	(insert-buffer-substring pgg-errors-buffer))
       t)))
 
 (provide 'pgg-gpg)
