@@ -177,7 +177,7 @@ FUNCTION.")
 ;; modified by tower@prep Nov 86
 ;; gnus-caesar-region
 ;; Modified by umerin@flab.flab.Fujitsu.JUNET for ROT47.
-(defun tm:caesar-region (&optional n)
+(defun caesar-region (&optional n)
   "Caesar rotation of region by N, default 13, for decrypting netnews.
 ROT47 will be performed for Japanese text in any case."
   (interactive (if current-prefix-arg	; Was there a prefix arg?

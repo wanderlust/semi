@@ -1938,7 +1938,7 @@ Content-Transfer-Encoding: 7bit
 		 (forward-line)
 		 (set-mark (point))
 		 (goto-char (mime-edit-content-end))
-		 (tm:caesar-region)
+		 (caesar-region)
 		 ))
 	      ((string-equal contype "text/enriched")
 	       (save-excursion

@@ -483,7 +483,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
     (save-excursion
       (set-mark (point-min))
       (goto-char (point-max))
-      (tm:caesar-region)
+      (caesar-region)
       )
     (set-buffer-modified-p nil)
     (set-buffer mother)
