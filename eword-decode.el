@@ -180,15 +180,53 @@ such as a version of Net$cape)."
 ;;; @ for message header
 ;;;
 
-(defun eword-decode-header (&optional separator)
+(defun eword-decode-header (&optional code-conversion separator)
   "Decode MIME encoded-words in header fields.
+If CODE-CONVERSION is nil, it decodes only encoded-words.  If it is
+mime-charset, it decodes non-ASCII bit patterns as the mime-charset.
+Otherwise it decodes non-ASCII bit patterns as the
+default-mime-charset.
 If SEPARATOR is not nil, it is used as header separator."
   (interactive "*")
   (save-excursion
     (save-restriction
       (std11-narrow-to-header separator)
-      (eword-decode-region (point-min) (point-max) t)
-      )))
+      (let ((default-charset
+	      (if code-conversion
+		  (if (mime-charset-to-coding-system code-conversion)
+		      code-conversion
+		    default-mime-charset))))
+	(if default-charset
+	    (let (beg end field-name)
+	      (goto-char (point-min))
+	      (while (re-search-forward std11-field-head-regexp nil t)
+		(setq beg (match-beginning 0)
+		      p (match-end 0)
+		      field-name (intern
+				  (downcase (buffer-substring beg (1- p))))
+		      end (std11-field-end))
+		(cond ((memq field-name '(newsgroups message-id path))
+		       )
+		      ((memq field-name '(reply-to
+					  from sender
+					  resent-reply-to resent-from
+					  resent-sender to resent-to
+					  cc resent-cc
+					  bcc resent-bcc dcc
+					  mime-version))
+		       (let ((body (buffer-substring p end))
+			     (default-mime-charset default-charset))
+			 (delete-region p end)
+			 (insert (eword-decode-structured-field-body body))
+			 ))
+		      (t
+		       (let ((body (buffer-substring p end))
+			     (default-mime-charset default-charset))
+			 (delete-region p end)
+			 (insert (eword-decode-unstructured-field-body body))
+			 )))))
+	  (eword-decode-region (point-min) (point-max) t)
+	  )))))
 
 (defun eword-decode-unfold ()
   (goto-char (point-min))
