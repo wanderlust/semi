@@ -284,9 +284,13 @@ Please redefine this function if you want to change default setting."
   (or (null rcnum)
       (string= ctype "application/x-selection")
       (and (string= ctype "application/octet-stream")
-	   (string= (mime-entity-info-type/subtype
-		     (mime-article/rcnum-to-cinfo (cdr rcnum) cinfo))
-		    "multipart/encrypted"))
+	   (let ((entity-info
+		  (mime-article/rcnum-to-cinfo (cdr rcnum) cinfo)))
+	     (and (eq (mime-entity-info-media-type entity-info)
+		      'multipart)
+		  (eq (mime-entity-info-media-subtype entity-info)
+		      'encrypted)
+		  )))
       (mime-view-insert-entity-button rcnum cinfo ctype params subj encoding)
       ))
 
