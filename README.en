@@ -1,0 +1,155 @@
+[README for SEMI kernel package (English Version)]
+by MORIOKA Tomohiko <morioka@jaist.ac.jp>
+$Id$
+
+What's SEMI?
+------------
+
+  SEMI is a library to provide MIME feature for GNU Emacs.  It stands
+  for "SEMI is Emacs MIME Interfaces".  MIME is a proposed internet
+  standard for including content and headers other than (ASCII) plain
+  text in messages.
+
+	RFC 2045 : Internet Message Bodies
+	RFC 2046 : Media Types
+	RFC 2047 : Message Header Extensions
+	RFC 2048 : MIME Registration Procedures
+	RFC 2049 : MIME Conformance
+
+  SEMI has the following features:
+
+	- MIME style multilingual header (RFC 2047)
+	- MIME message viewer   (mime-view-mode) (RFC 2045 .. 2049)
+	- MIME message composer (mime-edit-mode) (RFC 2045 .. 2049)
+
+  MIME message viewer and composer also support following features:
+
+	- filename handling by Content-Disposition field (RFC 1806)
+	- PGP/MIME security Multiparts (RFC 2015)
+	- application/pgp (draft-kazu-pgp-mime-00.txt; obsolete)
+	- text/richtext (RFC 1521; obsolete; preview only)
+	- text/enriched (RFC 1896)
+
+  Notice that this package does not contain MIME extender for any
+  MUAs and external methods.  They are released as separated packages.
+
+
+Required environment
+--------------------
+
+  SEMI supports XEmacs 20.1 or later with mule, and Emacs/mule (mule
+  merged EMACS; it will become Emacs 20.0).
+
+  SEMI does not support EMACS 19.28 or later, XEmacs 19.14 or later,
+  XEmacs 20.1 or later without mule, but SEMI may work with them.
+
+  If you use beta versions of XEmacs 20.1, please use the latest
+  version and compile with mule support, i.e. use the configure flag
+  `--with-mule'.
+
+  If you use EMACS/mule, please use the latest version (GNU MULE
+  19.34.91-delta or later).
+
+  SEMI requires APEL and MEL package.  Please install them before
+  installing it.  APEL package
+  is available at:
+
+	ftp://ftp.jaist.ac.jp/pub/GNU/elisp/apel/
+
+  and MEL package is available at:
+
+	ftp://ftp.jaist.ac.jp/pub/GNU/elisp/mime/libs/
+
+  PGP/MIME and application/pgp require mailcrypt or tiny-pgp package.
+
+  The package enriched.el is required to compose text/enriched, so if
+  you use Emacs anything 19.28 or older (including official version of
+  MULE 2.3), WYSIWYG composing for text/enriched is not available.
+
+
+Installation
+------------
+
+	% make install
+
+  You can specify the emacs command name, for example
+
+	% make install EMACS=xemacs
+
+  If `EMACS=...' is omitted, EMACS=emacs is used.
+
+  You can specify the prefix of the directory tree for Emacs Lisp
+  programs and shell scripts, for example:
+
+	% make install PREFIX=~/
+
+  If `PREFIX=...' is omitted, the prefix of the directory tree of the
+  specified emacs command is used (perhaps /usr/local).
+
+  For example, if PREFIX=/usr/local and EMACS 19.34 is specified, it
+  will create the following directory tree:
+
+	/usr/local/share/emacs/19.34/site-lisp/  --- emu
+	/usr/local/share/emacs/site-lisp/apel/   --- APEL
+	/usr/local/share/emacs/site-lisp/bitmap/ --- BITMAP-MULE
+	/usr/local/share/emacs/site-lisp/mu/     --- MU
+	/usr/local/share/emacs/site-lisp/mel/    --- MEL
+	/usr/local/share/emacs/site-lisp/semi/   --- SEMI
+
+  You can specify other optional settings by editing the file
+  semi/SEMI-CFG.  Please read semi/README.en and comments in
+  semi/TM-CFG.
+
+
+Initialization
+--------------
+
+(a) load-path
+
+  If you are using Emacs or Mule, please add directory of emu, apel,
+  bitmap, mu, mel and semi to load-path.  If you install by default
+  setting, you can write subdirs.el for example:
+
+  --------------------------------------------------------------------
+  (normal-top-level-add-to-load-path
+   '("apel" "bitmap" "mu" "mel" "semi"))
+  --------------------------------------------------------------------
+
+  If you are using XEmacs, there are no need of setting about
+  load-path.
+
+(b) mime-setup
+
+  Please insert the following into your ~/.emacs:
+
+	(load "mime-setup")
+
+
+Documentation
+-------------
+
+  To get started, please read semi/README.en.
+
+  RFC's 822, 1806, 1847, 1896, 2015, 2045, 2046, 2047, 2048 and 2049
+  are available via anonymous ftp:
+  ftp://ds.internic.net/rfc/
+
+
+Bug reports
+-----------
+
+  If you write bug-reports and/or suggestions for improvement, please
+  send them to the tm Mailing List:
+
+	bug-tm-en@chamonix.jaist.ac.jp	(English)
+	bug-tm-ja@chamonix.jaist.ac.jp	(Japanese)
+
+  Via the tm ML, you can report tm bugs, obtain the latest release of
+  tm, and discuss future enhancements to tm. To join the tm ML, send
+  e-mail to
+
+	tm-ja-admin@chamonix.jaist.ac.jp	(Japanese)
+	tm-en-admin@chamonix.jaist.ac.jp	(English)
+
+  Since the user registration is done manually, please write the mail
+  body in human-recognizable language (^_^).
