@@ -1,5 +1,10 @@
 1997-09-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-def.el (butlast, nbutlast): Don't use `defun-maybe' for cl
+	functions.
+
+1997-09-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-def.el (butlast): New function; imported from cl.el.
 	(nbutlast): New function; imported from cl.el.
 
