@@ -480,11 +480,10 @@ if it is not nil.")
   (if (and (>= emacs-major-version 19) window-system)
       "\
 This is message/partial style split message.
-Please press `v' key in this buffer         
-or click here by mouse button-2.            "
+Please press `v' key in this buffer or click here by mouse button-2."
     "\
 This is message/partial style split message.
-Please press `v' key in this buffer.        "
+Please press `v' key in this buffer."
     ))
 
 (defun mime-view-insert-message/partial-button (&optional situation)
