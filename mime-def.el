@@ -229,7 +229,7 @@ FUNCTION.")
 (defconst base64-token-regexp "[A-Za-z0-9+/]")
 (defconst base64-token-padding-regexp "[A-Za-z0-9+/=]")
 
-(defconst mime/B-encoded-text-regexp
+(defconst eword-B-encoded-text-regexp
   (concat "\\(\\("
 	  base64-token-regexp
 	  base64-token-regexp
@@ -242,8 +242,8 @@ FUNCTION.")
 	  base64-token-padding-regexp
           "\\)"))
 
-(defconst mime/B-encoding-and-encoded-text-regexp
-  (concat "\\(B\\)\\?" mime/B-encoded-text-regexp))
+(defconst eword-B-encoding-and-encoded-text-regexp
+  (concat "\\(B\\)\\?" eword-B-encoded-text-regexp))
 
 
 ;;; @@ Quoted-Printable
