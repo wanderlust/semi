@@ -1049,6 +1049,7 @@ The compressed face will be piped to this command.")
 
 (defun mime-view-display-message (message &optional preview-buffer
 					  mother default-keymap-or-function)
+  (mime-maybe-hide-echo-buffer)
   (let ((win-conf (current-window-configuration))
 	(raw-buffer (mime-entity-buffer message)))
     (or preview-buffer
@@ -1113,7 +1114,6 @@ button-2	Move to point under the mouse cursor
         	and decode current content as `play mode'
 "
   (interactive)
-  (mime-maybe-hide-echo-buffer)
   (mime-view-display-message
    (save-excursion
      (if raw-buffer (set-buffer raw-buffer))
