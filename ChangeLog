@@ -1,10 +1,16 @@
 1998-06-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-text.el (mime-text-insert-decoded-body): Don't refer
+	`mime-raw-buffer'.
+
+	* mime-parse.el: Change format of `mime-entity' to add `buffer'.
+
+1998-06-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-play.el: When it is compiled, require 'bbdb or define
 	`bbdb-buffer-name' to avoid compiler warning.
 
-	(mime-method-to-display-caesar): Abolish unused local variable;
-	avoid problem of `mime-text-insert-decoded-body'.
+	(mime-method-to-display-caesar): Abolish unused local variable.
 	
 	Use `eval-buffer' to eval contents of
 	`mime-acting-situation-examples-file'.
