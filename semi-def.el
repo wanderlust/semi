@@ -105,42 +105,33 @@
 ;;; @ menu
 ;;;
 
-(defun-maybe-cond select-menu-alist (title menu-alist)
-  ((fboundp 'popup-menu)
-   ;; While XEmacs can have both X and tty frames at the same time with
-   ;; gnuclient, we shouldn't emulate in text-mode here.
-   (let (ret)
-     (popup-menu
-      ;; list* is CL function, but CL is a part of XEmacs.
-      (list* title
-	     "---"
-	     (mapcar
-	      (lambda (cell)
-		(vector (car cell)
-			`(progn
-			   (setq ret ',(cdr cell))
-			   (throw 'exit nil))
-			t)))
-	     menu-alist))
-     (recursive-edit)
-     ret))
-  (window-system
-   (x-popup-menu t (list title (cons title menu-alist)))))
-
-(defmacro mime-menu-bogus-filter-constructor (name menu)
+(defmacro mime-popup-menu-bogus-filter-constructor (menu)
   `(let (x y)
      (setq x (x-popup-menu t ,menu)
-           y (and x (lookup-key ,menu (apply #'vector x))))
+	   y (and x (lookup-key ,menu (apply #'vector x))))
      (if (and x y)
-         (funcall y))))
+	 (funcall y))))
 
-(defmacro mime-menu-popup (event menu)
-  (if (fboundp 'popup-menu)
-      `(popup-menu ,menu)
-    ;; #### Kludge for GNU Emacs 20.7 or earlier.
-    `(let (bogus-menu)
-       (easy-menu-define bogus-menu nil nil ,menu)
-       (mime-menu-bogus-filter-constructor "Popup" bogus-menu))))
+;;; While XEmacs can have both X and tty frames at the same time with
+;;; gnuclient, we shouldn't emulate in text-mode here.
+
+(static-if (featurep 'xemacs)
+    (defalias 'mime-popup-menu-popup 'popup-menu)
+  (defun mime-popup-menu-popup (menu &optional event)
+    (let (bogus-menu)
+      ;; #### Kludge for FSF Emacs-style menu.
+      (easy-menu-define bogus-menu nil nil menu)
+      (mime-popup-menu-bogus-filter-constructor bogus-menu))))
+
+(static-if (featurep 'xemacs)
+    (defun mime-popup-menu-select (menu &optional event)
+      (let ((selection (get-popup-menu-response menu event)))
+	(event-object selection)))
+  (defun mime-popup-menu-select (menu &optional event)
+    (let (bogus-menu)
+      ;; #### Kludge for FSF Emacs-style menu.
+      (easy-menu-define bogus-menu nil nil menu)
+      (x-popup-menu t bogus-menu))))
 
 
 ;;; @ Other Utility

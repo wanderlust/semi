@@ -91,15 +91,16 @@ specified, play as it.  Default MODE is \"play\"."
     (setq mime-acting-situation-example-list (cdr ret)
 	  ret (car ret))
     (cond ((cdr ret)
-	   (setq ret (select-menu-alist
-		      "Methods"
-		      (mapcar (function
-			       (lambda (situation)
-				 (cons
-				  (format "%s"
-					  (cdr (assq 'method situation)))
-				  situation)))
-			      ret)))
+	   (setq ret (mime-popup-menu-select
+		      (cons 
+		       "Methods"
+		       (mapcar
+			(lambda (situation)
+			  (vector
+			   (format "%s"
+				   (cdr (assq 'method situation)))
+			   situation t))
+			ret))))
 	   (setq ret (mime-sort-situation ret))
 	   (add-to-list 'mime-acting-situation-example-list (cons ret 0)))
 	  (t

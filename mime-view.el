@@ -1004,7 +1004,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 ;;; @ MIME viewer mode
 ;;;
 
-(defconst mime-view-menu-list
+(defconst mime-view-popup-menu-list
   '("MIME-View"
     ["Move to upper entity" mime-preview-move-to-upper]
     ["Move to previous entity" mime-preview-move-to-previous]
@@ -1019,10 +1019,11 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 (defun mime-view-popup-menu (event)
   "Popup the menu in the MIME Viewer buffer"
   (interactive "@e")
-  (mime-menu-popup event mime-view-menu-list))
+  (mime-popup-menu-popup mime-view-popup-menu-list event))
 
-;;; The current local map is taken precendence over `widget-keymap', because GNU Emacs'
-;;; widget implementation doesn't set `local-map' property.  So we need to specify derivation.
+;;; The current local map is taken precendence over `widget-keymap',
+;;; because GNU Emacs' widget implementation doesn't set `local-map' property.
+;;;  So we need to specify derivation.
 (defvar widget-keymap)
 (defun mime-view-maybe-inherit-widget-keymap ()
   (when (boundp 'widget-keymap)
