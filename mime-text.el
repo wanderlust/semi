@@ -36,26 +36,18 @@ It decodes MIME-encoding then code-converts as MIME-charset.
 MIME-encoding is value of field 'encoding of SITUATION.  It must be
 'nil or string.  MIME-charset is value of field \"charset\" of
 SITUATION.  It must be symbol."
-  (let* ((buffer (mime-entity-buffer entity))
-	 (presentation-type
-	  (save-excursion
-	    (set-buffer buffer)
-	    (or mime-raw-representation-type
-		(cdr (or (assq major-mode mime-raw-representation-type-alist)
-			 (assq t mime-raw-representation-type-alist)))
-		))))
-    (let ((str (mime-entity-content entity)))
-      (insert
-       (if (or (eq presentation-type 'binary)
-	       (not (member (mime-entity-encoding entity)
-			    '(nil "7bit" "8bit" "binary"))))
-	   (decode-mime-charset-string
-	    str
-	    (or (mime-content-type-parameter
-		 (mime-entity-content-type entity) "charset")
-		default-mime-charset))
-	 str))
-      ))
+  (let ((str (mime-entity-content entity)))
+    (insert
+     (if (and (mime-entity-cooked-p entity)
+	      (member (mime-entity-encoding entity)
+		      '(nil "7bit" "8bit" "binary")))
+	 str
+       (decode-mime-charset-string str
+				   (or (mime-content-type-parameter
+					(mime-entity-content-type entity)
+					"charset")
+				       default-mime-charset))
+       )))
   (run-hooks 'mime-text-decode-hook)
   )
 
