@@ -1,6 +1,6 @@
 1997-06-18  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.91 was released.
+	* SEMI: Version 0.91.1 was released.
 
 	* eword-decode.el (eword-decode-structured-field-body): fixed.
 

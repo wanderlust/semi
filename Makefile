@@ -2,7 +2,7 @@
 # $Id$
 #
 
-VERSION = 0.88
+VERSION = 0.91.1
 
 SHELL	= /bin/sh
 MAKE	= make
