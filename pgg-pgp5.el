@@ -25,6 +25,7 @@
 
 ;;; Code:
 
+(require 'mel) ; binary-to-text-funcall, binary-write-decoded-region
 (eval-when-compile (require 'pgg))
 
 (defgroup pgg-pgp5 ()
@@ -73,6 +74,9 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
 (defvar pgg-pgp5-user-id nil
   "PGP 5.* ID of your default identity.")
 
+(defvar pgg-pgp5-messages-coding-system pgg-messages-coding-system
+  "Coding system used when reading from a PGP5 external process.")
+
 (defvar pgg-scheme-pgp5-instance nil)
 
 ;;;###autoload
@@ -104,8 +108,9 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
     (unwind-protect
 	(progn
 	  (setq process
-		(apply #'binary-start-process-shell-command "*PGP*"
-		       output-buffer
+		(apply #'binary-to-text-funcall
+		       pgg-pgp5-messages-coding-system
+		       #'start-process-shell-command "*PGP*" output-buffer
 		       program args))
 	  (set-process-sentinel process #'ignore)
 	  (when passphrase
@@ -210,7 +215,7 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
     (unwind-protect
 	(progn
 	  (set-default-file-modes 448)
-	  (binary-write-region start end orig-file))
+	  (binary-write-decoded-region start end orig-file))
       (set-default-file-modes orig-mode))
     (when (stringp signature)
       (copy-file signature (setq signature (concat orig-file ".asc")))
