@@ -1,5 +1,11 @@
 1997-11-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* eword-encode.el (eword-encode-field): Must regard MIME-Version
+	field as structured field.
+
+
+1997-11-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* SEMI: Version 0.115.2 (Inokuchi) was released.
 
 1997-11-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
