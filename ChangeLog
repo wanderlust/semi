@@ -1,3 +1,11 @@
+1999-01-04  OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
+
+	* mime-view.el (mime-view-insert-entity-button): Use URL if it
+	exists in Content-Type field.
+
+	* mime-play.el (mime-raw-browse-url-function): Default to
+	`mime-browse-url-function' instead of `mime-browse-url'.
+
 1998-12-24  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-view.el (mime-preview-move-to-next): Don't move forward at

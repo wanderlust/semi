@@ -256,9 +256,13 @@ Please redefine this function if you want to change default setting."
 			    num subject access-type (cdr server))
 		(let ((site (cdr (assoc "site" params)))
 		      (dir (cdr (assoc "directory" params)))
+		      (url (cdr (assoc "url" params)))
 		      )
-		  (format "%s %s ([%s] %s:%s)"
-			  num subject access-type site dir)
+		  (if url
+		      (format "%s %s ([%s] %s)"
+			      num subject access-type url)
+		    (format "%s %s ([%s] %s:%s)"
+			    num subject access-type site dir))
 		  )))
 	    )
 	   (t
