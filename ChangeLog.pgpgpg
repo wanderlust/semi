@@ -1,3 +1,9 @@
+1999-07-02  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-pgp.el (mime-view-application/pgp): Specify preview buffer
+	explicitly; set the value of `mime-raw-buffer' and
+	`mime-mother-buffer' in preview buffer.
+
 1999-05-21  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-pgp.el (mime-pgp-fetch-key): Returns nil if the key fecthing
