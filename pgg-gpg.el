@@ -207,9 +207,10 @@
 			     (progn (beginning-of-line 2)
 				    (point))
 			     (point-max))))))
-	  (pgg-add-passphrase-cache 
-	   (cdr (assq 'key-identifier packet))
-	   passphrase))))
+	  (if pgg-cache-passphrase
+	      (pgg-add-passphrase-cache 
+	       (cdr (assq 'key-identifier packet))
+	       passphrase)))))
     ))
 
 (luna-define-method verify-region ((scheme pgg-scheme-gpg) 

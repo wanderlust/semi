@@ -51,6 +51,11 @@
   :group 'pgg
   :type 'boolean)
 
+(defcustom pgg-cache-passphrase t
+  "Cache passphrase"
+  :group 'pgg
+  :type 'boolean)
+
 (defvar pgg-status-buffer " *PGG status*")
 (defvar pgg-errors-buffer " *PGG errors*")
 (defvar pgg-output-buffer " *PGG output*")

@@ -201,7 +201,8 @@ and END to the keyring.")
 	    (setq pgg-read-passphrase 'read-passwd)
 	  (autoload 'ange-ftp-read-passwd "ange-ftp")
 	  (setq pgg-read-passphrase 'ange-ftp-read-passwd))))
-  (or (and key (setq key (pgg-truncate-key-identifier key))
+  (or (and pgg-cache-passphrase
+	   key (setq key (pgg-truncate-key-identifier key))
 	   (symbol-value (intern-soft key pgg-passphrase-cache)))
       (funcall pgg-read-passphrase prompt)))
 
