@@ -1,3 +1,17 @@
+2000-06-16  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-edit.el (mime-edit-insert-text-file): New function.
+	(mime-file-types): Treat .htm as an HTML file.
+
+2000-06-16  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-edit.el (mime-edit-insert-user-agent-field): Defcustom.
+	(mime-edit-mime-version-field-for-message/partial): Removed.
+	(mime-edit-mime-partial-header): Use mime-edit-mime-version-value.
+	(mime-edit-insert-binary-string): New function.
+	(mime-edit-insert-file): Use it.
+	(mime-edit-set-parameter): Avoid duplicating same parameters.
+
 2000-06-15  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* mail-mime-setup.el: Don't touch mail-signature.

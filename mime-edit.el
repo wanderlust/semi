@@ -291,7 +291,7 @@ To insert a signature file automatically, call the function
      nil
      "attachment"	(("filename" . file)))
 
-    ("\\.html$"
+    ("\\.html?$"
      "text"	"html"		nil
      nil
      nil		nil)
@@ -602,8 +602,10 @@ If it is not specified for a `major-mode',
 ;;; @@ optional header fields
 ;;;
 
-(defvar mime-edit-insert-user-agent-field t
-  "*If non-nil, insert User-Agent header field.")
+(defcustom mime-edit-insert-user-agent-field t
+  "*If non-nil, insert User-Agent header field."
+  :group 'mime-edit
+  :type 'boolean)
 
 (defvar mime-edit-user-agent-value
   (concat (mime-product-name mime-user-interface-product)
@@ -681,15 +683,6 @@ Tspecials means any character that matches with it in header must be quoted.")
   "1.0"
   "MIME version number.")
 
-(defconst mime-edit-mime-version-field-for-message/partial
-  "MIME-Version: 1.0\n"
-;;  (concat "MIME-Version:"
-;;	  (eword-encode-field-body
-;;	   (concat " 1.0 (split by " mime-edit-version ")\n")
-;;	   "MIME-Version:"))
-  "MIME version field for message/partial.")
-
-
 ;;; @ keymap and menu
 ;;;
 
@@ -703,6 +696,7 @@ Tspecials means any character that matches with it in header must be quoted.")
 
 (define-key mime-edit-mode-entity-map "\C-t" 'mime-edit-insert-text)
 (define-key mime-edit-mode-entity-map "\C-i" 'mime-edit-insert-file)
+(define-key mime-edit-mode-entity-map "i"    'mime-edit-insert-text-file)
 (define-key mime-edit-mode-entity-map "\C-e" 'mime-edit-insert-external)
 (define-key mime-edit-mode-entity-map "\C-v" 'mime-edit-insert-voice)
 (define-key mime-edit-mode-entity-map "\C-y" 'mime-edit-insert-message)
@@ -1083,23 +1077,22 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	(if (boundp 'enriched-mode)
 	    (enriched-mode -1))))))
 
-(defun mime-edit-insert-file (file &optional verbose)
-  "Insert a message from a FILE.
-If VERBOSE is non-nil, it will prompt for Content-Type,
-Content-Transfer-Encoding and Content-Disposition headers."
-  (interactive "fInsert file as MIME message: \nP")
+(defun mime-edit-insert-text-file (file &optional verbose)
+  "Insert a text message from a FILE.
+Charset is automatically obtained from the `charsets-mime-charset-alist'.
+If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
+  (interactive "fInsert file as a MIME text: \nP")
   (let*  ((guess (mime-find-file-type file))
-	  (type (nth 0 guess))
-	  (subtype (nth 1 guess))
+	  (type "text")
+	  (subtype nil)
 	  (parameters (nth 2 guess))
-	  (encoding (nth 3 guess))
+;;	  (encoding (nth 3 guess))
 	  (disposition-type (nth 4 guess))
-	  (disposition-params (nth 5 guess)))
-    (if verbose
-	(setq type    (mime-prompt-for-type type)
-	      subtype (mime-prompt-for-subtype type subtype)))
-    (if (or (interactive-p) verbose)
-	(setq encoding (mime-prompt-for-encoding encoding)))
+	  (disposition-params (nth 5 guess))
+	  string)
+    (setq subtype (mime-prompt-for-subtype type subtype))
+;;    (if (or (interactive-p) verbose)
+;;	(setq encoding (mime-prompt-for-encoding encoding)))
     (if verbose
 	(setq disposition-type (mime-prompt-for-disposition disposition-type)))
     (if (or (consp parameters) (stringp disposition-type))
@@ -1133,7 +1126,93 @@ Content-Transfer-Encoding and Content-Disposition headers."
     (mime-edit-insert-place
      (list type subtype)
      (mime-edit-insert-tag type subtype parameters)
-     (mime-edit-insert-binary-file file encoding))))
+;;     (if (stringp encoding)
+;;	 (mime-edit-define-encoding encoding))
+     (save-excursion
+       (let ((ret (insert-file-contents file)))
+	 (forward-char (cadr ret))
+     (if (and (not (eobp))
+	      (not (looking-at mime-edit-single-part-tag-regexp)))
+	 (insert (mime-make-text-tag) "\n")))))))
+
+(defun mime-edit-insert-file (file &optional verbose)
+  "Insert a message from a FILE.
+If VERBOSE is non-nil, it will prompt for Content-Type,
+Content-Transfer-Encoding and Content-Disposition headers."
+  (interactive "fInsert file as MIME message: \nP")
+  (let*  ((guess (mime-find-file-type file))
+	  (type (nth 0 guess))
+	  (subtype (nth 1 guess))
+	  (parameters (nth 2 guess))
+	  (encoding (nth 3 guess))
+	  (disposition-type (nth 4 guess))
+	  (disposition-params (nth 5 guess))
+	  string)
+    (if verbose
+	(setq type    (mime-prompt-for-type type)
+	      subtype (mime-prompt-for-subtype type subtype)))
+    (if (or (interactive-p) verbose)
+	(setq encoding (mime-prompt-for-encoding encoding)))
+    (if verbose
+	(setq disposition-type (mime-prompt-for-disposition disposition-type)))
+    (if (or (consp parameters) (stringp disposition-type))
+	(let ((rest parameters) cell attribute value)
+	  (setq parameters "")
+	  (when (string= type "text")
+	    (with-temp-buffer
+	      (let (candidates candidate eol eol-string)
+	      (set-buffer-multibyte nil)
+	      (insert-file-contents-as-binary file)
+	      (setq candidates (detect-coding-region (point-min) (point-max)))
+	      (setq candidate (if (listp candidates)
+				  (car candidates)
+				candidates))
+	      (setq eol (coding-system-eol-type candidate))
+	      (cond ((eq eol 'lf)
+		     (setq eol-string "\n"))
+		    ((eq eol 'cr)
+		     (setq eol-string "\r")))
+	      (goto-char (point-min))
+	      (when eol-string
+		(while (search-forward eol-string nil t)
+		  (replace-match "\r\n")))
+	      (setq string (buffer-string))
+	      (setq parameters
+		    (concat parameters "; charset="
+			    (symbol-name
+			     (coding-system-to-mime-charset
+			      candidate)))))))
+	  (while rest
+	    (setq cell (car rest))
+	    (setq attribute (car cell))
+	    (setq value (cdr cell))
+	    (if (eq value 'file)
+		(setq value (std11-wrap-as-quoted-string
+			     (file-name-nondirectory file))))
+	    (setq parameters (concat parameters "; " attribute "=" value))
+	    (setq rest (cdr rest)))
+	  (if disposition-type
+	      (progn
+		(setq parameters
+		      (concat parameters "\n"
+			      "Content-Disposition: " disposition-type))
+		(setq rest disposition-params)
+		(while rest
+		  (setq cell (car rest))
+		  (setq attribute (car cell))
+		  (setq value (cdr cell))
+		  (if (eq value 'file)
+		      (setq value (std11-wrap-as-quoted-string
+				   (file-name-nondirectory file))))
+		  (setq parameters
+			(concat parameters "; " attribute "=" value))
+		  (setq rest (cdr rest)))))))
+    (mime-edit-insert-place
+     (list type subtype)
+     (mime-edit-insert-tag type subtype parameters)
+     (if string
+	 (mime-edit-insert-binary-string string encoding)
+       (mime-edit-insert-binary-file file encoding)))))
 
 (defun mime-edit-insert-external ()
   "Insert a reference to external body."
@@ -1241,6 +1320,45 @@ If nothing is inserted, return nil."
       nil				;Nothing is created.
       )))
 
+;; #### This should be merged into the function below but for now,
+;; don't change APIs.
+(defun mime-edit-insert-binary-string (string &optional encoding)
+  "Insert binary STRING at point.
+Optional argument ENCODING specifies an encoding method such as base64."
+  (let* ((tagend (1- (point)))		;End of the tag
+	 (hide-p (and mime-auto-hide-body
+		      (stringp encoding)
+		      (not
+		       (let ((en (downcase encoding)))
+			 (or (string-equal en "7bit")
+			     (string-equal en "8bit")
+			     (string-equal en "binary")))))))
+    (save-restriction
+      (narrow-to-region tagend (point))
+      (insert
+       (with-temp-buffer
+	 ;; #### @!#$%@!${$@}
+	 (set-buffer-multibyte nil)
+	 (insert string)
+	 ;; #### Why mime-encode-string doesn't exist?
+	 (mime-encode-region (point-min) (point-max)
+			     (or encoding "7bit"))
+	 (buffer-string)))
+      (if hide-p
+	  (progn
+	    (invisible-region (point-min) (point-max))
+	    (goto-char (point-max)))
+	(goto-char (point-max))))
+    (unless (or (looking-at mime-edit-tag-regexp)
+		(= (point)(point-max)))
+      (insert "\n")
+      (mime-edit-insert-tag "text" "plain"))
+    ;; Define encoding even if it is 7bit.
+    (if (stringp encoding)
+	(save-excursion
+	  (goto-char tagend) ; Make sure which line the tag is on.
+	  (mime-edit-define-encoding encoding)))))
+
 (defun mime-edit-insert-binary-file (file &optional encoding)
   "Insert binary FILE at point.
 Optional argument ENCODING specifies an encoding method such as base64."
@@ -1260,10 +1378,10 @@ Optional argument ENCODING specifies an encoding method such as base64."
 	    (invisible-region (point-min) (point-max))
 	    (goto-char (point-max)))
 	(goto-char (point-max))))
-    (or hide-p
-	(looking-at mime-edit-tag-regexp)
-	(= (point)(point-max))
-	(mime-edit-insert-tag "text" "plain"))
+    (unless (or (looking-at mime-edit-tag-regexp)
+		(= (point)(point-max)))
+      (insert "\n")
+      (mime-edit-insert-tag "text" "plain"))
     ;; Define encoding even if it is 7bit.
     (if (stringp encoding)
 	(save-excursion
@@ -1431,10 +1549,10 @@ Nil if no such parameter."
 	;; Change value
 	(concat (substring ctype 0 (match-beginning 1))
 		parameter "=" value
-		(substring contype (match-end 1))
-		opt-fields)
-      (concat ctype "; " parameter "=" value opt-fields)
-      )))
+		(substring contype (match-end 1)))
+      ;; This field makes two CDP header when charset parameter is present.
+;;		opt-fields)
+      (concat ctype "; " parameter "=" value opt-fields))))
 
 (defun mime-strip-parameters (contype)
   "Return primary content-type and subtype without parameters for CONTYPE."
@@ -2413,7 +2531,7 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
 					       id number total separator)
   (insert fields)
   (insert (format "Subject: %s (%d/%d)\n" subject number total))
-  (insert mime-edit-mime-version-field-for-message/partial)
+  (insert (format "Mime-Version: %s\n" mime-edit-mime-version-value))
   (insert (format "\
 Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 		  id number total separator)))
