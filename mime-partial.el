@@ -65,7 +65,7 @@ partial messages using mime-view."
     (if (or (file-exists-p full-file)
 	    (not (y-or-n-p "Merge partials?"))
 	    )
-	(mime-display-message/partial beg end cal)
+	(mime-method-to-store-message/partial beg end cal)
       (let (the-id parameters)
 	(setq subject-id (std11-field-body "Subject"))
 	(if (string-match "[0-9\n]+" subject-id)
@@ -83,7 +83,7 @@ partial messages using mime-view."
 	      (setq the-id (cdr (assoc "id" parameters)))
 	      (if (string= the-id id)
 		  (progn
-		    (mime-display-message/partial
+		    (mime-method-to-store-message/partial
 		     (point-min)(point-max) parameters)
 		    (if (file-exists-p full-file)
 			(throw 'tag nil)
