@@ -523,7 +523,7 @@ If it is not specified for a major-mode,
   :type 'list)
 
 (defconst mime-edit-split-ignored-field-regexp
-  "\\(^Content-\\|^Subject:\\|^Mime-Version:\\)")
+  "\\(^Content-\\|^Subject:\\|^Mime-Version:\\|Message-Id:\\)")
 
 (defvar mime-edit-split-blind-field-regexp
   "\\(^[BDFbdf]cc:\\|^cc:[ \t]*$\\)")
