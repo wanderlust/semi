@@ -137,14 +137,11 @@
 	  (define-key keymap key (function insert-signature))
 	  ))))
 
-(if mime-setup-use-signature
-    (progn
-      (autoload 'insert-signature "signature" "Insert signature" t)
-      (add-hook 'mime-edit-mode-hook 'mime-setup-set-signature-key)
-      (setq gnus-signature-file nil)
-      (setq mail-signature nil)
-      (setq message-signature nil)
-      ))
+(when mime-setup-use-signature
+  (autoload 'insert-signature "signature" "Insert signature" t)
+  (add-hook 'mime-edit-mode-hook 'mime-setup-set-signature-key)
+  ;; (setq message-signature nil)
+  )
 
 
 ;;; @ for mu-cite
