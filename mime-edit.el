@@ -536,11 +536,11 @@ If it is not specified for a major-mode,
 ;;; @@ about PGP
 ;;;
 
-(defvar mime-edit-signing-type 'pgp-elkins
-  "*PGP signing type (pgp-elkins, pgp-kazu or nil).")
+(defvar mime-edit-signing-type 'pgp-mime
+  "*PGP signing type (pgp-mime, pgp-kazu or nil).")
 
-(defvar mime-edit-encrypting-type 'pgp-elkins
-  "*PGP encrypting type (pgp-elkins, pgp-kazu or nil).")
+(defvar mime-edit-encrypting-type 'pgp-mime
+  "*PGP encrypting type (pgp-mime, pgp-kazu or nil).")
 
 
 ;;; @@ about tag
@@ -599,13 +599,15 @@ If it is not specified for a major-mode,
 		   (substring emacs-version 0 (match-beginning 0))
 		 emacs-version)))
       (if (featurep 'mule)
-	  (concat "Emacs " ver
-		  (if enable-multibyte-characters
-		      (concat ", MULE " mule-version)
-		    " (with raw setting)")
-		  (if (featurep 'meadow)
-		      (concat ", " (Meadow-version))
-		    ))
+	  (if (boundp 'enable-multibyte-characters)
+	      (concat "Emacs " ver
+		      (if enable-multibyte-characters
+			  (concat ", MULE " mule-version)
+			" (with raw setting)")
+		      (if (featurep 'meadow)
+			  (concat ", " (Meadow-version))
+			))
+	    (concat "MULE " mule-version " based on Emacs " ver))
 	ver)))
   "Body of X-Emacs field.
 If variable `mime-edit-insert-x-emacs-field' is not nil, it is
@@ -767,6 +769,8 @@ Tspecials means any character that matches with it in header must be quoted.")
 ;;; @ functions
 ;;;
 
+(defvar mime-edit-touched-flag nil)
+
 ;;;###autoload
 (defun mime-edit-mode ()
   "MIME minor mode for editing the tagged MIME message.
@@ -902,8 +906,7 @@ User customizable variables (not documented all of them):
   (interactive)
   (if mime-edit-mode-flag
       (mime-edit-exit)
-    (if (and (boundp 'mime-edit-touched-flag)
-	     mime-edit-touched-flag)
+    (if mime-edit-touched-flag
 	(mime-edit-again)
       (make-local-variable 'mime-edit-touched-flag)
       (setq mime-edit-touched-flag t)
@@ -1574,21 +1577,17 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
       (let ((bb (match-beginning 0))
 	    (be (match-end 0))
 	    (type (buffer-substring (match-beginning 1)(match-end 1)))
-	    end-exp eb ee)
+	    end-exp eb)
 	(setq end-exp (format "--}-<<%s>>\n" type))
 	(widen)
 	(if (re-search-forward end-exp nil t)
-	    (progn
-	      (setq eb (match-beginning 0))
-	      (setq ee (match-end 0))
-	      )
+	    (setq eb (match-beginning 0))
 	  (setq eb (point-max))
-	  (setq ee (point-max))
 	  )
 	(narrow-to-region be eb)
 	(goto-char be)
 	(if (re-search-forward mime-edit-multipart-beginning-regexp nil t)
-	    (let (ret)
+	    (progn
 	      (narrow-to-region (match-beginning 0)(point-max))
 	      (mime-edit-find-inmost)
 	      )
@@ -1622,16 +1621,16 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 		 (mime-edit-enquote-region bb eb)
 		 )
 		((string-equal type "signed")
-		 (cond ((eq mime-edit-signing-type 'pgp-elkins)
-			(mime-edit-sign-pgp-elkins bb eb boundary)
+		 (cond ((eq mime-edit-signing-type 'pgp-mime)
+			(mime-edit-sign-pgp-mime bb eb boundary)
 			)
 		       ((eq mime-edit-signing-type 'pgp-kazu)
 			(mime-edit-sign-pgp-kazu bb eb boundary)
 			))
 		 )
 		((string-equal type "encrypted")
-		 (cond ((eq mime-edit-encrypting-type 'pgp-elkins)
-			(mime-edit-encrypt-pgp-elkins bb eb boundary)
+		 (cond ((eq mime-edit-encrypting-type 'pgp-mime)
+			(mime-edit-encrypt-pgp-mime bb eb boundary)
 			)
 		       ((eq mime-edit-encrypting-type 'pgp-kazu)
 			(mime-edit-encrypt-pgp-kazu bb eb boundary)
@@ -1669,7 +1668,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 	  (replace-match (concat "-" (substring tag 2)))
 	  )))))
 
-(defun mime-edit-sign-pgp-elkins (beg end boundary)
+(defun mime-edit-sign-pgp-mime (beg end boundary)
   (save-excursion
     (save-restriction
       (narrow-to-region beg end)
@@ -1677,9 +1676,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 	      (mime-edit-translate-region beg end boundary))
 	     (ctype    (car ret))
 	     (encoding (nth 1 ret))
-	     (parts    (nth 3 ret))
-	     (pgp-boundary (concat "pgp-sign-" boundary))
-	     )
+	     (pgp-boundary (concat "pgp-sign-" boundary)))
 	(goto-char beg)
 	(insert (format "Content-Type: %s\n" ctype))
 	(if encoding
@@ -1727,7 +1724,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
     (vector from recipients header)
     ))
 
-(defun mime-edit-encrypt-pgp-elkins (beg end boundary)
+(defun mime-edit-encrypt-pgp-mime (beg end boundary)
   (save-excursion
     (save-restriction
       (let (from recipients header)
@@ -1741,9 +1738,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 		(mime-edit-translate-region beg end boundary))
 	       (ctype    (car ret))
 	       (encoding (nth 1 ret))
-	       (parts    (nth 3 ret))
-	       (pgp-boundary (concat "pgp-" boundary))
-	       )
+	       (pgp-boundary (concat "pgp-" boundary)))
 	  (goto-char beg)
 	  (insert header)
 	  (insert (format "Content-Type: %s\n" ctype))
@@ -1908,17 +1903,15 @@ Content-Transfer-Encoding: 7bit
 	      (insert encoding)))
 	))))
 
-(defun mime-edit-translate-single-part-tag (&optional prefix)
+(defun mime-edit-translate-single-part-tag (boundary &optional prefix)
   "Translate single-part-tag to MIME header."
   (if (re-search-forward mime-edit-single-part-tag-regexp nil t)
       (let* ((beg (match-beginning 0))
 	     (end (match-end 0))
-	     (tag (buffer-substring beg end))
-	     )
+	     (tag (buffer-substring beg end)))
 	(delete-region beg end)
 	(let ((contype (mime-edit-get-contype tag))
-	      (encoding (mime-edit-get-encoding tag))
-	      )
+	      (encoding (mime-edit-get-encoding tag)))
 	  (insert (concat prefix "--" boundary "\n"))
 	  (save-restriction
 	    (narrow-to-region (point)(point))
@@ -1963,9 +1956,8 @@ Content-Transfer-Encoding: 7bit
 	 (t
 	  ;; It's a multipart message.
 	  (goto-char (point-min))
-	  (and (mime-edit-translate-single-part-tag)
-	       (while (mime-edit-translate-single-part-tag "\n"))
-	       )
+	  (and (mime-edit-translate-single-part-tag boundary)
+	       (while (mime-edit-translate-single-part-tag boundary "\n")))
 	  ;; Define Content-Type as "multipart/mixed".
 	  (setq contype
 		(concat "multipart/mixed;\n boundary=\"" boundary "\""))
@@ -2098,9 +2090,7 @@ Content-Transfer-Encoding: 7bit
 	;; encoded.
 	(let* ((encoding "base64")	;Encode in BASE64 by default.
 	       (beg (mime-edit-content-beginning))
-	       (end (mime-edit-content-end))
-	       (body (buffer-substring beg end))
-	       )
+	       (end (mime-edit-content-end)))
 	  (mime-encode-region beg end encoding)
 	  (mime-edit-define-encoding encoding))
 	(forward-line 1)

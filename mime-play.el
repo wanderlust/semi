@@ -30,8 +30,12 @@
 (require 'alist)
 (require 'filename)
 
-(eval-when-compile (require 'mime-text))
-
+(eval-when-compile
+  (require 'mime-text)
+  (condition-case nil
+      (require 'bbdb)
+    (error (defvar bbdb-buffer-name nil))
+    ))
 
 (defvar mime-acting-situation-examples nil)
 
@@ -116,6 +120,16 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	      )))
   )
 
+(defsubst mime-delq-null-situation (situations field)
+  (let (dest)
+    (while situations
+      (let ((situation (car situations)))
+	(if (assq field situation)
+	    (setq dest (cons situation dest))
+	  ))
+      (setq situations (cdr situations)))
+    dest))
+
 (defun mime-raw-play-entity (entity-info &optional mode)
   "Play entity specified by ENTITY-INFO.
 It decodes the entity to call internal or external method.  The method
@@ -140,10 +154,14 @@ specified, play as it.  Default MODE is \"play\"."
 					      cal)
 		cal))
       (setq ret
-	    (or (ctree-find-calist mime-acting-condition ret
-				   mime-view-find-every-acting-situation)
-		(ctree-find-calist mime-acting-condition cal
-				   mime-view-find-every-acting-situation)
+	    (or (mime-delq-null-situation
+		 (ctree-find-calist mime-acting-condition ret
+				    mime-view-find-every-acting-situation)
+		 'method)
+		(mime-delq-null-situation
+		 (ctree-find-calist mime-acting-condition cal
+				    mime-view-find-every-acting-situation)
+		 'method)
 		))
       (cond ((cdr ret)
 	     (setq ret (select-menu-alist
@@ -609,17 +627,12 @@ saved as binary.  Otherwise the region is saved by `write-region'."
 (defun mime-method-to-display-caesar (start end cal)
   "Internal method for mime-view to display ROT13-47-48 message."
   (let* ((entity (mime-raw-find-entity-from-point start))
-	 (cnum (reverse (mime-entity-node-id entity)))
-	 (new-name (format "%s-%s" (buffer-name) cnum))
-	 (the-buf (current-buffer))
-	 (mother mime-preview-buffer)
-	 (charset (cdr (assoc "charset" cal)))
-	 (encoding (cdr (assq 'encoding cal)))
-	 (mode major-mode))
+	 (new-name (format "%s-%s" (buffer-name)
+			   (reverse (mime-entity-node-id entity))))
+	 (mother mime-preview-buffer))
     (let ((pwin (or (get-buffer-window mother)
 		    (get-largest-window)))
-	  (buf (get-buffer-create new-name))
-	  )
+	  (buf (get-buffer-create new-name)))
       (set-window-buffer pwin buf)
       (set-buffer buf)
       (select-window pwin)
@@ -647,7 +660,7 @@ saved as binary.  Otherwise the region is saved by `write-region'."
 	    (set-buffer buffer)
 	    (erase-buffer)
 	    (insert-file-contents file)
-	    (eval-current-buffer)
+	    (eval-buffer)
 	    ;; format check
 	    (or (eq (car mime-acting-situation-examples) 'type)
 		(setq mime-acting-situation-examples nil))
