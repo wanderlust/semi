@@ -83,14 +83,14 @@ LISPDIR=%s\n" PREFIX EXEC_PREFIX LISPDIR))
   (Custom-make-dependencies)
 
   (compile-elisp-modules (append semi-modules-to-compile
-				 '(auto-autoloads custom-load))
+				 '(mime-setup auto-autoloads custom-load))
 			 ".")
   )
 
 (defun install-semi-package ()
   (config-semi-package)
   (install-elisp-modules (append semi-modules
-				 '(mime auto-autoloads custom-load))
+				 '(mime-setup auto-autoloads custom-load))
 			 "./"
 			 (expand-file-name SEMI_PREFIX
 					   (expand-file-name "lisp"

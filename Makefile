@@ -4,7 +4,7 @@
 
 PACKAGE = semi
 API	= 1.13
-RELEASE = 2
+RELEASE = 3
 
 TAR	= tar
 RM	= /bin/rm -f

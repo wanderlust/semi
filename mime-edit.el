@@ -225,6 +225,7 @@ To insert a signature file automatically, call the function
     ("application"
      ("octet-stream" ("type" "" "tar" "shar"))
      ("postscript")
+     ("vnd.ms-powerpoint")
      ("x-kiss" ("x-cnf")))
     ("image"
      ("gif")
@@ -306,6 +307,11 @@ To insert a signature file automatically, call the function
 
     ("\\.doc$"				;MS Word
      "application" "winword" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.ppt$"				; MS Power Point
+     "application" "vnd.ms-powerpoint" nil
      "base64"
      "attachment" (("filename" . file))
      )
