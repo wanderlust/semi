@@ -358,13 +358,15 @@ mother-buffer."
 	  (insert "\n;;; "
 		  (file-name-nondirectory file)
 		  " ends here.\n")
-	  (static-cond
-	   ((boundp 'buffer-file-coding-system)
-	    (setq buffer-file-coding-system
-		  mime-situation-examples-file-coding-system))
-	   ((boundp 'file-coding-system)
-	    (setq file-coding-system
-		  mime-situation-examples-file-coding-system)))
+	  (setq buffer-file-coding-system
+		mime-situation-examples-file-coding-system)
+          ;; (static-cond
+          ;;  ((boundp 'buffer-file-coding-system)
+          ;;   (setq buffer-file-coding-system
+          ;;         mime-situation-examples-file-coding-system))
+          ;;  ((boundp 'file-coding-system)
+          ;;   (setq file-coding-system
+          ;;         mime-situation-examples-file-coding-system)))
 	  (setq buffer-file-name file)
 	  (save-buffer)))))
 
@@ -1101,14 +1103,17 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
     (define-key mime-view-mode-map
       [backspace] (function mime-preview-scroll-down-entity))
     (if (functionp default)
-	(static-if (featurep 'xemacs)
+	(if (featurep 'xemacs)
 	    (set-keymap-default-binding mime-view-mode-map default)
 	  (setq mime-view-mode-map
 		(append mime-view-mode-map (list (cons t default))))))
     (define-key mime-view-mode-map
       [down-mouse-3] (function mime-view-popup-menu))
-    (use-local-map mime-view-mode-map)
-    (run-hooks 'mime-view-define-keymap-hook)))
+    ;; (run-hooks 'mime-view-define-keymap-hook)
+    mime-view-mode-map))
+
+(defvar mime-view-mode-default-map (mime-view-define-keymap))
+
 
 (defsubst mime-maybe-hide-echo-buffer ()
   "Clear mime-echo buffer and delete window for it."
@@ -1127,7 +1132,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 ;;;###autoload
 (defun mime-display-message (message &optional preview-buffer
 				     mother default-keymap-or-function
-				     original-major-mode)
+				     original-major-mode keymap)
   "View MESSAGE in MIME-View mode.
 
 Optional argument PREVIEW-BUFFER specifies the buffer of the
@@ -1138,7 +1143,14 @@ Optional argument MOTHER specifies mother-buffer of the preview-buffer.
 Optional argument DEFAULT-KEYMAP-OR-FUNCTION is nil, keymap or
 function.  If it is a keymap, keymap of MIME-View mode will be added
 to it.  If it is a function, it will be bound as default binding of
-keymap of MIME-View mode."
+keymap of MIME-View mode.
+
+Optional argument ORIGINAL-MAJOR-MODE is major-mode of representation
+buffer of MESSAGE.  If it is nil, current `major-mode' is used.
+
+Optional argument KEYMAP is keymap of MIME-View mode.  If it is
+non-nil, DEFAULT-KEYMAP-OR-FUNCTION is ignored.  If it is nil,
+`mime-view-mode-default-map' is used."
   (mime-maybe-hide-echo-buffer)
   (let ((win-conf (current-window-configuration)))
     (or preview-buffer
@@ -1160,7 +1172,11 @@ keymap of MIME-View mode."
 			     (header . visible)
 			     (major-mode . ,original-major-mode))
 			   preview-buffer)
-      (mime-view-define-keymap default-keymap-or-function)
+      (use-local-map
+       (or keymap
+	   (if default-keymap-or-function
+	       (mime-view-define-keymap default-keymap-or-function)
+	     mime-view-mode-default-map)))
       (let ((point
 	     (next-single-property-change (point-min) 'mime-view-entity)))
 	(if point

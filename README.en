@@ -40,7 +40,10 @@ Required environment
   19.14.  SEMI also does not support Emacs 19.29 to 19.34, XEmacs
   19.15 or XEmacs 20.2 without mule, but SEMI may work with them.
 
-  SEMI requires APEL (9.22 or later) and FLIM (Chao 1.14.1 or later)
+  SEMI also does not support Emacs 19.29 to 19.34, XEmacs 19.15 or
+  XEmacs 20.2, but SEMI may work with them.
+
+  SEMI requires APEL (9.22 or later) and FLIM (1.14.2 or later)
   package.  Please install them before installing it.  APEL package is
   available at:
 

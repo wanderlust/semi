@@ -39,7 +39,8 @@
 ;;; Code:
 
 (require 'path-util)
-(require 'raw-io)
+(require 'mel)
+;; binary-funcall, binary-write-decoded-region, binary-insert-encoded-file
 (eval-when-compile (require 'static))
 
 (defgroup smime ()
@@ -204,8 +205,9 @@
       (buffer-disable-undo)
       (erase-buffer))
     (setq process
-	  (apply #'binary-start-process-shell-command "*S/MIME*"
-		 smime-output-buffer program args))
+	  (apply #'binary-funcall #'start-process-shell-command
+		 "*S/MIME*" smime-output-buffer
+		 program args))
     (set-process-sentinel process 'ignore)
     (process-send-region process start end)
     (process-send-eof process)
@@ -301,12 +303,12 @@ the detached signature of the current region."
     (unwind-protect
 	(progn
 	  (set-default-file-modes 448)
-	  (binary-write-region start end orig-file))
+	  (binary-write-decoded-region start end orig-file))
       (set-default-file-modes orig-mode))
     (with-temp-buffer
-      (binary-insert-file-contents signature)
+      (binary-insert-encoded-file signature)
       (goto-char (point-max))
-      (binary-insert-file-contents
+      (binary-insert-encoded-file
        (or (smime-find-certificate 
 	    (smime-query-signer (point-min)(point-max)))
 	   (expand-file-name 

@@ -25,6 +25,7 @@
 
 ;;; Code:
 
+(require 'mel) ; binary-to-text-funcall, binary-write-decoded-region
 (eval-when-compile (require 'pgg))
 
 (defgroup pgg-pgp ()
@@ -89,9 +90,8 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
     (unwind-protect
 	(progn
 	  (setq process
-		(apply #'binary-start-process-shell-command "*PGP*"
-		       output-buffer
-		       program args))
+		(apply #'binary-funcall #'start-process-shell-command
+		       "*PGP*" output-buffer program args))
 	  (set-process-sentinel process #'ignore)
 	  (when passphrase
 	    (process-send-string process (concat passphrase "\n")))
@@ -198,7 +198,7 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
     (unwind-protect
 	(progn
 	  (set-default-file-modes 448)
-	  (binary-write-region start end orig-file))
+	  (binary-write-decoded-region start end orig-file))
       (set-default-file-modes orig-mode))
     (when (stringp signature)
       (copy-file signature (setq signature (concat orig-file ".asc")))

@@ -2,7 +2,7 @@
 # Makefile for SEMI kernel.
 #
 
-PACKAGE = semi
+PACKAGE = emiko
 API	= 1.14
 RELEASE = 0
 
