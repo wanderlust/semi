@@ -1147,12 +1147,12 @@ If reached to (point-min), it calls function registered in variable
   )
 
 (defun mime-view-quit ()
+  "Quit from MIME-View buffer.
+It calls function registered in variable
+`mime-view-quitting-method-alist'."
   (interactive)
-  (let ((r (save-excursion
-	     (set-buffer (mime::preview-content-info/buffer
-			  (mime-preview/point-pcinfo (point))))
-	     (assq major-mode mime-view-quitting-method-alist)
-	     )))
+  (let ((r (assq mime::preview/original-major-mode
+		 mime-view-quitting-method-alist)))
     (if r
 	(funcall (cdr r))
       )))
