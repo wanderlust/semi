@@ -1,3 +1,18 @@
+1999-05-12  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-decode-multipart-in-buffer): Use
+	`pgp-encrypted' or `pgp-signed' for the value of `subtype' if the
+	protocol "application/pgp-encrypted" or "application/pgp-signature"
+	is declared; attempt to decrypt the encrypted part with the new
+	function `mime-edit-decrypt-application/pgp-encrypted' and strip
+	sender, recipients and useless tags from the decrypted part.
+	(TopLevel): Autoload "mime-pgp" for the function
+	`mime-edit-decrypt-application/pgp-encrypted'.
+
+	* mime-pgp.el (mime-edit-decrypt-application/pgp-encrypted): New
+	function.
+	(mime-pgp-detect-version): Allow some leading garbage lines.
+
 1999-04-16  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-play.el (mime-show-echo-buffer): Make it returns the list of
