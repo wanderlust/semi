@@ -93,7 +93,7 @@
        ;;
        ;; X-Face
        ;;
-       (if (file-installed-p uncompface-program exec-path)
+       (if (exec-installed-p uncompface-program exec-path)
 	   (add-hook 'mime-view-content-header-filter-hook
 		     'x-face-decode-message-header)
 	 )
