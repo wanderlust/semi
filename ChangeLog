@@ -1,3 +1,53 @@
+1998-06-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* README.en (Required environment): Modify for FLIM 1.3.0.
+
+1998-06-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-raw-write-region): New implementation; refer
+	`mime-raw-representation-type' or
+	`mime-raw-representation-type-alist' instead of
+	`mime-raw-buffer-coding-system-alist'.
+
+	* mime-view.el: Abolish variable
+	`mime-raw-buffer-coding-system-alist'.
+
+1998-06-02  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el (mime-method-for-application/pgp): Use
+	`mime-raw-representation-type-alist' instead of
+	`mime-text-decoder-alist'; set up to
+	`mime-raw-representation-type' instead of `mime-text-decoder'.
+
+	* mime-play.el (mime-method-to-display-message/rfc822): Use
+	`mime-raw-representation-type-alist' instead of
+	`mime-text-decoder-alist'; set up to
+	`mime-raw-representation-type' instead of `mime-text-decoder'.
+	(mime-method-to-display-caesar): Use
+	`mime-text-insert-decoded-body'.
+
+	* mime-text.el (mime-raw-representation-type): New variable;
+	abolish `mime-text-decoder'.
+	(mime-text-insert-decoded-body): Change interface; refer
+	`mime-raw-representation-type' or
+	`mime-raw-representation-type-alist' instead of
+	`mime-text-decoder' or `mime-text-decoder-alist'; abolish function
+	`mime-text-decode-buffer' and `mime-text-decode-buffer-maybe'.
+	(mime-preview-text/plain): Modify for new interface of
+	`mime-text-insert-decoded-body'.
+	(mime-preview-text/richtext): Modify for new interface of
+	`mime-text-insert-decoded-body'.
+	(mime-preview-text/enriched): Modify for new interface of
+	`mime-text-insert-decoded-body'.
+
+	* mime-view.el (mime-raw-representation-type-alist): New variable;
+	abolish `mime-text-decoder-alist'.
+
+1998-05-31  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el (mime-parse-multipart): fixed.
+
+
 1998-06-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* WEMI: Version 1.4.6 (K-Dòzu)-A released.

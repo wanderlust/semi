@@ -61,7 +61,7 @@
 	 (the-buf (current-buffer))
 	 (mother mime-preview-buffer)
 	 (mode major-mode)
-	 text-decoder)
+	 representation-type)
     (set-buffer (get-buffer-create new-name))
     (erase-buffer)
     (insert-buffer-substring the-buf start end)
@@ -83,9 +83,9 @@
 	   (while (re-search-forward "^- -" nil t)
 	     (replace-match "-")
 	     )
-	   (setq text-decoder
-		 (cdr (or (assq mode mime-text-decoder-alist)
-			  (assq t    mime-text-decoder-alist))))
+	   (setq representation-type
+		 (cdr (or (assq mode mime-raw-representation-type-alist)
+			  (assq t    mime-raw-representation-type-alist))))
 	   )
 	  ((progn
 	     (goto-char (point-min))
@@ -96,25 +96,13 @@
 			  (and
 			   (search-forward "\n\n")
 			   (match-end 0)))
-	   (setq text-decoder (function mime-text-decode-buffer))
+	   (setq representation-type (function mime-text-decode-buffer))
 	   ))
     (setq major-mode 'mime-show-message-mode)
-    (setq mime-text-decoder text-decoder)
+    (setq mime-raw-representation-type representation-type)
     (save-window-excursion (mime-view-mode mother))
     (set-window-buffer p-win mime-preview-buffer)
     ))
-
-;; (ctree-set-calist-strictly
-;;  'mime-preview-condition '((type . application)(subtype . pgp)
-;;                            (message-button . visible)))
-
-;; (ctree-set-calist-strictly
-;;  'mime-acting-condition '((type . application)(subtype . pgp)
-;;                           (method . mime-method-for-application/pgp)))
-
-;; (ctree-set-calist-strictly
-;;  'mime-acting-condition '((type . text)(subtype . x-pgp)
-;;                           (method . mime-method-for-application/pgp)))
 
 
 ;;; @ Internal method for multipart/signed
@@ -130,11 +118,6 @@
     (cons 1 (mime-raw-point-to-entity-node-id start)))
    (cdr (assq 'mode cal)) ; play-mode
    ))
-
-;; (ctree-set-calist-strictly
-;;  'mime-acting-condition
-;;  '((type . multipart)(subtype . signed)
-;;    (method . mime-method-to-verify-multipart/signed)))
 
 
 ;;; @ Internal method for application/pgp-signature
@@ -235,11 +218,6 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
     (delete-file sig-file)
     ))
 
-;; (ctree-set-calist-strictly
-;;  'mime-acting-condition
-;;  '((type . application)(subtype . pgp-signature)
-;;    (method . mime-method-to-verify-application/pgp-signature)))
-
 
 ;;; @ Internal method for application/pgp-encrypted
 ;;;
@@ -259,11 +237,6 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	 )
     (mime-method-for-application/pgp obeg oend cal)
     ))
-
-;; (ctree-set-calist-strictly
-;;  'mime-acting-condition
-;;  '((type . application)(subtype . pgp-encrypted)
-;;    (method . mime-method-to-decrypt-application/pgp-encrypted)))
 
 
 ;;; @ Internal method for application/pgp-keys
@@ -288,11 +261,6 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
     (funcall (pgp-function 'snarf-keys))
     (kill-buffer (current-buffer))
     ))
-
-;; (ctree-set-calist-strictly
-;;  'mime-acting-condition
-;;  '((type . application)(subtype . pgp-keys)
-;;    (method . mime-method-to-add-application/pgp-keys)))
 
 	 
 ;;; @ end
