@@ -905,10 +905,11 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 		    (car (mime-entity-children entity))))
 	 (original-major-mode-cell (assq 'major-mode situation))
 	 (default-situation (cdr (assq 'childrens-situation situation))))
-    (if original-major-mode-cell
-	(setq default-situation
-	      (cons original-major-mode-cell default-situation)))
-    (mime-display-entity start nil default-situation)))
+    (when start
+      (if original-major-mode-cell
+	  (setq default-situation
+		(cons original-major-mode-cell default-situation)))
+      (mime-display-entity start nil default-situation))))
 
 (defun mime-view-entity-content (entity situation)
   (mime-decode-string
