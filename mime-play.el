@@ -135,60 +135,58 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 It decodes the entity to call internal or external method.  The method
 is selected from variable `mime-acting-condition'.  If MODE is
 specified, play as it.  Default MODE is \"play\"."
-  (let ((beg (mime-entity-point-min entity))
-	(end (mime-entity-point-max entity)))
-    (let (method cal ret)
-      (setq cal (mime-entity-situation entity))
-      (if mode
-	  (setq cal (cons (cons 'mode mode) cal))
-	)
-      (setq ret
-	    (or (ctree-match-calist mime-acting-situation-examples cal)
-		(ctree-match-calist-partially mime-acting-situation-examples
-					      cal)
-		cal))
-      (setq ret
-	    (or (mime-delq-null-situation
-		 (ctree-find-calist mime-acting-condition ret
-				    mime-view-find-every-acting-situation)
-		 'method)
-		(mime-delq-null-situation
-		 (ctree-find-calist mime-acting-condition cal
-				    mime-view-find-every-acting-situation)
-		 'method)
-		))
-      (cond ((cdr ret)
-	     (setq ret (select-menu-alist
-			"Methods"
-			(mapcar (function
-				 (lambda (situation)
-				   (cons
-				    (format "%s"
-					    (cdr (assq 'method situation)))
-				    situation)))
-				ret)))
-	     (setq ret (mime-sort-situation ret))
-	     (ctree-set-calist-strictly 'mime-acting-situation-examples ret)
-	     )
-	    (t
-	     (setq ret (car ret))
-	     ))
-      (setq method (cdr (assq 'method ret)))
-      (cond ((and (symbolp method)
-		  (fboundp method))
-	     (funcall method entity ret)
-	     )
-	    ((stringp method)
-	     (mime-activate-mailcap-method entity ret)
-	     )
-	    ((and (listp method)(stringp (car method)))
-	     (mime-activate-external-method beg end ret)
-	     )
-	    (t
-	     (mime-show-echo-buffer "No method are specified for %s\n"
-				    (mime-entity-type/subtype entity))
-	     ))
-      )))
+  (let (method cal ret)
+    (setq cal (mime-entity-situation entity))
+    (if mode
+	(setq cal (cons (cons 'mode mode) cal))
+      )
+    (setq ret
+	  (or (ctree-match-calist mime-acting-situation-examples cal)
+	      (ctree-match-calist-partially mime-acting-situation-examples
+					    cal)
+	      cal))
+    (setq ret
+	  (or (mime-delq-null-situation
+	       (ctree-find-calist mime-acting-condition ret
+				  mime-view-find-every-acting-situation)
+	       'method)
+	      (mime-delq-null-situation
+	       (ctree-find-calist mime-acting-condition cal
+				  mime-view-find-every-acting-situation)
+	       'method)
+	      ))
+    (cond ((cdr ret)
+	   (setq ret (select-menu-alist
+		      "Methods"
+		      (mapcar (function
+			       (lambda (situation)
+				 (cons
+				  (format "%s"
+					  (cdr (assq 'method situation)))
+				  situation)))
+			      ret)))
+	   (setq ret (mime-sort-situation ret))
+	   (ctree-set-calist-strictly 'mime-acting-situation-examples ret)
+	   )
+	  (t
+	   (setq ret (car ret))
+	   ))
+    (setq method (cdr (assq 'method ret)))
+    (cond ((and (symbolp method)
+		(fboundp method))
+	   (funcall method entity ret)
+	   )
+	  ((stringp method)
+	   (mime-activate-mailcap-method entity ret)
+	   )
+	  ((and (listp method)(stringp (car method)))
+	   (mime-activate-external-method entity ret)
+	   )
+	  (t
+	   (mime-show-echo-buffer "No method are specified for %s\n"
+				  (mime-entity-type/subtype entity))
+	   ))
+    ))
 
 
 ;;; @ external decoder
@@ -233,43 +231,44 @@ specified, play as it.  Default MODE is \"play\"."
   (remove-alist 'mime-mailcap-method-filename-alist process)
   (message (format "%s %s" process event)))
 
-(defun mime-activate-external-method (beg end cal)
+(defun mime-activate-external-method (entity cal)
   (save-excursion
     (save-restriction
-      (narrow-to-region beg end)
-      (goto-char beg)
-      (let ((method (cdr (assoc 'method cal)))
-	    (name (mime-raw-get-filename cal))
-	    )
-	(if method
-	    (let ((file (make-temp-name
-			 (expand-file-name "TM" mime-temp-directory)))
-		  b args)
-	      (if (nth 1 method)
-		  (setq b beg)
-		(setq b
-		      (if (re-search-forward "^$" nil t)
-			  (1+ (match-end 0))
-			(point-min)
-			))
-		)
-	      (goto-char b)
-	      (write-region b end file)
-	      (message "External method is starting...")
-	      (setq cal (put-alist
-			 'name (replace-as-filename name) cal))
-	      (setq cal (put-alist 'file file cal))
-	      (setq args (nconc
-			  (list (car method)
-				mime-echo-buffer-name (car method)
-				)
-			  (mime-make-external-method-args
-			   cal (cdr (cdr method)))
+      (let ((beg (mime-entity-point-min entity))
+	    (end (mime-entity-point-max entity)))
+	(narrow-to-region beg end)
+	(goto-char beg)
+	(let ((method (cdr (assoc 'method cal)))
+	      (name (mime-raw-get-filename cal)))
+	  (if method
+	      (let ((file (make-temp-name
+			   (expand-file-name "TM" mime-temp-directory)))
+		    b args)
+		(if (nth 1 method)
+		    (setq b beg)
+		  (setq b
+			(if (re-search-forward "^$" nil t)
+			    (1+ (match-end 0))
+			  (point-min)
 			  ))
-	      (apply (function start-process) args)
-	      (mime-show-echo-buffer)
-	      ))
-	))))
+		  )
+		(goto-char b)
+		(write-region b end file)
+		(message "External method is starting...")
+		(setq cal (put-alist
+			   'name (replace-as-filename name) cal))
+		(setq cal (put-alist 'file file cal))
+		(setq args (nconc
+			    (list (car method)
+				  mime-echo-buffer-name (car method)
+				  )
+			    (mime-make-external-method-args
+			     cal (cdr (cdr method)))
+			    ))
+		(apply (function start-process) args)
+		(mime-show-echo-buffer)
+		))
+	  )))))
 
 (defun mime-make-external-method-args (cal format)
   (mapcar (function
