@@ -1,3 +1,7 @@
+1998-04-15  MORIOKA Tomohiko  <morioka@ks-pc0.jaist.ac.jp>
+
+	* WEMI: Version 1.2.3 (Kawasaki) was released.
+
 1998-04-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el: Abolish function 'mime-view-body-visible-p and
