@@ -1,3 +1,7 @@
+1997-09-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 0.112 (Tsurugi) was released.
+
 1997-09-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el (mime-view-insert-entity-button): Change interface
