@@ -421,9 +421,38 @@ Each elements are regexp of field-name.")
 ;;; @@@ entity presentation
 ;;;
 
-(autoload 'mime-display-text/plain "mime-text")
-(autoload 'mime-display-text/enriched "mime-text")
-(autoload 'mime-display-text/richtext "mime-text")
+(defun mime-display-text/plain (entity situation)
+  (save-restriction
+    (narrow-to-region (point-max)(point-max))
+    (mime-insert-text-content entity)
+    (run-hooks 'mime-text-decode-hook)
+    (goto-char (point-max))
+    (if (not (eq (char-after (1- (point))) ?\n))
+	(insert "\n")
+      )
+    (mime-add-url-buttons)
+    (run-hooks 'mime-display-text/plain-hook)
+    ))
+
+(defun mime-display-text/richtext (entity situation)
+  (save-restriction
+    (narrow-to-region (point-max)(point-max))
+    (mime-insert-text-content entity)
+    (run-hooks 'mime-text-decode-hook)
+    (let ((beg (point-min)))
+      (remove-text-properties beg (point-max) '(face nil))
+      (richtext-decode beg (point-max))
+      )))
+
+(defun mime-display-text/enriched (entity situation)
+  (save-restriction
+    (narrow-to-region (point-max)(point-max))
+    (mime-insert-text-content entity)
+    (run-hooks 'mime-text-decode-hook)
+    (let ((beg (point-min)))
+      (remove-text-properties beg (point-max) '(face nil))
+      (enriched-decode beg (point-max))
+      )))
 
 (defvar mime-view-announcement-for-message/partial
   (if (and (>= emacs-major-version 19) window-system)
