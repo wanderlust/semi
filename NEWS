@@ -7,15 +7,16 @@ Copyright (C) 1998 Free Software Foundation, Inc.
 
 *** Setting variable about visible body
 
-  `mime-view-visible-media-type-list' was abolished.  Please use
-`mime-view-body-visible-condition' instead.
+  `mime-view-visible-media-type-list' and
+`mime-view-content-filter-alist' were abolished.  Please use
+`mime-preview-condition' instead.
 
-  Notice that `mime-view-body-visible-condition' is not list of
-media-type/subtype string.  It uses new data-structure `ctree'
-(condition-tree; it is introduced to replace `atype').  Function
-`ctree-set-calist-strictly' and `ctree-set-calist-with-default' may be
-useful to modify it (`calist' (condition-alist) is as same as
-`atype').
+  Notice that `mime-preview-condition' is not list of
+media-type/subtype string nor association-list.  It uses new
+data-structure `ctree' (condition-tree; it is introduced to replace
+`atype').  Function `ctree-set-calist-strictly' and
+`ctree-set-calist-with-default' may be useful to modify it (`calist'
+(condition-alist) is as same as `atype').
 
 
 *** API about visible-predicates
