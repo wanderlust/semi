@@ -1,6 +1,7 @@
 1998-08-31  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* mime-view.el (mime-view-type-subtype-score-alist): Mismatched.
+	* mime-view.el (mime-view-type-subtype-score-alist): Fix
+	mismatched.
 
 1998-08-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
