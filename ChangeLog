@@ -1,5 +1,12 @@
 2001-05-05   Daiki Ueno  <ueno@unixuser.org>
 
+	* mime-edit.el (mime-edit-sign-smime): Use OpenSSL output as it is.
+	(mime-edit-encrypt-smime): Ditto.
+
+	* semi-setup.el: Revive setting for application/x-pkcs7-signature.
+
+2001-05-05   Daiki Ueno  <ueno@unixuser.org>
+
 	* mime-pgp.el: Add autoload settings for S/MIME functions.
 	(mime-verify-application/pkcs7-signature): New implementation.
 
