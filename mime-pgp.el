@@ -97,7 +97,7 @@
 			   (match-end 0)))
 	   (setq text-decoder (function mime-text-decode-buffer))
 	   ))
-    (setq major-mode 'mime/show-message-mode)
+    (setq major-mode 'mime-show-message-mode)
     (setq mime-text-decoder text-decoder)
     (save-window-excursion (mime-view-mode mother))
     (set-window-buffer p-win mime::article/preview-buffer)
