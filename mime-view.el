@@ -362,8 +362,9 @@ Please redefine this function if you want to change default setting."
 ;;;
 
 (defvar mime-view-quitting-method-alist
-  '((mime/show-message-mode
-     . mime-view-quitting-method-for-mime/show-message-mode)))
+  '((mime-show-message-mode
+     . mime-view-quitting-method-for-mime-show-message-mode))
+  "Alist of major-mode vs. quitting-method of mime-view.")
 
 (defvar mime-view-over-to-previous-method-alist nil)
 (defvar mime-view-over-to-next-method-alist nil)

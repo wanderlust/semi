@@ -232,7 +232,9 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 ;;; @ mail/news message
 ;;;
 
-(defun mime-view-quitting-method-for-mime/show-message-mode ()
+(defun mime-view-quitting-method-for-mime-show-message-mode ()
+  "Quitting method for mime-view.
+It is registered to variable `mime-view-quitting-method-alist'."
   (let ((mother mime::preview/mother-buffer)
 	(win-conf mime::preview/original-window-configuration)
 	)
@@ -241,8 +243,6 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
     (mime-view-kill-buffer)
     (set-window-configuration win-conf)
     (pop-to-buffer mother)
-    ;;(goto-char (point-min))
-    ;;(mime-view-up-content)
     ))
 
 (defun mime-article/view-message/rfc822 (beg end cal)
@@ -261,7 +261,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
     (if (re-search-forward "^\n" nil t)
 	(delete-region (point-min) (match-end 0))
       )
-    (setq major-mode 'mime/show-message-mode)
+    (setq major-mode 'mime-show-message-mode)
     (setq mime-text-decoder text-decoder)
     (mime-view-mode mother)
     ))
@@ -313,7 +313,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	    (set-buffer full-buf)
 	    (erase-buffer)
 	    (as-binary-input-file (insert-file-contents file))
-	    (setq major-mode 'mime/show-message-mode)
+	    (setq major-mode 'mime-show-message-mode)
 	    (mime-view-mode mother)
 	    )
 	  (set-window-buffer pwin
@@ -383,7 +383,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 		       (delete-file file)
 		       ))
 		(save-window-excursion
-		  (setq major-mode 'mime/show-message-mode)
+		  (setq major-mode 'mime-show-message-mode)
 		  (mime-view-mode mother)
 		  )
 		(let ((pwin (or (get-buffer-window mother)
