@@ -34,9 +34,7 @@
 ;;; @ version
 ;;;
 
-(defconst eword-encode-RCS-ID
-  "$Id$")
-(defconst eword-encode-version (get-version-string eword-encode-RCS-ID))
+(defconst eword-encode-version "1.2")
 
 
 ;;; @ variables
