@@ -1,3 +1,8 @@
+1999-11-30   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg.el (pgg-remove-passphrase-cache): Add checking whether
+	the passphrase has already been expired.
+
 1999-11-26   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* mime-edit.el (mime-edit-pgp-user-id): New variable.

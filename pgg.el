@@ -215,9 +215,10 @@ and END to the keyring.")
 	       key))
 
 (defun pgg-remove-passphrase-cache (key)
-  (let ((passphrase (symbol-value (intern key pgg-passphrase-cache))))
-    (fillarray passphrase ?_)
-    (unintern key pgg-passphrase-cache)))
+  (let ((passphrase (symbol-value (intern-soft key pgg-passphrase-cache))))
+    (when passphrase
+      (fillarray passphrase ?_)
+      (unintern key pgg-passphrase-cache))))
 
 (defmacro pgg-convert-lbt-region (start end lbt)
   `(let ((pgg-conversion-end (set-marker (make-marker) ,end)))
