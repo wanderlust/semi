@@ -1,3 +1,7 @@
+2001-08-10  Kenichi OKADA <okada@opaopa.org>
+
+	* semi-def.el (mime-browse-url-regexp): Allow nntps and ftps.
+
 2001-06-12  Yuuichi Teranishi <teranisi@gohome.org>
 
 	* mime-view.el (mime-display-multipart/related): When "start"
