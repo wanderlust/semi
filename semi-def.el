@@ -94,7 +94,9 @@ provided or the TTY frame is used."
 	    extent)
 	(insert "[" string "]")
 	(while (setq extent (extent-at start nil nil extent))
-	  (set-extent-endpoints extent end (point)))
+	  ;; Avoid removing extents of next part.
+	  (if (eq (extent-end-position extent) end)
+	      (set-extent-endpoints extent end (point))))
 	(delete-region start end)))
     (add-text-properties start (point)
 			 (list 'start-open t
