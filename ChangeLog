@@ -1,6 +1,6 @@
 2001-09-27  Katsumi Yamaoka   <yamaoka@jpl.org>
 
-	* mime-edit.el (mime-edit-content-end): Retuen the value of
+	* mime-edit.el (mime-edit-content-end): Return the value of
 	`point-max' when the function `next-single-property-change'
 	returns nil.
 
