@@ -28,8 +28,7 @@
 ;;; Code:
 
 (require 'std11)
-(require 'mel)
-(require 'eword-decode)
+(require 'mime-lib)
 (require 'mime-parse)
 (require 'semi-def)
 (require 'calist)
@@ -251,8 +250,9 @@ If optional argument MESSAGE-INFO is not specified,
 	    (buffer-substring (match-beginning 0)(match-end 0))
 	  ))))
 
-(defun mime-raw-get-subject (entity)
-  (or (std11-find-field-body '("Content-Description" "Subject"))
+(defun mime-view-entity-title (entity)
+  (or (mime-entity-read-field entity 'Content-Description)
+      (mime-entity-read-field entity 'Subject)
       (let ((ret (mime-entity-content-disposition entity)))
 	(and ret
 	     (setq ret (mime-content-disposition-filename ret))
@@ -777,7 +777,7 @@ The compressed face will be piped to this command.")
     (goto-char start)
     (save-restriction
       (narrow-to-region start end)
-      (setq subj (eword-decode-string (mime-raw-get-subject entity)))
+      (setq subj (mime-view-entity-title entity))
       )
     (or situation
 	(setq situation
