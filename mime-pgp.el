@@ -776,12 +776,13 @@ appropriately."
 	      (save-window-excursion
 		(funcall show-function armor)
 		(if (y-or-n-p "Add this key to keyring? ")
-		    (if (zerop
+		    (if (string-match
+			 "^0"
 			 (with-temp-buffer
 			   (insert armor)
 			   ;; The function should return a number of
-			   ;; keys found.
-			   (funcall snarf-function)))
+			   ;; keys found as a string.
+			   (format "%s" (funcall snarf-function))))
 			(progn
 			  (message "Key not found or discarded.")
 			  nil)
