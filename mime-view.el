@@ -1047,7 +1047,8 @@ The compressed face will be piped to this command.")
 
 (defvar mime-view-redisplay nil)
 
-(defun mime-view-display-message (message &optional preview-buffer mother)
+(defun mime-view-display-message (message &optional preview-buffer
+					  mother default-keymap-or-function)
   (let ((win-conf (current-window-configuration))
 	(raw-buffer (mime-entity-buffer message)))
     (or preview-buffer
@@ -1069,6 +1070,7 @@ The compressed face will be piped to this command.")
 				'((entity-button . invisible)
 				  (header . visible)
 				  ))
+      (mime-view-define-keymap default-keymap-or-function)
       (set-buffer-modified-p nil)
       )
     (setq buffer-read-only t)
@@ -1113,8 +1115,8 @@ button-2	Move to point under the mouse cursor
 	       (setq mime-raw-message-info (mime-parse-message ctl encoding))
 	       ))))
     (prog1
-	(mime-view-display-message message obuf mother)
-      (mime-view-define-keymap default-keymap-or-function)
+	(mime-view-display-message message obuf mother
+				   default-keymap-or-function)
       (let ((point
 	     (next-single-property-change (point-min) 'mime-view-entity)))
 	(if point
