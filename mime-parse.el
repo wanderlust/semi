@@ -143,9 +143,9 @@ which are string or symbol."
 ;;; @ field reader
 ;;;
 
-(defun mime/Content-Type ()
+(defun mime-read-Content-Type ()
   "Read field-body of Content-Type field from current-buffer,
-and return parsed it. [mime-parse.el]"
+and return parsed it."
   (let ((str (std11-field-body "Content-Type")))
     (if str
 	(mime-parse-Content-Type str)
@@ -232,7 +232,7 @@ and return parsed it. [mime-parse.el]"
 
 (defun mime-parse-message (&optional ctl encoding rcnum)
   "Parse current-buffer as a MIME message. [mime-parse.el]"
-  (setq ctl (or (mime/Content-Type) ctl))
+  (setq ctl (or (mime-read-Content-Type) ctl))
   (setq encoding (or (mime/Content-Transfer-Encoding) encoding))
   (let ((ctype (car ctl))
 	(params (cdr ctl))

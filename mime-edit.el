@@ -2472,7 +2472,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 (defun mime-edit-decode-buffer (not-decode-text)
   (save-excursion
     (goto-char (point-min))
-    (let ((ctl (mime/Content-Type)))
+    (let ((ctl (mime-read-Content-Type)))
       (if ctl
 	  (let ((ctype (car ctl))
 		(params (cdr ctl))
