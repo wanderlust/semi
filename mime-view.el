@@ -852,10 +852,16 @@ This can only handle gzipped contents."
   "Ungzip gzipped part and display."
     (insert
      (with-temp-buffer
+       ;; I really hate this brain-damaged function.
+       (when (fboundp 'set-buffer-multibyte)
+	 (set-buffer-multibyte nil))
        (insert (mime-entity-content entity))
        (as-binary-process
 	(call-process-region (point-min) (point-max) "gzip" t t
 			     nil "-cd"))
+       ;; Oh my goodness.
+       (when (fboundp 'set-buffer-multibyte)
+	 (set-buffer-multibyte t))
        (decode-coding-region (point-min) (point-max) 'undecided)
        (buffer-string)))
     t)

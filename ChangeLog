@@ -1,3 +1,7 @@
+2000-03-16  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-display-gzipped): Make it FSF Emacs friendly.
+
 2000-03-14  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* mime-view.el (mime-display-gzipped): Remove arguments.
