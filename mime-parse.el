@@ -160,18 +160,20 @@ and return parsed it."
 ;;; @ Content-Transfer-Encoding
 ;;;
 
+(defun mime-parse-Content-Transfer-Encoding (string)
+  "Parse STRING as field-body of Content-Transfer-Encoding field."
+  (if (string-match "[ \t\n\r]+$" string)
+      (setq string (match-string 0 string))
+    )
+  (downcase string))
+
 (defun mime-read-Content-Transfer-Encoding (&optional default-encoding)
   "Read field-body of Content-Transfer-Encoding field from
 current-buffer, and return it.
 If is is not found, return DEFAULT-ENCODING."
   (let ((str (std11-field-body "Content-Transfer-Encoding")))
     (if str
-	(progn
-	  (if (string-match "[ \t\n\r]+$" str)
-	      (setq str (substring str 0 (match-beginning 0)))
-	    )
-	  (downcase str)
-	  )
+	(mime-parse-Content-Transfer-Encoding str)
       default-encoding)))
 
 
@@ -260,10 +262,38 @@ If is is not found, return DEFAULT-ENCODING."
 DEFAULT-CTL is used when an entity does not have valid Content-Type
 field.  Its format must be as same as return value of
 mime-{parse|read}-Content-Type."
-  (let* ((content-type (or (mime-read-Content-Type) default-ctl))
-	 (content-disposition (mime-read-Content-Disposition))
-	 (primary-type (mime-content-type-primary-type content-type))
-	 (encoding (mime-read-Content-Transfer-Encoding default-encoding)))
+  (let ((header-start (point-min))
+	header-end
+	body-start
+	(body-end (point-max))
+	content-type content-disposition encoding
+	primary-type)
+    (goto-char header-start)
+    (if (re-search-forward "^$" nil t)
+	(setq header-end (match-end 0)
+	      body-start (1+ header-end))
+      (setq header-end (point-min)
+	    body-start (point-min))
+      )
+    (save-restriction
+      (narrow-to-region header-start header-end)
+      (setq content-type (or (let ((str (std11-fetch-field "Content-Type")))
+			       (if str
+				   (mime-parse-Content-Type str)
+				 ))
+			     default-ctl)
+	    content-disposition (let ((str (std11-fetch-field
+					    "Content-Disposition")))
+				  (if str
+				      (mime-parse-Content-Disposition str)
+				    ))
+	    encoding (let ((str (std11-fetch-field
+				 "Content-Transfer-Encoding")))
+		       (if str
+			   (mime-parse-Content-Transfer-Encoding str)
+			 default-encoding))
+	    primary-type (mime-content-type-primary-type content-type))
+      )
     (cond ((eq primary-type 'multipart)
 	   (mime-parse-multipart content-type content-disposition encoding
 				 node-id)
@@ -272,16 +302,10 @@ mime-{parse|read}-Content-Type."
 		(memq (mime-content-type-subtype content-type)
 		      '(rfc822 news)
 		      ))
-	   (goto-char (point-min))
 	   (make-mime-entity node-id (point-min) (point-max)
 			     content-type content-disposition encoding
 			     (save-restriction
-			       (narrow-to-region
-				(if (re-search-forward "^$" nil t)
-				    (1+ (match-end 0))
-				  (point-min)
-				  )
-				(point-max))
+			       (narrow-to-region body-start body-end)
 			       (list (mime-parse-message
 				      nil nil (cons 0 node-id)))
 			       ))
