@@ -1,3 +1,10 @@
+2000-02-23   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-image.el
+	(mime-image-normalize-xbm-buffer): New inline function.
+	(mime-image-create) [XEmacs || Emacs21]: Use it for XBM data.
+	(mime-display-image): Don't create temporary file.
+
 2000-02-24  Mito  <mit@nines.nec.co.jp>
 
 	* mime-edit.el (mime-edit-normalize-body): Fix number of arguments
