@@ -1,5 +1,32 @@
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-pgp.el, mime-play.el: Rename `mime-playback-entity' ->
+	`mime-raw-play-entity'.
+
+	* mime-play.el, mime-view.el: Rename `mime-view-cinfo' ->
+	`mime-view-entity-info'.
+
+	* mime-view.el, mime-parse.el: Rename `mime-entity-info-rnum' ->
+	`mime-entity-info-reversed-number'.
+
+	* mime-view.el: Rename `mime/flatten-content-info' ->
+	`mime-raw-flatten-message-info'.
+
+	* mime-pgp.el, mime-view.el: Rename `mime-raw-rcnum-to-cinfo' ->
+	`mime-raw-reversed-entity-number-to-entity-info'.
+
+	* mime-view.el: Rename `mime-raw-cnum-to-cinfo' ->
+	`mime-raw-entity-number-to-entity-info'.
+
+	* mime-pgp.el, mime-partial.el, mime-view.el: Rename
+	`mime-raw-entity-info' -> `mime-raw-message-info'.
+
+	* mime-play.el, mime-pgp.el, mime-view.el: Rename
+	`mime-raw-point-content-number' ->
+	`mime-raw-point-to-entity-number'.
+
+1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-play.el, mime-pgp.el, mime-view.el: Rename ` mime-article/'
 	-> `mime-raw-'.
 
