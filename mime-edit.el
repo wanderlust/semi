@@ -374,6 +374,12 @@ If encoding is nil, it is determined from its contents.")
     (iso-2022-int-1	7 "base64")
     ))
 
+(defsubst mime/encoding-name (transfer-level &optional not-omit)
+  (cond ((> transfer-level 8) "binary")
+	((= transfer-level 8) "8bit")
+	(not-omit "7bit")
+	))
+
 (defvar mime-edit-transfer-level 7
   "*A number of network transfer level.  It should be bigger than 7.")
 (make-variable-buffer-local 'mime-edit-transfer-level)
