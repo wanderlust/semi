@@ -62,6 +62,15 @@
   :group 'mime-view
   :type 'file)
 
+(defcustom mime-preview-move-scroll nil
+  "*Decides whether to scroll when moving to next entity.
+When t, scroll the buffer. Non-nil but not t means scroll when
+the next entity is within next-screen-context-lines from top or
+buttom. Nil means don't scroll at all."
+  :group 'mime-view
+  :type '(choice (const :tag "Off" nil)
+		 (const :tag "On" t)
+		 (sexp :tag "Situation" 1)))
 
 ;;; @ in raw-buffer (representation space)
 ;;;
@@ -1298,7 +1307,17 @@ variable `mime-preview-over-to-previous-method-alist'."
     (if (and point
 	     (>= point (point-min)))
 	(if (get-text-property (1- point) 'mime-view-entity)
-	    (goto-char point)
+	    (progn (goto-char point)
+		   (if
+		    (or (eq mime-preview-move-scroll t)
+			(and mime-preview-move-scroll
+			     (<= point
+				(save-excursion
+				  (move-to-window-line 0)
+				  (forward-line next-screen-context-lines)
+				  (end-of-line)
+				  (point)))))
+			(recenter (* -1 next-screen-context-lines))))
 	  (goto-char (1- point))
 	  (mime-preview-move-to-previous)
 	  )
@@ -1325,6 +1344,17 @@ variable `mime-preview-over-to-next-method-alist'."
 	  (goto-char point)
 	  (if (null (get-text-property point 'mime-view-entity))
 	      (mime-preview-move-to-next)
+	    (and
+	     (or (eq mime-preview-move-scroll t)
+		 (and mime-preview-move-scroll
+		      (>= point
+			 (save-excursion
+			   (move-to-window-line -1)
+			   (forward-line
+			    (* -1 next-screen-context-lines))
+			   (beginning-of-line)
+			   (point)))))
+		 (recenter next-screen-context-lines))
 	    ))
       (let ((f (assq (mime-preview-original-major-mode)
 		     mime-preview-over-to-next-method-alist)))
@@ -1350,7 +1380,8 @@ If reached to (point-max), it calls function registered in variable
 	  (bottom (window-end (selected-window))))
       (if (and (not h)
 	       (> bottom point))
-	  (goto-char point)
+	  (progn (goto-char point)
+		 (recenter next-screen-context-lines))
 	(condition-case nil
 	    (scroll-up h)
 	  (end-of-buffer
@@ -1374,7 +1405,8 @@ If reached to (point-min), it calls function registered in variable
 	  (top (window-start (selected-window))))
       (if (and (not h)
 	       (< top point))
-	  (goto-char point)
+	  (progn (goto-char point)
+		 (recenter (* -1 next-screen-context-lines)))
 	(condition-case nil
 	    (scroll-down h)
 	  (beginning-of-buffer
