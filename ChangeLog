@@ -1,5 +1,12 @@
 1999-01-17  Tanaka Akira  <akr@jaist.ac.jp>
 
+	* AKEMI-VERSION: New file.
+
+	* semi-def.el (mime-user-interface-product): Bump up to
+	AKEMI 1.12.1.
+
+1999-01-17  Tanaka Akira  <akr@jaist.ac.jp>
+
 	* mime-play.el: Reuiqre `ccl'.
 	(translate-string): New CCL program.
 	(mime-view-caesar): Try to deal with
