@@ -459,20 +459,17 @@ Each elements are regexp of field-name.")
 (autoload 'mime-preview-text/enriched "mime-text")
 (autoload 'mime-preview-text/richtext "mime-text")
 
-(defvar mime-text-decoder-alist
-  '((mime-show-message-mode	. mime-text-decode-buffer)
-    (mime-temp-message-mode	. mime-text-decode-buffer)
-    (t				. mime-text-decode-buffer-maybe)
+(defvar mime-raw-representation-type-alist
+  '((mime-show-message-mode     . binary)
+    (mime-temp-message-mode     . binary)
+    (t                          . cooked)
     )
-  "Alist of major-mode vs. mime-text-decoder.
-Each element looks like (SYMBOL . FUNCTION).  SYMBOL is major-mode or
-t.  t means default.
+  "Alist of major-mode vs. presentation-type of mime-raw-buffer.
+Each element looks like (SYMBOL . MODE).  SYMBOL is major-mode or t.
+t means default.  MODE must be `binary' or `cooked'.
 
-Specification of FUNCTION is described in DOC-string of variable
-`mime-text-decoder'.
-
-This value is overridden by buffer local variable `mime-text-decoder'
-if it is not nil.")
+This value is overridden by buffer local variable
+`mime-raw-representation-type' if it is not nil.")
 
 
 (defvar mime-view-announcement-for-message/partial
