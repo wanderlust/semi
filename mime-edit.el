@@ -1949,7 +1949,7 @@ Content-Transfer-Encoding: 7bit
   (while (re-search-forward mime-editor/single-part-tag-regexp nil t)
     (let* ((tag (buffer-substring (match-beginning 0) (match-end 0)))
 	   (contype (mime-editor/get-contype tag))
-	   (charset (intern (downcase (mime-get-parameter contype "charset"))))
+	   (charset (mime-get-parameter contype "charset"))
 	   (encoding (mime-editor/get-encoding tag)))
       ;; Remove extra whitespaces after the tag.
       (if (looking-at "[ \t]+$")
@@ -1972,7 +1972,9 @@ Content-Transfer-Encoding: 7bit
 	)
        ((mime-test-content-type contype "text")
 	;; Define charset for text if necessary.
-	(setq charset (or charset (mime-editor/choose-charset)))
+	(setq charset (if charset
+			  (intern (downcase charset))
+			(mime-editor/choose-charset)))
 	(mime-editor/define-charset charset)
 	(cond ((string-equal contype "text/x-rot13-47")
 	       (save-excursion
