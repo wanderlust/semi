@@ -897,8 +897,6 @@ button-2	Move to point under the mouse cursor
 
 (autoload 'mime-play-entity "mime-play")
 
-(defvar mime-view-decoding-mode "play" "MIME body decoding mode")
-
 (defun mime-view-extract-content ()
   (interactive)
   (mime-play-entity "extract")
