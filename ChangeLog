@@ -1,5 +1,9 @@
 1999-01-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el (mime-view-caesar): New implementation.
+
+1999-01-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-play.el (mime-view-caesar): Don't expect called in
 	raw-buffer; use `mime-insert-entity'.
 
