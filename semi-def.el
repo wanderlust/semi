@@ -105,12 +105,18 @@
 ;;; @ menu
 ;;;
 
-(defmacro mime-popup-menu-bogus-filter-constructor (menu)
-  `(let (x y)
-     (setq x (x-popup-menu t ,menu)
-	   y (and x (lookup-key ,menu (apply #'vector x))))
-     (if (and x y)
-	 (funcall y))))
+(defmacro mime-popup-menu-bogus-filter-constructor (menu &optional modal)
+  ;; #### Kludge for FSF Emacs-style menu.
+  (let ((bogus-menu (make-symbol "bogus-menu")))
+    `(let (,bogus-menu selection function)
+       (easy-menu-define ,bogus-menu nil nil ,menu)
+       (setq selection (x-popup-menu t ,bogus-menu))
+       ,(if modal
+	    `selection
+	  `(when selection
+	     (setq function (lookup-key ,bogus-menu (apply #'vector selection)))
+	     (if function
+		 (funcall function)))))))
 
 ;;; While XEmacs can have both X and tty frames at the same time with
 ;;; gnuclient, we shouldn't emulate in text-mode here.
@@ -118,20 +124,14 @@
 (static-if (featurep 'xemacs)
     (defalias 'mime-popup-menu-popup 'popup-menu)
   (defun mime-popup-menu-popup (menu &optional event)
-    (let (bogus-menu)
-      ;; #### Kludge for FSF Emacs-style menu.
-      (easy-menu-define bogus-menu nil nil menu)
-      (mime-popup-menu-bogus-filter-constructor bogus-menu))))
+    (mime-popup-menu-bogus-filter-constructor menu)))
 
 (static-if (featurep 'xemacs)
     (defun mime-popup-menu-select (menu &optional event)
       (let ((selection (get-popup-menu-response menu event)))
 	(event-object selection)))
   (defun mime-popup-menu-select (menu &optional event)
-    (let (bogus-menu)
-      ;; #### Kludge for FSF Emacs-style menu.
-      (easy-menu-define bogus-menu nil nil menu)
-      (x-popup-menu t bogus-menu))))
+    (mime-popup-menu-bogus-filter-constructor menu 'modal)))
 
 
 ;;; @ Other Utility
