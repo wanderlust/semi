@@ -1,3 +1,7 @@
+2001-04-17  YAMASHITA Junji   <ysjj@unixuser.org>
+
+	* semi-def.el (mime-browse-url-regexp): Allow https.
+
 2001-03-06  Hiroya Murata     <lapis-lazuli@pop06.odn.ne.jp>
 
 	* mime-edit.el (mime-edit-set-parameter): Get rid of the duplicated
