@@ -264,7 +264,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
     (pop-to-buffer mother)
     ))
 
-(defun mime-article/view-message/rfc822 (beg end cal)
+(defun mime-display-message/rfc822 (beg end cal)
   (let* ((cnum (mime-article/point-content-number beg))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (mother mime-view-buffer)

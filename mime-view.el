@@ -131,7 +131,7 @@
      (method . mime-display-message/external-ftp)
      )
     ((type . "message/rfc822")
-     (method . mime-article/view-message/rfc822)
+     (method . mime-display-message/rfc822)
      (mode . "play")
      )
     ((type . "message/partial")
