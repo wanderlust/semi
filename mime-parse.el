@@ -153,7 +153,7 @@ and return parsed it."
 
 (defsubst mime-content-disposition-parameters (content-disposition)
   "Return disposition-parameters of CONTENT-DISPOSITION."
-  (cdr (cdr content-disposition)))
+  (cdr content-disposition))
 
 
 ;;; @ Content-Transfer-Encoding
