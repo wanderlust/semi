@@ -29,6 +29,7 @@
 
 (require 'mime-view)
 (require 'alist)
+(require 'filename)
 
   
 ;;; @ content decoder
