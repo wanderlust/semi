@@ -90,21 +90,19 @@ specified, play as it.  Default MODE is \"play\"."
 				mime-acting-situation-example-list
 				'method ignored-method
 				mime-play-find-every-situations))
-	method)
+	method menu)
     (setq mime-acting-situation-example-list (cdr ret)
 	  ret (car ret))
     (cond ((cdr ret)
-	   (setq ret (mime-popup-menu-select
-		      (cons 
-		       "Methods"
-		       (mapcar
-			(lambda (situation)
-			  (vector
-			   (format "%s"
-				   (cdr (assq 'method situation)))
-			   situation t))
-			ret))))
-	   (setq ret (mime-sort-situation ret))
+	   (while ret
+	     (or (vassoc (setq method
+			       (format "%s"
+				       (cdr (assq 'method (pop ret)))))
+			 menu)
+		 (push (vector method situation t) menu)))
+	   (setq ret (mime-sort-situation
+		      (mime-menu-select "Play entity with: "
+					(cons "Methods" menu))))
 	   (add-to-list 'mime-acting-situation-example-list (cons ret 0)))
 	  (t
 	   (setq ret (car ret))))

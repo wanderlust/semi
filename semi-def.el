@@ -113,7 +113,8 @@
 	 (setq function (lookup-key ,bogus-menu (apply #'vector selection)))
 	 ;; If a callback entry has no name, easy-menu wraps its value.
 	 ;; See `easy-menu-make-symbol'.
-	 (if (eq t (compare-strings "menu-function-" 0 nil (symbol-name function) 0 14))
+	 (if (eq t (compare-strings "menu-function-" 0 nil
+				    (symbol-name function) 0 14))
 	     (car (last (symbol-function function)))
 	   function)))))
 
@@ -133,6 +134,21 @@
 	(event-object selection)))
   (defun mime-popup-menu-select (menu &optional event)
     (mime-popup-menu-bogus-filter-constructor menu)))
+
+(static-if (featurep 'xemacs)
+    (defun mime-should-use-popup-menu ()
+      (mouse-event-p last-command-event))
+  (defun mime-should-use-popup-menu ()
+    (memq 'click (event-modifiers last-command-event))))
+
+(defun mime-menu-select (prompt menu &optional event)
+  (if (mime-should-use-popup-menu)
+      (mime-popup-menu-select menu event)
+    (let ((rest (cdr menu)))
+      (while rest
+	(setcar rest (append (car rest) nil))
+	(setq rest (cdr rest)))
+      (nth 1 (assoc (completing-read prompt (cdr menu)) (cdr menu))))))
 
 
 ;;; @ Other Utility
