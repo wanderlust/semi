@@ -198,12 +198,14 @@ Each elements are regexp of field-name. [mime-view.el]")
 ;;;
 
 (defun mime-view-header-visible-p (rcnum cinfo &optional ctype)
+  "Return non-nil if header of current entity is visible."
   (or (null rcnum)
       (progn
-	(setq ctype
-	      (mime::content-info/type
-	       (mime-article/rcnum-to-cinfo (cdr rcnum) cinfo)
-	       ))
+	(or ctype
+	    (setq ctype
+		  (mime::content-info/type
+		   (mime-article/rcnum-to-cinfo (cdr rcnum) cinfo)
+		   )))
 	(member ctype mime-view-childrens-header-showing-Content-Type-list)
 	)))
 
