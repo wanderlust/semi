@@ -144,33 +144,39 @@ and END to the keyring.")
 			      ,scheme)))))
 
 (defun pgg-encrypt-region (start end rcpts)
+  (interactive
+   (list (region-beginning)(region-end)
+	 (split-string (read-string "Recipients: ") "[ \t,]+")))
   (let ((entity (pgg-make-scheme pgg-default-scheme)))
     (luna-send entity 'encrypt-region entity start end rcpts)))
 
 (defun pgg-decrypt-region (start end)
-  (let* ((packets (pgg-parse-armor-region start end))
+  (interactive "r")
+  (let* ((packet (cdr (assq 1 (pgg-parse-armor-region start end))))
 	 (scheme
 	  (or pgg-scheme
 	      (cdr (assq 'scheme
 			 (progn
 			   (in-calist-package 'pgg)
 			   (ctree-match-calist pgg-decrypt-codition
-					       packets))))
+					       packet))))
 	      pgg-default-scheme))
 	 (entity (pgg-make-scheme scheme)))
     (luna-send entity 'decrypt-region entity start end)))
 
 (defun pgg-sign-region (start end)
+  (interactive "r")
   (let ((entity (pgg-make-scheme pgg-default-scheme)))
     (luna-send entity 'sign-region entity start end)))
 
-(defun pgg-verify-region (start end &optional signature)
-  (let* ((packets 
+(defun pgg-verify-region (start end &optional signature fetch)
+  (interactive "r")
+  (let* ((packet
 	  (with-temp-buffer
 	    (buffer-disable-undo)
 	    (set-buffer-multibyte nil)
 	    (insert-file-contents signature)
-	    (pgg-decode-armor-region (point-min)(point-max))
+	    (cdr (assq 2 (pgg-decode-armor-region (point-min)(point-max))))
 	    ))
 	 (scheme
 	  (or pgg-scheme
@@ -178,9 +184,25 @@ and END to the keyring.")
 			 (progn
 			   (in-calist-package 'pgg)
 			   (ctree-match-calist pgg-verify-codition
-					       packets))))
+					       packet))))
 	      pgg-default-scheme))
-	 (entity (pgg-make-scheme scheme)))
+	 (entity (pgg-make-scheme scheme))
+	 (key (cdr (assq 'key-identifier packet)))
+	 keyserver)
+    (and (stringp key)
+	 (setq key (concat "0x" (pgg-truncate-key-identifier key)))
+	 (null (pgg-lookup-key-string key))
+	 fetch
+	 (y-or-n-p (format "Key %s not found; attempt to fetch? " key))
+	 (setq keyserver 
+	       (or (cdr (assq 'preferred-key-server packet))
+		   pgg-default-keyserver-address))
+	 (ignore-errors (require 'url))
+	 (pgg-fetch-key
+	  (if (url-type (url-generic-parse-url keyserver))
+	      keyserver
+	    (format "http://%s:11371/pks/lookup?op=get&search=%s"
+		    keyserver key))))
     (luna-send entity 'verify-region entity start end signature)))
 
 (defun pgg-insert-key ()
@@ -196,6 +218,11 @@ and END to the keyring.")
     (luna-send entity 'lookup-key-string entity string type)))
 
 (defun pgg-fetch-key (url)
+  "Attempt to fetch a key for addition to PGP or GnuPG keyring.
+
+Return t if we think we were successful; nil otherwise.  Note that nil
+is not necessarily an error, since we may have merely fired off an Email
+request for the key."
   (require 'w3)
   (require 'url)
   (with-current-buffer (get-buffer-create pgg-output-buffer)
