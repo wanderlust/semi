@@ -1,5 +1,11 @@
 1998-04-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-view-setup-buffers): Don't use
+	'mime-raw-flatten-message-info.
+	(mime-view-display-entity): Display recursively.
+
+1998-04-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* TODO: New file.
 
 1998-04-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
