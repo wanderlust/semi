@@ -1,3 +1,11 @@
+1998-06-25  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+
+	* semi-def.el: Don't require 'browse-url.
+	Abolish `mime-browse-add-url-buttons-maybe' and `mime-browse-url'.
+	(mime-browse-url-function): New function.
+	(mime-add-url-buttons): Renamed from `mime-browse-add-url-button'.
+	Use `mime-browse-url-function'.
+
 1998-06-24  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
 
 	* mime-view.el: (mime-preview-condition): Renamed method for
