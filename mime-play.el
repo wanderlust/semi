@@ -204,11 +204,8 @@ specified, play as it.  Default MODE is \"play\"."
 	(let ((method (cdr (assoc 'method situation)))
 	      (name (expand-file-name (mime-raw-get-filename situation)
 				      mime-temp-directory)))
-	  (mime-write-decoded-region (if (re-search-forward "^$" end t)
-					 (1+ (match-end 0))
-				       (point-min))
-				     end name
-				     (cdr (assq 'encoding situation)))
+	  (mime-write-decoded-region (mime-entity-body-start entity) end
+				     name (cdr (assq 'encoding situation)))
 	  (message "External method is starting...")
 	  (let ((process
 		 (let ((command
