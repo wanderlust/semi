@@ -1,3 +1,8 @@
+2004-07-24  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* mime-view.el (mime-display-multipart/related): Do nothing when
+	the part is not found.
+
 2004-04-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* mime-edit.el (mime-file-types): Add application/pdf. Use base64
