@@ -165,43 +165,6 @@
   )
 
 
-;;; @ PGP
-;;;
-
-(defvar pgp-function-alist
-  '(
-    ;; for mime-pgp
-    (verify		pgg-verify-region		"pgg")
-    (decrypt		pgg-decrypt-region		"pgg")
-    (snarf-keys		pgg-snarf-keys-region		"pgg")
-    ;; for mime-edit
-    (sign		pgg-sign-region			"pgg")
-    (encrypt		pgg-encrypt-region		"pgg")
-    (insert-key		pgg-insert-key			"pgg")
-    )
-  "Alist of service names vs. corresponding functions and its filenames.
-Each element looks like (SERVICE FUNCTION FILE).
-
-SERVICE is a symbol of PGP processing.  It allows `verify', `decrypt',
-`fetch-key', `snarf-keys', `mime-sign', `traditional-sign', `encrypt'
-or `insert-key'.
-
-Function is a symbol of function to do specified SERVICE.
-
-FILE is string of filename which has definition of corresponding
-FUNCTION.")
-
-(defmacro pgp-function (method)
-  "Return function to do service METHOD."
-  `(cadr (assq ,method (symbol-value 'pgp-function-alist))))
-
-(mapcar (function
-	 (lambda (method)
-	   (autoload (cadr method)(nth 2 method))
-	   ))
-	pgp-function-alist)
-
-
 ;;; @ Other Utility
 ;;;
 

@@ -42,10 +42,21 @@
 ;;	    by Kazuhiko Yamamoto <kazu@is.aist-nara.ac.jp> (1995/10;
 ;;	    expired)
 
+;;	[OpenPGP/MIME] draft-yamamoto-openpgp-mime-00.txt: "MIME
+;;	    Security with OpenPGP (OpenPGP/MIME)" by Kazuhiko YAMAMOTO
+;;	    <kazu@iijlab.net> (1998/1)
+
 ;;; Code:
 
 (require 'mime-play)
 (require 'pgg-def)
+
+(autoload 'pgg-decrypt-region "pgg"
+  "PGP decryption of current region." t)
+(autoload 'pgg-verify-region "pgg"
+  "PGP verification of current region." t)
+(autoload 'pgg-snarf-keys-region "pgg"
+  "Snarf PGP public keys in current region." t)
 
 
 ;;; @ Internal method for multipart/signed
@@ -78,8 +89,7 @@
     (cond ((progn
 	     (goto-char (point-min))
 	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
-	   (funcall (pgp-function 'verify)
-		    (point-min)(point-max))
+	   (pgg-verify-region (match-beginning 0)(point-max) nil 'fetch)
 	   (goto-char (point-min))
 	   (delete-region
 	    (point-min)
@@ -100,8 +110,7 @@
 	  ((progn
 	     (goto-char (point-min))
 	     (re-search-forward "^-+BEGIN PGP MESSAGE-+$" nil t))
-	   (funcall (pgp-function 'decrypt)
-		    (point-min)(point-max))
+	   (pgg-decrypt-region (point-min)(point-max))
 	   (delete-region (point-min)(point-max))
 	   (insert-buffer pgg-output-buffer)
 	   (setq representation-type 'binary)
@@ -115,44 +124,8 @@
 
 ;;; @ Internal method for application/pgp-signature
 ;;;
-;;; It is based on RFC 2015 (PGP/MIME).
-
-(defvar mime-pgp-command "pgp"
-  "*Name of the PGP command.")
-
-(defvar mime-pgp-default-language 'en
-  "*Symbol of language for pgp.
-It should be ISO 639 2 letter language code such as en, ja, ...")
-
-(defvar mime-pgp-good-signature-regexp-alist
-  '((en . "Good signature from user.*$"))
-  "Alist of language vs regexp to detect ``Good signature''.")
-
-(defvar mime-pgp-key-expected-regexp-alist
-  '((en . "Key matching expected Key ID \\(\\S +\\) not found"))
-  "Alist of language vs regexp to detect ``Key expected''.")
-
-(defun mime-pgp-check-signature (output-buffer sig-file orig-file)
-  (save-excursion
-    (set-buffer output-buffer)
-    (erase-buffer))
-  (let* ((lang (or mime-pgp-default-language 'en))
-	 (status (call-process-region (point-min)(point-max)
-				      mime-pgp-command
-				      nil output-buffer nil
-				      sig-file orig-file (format "+language=%s" lang)))
-	 (regexp (cdr (assq lang mime-pgp-good-signature-regexp-alist))))
-    (if (= status 0)
-	(save-excursion
-	  (set-buffer output-buffer)
-	  (goto-char (point-min))
-	  (message
-	   (cond ((not (stringp regexp))
-		  "Please specify right regexp for specified language")
-		 ((re-search-forward regexp nil t)
-		  (buffer-substring (match-beginning 0) (match-end 0)))
-		 (t "Bad signature")))
-	  ))))
+;;; It is based on RFC 2015 (PGP/MIME) and
+;;; draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME).
 
 (defun mime-verify-application/pgp-signature (entity situation)
   "Internal method to check PGP/MIME signature."
@@ -176,15 +149,15 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	    (insert "\r")
 	    (forward-line 1))
 	  (let ((pgg-output-buffer mime-echo-buffer-name))
-	    (funcall (pgp-function 'verify) 
-		     (point-min)(point-max) sig-file 'fetch)))
+	    (pgg-verify-region (point-min)(point-max) sig-file 'fetch)))
       (delete-file sig-file))
     ))
 
 
 ;;; @ Internal method for application/pgp-encrypted
 ;;;
-;;; It is based on RFC 2015 (PGP/MIME).
+;;; It is based on RFC 2015 (PGP/MIME) and
+;;; draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME).
 
 (defun mime-decrypt-application/pgp-encrypted (entity situation)
   (let* ((entity-node-id (mime-entity-node-id entity))
@@ -200,7 +173,8 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 
 ;;; @ Internal method for application/pgp-keys
 ;;;
-;;; It is based on RFC 2015 (PGP/MIME).
+;;; It is based on RFC 2015 (PGP/MIME) and
+;;; draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME).
 
 (defun mime-add-application/pgp-keys (entity situation)
   (save-excursion (mime-show-echo-buffer))
@@ -209,8 +183,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
     (mime-decode-region (point-min) (point-max)
                         (cdr (assq 'encoding situation)))
     (let ((pgg-output-buffer mime-echo-buffer-name))
-      (funcall (pgp-function 'snarf-keys)
-	       (point-min)(point-max)))))
+      (pgg-snarf-keys-region (point-min)(point-max)))))
 
 
 ;;; @ end

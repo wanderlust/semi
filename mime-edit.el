@@ -117,6 +117,13 @@
 (require 'pgg-def)
 (require 'pgg-parse)
 
+(autoload 'pgg-encrypt-region "pgg"
+  "PGP encryption of current region." t)
+(autoload 'pgg-sign-region "pgg"
+  "PGP signature of current region." t)
+(autoload 'pgg-insert-key "pgg"
+  "Insert PGP public key at point." t)
+
 
 ;;; @ version
 ;;;
@@ -1754,8 +1761,9 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 	    (insert (format "Content-Transfer-Encoding: %s\n" encoding))
 	  )
 	(insert "\n")
-	(funcall (pgp-function 'sign)
-		 (point-min)(point-max))
+	(or (pgg-sign-region (point-min)(point-max))
+	    (throw 'mime-edit-error 'pgp-error)
+	    )
 	(setq micalg
 	      (cdr (assq 'hash-algorithm
 			 (cdar (with-current-buffer pgg-output-buffer
@@ -1836,9 +1844,10 @@ Content-Transfer-Encoding: 7bit
               (insert (format "Content-Transfer-Encoding: %s\n" encoding))
             )
           (insert "\n")
-	  (let ((pgg-default-user-id (or from pgg-default-user-id)))
-	    (funcall (pgp-function 'encrypt)
-		     (point-min) (point-max) recipients))
+	  (or (let ((pgg-default-user-id (or from pgg-default-user-id)))
+		(pgg-encrypt-region (point-min) (point-max) recipients))
+	      (throw 'mime-edit-error 'pgp-error)
+	      )
 	  (delete-region (point-min)(point-max))
 	  (goto-char beg)
 	  (insert (format "--[[multipart/encrypted;
@@ -1871,9 +1880,7 @@ Content-Transfer-Encoding: 7bit
 	    (insert (format "Content-Transfer-Encoding: %s\n" encoding))
 	  )
 	(insert "\n")
-	(or (as-binary-process
-	     (funcall (pgp-function 'traditional-sign)
-		      beg (point-max)))
+	(or (pgg-sign-region beg (point-max) 'clearsign)
 	    (throw 'mime-edit-error 'pgp-error)
 	    )
 	(goto-char beg)
@@ -1902,10 +1909,7 @@ Content-Transfer-Encoding: 7bit
 	      (insert (format "Content-Transfer-Encoding: %s\n" encoding))
 	    )
 	  (insert "\n")
-	  (or (as-binary-process
-	       (funcall (pgp-function 'encrypt)
-			recipients beg (point-max) nil 'maybe)
-	       )
+	  (or (pgg-sign-region beg (point-max) recipients)
 	      (throw 'mime-edit-error 'pgp-error)
 	      )
 	  (goto-char beg)
@@ -2336,7 +2340,7 @@ and insert data encoded as ENCODING."
   (interactive "P")
   (mime-edit-insert-tag "application" "pgp-keys")
   (mime-edit-define-encoding "7bit")
-  (funcall (pgp-function 'insert-key))
+  (pgg-insert-key)
   )
 
 
