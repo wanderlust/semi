@@ -21,17 +21,17 @@
   (error (error "Please install APEL.")))
 (require 'cl)
 
+(add-path "bitmap-mule")
+(add-path "mel")
+
+(add-to-list 'load-path (expand-file-name "."))
+
 (or (module-installed-p 'calist)
     (error "Please install latest APEL."))
 (or (module-installed-p 'mel)
     (error "Please install MEL."))
 (if (module-installed-p 'tm-view)
     (error "Please remove tm from load-path."))
-
-(add-path "bitmap-mule")
-(add-path "mel")
-
-(add-to-list 'load-path (expand-file-name "."))
 
 
 ;;; @ Please specify optional package directory if you use them.
