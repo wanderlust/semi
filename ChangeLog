@@ -1,3 +1,10 @@
+2000-03-20  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-preview-follow-current-entity): Fix the bug
+	without header part.
+	(mime-preview-entity-boundary): Fix the case that last part
+	is composite type.
+
 2000-03-18  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* mime-view.el (mime-display-gzipped): Temporaly hack for FSF Emacs

@@ -1525,6 +1525,7 @@ It calls following-method selected from variable
 	(if header-exists
 	    (delete-region (goto-char (point-min))
 			   (re-search-forward "^$"))
+	  (goto-char (point-min))
 	  (insert "\n"))
 	(goto-char (point-min))
 	(let ((current-entity
@@ -1730,20 +1731,34 @@ If LINES is negative, scroll up LINES lines."
   (let ((entity (get-text-property point 'mime-view-entity))
 	(start (previous-single-property-change (1+ point) 'mime-view-entity
 						nil (point-min)))
-	(end point)
-	done)
-    (while (and (mime-entity-children entity)
-		(not done))
-      (if (not (mime-view-body-is-visible
-		(get-text-property point 'mime-view-situation)))
-	  (setq done t)
-	;; If the part is shown, search the last part.
-	(let ((child (car (last (mime-entity-children entity)))))
-	  (while (not (eq (get-text-property point 'mime-view-entity) child))
-	    (setq point (next-single-property-change point 'mime-view-entity)))
-	  (setq entity child))))
-    (setq end (next-single-property-change point 'mime-view-entity
-						 nil (point-max)))
+	end done)
+    (if (not (mime-entity-node-id entity))
+	(setq end (point-max))
+      (while (and (mime-entity-children entity)
+		  (not done))
+	(if (not (mime-view-body-is-visible
+		  (get-text-property point 'mime-view-situation)))
+	    (setq done t)
+	  ;; If the part is shown, search the last part.
+	  (let* ((child (car (last (mime-entity-children entity))))
+		 (node-id (mime-entity-node-id child))
+		 (tmp-node-id (mime-entity-node-id
+				 (get-text-property point
+						    'mime-view-entity))))
+	    (while (or (< (length tmp-node-id)
+			  (length node-id))
+		       (not (eq (nthcdr (- (length tmp-node-id)
+					   (length node-id))
+					tmp-node-id)
+				node-id)))
+	      (setq point
+		    (next-single-property-change point 'mime-view-entity)
+		    tmp-node-id (mime-entity-node-id
+				 (get-text-property point
+						    'mime-view-entity))))
+	    (setq entity child))))
+      (setq end (next-single-property-change
+		 point 'mime-view-entity nil (point-max))))
     (cons start end)))
 
 (defun mime-preview-toggle-header (&optional show)
