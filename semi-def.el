@@ -161,24 +161,6 @@ FUNCTION.")
 	pgp-function-alist)
 
 
-;;; @ method selector kernel
-;;;
-
-(require 'atype)
-
-;;; @@ field unifier
-;;;
-
-(defun field-unifier-for-mode (a b)
-  (let ((va (cdr a)))
-    (if (if (consp va)
-	    (member (cdr b) va)
-	  (equal va (cdr b))
-	  )
-	(list nil b nil)
-      )))
-
-
 ;;; @ field
 ;;;
 
