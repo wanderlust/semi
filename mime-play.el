@@ -480,11 +480,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
       (and (functionp m)
 	   (funcall m charset encoding)
 	   ))
-    (save-excursion
-      (set-mark (point-min))
-      (goto-char (point-max))
-      (caesar-region)
-      )
+    (mule-caesar-region (point-min) (point-max))
     (set-buffer-modified-p nil)
     (set-buffer mother)
     (view-buffer new-name)
