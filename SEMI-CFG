@@ -4,6 +4,8 @@
 
 ;;; Code:
 
+(require 'cl)
+
 (defvar default-load-path load-path)
 
 (add-to-list 'load-path
@@ -20,7 +22,6 @@
 (condition-case nil
     (require 'install)
   (error (error "Please install APEL 8.7 or later.")))
-(require 'cl)
 
 (add-path "bitmap-mule")
 (add-path "flim")
