@@ -1,5 +1,9 @@
 1998-06-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* SEMI: Version 1.5.3 (Uozu) released.
+
+	* NEWS (`pgp-elkins' -> `pgp-mime'): New section.
+
 	* mime-edit.el: Rename `pgp-elkins' -> `pgp-mime'.
 
 1998-06-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
