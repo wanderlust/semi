@@ -1,3 +1,16 @@
+1998-04-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-preview-condition): Specify
+ 	'childrens-situation field for message/rfc822 and message/news.
+	(mime-view-display-message): Use value of 'childrens-situation
+ 	field of preview-situation as default-situation of children.
+	(mime-view-display-entity): Add new argument 'default-situation;
+ 	use it as elements of draft of preview-situation; use value of
+ 	'header field of preview-situation instead of
+ 	'mime-view-header-visible-p; use value of 'childrens-situation
+ 	field of preview-situation as default-situation of children.
+
+
 1998-04-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.2.2 (Naoetsu) was released.
@@ -549,7 +562,7 @@
 
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae)-A was released.
+	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae) was released.-A
 
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -661,7 +674,7 @@
 
 1998-02-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae)-A was released.
+	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae) was released.-A
 
 	* SEMI-ELS: Remove mime-tar.el.
 
@@ -798,7 +811,7 @@
 
 1997-11-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.116 (D-Dòhòji)-A was released.
+	* SEMI: Version 0.116 (D-Dòhòji) was released.-A
 
 1997-11-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
