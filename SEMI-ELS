@@ -6,6 +6,7 @@
 
 (setq semi-modules-to-compile
       '(signature
+	pgg-def pgg pgg-parse pgg-gpg pgg-pgp5 pgg-pgp mime-pgp
 	semi-def mime-view mime-play mime-partial mime-edit
 	semi-setup mail-mime-setup))
 
@@ -23,8 +24,7 @@
 		     (nconc semi-modules-not-to-compile i-modules))
 	       )
 	     )))
-	'((mailcrypt	mime-pgp mime-mc)
-	  (bbdb		mime-bbdb)
+	'((bbdb		mime-bbdb)
 	  (w3		mime-w3)
 	  ))
 
