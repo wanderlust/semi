@@ -669,15 +669,6 @@ Each elements are regexp of field-name.")
    (body . visible)
    (body-presentation-method . mime-display-text/richtext)))
 
-(autoload 'vcard-parse-string "vcard")
-(autoload 'vcard-format-string "vcard")
-
-(ctree-set-calist-strictly
- 'mime-preview-condition
- '((type . text)(subtype . x-vcard)
-   (body . visible)
-   (body-presentation-method . mime-display-text/x-vcard)))
-
 (autoload 'mime-display-application/x-postpet "postpet")
 
 (ctree-set-calist-strictly
@@ -768,20 +759,6 @@ Each elements are regexp of field-name.")
       (remove-text-properties beg (point-max) '(face nil))
       (enriched-decode beg (point-max))
       )))
-
-(defun mime-display-text/x-vcard (entity situation)
-  (save-restriction
-    (narrow-to-region (point-max)(point-max))
-    (insert
-     (string-as-multibyte
-      (vcard-format-string
-       (vcard-parse-string
-	(mime-entity-content entity)
-	#'vcard-standard-filter))))
-    (if (not (eq (char-after (1- (point))) ?\n))
-        (insert "\n"))
-    (mime-add-url-buttons)
-    (run-hooks 'mime-display-text/x-vcard-hook)))
 
 (defvar mime-view-announcement-for-message/partial
   (if (and (>= emacs-major-version 19) window-system)
