@@ -155,14 +155,11 @@ specified, play as it.  Default MODE is \"play\"."
 		   method
 		   (cons (cons 'filename name) situation))))
 	     (binary-to-text-funcall
-	      #'mime-mailcap-method-messages-coding-system
+	      mime-mailcap-method-messages-coding-system
 	      #'start-process command mime-echo-buffer-name
-	      shell-file-name shell-command-switch command)
-	     )))
+	      shell-file-name shell-command-switch command))))
       (set-alist 'mime-mailcap-method-filename-alist process name)
-      (set-process-sentinel process 'mime-mailcap-method-sentinel)
-      )
-    ))
+      (set-process-sentinel process 'mime-mailcap-method-sentinel))))
 
 (defun mime-mailcap-method-sentinel (process event)
   (let ((file (cdr (assq process mime-mailcap-method-filename-alist))))
