@@ -1,18 +1,9 @@
+SEMI NEWS --- history of major-changes.
+Copyright (C) 1998 Free Software Foundation, Inc.
+
 * Changes in SEMI 1.1
 
 ** User setting
-
-*** API about visible-predicates
-
-  Interface of visible-predicates for entity elements were changed.
-New interfaces are following:
-
-    mime-view-entity-button-visible-p (entity message-info)
-
-    mime-view-header-visible-p (entity message-info)
-
-    mime-view-body-visible-p (entity message-info)
-
 
 *** Setting variable about visible body
 
@@ -25,6 +16,18 @@ media-type/subtype string.  It uses new data-structure `ctree'
 `ctree-set-calist-strictly' and `ctree-set-calist-with-default' may be
 useful to modify it (`calist' (condition-alist) is as same as
 `atype').
+
+
+*** API about visible-predicates
+
+  Interface of visible-predicates for entity elements were changed.
+New interfaces are following:
+
+    mime-view-entity-button-visible-p (entity message-info)
+
+    mime-view-header-visible-p (entity message-info)
+
+    mime-view-body-visible-p (entity message-info)
 
 
 ** API
