@@ -212,14 +212,6 @@ mother-buffer."
 	      (cons (cons 'encoding (or (mime-entity-encoding entity)
 					"7bit"))
 		    situation)))
-
-    ;; major-mode
-    ;; (or (assq 'major-mode situation)
-    ;;     (setq situation
-    ;;           (cons (cons 'major-mode
-    ;;                       (with-current-buffer (mime-entity-buffer entity)
-    ;;                         major-mode))
-    ;;                 situation)))
     
     situation))
 
@@ -542,14 +534,12 @@ Each elements are regexp of field-name.")
 
 (defun mime-display-multipart/mixed (entity situation)
   (let ((children (mime-entity-children entity))
-	(original-major-mode (cdr (assq 'major-mode situation)))
+	(original-major-mode-cell (assq 'major-mode situation))
 	(default-situation
 	  (cdr (assq 'childrens-situation situation))))
-    (if original-major-mode
+    (if original-major-mode-cell
 	(setq default-situation
-	      (cons (cons 'major-mode original-major-mode)
-		    default-situation))
-      )
+	      (cons original-major-mode-cell default-situation)))
     (while children
       (mime-display-entity (car children) nil default-situation)
       (setq children (cdr children))
@@ -573,18 +563,16 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 
 (defun mime-display-multipart/alternative (entity situation)
   (let* ((children (mime-entity-children entity))
-	 (original-major-mode (cdr (assq 'major-mode situation)))
+	 (original-major-mode-cell (assq 'major-mode situation))
 	 (default-situation
 	   (cdr (assq 'childrens-situation situation)))
 	 (i 0)
 	 (p 0)
 	 (max-score 0)
 	 situations)
-    (if original-major-mode
+    (if original-major-mode-cell
 	(setq default-situation
-	      (cons (cons 'major-mode original-major-mode)
-		    default-situation))
-      )
+	      (cons original-major-mode-cell default-situation)))
     (setq situations
 	  (mapcar (function
 		   (lambda (child)
@@ -769,7 +757,8 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	   (eq (cdr (assq 'header situation)) 'visible))
 	  (header-presentation-method
 	   (or (cdr (assq 'header-presentation-method situation))
-	       (cdr (assq major-mode mime-header-presentation-method-alist))))
+	       (cdr (assq (cdr (assq 'major-mode situation))
+			  mime-header-presentation-method-alist))))
 	  (body-presentation-method
 	   (cdr (assq 'body-presentation-method situation)))
 	  (children (mime-entity-children entity)))
