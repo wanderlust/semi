@@ -2,12 +2,13 @@
 # $Id$
 #
 
-VERSION = 0.87
+VERSION = 0.88
 
 SHELL	= /bin/sh
 MAKE	= make
 CC	= gcc
 CFLAGS	= -O2
+TAR	= gtar
 RM	= /bin/rm -f
 CP	= /bin/cp -p
 EMACS	= emacs
@@ -17,9 +18,9 @@ FLAGS   = -batch -q -no-site-file
 
 PREFIX	= NONE
 EXEC_PREFIX = NONE
-LISPDIR =
+LISPDIR = NONE
 
-FILES =	Makefile SEMI-MK SEMI-CFG SEMI-ELS *.el ChangeLog
+FILES =	README.?? Makefile SEMI-MK SEMI-CFG SEMI-ELS *.el ChangeLog
 
 elc:
 	$(EMACS) $(FLAGS) -l SEMI-MK -f compile-semi \
@@ -63,10 +64,7 @@ clean:
 
 
 tar:
-	gtar cvf ../semi-$(VERSION).tar $(FILES)
 	-cd ..; mkdir semi-$(VERSION)
-	cp ../semi-kernel/README.?? ../semi-$(VERSION)
-	cp ../semi-kernel/Makefile ../semi-$(VERSION)
-	cd ../semi-$(VERSION); gtar xvf ../semi-$(VERSION).tar
-	cd ..; gtar cvzf semi-$(VERSION).tar.gz semi-$(VERSION)
-	cd ..; $(RM) -r semi-$(VERSION); rm semi-$(VERSION).tar
+	-$(CP) $(FILES) ../semi-$(VERSION)
+	cd ..; $(TAR) cvzf semi-$(VERSION).tar.gz semi-$(VERSION)
+	cd ..; $(RM) -r semi-$(VERSION)
