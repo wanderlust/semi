@@ -111,8 +111,7 @@ specified, play as it.  Default MODE is \"play\"."
 ;;;
 
 (defun mime/get-content-decoding-alist (al)
-  (get-unified-alist mime-acting-condition al)
-  )
+  (ctree-match-calist mime-acting-condition al))
 
 
 ;;; @ external decoder
