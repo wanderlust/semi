@@ -2597,27 +2597,30 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	      )
 	    (cond
 	     ((string-equal type "multipart")
-	      (let ((boundary (assoc-value "boundary" params)))
-		(re-search-forward (concat "\n--" boundary) nil t)
+	      (let* ((boundary (assoc-value "boundary" params))
+		     (boundary-pat
+		      (concat "\n--" (regexp-quote boundary) "[ \t]*\n"))
+		     )
+		(re-search-forward boundary-pat nil t)
 		(let ((bb (match-beginning 0)) eb tag)
 		  (setq tag (format "\n--<<%s>>-{\n" stype))
 		  (goto-char bb)
 		  (insert tag)
 		  (setq bb (+ bb (length tag)))
-		  (re-search-forward (concat "\n--" boundary "--") nil t)
+		  (re-search-forward
+		   (concat "\n--" (regexp-quote boundary) "--[ \t]*\n")
+		   nil t)
 		  (setq eb (match-beginning 0))
-		  (replace-match (format "--}-<<%s>>" stype))
+		  (replace-match (format "--}-<<%s>>\n" stype))
 		  (save-restriction
 		    (narrow-to-region bb eb)
 		    (goto-char (point-min))
-		    (while (re-search-forward
-			    (concat "\n--" boundary "\n") nil t)
+		    (while (re-search-forward boundary-pat nil t)
 		      (let ((beg (match-beginning 0))
 			    end)
 			(delete-region beg (match-end 0))
 			(save-excursion
-			  (if (re-search-forward
-			       (concat "\n--" boundary) nil t)
+			  (if (re-search-forward boundary-pat nil t)
 			      (setq end (match-beginning 0))
 			    (setq end (point-max))
 			    )
@@ -2630,7 +2633,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 		(goto-char (point-min))
 		(or (= (point-min) 1)
 		    (delete-region (point-min)
-				   (if (re-search-forward "^$" nil t)
+				   (if (search-forward "\n\n" nil t)
 				       (match-end 0)
 				     (point-min)
 				     )))
