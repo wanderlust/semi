@@ -719,7 +719,7 @@ The compressed face will be piped to this command.")
 	       (save-restriction
 		 (narrow-to-region (point-max)(point-max))
 		 (insert-buffer-substring mime-raw-buffer end-of-header end)
-		 (funcall body-filter ctype params encoding)
+		 (funcall body-filter situation)
 		 )))
 	    ((functionp body-presentation-method)
 	     (funcall body-presentation-method situation)
