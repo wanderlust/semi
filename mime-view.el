@@ -254,7 +254,7 @@ Please redefine this function if you want to change default setting."
 ;;; @@@ entity button generator
 ;;;
 
-(defun mime-view-insert-entity-button (entity message-info subj)
+(defun mime-view-insert-entity-button (entity subject)
   "Insert entity-button of ENTITY."
   (let ((entity-node-id (mime-entity-node-id entity))
 	(params (mime-entity-parameters entity)))
@@ -274,12 +274,12 @@ Please redefine this function if you want to change default setting."
 		(setq access-type (cdr access-type))
 		(if server
 		    (format "%s %s ([%s] %s)"
-			    num subj access-type (cdr server))
+			    num subject access-type (cdr server))
 		(let ((site (cdr (assoc "site" params)))
 		      (dir (cdr (assoc "directory" params)))
 		      )
 		  (format "%s %s ([%s] %s:%s)"
-			  num subj access-type site dir)
+			  num subject access-type site dir)
 		  )))
 	    )
 	   (t
@@ -288,7 +288,7 @@ Please redefine this function if you want to change default setting."
 		  (charset (cdr (assoc "charset" params)))
 		  (encoding (mime-entity-encoding entity)))
 	      (concat
-	       num " " subj
+	       num " " subject
 	       (let ((rest
 		      (format " <%s/%s%s%s>"
 			      media-type media-subtype
@@ -872,7 +872,7 @@ The compressed face will be piped to this command.")
       (narrow-to-region nb nb)
       (or button-is-invisible
 	  (if (mime-view-entity-button-visible-p entity)
-	      (mime-view-insert-entity-button entity message-info subj)
+	      (mime-view-insert-entity-button entity subj)
 	    ))
       (if header-is-visible
 	  (save-restriction
@@ -900,7 +900,7 @@ The compressed face will be piped to this command.")
 	    (t
 	     (when button-is-invisible
 	       (goto-char (point-max))
-	       (mime-view-insert-entity-button entity message-info subj)
+	       (mime-view-insert-entity-button entity subj)
 	       )
 	     (or header-is-visible
 		 (progn
