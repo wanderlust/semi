@@ -269,9 +269,19 @@ and END to the keyring.")
 (defun pgg-insert-url-with-program (url)
   (let ((args (copy-sequence pgg-insert-url-extra-arguments))
 	process)
-    (setq process 
-	  (apply #'call-process pgg-insert-url-program nil t
-		 (nconc args (list url))))))
+    (insert
+     (with-temp-buffer
+       (setq process 
+	     (apply #'start-process " *PGG url*" (current-buffer)
+		    pgg-insert-url-program (nconc args (list url))))
+       (set-process-sentinel process #'ignore)
+       (while (eq 'run (process-status process))
+	 (accept-process-output process 5))
+       (delete-process process)
+       (if (and process (eq 'run (process-status process)))
+	   (interrupt-process process))
+       (buffer-string)))
+    ))
 
 (defun pgg-fetch-key (keyserver key)
   "Attempt to fetch a key for addition to PGP or GnuPG keyring."
