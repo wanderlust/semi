@@ -1,3 +1,9 @@
+1999-05-23  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-edit.el (mime-edit-mime-version-value): Don't use
+	`eval-when-compile' to avoid problem with XEmacs-MULE.
+	(mime-edit-mime-version-field-for-message/partial): Likewise.
+
 1999-05-20  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* NEWS (Text property `mime-view-entity-{header|body}'): New
