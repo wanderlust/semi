@@ -233,12 +233,11 @@ Each elements are regexp of field-name. [mime-view.el]")
 ;;; @@ content button
 ;;;
 
-(defun mime-view-insert-entity-button
-  (rcnum cinfo ctype params subj encoding)
+(defun mime-view-insert-entity-button (rcnum cinfo ctype params subj encoding)
+  "Insert entity-button."
   (save-restriction
     (narrow-to-region (point)(point))
     (let ((access-type (assoc "access-type" params))
-	  (charset (assoc "charset" params))
 	  (num (or (cdr (assoc "x-part-number" params))
 		   (if (consp rcnum)
 		       (mapconcat (function
@@ -262,21 +261,21 @@ Each elements are regexp of field-name. [mime-view.el]")
 		   )))
 	     )
 	    (t
-	     (insert (concat "[" num " " subj))
-	     (let ((rest
-		    (if (setq charset (cdr charset))
-			(if encoding
-			    (format " <%s; %s (%s)>]\n"
-				    ctype charset encoding)
-			  (format " <%s; %s>]\n" ctype charset)
-			  )
-		      (format " <%s>]\n" ctype)
-		      )))
-	       (if (>= (+ (current-column)(length rest))(window-width))
-		   (setq rest (concat "\n\t" rest))
-		 )
-	       (insert rest)
-	       ))))
+	     (let ((charset (cdr (assoc "charset" params))))
+	       (insert (concat "[" num " " subj))
+	       (let ((rest
+		      (concat " <" ctype
+			      (if charset
+				  (concat "; " charset)
+				(if encoding (concat " (" encoding ")"))
+				)
+			      ">]\n")))
+		 (if (>= (+ (current-column)(length rest))(window-width))
+		     (insert "\n\t")
+		   )
+		 (insert rest)
+		 ))))
+      )
     (mime-add-button (point-min)(1- (point-max))
 		     (function mime-view-play-current-entity))
     ))
