@@ -402,6 +402,49 @@ window.")
       )))
 
 
+;;; @ file detection
+;;;
+
+(defvar mime-file-type-regexp-type-subtype-alist
+  '(("JPEG" image jpeg)))
+
+(defun mime-method-to-detect (entity situation)
+  (let ((beg (mime-entity-point-min entity))
+	(end (mime-entity-point-max entity)))
+    (goto-char beg)
+    (let* ((name (save-restriction
+		   (narrow-to-region beg end)
+		   (mime-raw-get-filename situation)
+		   ))
+	   (encoding (or (cdr (assq 'encoding situation)) "7bit"))
+	   (filename (if (and name (not (string-equal name "")))
+			 (expand-file-name name mime-temp-directory)
+		       (make-temp-name
+			(expand-file-name "EMI" mime-temp-directory)))))
+      (mime-write-decoded-region (mime-entity-body-start entity) end
+				 filename encoding)
+      (let (type subtype)
+	(with-temp-buffer
+	  (call-process "file" nil t nil filename)
+	  (goto-char (point-min))
+	  (if (search-forward (concat filename ": ") nil t)
+	      (let ((rest mime-file-type-regexp-type-subtype-alist))
+		(while (not (let ((cell (car rest)))
+			      (if (looking-at (car cell))
+				  (setq type (nth 1 cell)
+					subtype (nth 2 cell))
+				)))
+		  (setq rest (cdr rest))))))
+	(if type
+	    (mime-raw-play-entity
+	     entity "play"
+	     (put-alist 'type type
+			(put-alist 'subtype subtype
+				   (mime-entity-situation entity))))
+	  ))
+      )))
+
+
 ;;; @ mail/news message
 ;;;
 
