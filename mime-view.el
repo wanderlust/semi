@@ -1734,18 +1734,15 @@ If LINES is negative, scroll up LINES lines."
       encoding)))
 
 (defun mime-view-default-charset (entity situation)
-  (or (cdr (assq '*charset situation))
-      (cdr (assq 'charset situation))
-      (static-if (fboundp 'coding-system-to-mime-charset)
-	  ;; might be specified by `universal-coding-system-argument'.
+  (or (static-if (fboundp 'coding-system-to-mime-charset)
+	  ;; might be overridden by `universal-coding-system-argument'.
 	  (and coding-system-for-read
 	       (coding-system-to-mime-charset coding-system-for-read)))
-      (let ((charset-param
-	     (mime-content-type-parameter
-	      (mime-entity-content-type entity)
-	      "charset")))
-	(if charset-param
-	    (intern (downcase charset-param))))
+      (cdr (assq '*charset situation))
+      (cdr (assq 'charset situation))
+      (let ((charset (cdr (assoc "charset" (mime-entity-parameters entity)))))
+	(if charset
+	    (intern (downcase charset))))
       default-mime-charset))
 
 (defun mime-view-read-charset (entity situation)
@@ -1758,7 +1755,7 @@ If LINES is negative, scroll up LINES lines."
 					(lambda (sym)
 					  (list (symbol-name sym)))
 					(mime-charset-list))
-				       nil t
+				       #'mime-charset-p t
 				       (symbol-name default-charset)))))
 	(unless (eq charset default-charset)
 	  charset))
