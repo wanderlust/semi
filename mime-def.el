@@ -69,7 +69,7 @@
 (defvar mime-button-mouse-face 'highlight
   "Face used for MIME-preview buffer mouse highlighting.")
 
-(defun tm:add-button (from to func &optional data)
+(defun mime-add-button (from to func &optional data)
   "Create a button between FROM and TO with callback FUNC and data DATA."
   (and mime-button-face
        (overlay-put (make-overlay from to) 'face mime-button-face))
