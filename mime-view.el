@@ -733,7 +733,7 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       "q"        (function mime-preview-quit))
     (define-key mime-view-mode-map
-      "h"        (function mime-view-show-summary))
+      "h"        (function mime-preview-show-summary))
     (define-key mime-view-mode-map
       "\C-c\C-x" (function mime-view-kill-buffer))
     ;; (define-key mime-view-mode-map
@@ -1165,7 +1165,7 @@ It calls function registered in variable
 	(funcall (cdr r))
       )))
 
-(defun mime-view-show-summary ()
+(defun mime-preview-show-summary ()
   "Show summary.
 It calls function registered in variable
 `mime-view-show-summary-method'."
