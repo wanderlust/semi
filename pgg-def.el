@@ -41,7 +41,7 @@
   :group 'pgg
   :type 'string)
 
-(defcustom pgg-default-keyserver-address "pgp.nic.ad.jp"
+(defcustom pgg-default-keyserver-address "wwwkeys.pgp.net"
   "Host name of keyserver."
   :group 'pgg
   :type 'string)
