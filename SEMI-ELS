@@ -1,0 +1,50 @@
+;;; -*-Emacs-Lisp-*-
+;;;
+;;; $Id$
+;;;
+
+(setq semi-modules-to-compile
+      '(signature
+	mime-def
+	eword-decode eword-encode
+	mime-parse mime-view mime-text mime-play mime-partial
+	tm-latex tm-html tm-tar tm-file
+	mime-edit
+	semi-setup))
+
+(setq semi-modules-not-to-compile nil)
+
+(mapcar (function
+	 (lambda (cell)
+	   (let ((c-module (car cell))
+		 (i-modules (cdr cell))
+		 )
+	     (if (module-installed-p c-module)
+		 (setq semi-modules-to-compile
+		       (nconc semi-modules-to-compile i-modules))
+	       (setq semi-modules-not-to-compile
+		     (nconc semi-modules-not-to-compile i-modules))
+	       )
+	     )))
+	'((ange-ftp	tm-ftp)
+	  (mailcrypt	tm-pgp tm-edit-mc)
+	  (bbdb		tm-bbdb)
+	  ))
+
+(if (and (file-exists-p "tm-evs.el")
+	 (or (boundp 'MULE)
+	     (boundp 'NEMACS))
+	 )
+    (setq semi-modules-to-compile (nconc semi-modules-to-compile '(tm-evs)))
+  )
+
+(if (or (string-match "XEmacs" emacs-version)
+	(featurep 'mule))
+    (setq semi-modules-to-compile
+	  (nconc semi-modules-to-compile '(mime-image)))
+  )
+
+(setq tm-modules (append semi-modules-to-compile
+			 semi-modules-not-to-compile))
+
+;;; SEMI-ELS ends here
