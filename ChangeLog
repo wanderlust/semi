@@ -1,5 +1,25 @@
 1998-06-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-partial.el
+	(mime-combine-message/partial-pieces-automatically): Fixed.
+
+	* mime-pgp.el (mime-view-application/pgp): Use function
+	`mime-entity-representation-type'.
+
+	* mime-play.el (mime-view-message/rfc822): Use function
+	`mime-entity-representation-type'.
+	(mime-store-message/partial-piece): `mime-entity-body-start' and
+	`mime-entity-body-end'.
+
+	* mime-text.el (mime-text-insert-decoded-body): Use function
+	`mime-entity-cooked-p'.
+
+	* mime-view.el (mime-entity-representation-type): New function.
+	(mime-entity-cooked-p): New function.
+	(mime-display-entity): Use function `mime-entity-cooked-p'.
+
+1998-06-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-text.el (mime-text-insert-decoded-body): Use
 	`mime-entity-content'.
 
