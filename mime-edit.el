@@ -1770,9 +1770,10 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 	  )
 	(insert "\n")
 	(or (let ((pgg-default-user-id 
-		   (if (and from (not pgg-default-user-id))
-		       (nth 1 (std11-extract-address-components from))
-		     pgg-default-user-id)))
+		   (or mime-edit-pgp-user-id
+		       (if from 
+			   (nth 1 (std11-extract-address-components from))
+			 pgg-default-user-id))))
 	      (pgg-sign-region (point-min)(point-max)))
 	    (throw 'mime-edit-error 'pgp-error)
 	    )
@@ -1860,9 +1861,10 @@ Content-Transfer-Encoding: 7bit
           (insert "\n")
 	  (eword-encode-header)
 	  (or (let ((pgg-default-user-id 
-		     (if (and from (not pgg-default-user-id))
-			 (nth 1 (std11-extract-address-components from))
-		       pgg-default-user-id)))
+		     (or mime-edit-pgp-user-id
+			 (if from 
+			     (nth 1 (std11-extract-address-components from))
+			   pgg-default-user-id))))		     
 		(pgg-encrypt-region 
 		 (point-min) (point-max) 
 		 (mapcar (lambda (recipient)
@@ -2417,6 +2419,8 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
 
 (defvar mime-edit-pgp-processing nil)
 (make-variable-buffer-local 'mime-edit-pgp-processing)
+
+(defvar mime-edit-pgp-user-id nil)
 
 (defun mime-edit-set-sign (arg)
   (interactive
