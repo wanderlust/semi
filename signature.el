@@ -7,20 +7,40 @@
 ;;;
 ;;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;;;         OKABE Yasuo <okabe@kudpc.kyoto-u.ac.jp> (1994/08/01)
+;;; Created: 1994/7/11
 ;;; Version:
 ;;;	$Id$
 ;;; Keywords: mail, news, signature
 ;;;
 ;;; This file is part of tm (Tools for MIME).
 ;;;
+;;; This program is free software; you can redistribute it and/or
+;;; modify it under the terms of the GNU General Public License as
+;;; published by the Free Software Foundation; either version 2, or
+;;; (at your option) any later version.
+;;;
+;;; This program is distributed in the hope that it will be useful,
+;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;;; General Public License for more details.
+;;;
+;;; You should have received a copy of the GNU General Public License
+;;; along with This program.  If not, write to the Free Software
+;;; Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+;;;
+;;; Code:
 
 (require 'tl-822)
 
 (defvar signature-insert-at-eof nil
-  "*Insert signature at the end of file if non-nil.")
+  "*Insert signature at the end of file if non-nil. [signature.el]")
+
+(defvar signature-delete-blank-lines-at-eof nil
+  "*Signature-insert-at-eof deletes blank lines at the end of file
+if non-nil. [signature.el]")
 
 (defvar signature-file-name "~/.signature"
-  "*Name of file containing the user's signature.")
+  "*Name of file containing the user's signature. [signature.el]")
 
 (defvar signature-file-alist nil)
 
@@ -103,7 +123,7 @@
 	  (goto-char (point-max))
 	  (if (not (bolp))
 	      (insert "\n"))
-	  ;;(delete-blank-lines)
+	  (if signature-delete-blank-lines-at-eof (delete-blank-lines))
 	  (insert-file-contents signature)
 	  (set-buffer-modified-p (buffer-modified-p))
 					; force mode line update
