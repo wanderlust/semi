@@ -1,5 +1,13 @@
 1999-09-08  Katsumi Yamaoka   <yamaoka@jpl.org>
 
+	* mime-mc.el (mime-mc-gpg-encrypt-region): Bind `mc-gpg-comment' to
+	"DUMMY".
+	(mime-mc-gpg-sign-region): Don't use "--textmode" in GPG arguments,
+	replace line break code with CRLF while signing instead.
+	(mime-mc-decrypt): Attempt to fix the bug in "mc-gpg.el".
+
+1999-09-08  Katsumi Yamaoka   <yamaoka@jpl.org>
+
 	* mime-play.el (mime-show-echo-buffer): Fix bug.
 
 1999-09-08  Katsumi Yamaoka   <yamaoka@jpl.org>
