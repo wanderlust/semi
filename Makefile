@@ -41,13 +41,7 @@ ps:	ol2
 	cd doc; $(MAKE) ps
 
 
-install:	install-elc install-execs
-
-execs:	$(UTILS)
-
-install-execs:
-	$(EMACS) $(FLAGS) -l SEMI-MK -f install-execs $(PREFIX) $(EXEC_PREFIX)
-
+install:	install-elc
 
 update-xemacs:
 	$(EMACS) $(FLAGS) -l SEMI-MK -f update-xemacs-source
