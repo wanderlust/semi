@@ -1077,6 +1077,14 @@ The compressed face will be piped to this command.")
     (set-buffer raw-buffer)
     )
   (switch-to-buffer (setq mime-preview-buffer preview-buffer))
+  (let ((point
+	 (next-single-property-change (point-min) 'mime-view-entity)))
+    (if point
+	(goto-char point)
+      (goto-char (point-min))
+      (search-forward "\n\n" nil t)
+      ))
+  (run-hooks 'mime-view-mode-hook)
   )
 
 (defun mime-view-mode (&optional mother ctl encoding raw-buffer obuf
@@ -1106,26 +1114,13 @@ button-2	Move to point under the mouse cursor
 "
   (interactive)
   (mime-maybe-hide-echo-buffer)
-  (let ((message
-	 (save-excursion
-	   (if raw-buffer
-	       (set-buffer raw-buffer)
-	     )
-	   (or mime-view-redisplay
-	       (setq mime-raw-message-info (mime-parse-message ctl encoding))
-	       ))))
-    (prog1
-	(mime-view-display-message message obuf mother
-				   default-keymap-or-function)
-      (let ((point
-	     (next-single-property-change (point-min) 'mime-view-entity)))
-	(if point
-	    (goto-char point)
-	  (goto-char (point-min))
-	  (search-forward "\n\n" nil t)
-	  ))
-      (run-hooks 'mime-view-mode-hook)
-      )))
+  (mime-view-display-message
+   (save-excursion
+     (if raw-buffer (set-buffer raw-buffer))
+     (or mime-view-redisplay
+	 (setq mime-raw-message-info (mime-parse-message ctl encoding))
+	 ))
+   obuf mother default-keymap-or-function))
 
 
 ;;; @@ playing
