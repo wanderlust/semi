@@ -29,7 +29,7 @@
 (eval-when-compile (require 'cl))
 
 
-(defconst mime-module-version '("SEMI" "Namerikawa" 1 6 0)
+(defconst mime-user-interface-version '("SEMI" "Mizuhashi" 1 7 0)
   "Implementation name, version name and numbers of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
@@ -247,20 +247,6 @@ FUNCTION.")
 
 ;;; @ Other Utility
 ;;;
-
-(defun call-after-loaded (module func &optional hook-name)
-  "If MODULE is provided, then FUNC is called.
-Otherwise func is set to MODULE-load-hook.
-If optional argument HOOK-NAME is specified,
-it is used as hook to set."
-  (if (featurep module)
-      (funcall func)
-    (or hook-name
-	(setq hook-name (intern (concat (symbol-name module) "-load-hook")))
-	)
-    (add-hook hook-name func)
-    ))
-
 
 (defvar mime-condition-type-alist
   '((preview . mime-preview-condition)

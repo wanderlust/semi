@@ -27,6 +27,19 @@
 (require 'semi-def)
 (require 'path-util)
 
+(defun call-after-loaded (module func &optional hook-name)
+  "If MODULE is provided, then FUNC is called.
+Otherwise func is set to MODULE-load-hook.
+If optional argument HOOK-NAME is specified,
+it is used as hook to set."
+  (if (featurep module)
+      (funcall func)
+    (or hook-name
+	(setq hook-name (intern (concat (symbol-name module) "-load-hook")))
+	)
+    (add-hook hook-name func)
+    ))
+
 
 ;; for image/* and X-Face
 (defvar mime-setup-enable-inline-image
@@ -82,33 +95,33 @@
 		     (message-button . visible)))
 	 (mime-add-condition
 	  'action '((type . application)(subtype . pgp)
-		    (method . mime-method-for-application/pgp))
+		    (method . mime-view-application/pgp))
 	  'strict "mime-pgp")
 	 (mime-add-condition
 	  'action '((type . text)(subtype . x-pgp)
-		    (method . mime-method-for-application/pgp)))
+		    (method . mime-view-application/pgp)))
 	 
 	 (mime-add-condition
 	  'action '((type . multipart)(subtype . signed)
-		    (method . mime-method-to-verify-multipart/signed))
+		    (method . mime-verify-multipart/signed))
 	  'strict "mime-pgp")
 	 
 	 (mime-add-condition
 	  'action
 	  '((type . application)(subtype . pgp-signature)
-	    (method . mime-method-to-verify-application/pgp-signature))
+	    (method . mime-verify-application/pgp-signature))
 	  'strict "mime-pgp")
 	 
 	 (mime-add-condition
 	  'action
 	  '((type . application)(subtype . pgp-encrypted)
-	    (method . mime-method-to-decrypt-application/pgp-encrypted))
+	    (method . mime-decrypt-application/pgp-encrypted))
 	  'strict "mime-pgp")
 	 
 	 (mime-add-condition
 	  'action
 	  '((type . application)(subtype . pgp-keys)
-	    (method . mime-method-to-add-application/pgp-keys))
+	    (method . mime-add-application/pgp-keys))
 	  'strict "mime-pgp")
 	 ))
   )
