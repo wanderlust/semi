@@ -196,7 +196,7 @@ window.")
 		 (setq win (get-buffer-window bbdb-buffer-name))
 		 )
 	    (set-window-buffer win mime-echo-buffer-name)
-	  (select-window (get-buffer-window mime-view-buffer))
+	  (select-window (get-buffer-window mime-preview-buffer))
 	  (setq win (split-window-vertically
 		     (- (window-height)
 			(if (functionp mime-echo-window-height)
@@ -304,7 +304,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
 (defun mime-method-to-display-message/rfc822 (beg end cal)
   (let* ((cnum (mime-article/point-content-number beg))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
-	 (mother mime-view-buffer)
+	 (mother mime-preview-buffer)
 	 (text-decoder
 	  (cdr (or (assq major-mode mime-text-decoder-alist)
 		   (assq t mime-text-decoder-alist))))
@@ -349,7 +349,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
 	 (number (cdr (assoc "number" cal)))
 	 (total (cdr (assoc "total" cal)))
 	 file
-	 (mother mime-view-buffer)
+	 (mother mime-preview-buffer)
          )
     (or (file-exists-p root-dir)
 	(make-directory root-dir)
@@ -375,7 +375,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
 	  (set-window-buffer pwin
 			     (save-excursion
 			       (set-buffer full-buf)
-			       mime-view-buffer))
+			       mime-preview-buffer))
 	  (select-window pwin)
 	  )
       (re-search-forward "^$")
@@ -449,7 +449,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
 				))
 		      (pbuf (save-excursion
 			      (set-buffer full-buf)
-			      mime-view-buffer)))
+			      mime-preview-buffer)))
 		  (set-window-buffer pwin pbuf)
 		  (select-window pwin)
 		  )))))
@@ -466,7 +466,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
     ))
 
 (defun mime-article/dired-function-for-one-frame (dir)
-  (let ((win (or (get-buffer-window mime-view-buffer)
+  (let ((win (or (get-buffer-window mime-preview-buffer)
 		 (get-largest-window))))
     (select-window win)
     (dired dir)
@@ -494,7 +494,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
   (let* ((cnum (mime-article/point-content-number start))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (the-buf (current-buffer))
-	 (mother mime-view-buffer)
+	 (mother mime-preview-buffer)
 	 (charset (cdr (assoc "charset" cal)))
 	 (encoding (cdr (assq 'encoding cal)))
 	 (mode major-mode)

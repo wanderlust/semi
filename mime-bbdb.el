@@ -155,9 +155,9 @@ Creating or modifying it as necessary. A record will be created if
 mime-bbdb/auto-create-p is non-nil, or if OFFER-TO-CREATE is non-nil and
 the user confirms the creation."
   (save-excursion
-    (if (and mime-view-buffer
-             (get-buffer mime-view-buffer))
-        (set-buffer mime-view-buffer))
+    (if (and mime-preview-buffer
+             (get-buffer mime-preview-buffer))
+        (set-buffer mime-preview-buffer))
     (if bbdb-use-pop-up
         (mime-bbdb/pop-up-bbdb-buffer offer-to-create)
       (let* ((from (std11-field-body "From"))

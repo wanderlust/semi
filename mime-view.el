@@ -319,9 +319,9 @@ message/rfc822, entity-infos of other entities are included in
 `children', so entity-info become a tree.")
 (make-variable-buffer-local 'mime-raw-entity-info)
 
-(defvar mime-view-buffer nil
-  "MIME View buffer corresponding with the (raw) buffer.")
-(make-variable-buffer-local 'mime-view-buffer)
+(defvar mime-preview-buffer nil
+  "MIME preview buffer corresponding with the (raw) buffer.")
+(make-variable-buffer-local 'mime-preview-buffer)
 
 
 ;;; @@@ in view buffer
@@ -438,7 +438,7 @@ The compressed face will be piped to this command.")
     (setq buffer-read-only t)
     (set-buffer the-buf)
     )
-  (setq mime-view-buffer obuf)
+  (setq mime-preview-buffer obuf)
   )
 
 (defun mime-view-display-entity (content cinfo ibuf obuf)
