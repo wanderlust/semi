@@ -1,5 +1,7 @@
 1998-03-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* NEWS: Modify about 'image-format.
+
 	* mime-image.el (mime-view-filter-for-image): Refer 'image-format
 	of preview-situation instead of 'mime-view-image-converter-alist;
 	abolish variable 'mime-view-image-converter-alist.
