@@ -434,7 +434,7 @@ If encoding is nil, it is determined from its contents."
     (iso-2022-jp	7 "base64")
     (iso-2022-kr	7 "base64")
     (euc-kr		8 "base64")
-    (cn-gb2312		8 "base64")
+    (cn-gb		8 "base64")
     (gb2312		8 "base64")
     (cn-big5		8 "base64")
     (big5		8 "base64")
