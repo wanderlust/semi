@@ -1,7 +1,8 @@
 2003-06-09  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* pgg-gpg.el (pgg-gpg-process-region): Undo the last change;
-	Add --yes option to overwrite existing output file.
+	Add --yes option to overwrite existing output file;
+	Remove needless set-default-file-modes.
 
 2003-05-29  Yuuichi Teranishi  <teranisi@gohome.org>
 

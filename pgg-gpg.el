@@ -71,7 +71,6 @@
 	    ,@pgg-gpg-extra-args ,@args))
 	 (output-buffer pgg-output-buffer)
 	 (errors-buffer pgg-errors-buffer)
-	 (orig-mode (default-file-modes))
 	 (process-connection-type nil)
 	 process status exit-status)
     (with-current-buffer (get-buffer-create errors-buffer)
@@ -79,7 +78,6 @@
       (erase-buffer))
     (unwind-protect
 	(progn
-	  (set-default-file-modes 448)
 	  (setq process
 		(apply #'binary-to-text-funcall
 		       pgg-gpg-messages-coding-system
@@ -109,8 +107,7 @@
       (if (and process (eq 'run (process-status process)))
 	  (interrupt-process process))
       (if (file-exists-p output-file-name)
-	  (delete-file output-file-name))
-      (set-default-file-modes orig-mode))))
+	  (delete-file output-file-name)))))
 
 (defun pgg-gpg-possibly-cache-passphrase (passphrase)
   (if (and pgg-cache-passphrase
