@@ -1,3 +1,11 @@
+1998-09-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-file-types): Abolish setting for
+	text/richtext.
+	(mime-edit-insert-text): Likewise.
+
+	* mime-edit.el (mime-content-types): Modify comment style.
+
 1998-09-13  Shin'ichiro Tanaka <tanaka@ifos.se.fujitsu.co.jp>
 
 	* mime-edit.el (mime-content-types): Delete text/richtext and add
