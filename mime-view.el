@@ -548,7 +548,7 @@ The compressed face will be piped to this command.")
 	   (mime-view-display-body he end
 				      rcnum cinfo ctype params subj encoding)
 	   )
-	  ((equal ctype "message/partial")
+	  ((and (eq media-type 'message)(eq media-subtype 'partial))
 	   (mime-view-insert-message/partial-button)
 	   )
 	  ((and (null rcnum)
