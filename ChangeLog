@@ -1,5 +1,10 @@
 1999-04-05  Katsumi Yamaoka   <yamaoka@jpl.org>
 
+	* mime-pgp.el (mime-pgp-detect-version): New function.
+	(mime-verify-application/pgp-signature): Use it.
+	(mime-decrypt-application/pgp-encrypted): Use it.
+	(TopLevel): Require `std11'.
+
 	* mime-mc.el (mime-mc-gpg-sign-region): Remove ("--passphrase-fd"
 	"0") from the list of arguments.
 	(mime-mc-shell-file-name): New user option.

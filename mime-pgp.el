@@ -44,6 +44,7 @@
 
 ;;; Code:
 
+(require 'std11)
 (require 'semi-def)
 (require 'mime-play)
 
@@ -111,6 +112,23 @@
 					     nil representation-type))
     (set-window-buffer p-win mime-preview-buffer)
     ))
+
+(defun mime-pgp-detect-version (entity)
+  "Detect PGP version from detached signature."
+  (with-temp-buffer
+    (mime-insert-entity-content entity)
+    (std11-narrow-to-header)
+    (let ((version (std11-fetch-field "Version")))
+      (cond ((not version)
+	     pgp-version)
+	    ((string-match "GnuPG" version)
+	     'gpg)
+	    ((string-match "5\\.0i" version)
+	     'pgp50)
+	    ((string-match "2\\.6" version)
+	     'pgp)
+	    (t
+	     pgp-version)))))
 
 
 ;;; @ Internal method for application/pgp-signature
@@ -327,6 +345,7 @@ or \"v\" for choosing a command of PGP 5.0i."
 	 (basename (expand-file-name "tm" temporary-file-directory))
 	 (orig-file (make-temp-name basename))
 	 (sig-file (concat orig-file ".sig"))
+	 (pgp-version (mime-pgp-detect-version entity))
 	 )
     (mime-write-entity orig-entity orig-file)
     (save-excursion (mime-show-echo-buffer))
@@ -397,7 +416,8 @@ or \"v\" for choosing a command of PGP 5.0i."
 	 (onum (if (> knum 0)
 		   (1- knum)
 		 (1+ knum)))
-	 (orig-entity (nth onum (mime-entity-children mother))))
+	 (orig-entity (nth onum (mime-entity-children mother)))
+	 (pgp-version (mime-pgp-detect-version orig-entity)))
     (mime-view-application/pgp orig-entity situation)
     ))
 
