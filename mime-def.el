@@ -28,6 +28,8 @@
 (require 'cl)
 (require 'emu)
 
+(defconst semi-version-name "Kaga-Ichinomiya")
+
 (autoload 'mule-caesar-region "mule-caesar"
   "Caesar rotation of current region." t)
 
