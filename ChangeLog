@@ -11,6 +11,7 @@
 
 	* mime-edit.el (mime-edit-set-sign): Remove duplication.
 	(mime-edit-set-encrypt): Ditto.
+	(mime-edit-encrypt-pgp-mime): Encode header before encrypting.
 
 	* mime-image.el (image-insert-at-point): Check the number of the
 	arguments of `insert-image'.
