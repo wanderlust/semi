@@ -934,8 +934,20 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 
 (defvar mime-view-redisplay nil)
 
+;;;###autoload
 (defun mime-display-message (message &optional preview-buffer
 				     mother default-keymap-or-function)
+  "View MESSAGE in MIME-View mode.
+
+Optional argument PREVIEW-BUFFER specifies the buffer of the
+presentation.  It must be either nil or a name of preview buffer.
+
+Optional argument MOTHER specifies mother-buffer of the preview-buffer.
+
+Optional argument DEFAULT-KEYMAP-OR-FUNCTION is nil, keymap or
+function.  If it is a keymap, keymap of MIME-View mode will be added
+to it.  If it is a function, it will be bound as default binding of
+keymap of MIME-View mode."
   (mime-maybe-hide-echo-buffer)
   (let ((win-conf (current-window-configuration))
 	(raw-buffer (mime-entity-buffer message)))
@@ -981,6 +993,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 		  )))))
       )))
 
+;;;###autoload
 (defun mime-view-buffer (&optional raw-buffer preview-buffer mother
 				   default-keymap-or-function
 				   representation-type)
