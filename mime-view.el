@@ -90,27 +90,6 @@ major-mode or t.  t means default.  REPRESENTATION-TYPE must be
 `binary' or `cooked'.")
 
 
-;; (defun mime-raw-find-entity-from-point (point &optional message-info)
-;;   "Return entity from POINT in mime-raw-buffer.
-;; If optional argument MESSAGE-INFO is not specified,
-;; `mime-message-structure' is used."
-;;   (or message-info
-;;       (setq message-info mime-message-structure))
-;;   (if (and (<= (mime-entity-point-min message-info) point)
-;;            (<= point (mime-entity-point-max message-info)))
-;;       (let ((children (mime-entity-children message-info)))
-;;         (catch 'tag
-;;           (while children
-;;             (let ((ret
-;;                    (mime-raw-find-entity-from-point point (car children))))
-;;               (if ret
-;;                   (throw 'tag ret)
-;;                 ))
-;;             (setq children (cdr children)))
-;;           message-info))))
-;; (make-obsolete 'mime-raw-find-entity-from-point "don't use it.")
-
-
 ;;; @ in preview-buffer (presentation space)
 ;;;
 
