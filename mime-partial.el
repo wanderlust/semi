@@ -84,7 +84,9 @@ partial messages using mime-view."
 	      (if (string= the-id id)
 		  (progn
 		    (mime-method-to-store-message/partial
-		     (point-min)(point-max) parameters)
+		     (mime-entity-point-min mime-raw-message-info)
+		     (mime-entity-point-max mime-raw-message-info)
+		     parameters)
 		    (if (file-exists-p full-file)
 			(throw 'tag nil)
 		      )
