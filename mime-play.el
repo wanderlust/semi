@@ -283,7 +283,7 @@ window.")
         (or (yes-or-no-p (format "File %s exists. Save anyway? " filename))
             (error "")))
     (re-search-forward "\n\n")
-    (mime-write-decoded-region (match-end 0)(point-max) filename encoding)
+    (mime-write-decoded-region (match-end 0) end filename encoding)
     ))
 
 
