@@ -35,7 +35,6 @@
 (require 'std11)
 (require 'mel)
 (require 'tm-ew-d)
-(require 'tm-def)
 (require 'mime-parse)
 (require 'mime-text)
 
