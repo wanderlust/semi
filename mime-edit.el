@@ -353,6 +353,7 @@ To insert a signature file automatically, call the function
   "*Alist of file name, types, parameters, and default encoding.
 If encoding is nil, it is determined from its contents.")
 
+
 ;;; @@ about charset, encoding and transfer-level
 ;;;
 
@@ -408,6 +409,7 @@ If encoding is nil, it is determined from its contents.")
   (mime-make-charset-default-encoding-alist mime-transfer-level))
 (make-variable-buffer-local 'mime-edit-charset-default-encoding-alist)
 
+
 ;;; @@ about message inserting
 ;;;
 
@@ -425,6 +427,7 @@ Each elements are regexp of field-name. [mime-edit.el]")
 
 (defvar mime-edit-message-inserter-alist nil)
 (defvar mime-edit-mail-inserter-alist nil)
+
 
 ;;; @@ about message splitting
 ;;;
@@ -495,6 +498,7 @@ If it is not specified for a major-mode,
 (defvar mime-tag-format-with-encoding "--[[%s][%s]]"
   "*Control-string making a MIME tag with encoding.")
 
+
 ;;; @@ multipart boundary
 ;;;
 
@@ -502,6 +506,26 @@ If it is not specified for a major-mode,
   "*Boundary of a multipart message.")
 
 
+;;; @@ optional header fields
+;;;
+
+(defvar mime-edit-insert-x-emacs-field t
+  "*If non-nil, insert X-Emacs header field.")
+
+(defvar mime-edit-x-emacs-value
+  (if running-xemacs
+      (concat emacs-version
+	      (if (featurep 'mule)
+		  " with mule"
+		" without mule"))
+    (let ((ver (if (string-match "\\.[0-9]+$" emacs-version)
+		   (substring emacs-version 0 (match-beginning 0))
+		 emacs-version)))
+      (if (featurep 'mule)
+	  (concat "Emacs " ver ", MULE " mule-version)
+	ver))))
+
+  
 ;;; @@ buffer local variables
 ;;;
 
@@ -1438,8 +1462,8 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 
 (defvar mime-edit-translate-buffer-hook
   '(mime-edit-pgp-enclose-buffer
-    mime-edit-translate-header
-    mime-edit-translate-body))
+    mime-edit-translate-body
+    mime-edit-translate-header))
 
 (defun mime-edit-translate-header ()
   "Encode the message header into network representation."
@@ -1773,6 +1797,11 @@ Content-Transfer-Encoding: 7bit
       (let ((contype (car ret))		;Content-Type
 	    (encoding (nth 1 ret))	;Content-Transfer-Encoding
 	    )
+	;; Insert X-Emacs field
+	(and mime-edit-insert-x-emacs-field
+	     (or (mail-position-on-field "X-Emacs")
+		 (insert mime-edit-x-emacs-value)
+		 ))
 	;; Make primary MIME headers.
 	(or (mail-position-on-field "Mime-Version")
 	    (insert mime-edit-mime-version-value))
