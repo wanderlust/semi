@@ -26,7 +26,7 @@
 ;;; Code:
 
 (require 'mime-def)
-(require 'file-detect)
+(require 'path-util)
 
 
 ;; for image/* and X-Face

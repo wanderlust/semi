@@ -27,7 +27,7 @@
 
 ;;; Code:
 
-(require 'file-detect)
+(require 'path-util)
 (require 'std11)
 (require 'mime-view)
 
