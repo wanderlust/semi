@@ -251,66 +251,66 @@ text entity $B$N>l9g$O(B charset $B$K1~$8$F(B code $BJQ49$7$?$j$7$^$9$7!"(
 @node mime-view-mode,  , MIME-Preview, MIME-View
 @section Operation in mime-preview-buffer
 
-mime-preview-buffer $B$K$O0J2<$N5!G=$,$"$j$^$9!#(B@refill
+mime-preview-buffer posesses following functionalities.@refill
 
 @table @kbd
 @item @key{u}
-$B>e$N(B part $B$KLa$k!J(Bmessage $B$N0lHV>e$N(B part $B$G$3$l$r9T$J$&$H(B Summary
-mode $B$KLa$k(B (*1)$B!K(B
+go back to upper part (in the first part of the message,
+go back to the Summary mode (*1))
 
 @item @key{p}
-$BA0$N(B part $B$K0\F0$9$k(B
+go to previous part
 
 @item @key{M-TAB}
-$BA0$N(B part $B$K0\F0$9$k(B
+go to previous part
 
 @item @key{n}
-$B<!$N(B part $B$K0\F0$9$k(B
+go to next part
 
 @item @key{TAB}
-$B<!$N(B part $B$K0\F0$9$k(B
+go to next part
 
 @item @key{SPC}
-scroll up $B$9$k(B
+scroll up
 
 @item @key{M-SPC}
-scroll down $B$9$k(B
+scroll down
 
 @item @key{DEL}
-scroll down $B$9$k(B
+scroll down
 
 @item @key{RET}
-$B<!$N9T$K0\F0$9$k(B
+go to next line
 
 @item @key{M-RET}
-$BA0$N9T$K0\F0$9$k(B
+go to previous line
 
 @item @key{v}
-part $B$r:F@8$9$k(B (*2)
+play current part (*2)
 
 @item @key{e}
-part $B$+$i(B file $B$r<h$j=P$9(B (*2)
+extract file from current part (*2)
 
 @item @key{C-c C-p}
-part $B$r0u:~$9$k(B (*2)
+print current part (*2)
 
 @item @key{mouse-button-2}
-preview-buffer $BCf$N(B mouse button $B$r5/F0$9$k(B
+start the mouse button in preview-buffer
 
-content-button $B$r2!$;$P!"$=$N(B part $B$,:F@8$5$l$k(B(*2)@refill
+on content-button, play current part (*2)@refill
 
-URL-button $B$r2!$;$P!"$=$N(B WWW browser $B$,5/F0$5$l$k(B@refill
+on URL-button, start WWW browser@refill
 
 @end table
 
 @noindent
-@strong{[$BCm0U(B]}
+@strong{[Notice]}
 @quotation
 
-(*1) MUA $B$G(B mime-view $B$N@_Dj$r$7$F$$$J$$>l9g!"(BSummary mode $B$K$OLa$j$^$;(B
-$B$s!#(B@refill
+(*1) Do not go back to Summary mode unless appropriately
+configured for mime-view in the MUA.@refill
 
-(*2) $B<B:]$NF0:n$OBP1~$9$k(B method $B$K0M$j$^$9!#(B
+(*2) actual behavior depends on the associated method
 @end quotation
 
 
