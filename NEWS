@@ -1,6 +1,30 @@
 SEMI NEWS --- history of major-changes.
 Copyright (C) 1998 Free Software Foundation, Inc.
 
+* Changes in SEMI 1.6
+
+** Abolish `mime-edit-signing-type' and `mime-edit-encrypting-type'
+
+
+** New interface to display message
+
+- Function `mime-view-buffer'
+
+- Function `mime-view-display-message'
+
+
+** Change interface of internal playback method
+
+
+** Change interface of `mime-view-entity-button-visible-p'
+
+
+** Change interface of `mime-view-insert-entity-button'
+
+
+** Abolish `mime-preview-original-major-mode'
+
+
 * Changes in SEMI 1.5
 
 ** mime-w3
