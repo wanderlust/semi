@@ -138,9 +138,9 @@ and return parsed it.  Format of return value is as same as
 	(cons ctype (nreverse dest))
 	)))
 
-(defun mime/Content-Disposition ()
+(defun mime-read-Content-Disposition ()
   "Read field-body of Content-Disposition field from current-buffer,
-and return parsed it. [mime-parse.el]"
+and return parsed it."
   (let ((str (std11-field-body "Content-Disposition")))
     (if str
 	(mime-parse-Content-Disposition str)
