@@ -1,3 +1,8 @@
+2000-04-28  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-edit.el (mime-charset-type-list): Add `iso-2022-jp-3'.
+
+
 2000-03-01  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* REMI: Version 1.14.1 (Mushigawa-Dòsugi)-A released.
