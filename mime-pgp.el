@@ -55,7 +55,7 @@
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (mother mime::article/preview-buffer)
 	 (mode major-mode)
-	 code-converter
+	 text-decoder
 	 (str (buffer-substring beg end))
 	 )
     (set-buffer (get-buffer-create new-name))
@@ -82,7 +82,7 @@
 	   (while (re-search-forward "^- -" nil t)
 	     (replace-match "-")
 	     )
-	   (setq code-converter
+	   (setq text-decoder
 		 (cdr (or (assq mode mime-text-decoder-alist)
 			  (assq t    mime-text-decoder-alist))))
 	   )
@@ -96,10 +96,10 @@
 			  (and
 			   (search-forward "\n\n")
 			   (match-end 0)))
-	   (setq code-converter (function mime-charset/decode-buffer))
+	   (setq text-decoder (function mime-charset/decode-buffer))
 	   ))
     (setq major-mode 'mime/show-message-mode)
-    (setq mime::article/code-converter code-converter)
+    (setq mime-raw::text-decoder text-decoder)
     (save-window-excursion (mime-view-mode mother))
     (set-window-buffer p-win mime::article/preview-buffer)
     ))
