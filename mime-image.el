@@ -92,7 +92,8 @@
 		     (list type (if data-p :data :file) file-or-data)
 		     props)
 		  file-or-data))))
-	  (if (nothing-image-instance-p (glyph-image-instance glyph)) nil
+	  (if (nothing-image-instance-p (ignore-errors
+					  (glyph-image-instance glyph))) nil
 	    glyph)))
 
       (defun mime-image-insert (image &optional string area)
