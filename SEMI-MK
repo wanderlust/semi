@@ -27,7 +27,7 @@
     )
   (load-file "SEMI-CFG")
   (load-file "SEMI-ELS")
-  (princ (format "PREFIX=%s\t
+  (princ (format "PREFIX=%s
 LISPDIR=%s\n" PREFIX LISPDIR))
   )
 
