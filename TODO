@@ -3,8 +3,6 @@
 
 * MIME-View
 
-** Better implementation for multipart/alternative
- 
 ** dynamic configuration for 'mime-preview-condition
 
 ** Don't use filter-model

@@ -2,7 +2,7 @@
 # Makefile for WEMI.
 #
 
-VERSION = 1.5.1
+VERSION = 1.5.2
 PACKAGE = wemi
 
 SHELL	= /bin/sh

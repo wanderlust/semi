@@ -180,23 +180,25 @@ If is is not found, return DEFAULT-ENCODING."
 ;;; @ message parser
 ;;;
 
-(defsubst make-mime-entity (node-id header-start header-end
-				    body-start body-end
-				    content-type content-disposition
-				    encoding children)
-  (vector node-id
-	  header-start header-end body-start body-end
+(defsubst make-mime-entity (buffer
+			    node-id
+			    header-start header-end body-start body-end
+			    content-type content-disposition
+			    encoding children)
+  (vector buffer
+	  node-id header-start header-end body-start body-end
 	  content-type content-disposition encoding children))
 
-(defsubst mime-entity-node-id (entity)             (aref entity 0))
-(defsubst mime-entity-header-start (entity)        (aref entity 1))
-(defsubst mime-entity-header-end (entity)          (aref entity 2))
-(defsubst mime-entity-body-start (entity)          (aref entity 3))
-(defsubst mime-entity-body-end (entity)            (aref entity 4))
-(defsubst mime-entity-content-type (entity)        (aref entity 5))
-(defsubst mime-entity-content-disposition (entity) (aref entity 6))
-(defsubst mime-entity-encoding (entity)            (aref entity 7))
-(defsubst mime-entity-children (entity)            (aref entity 8))
+(defsubst mime-entity-buffer (entity)              (aref entity 0))
+(defsubst mime-entity-node-id (entity)             (aref entity 1))
+(defsubst mime-entity-header-start (entity)        (aref entity 2))
+(defsubst mime-entity-header-end (entity)          (aref entity 3))
+(defsubst mime-entity-body-start (entity)          (aref entity 4))
+(defsubst mime-entity-body-end (entity)            (aref entity 5))
+(defsubst mime-entity-content-type (entity)        (aref entity 6))
+(defsubst mime-entity-content-disposition (entity) (aref entity 7))
+(defsubst mime-entity-encoding (entity)            (aref entity 8))
+(defsubst mime-entity-children (entity)            (aref entity 9))
 
 (defalias 'mime-entity-point-min 'mime-entity-header-start)
 (defalias 'mime-entity-point-max 'mime-entity-body-end)
@@ -255,9 +257,8 @@ If is is not found, return DEFAULT-ENCODING."
 	)
       (setq children (cons ret children))
       )
-    (make-mime-entity node-id
-		      header-start header-end
-		      body-start body-end
+    (make-mime-entity (current-buffer) node-id
+		      header-start header-end body-start body-end
 		      content-type content-disposition encoding
 		      (nreverse children))
     ))
@@ -309,9 +310,8 @@ mime-{parse|read}-Content-Type."
 		(memq (mime-content-type-subtype content-type)
 		      '(rfc822 news)
 		      ))
-           (make-mime-entity node-id
-			     header-start header-end
-			     body-start body-end
+           (make-mime-entity (current-buffer) node-id
+			     header-start header-end body-start body-end
 			     content-type content-disposition encoding
 			     (save-restriction
 			       (narrow-to-region body-start body-end)
@@ -320,9 +320,8 @@ mime-{parse|read}-Content-Type."
 			       ))
 	   )
 	  (t 
-           (make-mime-entity node-id
-			     header-start header-end
-			     body-start body-end
+           (make-mime-entity (current-buffer) node-id
+			     header-start header-end body-start body-end
 			     content-type content-disposition encoding nil)
 	   ))
     ))

@@ -1,3 +1,58 @@
+1998-06-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-delq-null-situation): New function.
+  	(mime-raw-play-entity): Use `mime-delq-null-situation'.
+
+1998-06-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* TODO (Better implementation for multipart/alternative): done.
+
+	* NEWS (type-subtype-score): New section.
+
+1998-06-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-raw-message-info): Modify DOC-string.
+
+	* MIME-View-API-ja.ol: Modify for SEMI 1.5.
+
+1998-06-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-touched-flag): Define by `defvar'.
+	(mime-edit-mode): Don't check `mime-edit-touched-flag' is bound or
+	not.
+
+	* mime-edit.el (mime-edit-find-inmost): Abolish unused local
+	variables.
+
+1998-06-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-text.el (mime-text-insert-decoded-body): Don't refer
+	`mime-raw-buffer'.
+
+	* mime-parse.el: Change format of `mime-entity' to add `buffer'.
+
+1998-06-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el: When it is compiled, require 'bbdb or define
+	`bbdb-buffer-name' to avoid compiler warning.
+
+	(mime-method-to-display-caesar): Abolish unused local variable.
+	
+	Use `eval-buffer' to eval contents of
+	`mime-acting-situation-examples-file'.
+
+1998-06-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-text.el: Move definition of variable
+	`mime-raw-representation-type' to mime-view.el.
+
+	* mime-view.el: Move definition of variable
+	`mime-raw-representation-type' from mime-text.el.
+	(mime-raw-message-info): Modify DOC-string.
+
+	* MIME-View-API-ja.ol: New file.
+
+
 1998-06-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* WEMI: Version 1.5.1 (Odawara) released.

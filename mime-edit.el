@@ -767,6 +767,8 @@ Tspecials means any character that matches with it in header must be quoted.")
 ;;; @ functions
 ;;;
 
+(defvar mime-edit-touched-flag nil)
+
 ;;;###autoload
 (defun mime-edit-mode ()
   "MIME minor mode for editing the tagged MIME message.
@@ -902,8 +904,7 @@ User customizable variables (not documented all of them):
   (interactive)
   (if mime-edit-mode-flag
       (mime-edit-exit)
-    (if (and (boundp 'mime-edit-touched-flag)
-	     mime-edit-touched-flag)
+    (if mime-edit-touched-flag
 	(mime-edit-again)
       (make-local-variable 'mime-edit-touched-flag)
       (setq mime-edit-touched-flag t)
@@ -1574,21 +1575,17 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
       (let ((bb (match-beginning 0))
 	    (be (match-end 0))
 	    (type (buffer-substring (match-beginning 1)(match-end 1)))
-	    end-exp eb ee)
+	    end-exp eb)
 	(setq end-exp (format "--}-<<%s>>\n" type))
 	(widen)
 	(if (re-search-forward end-exp nil t)
-	    (progn
-	      (setq eb (match-beginning 0))
-	      (setq ee (match-end 0))
-	      )
+	    (setq eb (match-beginning 0))
 	  (setq eb (point-max))
-	  (setq ee (point-max))
 	  )
 	(narrow-to-region be eb)
 	(goto-char be)
 	(if (re-search-forward mime-edit-multipart-beginning-regexp nil t)
-	    (let (ret)
+	    (progn
 	      (narrow-to-region (match-beginning 0)(point-max))
 	      (mime-edit-find-inmost)
 	      )
