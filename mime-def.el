@@ -63,9 +63,6 @@
 (defvar tm:mouse-face 'highlight
   "Face used for MIME-preview buffer mouse highlighting. [mime-def.el]")
 
-(defvar tm:warning-face nil
-  "Face used for invalid encoded-word.")
-
 (defun tm:add-button (from to func &optional data)
   "Create a button between FROM and TO with callback FUNC and data DATA."
   (and tm:button-face
