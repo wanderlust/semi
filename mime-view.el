@@ -290,28 +290,25 @@ Please redefine this function if you want to change default setting."
 ;;; @@ content header filter
 ;;;
 
-(defun mime-preview/cut-header ()
+(defsubst mime-view-cut-header ()
   (goto-char (point-min))
-  (while (and
-	  (re-search-forward mime-view-ignored-field-regexp nil t)
-	  (let* ((beg (match-beginning 0))
-		 (end (match-end 0))
-		 (name (buffer-substring beg end))
-		 )
-	    (if (not (string-match mime-view-visible-field-regexp name))
-		(delete-region
-		 beg
-		 (save-excursion
-		   (and
-		    (re-search-forward "^\\([^ \t]\\|$\\)" nil t)
-		    (match-beginning 0)
-		    )))
-	      )
-	    t)))
-  )
+  (while (re-search-forward mime-view-ignored-field-regexp nil t)
+    (let* ((beg (match-beginning 0))
+	   (end (match-end 0))
+	   (name (buffer-substring beg end))
+	   )
+      (or (member-if (function
+		      (lambda (regexp)
+			(string-match regexp name)
+			)) mime-view-visible-field-list)
+	  (delete-region beg
+			 (if (re-search-forward "^\\([^ \t]\\|$\\)" nil t)
+			     (match-beginning 0)
+			   (point-max)))
+	  ))))
 
 (defun mime-view-default-content-header-filter ()
-  (mime-preview/cut-header)
+  (mime-view-cut-header)
   (eword-decode-header)
   )
 
