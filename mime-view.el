@@ -406,40 +406,38 @@ Each elements are regexp of field-name.")
 			   (body . visible)))
 
 (ctree-set-calist-strictly
- 'mime-preview-condition '((body . visible)
-			   (body-presentation-method . with-filter)
-			   (body-filter . mime-preview-filter-for-text/plain)))
+ 'mime-preview-condition
+ '((body . visible)
+   (body-presentation-method . mime-preview-text/plain)))
 
 (ctree-set-calist-strictly
- 'mime-preview-condition '((type . nil)
-			   (body . visible)
-			   (body-presentation-method . with-filter)
-			   (body-filter . mime-preview-filter-for-text/plain)))
+ 'mime-preview-condition
+ '((type . nil)
+   (body . visible)
+   (body-presentation-method . mime-preview-text/plain)))
 
 (ctree-set-calist-strictly
- 'mime-preview-condition '((type . text)(subtype . enriched)
-			   (body . visible)
-			   (body-presentation-method . with-filter)
-			   (body-filter
-			    . mime-preview-filter-for-text/enriched)))
+ 'mime-preview-condition
+ '((type . text)(subtype . enriched)
+   (body . visible)
+   (body-presentation-method . mime-preview-text/enriched)))
 
 (ctree-set-calist-strictly
- 'mime-preview-condition '((type . text)(subtype . richtext)
-			   (body . visible)
-			   (body-presentation-method . with-filter)
-			   (body-filter
-			    . mime-preview-filter-for-text/richtext)))
+ 'mime-preview-condition
+ '((type . text)(subtype . richtext)
+   (body . visible)
+   (body-presentation-method . mime-preview-text/richtext)))
 
 (ctree-set-calist-strictly
- 'mime-preview-condition '((type . text)(subtype . t)
-			   (body . visible)
-			   (body-presentation-method . with-filter)
-			   (body-filter . mime-preview-filter-for-text/plain)))
+ 'mime-preview-condition
+ '((type . text)(subtype . t)
+   (body . visible)
+   (body-presentation-method . mime-preview-text/plain)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . message)(subtype . partial)
 			   (body-presentation-method
-			    . mime-view-insert-message/partial-button)))
+			    . mime-preview-message/partial-button)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . message)(subtype . rfc822)
@@ -457,9 +455,9 @@ Each elements are regexp of field-name.")
 ;;; @@@ entity filter
 ;;;
 
-(autoload 'mime-preview-filter-for-text/plain "mime-text")
-(autoload 'mime-preview-filter-for-text/enriched "mime-text")
-(autoload 'mime-preview-filter-for-text/richtext "mime-text")
+(autoload 'mime-preview-text/plain "mime-text")
+(autoload 'mime-preview-text/enriched "mime-text")
+(autoload 'mime-preview-text/richtext "mime-text")
 
 (defvar mime-text-decoder-alist
   '((mime-show-message-mode	. mime-text-decode-buffer)
@@ -488,7 +486,7 @@ if it is not nil.")
 \[[ Please press `v' key in this buffer.         ]]"
     ))
 
-(defun mime-view-insert-message/partial-button (&optional situation)
+(defun mime-preview-message/partial-button (&optional entity situation)
   (save-restriction
     (goto-char (point-max))
     (if (not (search-backward "\n\n" nil t))
@@ -801,7 +799,7 @@ The compressed face will be piped to this command.")
 		 (funcall body-filter situation)
 		 )))
 	    ((functionp body-presentation-method)
-	     (funcall body-presentation-method situation)
+	     (funcall body-presentation-method entity situation)
 	     ))
       (or header-is-visible
 	  body-presentation-method
