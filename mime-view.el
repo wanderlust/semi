@@ -395,8 +395,8 @@ mother-buffer."
 
 (add-hook 'kill-emacs-hook 'mime-save-situation-examples)
 
-(defun mime-reduce-acting-situation-examples ()
-  (let ((len (length mime-acting-situation-example-list))
+(defun mime-reduce-situation-examples (situation-examples)
+  (let ((len (length situation-examples))
 	i ir ic j jr jc ret
 	dest d-i d-j
 	(max-sim 0) sim
@@ -404,11 +404,11 @@ mother-buffer."
 	min-det-org det-org
 	min-freq freq)
     (setq i 0
-	  ir mime-acting-situation-example-list)
+	  ir situation-examples)
     (while (< i len)
       (setq ic (car ir)
 	    j 0
-	    jr mime-acting-situation-example-list)
+	    jr situation-examples)
       (while (< j len)
 	(unless (= i j)
 	  (setq jc (car jr))
@@ -462,18 +462,20 @@ mother-buffer."
 	(setq i d-i
 	      d-i d-j
 	      d-j i))
-    (setq jr (nthcdr (1- d-j) mime-acting-situation-example-list))
+    (setq jr (nthcdr (1- d-j) situation-examples))
     (setcdr jr (cddr jr))
     (if (= d-i 0)
-	(setq mime-acting-situation-example-list
-	      (cdr mime-acting-situation-example-list))
-      (setq ir (nthcdr (1- d-i) mime-acting-situation-example-list))
+	(setq situation-examples
+	      (cdr situation-examples))
+      (setq ir (nthcdr (1- d-i) situation-examples))
       (setcdr ir (cddr ir))
       )
-    (if (setq ir (assoc (car dest) mime-acting-situation-example-list))
-	(setcdr ir (+ (cdr ir)(cdr dest)))
-      (setq mime-acting-situation-example-list
-	    (cons dest mime-acting-situation-example-list))
+    (if (setq ir (assoc (car dest) situation-examples))
+	(progn
+	  (setcdr ir (+ (cdr ir)(cdr dest)))
+	  situation-examples)
+      (cons dest situation-examples)
+      ;; situation-examples may be modified.
       )))
 
 
@@ -1722,7 +1724,9 @@ It calls function registered in variable
 		  (while (and (> (length mime-acting-situation-example-list)
 				 mime-acting-situation-example-list-max-size)
 			      (< i 16))
-		    (mime-reduce-acting-situation-examples)
+		    (setq mime-acting-situation-example-list
+			  (mime-reduce-situation-examples
+			   mime-acting-situation-example-list))
 		    (setq i (1+ i))
 		    ))
 	      (error (setq mime-acting-situation-example-list nil)))
