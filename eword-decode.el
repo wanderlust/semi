@@ -146,8 +146,8 @@ such as a version of Net$cape)."
 ;;; @ for message header
 ;;;
 
-(defun eword-decode-message-header ()
-  "Decode MIME encoded-words in message header."
+(defun eword-decode-header ()
+  "Decode MIME encoded-words in header fields."
   (interactive "*")
   (save-excursion
     (save-restriction
