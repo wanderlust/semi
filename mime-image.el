@@ -142,11 +142,12 @@
     (highlight-headers (point-min) (re-search-forward "^$" nil t) t))
   (add-hook 'mime-display-header-hook
 	    'mime-preview-x-face-function-use-highlight-headers))
- ((featurep 'mule)
-  (require 'x-face-mule)
-  (when (exec-installed-p uncompface-program exec-path)
-    (add-hook 'mime-display-header-hook
-	      'x-face-decode-message-header))))
+ ((and (featurep 'mule)
+       (condition-case nil
+	   (require 'x-face-mule)
+	 (file-error nil))
+       (exec-installed-p uncompface-program exec-path))
+  (add-hook 'mime-display-header-hook 'x-face-decode-message-header)))
 
 (defvar mime-image-format-alist
   '((image jpeg		jpeg)
