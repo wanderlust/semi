@@ -1,3 +1,8 @@
+1999-08-02  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-preview-follow-current-entity):
+	Don't use `mime-entity-buffer'.
+
 1999-07-30  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-pgp.el (mime-view-application/pgp): Don't set the values of
