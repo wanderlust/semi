@@ -1,3 +1,8 @@
+1999-11-06   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg-parse.el (pgg-byte-after): Always pass the first argument
+	of `char-after'.
+
 1999-11-05   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* pgg-pgp.el (sign-region): Fix regexp for the beginning of armor.
