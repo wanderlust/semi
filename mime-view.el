@@ -1221,7 +1221,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
   (when (boundp 'widget-keymap)
     (set-keymap-parent (current-local-map) widget-keymap)))
 
-(add-hook 'mime-view-define-keymap-hook 'mime-view-maybe-inherit-widget-keymap)
+(add-hook 'mime-view-mode-hook 'mime-view-maybe-inherit-widget-keymap)
 	  
 (defun mime-view-define-keymap (&optional default)
   (let ((mime-view-mode-map (if (keymapp default)
