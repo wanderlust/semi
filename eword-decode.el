@@ -10,7 +10,6 @@
 ;;	Renamed: 1993/06/03 to tiny-mime.el
 ;;	Renamed: 1995/10/03 from tiny-mime.el (split off encoder)
 ;;	Renamed: 1997/02/22 from tm-ew-d.el
-;; Version: $Revision$
 ;; Keywords: encoded-word, MIME, multilingual, header, mail, news
 
 ;; This file is part of SEMI (Spadework for Emacs MIME Interfaces).
