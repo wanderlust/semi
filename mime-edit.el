@@ -646,11 +646,8 @@ If it is not specified for a major-mode,
 	  " ("
 	  (mime-product-code-name mime-library-product)
 	  ") "
-	  (condition-case nil
-	      (progn
-		(require 'apel-ver)
-		(concat (apel-version) " "))
-	    (error nil))
+	  (if (fboundp 'apel-version)
+	      (concat (apel-version) " "))
 	  (if (featurep 'xemacs)
 	      (concat (cond ((featurep 'utf-2000)
 			     (concat "UTF-2000-MULE/" utf-2000-version))
