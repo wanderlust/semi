@@ -24,7 +24,7 @@
 
 ;;; Code:
 
-(require 'mime-def)
+(require 'semi-def)
 (require 'path-util)
 
 
