@@ -36,6 +36,13 @@
     (error (defvar bbdb-buffer-name nil)))
   )
 
+(defcustom mime-save-directory "~/"
+  "*Name of the directory where MIME entity will be saved in.
+If t, it means current directory."
+  :group 'mime-view
+  :type '(choice (const :tag "Current directory" t)
+		 (directory)))
+
 (defvar mime-acting-situation-example-list nil)
 
 (defvar mime-acting-situation-example-list-max-size 16)
@@ -470,26 +477,25 @@ this function is called."
 ;;;
 
 (defun mime-save-content (entity situation)
-  (let* ((name (mime-entity-safe-filename entity))
-	 (filename (if (and name (not (string-equal name "")))
-		       (expand-file-name name
-					 (save-window-excursion
-					   (call-interactively
-					    (function
-					     (lambda (dir)
-					       (interactive "DDirectory: ")
-					       dir)))))
-		     (save-window-excursion
-		       (call-interactively
-			(function
-			 (lambda (file)
-			   (interactive "FFilename: ")
-			   (expand-file-name file)))))))
-	 )
+  (let ((name (or (mime-entity-safe-filename entity)
+		  (format "%s" (mime-entity-media-type entity))))
+	(dir (if (eq t mime-save-directory)
+		 default-directory
+	       mime-save-directory))
+	filename)
+    (setq filename (read-file-name
+		    (concat "File name: (default "
+			    (file-name-nondirectory name) ") ")
+		    dir
+		    (concat (file-name-as-directory dir)
+			    (file-name-nondirectory name))))
+    (if (file-directory-p filename)
+	(setq filename (concat (file-name-as-directory filename)
+			       (file-name-nondirectory name))))
     (if (file-exists-p filename)
 	(or (yes-or-no-p (format "File %s exists. Save anyway? " filename))
 	    (error "")))
-    (mime-write-entity-content entity filename)
+    (mime-write-entity-content entity (expand-file-name filename))
     ))
 
 
