@@ -1,5 +1,8 @@
 1998-03-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el: Rename `mime-article/start-external-method-region'
+	-> `mime-activate-external-method'.
+
 	* mime-play.el, mime-pgp.el: Rename `mime-display-content' ->
 	`mime-playback-entity'.
 
