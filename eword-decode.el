@@ -185,7 +185,7 @@ such as a version of Net$cape)."
 ;;;
 
 (defcustom eword-decode-ignored-field-list
-  '(newsgroups message-id path)
+  '(newsgroups path lines nntp-posting-host message-id date)
   "*List of field-names to be ignored when decoding.
 Each field name must be symbol."
   :group 'eword-decode
@@ -239,9 +239,12 @@ If SEPARATOR is not nil, it is used as header separator."
 		      (t
 		       ;; Decode as unstructured field
 		       (save-restriction
-			 (narrow-to-region p end)
+			 (narrow-to-region beg (1+ end))
 			 (decode-mime-charset-region p end default-charset)
-			 (eword-decode-region p (point-max))
+			 (goto-char p)
+			 (if (re-search-forward eword-encoded-word-regexp
+						nil t)
+			     (eword-decode-region beg (point-max) 'unfold))
 			 )))))
 	  (eword-decode-region (point-min) (point-max) t)
 	  )))))
