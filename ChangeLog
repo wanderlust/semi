@@ -1,3 +1,7 @@
+2000-02-14  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* EMY 1.13.3 is released.
+
 2000-02-12  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* mime-view.el (mime-display-entity): Prefer visibility of
