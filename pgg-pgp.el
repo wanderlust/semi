@@ -248,6 +248,7 @@
     (pgg-pgp-process-region start end nil
 			    pgg-pgp-program args)
     (delete-file key-file)
+    (pgg-process-when-success nil)
     ))
 
 (provide 'pgg-pgp)

@@ -281,8 +281,7 @@
 		"\tSecret keys are imported.\n")))
     (append-to-buffer pgg-output-buffer
 		      (point-min)(point-max))
-    (with-current-buffer pgg-output-buffer
-      (if (zerop (buffer-size)) nil t))
+    (pgg-process-when-success nil)
     ))
 
 (provide 'pgg-gpg)
