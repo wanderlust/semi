@@ -1,5 +1,12 @@
 1999-11-05   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* mime-pgp.el (mime-add-application/pgp-keys): Don't display
+	public key block; snarf keys immediately.
+
+	* pgg.el (pgg-insert-url-with-program): Call program asynchronously.
+
+1999-11-05   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
 	* pgg-def.el (pgg-echo-buffer): New variable.
 
 	* pgg.el (pgg-process-when-success): New macro.
