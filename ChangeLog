@@ -1,3 +1,14 @@
+1998-10-12  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* README.en: Add explanation about `VERSION_SPECIFIC_LISPDIR'.
+
+	* Makefile (install): Add new arg `VERSION_SPECIFIC_LISPDIR'.
+	(install-elc): Likewise.
+
+	* SEMI-MK (config-semi): Refer to `VERSION_SPECIFIC_LISPDIR'.
+
+	* SEMI-CFG (VERSION_SPECIFIC_LISPDIR): New variable.
+
 1998-10-08  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* semi-def.el: Restore the requirement for `custom'.
