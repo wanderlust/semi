@@ -127,13 +127,6 @@ specified, play as it.  Default MODE is \"play\"."
 	(encoding (mime-entity-encoding entity-info)))
     (or content-type
 	(setq content-type (make-mime-content-type 'text 'plain)))
-    ;; Check for VM
-    (if (< beg (point-min))
-	(setq beg (point-min))
-      )
-    (if (< (point-max) end)
-	(setq end (point-max))
-      )
     (let (method cal ret)
       (setq cal (list* (cons 'major-mode major-mode)
 		       (cons 'encoding encoding)
