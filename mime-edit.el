@@ -2111,7 +2111,12 @@ Content-Transfer-Encoding: 7bit
 		    (narrow-to-region beg (mime-edit-content-end))
 		    (goto-char beg)
 		    (while (re-search-forward "\\(\\=\\|[^\r]\\)\n" nil t)
-		      (replace-match "\\1\r\n"))))
+		      ;; Don't use this in the multibyte buffer since it may
+		      ;; convert the unibyte string into multibyte.
+		      ;;;;(replace-match "\\1\r\n"))))
+		      (backward-char 1)
+		      (insert "\r")
+		      (forward-char 1))))
 	      (goto-char beg)
 	      (mime-encode-region beg (mime-edit-content-end)
 				  (or encoding "7bit"))

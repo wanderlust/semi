@@ -1,3 +1,9 @@
+2003-12-16  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-normalize-body): Don't use the
+	`(replace-match "\\1\r\n")' form since it may convert the unibyte
+	string into multibyte in Emacs 21.4.
+
 2003-12-12  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
 	* mime-edit.el (mime-edit-user-agent-value): Add a setting for
