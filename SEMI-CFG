@@ -96,6 +96,20 @@
 ;; (add-path "w3-4.0pre.20" 'all-paths)
 
 
+;;;
+;;; @@ Please specify CUSTOM path.
+;;;
+
+(let ((path (get-latest-path "custom" 'all-paths)))
+  (when path
+    (add-path path)
+    (add-path (expand-file-name "lisp" path)) ; run-in-place installation
+    ))
+
+;; Or please specify path.
+;; (add-path "custom-1.9962" 'all-paths)
+
+
 ;;; @ shell
 ;;;
 

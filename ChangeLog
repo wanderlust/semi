@@ -1,3 +1,8 @@
+1998-10-09  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* SEMI-CFG: Add "custom" to load-path.
+
+
 1998-10-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.9.0 (Isurugi) released.
