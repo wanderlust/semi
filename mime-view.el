@@ -524,11 +524,11 @@ if it is not nil.")
 	    (setq entry (cdr entry))
 	    )
 	  (setq shared (nreverse shared))
-	  (ctree-set-calist-strictly
+	  (ctree-set-calist-with-default
 	   'mime-acting-condition
 	   (append shared (list '(mode . "play")(cons 'method (cdr view)))))
 	  (if print
-	      (ctree-set-calist-strictly
+	      (ctree-set-calist-with-default
 	       'mime-acting-condition
 	       (append shared
 		       (list '(mode . "print")(cons 'method (cdr view))))
