@@ -206,7 +206,7 @@ specified, play as it.  Default MODE is \"play\"."
 	(let ((method (cdr (assoc 'method situation)))
 	      (name (mime-entity-safe-filename entity)))
 	  (setq name
-		(if name
+		(if (and name (not (string= name "")))
 		    (expand-file-name name mime-temp-directory)
 		  (make-temp-name
 		   (expand-file-name "EMI" mime-temp-directory))
