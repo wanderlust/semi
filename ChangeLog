@@ -1,3 +1,10 @@
+1998-07-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-ui-en.texi, mime-ui-en.sgml: New files.
+
+	* mime-ui-ja.sgml: Modify node names about MIME-Edit.
+	(file-type specification): Fix typo.
+
 1998-07-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-play.el (mime-file-content-type-alist): Add "Standard
