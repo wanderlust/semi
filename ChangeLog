@@ -1,5 +1,10 @@
 1998-03-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-text.el: Rename 'mime-decode-text-body ->
+ 	'mime-text-decode-body.
+
+1998-03-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-text.el (mime-decode-text-body): Change interface; call
  	'mime-text-decode-hook.
 
