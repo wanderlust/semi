@@ -1,3 +1,7 @@
+1999-11-22   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg.el (pgg-remove-passphrase-cache): Don't unbind passphrase.
+
 1999-11-20   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* mime-edit.el (mime-edit-sign-pgp-mime): Bind
