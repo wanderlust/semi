@@ -317,7 +317,7 @@ To insert a signature file automatically, call the function
     ;;  Octect binary text
 
     ("\\.doc$"				;MS Word
-     "application" "winword" nil
+     "application" "msword" nil
      "base64"
      "attachment" (("filename" . file))
      )
