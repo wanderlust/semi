@@ -1,5 +1,9 @@
 1998-05-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el: Delete setting for metamail.
+
+1998-05-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-play.el (mime-activate-mailcap-method): New function.
 	(mime-raw-play-entity): Use 'mime-activate-mailcap-method for
  	mailcap method.
