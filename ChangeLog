@@ -1,3 +1,17 @@
+1999-07-28  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-raw-find-entity-from-point): Deleted.
+	(mime-raw-buffer): Deleted.
+	(mime-preview-original-major-mode): Add new optional argument
+	`point'; refer text-property `mime-view-situation' instead of
+	using `mime-entity-buffer'.
+	(mime-raw-point-to-entity-node-id): Deleted.
+	(mime-raw-point-to-entity-number): Deleted.
+	(mime-raw-flatten-message-info): Deleted.
+	(mime-display-entity): Add text-property `mime-view-situation' to
+	each entity.
+
+
 1999-07-27  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* SEMI: Version 1.13.5 (Meih-Dò)-A released.
