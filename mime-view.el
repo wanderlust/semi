@@ -667,7 +667,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 (ctree-set-calist-with-default
  'mime-acting-condition
  '((mode . "extract")
-   (method . mime-method-to-save)))
+   (method . mime-save-content)))
 
 (ctree-set-calist-strictly
  'mime-acting-condition
@@ -701,7 +701,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . application)(subtype . octet-stream)
-   (method . mime-method-to-save)
+   (method . mime-save-content)
    ))
 
 
@@ -818,15 +818,15 @@ The compressed face will be piped to this command.")
 	(insert "\n")
 	(run-hooks 'mime-display-header-hook)
 	)
-      (cond ((eq body-presentation-method 'with-filter)
-	     (let ((body-filter (cdr (assq 'body-filter situation))))
-	       (save-restriction
-		 (narrow-to-region (point-max)(point-max))
-		 (insert-buffer-substring
-		  raw-buffer (mime-entity-body-start entity) end)
-		 (funcall body-filter situation)
-		 )))
-	    (children)
+      (cond (children)
+            ;; ((eq body-presentation-method 'with-filter)
+            ;;  (let ((body-filter (cdr (assq 'body-filter situation))))
+            ;;    (save-restriction
+            ;;      (narrow-to-region (point-max)(point-max))
+            ;;      (insert-buffer-substring
+            ;;       raw-buffer (mime-entity-body-start entity) end)
+            ;;      (funcall body-filter situation)
+            ;;      )))
 	    ((functionp body-presentation-method)
 	     (funcall body-presentation-method entity situation)
 	     )
