@@ -1,5 +1,7 @@
 2000-12-28  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
+	* SEMI: Version 1.14.3 (Ushinoya) released.
+
 	* mime-view.el (mime-view-read-situation-examples-file): Don't try
 	to read situation-examples-file is it is nil.
 	(mime-situation-examples-file): Avoid to read
