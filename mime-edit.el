@@ -107,13 +107,13 @@
 
 ;;; Code:
 
-(require 'emu)
 (require 'sendmail)
 (require 'mail-utils)
 (require 'mel)
 (require 'mime-view)
 (require 'signature)
 (require 'alist)
+(require 'invisible)
 
 
 ;;; @ version
