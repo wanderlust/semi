@@ -1,3 +1,14 @@
+1997-09-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-cut-header): Use `defun' instead of
+	`defsubst'.
+
+	* mime-view.el: Rename `mime-preview/display-body' ->
+	`mime-view-display-body'.
+
+	* mime-view.el: Rename `mime-preview/display-header' ->
+	`mime-view-display-header'.
+
 1997-09-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-parse.el, mime-edit.el: Rename `mime/Content-Type' ->
