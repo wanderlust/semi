@@ -36,7 +36,6 @@
 (require 'std11)
 (require 'mel)
 (require 'mime-def)
-(require 'tl-str)
 
 
 ;;; @ version
