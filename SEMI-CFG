@@ -15,7 +15,6 @@
 			 )
 		 load-path))
 
-(require 'tl-misc)
 (require 'install)
 
 
@@ -36,19 +35,6 @@
 ;;	(add-path "~/lib/elisp/mailcrypt-3.4")
 ;; or
 ;;	(add-path "/opt/share/xmule/site-lisp/mailcrypt-3.4")
-
-;;; @@ Please specify VM path.
-;;;
-
-;; Use latest version installed in load-path.
-
-(let ((path (get-latest-path "vm" 'all-paths)))
-  (if path
-      (add-path path)
-    ))
-
-;; Or please specify path.
-;; (add-path "vm-5.95beta" 'all-paths)
 
 
 ;;; @@ Please specify Mailcrypt path.
@@ -105,19 +91,6 @@
     (expand-file-name "../../../.." exec-directory)
     ))
 
-;; Please specify emu prefix [optional]
-(setq EMU_PREFIX
-      (if (string-match "XEmacs" emacs-version)
-	  "emu"
-	""))
-
-;; Please specify tl prefix [optional]
-;;(setq TL_PREFIX "tl")
-(setq TL_PREFIX
-      (if (string-match "XEmacs" emacs-version)
-	  "tl"
-	""))
-
 ;; Please specify prefix for ``bitmap-mule'' [optional]
 (setq BITMAP_PREFIX "bitmap")
 
@@ -134,7 +107,6 @@
 ;;
 ;;	<LISPDIR> = <PREFIX>/DATA_PREFIX/<install-elisp-prefix>/
 ;;	<LISPDIR>/mime-setup.{el|elc}
-;;	<LISPDIR>/<TL_PREFIX>/		--- tl lisp files
 ;;	<LISPDIR>/<BITMAP_PREFIX>/	--- bitmap lisp files
 ;;	<LISPDIR>/<MU_PREFIX>/		--- MU lisp files
 ;;	<LISPDIR>/<MEL_PREFIX>/		--- MEL lisp files
@@ -166,7 +138,7 @@
 (defvar BIN_DIR (expand-file-name "bin" EXEC_PREFIX))
 
 ;; Please specify binary path. (for external method scripts)
-(setq METHOD_DIR (expand-file-name "share/tm" PREFIX))
+(setq METHOD_DIR (expand-file-name "share/semi" PREFIX))
 
 
 
@@ -179,26 +151,17 @@
 (defvar LISPDIR (install-detect-elisp-directory PREFIX))
 ;; (setq install-default-elisp-directory "~/lib/emacs/lisp")
 
-(setq EMU_DIR
-      (expand-file-name
-       EMU_PREFIX
-       (install-detect-elisp-directory PREFIX nil 'version-specific)))
-
-;; Please specify mime-setup.{el|elc} install path.
-(setq SETUP_FILE_DIR LISPDIR)
-
-(setq TL_DIR		(expand-file-name TL_PREFIX	LISPDIR))
 (setq BITMAP_DIR	(expand-file-name BITMAP_PREFIX	LISPDIR))
 (setq MU_DIR		(expand-file-name MU_PREFIX	LISPDIR))
 (setq MEL_DIR		(expand-file-name MEL_PREFIX	LISPDIR))
 (setq SEMI_KERNEL_DIR	(expand-file-name SEMI_PREFIX	LISPDIR))
+(setq SETUP_FILE_DIR	SEMI_KERNEL_DIR)
 (setq EMH_DIR		SEMI_KERNEL_DIR)
 (setq Gnus_MIME_DIR	SEMI_KERNEL_DIR)
 (setq RMAIL_MIME_DIR	SEMI_KERNEL_DIR)
 (setq SEMI_VM_DIR	SEMI_KERNEL_DIR)
 
 (cond ((member LISPDIR default-load-path)
-       (setq TL_RELATIVE_DIR		TL_PREFIX)
        (setq BITMAP_RELATIVE_DIR	BITMAP_PREFIX)
        (setq MU_RELATIVE_DIR		MU_PREFIX)
        (setq MEL_RELATIVE_DIR		MEL_PREFIX)
@@ -206,9 +169,6 @@
        )
       ((string-match (concat "^" (regexp-quote (expand-file-name "~/")))
 		     LISPDIR)
-       (setq TL_RELATIVE_DIR
-	     (concat "~/" (file-relative-name TL_DIR "~/"))
-	     )
        (setq BITMAP_RELATIVE_DIR
 	     (concat "~/" (file-relative-name BITMAP_DIR "~/"))
 	     )
@@ -223,7 +183,6 @@
 	     )
        )
       (t
-       (setq TL_RELATIVE_DIR		TL_DIR)
        (setq BITMAP_RELATIVE_DIR	BITMAP_DIR)
        (setq MU_RELATIVE_DIR		MU_DIR)
        (setq MEL_RELATIVE_DIR		MEL_DIR)
