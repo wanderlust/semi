@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 1995,1996,1997,1998,1999 Free Software Foundation, Inc.
 
-;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;; Author: MORIOKA Tomohiko <tomo@m17n.org>
 ;; Keywords: definition, MIME, multimedia, mail, news
 
 ;; This file is part of SEMI (Sample of Emacs MIME Implementation).
@@ -236,7 +236,6 @@ If optional argument MODE is 'with-default, CONDITION is added with
 default rule.
 If optional argument FILE is specified, it is loaded when CONDITION is
 activate."
-  (in-calist-package 'mime-view)
   (let ((sym (cdr (assq target-type mime-condition-type-alist))))
     (if sym
 	(let ((func (cdr (or (assq mode mime-condition-mode-alist)
