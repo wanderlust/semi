@@ -92,7 +92,7 @@
   :group 'pgg-parse
   :type 'alist)
 
-(defcustom pgg-ignore-packet-checksum (featurep 'xemacs); XXX
+(defcustom pgg-ignore-packet-checksum t; XXX
   "If non-nil checksum of each ascii armored packet will be ignored."
   :group 'pgg-parse
   :type 'boolean)
@@ -475,11 +475,11 @@
     (mime-decode-region (point-min) marker "base64")
     (static-when (fboundp 'pgg-parse-crc24-string )
       (or pgg-ignore-packet-checksum
-	  (string-equal (mime-encode-string 
-			 (pgg-parse-crc24-string 
-			  (buffer-substring (point-min)(point-max)))
-			 "base64")
-			checksum)
+	  (string-equal 
+	   (funcall (mel-find-function 'mime-encode-string "base64")
+		    (pgg-parse-crc24-string 
+		     (buffer-substring (point-min)(point-max))))
+	   checksum)
 	  (error "PGP packet checksum does not match.")))))
 
 (defun pgg-decode-armor-region (start end)
