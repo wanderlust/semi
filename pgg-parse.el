@@ -39,9 +39,8 @@
 
 (eval-when-compile (require 'static))
 
-(require 'poem)
 (require 'pccl)
-(require 'pcustom)
+(require 'custom)
 (require 'mel)
 
 (defgroup pgg-parse ()
