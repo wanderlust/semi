@@ -145,6 +145,7 @@ and END to the keyring.")
      (funcall (intern (format "pgg-make-scheme-%s" 
 			      ,scheme)))))
 
+;;;###autoload
 (defun pgg-encrypt-region (start end rcpts)
   (interactive
    (list (region-beginning)(region-end)
@@ -162,6 +163,7 @@ and END to the keyring.")
 	  (insert-buffer-substring pgg-errors-buffer))))
     status))
 
+;;;###autoload
 (defun pgg-decrypt-region (start end)
   (interactive "r")
   (let* ((packet (cdr (assq 1 (pgg-parse-armor-region start end))))
@@ -185,6 +187,7 @@ and END to the keyring.")
 	  (insert-buffer-substring pgg-errors-buffer))))
     status))
 
+;;;###autoload
 (defun pgg-sign-region (start end)
   (interactive "r")
   (let* ((entity (pgg-make-scheme pgg-default-scheme))
@@ -200,6 +203,7 @@ and END to the keyring.")
 	  (insert-buffer-substring pgg-errors-buffer))))
     status))
 
+;;;###autoload
 (defun pgg-verify-region (start end &optional signature fetch)
   (interactive "r")
   (let* ((packet
@@ -234,22 +238,31 @@ and END to the keyring.")
     (setq status (luna-send entity 'verify-region 
 			    entity start end signature))
     (when (interactive-p)
-      (if status
-	  (progn
-	    (delete-region start end)
-	    (insert-buffer-substring pgg-output-buffer))
-	(with-output-to-temp-buffer pgg-echo-buffer
-	  (set-buffer standard-output)
-	  (insert-buffer-substring pgg-errors-buffer))))
+      (with-output-to-temp-buffer pgg-echo-buffer
+	(set-buffer standard-output)
+	(insert-buffer-substring 
+	 (if status pgg-output-buffer pgg-errors-buffer))
+	))
     status))
 
+;;;###autoload
 (defun pgg-insert-key ()
+  (interactive)
   (let ((entity (pgg-make-scheme (or pgg-scheme pgg-default-scheme))))
     (luna-send entity 'insert-key entity)))
 
+;;;###autoload
 (defun pgg-snarf-keys-region (start end)
-  (let ((entity (pgg-make-scheme (or pgg-scheme pgg-default-scheme))))
-    (luna-send entity 'snarf-keys-region entity start end)))
+  (interactive "r")
+  (let* ((entity (pgg-make-scheme (or pgg-scheme pgg-default-scheme)))
+	 (status (luna-send entity 'snarf-keys-region entity start end)))
+    (when (interactive-p)
+      (with-output-to-temp-buffer pgg-echo-buffer
+	(set-buffer standard-output)
+	(insert-buffer-substring 
+	 (if status pgg-output-buffer pgg-errors-buffer))
+	))
+    status))
 
 (defun pgg-lookup-key-string (string &optional type)
   (let ((entity (pgg-make-scheme (or pgg-scheme pgg-default-scheme))))
