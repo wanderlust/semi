@@ -124,7 +124,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
   (interactive "P")
   (let ((entity (get-text-property (point) 'mime-view-entity)))
     (if entity
-	(mime-play-entity entity (or mode "play") nil ignore-examples)
+	(mime-play-entity entity nil (or mode "play") ignore-examples)
       )))
 
 (defun mime-sort-situation (situation)
@@ -193,8 +193,8 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
     (cons match example)
     ))
 
-(defun mime-play-entity (entity &optional mode situation ignore-examples
-				ignored-method)
+(defun mime-play-entity (entity &optional situation mode
+				ignore-examples ignored-method)
   "Play entity specified by ENTITY.
 It decodes the entity to call internal or external method.  The method
 is selected from variable `mime-acting-condition'.  If MODE is
@@ -470,11 +470,12 @@ SUBTYPE is symbol to indicate subtype of media-type.")
 	(setq rest (cdr rest))))
     (if type
 	(mime-play-entity
-	 entity nil
+	 entity
 	 (put-alist 'type type
 		    (put-alist 'subtype subtype
 			       (del-alist 'method
 					  (copy-alist situation))))
+	 nil
 	 (cdr (assq 'ignore-examples situation))
 	 'mime-detect-content)
       ))
