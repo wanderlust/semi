@@ -125,14 +125,14 @@ C-c C-x C-y	insert a mail or news message.
 C-c C-x RET	insert a mail message.
 C-c C-x C-s	insert a signature file at end.
 C-c C-x t	insert a new MIME tag.
-C-c C-x a	enclose as multipart/alternative.
-C-c C-x p	enclose as multipart/parallel.
-C-c C-x m	enclose as multipart/mixed.
-C-c C-x d	enclose as multipart/digest.
-C-c C-x s	enclose as PGP signed.
-C-c C-x e	enclose as PGP encrypted.
+C-c C-m C-a	enclose as multipart/alternative.
+C-c C-m C-p	enclose as multipart/parallel.
+C-c C-m C-m	enclose as multipart/mixed.
+C-c C-m C-d	enclose as multipart/digest.
+C-c C-m C-s	enclose as PGP signed.
+C-c C-m C-e	enclose as PGP encrypted.
 C-c C-x C-k	insert PGP public key.
-C-c C-x C-p	preview editing MIME message.
+C-c C-x p	preview editing MIME message.
 ...
 
 って訳で、C-c C-x C-i を押して、挿入したい binary file を指定します。
@@ -401,26 +401,26 @@ enclosure を作るための操作としては以下のようなものがあります。
 <kd>
 指定した region を multipart/alternative として囲みます。
 </kd>
-<kt>C-c C-x C-p
+<kt>C-c C-m C-p
 <kd>
 指定した region を multipart/parallel として囲みます。
 </kd>
-<kt>C-c C-x C-m
+<kt>C-c C-m C-m
 <kd>
 指定した region を multipart/mixed として囲みます。
 </kd>
-<kt>C-c C-x C-d
+<kt>C-c C-m C-d
 <kd>
 指定した region を multipart/digest として囲みます。
 </kd>
-<kt>C-c C-x C-s
+<kt>C-c C-m C-s
 <kd>
 指定した region に電子署名を行います。<cf node="PGP">
 </kd>
-<kt>C-c C-x C-e
+<kt>C-c C-m C-e
 <kd>
 指定した region を暗号化します。<cf node="PGP">
-<kt>C-c C-x C-q
+<kt>C-c C-m C-q
 <kd>
 指定した region 内の tag を無効にし、その tag を文字列として利用できる
 ようにします。（現在の版ではうまく働かないことがあります。また、電子署

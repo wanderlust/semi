@@ -145,14 +145,14 @@ C-c C-x C-y	insert a mail or news message.
 C-c C-x RET	insert a mail message.
 C-c C-x C-s	insert a signature file at end.
 C-c C-x t	insert a new MIME tag.
-C-c C-x a	enclose as multipart/alternative.
-C-c C-x p	enclose as multipart/parallel.
-C-c C-x m	enclose as multipart/mixed.
-C-c C-x d	enclose as multipart/digest.
-C-c C-x s	enclose as PGP signed.
-C-c C-x e	enclose as PGP encrypted.
+C-c C-m C-a	enclose as multipart/alternative.
+C-c C-m C-p	enclose as multipart/parallel.
+C-c C-m C-m	enclose as multipart/mixed.
+C-c C-m C-d	enclose as multipart/digest.
+C-c C-m C-s	enclose as PGP signed.
+C-c C-m C-e	enclose as PGP encrypted.
 C-c C-x C-k	insert PGP public key.
-C-c C-x C-p	preview editing MIME message.
+C-c C-x p	preview editing MIME message.
 ...
 
 therefore, you should type C-c C-x C-i and specify the binary file
@@ -453,22 +453,22 @@ Operations to make enclosure are following:
 @item @key{C-c C-m C-a}
 Enclose specified region as multipart/alternative.
 
-@item @key{C-c C-x C-p}
+@item @key{C-c C-m C-p}
 Enclose specified region as multipart/parallel.
 
-@item @key{C-c C-x C-m}
+@item @key{C-c C-m C-m}
 Enclose specified region as multipart/mixed.
 
-@item @key{C-c C-x C-d}
+@item @key{C-c C-m C-d}
 Enclose specified region as multipart/digest.
 
-@item @key{C-c C-x C-s}
+@item @key{C-c C-m C-s}
 Digital-sign to specified region. (cf. @ref{PGP})
 
-@item @key{C-c C-x C-e}
+@item @key{C-c C-m C-e}
 Encrypt to specified region. (cf. @ref{PGP})
 
-@item @key{C-c C-x C-q}
+@item @key{C-c C-m C-q}
 avoid to encode tags in specified region.  In other words, tags is
 interpreted as such string.  (In current version, it may be
 incomplete.  Maybe PGP-signature does not work for this enclosure.)
