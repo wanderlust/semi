@@ -769,9 +769,9 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	  (mime-insert-header entity
 			      mime-view-ignored-field-list
 			      mime-view-visible-field-list))
-	(goto-char (point-max))
 	(run-hooks 'mime-display-header-hook)
 	(put-text-property nhb (point-max) 'mime-view-entity-header entity)
+	(goto-char (point-max))
 	(insert "\n")
 	)
       (setq nbb (point))
