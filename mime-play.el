@@ -171,7 +171,7 @@ specified, play as it.  Default MODE is \"play\"."
     (if (file-exists-p file)
 	(delete-file file)))
   (remove-alist 'mime-mailcap-method-filename-alist process)
-  (message (format "%s %s" process event)))
+  (message "%s %s" process event))
 
 (defvar mime-echo-window-is-shared-with-bbdb
   (module-installed-p 'bbdb)
@@ -455,7 +455,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	 (directory (cdr (assoc "directory" cal)))
 	 (name (cdr (assoc "name" cal)))
 	 (pathname (concat "/anonymous@" site ":" directory)))
-    (message (concat "Accessing " (expand-file-name name pathname) "..."))
+    (message "%s" (concat "Accessing " (expand-file-name name pathname) "..."))
     (funcall mime-raw-dired-function pathname)
     (goto-char (point-min))
     (search-forward name)))
@@ -464,7 +464,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 
 (defun mime-view-message/external-url (entity cal)
   (let ((url (cdr (assoc "url" cal))))
-    (message (concat "Accessing " url "..."))
+    (message "%s" (concat "Accessing " url "..."))
     (funcall mime-raw-browse-url-function url)))
 
 

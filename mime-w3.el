@@ -59,7 +59,7 @@
        (run-hooks 'mime-text-decode-hook)
        (condition-case err
 	   (w3-region p (point-max))
-	 (error (message (format "%s" err))))
+	 (error (message "%s" err)))
        (mime-put-keymap-region p (point-max) w3-mode-map)))))
 
 (defun url-cid (url &optional proxy-info)
