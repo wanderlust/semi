@@ -1,5 +1,10 @@
 1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el: Rename `mime-view-following-method-alist' to
+	`mime-preview-following-method-alist'.
+
+1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* semi-setup.el, mime-pgp.el: Rename
 	`mime-method-to-add-application/pgp-keys' to
 	`mime-add-application/pgp-keys'.
