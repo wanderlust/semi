@@ -1,5 +1,14 @@
 1998-06-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el (mime-raw-play-entity): Use
+	`mime-entity-situation'.
+
+	* mime-view.el (mime-entity-situation): New function.
+	(mime-preview-multipart/alternative): Use `mime-entity-situation'.
+	(mime-view-display-entity): Use `mime-entity-situation'.
+
+1998-06-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-edit.el (mime-edit-enclose-region-internal): Abolish unused
 	local variable.
 
