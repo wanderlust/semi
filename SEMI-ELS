@@ -4,7 +4,7 @@
 ;;;
 
 (setq semi-modules-to-compile
-      '(alist signature
+      '(signature
 	mime-def
 	eword-decode eword-encode
 	mime-parse mime-view mime-text mime-play mime-partial
