@@ -50,6 +50,12 @@
 	     x))))
   )
 
+(defsubst eliminate-top-spaces (string)
+  "Eliminate top sequence of space or tab in STRING."
+  (if (string-match "^[ \t]+" string)
+      (substring string (match-end 0))
+    string))
+
 
 ;;; @ definitions about MIME
 ;;;
