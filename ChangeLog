@@ -1,3 +1,10 @@
+1999-05-02  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* (mime-edit-use-long-mime-charset-comment): Use `defvar' to define.
+
+	* mime-edit.el (mime-edit-define-charset): Check
+	`mime-edit-use-long-mime-charset-comment'.
+
 1999-04-30 Shigeru OKUMURA <sokumura@jaist.ac.jp>
 	
 	* mime-edit.el (mime-edit-use-long-mime-charset-comment):

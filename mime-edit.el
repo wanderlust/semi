@@ -502,19 +502,12 @@ If encoding is nil, it is determined from its contents."
   "A string formatted version of mime-transfer-level")
 (make-variable-buffer-local 'mime-transfer-level-string)
 
-;;
-;; some MUA reject long comment
-;;
+(defvar mime-edit-use-long-mime-charset-comment t
+  "*Use charset comment")
 
-(if (and (boundp 'mime-edit-use-long-mime-charset-comment)
-	 mime-edit-use-long-mime-charset-comment)
-    (progn
-      (put 'iso-2022-jp-2 'mime-charset-comment "RFC1554")
-      (put 'iso-2022-jp 'mime-charset-comment "RFC1468 with trivial bugfix")
-      )
-  )
+(put 'iso-2022-jp-2 'mime-charset-comment "RFC1554")
+(put 'iso-2022-jp 'mime-charset-comment "RFC1468 with trivial bugfix")
 
-  
 ;;; @@ about content transfer encoding
 
 (defvar mime-content-transfer-encoding-priority-list
@@ -1382,7 +1375,7 @@ Optional argument ENCODING specifies an encoding method such as base64."
 	     (mime-edit-get-contype tag)
 	     "charset"
 	     (let ((comment (get charset 'mime-charset-comment)))
-	       (if comment
+	       (if (and mime-edit-use-long-mime-charset-comment comment)
 		   (concat (upcase (symbol-name charset)) " (" comment ")")
 		 (upcase (symbol-name charset)))))
 	    (mime-edit-get-encoding tag)))
