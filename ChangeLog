@@ -1,3 +1,9 @@
+2004-01-15  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-normalize-body): Fix a comment that the
+	problem related to `replace-match' has been fixed at 2004-01-15,
+	thanks to Handa-san.
+
 2003-12-16  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* mime-edit.el (mime-edit-normalize-body): Don't use the

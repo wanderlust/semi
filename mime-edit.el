@@ -2111,9 +2111,10 @@ Content-Transfer-Encoding: 7bit
 		    (narrow-to-region beg (mime-edit-content-end))
 		    (goto-char beg)
 		    (while (re-search-forward "\\(\\=\\|[^\r]\\)\n" nil t)
-		      ;; Don't use this in the multibyte buffer since it may
-		      ;; convert the unibyte string into multibyte.
-		      ;;;;(replace-match "\\1\r\n"))))
+		      ;; In a certain period, `replace-match' with "\\N"
+		      ;; converted 8-bit characters into multibyte string,
+		      ;; but it has been fixed at 2004-01-15.
+		      ;;(replace-match "\\1\r\n"))))
 		      (backward-char 1)
 		      (insert "\r")
 		      (forward-char 1))))
