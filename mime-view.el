@@ -738,10 +738,8 @@ The compressed face will be piped to this command.")
 (defun mime-view-display-message (message-info ibuf obuf)
   (let* ((start (mime-entity-point-min message-info))
 	 (end (mime-entity-point-max message-info))
-	 (media-type (mime-entity-media-type message-info))
-	 (media-subtype (mime-entity-media-subtype message-info))
-	 (params (mime-entity-parameters message-info))
-	 (encoding (mime-entity-encoding message-info))
+	 (content-type (mime-entity-content-type message-info))
+         (encoding (mime-entity-encoding message-info))
 	 end-of-header e nb ne subj)
     (set-buffer ibuf)
     (goto-char start)
@@ -755,7 +753,9 @@ The compressed face will be piped to this command.")
       (narrow-to-region start end)
       (setq subj
 	    (eword-decode-string
-	     (mime-raw-get-subject params encoding)))
+	     (mime-raw-get-subject
+	      (mime-content-type-parameters content-type)
+	      encoding)))
       )
     (set-buffer obuf)
     (setq nb (point))
@@ -774,11 +774,9 @@ The compressed face will be piped to this command.")
       )
     (let* ((situation
 	    (ctree-match-calist mime-preview-condition
-				(list* (cons 'type       media-type)
-				       (cons 'subtype    media-subtype)
+				(list* (cons 'major-mode major-mode)
 				       (cons 'encoding   encoding)
-				       (cons 'major-mode major-mode)
-				       params)))
+				       content-type)))
 	   (message-button
 	    (cdr (assq 'message-button situation)))
 	   (body-presentation-method
