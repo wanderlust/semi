@@ -1,5 +1,11 @@
 1998-06-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-preview-original-major-mode): Modify
+	DOC-string.
+
+	* NEWS: Add description about abolishment of tm-compatible
+	external method support.
+
 	* mime-play.el (mime-raw-play-entity): Abolish tm-compatible
 	external method support; abolish function
 	`mime-activate-external-method' and
