@@ -107,12 +107,10 @@ which are string or symbol."
 	 (substring str e)
 	 ))))
 
-(defconst mime::ctype-regexp (concat "^" mime-media-type/subtype-regexp))
-
 (defun mime-parse-Content-Type (string)
   "Parse STRING as field-body of Content-Type field."
   (setq string (std11-unfold-string string))
-  (if (string-match mime::ctype-regexp string)
+  (if (string-match `,(concat "^" mime-media-type/subtype-regexp) string)
       (let* ((e (match-end 0))
 	     (ctype (downcase (substring string 0 e)))
 	     ret dest)
