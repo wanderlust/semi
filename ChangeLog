@@ -1,3 +1,11 @@
+1998-05-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.4.3 (Ichiburi) released.
+
+1998-05-12  Kazuhiro Ohta     <ohta@ele.cst.nihon-u.ac.jp>
+
+	* mime-partial.el: start and end of the region fixed.
+
 1998-05-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-parse.el (make-mime-content-type): New function.
