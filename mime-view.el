@@ -865,15 +865,6 @@ button-2	Move to point under the mouse cursor
       (run-hooks 'mime-view-mode-hook)
       )))
 
-(defun mime-preview/point-content-number (point)
-  (save-window-excursion
-    (let ((pc (mime-preview/point-pcinfo (point)))
-	  cinfo)
-      (switch-to-buffer (mime::preview-content-info/buffer pc))
-      (setq cinfo (mime::preview-content-info/content-info pc))
-      (mime-article/point-content-number (mime::content-info/point-min cinfo))
-      )))
-
 (defun mime-preview/cinfo-to-pcinfo (cinfo)
   (let ((rpcl mime::preview/content-list) cell)
     (catch 'tag
