@@ -838,10 +838,12 @@ The compressed face will be piped to this command.")
       )
     (let* ((situation
 	    (ctree-match-calist mime-preview-condition
-				(append content-type
-					(list* (cons 'encoding   encoding)
-					       (cons 'major-mode major-mode)
-					       default-situation))))
+				(append
+				 (or content-type
+				     (make-mime-content-type 'text 'plain))
+				 (list* (cons 'encoding   encoding)
+					(cons 'major-mode major-mode)
+					default-situation))))
 	   (button-is-invisible
 	    (eq (cdr (assq 'entity-button situation)) 'invisible))
 	   (header-is-visible
