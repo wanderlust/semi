@@ -1,3 +1,19 @@
+1998-10-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-w3.el (mime-preview-text/html): Use
+	`mime-insert-text-content' instead of
+	`mime-text-insert-decoded-body'.
+
+	* mime-play.el (mime-view-caesar): Use `mime-insert-text-content'
+	instead of `mime-text-insert-decoded-body'.
+
+	* mime-text.el: Abolish function `mime-text-insert-decoded-body'.
+	(mime-display-text/plain): Use `mime-insert-text-content' instead
+	of `mime-text-insert-decoded-body'.
+	(mime-display-text/richtext): Likewise.
+	(mime-display-text/enriched): Likewise.
+
+
 1998-10-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.9.1 (Kurikara) released.
