@@ -647,7 +647,7 @@ saved as binary.  Otherwise the region is saved by `write-region'."
     (dired dir)
     ))
 
-(defun mime-method-to-display-message/external-ftp (entity cal)
+(defun mime-view-message/external-ftp (entity cal)
   (let* ((site (cdr (assoc "site" cal)))
 	 (directory (cdr (assoc "directory" cal)))
 	 (name (cdr (assoc "name" cal)))
@@ -662,7 +662,7 @@ saved as binary.  Otherwise the region is saved by `write-region'."
 ;;; @ rot13-47
 ;;;
 
-(defun mime-method-to-display-caesar (entity situation)
+(defun mime-view-caesar (entity situation)
   "Internal method for mime-view to display ROT13-47-48 message."
   (let* ((new-name (format "%s-%s" (buffer-name)
 			   (mime-entity-number entity)))
