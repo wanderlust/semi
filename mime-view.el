@@ -1052,25 +1052,18 @@ If there is no upper entity, call function `mime-view-quit'."
 If there is no previous entity, it calls function registered in
 variable `mime-view-over-to-previous-method-alist'."
   (interactive)
-  (let* ((pcl mime::preview/content-list)
-	 (p (point))
-	 (i (- (length pcl) 1))
-	 beg)
-    (catch 'tag
-      (while (> i 0)
-	(setq beg (mime::preview-content-info/point-min (nth i pcl)))
-	(if (> p beg)
-	    (throw 'tag (goto-char beg))
-	  )
-	(setq i (- i 1))
-	)
+  (while (null (get-text-property (point) 'mime-view-cinfo))
+    (backward-char)
+    )
+  (let ((point (previous-single-property-change (point) 'mime-view-cinfo)))
+    (if point
+	(goto-char point)
       (let ((f (assq mime::preview/original-major-mode
 		     mime-view-over-to-previous-method-alist)))
 	(if f
 	    (funcall (cdr f))
 	  ))
-      )
-    ))
+      )))
 
 (defun mime-view-next-content ()
   (interactive)
