@@ -188,7 +188,7 @@
 			 (pgg-byte-after (+ 5 (point)))))
 	   5))
     (t;partial body length
-     '(0 0))))
+     '(0 . 0))))
 
 (defun pgg-parse-packet-header ()
   (let ((ptag (pgg-byte-after))
@@ -406,7 +406,8 @@
 		   'version (pgg-read-byte))
     (pgg-set-alist result
 		   'public-key-identifier
-		   (pgg-format-key-identifier (pgg-read-bytes 8)))
+		   (pgg-format-key-identifier 
+		    (pgg-read-bytes-string 8)))
     (pgg-set-alist result
 		   'public-key-algorithm
 		   (cdr (assq (pgg-read-byte)
