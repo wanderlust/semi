@@ -128,6 +128,8 @@
   "S/MIME encryption of current region.")
 (autoload 'smime-sign-region "smime"
   "S/MIME signature of current region.")
+(defvar smime-output-buffer)
+(defvar smime-errors-buffer)
 
 
 ;;; @ version
@@ -493,7 +495,6 @@ either type/subtype or type only."
   (mime-encoding-name mime-transfer-level 'not-omit)
   "A string formatted version of `mime-transfer-level'.")
 (make-variable-buffer-local 'mime-transfer-level-string)
-
 
 ;;; @@ about content transfer encoding
 
@@ -1337,7 +1338,11 @@ Optional argument ENCODING specifies an encoding method such as base64."
 	   (mime-create-tag
 	    (mime-edit-set-parameter
 	     (mime-edit-get-contype tag)
-	     "charset" (upcase (symbol-name charset)))
+	     "charset"
+	     (let ((comment (get charset 'mime-charset-comment)))
+	       (if comment
+		   (concat (upcase (symbol-name charset)) " (" comment ")")
+		 (upcase (symbol-name charset)))))
 	    (mime-edit-get-encoding tag)))))))
 
 (defun mime-edit-define-encoding (encoding)
@@ -1669,6 +1674,8 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 	      mime-edit-quoted-single-part-tag-regexp nil t)
 	(let ((tag (buffer-substring (match-beginning 0)(match-end 0))))
 	  (replace-match (concat "-" (substring tag 2))))))))
+
+(defvar mime-edit-pgp-user-id nil)
 
 (defun mime-edit-sign-pgp-mime (beg end boundary)
   (save-excursion
@@ -2341,8 +2348,6 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
 
 (defvar mime-edit-pgp-processing nil)
 (make-variable-buffer-local 'mime-edit-pgp-processing)
-
-(defvar mime-edit-pgp-user-id nil)
 
 (defun mime-edit-set-sign (arg)
   (interactive

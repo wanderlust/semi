@@ -165,10 +165,9 @@
        ,@body)))
 
 (defun pgg-temp-buffer-show-function (buffer)
-  (let ((window (split-window-vertically
-		 (- (window-height)
-		    (/ (window-height) 5)))))
-    (set-window-buffer window buffer)))
+  (let ((window (split-window-vertically)))
+    (set-window-buffer window buffer)
+    (shrink-window-if-larger-than-buffer window)))
 
 (defun pgg-display-output-buffer (start end status)
   (if status
