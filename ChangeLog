@@ -1,3 +1,15 @@
+2000-06-21  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-w3.el: Modify header.
+
+	* mime-view.el (mime-view-mode): Use
+	`mime-entity-set-content-type' and `mime-entity-set-encoding'
+	instead of `mime-entity-set-content-type-internal' and
+	`mime-entity-set-encoding-internal'.
+
+	* mime-w3.el (mime-preview-text/html): Use
+	`mime-find-root-entity'.
+
 2000-05-25  Tanaka Akira      <akr@m17n.org>
 
         * README.en: Update for CVS via SSH.
