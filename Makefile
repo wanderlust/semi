@@ -2,9 +2,9 @@
 # Makefile for SEMI kernel.
 #
 
-PACKAGE = semi
+PACKAGE = remi
 API	= 1.13
-RELEASE = 4
+RELEASE = 0
 
 TAR	= tar
 RM	= /bin/rm -f
