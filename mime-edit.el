@@ -338,6 +338,11 @@ To insert a signature file automatically, call the function
      nil
      "attachment"	(("filename" . file))
      )
+    ("\\.patch$"
+     "application" "octet-stream" (("type" . "patch"))
+     nil
+     "attachment"      (("filename" . file))
+     )
     ("\\.signature"
      "text"	"plain"		nil	nil)
     (".*"
