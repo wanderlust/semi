@@ -1,5 +1,19 @@
 1998-04-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* semi-setup.el: Require 'semi-def instead of 'mime-def.
+
+	* mime-view.el: Require 'semi-def.
+
+	* mime-def.el: Move SEMI depended definitions to semi-def.el.
+
+	* semi-def.el: Move SEMI depended definitions from mime-def.el.
+
+	* eword-decode.el (eword-decode-version): Don't use
+	`mime-module-version'.
+
+
+1998-04-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* SEMI: Version 1.2.1 (Nomachi) was released.
 
 1998-04-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
