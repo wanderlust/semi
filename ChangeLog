@@ -1,5 +1,9 @@
 1998-06-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-edit.el: Don't require `eword-encode'.
+
+1998-06-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-partial.el
 	(mime-combine-message/partial-pieces-automatically): Fixed.
 
