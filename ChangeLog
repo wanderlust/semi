@@ -1,3 +1,16 @@
+1999-11-26   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-edit.el (mime-edit-pgp-user-id): New variable.
+	(mime-edit-sign-pgp-mime): Undo last change; refer
+	`mime-edit-pgp-user-id'.
+	(mime-edit-encrypt-pgp-mime): Ditto.
+
+	* pgg-gpg.el, pgg-pgp.el, pgg-pgp5.el
+	(encrypt-region): Refer `pgg-<impl>-user-id' if specified.
+	(sign-region): Ditto.
+	(decrypt-region): Ditto.
+	(insert-key): Ditto.
+
 1999-11-26   Nakagawa, Makoto  <Makoto.Nakagawa@jp.compaq.com>
 
 	* mime-edit.el (mime-edit-sign-pgp-mime): Regard
