@@ -31,8 +31,9 @@
 
 (defsubst mailcap-skip-comment ()
   (let ((chr (char-after (point))))
-    (when (or (= chr ?\n)
-	      (= chr ?#))
+    (when (and chr
+	       (or (= chr ?\n)
+		   (= chr ?#)))
       (forward-line)
       t)))
 
