@@ -200,6 +200,17 @@ If optional argument MESSAGE-INFO is not specified,
 	 (set-buffer (mime-entity-buffer entity))
 	 mime-raw-message-info))))
 
+(defsubst mime-entity-situation (entity)
+  "Return situation of ENTITY."
+  (append (or (mime-entity-content-type entity)
+	      (make-mime-content-type 'text 'plain))
+	  (list (cons 'encoding (mime-entity-encoding entity))
+		(cons 'major-mode
+		      (save-excursion
+			(set-buffer (mime-entity-buffer entity))
+			major-mode)))
+	  ))
+
 (defsubst mime-raw-point-to-entity-node-id (point &optional message-info)
   "Return entity-node-id from POINT in mime-raw-buffer.
 If optional argument MESSAGE-INFO is not specified,
@@ -545,13 +556,8 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 		     (let ((situation
 			    (or (ctree-match-calist
 				 mime-preview-condition
-				 (append
-				  (or (mime-entity-content-type child)
-				      (make-mime-content-type 'text 'plain))
-				  (list* (cons 'encoding
-					       (mime-entity-encoding child))
-					 (cons 'major-mode major-mode)
-					 default-situation)))
+				 (append (mime-entity-situation child)
+					 default-situation))
 				default-situation)))
 		       (if (cdr (assq 'body-presentation-method situation))
 			   (let ((score
@@ -834,8 +840,6 @@ The compressed face will be piped to this command.")
 					&optional situation)
   (let* ((start (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))
-         (content-type (mime-entity-content-type entity))
-         (encoding (mime-entity-encoding entity))
 	 end-of-header e nb ne subj)
     (set-buffer ibuf)
     (goto-char start)
@@ -852,13 +856,8 @@ The compressed face will be piped to this command.")
     (or situation
 	(setq situation
 	      (or (ctree-match-calist mime-preview-condition
-				      (append
-				       (or content-type
-					   (make-mime-content-type
-					    'text 'plain))
-				       (list* (cons 'encoding   encoding)
-					      (cons 'major-mode major-mode)
-					      default-situation)))
+				      (append (mime-entity-situation entity)
+					      default-situation))
 		  default-situation)))
     (let ((button-is-invisible
 	   (eq (cdr (assq 'entity-button situation)) 'invisible))
