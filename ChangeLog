@@ -1,5 +1,22 @@
 1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-parse.el: Move function `mime-entity-number' to FLIM layer.
+
+1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-header-presentation-method-alist): New
+	variable; abolish variable
+	`mime-view-content-header-filter-alist'; abolish function
+	`mime-view-cut-header'; abolish variable
+	`mime-view-ignored-field-regexp'.
+	(mime-view-display-entity): Use
+	`mime-header-presentation-method-alist'.
+
+	* mime-parse.el: Move definition of structure `mime-entity' to
+	FLIM layer.
+
+1998-06-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-parse.el: Change order of `mime-entity'.
 
 1998-06-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
