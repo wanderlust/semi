@@ -328,7 +328,7 @@ to just an ascii armor.  However, a few leading garbage lines are allowed."
     (mime-pgp-detect-version)
     ))
 
-(defun mime-pgp-check-signature (output-buffer orig-file
+(defun mime-pgp-check-signature (output-buffer sig-file orig-file
 					       &optional hide-lines)
   (with-current-buffer output-buffer
     (erase-buffer)
@@ -336,16 +336,16 @@ to just an ascii armor.  However, a few leading garbage lines are allowed."
   (let* ((lang (mime-pgp-default-language))
 	 (command (mime-pgp-command 'v))
 	 (args (cond ((eq 'gpg pgp-version)
-		      (list "--batch" "--verify"
-			    (concat orig-file ".sig"))
+		      (list "--batch" "--verify" sig-file)
 		      )
 		     ((eq 'pgp50 pgp-version)
 		      (list "+batchmode=1"
 			    (format "+language=%s" lang)
-			    (concat orig-file ".sig"))
+			    sig-file)
 		      )
 		     ((eq 'pgp pgp-version)
-		      (list (format "+language=%s" lang) orig-file))
+		      (list (format "+language=%s" lang)
+			    sig-file orig-file))
 		     ))
 	 (good-regexp (mime-pgp-good-signature-regexp))
 	 (good-post-function (mime-pgp-good-signature-post-function))
@@ -473,7 +473,7 @@ list of expected key-ID, start position and lines to be shown a result."
     (unwind-protect
 	(while (not done)
 	  (if (setq return (mime-pgp-check-signature
-			    output-buffer orig-file hide-lines))
+			    output-buffer sig-file orig-file hide-lines))
 	      (progn
 		(mime-pgp-show-echo-buffer (car return) (cdr return))
 		(setq done t)
