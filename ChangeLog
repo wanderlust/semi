@@ -1,5 +1,20 @@
 1998-06-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-edit.el: Rename `pgp-elkins' -> `pgp-mime'.
+
+1998-06-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-sign-pgp-elkins): Abolish unused local
+	variable.
+	(mime-edit-encrypt-pgp-elkins): Abolish unused local variable.
+
+1998-06-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el (mime-parse-multipart): fixed.
+
+
+1998-06-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* SEMI: Version 1.5.2 (Kurobe) released.
 
 	* mime-play.el (mime-delq-null-situation): New function.
