@@ -4,7 +4,7 @@
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Version: $Id$
-;; Keywords: MIME, multimedia, mail, news
+;; Keywords: parse, MIME, multimedia, mail, news
 
 ;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
 
@@ -61,6 +61,9 @@
 
 ;;; @ field parser
 ;;;
+
+(defsubst regexp-* (regexp)
+  (concat regexp "*"))
 
 (defconst rfc822/quoted-pair-regexp "\\\\.")
 (defconst rfc822/qtext-regexp
