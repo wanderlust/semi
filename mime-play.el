@@ -293,7 +293,7 @@ window.")
   "Quitting method for mime-view.
 It is registered to variable `mime-view-quitting-method-alist'."
   (let ((mother mime-mother-buffer)
-	(win-conf mime::preview/original-window-configuration)
+	(win-conf mime-preview-original-window-configuration)
 	)
     (kill-buffer mime-raw-buffer)
     (mime-preview-kill-buffer)

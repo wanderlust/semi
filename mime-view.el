@@ -341,7 +341,7 @@ message/partial, it is called `mother-buffer'.")
   "Major-mode of mime-raw-buffer.")
 (make-variable-buffer-local 'mime-preview-original-major-mode)
 
-(make-variable-buffer-local 'mime::preview/original-window-configuration)
+(make-variable-buffer-local 'mime-preview-original-window-configuration)
 
 
 ;;; @@ quitting method
@@ -828,7 +828,7 @@ button-2	Move to point under the mouse cursor
 	)
     (prog1
 	(switch-to-buffer ret)
-      (setq mime::preview/original-window-configuration win-conf)
+      (setq mime-preview-original-window-configuration win-conf)
       (if mother
 	  (progn
 	    (setq mime-mother-buffer mother)
