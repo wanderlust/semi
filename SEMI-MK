@@ -4,22 +4,25 @@
 ;;;
 
 (defun config-semi ()
-  (let (prefix exec-prefix)
-    (setq prefix (car command-line-args-left))
-    (and prefix
-	 (not (string-equal "NONE" prefix))
-	 (progn
-	   (defvar PREFIX prefix)
-	   (setq command-line-args-left (cdr command-line-args-left))
-	   )
-	 (setq exec-prefix (car command-line-args-left))
-	 (progn
-	   (defvar EXEC_PREFIX exec-prefix)
-	   ;;(setq command-line-args-left (cdr command-line-args-left))
-	   )))
+  (let (prefix exec-prefix lisp-dir)
+    (and (setq prefix (car command-line-args-left))
+	 (or (string-equal "NONE" prefix)
+	     (defvar PREFIX prefix)
+	     ))
+    (setq command-line-args-left (cdr command-line-args-left))
+    (and (setq exec-prefix (car command-line-args-left))
+	 (or (string-equal "NONE" exec-prefix)
+	     (defvar EXEC_PREFIX exec-prefix)
+	     ))
+    (setq command-line-args-left (cdr command-line-args-left))
+    (and (setq lisp-dir (car command-line-args-left))
+	 (or (string-equal "NONE" lisp-dir)
+	     (defvar LISPDIR lisp-dir)
+	     )))
   (load-file "SEMI-CFG")
   (load-file "SEMI-ELS")
-  (princ (format "PREFIX=%s\tEXEC_PREFIX=%s\n" PREFIX EXEC_PREFIX))
+  (princ (format "PREFIX=%s\tEXEC_PREFIX=%s
+LISPDIR=%s\n" PREFIX EXEC_PREFIX LISPDIR))
   )
 
 (defun directory= (dir1 dir2)
