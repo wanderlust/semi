@@ -1,4 +1,4 @@
-;;; mime-mc.el --- Mailcrypt interface for SEMI
+;;; mime-mc.el --- Mailcrypt interface for SEMI -*- coding: iso-8859-4; -*-
 
 ;; Copyright (C) 1996,1997,1998,1999 MORIOKA Tomohiko
 
@@ -89,6 +89,10 @@ See draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME) for more information."
 		  "."))
 	(codename (mime-product-code-name mime-user-interface-product))
 	string)
+    (while (string-match "ò" codename)
+      (setq codename (replace-match "o" t nil codename)))
+    (while (string-match "þ" codename)
+      (setq codename (replace-match "u" t nil codename)))
     (setq string (format "Processed by Mailcrypt %s under %s %s%s"
 			 mc-version product-name version
 			 (if (string-match "^[ -~]+$" codename)
@@ -213,8 +217,20 @@ current major mode."
   "Decrypt a message in the current buffer. Exact behavior depends on
 current major mode."
   (let ((mc-default-scheme (mime-mc-symbol 'scheme)))
-    (mc-decrypt)
-    ))
+    (if (eq 'mc-scheme-gpg mc-default-scheme)
+	(condition-case nil
+	    (mc-decrypt)
+	  (error
+	   (let ((ofunc (symbol-function 'mc-gpg-decrypt-region)))
+	     (message "\"mc-gpg.el\" may be broken.  Trying to fix it...")
+	     (sit-for 1)
+	     (defun mc-gpg-decrypt-region (start end &optional id)
+	       (funcall ofunc start end (or id mc-gpg-user-id)))
+	     (unwind-protect
+		 (mc-decrypt)
+	       (fset 'mc-gpg-decrypt-region ofunc)))))
+      (mc-decrypt)
+      )))
 
 (defun mime-mc-fetch-key (&optional id)
   "Attempt to fetch a key for addition to PGP or GnuPG keyring.
@@ -460,11 +476,11 @@ Content-Transfer-Encoding: 7bit
 	micalg
 	(comment (mime-mc-comment))
 	)
-    (setq key (mc-gpg-lookup-key (or id mc-gpg-user-id)))
+    (setq key (mc-gpg-lookup-key (or id mc-gpg-user-id) 'sign))
     (setq passwd
 	  (mc-activate-passwd
-	   (cdr key)
-	   (format "GnuPG passphrase for %s (%s): " (car key) (cdr key))))
+	   (car key)
+	   (format "GPG passphrase for %s (%s): " (car key) (cdr key))))
     (setq args (cons
 		(if boundary
 		    "--detach-sign"
@@ -472,7 +488,7 @@ Content-Transfer-Encoding: 7bit
 		      "--sign"
 		    "--clearsign")
 		  )
-		(list "--armor" "--batch" "--textmode" "--verbose"
+		(list "--armor" "--batch" "--verbose"
 		      "--local-user" (cdr key))
 		))
     (if boundary
@@ -491,7 +507,7 @@ Content-Transfer-Encoding: 7bit
 		(if (let ((mc-passwd-timeout 60)) ;; Don't deactivate passwd.
 		      (mime-mc-gpg-process-region
 		       1 2 passwd pgp-path
-		       (list "--clearsign" "--armor" "--batch" "--textmode"
+		       (list "--clearsign" "--armor" "--batch"
 			     "--verbose" "--local-user" (cdr key))
 		       parser buffer nil)
 		      )
@@ -506,11 +522,29 @@ Content-Transfer-Encoding: 7bit
 		  ))
 	    )))
     (if (or mime-mc-omit-micalg micalg)
-	(progn
+	(let ((cur (current-buffer))
+	      result)
 	  (message "Signing as %s ..." (car key))
-	  (if (mime-mc-gpg-process-region
-	       start end passwd pgp-path args parser buffer boundary comment)
+	  (if (with-temp-buffer
+		(insert-buffer-substring cur start end)
+		(goto-char (point-min))
+		(while (progn
+			 (end-of-line)
+			 (not (eobp)))
+		  (insert "\r")
+		  (forward-line 1))
+		(prog1
+		    (mime-mc-gpg-process-region (point-min) (point-max)
+						passwd pgp-path args parser
+						buffer boundary comment)
+		  (goto-char (point-min))
+		  (while (search-forward "\r\n" nil t)
+		    (forward-char -2)
+		    (delete-char 1))
+		  (setq result (buffer-string))))
 	      (progn
+		(delete-region (goto-char start) end)
+		(insert result)
 		(if boundary
 		    (progn
 		      (goto-char (point-min))
@@ -534,10 +568,11 @@ Content-Transfer-Encoding: 7bit
   (if (not (fboundp 'mc-gpg-encrypt-region))
       (load "mc-gpg")
     )
-  (let ((mc-pgp-always-sign (if (eq sign 'maybe)
-				mc-pgp-always-sign
-			      'never))
-	(comment (mime-mc-comment)))
+  (let* ((mc-pgp-always-sign (if (eq sign 'maybe)
+				 mc-pgp-always-sign
+			       'never))
+	 (comment (mime-mc-comment))
+	 (mc-gpg-comment (if comment "DUMMY")))
     (prog1
 	(mc-gpg-encrypt-region
 	 (mc-split "\\([ \t\n]*,[ \t\n]*\\)+" recipients)
