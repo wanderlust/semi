@@ -1,5 +1,23 @@
 1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-preview-condition): Set up for
+	'mime-preview-text/enriched instead of
+	'mime-preview-filter-for-text/enriched.
+
+	* mime-text.el (mime-preview-text/enriched): New function; abolish
+	'mime-preview-filter-for-text/enriched.
+
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-preview-condition): Set up for
+	'mime-preview-text/richtext instead of
+	'mime-preview-filter-for-text/richtext.
+
+	* mime-text.el (mime-preview-text/richtext): New function; abolish
+	'mime-preview-filter-for-text/richtext.
+
+1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el: Rename 'mime-view-insert-message/partial-button to
 	'mime-preview-message/partial-button.
 
