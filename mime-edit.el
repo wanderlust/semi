@@ -702,6 +702,7 @@ Tspecials means any character that matches with it in header must be quoted.")
 
 (define-key mime-edit-mode-entity-map "\C-t" 'mime-edit-insert-text)
 (define-key mime-edit-mode-entity-map "\C-i" 'mime-edit-insert-file)
+(define-key mime-edit-mode-entity-map "\C-T" 'mime-edit-insert-text-file)
 (define-key mime-edit-mode-entity-map "\C-e" 'mime-edit-insert-external)
 (define-key mime-edit-mode-entity-map "\C-v" 'mime-edit-insert-voice)
 (define-key mime-edit-mode-entity-map "\C-y" 'mime-edit-insert-message)
@@ -753,7 +754,8 @@ Tspecials means any character that matches with it in header must be quoted.")
 
 (defconst mime-edit-menu-list
   '((mime-help	"Describe MIME editor mode" mime-edit-help)
-    (file	"Insert File"		mime-edit-insert-file)
+    (file	"Insert Binary File"	mime-edit-insert-file)
+    (file	"Insert Text File"	mime-edit-text-insert-file)
     (external	"Insert External"	mime-edit-insert-external)
     (voice	"Insert Voice"		mime-edit-insert-voice)
     (message	"Insert Message"	mime-edit-insert-message)
@@ -876,6 +878,7 @@ Following commands are available in addition to major mode commands:
 \[make single part\]
 \\[mime-edit-insert-text]	insert a text message.
 \\[mime-edit-insert-file]	insert a (binary) file.
+\\[mime-edit-insert-text-file]	insert a (text) file.
 \\[mime-edit-insert-external]	insert a reference to external body.
 \\[mime-edit-insert-voice]	insert a voice message.
 \\[mime-edit-insert-message]	insert a mail or news message.
@@ -1092,7 +1095,7 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
       )))
 
 (defun mime-edit-insert-file (file &optional verbose)
-  "Insert a message from a file."
+  "Insert a message from a file as binary."
   (interactive "fInsert file as MIME message: \nP")
   (let*  ((guess (mime-find-file-type file))
 	  (type (nth 0 guess))
@@ -1145,6 +1148,62 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	  ))
     (mime-edit-insert-tag type subtype parameters)
     (mime-edit-insert-binary-file file encoding)
+    ))
+
+(defun mime-edit-insert-text-file (file &optional verbose)
+  "Insert a message from a text file."
+  (interactive "fInsert text file as MIME message: \nP")
+  (let*  ((guess (mime-find-file-type file))
+	  (type "text")
+	  (subtype (if (string-equal (nth 0 guess) "text")
+		       (nth 1 guess)
+		     "plane"))
+	  (parameters (nth 2 guess))
+	  (encoding (nth 3 guess))
+	  (disposition-type (nth 4 guess))
+	  (disposition-params (nth 5 guess))
+	  )
+    (if verbose
+	(setq type     (mime-prompt-for-type type)
+	      subtype  (mime-prompt-for-subtype type subtype)
+	      encoding (mime-prompt-for-encoding encoding)
+	      ))
+    (if (or (consp parameters) (stringp disposition-type))
+	(let ((rest parameters) cell attribute value)
+	  (setq parameters "")
+	  (while rest
+	    (setq cell (car rest))
+	    (setq attribute (car cell))
+	    (setq value (cdr cell))
+	    (if (eq value 'file)
+		(setq value (std11-wrap-as-quoted-string
+			     (file-name-nondirectory file)))
+	      )
+	    (setq parameters (concat parameters "; " attribute "=" value))
+	    (setq rest (cdr rest))
+	    )
+	  (if disposition-type
+	      (progn
+		(setq parameters
+		      (concat parameters "\n"
+			      "Content-Disposition: " disposition-type))
+		(setq rest disposition-params)
+		(while rest
+		  (setq cell (car rest))
+		  (setq attribute (car cell))
+		  (setq value (cdr cell))
+		  (if (eq value 'file)
+		      (setq value (std11-wrap-as-quoted-string
+				   (file-name-nondirectory file)))
+		    )
+		  (setq parameters
+			(concat parameters "; " attribute "=" value))
+		  (setq rest (cdr rest))
+		  )
+		))
+	  ))
+    (mime-edit-insert-tag type subtype parameters)
+    (insert-file file)
     ))
 
 (defun mime-edit-insert-external ()

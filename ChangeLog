@@ -1,3 +1,11 @@
+1999-02-01  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
+
+	* mime-edit.el (mime-edit-mode-entity-map): Add
+	`mime-edit-insert-text-file' command.
+	(mime-edit-menu-list): Ditto.
+	(mime-edit-insert-text-file): New command.
+	(mime-edit-insert-file): Modify DOC string.
+
 1999-01-27  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
 
 	* Sync up with semi-1_13.
