@@ -10,6 +10,43 @@ Copyright (C) 1998 Free Software Foundation, Inc.
   'mime-view-plain-text-preview-hook was renamed to
 'mime-preview-text/plain-hook.
 
+*** Variable
+
+  Variable 'mime-view-childrens-header-showing-Content-Type-list was
+abolished.  Please use 'mime-preview-condition instead.
+
+*** API about visible-predicates were abolished
+
+  Following functions were abolished:
+
+    mime-view-header-visible-p (entity message-info)
+
+    mime-view-body-visible-p (entity message-info)
+
+    mime-view-entity-separator-visible-p (entity message-info)
+
+Please use 'mime-preview-condition instead.
+
+  Function 'mime-view-entity-button-visible-p is not abolished, but it
+is obsoleted.
+
+*** mime-preview-condition
+
+  Following are added as pre-defined keys:
+
+	'childrens-situation	default preview-situation for children
+	'message-button		to specify to display message-button
+				    nil:	default (invisible)
+				    'visible:	visible
+				    'invisible:	invisible
+	'entity-button		to specify to display entity-button
+				    nil:	default (visible)
+				    'visible:	visible
+				    'invisible:	invisible
+	'header			to specify to display header
+				    nil:	default (invisible)
+				    'visible:	visible
+				    'invisible:	invisible
 
 ** API
 
