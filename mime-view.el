@@ -1800,7 +1800,7 @@ If LINES is negative, scroll up LINES lines."
 					(lambda (sym)
 					  (list (symbol-name sym)))
 					(mime-charset-list))
-				       #'mime-charset-p t
+				       nil t
 				       (symbol-name default-charset)))))
 	(unless (eq charset default-charset)
 	  charset))
