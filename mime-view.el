@@ -1,15 +1,14 @@
 ;;; mime-view.el --- interactive MIME viewer for GNU Emacs
 
-;; Copyright (C) 1995,1996,1997 Free Software Foundation, Inc.
+;; Copyright (C) 1995,1996,1997,1998 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Created: 1994/7/13
 ;;	Renamed: 1994/8/31 from tm-body.el
 ;;	Renamed: 1997/02/19 from tm-view.el
-;; Version: $Revision$
 ;; Keywords: MIME, multimedia, mail, news
 
-;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
+;; This file is part of SEMI (Sophisticated Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -38,15 +37,10 @@
 ;;; @ version
 ;;;
 
-(defconst mime-view-RCS-ID
-  "$Id$")
-
-(defconst mime-view-version
-  `,(get-version-string mime-view-RCS-ID))
-
 (defconst mime-view-version-string
-  `,(concat "SEMI MIME-View " mime-view-version
-	    " (" semi-version-name ")"))
+  `,(concat "SEMI MIME-View "
+	    (mapconcat #'number-to-string (cdr semi-version) ".")
+	    " (" (car semi-version) ")"))
 
 
 ;;; @ variables
