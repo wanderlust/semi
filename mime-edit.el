@@ -845,22 +845,17 @@ specified.  Binary messages such as audio and image are usually
 hidden.  The messages in the tagged MIME format are automatically
 translated into a MIME compliant message when exiting this mode.
 
-Available charsets depend on Emacs version being used.  The following
-lists the available charsets of each emacs.
+Available charsets depend on Emacs.
 
-Without mule:	US-ASCII and ISO-8859-1 (or other charset) are available.
-With mule:	US-ASCII, ISO-8859-* (except for ISO-8859-5), KOI8-R,
-		ISO-2022-JP, ISO-2022-JP-2, EUC-KR, CN-GB-2312,
-		CN-BIG5 and ISO-2022-INT-1 are available.
+These charsets are available in all emacsen (with MULE):
+US-ASCII, ISO-8859-* (except for ISO-8859-5), KOI8-R, ISO-2022-JP,
+ISO-2022-JP-2, EUC-KR, CN-GB-2312, CN-BIG5 and ISO-2022-INT-1 are
+available.
 
 ISO-2022-JP-2 and ISO-2022-INT-1 charsets used in mule is expected to
 be used to represent multilingual text in intermixed manner.  Any
 languages that has no registered charset are represented as either
 ISO-2022-JP-2 or ISO-2022-INT-1 in mule.
-
-If you want to use non-ISO-8859-1 charset in Emacs 19 or XEmacs
-without mule, please set variable `default-mime-charset'.  This
-variable must be symbol of which name is a MIME charset.
 
 If you want to add more charsets in mule, please set variable
 `charsets-mime-charset-alist'.  This variable must be alist of which
@@ -874,6 +869,7 @@ Following commands are available in addition to major mode commands:
 \[make single part\]
 \\[mime-edit-insert-text]	insert a text message.
 \\[mime-edit-insert-file]	insert a (binary) file.
+\\[mime-eidt-insert-text-file]  insert a text file.
 \\[mime-edit-insert-external]	insert a reference to external body.
 \\[mime-edit-insert-voice]	insert a voice message.
 \\[mime-edit-insert-message]	insert a mail or news message.
@@ -927,8 +923,9 @@ TABs at the beginning of the line are not a part of the message:
 	--[[image/gif][base64]]...image encoded in base64 here...
 	--[[audio/basic][base64]]...audio encoded in base64 here...
 
-User customizable variables (not documented all of them):
- mime-edit-prefix
+User customizable variables (not all of them are documented):
+mime-edit-mode-entity-prefix
+mime-edit-mode-enclosure-prefix
     Specifies a key prefix for MIME minor mode commands.
 
  mime-ignore-preceding-spaces
@@ -946,7 +943,7 @@ User customizable variables (not documented all of them):
     If you are in 8bit-through environment, please set to 8.
 
  mime-edit-voice-recorder
-    Specifies a function to record a voice message and encode it.
+    Specifies a function to record and encode a voice message.
     The function `mime-edit-voice-recorder-for-sun' is for Sun
     SparcStations.
 

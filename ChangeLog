@@ -1,3 +1,13 @@
+2000-07-08  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-display-text/plain): Make it a little
+	bit more robust to errors.
+
+2000-07-05  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-edit.el (mime-edit-mode): Remove reference to emacsen
+	without MULE.
+
 2000-07-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* mime-image.el (mime-image-insert) [XEmacs]:
