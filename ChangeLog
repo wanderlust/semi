@@ -1,5 +1,13 @@
 1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-raw-point-to-entity-node-id): Use
+	`mime-raw-find-entity-from-point'.
+	(mime-raw-point-to-entity-number): Likewise.
+
+	* mime-view.el (mime-raw-find-entity-from-point): New function.
+
+1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-view-display-body): Change interface.
 
 1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
