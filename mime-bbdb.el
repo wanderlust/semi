@@ -161,14 +161,13 @@ the user confirms the creation."
     (if bbdb-use-pop-up
         (mime-bbdb/pop-up-bbdb-buffer offer-to-create)
       (let* ((message (get-text-property (point-min) 'mime-view-entity))
-	     (from (mime-entity-fetch-field message 'From))
+	     (from (mime-fetch-field 'From message))
 	     addr)
 	(if (or (null from)
-                (null
-		 (setq addr (car (mime-entity-read-field message 'From))))
+                (null (setq addr (car (mime-read-field 'From message))))
                 (string-match (bbdb-user-mail-names)
 			      (std11-address-string addr)))
-            (setq from (or (mime-entity-fetch-field message 'To)
+            (setq from (or (mime-fetch-field 'To message)
 			   from))
 	  )
         (if from
