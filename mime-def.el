@@ -125,7 +125,7 @@
     ;; (widget-push-button-value-create
     ;;  (widget-convert 'push-button
     ;;                  :notify (lambda (&rest ignore)
-    ;;                            (mime-view-play-current-entity)
+    ;;                            (mime-preview-play-current-entity)
     ;;                            )
     ;;                  string))
     (insert "\n")
