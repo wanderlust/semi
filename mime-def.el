@@ -223,29 +223,6 @@ FUNCTION.")
 (defconst mime/disposition-type-regexp mime/token-regexp)
 
 
-;;; @@ Base64
-;;;
-
-(defconst base64-token-regexp "[A-Za-z0-9+/]")
-(defconst base64-token-padding-regexp "[A-Za-z0-9+/=]")
-
-(defconst eword-B-encoded-text-regexp
-  (concat "\\(\\("
-	  base64-token-regexp
-	  base64-token-regexp
-	  base64-token-regexp
-	  base64-token-regexp
-	  "\\)*"
-	  base64-token-regexp
-	  base64-token-regexp
-	  base64-token-padding-regexp
-	  base64-token-padding-regexp
-          "\\)"))
-
-;; (defconst eword-B-encoding-and-encoded-text-regexp
-;;   (concat "\\(B\\)\\?" eword-B-encoded-text-regexp))
-
-
 ;;; @@ Quoted-Printable
 ;;;
 
