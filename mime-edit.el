@@ -764,7 +764,7 @@ Tspecials means any character that matches with it in header must be quoted.")
     )
   "MIME-edit menubar entry.")
 
-(cond (running-xemacs
+(cond ((featurep 'xemacs)
        ;; modified by Pekka Marjola <pema@iki.fi>
        ;;	1995/9/5 (c.f. [tm-en:69])
        (defun mime-edit-define-menu-for-xemacs ()
@@ -962,7 +962,7 @@ User customizable variables (not documented all of them):
       )))
 
 
-(cond (running-xemacs
+(cond ((featurep 'xemacs)
        (add-minor-mode 'mime-edit-mode-flag
 		       '((" MIME-Edit "  mime-transfer-level-string))
 		       mime-edit-mode-map
@@ -994,7 +994,7 @@ User customizable variables (not documented all of them):
     (force-mode-line-update)
 
     ;; Define menu for XEmacs.
-    (if running-xemacs
+    (if (featurep 'xemacs)
 	(mime-edit-define-menu-for-xemacs)
       )
 
@@ -1032,7 +1032,7 @@ just return to previous mode."
 	  (mime-edit-translate-buffer)))
     ;; Restore previous state.
     (setq mime-edit-mode-flag nil)
-    (if (and running-xemacs
+    (if (and (featurep 'xemacs)
 	     (featurep 'menubar))
 	(delete-menu-item (list mime-edit-menu-title))
       )
