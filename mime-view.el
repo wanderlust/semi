@@ -1,8 +1,8 @@
 ;;; mime-view.el --- interactive MIME viewer for GNU Emacs
 
-;; Copyright (C) 1995,1996,1997,1998,1999 Free Software Foundation, Inc.
+;; Copyright (C) 1995,1996,1997,1998,1999,2000 Free Software Foundation, Inc.
 
-;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;; Author: MORIOKA Tomohiko <tomo@m17n.org>
 ;; Created: 1994/07/13
 ;;	Renamed: 1994/08/31 from tm-body.el
 ;;	Renamed: 1997/02/19 from tm-view.el
@@ -224,41 +224,77 @@ mother-buffer."
     
     situation))
 
+(defsubst mime-delq-null-situation (situations field
+					       &optional ignored-value)
+  (let (dest)
+    (while situations
+      (let* ((situation (car situations))
+	     (cell (assq field situation)))
+	(if cell
+	    (or (eq (cdr cell) ignored-value)
+		(setq dest (cons situation dest))
+		)))
+      (setq situations (cdr situations)))
+    dest))
+
+(defun mime-compare-situation-with-example (situation example)
+  (let ((example (copy-alist example))
+	(match 0))
+    (while situation
+      (let* ((cell (car situation))
+	     (key (car cell))
+	     (ecell (assoc key example)))
+	(when ecell
+	  (if (equal cell ecell)
+	      (setq match (1+ match))
+	    (setq example (delq ecell example))
+	    ))
+	)
+      (setq situation (cdr situation))
+      )
+    (cons match example)
+    ))
+
+(defun mime-sort-situation (situation)
+  (sort situation
+	#'(lambda (a b)
+	    (let ((a-t (car a))
+		  (b-t (car b))
+		  (order '((type . 1)
+			   (subtype . 2)
+			   (mode . 3)
+			   (method . 4)
+			   (major-mode . 5)
+			   (disposition-type . 6)
+			   ))
+		  a-order b-order)
+	      (if (symbolp a-t)
+		  (let ((ret (assq a-t order)))
+		    (if ret
+			(setq a-order (cdr ret))
+		      (setq a-order 7)
+		      ))
+		(setq a-order 8)
+		)
+	      (if (symbolp b-t)
+		  (let ((ret (assq b-t order)))
+		    (if ret
+			(setq b-order (cdr ret))
+		      (setq b-order 7)
+		      ))
+		(setq b-order 8)
+		)
+	      (if (= a-order b-order)
+		  (string< (format "%s" a-t)(format "%s" b-t))
+		(< a-order b-order))
+	      )))
+  )
+
 (defun mime-view-entity-title (entity)
   (or (mime-entity-read-field entity 'Content-Description)
       (mime-entity-read-field entity 'Subject)
       (mime-entity-filename entity)
       ""))
-
-
-;; (defsubst mime-raw-point-to-entity-node-id (point &optional message-info)
-;;   "Return entity-node-id from POINT in mime-raw-buffer.
-;; If optional argument MESSAGE-INFO is not specified,
-;; `mime-message-structure' is used."
-;;   (mime-entity-node-id (mime-raw-find-entity-from-point point message-info)))
-
-;; (make-obsolete 'mime-raw-point-to-entity-node-id "don't use it.")
-
-;; (defsubst mime-raw-point-to-entity-number (point &optional message-info)
-;;   "Return entity-number from POINT in mime-raw-buffer.
-;; If optional argument MESSAGE-INFO is not specified,
-;; `mime-message-structure' is used."
-;;   (mime-entity-number (mime-raw-find-entity-from-point point message-info)))
-
-;; (make-obsolete 'mime-raw-point-to-entity-number "don't use it.")
-
-;; (defun mime-raw-flatten-message-info (&optional message-info)
-;;   "Return list of entity in mime-raw-buffer.
-;; If optional argument MESSAGE-INFO is not specified,
-;; `mime-message-structure' is used."
-;;   (or message-info
-;;       (setq message-info mime-message-structure))
-;;   (let ((dest (list message-info))
-;;         (rcl (mime-entity-children message-info)))
-;;     (while rcl
-;;       (setq dest (nconc dest (mime-raw-flatten-message-info (car rcl))))
-;;       (setq rcl (cdr rcl)))
-;;     dest))
 
 
 ;;; @ presentation of preview
@@ -491,19 +527,6 @@ Each elements are regexp of field-name.")
 
 ;;; @@@ entity presentation
 ;;;
-
-(defsubst mime-delq-null-situation (situations field
-					       &optional ignored-value)
-  (let (dest)
-    (while situations
-      (let* ((situation (car situations))
-	     (cell (assq field situation)))
-	(if cell
-	    (or (eq (cdr cell) ignored-value)
-		(setq dest (cons situation dest))
-		)))
-      (setq situations (cdr situations)))
-    dest))
 
 (defun mime-display-text/plain (entity situation)
   (save-restriction
