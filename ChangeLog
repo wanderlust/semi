@@ -1,3 +1,15 @@
+2000-05-22  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* semi-def.el (mime-create-xpm-button): Define it if the feature
+	`xpm' is provided even if the TTY frame is used; call
+	`mime-create-widget-button' if the TTY frame is used.
+	(mime-create-widget-button): Add comment.
+
+2000-02-20  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* semi-def.el (mime-insert-button): Insert newline to avoid
+	face property concatenation.
+
 2000-04-13  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-view.el (mime-preview-scroll-down-entity): Bind

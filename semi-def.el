@@ -27,9 +27,6 @@
 (require 'poe)
 (eval-when-compile (require 'cl))
 (require 'custom)
-(require 'widget)
-(eval-when-compile (require 'static))
-(require 'alist)
 
 (defconst mime-user-interface-product ["WEMI" (1 13 7) "Shimada"]
   "Product name, version number and code name of MIME-kernel package.")
@@ -72,6 +69,9 @@ provided or the TTY frame is used."
 			       (goto-char point)
 			       (,function))))
      string)
+    ;; There may be only one string "*" behind the widget button.  We
+    ;; should replace it with the string as it can be seen because it
+    ;; will be yanked into the reply messages.
     (static-when (featurep 'xemacs)
       (let ((end (point))
 	    extent)
@@ -100,46 +100,50 @@ the buttons."
 
   (defvar mime-xpm-button-glyph-cache nil)
 
-  (if (and (featurep 'xpm) (device-on-window-system-p))
+  (if (featurep 'xpm)
       (defun mime-create-xpm-button (string function)
 	"Display STRING as a XPM button with the callback FUNCTION.
 It might be identical to the function `mime-create-widget-button'
-if the feature `xpm' is not provided or the TTY frame is used."
-	(set-extent-properties (make-extent (point)
-					    (progn
-					      (insert "[" string "]")
-					      (point)))
-			       '(invisible t intangible t))
-	(let* ((spec (list string
-			   mime-xpm-button-shadow-thickness
-			   mime-xpm-button-foreground
-			   mime-xpm-button-background))
-	       (button (cdr (assoc spec mime-xpm-button-glyph-cache))))
-	  (or button
-	      (set-alist 'mime-xpm-button-glyph-cache spec
-			 (setq button (apply (function xpm-button-create)
-					     spec))))
-	  (let* ((extent (make-extent (point) (point)))
-		 (down-glyph (make-glyph (car (cdr button))))
-		 (up-glyph (make-glyph (car button)))
-		 (down-func `(lambda (event)
-			       (interactive "e")
-			       (set-extent-begin-glyph ,extent ,down-glyph)))
-		 (up-func `(lambda (event)
-			     (interactive "e")
-			     (mouse-set-point event)
-			     (set-extent-begin-glyph ,extent ,up-glyph)
-			     (,function)))
-		 (keymap (make-sparse-keymap)))
-	    (define-key keymap 'button1 down-func)
-	    (define-key keymap 'button2 down-func)
-	    (define-key keymap 'button1up up-func)
-	    (define-key keymap 'button2up up-func)
-	    (set-extent-begin-glyph extent up-glyph)
-	    (set-extent-property extent 'keymap keymap))
-	  (insert "\n")))
-    (fset 'mime-create-xpm-button 'mime-create-widget-button))
-  )
+if the TTY frame is used."
+	;; `device-on-widow-system-p' must be checked at run-time.
+	(if (device-on-window-system-p)
+	    (progn
+	      (set-extent-properties (make-extent (point)
+						  (progn
+						    (insert "[" string "]")
+						    (point)))
+				     '(invisible t intangible t))
+	      (let* ((spec (list string
+				 mime-xpm-button-shadow-thickness
+				 mime-xpm-button-foreground
+				 mime-xpm-button-background))
+		     (button (cdr (assoc spec mime-xpm-button-glyph-cache))))
+		(or button
+		    (set-alist 'mime-xpm-button-glyph-cache spec
+			       (setq button (apply (function xpm-button-create)
+						   spec))))
+		(let* ((extent (make-extent (point) (point)))
+		       (down-glyph (make-glyph (car (cdr button))))
+		       (up-glyph (make-glyph (car button)))
+		       (down-func `(lambda (event)
+				     (interactive "e")
+				     (set-extent-begin-glyph ,extent
+							     ,down-glyph)))
+		       (up-func `(lambda (event)
+				   (interactive "e")
+				   (mouse-set-point event)
+				   (set-extent-begin-glyph ,extent ,up-glyph)
+				   (,function)))
+		       (keymap (make-sparse-keymap)))
+		  (define-key keymap 'button1 down-func)
+		  (define-key keymap 'button2 down-func)
+		  (define-key keymap 'button1up up-func)
+		  (define-key keymap 'button2up up-func)
+		  (set-extent-begin-glyph extent up-glyph)
+		  (set-extent-property extent 'keymap keymap))
+		(insert "\n")))
+	  (mime-create-widget-button string function)))
+    (fset 'mime-create-xpm-button 'mime-create-widget-button)))
 
 (defcustom mime-create-button-function 'mime-create-widget-button
   "A function called to create the content button."
@@ -160,6 +164,8 @@ if the feature `xpm' is not provided or the TTY frame is used."
 
 (defsubst mime-insert-button (string function &optional data)
   "Insert STRING as button with callback FUNCTION and DATA."
+  (unless (bolp)
+    (insert "\n"))
   (save-restriction
     (narrow-to-region (point) (point))
     (mapcar (function
@@ -178,16 +184,14 @@ if the feature `xpm' is not provided or the TTY frame is used."
       (setq buf (current-buffer)
 	    point (point)
 	    func (get-text-property (point) 'mime-button-callback)
-	    data (get-text-property (point) 'mime-button-data)
-	    ))
+	    data (get-text-property (point) 'mime-button-data)))
     (save-excursion
       (set-buffer buf)
       (goto-char point)
       (if func
 	  (apply func data)
 	(if (fboundp mime-button-mother-dispatcher)
-	    (funcall mime-button-mother-dispatcher event)
-	  )))))
+	    (funcall mime-button-mother-dispatcher event))))))
 
 
 ;;; @ for URL
@@ -215,8 +219,7 @@ if the feature `xpm' is not provided or the TTY frame is used."
       (widget-convert-button 'mime-url-link beg end
 			     (buffer-substring beg end))
       (static-unless (featurep 'xemacs)
-	(overlay-put (make-overlay beg end) 'local-map widget-keymap))
-      )))
+	(overlay-put (make-overlay beg end) 'local-map widget-keymap)))))
 
 (define-widget 'mime-url-link 'link
   "A link to an www page."
@@ -243,26 +246,19 @@ if the feature `xpm' is not provided or the TTY frame is used."
 			       (vector (car cell)
 				       `(progn
 					  (setq ret ',(cdr cell))
-					  (throw 'exit nil)
-					  )
-				       t)
-			       ))
-			    menu-alist)
-		    ))
+					  (throw 'exit nil))
+				       t)))
+			    menu-alist)))
 	    (recursive-edit)
 	    ret))
       (defun select-menu-alist (title menu-alist)
 	(x-popup-menu
 	 (list '(1 1) (selected-window))
-	 (list title (cons title menu-alist))
-	 ))
-      )
+	 (list title (cons title menu-alist)))))
   (defun select-menu-alist (title menu-alist)
     (cdr
      (assoc (completing-read (concat title " : ") menu-alist)
-	    menu-alist)
-     ))
-  )
+	    menu-alist))))
 
 
 ;;; @ PGP
@@ -317,7 +313,7 @@ FUNCTION.")
 
 (defun mime-add-condition (target-type condition &optional mode file)
   "Add CONDITION to database specified by TARGET-TYPE.
-TARGET-TYPE must be 'preview or 'action.  
+TARGET-TYPE must be 'preview or 'action.
 If optional argument MODE is 'strict or nil (omitted), CONDITION is
 added strictly.
 If optional argument MODE is 'with-default, CONDITION is added with
@@ -333,13 +329,9 @@ activate."
 		(funcall func sym condition)
 		(if file
 		    (let ((method (cdr (assq 'method condition))))
-		      (autoload method file)
-		      ))
-		)
-	    (error "Function for mode `%s' is not found." mode)
-	    ))
-      (error "Variable for target-type `%s' is not found." target-type)
-      )))
+		      (autoload method file))))
+	    (error "Function for mode `%s' is not found." mode)))
+      (error "Variable for target-type `%s' is not found." target-type))))
 
 
 ;;; @ end
