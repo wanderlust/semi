@@ -536,11 +536,11 @@ If it is not specified for a major-mode,
 ;;; @@ about PGP
 ;;;
 
-(defvar mime-edit-signing-type 'pgp-elkins
-  "*PGP signing type (pgp-elkins, pgp-kazu or nil).")
+(defvar mime-edit-signing-type 'pgp-mime
+  "*PGP signing type (pgp-mime, pgp-kazu or nil).")
 
-(defvar mime-edit-encrypting-type 'pgp-elkins
-  "*PGP encrypting type (pgp-elkins, pgp-kazu or nil).")
+(defvar mime-edit-encrypting-type 'pgp-mime
+  "*PGP encrypting type (pgp-mime, pgp-kazu or nil).")
 
 
 ;;; @@ about tag
@@ -1619,16 +1619,16 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 		 (mime-edit-enquote-region bb eb)
 		 )
 		((string-equal type "signed")
-		 (cond ((eq mime-edit-signing-type 'pgp-elkins)
-			(mime-edit-sign-pgp-elkins bb eb boundary)
+		 (cond ((eq mime-edit-signing-type 'pgp-mime)
+			(mime-edit-sign-pgp-mime bb eb boundary)
 			)
 		       ((eq mime-edit-signing-type 'pgp-kazu)
 			(mime-edit-sign-pgp-kazu bb eb boundary)
 			))
 		 )
 		((string-equal type "encrypted")
-		 (cond ((eq mime-edit-encrypting-type 'pgp-elkins)
-			(mime-edit-encrypt-pgp-elkins bb eb boundary)
+		 (cond ((eq mime-edit-encrypting-type 'pgp-mime)
+			(mime-edit-encrypt-pgp-mime bb eb boundary)
 			)
 		       ((eq mime-edit-encrypting-type 'pgp-kazu)
 			(mime-edit-encrypt-pgp-kazu bb eb boundary)
@@ -1666,7 +1666,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 	  (replace-match (concat "-" (substring tag 2)))
 	  )))))
 
-(defun mime-edit-sign-pgp-elkins (beg end boundary)
+(defun mime-edit-sign-pgp-mime (beg end boundary)
   (save-excursion
     (save-restriction
       (narrow-to-region beg end)
@@ -1722,7 +1722,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
     (vector from recipients header)
     ))
 
-(defun mime-edit-encrypt-pgp-elkins (beg end boundary)
+(defun mime-edit-encrypt-pgp-mime (beg end boundary)
   (save-excursion
     (save-restriction
       (let (from recipients header)
