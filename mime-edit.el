@@ -180,7 +180,7 @@ To insert a signature file automatically, call the function
      ("html"
       ;;("charset" "" "ISO-2022-JP" "US-ASCII" "ISO-8859-1" "ISO-8859-8")
       )
-     ("x-rot13-47")
+     ("x-rot13-47-48")
      )
     ("message"
      ("external-body"
@@ -1933,7 +1933,7 @@ Content-Transfer-Encoding: 7bit
 			  (intern (downcase charset))
 			(mime-edit-choose-charset)))
 	(mime-edit-define-charset charset)
-	(cond ((string-equal contype "text/x-rot13-47")
+	(cond ((string-equal contype "text/x-rot13-47-48")
 	       (save-excursion
 		 (forward-line)
 		 (mule-caesar-region (point) (mime-edit-content-end))
