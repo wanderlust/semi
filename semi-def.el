@@ -28,7 +28,7 @@
 (eval-when-compile (require 'static))
 (require 'custom)
 
-(defconst mime-user-interface-product ["EMY" (1 13 6) "Life is balance"]
+(defconst mime-user-interface-product ["EMY" (1 13 7) "Look before you leap"]
   "Product name, version number and code name of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"

@@ -221,8 +221,8 @@ Toggle display of entity body.
 @section How buttons look like
 
 @vindex mime-use-widget
-Before EMY 1.13.6, you need W- variants of SEMI to show buttons using
-widgets.  From now on, you only need to set @code{mime-use-widget}
+Before EMY 1.13.6, you need W- variants of SEMI to show wigdet buttons
+From now on, you only need to set @code{mime-use-widget}
 to @code{t}.
 
 A button is a place where information about a given part is displayed.
