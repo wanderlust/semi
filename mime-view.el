@@ -539,11 +539,6 @@ if it is not nil.")
 
 (ctree-set-calist-strictly
  'mime-acting-condition
- '((type . t)(subtype . t)(mode . "play")
-   (method "metamail" t "-m" "tm" "-x" "-d" "-z" "-e" 'file)
-   ))
-(ctree-set-calist-strictly
- 'mime-acting-condition
  '((type . t)(subtype . t)(mode . "extract")
    (method . mime-method-to-save)))
 
