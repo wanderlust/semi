@@ -640,16 +640,22 @@ If it is not specified for a major-mode,
 			    ((featurep 'mule) "MULE"))
 		      " XEmacs"
 		      (if (string-match "^[0-9]+\\(\\.[0-9]+\\)" emacs-version)
-			  (concat "/"
-				  (substring emacs-version 0 (match-end 0))
-				  (if (and (boundp 'xemacs-betaname)
-					   ;; It does not exist in XEmacs
-					   ;; versions prior to 20.3.
-					   xemacs-betaname)
-				      (concat " " xemacs-betaname)
-				    "")
-				  " (" xemacs-codename ") ("
-				  system-configuration ")")
+			  (concat
+			   "/"
+			   (substring emacs-version 0 (match-end 0))
+			   (cond ((and (boundp 'xemacs-betaname)
+				       xemacs-betaname)
+				  ;; It does not exist in XEmacs
+				  ;; versions prior to 20.3.
+				  (concat " " xemacs-betaname))
+				 ((and (boundp 'emacs-patch-level)
+				       emacs-patch-level)
+				  ;; It does not exist in FSF Emacs or in
+				  ;; XEmacs versions earlier than 21.1.1.
+				  (format " (patch %d)" emacs-patch-level))
+				 (t ""))
+			   " (" xemacs-codename ") ("
+			   system-configuration ")")
 			" (" emacs-version ")"))
 	    (let ((ver (if (string-match "\\.[0-9]+$" emacs-version)
 			   (substring emacs-version 0 (match-beginning 0))
