@@ -208,13 +208,17 @@
     (delete-file gif-file)
     ))
 
-(set-alist 'mime-view-content-filter-alist
-	   "application/postscript"
-	   (function mime-view-filter-for-application/postscript))
+;; If you would like to display inline Postscript image, please
+;; activate following:
 
-(if (featurep 'gif)
-    (add-to-list 'mime-view-visible-media-type-list "application/postscript")
-  )
+;; (set-alist 'mime-view-content-filter-alist
+;;            "application/postscript"
+;;            (function mime-view-filter-for-application/postscript))
+
+;; (if (featurep 'gif)
+;;     (add-to-list
+;;      'mime-view-visible-media-type-list "application/postscript")
+;;   )
 
 
 ;;; @ end
