@@ -49,7 +49,6 @@
 	      (lambda (file)
 		(interactive "FFilename: ")
 		(expand-file-name file))))))
-	 (the-buf (current-buffer))
 	 (tmp-buf (generate-new-buffer (file-name-nondirectory filename)))
 	 )
     (if (file-exists-p filename)
