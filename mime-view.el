@@ -757,8 +757,8 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
      . mime-preview-quitting-method-for-mime-show-message-mode))
   "Alist of major-mode vs. quitting-method of mime-view.")
 
-(defvar mime-view-over-to-previous-method-alist nil)
-(defvar mime-view-over-to-next-method-alist nil)
+(defvar mime-preview-over-to-previous-method-alist nil)
+(defvar mime-preview-over-to-next-method-alist nil)
 
 
 ;;; @ following method
@@ -1313,7 +1313,7 @@ If there is no upper entity, call function `mime-preview-quit'."
 (defun mime-preview-move-to-previous ()
   "Move to previous entity.
 If there is no previous entity, it calls function registered in
-variable `mime-view-over-to-previous-method-alist'."
+variable `mime-preview-over-to-previous-method-alist'."
   (interactive)
   (while (null (get-text-property (point) 'mime-view-entity))
     (backward-char)
@@ -1326,7 +1326,7 @@ variable `mime-view-over-to-previous-method-alist'."
 	  (mime-preview-move-to-previous)
 	  )
       (let ((f (assq (mime-preview-original-major-mode)
-		     mime-view-over-to-previous-method-alist)))
+		     mime-preview-over-to-previous-method-alist)))
 	(if f
 	    (funcall (cdr f))
 	  ))
@@ -1335,7 +1335,7 @@ variable `mime-view-over-to-previous-method-alist'."
 (defun mime-preview-move-to-next ()
   "Move to next entity.
 If there is no previous entity, it calls function registered in
-variable `mime-view-over-to-next-method-alist'."
+variable `mime-preview-over-to-next-method-alist'."
   (interactive)
   (while (null (get-text-property (point) 'mime-view-entity))
     (forward-char)
@@ -1348,7 +1348,7 @@ variable `mime-view-over-to-next-method-alist'."
 	      (mime-preview-move-to-next)
 	    ))
       (let ((f (assq (mime-preview-original-major-mode)
-		     mime-view-over-to-next-method-alist)))
+		     mime-preview-over-to-next-method-alist)))
 	(if f
 	    (funcall (cdr f))
 	  ))
@@ -1357,14 +1357,14 @@ variable `mime-view-over-to-next-method-alist'."
 (defun mime-preview-scroll-up-entity (&optional h)
   "Scroll up current entity.
 If reached to (point-max), it calls function registered in variable
-`mime-view-over-to-next-method-alist'."
+`mime-preview-over-to-next-method-alist'."
   (interactive)
   (or h
       (setq h (1- (window-height)))
       )
   (if (= (point) (point-max))
       (let ((f (assq (mime-preview-original-major-mode)
-                     mime-view-over-to-next-method-alist)))
+                     mime-preview-over-to-next-method-alist)))
         (if f
             (funcall (cdr f))
           ))
@@ -1380,14 +1380,14 @@ If reached to (point-max), it calls function registered in variable
 (defun mime-preview-scroll-down-entity (&optional h)
   "Scroll down current entity.
 If reached to (point-min), it calls function registered in variable
-`mime-view-over-to-previous-method-alist'."
+`mime-preview-over-to-previous-method-alist'."
   (interactive)
   (or h
       (setq h (1- (window-height)))
       )
   (if (= (point) (point-min))
       (let ((f (assq (mime-preview-original-major-mode)
-		     mime-view-over-to-previous-method-alist)))
+		     mime-preview-over-to-previous-method-alist)))
         (if f
             (funcall (cdr f))
           ))
