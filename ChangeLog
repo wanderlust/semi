@@ -1,3 +1,8 @@
+1999-02-17  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-define-charset): Check `mime-charset-comment'
+	property for mime-charset to add comment.
+
 1999-01-18  Tanaka Akira  <akr@jaist.ac.jp>
 
 	* mime-view.el (mime-display-text/x-vcard): Deal with bare LF as newline.

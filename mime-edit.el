@@ -504,6 +504,8 @@ If encoding is nil, it is determined from its contents."
   "A string formatted version of mime-transfer-level")
 (make-variable-buffer-local 'mime-transfer-level-string)
 
+(put 'iso-2022-jp-2 'mime-charset-comment "RFC1554")
+(put 'iso-2022-jp 'mime-charset-comment "RFC1468 with trivial bugfix")
 
 ;;; @@ about content transfer encoding
 
@@ -1370,7 +1372,11 @@ Optional argument ENCODING specifies an encoding method such as base64."
 	   (mime-create-tag
 	    (mime-edit-set-parameter
 	     (mime-edit-get-contype tag)
-	     "charset" (upcase (symbol-name charset)))
+	     "charset"
+	     (let ((comment (get charset 'mime-charset-comment)))
+	       (if comment
+		   (concat (upcase (symbol-name charset)) " (" comment ")")
+		 (upcase (symbol-name charset)))))
 	    (mime-edit-get-encoding tag)))
 	  ))))
 
