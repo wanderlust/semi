@@ -188,64 +188,14 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 It decodes the entity to call internal or external method.  The method
 is selected from variable `mime-acting-condition'.  If MODE is
 specified, play as it.  Default MODE is \"play\"."
-  (let (method ret)
-    (in-calist-package 'mime-view)
-    (setq ret
-	  (mime-delq-null-situation
-	   (ctree-find-calist mime-acting-condition
-			      (mime-entity-situation entity situation)
-			      mime-view-find-every-acting-situation)
-	   'method ignored-method))
-    (or (assq 'ignore-examples situation)
-	(if (cdr ret)
-	    (let ((rest ret)
-		  (max-score 0)
-		  (max-escore 0)
-		  max-examples
-		  max-situations)
-	      (while rest
-		(let ((situation (car rest))
-		      (examples mime-acting-situation-example-list))
-		  (while examples
-		    (let* ((ret
-			    (mime-compare-situation-with-example
-			     situation (caar examples)))
-			   (ret-score (car ret)))
-		      (cond ((> ret-score max-score)
-			     (setq max-score ret-score
-				   max-escore (cdar examples)
-				   max-examples (list (cdr ret))
-				   max-situations (list situation))
-			     )
-			    ((= ret-score max-score)
-			     (cond ((> (cdar examples) max-escore)
-				    (setq max-escore (cdar examples)
-					  max-examples (list (cdr ret))
-					  max-situations (list situation))
-				    )
-				   ((= (cdar examples) max-escore)
-				    (setq max-examples
-					  (cons (cdr ret) max-examples))
-				    (or (member situation max-situations)
-					(setq max-situations
-					      (cons situation max-situations)))
-				    )))))
-		    (setq examples (cdr examples))))
-		(setq rest (cdr rest)))
-	      (when max-situations
-		(setq ret max-situations)
-		(while max-examples
-		  (let* ((example (car max-examples))
-			 (cell
-			  (assoc example mime-acting-situation-example-list)))
-		    (if cell
-			(setcdr cell (1+ (cdr cell)))
-		      (setq mime-acting-situation-example-list
-			    (cons (cons example 0)
-				  mime-acting-situation-example-list))
-		      ))
-		  (setq max-examples (cdr max-examples))
-		  )))))
+  (let ((ret
+	 (mime-unify-situations (mime-entity-situation entity situation)
+				mime-acting-condition
+				mime-acting-situation-example-list
+				ignored-method))
+	method)
+    (setq mime-acting-situation-example-list (cdr ret)
+	  ret (car ret))
     (cond ((cdr ret)
 	   (setq ret (select-menu-alist
 		      "Methods"
