@@ -1,5 +1,12 @@
 1998-10-31  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-edit.el (mime-edit-decode-message-in-buffer): Delete fields
+	match with `mime-edit-again-ignored-field-regexp' then call
+	`mime-decode-header-in-buffer'.
+	(mime-edit-again): Delete header filter.
+
+1998-10-31  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-edit.el (mime-edit-decode-multipart-in-buffer): Change
 	interface.
 	(mime-edit-decode-single-part-in-buffer): New function.
