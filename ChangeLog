@@ -1,5 +1,14 @@
 1998-06-24  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
 
+	* mime-play.el (mime-preview-play-current-entity): Use
+	optional arg of `interactive'.
+	(mime-view-message/external-anon-ftp): Renamed from
+	`mime-view-message/external-ftp'.
+	(mime-raw-browse-url-function): New variable.
+	(mime-view-message/external-url): New function.
+	
+1998-06-24  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+
 	* semi-def.el (mime-browse-url-regexp): Renamed from
 	`mime-text-url-regexp'.
 	(mime-browse-url): Renamed from `mime-text-browse-url'.
