@@ -46,15 +46,15 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
   (or mode
       (setq mode "play")
       )
-  (let ((pc (mime-preview/point-pcinfo (point))))
-    (if pc
-	(let ((the-buf (current-buffer)))
+  (let ((cinfo (get-text-property (point) 'mime-view-cinfo)))
+    (if cinfo
+	(let ((the-buf (current-buffer))
+	      (raw-buffer (get-text-property (point) 'mime-view-raw-buffer))
+	      )
 	  (setq mime-preview/after-decoded-position (point))
-	  (set-buffer (mime::preview-content-info/buffer pc))
-	  (mime-article/decode-content
-	   (mime::preview-content-info/content-info pc) mode)
-	  (if (eq (current-buffer)
-		  (mime::preview-content-info/buffer pc))
+	  (set-buffer raw-buffer)
+	  (mime-article/decode-content cinfo mode)
+	  (if (eq (current-buffer) raw-buffer)
 	      (progn
 		(set-buffer the-buf)
 		(goto-char mime-preview/after-decoded-position)
