@@ -1,6 +1,13 @@
+2000-05-29  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-view-mailcap-files): New variable.
+	(mime-view-mailcap-parsed-p): New variable.
+	(mime-view-parse-mailcap-files): New function.
+	(mime-view-parse-mailcap): New function.
+
 2000-05-25  Tanaka Akira      <akr@m17n.org>
 
-        * README.en: Update for CVS via SSH.
+	* README.en: Update for CVS via SSH.
 
 2000-05-23  Yoshiki Hayashi  <yoshiki@xemacs.org>
 

@@ -117,6 +117,15 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 			       (const :tag "Default" t))
 		       integer)))
 
+(defcustom mime-view-mailcap-files
+    (if (memq system-type '(ms-dos ms-windows windows-nt))
+      '("~/mail.cap" "~/etc/mail.cap" "~/.mailcap")
+      '("~/.mailcap" "/etc/mailcap" "/usr/etc/mailcap"
+	"/usr/local/etc/mailcap"))
+    "*Search path of mailcap files."
+    :group 'mime
+    :type '(repeat file))
+
 (defvar mime-view-automatic-conversion
   (cond ((featurep 'xemacs)
 	 'automatic-conversion)
@@ -999,29 +1008,65 @@ With prefix, it prompts for coding-system."
 (defvar mime-acting-condition nil
   "Condition-tree about how to process entity.")
 
-(if (file-readable-p mailcap-file)
-    (let ((entries (mailcap-parse-file)))
-      (while entries
-	(let ((entry (car entries))
-	      view print shared)
-	  (while entry
-	    (let* ((field (car entry))
-		   (field-type (car field)))
-	      (cond ((eq field-type 'view)  (setq view field))
-		    ((eq field-type 'print) (setq print field))
-		    ((memq field-type '(compose composetyped edit)))
-		    (t (setq shared (cons field shared)))))
-	    (setq entry (cdr entry)))
-	  (setq shared (nreverse shared))
-	  (ctree-set-calist-with-default
-	   'mime-acting-condition
-	   (append shared (list '(mode . "play")(cons 'method (cdr view)))))
-	  (if print
-	      (ctree-set-calist-with-default
-	       'mime-acting-condition
-	       (append shared
-		       (list '(mode . "print")(cons 'method (cdr view)))))))
-	(setq entries (cdr entries)))))
+(defvar mime-view-mailcap-parsed-p nil)
+
+;; ### Fix flim
+(defun mime-view-parse-mailcap-files (&optional path)
+  (if (not (or path (setq path (getenv "MAILCAPS"))))
+      (setq path mime-view-mailcap-files))
+  (let ((fnames (reverse
+		 (if (stringp path)
+		     (parse-colon-path path)
+		   path)))
+	fname)
+    (setq mim-view-mailcap-parsed-p t)
+    (with-temp-buffer
+      (while fnames
+	(setq fname (car fnames))
+	(when (and (file-readable-p fname)
+		   (file-regular-p fname))
+	  (insert-file-contents fname)
+	  (unless (bolp)
+	    (insert "\n")))
+	(setq fnames (cdr fnames)))
+      (mailcap-parse-buffer))))
+
+(defun mime-view-parse-mailcap (&optional path force)
+    "Parse out all the mailcaps specified in a path string PATH.
+Components of PATH are separated by the `path-separator' character
+appropriate for this system.  If FORCE, re-parse even if already
+parsed.  If PATH is omitted, use the value of `mime-view-mailcap-files'."
+    (interactive (list nil t))
+    (when (or (not mime-view-mailcap-parsed-p)
+	      force)
+      (let ((entries (mime-view-parse-mailcap-files path)))
+	(while entries
+	  (let ((entry (car entries))
+		view print shared)
+	    (while entry
+	      (let* ((field (car entry))
+		     (field-type (car field)))
+		(cond ((eq field-type 'view)
+		       (setq view field))
+		      ((eq field-type 'print)
+		       (setq print field))
+		      ((memq field-type '(compose composetyped edit)))
+		      (t
+		       (setq shared (cons field shared)))))
+	      (setq entry (cdr entry)))
+	    (setq shared (nreverse shared))
+	    (ctree-set-calist-with-default
+	     'mime-acting-condition
+	     (append shared
+		     (list '(mode . "play") (cons 'method (cdr view)))))
+	    (if print
+		(ctree-set-calist-with-default
+		 'mime-acting-condition
+		 (append shared
+			 (list '(mode . "print") (cons 'method (cdr view)))))))
+	  (setq entries (cdr entries))))))
+
+(mime-view-parse-mailcap)
 
 (ctree-set-calist-strictly
  'mime-acting-condition
