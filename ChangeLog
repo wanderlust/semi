@@ -1,3 +1,10 @@
+1997-09-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el, mime-edit.el: Rename `mime/Content-Type' ->
+	`mime-read-Content-Type'.
+
+	* mime-parse.el (symbol-concat): New implementation.
+
 1997-08-30  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-def.el: Abolish alias `last*'.
