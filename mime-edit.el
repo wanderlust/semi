@@ -2665,9 +2665,10 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 			    (hbeg (match-end 0))
 			    (end (std11-field-end)))
 			(setq encoding
-			      (eliminate-top-spaces
-			       (std11-unfold-string
-				(buffer-substring hbeg end))))
+			      (downcase
+			       (eliminate-top-spaces
+				(std11-unfold-string
+				 (buffer-substring hbeg end)))))
 			(if (or charset (eq type 'text))
 			    (progn
 			      (delete-region beg (1+ end))
