@@ -977,18 +977,20 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	    (buffer-disable-undo)
 	    (kill-all-local-variables)
 	    (mime-view-insert-text-content entity situation)
-	    (if mode
-		(funcall mode)
-	      (if (setq filename (mime-entity-filename entity))
-		  (unwind-protect
-		      (progn
-			(setq buffer-file-name filename)
-			(set-auto-mode))
-		    (setq buffer-file-name nil))))
+	    (cond (mode
+		   (funcall mode))
+		  ((setq filename (mime-entity-filename entity))
+		   (let ((buffer-file-name
+			  (expand-file-name (file-name-nondirectory filename)
+					    temporary-file-directory)))
+		     (set-auto-mode))))
 	    (require 'font-lock)
 	    (let ((font-lock-verbose nil))
 	      ;; I find font-lock a bit too verbose.
-	      (font-lock-fontify-buffer))
+	      (font-lock-fontify-buffer)
+	      (when (and (boundp 'jit-lock-mode)
+			 jit-lock-mode)
+		(jit-lock-fontify-now)))
 	    ;; By default, XEmacs font-lock uses non-duplicable text
 	    ;; properties.  This code forces all the text properties
 	    ;; to be copied along with the text.

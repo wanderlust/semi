@@ -1,3 +1,9 @@
+2004-10-21  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* mime-view.el (mime-view-insert-fontified-text-content): Use
+	dummy absolute path in buffer-file-name. (by Katsumi Yamaoka)
+	Force fontify for jit-lock-mode.
+
 2004-09-27  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* mime-edit.el (mime-edit-temp-message-buffer): Define.
