@@ -64,7 +64,7 @@ See also variable `mime-charset-coding-system-alist'."
       (mime-text-decode-buffer charset)
       ))
 
-(defun mime-decode-text-body (situation)
+(defun mime-text-decode-body (situation)
   "Decode current buffer as text body.
 It decodes MIME-encoding then code-converts as MIME-charset.
 MIME-encoding is value of field 'encoding of SITUATION.  It must be
@@ -117,7 +117,7 @@ local variable `mime-text-decoder' and variable
 ;;;
 
 (defun mime-view-filter-for-text/plain (situation)
-  (mime-decode-text-body situation)
+  (mime-text-decode-body situation)
   (goto-char (point-max))
   (if (not (eq (char-after (1- (point))) ?\n))
       (insert "\n")
@@ -138,14 +138,14 @@ local variable `mime-text-decoder' and variable
 (defun mime-view-filter-for-text/richtext (situation)
   (let ((beg (point-min)))
     (remove-text-properties beg (point-max) '(face nil))
-    (mime-decode-text-body situation)
+    (mime-text-decode-body situation)
     (richtext-decode beg (point-max))
     ))
 
 (defun mime-view-filter-for-text/enriched (situation)
   (let ((beg (point-min)))
     (remove-text-properties beg (point-max) '(face nil))
-    (mime-decode-text-body situation)
+    (mime-text-decode-body situation)
     (enriched-decode beg (point-max))
     ))
 
