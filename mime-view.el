@@ -233,7 +233,7 @@ Each elements are regexp of field-name. [mime-view.el]")
 ;;; @@ content button
 ;;;
 
-(defun mime-preview/insert-content-button
+(defun mime-view-insert-entity-button
   (rcnum cinfo ctype params subj encoding)
   (save-restriction
     (narrow-to-region (point)(point))
@@ -287,7 +287,7 @@ Each elements are regexp of field-name. [mime-view.el]")
 	   (not (member
 		 ctype
 		 mime-view-content-button-ignored-ctype-list)))
-      (mime-preview/insert-content-button
+      (mime-view-insert-entity-button
        rcnum cinfo ctype params subj encoding)
     ))
 
@@ -531,7 +531,7 @@ The compressed face will be piped to this command.")
 	      ctype mime-view-content-button-visible-ctype-list))
 	(save-excursion
 	  (goto-char (point-max))
-	  (mime-preview/insert-content-button
+	  (mime-view-insert-entity-button
 	   rcnum cinfo ctype params subj encoding)
 	  ))
     (cond ((mime-view-body-visible-p rcnum cinfo ctype)
@@ -545,7 +545,7 @@ The compressed face will be piped to this command.")
 		(null (mime::content-info/children cinfo))
 		)
 	   (goto-char (point-max))
-	   (mime-preview/insert-content-button
+	   (mime-view-insert-entity-button
 	    rcnum cinfo ctype params subj encoding)
 	   ))
     (mime-preview/default-content-separator rcnum cinfo ctype params subj)
