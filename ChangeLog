@@ -1,10 +1,5 @@
 1999-11-09   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
-	* mime-pgp.el (mime-verify-application/pgp-signature): Don't
-	convert line break code.
-
-	* pgg-gpg.el (verify-region): Convert line break code to CRLF.
-
 	* pgg-pgp.el, pgg-pgp5.el
 	(sign-region): Don't convert line break	code.
 
