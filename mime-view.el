@@ -1055,8 +1055,11 @@ The compressed face will be piped to this command.")
     (or preview-buffer
 	(setq preview-buffer
 	      (concat "*Preview-" (buffer-name raw-buffer) "*")))
+    (set-buffer raw-buffer)
+    (setq mime-raw-message-info (mime-parse-message))
+    (setq mime-preview-buffer preview-buffer)
     (let ((inhibit-read-only t))
-      (set-buffer (get-buffer-create preview-buffer))
+      (switch-to-buffer preview-buffer)
       (widen)
       (erase-buffer)
       (setq mime-raw-buffer raw-buffer)
@@ -1072,23 +1075,31 @@ The compressed face will be piped to this command.")
 				  (header . visible)
 				  ))
       (mime-view-define-keymap default-keymap-or-function)
-      (set-buffer-modified-p nil)
-      )
-    (setq buffer-read-only t)
-    (set-buffer raw-buffer)
-    )
-  (switch-to-buffer (setq mime-preview-buffer preview-buffer))
-  (let ((point
-	 (next-single-property-change (point-min) 'mime-view-entity)))
-    (if point
-	(goto-char point)
-      (goto-char (point-min))
-      (search-forward "\n\n" nil t)
+      (let ((point
+	     (next-single-property-change (point-min) 'mime-view-entity)))
+	(if point
+	    (goto-char point)
+	  (goto-char (point-min))
+	  (search-forward "\n\n" nil t)
+	  ))
+      (run-hooks 'mime-view-mode-hook)
       ))
-  (run-hooks 'mime-view-mode-hook)
+  (set-buffer-modified-p nil)
+  (setq buffer-read-only t)
   )
 
-(defun mime-view-mode (&optional mother ctl encoding raw-buffer obuf
+(defun mime-view-buffer (&optional raw-buffer preview-buffer mother
+				   default-keymap-or-function)
+  (interactive)
+  (mime-view-display-message
+   (save-excursion
+     (if raw-buffer (set-buffer raw-buffer))
+     (mime-parse-message)
+     )
+   preview-buffer mother default-keymap-or-function))
+
+(defun mime-view-mode (&optional mother ctl encoding
+				 raw-buffer preview-buffer
 				 default-keymap-or-function)
   "Major mode for viewing MIME message.
 
@@ -1118,9 +1129,9 @@ button-2	Move to point under the mouse cursor
    (save-excursion
      (if raw-buffer (set-buffer raw-buffer))
      (or mime-view-redisplay
-	 (setq mime-raw-message-info (mime-parse-message ctl encoding))
-	 ))
-   obuf mother default-keymap-or-function))
+	 (mime-parse-message ctl encoding))
+     )
+   preview-buffer mother default-keymap-or-function))
 
 
 ;;; @@ playing
