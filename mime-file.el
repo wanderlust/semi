@@ -63,7 +63,7 @@
 	    jka-compr-compression-info-list ; for jka-compr
 	    jam-zcat-filename-list          ; for jam-zcat
 	    require-final-newline)
-	(write-file filename)
+	(write-region (point-min)(point-max) filename)
 	)
       (kill-buffer tmp-buf)
       )))
