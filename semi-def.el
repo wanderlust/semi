@@ -30,7 +30,7 @@
 
 (require 'custom)
 
-(defconst mime-user-interface-product ["SEMI" (1 13 7) "Awazu"]
+(defconst mime-user-interface-product ["EMIKO" (1 13 7) "Euglena caudata"]
   "Product name, version number and code name of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
@@ -171,15 +171,13 @@
 (defvar pgp-function-alist
   '(
     ;; for mime-pgp
-    (verify		mc-verify			"mc-toplev")
-    (decrypt		mc-decrypt			"mc-toplev")
-    (fetch-key		mc-pgp-fetch-key		"mc-pgp")
-    (snarf-keys		mc-snarf-keys			"mc-toplev")
+    (verify		pgg-verify-region		"pgg")
+    (decrypt		pgg-decrypt-region		"pgg")
     ;; for mime-edit
-    (mime-sign		mime-mc-pgp-sign-region		"mime-mc")
-    (traditional-sign	mc-pgp-sign-region		"mc-pgp")
-    (encrypt		mime-mc-pgp-encrypt-region	"mime-mc")
-    (insert-key		mc-insert-public-key		"mc-toplev")
+    (sign		pgg-sign-region			"pgg")
+    (encrypt		pgg-encrypt-region		"pgg")
+    (insert-key		pgg-insert-key			"pgg")
+    (snarf-keys		pgg-snarf-keys-region		"pgg")
     )
   "Alist of service names vs. corresponding functions and its filenames.
 Each element looks like (SERVICE FUNCTION FILE).
