@@ -1761,51 +1761,43 @@ It calls function registered in variable
 
 (provide 'mime-view)
 
-(let* ((file mime-situation-examples-file)
-       (buffer (get-buffer-create " *mime-example*")))
+(let ((file mime-situation-examples-file))
   (if (file-readable-p file)
-      (unwind-protect
-	  (save-excursion
-	    (set-buffer buffer)
-	    (erase-buffer)
-	    (insert-file-contents file)
-	    (setq mime-situation-examples-file-coding-system
-		  (static-cond
-		   ((boundp 'buffer-file-coding-system)
-		    (symbol-value 'buffer-file-coding-system))
-		   ((boundp 'file-coding-system)
-		    (symbol-value 'file-coding-system))
-		   (t nil)))
-	    (eval-buffer)
-	    ;; format check
-	    (condition-case nil
-		(let ((i 0))
-		  (while (and (> (length mime-preview-situation-example-list)
-				 mime-preview-situation-example-list-max-size)
-			      (< i 16))
-		    (setq mime-preview-situation-example-list
-			  (mime-reduce-situation-examples
-			   mime-preview-situation-example-list))
-		    (setq i (1+ i))
-		    ))
-	      (error (setq mime-preview-situation-example-list nil)))
-            ;; (let ((rest mime-preview-situation-example-list))
-            ;;   (while rest
-            ;;     (ctree-set-calist-strictly 'mime-preview-condition
-            ;;                                (caar rest))
-            ;;     (setq rest (cdr rest))))
-	    (condition-case nil
-		(let ((i 0))
-		  (while (and (> (length mime-acting-situation-example-list)
-				 mime-acting-situation-example-list-max-size)
-			      (< i 16))
-		    (setq mime-acting-situation-example-list
-			  (mime-reduce-situation-examples
-			   mime-acting-situation-example-list))
-		    (setq i (1+ i))
-		    ))
-	      (error (setq mime-acting-situation-example-list nil)))
-	    )
-	(kill-buffer buffer))))
+      (with-temp-buffer
+	(insert-file-contents file)
+	(setq mime-situation-examples-file-coding-system
+	      (static-cond
+	       ((boundp 'buffer-file-coding-system)
+		(symbol-value 'buffer-file-coding-system))
+	       ((boundp 'file-coding-system)
+		(symbol-value 'file-coding-system))
+	       (t nil)))
+	(eval-buffer)
+	;; format check
+	(condition-case nil
+	    (let ((i 0))
+	      (while (and (> (length mime-preview-situation-example-list)
+			     mime-preview-situation-example-list-max-size)
+			  (< i 16))
+		(setq mime-preview-situation-example-list
+		      (mime-reduce-situation-examples
+		       mime-preview-situation-example-list))
+		(setq i (1+ i))))
+	  (error (setq mime-preview-situation-example-list nil)))
+	;; (let ((rest mime-preview-situation-example-list))
+	;;   (while rest
+	;;     (ctree-set-calist-strictly 'mime-preview-condition
+	;;                                (caar rest))
+	;;     (setq rest (cdr rest))))
+	(condition-case nil
+	    (let ((i 0))
+	      (while (and (> (length mime-acting-situation-example-list)
+			     mime-acting-situation-example-list-max-size)
+			  (< i 16))
+		(setq mime-acting-situation-example-list
+		      (mime-reduce-situation-examples
+		       mime-acting-situation-example-list))
+		(setq i (1+ i))))
+	  (error (setq mime-acting-situation-example-list nil))))))
 
 ;;; mime-view.el ends here
