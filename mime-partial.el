@@ -28,31 +28,20 @@
 (require 'mime-view)
 (require 'mime-play)
 
-(defvar mime-view-partial-message-method-alist nil
-  "Alist major-mode vs. function to view partial message for mime-partial.")
-
-;; display Article at the cursor in Subject buffer.
-(defsubst mime-view-partial-message (target)
-  (save-window-excursion
-    (let ((f (assq target mime-view-partial-message-method-alist)))
-      (if f
-	  (funcall (cdr f))
-	(error "Fatal. Unsupported mode")
-	))))
-
-(defun mime-combine-message/partial-pieces-automatically (entity cal)
+(defun mime-combine-message/partial-pieces-automatically (entity situation)
   "Internal method for mime-view to combine message/partial messages
 automatically.  This function refers variable
-`mime-view-partial-message-method-alist' to select function to display
+`mime-request-partial-message-method-alist' to select function to display
 partial messages using mime-view."
   (interactive)
-  (let* ((id (cdr (assoc "id" cal)))
-	 (target (cdr (assq 'major-mode cal)))
-	 (article-buffer (buffer-name (current-buffer)))
-	 (subject-buf (eval (cdr (assq 'summary-buffer-exp cal))))
+  (let* ((id (cdr (assoc "id" situation)))
+	 (target (cdr (assq 'major-mode situation)))
+	 (subject-buf (eval (cdr (assq 'summary-buffer-exp situation))))
 	 subject-id
 	 (root-dir (expand-file-name
 		    (concat "m-prts-" (user-login-name)) mime-temp-directory))
+	 (request-partial-message-method
+	  (cdr (assq 'request-partial-message-method situation)))
 	 full-file)
     (setq root-dir (concat root-dir "/" (replace-as-filename id)))
     (setq full-file (concat root-dir "/FULL"))
@@ -65,7 +54,7 @@ partial messages using mime-view."
     (if (or (file-exists-p full-file)
 	    (not (y-or-n-p "Merge partials?"))
 	    )
-	(mime-store-message/partial-piece entity cal)
+	(mime-store-message/partial-piece entity situation)
       (setq subject-id (mime-entity-read-field entity 'Subject))
       (if (string-match "[0-9\n]+" subject-id)
 	  (setq subject-id (substring subject-id 0 (match-beginning 0)))
@@ -75,19 +64,22 @@ partial messages using mime-view."
 	(while (search-backward subject-id nil t))
 	(catch 'tag
 	  (while t
-	    (mime-view-partial-message target)
-	    (set-buffer article-buffer)
-	    (let* ((situation
-		    (mime-entity-situation mime-message-structure))
+	    (let* ((message
+		    ;; request message at the cursor in Subject buffer.
+		    (save-window-excursion
+		      (funcall request-partial-message-method)
+		      ))
+		   (situation (mime-entity-situation message))
 		   (the-id (cdr (assoc "id" situation))))
 	      (when (string= the-id id)
-		(mime-store-message/partial-piece mime-message-structure
-						  situation)
+		(save-excursion
+		  (set-buffer (mime-entity-buffer message))
+		  (mime-store-message/partial-piece message situation)
+		  )
 		(if (file-exists-p full-file)
 		    (throw 'tag nil)
 		  ))
 	      (if (not (progn
-			 (set-buffer subject-buf)
 			 (end-of-line)
 			 (search-forward subject-id nil t)
 			 ))
