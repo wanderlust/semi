@@ -290,6 +290,71 @@ mother-buffer."
 	      )))
   )
 
+(defun mime-unify-situations (entity-situation condition situation-examples
+					       &optional ignored-method)
+  (let (ret)
+    (in-calist-package 'mime-view)
+    (setq ret
+	  (mime-delq-null-situation
+	   (ctree-find-calist condition entity-situation
+			      mime-view-find-every-acting-situation)
+	   'method ignored-method))
+    (or (assq 'ignore-examples entity-situation)
+	(if (cdr ret)
+	    (let ((rest ret)
+		  (max-score 0)
+		  (max-escore 0)
+		  max-examples
+		  max-situations)
+	      (while rest
+		(let ((situation (car rest))
+		      (examples situation-examples))
+		  (while examples
+		    (let* ((ret
+			    (mime-compare-situation-with-example
+			     situation (caar examples)))
+			   (ret-score (car ret)))
+		      (cond ((> ret-score max-score)
+			     (setq max-score ret-score
+				   max-escore (cdar examples)
+				   max-examples (list (cdr ret))
+				   max-situations (list situation))
+			     )
+			    ((= ret-score max-score)
+			     (cond ((> (cdar examples) max-escore)
+				    (setq max-escore (cdar examples)
+					  max-examples (list (cdr ret))
+					  max-situations (list situation))
+				    )
+				   ((= (cdar examples) max-escore)
+				    (setq max-examples
+					  (cons (cdr ret) max-examples))
+				    (or (member situation max-situations)
+					(setq max-situations
+					      (cons situation max-situations)))
+				    )))))
+		    (setq examples (cdr examples))))
+		(setq rest (cdr rest)))
+	      (when max-situations
+		(setq ret max-situations)
+		(while max-examples
+		  (let* ((example (car max-examples))
+			 (cell
+			  (assoc example situation-examples)))
+		    (if cell
+			(setcdr cell (1+ (cdr cell)))
+		      (setq situation-examples
+			    (cons (cons example 0)
+				  situation-examples))
+		      ))
+		  (setq max-examples (cdr max-examples))
+		  )))))
+    (cons ret situation-examples)
+    ;; ret: list of situations
+    ;; situation-examples: new examples (notoce that contents of
+    ;;                     argument `situation-examples' has bees modified)
+    ))
+
 (defun mime-view-entity-title (entity)
   (or (mime-entity-read-field entity 'Content-Description)
       (mime-entity-read-field entity 'Subject)
