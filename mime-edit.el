@@ -599,13 +599,15 @@ If it is not specified for a major-mode,
 		   (substring emacs-version 0 (match-beginning 0))
 		 emacs-version)))
       (if (featurep 'mule)
-	  (concat "Emacs " ver
-		  (if enable-multibyte-characters
-		      (concat ", MULE " mule-version)
-		    " (with raw setting)")
-		  (if (featurep 'meadow)
-		      (concat ", " (Meadow-version))
-		    ))
+	  (if (boundp 'enable-multibyte-characters)
+	      (concat "Emacs " ver
+		      (if enable-multibyte-characters
+			  (concat ", MULE " mule-version)
+			" (with raw setting)")
+		      (if (featurep 'meadow)
+			  (concat ", " (Meadow-version))
+			))
+	    (concat "MULE " mule-version " based on Emacs " ver))
 	ver)))
   "Body of X-Emacs field.
 If variable `mime-edit-insert-x-emacs-field' is not nil, it is
