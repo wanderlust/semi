@@ -229,7 +229,7 @@ optional argument COMMENT if it is specified."
 	proc rc status parser-result
 	)
     (mc-gpg-debug-print (format 
-			 "(mc-gpg-process-region beg=%s end=%s passwd=%s program=%s args=%s parser=%s bufferdummy=%s boundary=%s comment=%s)"
+			 "(mime-mc-gpg-process-region beg=%s end=%s passwd=%s program=%s args=%s parser=%s bufferdummy=%s boundary=%s comment=%s)"
 			 beg end passwd program args parser bufferdummy
 			 boundary comment))
     (setq stderr-tempfilename 
@@ -419,12 +419,13 @@ Content-Transfer-Encoding: 7bit
 	      (with-temp-buffer
 		(message "Detecting the value of `micalg'...")
 		(insert "\n")
-		(mime-mc-gpg-process-region
-		 1 2 passwd pgp-path
-		 (list "--clearsign" "--armor" "--batch" "--textmode"
-		       "--verbose" "--local-user" (cdr key))
-		 parser buffer nil
-		 )
+		(let ((mc-passwd-timeout 60)) ;; Don't deactivate passwd.
+		  (mime-mc-gpg-process-region
+		   1 2 passwd pgp-path
+		   (list "--clearsign" "--armor" "--batch" "--textmode"
+			 "--verbose" "--local-user" (cdr key))
+		   parser buffer nil
+		   ))
 		(std11-narrow-to-header)
 		(setq micalg
 		      (downcase (or (std11-fetch-field "Hash") "md5"))
@@ -694,11 +695,13 @@ Content-Transfer-Encoding: 7bit
 	(with-temp-buffer
 	  (message "Detecting the value of `micalg'...")
 	  (insert "\n")
-	  (mime-mc-pgp50-process-region
-	   1 2 passwd pgp-path
-	   (list "-fat" "+verbose=1" "+language=us" "+clearsig=on"
-		 "+batchmode" "-u" (cdr key))
-	   (function mc-pgp50-sign-parser) buffer nil)
+	  (let ((mc-passwd-timeout 60)) ;; Don't deactivate passwd.
+	    (mime-mc-pgp50-process-region
+	     1 2 passwd pgp-path
+	     (list "-fat" "+verbose=1" "+language=us" "+clearsig=on"
+		   "+batchmode" "-u" (cdr key))
+	     (function mc-pgp50-sign-parser) buffer nil
+	     ))
 	  (std11-narrow-to-header)
 	  (setq micalg (downcase (or (std11-fetch-field "Hash") "md5")))
 	  (set-alist 'mime-mc-micalg-alist (cdr key) micalg)
