@@ -146,6 +146,14 @@ and return parsed it."
 	(mime-parse-Content-Disposition str)
       )))
 
+(defsubst mime-content-disposition-type (content-disposition)
+  "Return disposition-type of CONTENT-DISPOSITION."
+  (cdr (car content-type)))
+
+(defsubst mime-content-disposition-parameters (content-disposition)
+  "Return disposition-parameters of CONTENT-DISPOSITION."
+  (cdr (cdr content-type)))
+
 
 ;;; @ Content-Transfer-Encoding
 ;;;
