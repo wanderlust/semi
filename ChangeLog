@@ -1,3 +1,12 @@
+2000-08-04   Daiki Ueno  <ueno@unixuser.org>
+
+	* pgg-gpg.el (pgg-gpg-process-region): Don't bind
+	coding-system-for-read.
+
+2000-07-21  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* EMY 1.13.8 is released.
+
 2000-07-11  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
 	* mime-pgp.el (mime-view-application/pgp): Setup local variable
