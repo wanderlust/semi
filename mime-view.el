@@ -700,7 +700,7 @@ The compressed face will be piped to this command.")
 (defconst mime-view-menu-title "MIME-View")
 (defconst mime-view-menu-list
   '((up		 "Move to upper content"      mime-view-move-to-upper)
-    (previous	 "Move to previous content"   mime-view-previous-content)
+    (previous	 "Move to previous content"   mime-view-move-to-previous)
     (next	 "Move to next content"	      mime-view-next-content)
     (scroll-down "Scroll to previous content" mime-view-scroll-down-content)
     (scroll-up	 "Scroll to next content"     mime-view-scroll-up-content)
@@ -739,11 +739,11 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       "u"        (function mime-view-move-to-upper))
     (define-key mime-view-mode-map
-      "p"        (function mime-view-previous-content))
+      "p"        (function mime-view-move-to-previous))
     (define-key mime-view-mode-map
       "n"        (function mime-view-next-content))
     (define-key mime-view-mode-map
-      "\e\t"     (function mime-view-previous-content))
+      "\e\t"     (function mime-view-move-to-previous))
     (define-key mime-view-mode-map
       "\t"       (function mime-view-next-content))
     (define-key mime-view-mode-map
@@ -1047,7 +1047,10 @@ If there is no upper entity, call function `mime-view-quit'."
 	(mime-view-quit)
 	))))
 
-(defun mime-view-previous-content ()
+(defun mime-view-move-to-previous ()
+  "Move to previous entity.
+If there is no previous entity, it calls function registered in
+variable `mime-view-over-to-previous-method-alist'."
   (interactive)
   (let* ((pcl mime::preview/content-list)
 	 (p (point))
