@@ -1,3 +1,8 @@
+1998-10-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-decode-buffer): Convert encoding to
+	lower case.
+
 1998-10-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el (mime-view-ignored-field-list): Modify each element
