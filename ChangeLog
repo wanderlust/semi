@@ -1,15 +1,22 @@
+1999-01-17  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* mime-play.el: Reuiqre `ccl'.
+	(translate-string): New CCL program.
+	(mime-view-caesar): Try to deal with
+	`standard-translation-table-for-decode'.
+
 1998-11-12  Tanaka Akira  <akr@jaist.ac.jp>
 
-        * mime-view.el: (mime-display-text/x-vcard): Fix multibyteness
+        * mime-view.el (mime-display-text/x-vcard): Fix multibyteness
 	problem.
 
 1998-11-07  Tanaka Akira  <akr@jaist.ac.jp>
 
-        * mime-view.el: (mime-display-text/x-vcard): Preserve encoding.
+        * mime-view.el (mime-display-text/x-vcard): Preserve encoding.
 
 1998-11-07  Tanaka Akira  <akr@jaist.ac.jp>
 
-        * mime-view.el: (mime-display-text/x-vcard): New function.
+        * mime-view.el (mime-display-text/x-vcard): New function.
         (mime-preview-condition): Set up for 'mime-preview-text/x-vcard.
 
 1999-01-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>

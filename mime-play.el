@@ -29,6 +29,7 @@
 (require 'mime-view)
 (require 'alist)
 (require 'filename)
+(require 'ccl)
 
 (eval-when-compile
   (condition-case nil
@@ -690,6 +691,14 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 ;;; @ rot13-47
 ;;;
 
+(define-ccl-program translate-string
+  '(4
+    (loop
+     (read-multibyte-character r1 r2)
+     (translate-character r0 r1 r2)
+     (write-multibyte-character r1 r2)
+     (repeat))))
+
 (defun mime-view-caesar (entity situation)
   "Internal method for mime-view to display ROT13-47-48 message."
   (let* ((new-name (format "%s-%s" (buffer-name)
@@ -704,8 +713,27 @@ It is registered to variable `mime-preview-quitting-method-alist'."
       )
     (setq buffer-read-only nil)
     (erase-buffer)
-    (mime-insert-text-content entity)
+    (let ((standard-translation-table-for-decode nil))
+      (mime-insert-text-content entity))
     (mule-caesar-region (point-min) (point-max))
+    (let ((str (buffer-string))
+	  (status (make-vector 9 nil))
+	  (table
+	   (catch 'tbl
+	     (let ((i 0) e)
+	       (while (and (< i (length translation-table-vector))
+			   (setq e (aref translation-table-vector i)))
+		 (if (eq (cdr e) standard-translation-table-for-decode)
+		     (throw 'tbl i))
+		 (setq i (1+ i)))
+	       nil))))
+      (when table
+	(aset status 0 table)
+	(delete-region (point-min) (point-max))
+	(insert (ccl-execute-on-string
+		 'translate-string
+		 status
+		 str))))
     (set-buffer-modified-p nil)
     (set-buffer mother)
     (view-buffer new-name)
