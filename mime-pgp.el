@@ -121,7 +121,7 @@
   "Internal method to verify multipart/signed."
   (mime-raw-play-entity
    ;; entity-info of signature
-   (mime-raw-entity-node-id-to-entity-info
+   (mime-raw-find-entity-from-node-id
     ;; entity-node-id of signature
     (cons 1 (mime-raw-point-to-entity-node-id start)))
    (cdr (assq 'mode cal)) ; play-mode
@@ -183,7 +183,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 		   (1- knum)
 		 (1+ knum)))
 	 (raw-buf (current-buffer))
-	 (oinfo (mime-raw-entity-node-id-to-entity-info
+	 (oinfo (mime-raw-find-entity-from-node-id
 		 (cons onum mother-node-id) mime-raw-message-info))
 	 (basename (expand-file-name "tm" mime-temp-directory))
 	 (orig-file (make-temp-name basename))
@@ -247,7 +247,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	 (onum (if (> knum 0)
 		   (1- knum)
 		 (1+ knum)))
-	 (oinfo (mime-raw-entity-node-id-to-entity-info
+	 (oinfo (mime-raw-find-entity-from-node-id
 		 (cons onum mother-node-id) mime-raw-message-info))
 	 (obeg (mime-entity-point-min oinfo))
 	 (oend (mime-entity-point-max oinfo))

@@ -51,8 +51,7 @@
 
 (defvar mime-raw-message-info
   "Information about structure of message.
-Please use reference function `mime-entity-SLOT' to get value of
-SLOT.
+Please use reference function `mime-entity-SLOT' to get value of SLOT.
 
 Following is a list of slots of the structure:
 
@@ -164,7 +163,7 @@ Please redefine this function if you want to change default setting."
 	     (or (eq media-subtype 'x-selection)
 		 (and (eq media-subtype 'octet-stream)
 		      (let ((mother-entity
-			     (mime-raw-entity-node-id-to-entity-info
+			     (mime-raw-find-entity-from-node-id
 			      (cdr entity-node-id) message-info)))
 			(and (eq (mime-entity-media-type mother-entity)
 				 'multipart)
@@ -189,7 +188,7 @@ Please redefine this function if you want to change default setting."
   (let ((entity-node-id (mime-entity-node-id entity)))
     (or (null entity-node-id)
 	(member (mime-entity-type/subtype
-		 (mime-raw-entity-node-id-to-entity-info
+		 (mime-raw-find-entity-from-node-id
 		  (cdr entity-node-id) message-info))
 		mime-view-childrens-header-showing-Content-Type-list)
 	)))
@@ -650,8 +649,8 @@ If optional argument MESSAGE-INFO is not specified,
 `mime-raw-message-info' is used."
   (reverse (mime-raw-point-to-entity-number position message-info)))
 
-(defsubst mime-raw-entity-node-id-to-entity-info (entity-node-id
-						  &optional message-info)
+(defsubst mime-raw-find-entity-from-node-id (entity-node-id
+					     &optional message-info)
   "Return entity-info from ENTITY-NODE-ID in mime-raw-buffer.
 If optional argument MESSAGE-INFO is not specified,
 `mime-raw-message-info' is used."
@@ -999,8 +998,7 @@ It calls following-method selected from variable
 			(set-buffer a-buf)
 			(setq
 			 ci
-			 (mime-raw-entity-node-id-to-entity-info
-			  entity-node-id))
+			 (mime-raw-find-entity-from-node-id entity-node-id))
 			(save-restriction
 			  (narrow-to-region
 			   (mime-entity-point-min ci)
@@ -1076,7 +1074,7 @@ If there is no upper entity, call function `mime-preview-quit'."
 		       (get-text-property (point) 'mime-view-entity-info)))
       (backward-char)
       )
-    (let ((r (mime-raw-entity-node-id-to-entity-info
+    (let ((r (mime-raw-find-entity-from-node-id
 	      (cdr (mime-entity-node-id cinfo))
 	      (get-text-property 1 'mime-view-entity-info)))
 	  point)
