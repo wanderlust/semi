@@ -1328,9 +1328,8 @@ variable `mime-view-over-to-previous-method-alist'."
   (while (null (get-text-property (point) 'mime-view-entity))
     (backward-char)
     )
-  (let ((point
-	 (previous-single-property-change (point) 'mime-view-entity)))
-    (if point
+  (let ((point (previous-single-property-change (point) 'mime-view-entity)))
+    (if (and point (get-text-property (- point 1) 'mime-view-entity))
 	(goto-char point)
       (let ((f (assq mime-preview-original-major-mode
 		     mime-view-over-to-previous-method-alist)))
@@ -1344,8 +1343,11 @@ variable `mime-view-over-to-previous-method-alist'."
 If there is no previous entity, it calls function registered in
 variable `mime-view-over-to-next-method-alist'."
   (interactive)
+  (while (null (get-text-property (point) 'mime-view-entity))
+    (forward-char)
+    )
   (let ((point (next-single-property-change (point) 'mime-view-entity)))
-    (if point
+    (if (and point (get-text-property point 'mime-view-entity))
 	(goto-char point)
       (let ((f (assq mime-preview-original-major-mode
 		     mime-view-over-to-next-method-alist)))
