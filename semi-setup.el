@@ -27,10 +27,6 @@
 
 (require 'mime-def)
 
-(eval-when-compile
-  (require 'mime-play)
-  )
-
 
 ;;; @ for mime-view
 ;;;
