@@ -122,6 +122,30 @@ it is used as hook to set."
 	  '((type . application)(subtype . pgp-keys)
 	    (method . mime-add-application/pgp-keys))
 	  'strict "mime-pgp")
+
+	 (mime-add-condition
+	  'action
+	  '((type . application)(subtype . pkcs7-signature)
+	    (method . mime-verify-application/pkcs7-signature))
+	  'strict "mime-pgp")
+
+	 (mime-add-condition
+	  'action
+	  '((type . application)(subtype . x-pkcs7-signature)
+	    (method . mime-verify-application/pkcs7-signature))
+	  'strict "mime-pgp")
+	 
+	 (mime-add-condition
+	  'action
+	  '((type . application)(subtype . pkcs7-mime)
+	    (method . mime-decrypt-application/pkcs7-mime))
+	  'strict "mime-pgp")
+
+	 (mime-add-condition
+	  'action
+	  '((type . application)(subtype . x-pkcs7-mime)
+	    (method . mime-decrypt-application/pkcs7-mime))
+	  'strict "mime-pgp")
 	 ))
   )
 
