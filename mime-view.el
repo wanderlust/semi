@@ -28,7 +28,6 @@
 
 ;;; Code:
 
-(require 'tl-str)
 (require 'tl-list)
 (require 'tl-atype)
 (require 'tl-misc)
