@@ -476,7 +476,7 @@ return new alist whose car is the new pair and cdr is ALIST.
 ;;;
 
 (defvar mime-article/coding-system-alist
-  (list (cons 'mh-show-mode *noconv*)
+  (list '(mh-show-mode . no-conversion)
 	(cons t (mime-charset-to-coding-system default-mime-charset))
 	))
 
