@@ -1,3 +1,7 @@
+1998-08-31  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-type-subtype-score-alist): Mismatched.
+
 1998-08-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-text.el (mime-text-insert-decoded-body): Specify line break
