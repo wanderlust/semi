@@ -63,7 +63,7 @@ If method is nil, this field will not be encoded.")
 
 (defvar eword-generate-X-Nsubject nil
   "*If it is not nil, X-Nsubject field is generated
-when Subject field is encoded by `eword-encode-message-header'.")
+when Subject field is encoded by `eword-encode-header'.")
 
 (defvar eword-charset-encoding-alist
   '((us-ascii		. nil)
@@ -531,7 +531,10 @@ when Subject field is encoded by `eword-encode-message-header'.")
     (if (and str (string-match eword-encoded-word-regexp str))
 	str)))
 
-(defun eword-encode-message-header (&optional code-conversion)
+(defun eword-encode-header (&optional code-conversion)
+  "Encode header fields to network representation, such as MIME encoded-word.
+
+It refer variable `eword-field-encoding-method-alist'."
   (interactive "*")
   (save-excursion
     (save-restriction

@@ -1415,7 +1415,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 
 (defun mime-edit-translate-header ()
   "Encode the message header into network representation."
-  (eword-encode-message-header 'code-conversion)
+  (eword-encode-header 'code-conversion)
   (run-hooks 'mime-edit-translate-header-hook)
   )
 
@@ -1769,7 +1769,7 @@ Content-Transfer-Encoding: 7bit
 	  (insert "Content-Type: " contype "\n")
 	  (if encoding
 	      (insert "Content-Transfer-Encoding: " encoding "\n"))
-	  (eword-encode-message-header)
+	  (eword-encode-header)
 	  )
 	t)))
 
