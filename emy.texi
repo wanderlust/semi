@@ -201,6 +201,22 @@ Unbuttonize article (@code{mime-preview-unbuttonize}).
 
 @end table
 
+@table @code
+
+@item C-c C-t C-h
+@kindex C-c C-t C-h (MIME-View)
+@findex mime-preview-toggle-header
+
+Toggle display of entity header.
+
+@item C-c C-t C-c
+@kindex C-c C-t C-c (MIME-View)
+@findex mime-preview-toggle-content
+
+Toggle display of entity body.
+
+@end table
+
 @node Changing Entity Button
 @section How buttons look like
 
@@ -215,7 +231,7 @@ You can customize where to add buttons and where to not with
 to change content of the button. It must be an alist of type or
 type/subtype vs. keywords.
 
-Three legal keywords are:
+Three valid keywords are:
 
 @table @code
 @item before
