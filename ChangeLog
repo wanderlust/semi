@@ -1,3 +1,23 @@
+1998-02-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* eword-decode.el (eword-decode-and-unfold-structured-field): New
+ 	function.
+
+	* eword-decode.el (eword-decode-and-fold-structured-field): New
+ 	function.
+	(eword-decode-structured-field-body): Use it.
+	(eword-decode-header): Likewise.
+
+	* eword-decode.el (eword-decode-structured-field-body): If
+ 	`START-COLUMN' is nil, it uses `mapconcat'.
+
+	* eword-decode.el (eword-decode-token): New function.
+	(eword-decode-structured-field-body): Add new optional arguments
+ 	`START-COLUMN' and `MAX-COLUMN'; fill results; use function
+ 	`eword-decode-token'.
+	(eword-decode-header): Specify START-COLUMN for
+ 	`eword-decode-structured-field-body'.
+
 1998-02-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* eword-decode.el (eword-decode-header): Unfold fields including
