@@ -552,7 +552,7 @@ It refer variable `eword-field-encoding-method-alist'."
 				 (function
 				  (lambda (str)
 				    (and (stringp str)
-					 (string= fname (downcase str2))
+					 (string= fname (downcase str))
 					 )))
 				 eword-field-encoding-method-alist))
 			      (assq t eword-field-encoding-method-alist)
