@@ -76,6 +76,7 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
 		  (list (concat "2>" errors-file-name))))
 	 (shell-file-name pgg-pgp-shell-file-name)
 	 (shell-command-switch pgg-pgp-shell-command-switch)
+	 (process-environment process-environment)
 	 (output-buffer pgg-output-buffer)
 	 (errors-buffer pgg-errors-buffer)
 	 (process-connection-type nil)

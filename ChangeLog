@@ -1,3 +1,9 @@
+2000-10-19  Takanori Saneto  <sanewo@ba2.so-net.ne.jp>
+
+	* pgg-pgp.el (pgg-pgp-process-region): bind process-environment
+	locally so that setenv's effect won't last forever.
+	pgg-pgp5.el (pgg-pgp5-process-region): Ditto.
+
 2000-10-16  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* mime-edit.el (mime-edit-process-multipart-1): Typo fix
