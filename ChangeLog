@@ -1,5 +1,10 @@
 1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el (mime-view-message/rfc822): Don't expect called in
+	raw-buffer.
+
+1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* NEWS (Function `mime-play-entity'): Add description about
 	interface change of `mime-play-entity'.
 
