@@ -112,6 +112,22 @@ local variable `mime-text-decoder' and variable
       )
     ))
 
+(defsubst mime-text-add-url-buttons ()
+  "Add URL-buttons for text body."
+  (goto-char (point-min))
+  (while (re-search-forward mime-text-url-regexp nil t)
+    (let ((beg (match-beginning 0))
+	  (end (match-end 0)))
+      (mime-add-button beg end #'mime-text-browse-url
+		       (list (buffer-substring beg end)))
+      )))
+
+(defun mime-text-add-url-buttons-maybe ()
+  "Add URL-buttons if 'browse-url-browser-function is not 'nil."
+  (if browse-url-browser-function
+      (mime-text-add-url-buttons)
+    ))
+
 
 ;;; @ content filters for mime-text
 ;;;
@@ -122,16 +138,7 @@ local variable `mime-text-decoder' and variable
   (if (not (eq (char-after (1- (point))) ?\n))
       (insert "\n")
     )
-  (if browse-url-browser-function
-      (progn
-	(goto-char (point-min))
-	(while (re-search-forward mime-text-url-regexp nil t)
-	  (let ((beg (match-beginning 0))
-		(end (match-end 0)))
-	    (mime-add-button beg end
-			     (function mime-text-browse-url)
-			     (list (buffer-substring beg end))))
-	  )))
+  (mime-text-add-url-buttons)
   (run-hooks 'mime-view-plain-text-preview-hook)
   )
 
