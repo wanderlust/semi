@@ -182,7 +182,6 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	 (onum (if (> knum 0)
 		   (1- knum)
 		 (1+ knum)))
-	 (raw-buf (current-buffer))
 	 (oinfo (mime-raw-find-entity-from-node-id
 		 (cons onum mother-node-id) mime-raw-message-info))
 	 (basename (expand-file-name "tm" mime-temp-directory))
