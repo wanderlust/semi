@@ -63,8 +63,9 @@
 ;;; @ for URL
 ;;;
 
-(defvar tm:URL-regexp
-  "\\(http\\|ftp\\|file\\|gopher\\|news\\|telnet\\|wais\\|mailto\\):\\(//[-a-zA-Z0-9_.]+:[0-9]*\\)?[-a-zA-Z0-9_=?#$@~`%&*+|\\/.,]*[-a-zA-Z0-9_=#$@~`%&*+|\\/]")
+(defvar mime-text-url-regexp
+  "\\(http\\|ftp\\|file\\|gopher\\|news\\|telnet\\|wais\\|mailto\\):\\(//[-a-zA-Z0-9_.]+:[0-9]*\\)?[-a-zA-Z0-9_=?#$@~`%&*+|\\/.,]*[-a-zA-Z0-9_=#$@~`%&*+|\\/]"
+  "*Regexp to match URL in text/plain body.")
 
 (defvar browse-url-browser-function nil)
 
@@ -91,7 +92,7 @@
   (if browse-url-browser-function
       (progn
 	(goto-char (point-min))
-	(while (re-search-forward tm:URL-regexp nil t)
+	(while (re-search-forward mime-text-url-regexp nil t)
 	  (let ((beg (match-beginning 0))
 		(end (match-end 0)))
 	    (tm:add-button beg end
