@@ -35,7 +35,6 @@
 
 ;;; Code:
 
-(require 'emu)
 (require 'mime-view)
 
 
