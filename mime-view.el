@@ -186,9 +186,6 @@ If optional argument MESSAGE-INFO is not specified,
 ;;; @@@ predicate function
 ;;;
 
-(defvar mime-view-content-button-visible-ctype-list
-  '("application/pgp"))
-
 (defun mime-view-entity-button-visible-p (entity message-info)
   "Return non-nil if header of ENTITY is visible.
 Please redefine this function if you want to change default setting."
@@ -356,6 +353,7 @@ Each elements are regexp of field-name.")
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . application)(subtype . pgp)
+			   (message-button . visible)
 			   (body . visible)))
 
 (ctree-set-calist-strictly
@@ -687,11 +685,6 @@ The compressed face will be piped to this command.")
 	  ))
       (run-hooks 'mime-view-content-header-filter-hook)
       )
-    (if (member ctype mime-view-content-button-visible-ctype-list)
-	(save-excursion
-	  (goto-char (point-max))
-	  (mime-view-insert-entity-button message-info message-info subj)
-	  ))
     (let* ((situation
 	    (ctree-match-calist mime-preview-condition
 				(list* (cons 'type       media-type)
@@ -699,8 +692,14 @@ The compressed face will be piped to this command.")
 				       (cons 'encoding   encoding)
 				       (cons 'major-mode major-mode)
 				       params)))
+	   (message-button
+	    (cdr (assq 'message-button situation)))
 	   (body-presentation-method
 	    (cdr (assq 'body-presentation-method situation))))
+      (when message-button
+	(goto-char (point-max))
+	(mime-view-insert-entity-button message-info message-info subj)
+	)
       (cond ((eq body-presentation-method 'with-filter)
 	     (let ((body-filter (cdr (assq 'body-filter situation))))
 	       (save-restriction
