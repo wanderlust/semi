@@ -1,5 +1,8 @@
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el, mime-pgp.el, mime-bbdb.el, mime-view.el: Rename
+	`mime-view-buffer' -> `mime-preview-buffer'.
+
 	* mime-play.el, mime-view.el: Rename `mime::preview/' ->
 	`mime-preview-'.
 
