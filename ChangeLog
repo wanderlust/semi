@@ -1,3 +1,7 @@
+2000-02-01  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-image.el: Fix problem when x-face-mule is not installed.
+
 2000-01-24   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* mime-image.el	[Emacs21]: Require `image' when compiling.
