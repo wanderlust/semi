@@ -179,7 +179,7 @@ specified, play as it.  Default MODE is \"play\"."
 	     (funcall method entity ret)
 	     )
 	    ((stringp method)
-	     (mime-activate-mailcap-method beg end ret)
+	     (mime-activate-mailcap-method entity ret)
 	     )
 	    ((and (listp method)(stringp (car method)))
 	     (mime-activate-external-method beg end ret)
@@ -196,33 +196,34 @@ specified, play as it.  Default MODE is \"play\"."
 
 (defvar mime-mailcap-method-filename-alist nil)
 
-(defun mime-activate-mailcap-method (start end situation)
+(defun mime-activate-mailcap-method (entity situation)
   (save-excursion
     (save-restriction
-      (narrow-to-region start end)
-      (goto-char start)
-      (let ((method (cdr (assoc 'method situation)))
-	    (name (expand-file-name (mime-raw-get-filename situation)
-				    mime-temp-directory)))
-	(mime-write-decoded-region (if (re-search-forward "^$" end t)
-				       (1+ (match-end 0))
-				     (point-min))
-				   end name
-				   (cdr (assq 'encoding situation)))
-	(message "External method is starting...")
-	(let ((process
-	       (let ((command
-		      (mailcap-format-command
-		       method
-		       (cons (cons 'filename name) situation))))
-		 (start-process command mime-echo-buffer-name
-				shell-file-name shell-command-switch command)
-		 )))
-	  (set-alist 'mime-mailcap-method-filename-alist process name)
-	  (set-process-sentinel process 'mime-mailcap-method-sentinel)
-	  )
-	;;(mime-show-echo-buffer)
-	))))
+      (let ((start (mime-entity-point-min entity))
+	    (end (mime-entity-point-max entity)))
+	(narrow-to-region start end)
+	(goto-char start)
+	(let ((method (cdr (assoc 'method situation)))
+	      (name (expand-file-name (mime-raw-get-filename situation)
+				      mime-temp-directory)))
+	  (mime-write-decoded-region (if (re-search-forward "^$" end t)
+					 (1+ (match-end 0))
+				       (point-min))
+				     end name
+				     (cdr (assq 'encoding situation)))
+	  (message "External method is starting...")
+	  (let ((process
+		 (let ((command
+			(mailcap-format-command
+			 method
+			 (cons (cons 'filename name) situation))))
+		   (start-process command mime-echo-buffer-name
+				  shell-file-name shell-command-switch command)
+		   )))
+	    (set-alist 'mime-mailcap-method-filename-alist process name)
+	    (set-process-sentinel process 'mime-mailcap-method-sentinel)
+	    )
+	  )))))
 
 (defun mime-mailcap-method-sentinel (process event)
   (let ((file (cdr (assq process mime-mailcap-method-filename-alist))))
