@@ -1,3 +1,8 @@
+2000-02-01  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-view-define-keymap): Change keybind for
+	`mime-preview-toggle-header' to "\C-c\C-t\C-h".
+
 2000-02-01   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
  	* pgg.el,pgp-gpg.el,pgg-pgp.el,pgg-pgp5.el
