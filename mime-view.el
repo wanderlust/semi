@@ -275,7 +275,8 @@ Each elements are regexp of field-name. [mime-view.el]")
 
 (defun mime-view-entity-button-function
   (rcnum cinfo ctype params subj encoding)
-  "Insert entity button conditionally."
+  "Insert entity button conditionally.
+Please redefine this function if you want to change default setting."
   (or (null rcnum)
       (string= ctype "application/x-selection")
       (and (string= ctype "application/octet-stream")
@@ -327,13 +328,14 @@ Each elements are regexp of field-name. [mime-view.el]")
     ))
 
 
-;;; @@ content separator
+;;; @@ entity separator
 ;;;
 
 (defun mime-view-entity-separator-function (rcnum cinfo ctype params subj)
-  (if (and (not (mime-view-header-visible-p rcnum cinfo))
-	   (not (mime-view-body-visible-p rcnum cinfo ctype))
-	   )
+  "Insert entity separator conditionally.
+Please redefine this function if you want to change default setting."
+  (or (mime-view-header-visible-p rcnum cinfo)
+      (mime-view-body-visible-p rcnum cinfo ctype)
       (progn
 	(goto-char (point-max))
 	(insert "\n")
