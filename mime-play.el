@@ -84,6 +84,38 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	    (goto-char mime-preview-after-decoded-position)
 	    )))))
 
+(defun mime-sort-situation (situation)
+  (sort situation
+	#'(lambda (a b)
+	    (let ((a-t (car a))
+		  (b-t (car b))
+		  (order '((type . 1)
+			   (subtype . 2)
+			   (mode . 3)
+			   (major-mode . 4)))
+		  a-order b-order)
+	      (if (symbolp a-t)
+		  (let ((ret (assq a-t order)))
+		    (if ret
+			(setq a-order (cdr ret))
+		      (setq a-order 5)
+		      ))
+		(setq a-order 6)
+		)
+	      (if (symbolp b-t)
+		  (let ((ret (assq b-t order)))
+		    (if ret
+			(setq b-order (cdr ret))
+		      (setq b-order 5)
+		      ))
+		(setq b-order 6)
+		)
+	      (if (= a-order b-order)
+		  (string< (format "%s" a-t)(format "%s" b-t))
+		(< a-order b-order))
+	      )))
+  )
+
 (defun mime-raw-play-entity (entity-info &optional mode)
   "Play entity specified by ENTITY-INFO.
 It decodes the entity to call internal or external method.  The method
@@ -136,36 +168,7 @@ specified, play as it.  Default MODE is \"play\"."
 					    (cdr (assq 'method situation)))
 				    situation)))
 				ret)))
-	     (setq ret
-		   (sort ret
-			 #'(lambda (a b)
-			     (let ((a-t (car a))
-				   (b-t (car b))
-				   (order '((type . 1)
-					    (subtype . 2)
-					    (mode . 3)
-					    (major-mode . 4)))
-				   a-order b-order)
-			       (if (symbolp a-t)
-				   (let ((ret (assq a-t order)))
-				     (if ret
-					 (setq a-order (cdr ret))
-				       (setq a-order 5)
-				       ))
-				 (setq a-order 6)
-				 )
-			       (if (symbolp b-t)
-				   (let ((ret (assq b-t order)))
-				     (if ret
-					 (setq b-order (cdr ret))
-				       (setq b-order 5)
-				       ))
-				 (setq b-order 6)
-				 )
-			       (if (= a-order b-order)
-				   (string< (format "%s" a-t)(format "%s" b-t))
-				 (< a-order b-order))
-			       ))))
+	     (setq ret (mime-sort-situation ret))
 	     (ctree-set-calist-strictly 'mime-acting-situation-examples ret)
 	     )
 	    (t
@@ -207,7 +210,10 @@ specified, play as it.  Default MODE is \"play\"."
 				   end name
 				   (cdr (assq 'encoding situation)))
 	(message "External method is starting...")
-	(let ((command (format method name)))
+	(let ((command
+	       (mailcap-format-command
+		method
+		(cons (cons 'filename name) situation))))
 	  (start-process command mime-echo-buffer-name
 			 shell-file-name shell-command-switch command)
 	  )

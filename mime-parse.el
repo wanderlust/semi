@@ -174,13 +174,6 @@ and return parsed it. [mime-parse.el]"
 (defsubst mime-entity-encoding (entity-info)      (aref entity-info 6))
 (defsubst mime-entity-children (entity-info)      (aref entity-info 7))
 
-(defsubst mime-type/subtype-string (type &optional subtype)
-  "Return type/subtype string from TYPE and SUBTYPE."
-  (if type
-      (if subtype
-	  (format "%s/%s" type subtype)
-	(format "%s" type))))
-
 (defsubst mime-entity-type/subtype (entity-info)
   (mime-type/subtype-string (mime-entity-media-type entity-info)
 			    (mime-entity-media-subtype entity-info)))
