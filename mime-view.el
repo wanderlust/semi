@@ -465,10 +465,6 @@ The compressed face will be piped to this command.")
   (or mime-view-redisplay
       (setq mime::article/content-info (mime-parse-message ctl encoding))
       )
-  (setq mime-view-buffer (mime-view-make-preview-buffer obuf))
-  )
-
-(defun mime-view-make-preview-buffer (&optional obuf)
   (let* ((cinfo mime::article/content-info)
 	 (pcl (mime/flatten-content-info cinfo))
 	 (the-buf (current-buffer))
@@ -491,7 +487,9 @@ The compressed face will be piped to this command.")
     (set-buffer-modified-p nil)
     (setq buffer-read-only t)
     (set-buffer the-buf)
-    obuf))
+    )
+  (setq mime-view-buffer obuf)
+  )
 
 (defun mime-view-display-entity (content cinfo ibuf obuf)
   "Display entity from content-info CONTENT."
