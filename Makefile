@@ -2,7 +2,7 @@
 # $Id$
 #
 
-VERSION = 0.92
+VERSION = 0.96
 
 SHELL	= /bin/sh
 MAKE	= make
@@ -19,8 +19,6 @@ FLAGS   = -batch -q -no-site-file
 PREFIX	= NONE
 EXEC_PREFIX = NONE
 LISPDIR = NONE
-
-FILES =	README.?? Makefile SEMI-MK SEMI-CFG SEMI-ELS *.el ChangeLog
 
 elc:
 	$(EMACS) $(FLAGS) -l SEMI-MK -f compile-semi \
@@ -73,7 +71,3 @@ tar:
 	cd /tmp; $(TAR) cvzf semi-$(VERSION).tar.gz semi-$(VERSION)
 	cd /tmp; $(RM) -r semi-$(VERSION)
 	sed "s/VERSION/$(VERSION)/" < ftp.in > ftp
-#	-cd ..; mkdir semi-$(VERSION)
-#	-$(CP) $(FILES) ../semi-$(VERSION)
-#	cd ..; $(TAR) cvzf semi-$(VERSION).tar.gz semi-$(VERSION)
-#	cd ..; $(RM) -r semi-$(VERSION)
