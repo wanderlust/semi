@@ -681,29 +681,22 @@ mime-edit provides PGP encryption, signature and inserting public-key
 features based on @strong{PGP/MIME} (RFC 2015) or @strong{PGP-kazu}
 (draft-kazu-pgp-mime-00.txt).@refill
 
-This feature requires pgp command and pgp interface package, such as
-Mailcrypt package (@ref{(mailcrypt)}).
+This feature requires your pgp command.
 
-@defvar pgp-function-alist
+@defvar pgg-default-scheme
 
-Alist of service names vs. corresponding functions and its filenames.
-Each element looks like @code{(SERVICE FUNCTION FILE)}.@refill
-
-SERVICE is a symbol of PGP processing.  It allows `verify', `decrypt',
-`fetch-key', `snarf-keys', `mime-sign', `traditional-sign', `encrypt' or
-`insert-key'.@refill
-
-Function is a symbol of function to do specified SERVICE.@refill
-
-FILE is string of filename which has definition of corresponding
-FUNCTION.
+Version of PGP or GnuPG command to be used for encryption or sign.
+The value should be a symbol.  Allowed versions are @code{gpg},
+@code{pgp} or @code{pgp5}.@refill
 @end defvar
 
 
-@defun pgp-function method
+@defvar pgg-scheme
 
-Return function to do service @var{method}.
-@end defun
+Version of PGP or GnuPG command to be used for decryption or verification.
+The value should be a symbol.  Allowed versions are @code{gpg},
+@code{pgp} or @code{pgp5}.@refill
+@end defvar
 
 
 

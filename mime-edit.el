@@ -3,7 +3,8 @@
 ;; Copyright (C) 1993,94,95,96,97,98,99 Free Software Foundation, Inc.
 
 ;; Author: UMEDA Masanobu <umerin@mse.kyutech.ac.jp>
-;;         MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;;	MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;;	Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
 ;; Created: 1994/08/21 renamed from mime.el
 ;;	Renamed: 1997/2/21 from tm-edit.el
 ;; Keywords: MIME, multimedia, multilingual, mail, news
@@ -114,6 +115,19 @@
 (require 'signature)
 (require 'alist)
 (require 'invisible)
+(require 'pgg-def)
+(require 'pgg-parse)
+
+(autoload 'pgg-encrypt-region "pgg"
+  "PGP encryption of current region." t)
+(autoload 'pgg-sign-region "pgg"
+  "PGP signature of current region." t)
+(autoload 'pgg-insert-key "pgg"
+  "Insert PGP public key at point." t)
+(autoload 'smime-encrypt-region "smime"
+  "S/MIME encryption of current region.")
+(autoload 'smime-sign-region "smime"
+  "S/MIME signature of current region.")
 
 
 ;;; @ version
@@ -632,6 +646,11 @@ If it is not specified for a major-mode,
 	  " ("
 	  (mime-product-code-name mime-library-product)
 	  ") "
+	  (condition-case nil
+	      (progn
+		(require 'apel-ver)
+		(concat (apel-version) " "))
+	    (file-error nil))
 	  (if (featurep 'xemacs)
 	      (concat (cond ((featurep 'utf-2000)
 			     (concat "UTF-2000-MULE/" utf-2000-version))
@@ -1633,6 +1652,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 (defun mime-edit-translate-buffer ()
   "Encode the tagged MIME message in current buffer in MIME compliant message."
   (interactive)
+  (undo-boundary)
   (if (catch 'mime-edit-error
 	(save-excursion
 	  (run-hooks 'mime-edit-translate-buffer-hook)
@@ -1703,6 +1723,12 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 		((string-equal type "kazu-encrypted")
 		 (mime-edit-encrypt-pgp-kazu bb eb boundary)
 		 )
+		((string-equal type "smime-signed")
+		 (mime-edit-sign-smime bb eb boundary)
+		 )
+		((string-equal type "smime-encrypted")
+		 (mime-edit-encrypt-smime bb eb boundary)
+		 )
 		(t
 		 (setq boundary
 		       (nth 2 (mime-edit-translate-region bb eb
@@ -1739,23 +1765,52 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 (defun mime-edit-sign-pgp-mime (beg end boundary)
   (save-excursion
     (save-restriction
-      (narrow-to-region beg end)
-      (let* ((ret
-	      (mime-edit-translate-region beg end boundary))
+      (let* ((from (std11-field-body "From" mail-header-separator))
+	     (ret (progn 
+		    (narrow-to-region beg end)
+		    (mime-edit-translate-region beg end boundary)))
 	     (ctype    (car ret))
 	     (encoding (nth 1 ret))
-	     (pgp-boundary (concat "pgp-sign-" boundary)))
+	     (pgp-boundary (concat "pgp-sign-" boundary))
+	     micalg)
 	(goto-char beg)
 	(insert (format "Content-Type: %s\n" ctype))
 	(if encoding
 	    (insert (format "Content-Transfer-Encoding: %s\n" encoding))
 	  )
 	(insert "\n")
-	(or (as-binary-process
-	     (funcall (pgp-function 'mime-sign)
-		      (point-min)(point-max) nil nil pgp-boundary))
+	(or (let ((pgg-default-user-id 
+		   (or mime-edit-pgp-user-id
+		       (if from 
+			   (nth 1 (std11-extract-address-components from))
+			 pgg-default-user-id))))
+	      (pgg-sign-region (point-min)(point-max)))
 	    (throw 'mime-edit-error 'pgp-error)
 	    )
+	(setq micalg
+	      (cdr (assq 'hash-algorithm
+			 (cdar (with-current-buffer pgg-output-buffer
+				 (pgg-parse-armor-region 
+				  (point-min)(point-max))))))
+	      micalg 
+	      (if micalg
+		  (concat "; micalg=pgp-" (downcase (symbol-name micalg)))
+		""))
+	(goto-char beg)
+	(insert (format "--[[multipart/signed;
+ boundary=\"%s\"%s;
+ protocol=\"application/pgp-signature\"][7bit]]
+--%s
+" pgp-boundary micalg pgp-boundary))
+	(goto-char (point-max))
+	(insert (format "\n--%s
+Content-Type: application/pgp-signature
+Content-Transfer-Encoding: 7bit
+
+" pgp-boundary))
+	(insert-buffer-substring pgg-output-buffer)
+	(goto-char (point-max))
+	(insert (format "\n--%s--\n" pgp-boundary))
 	))))
 
 (defvar mime-edit-encrypt-recipient-fields-list '("To" "cc"))
@@ -1796,28 +1851,41 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
   (save-excursion
     (save-restriction
       (let (from recipients header)
-	(let ((ret (mime-edit-make-encrypt-recipient-header)))
-	  (setq from (aref ret 0)
-		recipients (aref ret 1)
-		header (aref ret 2))
+        (let ((ret (mime-edit-make-encrypt-recipient-header)))
+          (setq from (aref ret 0)
+                recipients (aref ret 1)
+                header (aref ret 2))
 	  )
-	(narrow-to-region beg end)
-	(let* ((ret
-		(mime-edit-translate-region beg end boundary))
-	       (ctype    (car ret))
-	       (encoding (nth 1 ret))
-	       (pgp-boundary (concat "pgp-" boundary)))
-	  (goto-char beg)
-	  (insert header)
-	  (insert (format "Content-Type: %s\n" ctype))
-	  (if encoding
-	      (insert (format "Content-Transfer-Encoding: %s\n" encoding))
-	    )
-	  (insert "\n")
-	  (or (funcall (pgp-function 'encrypt)
-		       recipients (point-min) (point-max) from)
+        (narrow-to-region beg end)
+        (let* ((ret
+                (mime-edit-translate-region beg end boundary))
+               (ctype    (car ret))
+               (encoding (nth 1 ret))
+               (pgp-boundary (concat "pgp-" boundary)))
+          (goto-char beg)
+          (insert header)
+          (insert (format "Content-Type: %s\n" ctype))
+          (if encoding
+              (insert (format "Content-Transfer-Encoding: %s\n" encoding))
+            )
+          (insert "\n")
+	  (eword-encode-header)
+	  (or (let ((pgg-default-user-id 
+		     (or mime-edit-pgp-user-id
+			 (if from 
+			     (nth 1 (std11-extract-address-components from))
+			   pgg-default-user-id))))		     
+		(pgg-encrypt-region 
+		 (point-min) (point-max) 
+		 (mapcar (lambda (recipient)
+			   (nth 1 (std11-extract-address-components
+				   recipient)))
+			 (split-string recipients 
+				       "\\([ \t\n]*,[ \t\n]*\\)+")))
+		)
 	      (throw 'mime-edit-error 'pgp-error)
 	      )
+	  (delete-region (point-min)(point-max))
 	  (goto-char beg)
 	  (insert (format "--[[multipart/encrypted;
  boundary=\"%s\";
@@ -1830,6 +1898,7 @@ Content-Type: application/octet-stream
 Content-Transfer-Encoding: 7bit
 
 " pgp-boundary pgp-boundary pgp-boundary))
+	  (insert-buffer-substring pgg-output-buffer)
 	  (goto-char (point-max))
 	  (insert (format "\n--%s--\n" pgp-boundary))
 	  )))))
@@ -1848,9 +1917,7 @@ Content-Transfer-Encoding: 7bit
 	    (insert (format "Content-Transfer-Encoding: %s\n" encoding))
 	  )
 	(insert "\n")
-	(or (as-binary-process
-	     (funcall (pgp-function 'traditional-sign)
-		      beg (point-max)))
+	(or (pgg-sign-region beg (point-max) 'clearsign)
 	    (throw 'mime-edit-error 'pgp-error)
 	    )
 	(goto-char beg)
@@ -1879,10 +1946,7 @@ Content-Transfer-Encoding: 7bit
 	      (insert (format "Content-Transfer-Encoding: %s\n" encoding))
 	    )
 	  (insert "\n")
-	  (or (as-binary-process
-	       (funcall (pgp-function 'encrypt)
-			recipients beg (point-max) nil 'maybe)
-	       )
+	  (or (pgg-encrypt-region beg (point-max) recipients)
 	      (throw 'mime-edit-error 'pgp-error)
 	      )
 	  (goto-char beg)
@@ -1890,6 +1954,78 @@ Content-Transfer-Encoding: 7bit
 	   "--[[application/pgp; format=mime][7bit]]\n")
 	  ))
       )))
+
+(defun mime-edit-sign-smime (beg end boundary)
+  (save-excursion
+    (save-restriction
+      (let* ((ret (progn 
+		    (narrow-to-region beg end)
+		    (mime-edit-translate-region beg end boundary)))
+	     (ctype    (car ret))
+	     (encoding (nth 1 ret))
+	     (smime-boundary (concat "smime-sign-" boundary)))
+	(goto-char beg)
+	(insert (format "Content-Type: %s\n" ctype))
+	(if encoding
+	    (insert (format "Content-Transfer-Encoding: %s\n" encoding))
+	  )
+	(insert "\n")
+	(let (buffer-undo-list)
+	  (goto-char (point-min))
+	  (while (progn (end-of-line) (not (eobp)))
+	    (insert "\r")
+	    (forward-line 1))
+	  (or (prog1 (smime-sign-region (point-min)(point-max))
+		(push nil buffer-undo-list)
+		(ignore-errors (undo)))
+	      (throw 'mime-edit-error 'pgp-error)
+	      ))
+	(goto-char beg)
+	(insert (format "--[[multipart/signed;
+ boundary=\"%s\"; micalg=sha1;
+ protocol=\"application/pkcs7-signature\"][7bit]]
+--%s
+" smime-boundary smime-boundary))
+	(goto-char (point-max))
+	(insert (format "\n--%s
+Content-Type: application/pkcs7-signature; name=\"smime.p7s\"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename=\"smime.p7s\"
+Content-Description: S/MIME Cryptographic Signature
+
+"  smime-boundary))
+	(insert-buffer-substring smime-output-buffer)
+	(goto-char (point-max))
+	(insert (format "\n--%s--\n" smime-boundary))
+	))))
+
+(defun mime-edit-encrypt-smime (beg end boundary)
+  (save-excursion
+    (save-restriction
+      (let* ((ret (progn 
+		    (narrow-to-region beg end)
+		    (mime-edit-translate-region beg end boundary)))
+	     (ctype    (car ret))
+	     (encoding (nth 1 ret)))
+	(goto-char beg)
+	(insert (format "Content-Type: %s\n" ctype))
+	(if encoding
+	    (insert (format "Content-Transfer-Encoding: %s\n" encoding))
+	  )
+	(insert "\n")
+	(goto-char (point-min))
+	(while (progn (end-of-line) (not (eobp)))
+	  (insert "\r")
+	  (forward-line 1))
+	(or (smime-encrypt-region (point-min)(point-max))
+	    (throw 'mime-edit-error 'pgp-error)
+	    )
+	(delete-region (point-min)(point-max))
+	(insert "--[[application/pkcs7-mime; name=\"smime.p7m\"
+Content-Disposition: attachment; filename=\"smime.p7m\"
+Content-Description: S/MIME Encrypted Message][base64]]\n")
+	(insert-buffer-substring smime-output-buffer)
+	))))
 
 (defsubst replace-space-with-underline (str)
   (mapconcat (function
@@ -2308,12 +2444,22 @@ and insert data encoded as ENCODING."
   (mime-edit-enclose-region-internal 'kazu-encrypted beg end)
   )
 
+(defun mime-edit-enclose-smime-signed-region (beg end)
+  (interactive "*r")
+  (mime-edit-enclose-region-internal 'smime-signed beg end)
+  )
+
+(defun mime-edit-enclose-smime-encrypted-region (beg end)
+  (interactive "*r")
+  (mime-edit-enclose-region-internal 'smime-encrypted beg end)
+  )
+
 (defun mime-edit-insert-key (&optional arg)
   "Insert a pgp public key."
   (interactive "P")
   (mime-edit-insert-tag "application" "pgp-keys")
   (mime-edit-define-encoding "7bit")
-  (funcall (pgp-function 'insert-key))
+  (pgg-insert-key)
   )
 
 
@@ -2366,6 +2512,8 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
 (defvar mime-edit-pgp-processing nil)
 (make-variable-buffer-local 'mime-edit-pgp-processing)
 
+(defvar mime-edit-pgp-user-id nil)
+
 (defun mime-edit-set-sign (arg)
   (interactive
    (list
@@ -2373,12 +2521,14 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
     ))
   (if arg
       (progn
-	(setq mime-edit-pgp-processing 'sign)
+	(or (memq 'sign mime-edit-pgp-processing)
+	    (setq mime-edit-pgp-processing 
+		  (nconc mime-edit-pgp-processing 
+			 (copy-sequence '(sign)))))
 	(message "This message will be signed.")
 	)
-    (if (eq mime-edit-pgp-processing 'sign)
-	(setq mime-edit-pgp-processing nil)
-      )
+    (setq mime-edit-pgp-processing 
+	  (delq 'sign mime-edit-pgp-processing))
     (message "This message will not be signed.")
     ))
 
@@ -2389,12 +2539,14 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
     ))
   (if arg
       (progn
-	(setq mime-edit-pgp-processing 'encrypt)
+	(or (memq 'encrypt mime-edit-pgp-processing)
+	    (setq mime-edit-pgp-processing 
+		  (nconc mime-edit-pgp-processing 
+			 (copy-sequence '(encrypt)))))
 	(message "This message will be encrypt.")
 	)
-    (if (eq mime-edit-pgp-processing 'encrypt)
-	(setq mime-edit-pgp-processing nil)
-      )
+    (setq mime-edit-pgp-processing
+	  (delq 'encrypt mime-edit-pgp-processing))
     (message "This message will not be encrypt.")
     ))
 
@@ -2404,15 +2556,18 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
 	       (if (search-forward (concat "\n" mail-header-separator "\n"))
 		   (match-end 0)
 		 )))
-	(end (point-max))
 	)
     (if beg
-	(cond ((eq mime-edit-pgp-processing 'sign)
-	       (mime-edit-enclose-pgp-signed-region beg end)
-	       )
-	      ((eq mime-edit-pgp-processing 'encrypt)
-	       (mime-edit-enclose-pgp-encrypted-region beg end)
-	       ))
+	(dolist (pgp-processing mime-edit-pgp-processing)
+	  (case pgp-processing
+	    (sign
+	     (mime-edit-enclose-pgp-signed-region 
+	      beg (point-max))
+	     )
+	    (encrypt
+	     (mime-edit-enclose-pgp-encrypted-region 
+	      beg (point-max))
+	     )))
       )))
 
 
@@ -2557,6 +2712,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	 (buf-name (buffer-name))
 	 (temp-buf-name (concat "*temp-article:" buf-name "*"))
 	 (buf (get-buffer temp-buf-name))
+	 (pgp-processing mime-edit-pgp-processing)
 	 )
     (if buf
 	(progn
@@ -2572,6 +2728,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
     (setq mail-header-separator separator)
     (make-local-variable 'mime-edit-buffer)
     (setq mime-edit-buffer the-buf)
+    (setq mime-edit-pgp-processing pgp-processing)
 
     (run-hooks 'mime-edit-translate-hook)
     (mime-edit-translate-buffer)
@@ -2616,7 +2773,12 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
     string))
 
 (defun mime-edit-decode-multipart-in-buffer (content-type not-decode-text)
-  (let* ((subtype (mime-content-type-subtype content-type))
+  (let* ((subtype
+	  (or
+	   (cdr (assoc (mime-content-type-parameter content-type "protocol")
+		       '(("application/pgp-encrypted" . pgp-encrypted)
+			 ("application/pgp-signature" . pgp-signed))))
+	   (mime-content-type-subtype content-type)))
 	 (boundary (mime-content-type-parameter content-type "boundary"))
 	 (boundary-pat (concat "\n--" (regexp-quote boundary) "[ \t]*\n")))
     (re-search-forward boundary-pat nil t)
@@ -2644,13 +2806,36 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 		)
 	      (save-restriction
 		(narrow-to-region beg end)
-		(mime-edit-decode-message-in-buffer
-		 (if (eq subtype 'digest)
-		     (eval-when-compile
-		       (make-mime-content-type 'message 'rfc822))
-		   )
-		 not-decode-text)
-		(goto-char (point-max))
+		(cond
+		 ((eq subtype 'pgp-encrypted)
+		  (when (and
+			 (progn
+			   (goto-char (point-min))
+			   (re-search-forward "^-+BEGIN PGP MESSAGE-+$"
+					      nil t))
+			 (prog1 
+			     (save-window-excursion
+			       (pgg-decrypt-region (match-beginning 0)
+						   (point-max)))
+			   (delete-region (point-min)(point-max))))
+		    (insert-buffer-substring pgg-output-buffer)
+		    (mime-edit-decode-message-in-buffer 
+		     nil not-decode-text)
+		    (delete-region (goto-char (point-min))
+				   (if (search-forward "\n\n" nil t)
+				       (match-end 0)
+				     (point-min)))
+		    (goto-char (point-max))
+		    ))
+		 (t 
+		  (mime-edit-decode-message-in-buffer
+		   (if (eq subtype 'digest)
+		       (eval-when-compile
+			 (make-mime-content-type 'message 'rfc822))
+		     )
+		   not-decode-text)
+		  (goto-char (point-max))
+		  ))
 		))))
 	))
     (goto-char (point-min))
@@ -2662,7 +2847,8 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 			 )))
     ))
 
-(defun mime-edit-decode-single-part-in-buffer (content-type not-decode-text)
+(defun mime-edit-decode-single-part-in-buffer
+  (content-type not-decode-text &optional content-disposition)
   (let* ((type (mime-content-type-primary-type content-type))
 	 (subtype (mime-content-type-subtype content-type))
 	 (ctype (format "%s/%s" type subtype))
@@ -2689,7 +2875,38 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	 encoded
 	 (limit (save-excursion
 		  (if (search-forward "\n\n" nil t)
-		      (1- (point))))))
+		      (1- (point)))))
+	 (disposition-type
+	  (mime-content-disposition-type content-disposition))
+	 (disposition-str
+	  (if disposition-type
+	      (let ((bytes (+ 21 (length (format "%s" disposition-type)))))
+		(mapconcat (function
+			    (lambda (attr)
+			      (let* ((str (concat
+					   (car attr)
+					   "="
+					   (if (string-equal "filename"
+							     (car attr))
+					       (std11-wrap-as-quoted-string
+						(cdr attr))
+					     (cdr attr))))
+				     (bs (length str)))
+				(setq bytes (+ bytes bs 2))
+				(if (< bytes 76)
+				    (concat "; " str)
+				  (setq bytes (+ bs 1))
+				  (concat ";\n " str)
+				  )
+				)))
+			   (mime-content-disposition-parameters
+			    content-disposition)
+			   ""))))
+	 )
+    (if disposition-type
+	(setq pstr (format "%s\nContent-Disposition: %s%s"
+			   pstr disposition-type disposition-str))
+      )
     (save-excursion
       (if (re-search-forward
 	   "^Content-Transfer-Encoding:" limit t)
@@ -2764,19 +2981,24 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	      (mime-edit-decode-multipart-in-buffer ctl not-decode-text)
 	      )
 	     (t
-	      (mime-edit-decode-single-part-in-buffer ctl not-decode-text)
+	      (mime-edit-decode-single-part-in-buffer
+	       ctl not-decode-text (mime-read-Content-Disposition))
 	      )))
 	(or not-decode-text
 	    (decode-mime-charset-region (point-min) (point-max)
 					default-mime-charset))
 	)
-      (save-restriction
-	(std11-narrow-to-header)
-	(goto-char (point-min))
-	(while (re-search-forward mime-edit-again-ignored-field-regexp nil t)
-	  (delete-region (match-beginning 0) (1+ (std11-field-end)))
-	  ))
-      (mime-decode-header-in-buffer (not not-decode-text))
+      (if (= (point-min) 1)
+	  (progn
+	    (save-restriction
+	      (std11-narrow-to-header)
+	      (goto-char (point-min))
+	      (while (re-search-forward
+		      mime-edit-again-ignored-field-regexp nil t)
+		(delete-region (match-beginning 0) (1+ (std11-field-end)))
+		))
+	    (mime-decode-header-in-buffer (not not-decode-text))
+	    ))
       )))
 
 ;;;###autoload

@@ -83,8 +83,7 @@ it is used as hook to set."
 
 
 ;; for PGP
-(defvar mime-setup-enable-pgp
-  (module-installed-p 'mailcrypt)
+(defvar mime-setup-enable-pgp t
   "*If it is non-nil, semi-setup sets uf to use mime-pgp.")
 
 (if mime-setup-enable-pgp
@@ -122,6 +121,30 @@ it is used as hook to set."
 	  'action
 	  '((type . application)(subtype . pgp-keys)
 	    (method . mime-add-application/pgp-keys))
+	  'strict "mime-pgp")
+
+	 (mime-add-condition
+	  'action
+	  '((type . application)(subtype . pkcs7-signature)
+	    (method . mime-verify-application/pkcs7-signature))
+	  'strict "mime-pgp")
+
+	 (mime-add-condition
+	  'action
+	  '((type . application)(subtype . x-pkcs7-signature)
+	    (method . mime-verify-application/pkcs7-signature))
+	  'strict "mime-pgp")
+	 
+	 (mime-add-condition
+	  'action
+	  '((type . application)(subtype . pkcs7-mime)
+	    (method . mime-decrypt-application/pkcs7-mime))
+	  'strict "mime-pgp")
+
+	 (mime-add-condition
+	  'action
+	  '((type . application)(subtype . x-pkcs7-mime)
+	    (method . mime-decrypt-application/pkcs7-mime))
 	  'strict "mime-pgp")
 	 ))
   )

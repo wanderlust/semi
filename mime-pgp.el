@@ -1,8 +1,9 @@
-;;; mime-pgp.el --- mime-view internal methods for PGP.
+;;; mime-pgp.el --- mime-view internal methods foro PGP.
 
 ;; Copyright (C) 1995,1996,1997,1998,1999 MORIOKA Tomohiko
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;;	Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
 ;; Created: 1995/12/7
 ;;	Renamed: 1997/2/27 from tm-pgp.el
 ;; Keywords: PGP, security, MIME, multimedia, mail, news
@@ -41,9 +42,25 @@
 ;;	    by Kazuhiko Yamamoto <kazu@is.aist-nara.ac.jp> (1995/10;
 ;;	    expired)
 
+;;	[OpenPGP/MIME] draft-yamamoto-openpgp-mime-00.txt: "MIME
+;;	    Security with OpenPGP (OpenPGP/MIME)" by Kazuhiko YAMAMOTO
+;;	    <kazu@iijlab.net> (1998/1)
+
 ;;; Code:
 
 (require 'mime-play)
+(require 'pgg-def)
+
+(autoload 'pgg-decrypt-region "pgg"
+  "PGP decryption of current region." t)
+(autoload 'pgg-verify-region "pgg"
+  "PGP verification of current region." t)
+(autoload 'pgg-snarf-keys-region "pgg"
+  "Snarf PGP public keys in current region." t)
+(autoload 'smime-decrypt-region "smime"
+  "S/MIME decryption of current region.")
+(autoload 'smime-verify-region "smime"
+  "S/MIME verification of current region.")
 
 
 ;;; @ Internal method for multipart/signed
@@ -68,6 +85,7 @@
 	 (new-name
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
 	 (mother (current-buffer))
+	 (preview-buffer (concat "*Preview-" (buffer-name) "*"))
 	 representation-type)
     (set-buffer (get-buffer-create new-name))
     (erase-buffer)
@@ -75,7 +93,7 @@
     (cond ((progn
 	     (goto-char (point-min))
 	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
-	   (funcall (pgp-function 'verify))
+	   (pgg-verify-region (match-beginning 0)(point-max) nil 'fetch)
 	   (goto-char (point-min))
 	   (delete-region
 	    (point-min)
@@ -96,61 +114,22 @@
 	  ((progn
 	     (goto-char (point-min))
 	     (re-search-forward "^-+BEGIN PGP MESSAGE-+$" nil t))
-	   (as-binary-process (funcall (pgp-function 'decrypt)))
-	   (goto-char (point-min))
-	   (delete-region (point-min)
-			  (and
-			   (search-forward "\n\n")
-			   (match-end 0)))
+	   (pgg-decrypt-region (point-min)(point-max))
+	   (delete-region (point-min)(point-max))
+	   (insert-buffer pgg-output-buffer)
 	   (setq representation-type 'binary)
 	   ))
     (setq major-mode 'mime-show-message-mode)
-    (save-window-excursion (mime-view-buffer nil nil mother
+    (save-window-excursion (mime-view-buffer nil preview-buffer mother
 					     nil representation-type))
-    (set-window-buffer p-win mime-preview-buffer)
+    (set-window-buffer p-win preview-buffer)
     ))
 
 
 ;;; @ Internal method for application/pgp-signature
 ;;;
-;;; It is based on RFC 2015 (PGP/MIME).
-
-(defvar mime-pgp-command "pgp"
-  "*Name of the PGP command.")
-
-(defvar mime-pgp-default-language 'en
-  "*Symbol of language for pgp.
-It should be ISO 639 2 letter language code such as en, ja, ...")
-
-(defvar mime-pgp-good-signature-regexp-alist
-  '((en . "Good signature from user.*$"))
-  "Alist of language vs regexp to detect ``Good signature''.")
-
-(defvar mime-pgp-key-expected-regexp-alist
-  '((en . "Key matching expected Key ID \\(\\S +\\) not found"))
-  "Alist of language vs regexp to detect ``Key expected''.")
-
-(defun mime-pgp-check-signature (output-buffer sig-file orig-file)
-  (save-excursion
-    (set-buffer output-buffer)
-    (erase-buffer))
-  (let* ((lang (or mime-pgp-default-language 'en))
-	 (status (call-process-region (point-min)(point-max)
-				      mime-pgp-command
-				      nil output-buffer nil
-				      sig-file orig-file (format "+language=%s" lang)))
-	 (regexp (cdr (assq lang mime-pgp-good-signature-regexp-alist))))
-    (if (= status 0)
-	(save-excursion
-	  (set-buffer output-buffer)
-	  (goto-char (point-min))
-	  (message
-	   (cond ((not (stringp regexp))
-		  "Please specify right regexp for specified language")
-		 ((re-search-forward regexp nil t)
-		  (buffer-substring (match-beginning 0) (match-end 0)))
-		 (t "Bad signature")))
-	  ))))
+;;; It is based on RFC 2015 (PGP/MIME) and
+;;; draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME).
 
 (defun mime-verify-application/pgp-signature (entity situation)
   "Internal method to check PGP/MIME signature."
@@ -162,49 +141,37 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 		 (1+ knum)))
 	 (orig-entity (nth onum (mime-entity-children mother)))
 	 (basename (expand-file-name "tm" temporary-file-directory))
-	 (orig-file (make-temp-name basename))
-	 (sig-file (concat orig-file ".sig"))
-	 )
-    (mime-write-entity orig-entity orig-file)
-    (save-excursion (mime-show-echo-buffer))
-    (mime-write-entity-content entity sig-file)
-    (or (mime-pgp-check-signature mime-echo-buffer-name sig-file orig-file)
-	(let (pgp-id)
-	  (save-excursion
-	    (set-buffer mime-echo-buffer-name)
-	    (goto-char (point-min))
-	    (let ((regexp (cdr (assq (or mime-pgp-default-language 'en)
-				     mime-pgp-key-expected-regexp-alist))))
-	      (cond ((not (stringp regexp))
-		     (message
-		      "Please specify right regexp for specified language")
-		     )
-		    ((re-search-forward regexp nil t)
-		     (setq pgp-id
-			   (concat "0x" (buffer-substring-no-properties
-					 (match-beginning 1)
-					 (match-end 1))))
-		     ))))
-	  (if (and pgp-id
-		   (y-or-n-p
-		    (format "Key %s not found; attempt to fetch? " pgp-id))
-		   )
-	      (progn
-		(funcall (pgp-function 'fetch-key) (cons nil pgp-id))
-		(mime-pgp-check-signature mime-echo-buffer-name orig-file)
-		))
-	  ))
-    (let ((other-window-scroll-buffer mime-echo-buffer-name))
-      (scroll-other-window 8)
+	 (sig-file (concat (make-temp-name basename) ".asc"))
+	 status)
+    (save-excursion 
+      (mime-show-echo-buffer)
+      (set-buffer mime-echo-buffer-name)
+      (set-window-start 
+       (get-buffer-window mime-echo-buffer-name)
+       (point-max))
       )
-    (delete-file orig-file)
-    (delete-file sig-file)
+    (mime-write-entity-content entity sig-file)
+    (unwind-protect
+	(with-temp-buffer
+	  (mime-insert-entity orig-entity)
+	  (goto-char (point-min))
+	  (while (progn (end-of-line) (not (eobp)))
+	    (insert "\r")
+	    (forward-line 1))
+	  (setq status (pgg-verify-region (point-min)(point-max) 
+					  sig-file 'fetch))
+	  (save-excursion 
+	    (set-buffer mime-echo-buffer-name)
+	    (insert-buffer-substring (if status pgg-output-buffer
+				       pgg-errors-buffer))))
+      (delete-file sig-file))
     ))
 
 
 ;;; @ Internal method for application/pgp-encrypted
 ;;;
-;;; It is based on RFC 2015 (PGP/MIME).
+;;; It is based on RFC 2015 (PGP/MIME) and
+;;; draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME).
 
 (defun mime-decrypt-application/pgp-encrypted (entity situation)
   (let* ((entity-node-id (mime-entity-node-id entity))
@@ -220,30 +187,97 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 
 ;;; @ Internal method for application/pgp-keys
 ;;;
-;;; It is based on RFC 2015 (PGP/MIME).
+;;; It is based on RFC 2015 (PGP/MIME) and
+;;; draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME).
 
 (defun mime-add-application/pgp-keys (entity situation)
-  (let* ((start (mime-entity-point-min entity))
-	 (end (mime-entity-point-max entity))
-	 (entity-number (mime-entity-number entity))
-	 (new-name (format "%s-%s" (buffer-name) entity-number))
-	 (encoding (cdr (assq 'encoding situation)))
-	 str)
-    (setq str (buffer-substring start end))
-    (switch-to-buffer new-name)
-    (setq buffer-read-only nil)
-    (erase-buffer)
-    (insert str)
-    (goto-char (point-min))
-    (if (re-search-forward "^\n" nil t)
-	(delete-region (point-min) (match-end 0))
+  (save-excursion 
+    (mime-show-echo-buffer)
+    (set-buffer mime-echo-buffer-name)
+    (set-window-start 
+     (get-buffer-window mime-echo-buffer-name)
+     (point-max))
+    )
+  (with-temp-buffer
+    (mime-insert-entity-content entity)
+    (mime-decode-region (point-min) (point-max)
+                        (cdr (assq 'encoding situation)))
+    (let ((status (pgg-snarf-keys-region (point-min)(point-max))))
+      (save-excursion 
+	(set-buffer mime-echo-buffer-name)
+	(insert-buffer-substring (if status pgg-output-buffer
+				   pgg-errors-buffer)))
+      )))
+
+
+;;; @ Internal method for application/pkcs7-signature
+;;;
+;;; It is based on RFC 2633 (S/MIME version 3).
+
+(defun mime-verify-application/pkcs7-signature (entity situation)
+  "Internal method to check S/MIME signature."
+  (let* ((entity-node-id (mime-entity-node-id entity))
+	 (mother (mime-entity-parent entity))
+	 (knum (car entity-node-id))
+	 (onum (if (> knum 0)
+		   (1- knum)
+		 (1+ knum)))
+	 (orig-entity (nth onum (mime-entity-children mother)))
+	 (basename (expand-file-name "tm" temporary-file-directory))
+	 (sig-file (concat (make-temp-name basename) ".asc"))
+	 status)
+    (save-excursion 
+      (mime-show-echo-buffer)
+      (set-buffer mime-echo-buffer-name)
+      (set-window-start 
+       (get-buffer-window mime-echo-buffer-name)
+       (point-max))
       )
-    (mime-decode-region (point-min)(point-max) encoding)
-    (funcall (pgp-function 'snarf-keys))
-    (kill-buffer (current-buffer))
+    (mime-write-entity entity sig-file)
+    (unwind-protect
+	(with-temp-buffer
+	  (mime-insert-entity orig-entity)
+	  (goto-char (point-min))
+	  (while (progn (end-of-line) (not (eobp)))
+	    (insert "\r")
+	    (forward-line 1))
+	  (setq status (smime-verify-region (point-min)(point-max) 
+					    sig-file))
+	  (save-excursion 
+	    (set-buffer mime-echo-buffer-name)
+	    (insert-buffer-substring (if status smime-output-buffer
+				       smime-errors-buffer))))
+      (delete-file sig-file))
     ))
 
-	 
+
+;;; @ Internal method for application/pkcs7-mime
+;;;
+;;; It is based on RFC 2633 (S/MIME version 3).
+
+(defun mime-decrypt-application/pkcs7-mime (entity situation)
+  (let* ((p-win (or (get-buffer-window (current-buffer))
+		    (get-largest-window)))
+	 (new-name
+	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
+	 (mother (current-buffer))
+	 (preview-buffer (concat "*Preview-" (buffer-name) "*"))
+	 representation-type)
+    (set-buffer (get-buffer-create new-name))
+    (let ((inhibit-read-only t)
+	  buffer-read-only)
+      (erase-buffer)
+      (mime-insert-entity entity)
+      (smime-decrypt-region (point-min)(point-max))
+      (delete-region (point-min)(point-max))
+      (insert-buffer smime-output-buffer))
+    (setq major-mode 'mime-show-message-mode)
+    (save-window-excursion (mime-view-buffer nil preview-buffer mother
+					     nil 'binary))
+    (set-window-buffer p-win preview-buffer)
+    ))
+
+
 ;;; @ end
 ;;;
 

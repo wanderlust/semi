@@ -30,7 +30,7 @@
 
 (require 'custom)
 
-(defconst mime-user-interface-product ["SEMI" (1 13 7) "Awazu"]
+(defconst mime-user-interface-product ["EMIKO" (1 13 9) "Euglena tripteris"]
   "Product name, version number and code name of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
@@ -163,45 +163,6 @@
 	    menu-alist)
      ))
   )
-
-
-;;; @ PGP
-;;;
-
-(defvar pgp-function-alist
-  '(
-    ;; for mime-pgp
-    (verify		mc-verify			"mc-toplev")
-    (decrypt		mc-decrypt			"mc-toplev")
-    (fetch-key		mc-pgp-fetch-key		"mc-pgp")
-    (snarf-keys		mc-snarf-keys			"mc-toplev")
-    ;; for mime-edit
-    (mime-sign		mime-mc-pgp-sign-region		"mime-mc")
-    (traditional-sign	mc-pgp-sign-region		"mc-pgp")
-    (encrypt		mime-mc-pgp-encrypt-region	"mime-mc")
-    (insert-key		mc-insert-public-key		"mc-toplev")
-    )
-  "Alist of service names vs. corresponding functions and its filenames.
-Each element looks like (SERVICE FUNCTION FILE).
-
-SERVICE is a symbol of PGP processing.  It allows `verify', `decrypt',
-`fetch-key', `snarf-keys', `mime-sign', `traditional-sign', `encrypt'
-or `insert-key'.
-
-Function is a symbol of function to do specified SERVICE.
-
-FILE is string of filename which has definition of corresponding
-FUNCTION.")
-
-(defmacro pgp-function (method)
-  "Return function to do service METHOD."
-  `(cadr (assq ,method (symbol-value 'pgp-function-alist))))
-
-(mapcar (function
-	 (lambda (method)
-	   (autoload (cadr method)(nth 2 method))
-	   ))
-	pgp-function-alist)
 
 
 ;;; @ Other Utility
