@@ -77,7 +77,7 @@
 
 (defvar mime-button-mother-dispatcher nil)
 
-(defun tm:button-dispatcher (event)
+(defun mime-button-dispatcher (event)
   "Select the button under point."
   (interactive "e")
   (let (buf point func data)
