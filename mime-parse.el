@@ -202,6 +202,12 @@ and return parsed it. [mime-parse.el]"
 			       children)
     ))
 
+(defsubst mime-entity-info-point-min (entity-info)
+  (mime::content-info/point-min entity-info))
+
+(defsubst mime-entity-info-point-max (entity-info)
+  (mime::content-info/point-max entity-info))
+
 (defun mime-parse-multipart (boundary primtype subtype params encoding rcnum)
   (goto-char (point-min))
   (let* ((dash-boundary   (concat "--" boundary))
@@ -234,7 +240,7 @@ and return parsed it. [mime-parse.el]"
 	  (setq ret (mime-parse-message dc-ctl "7bit" (cons i rcnum)))
 	  )
 	(setq children (cons ret children))
-	(goto-char (mime::content-info/point-max ret))
+	(goto-char (mime-entity-info-point-max ret))
 	(goto-char (setq cb ncb))
 	(setq i (1+ i))
 	)
