@@ -665,9 +665,9 @@ The compressed face will be piped to this command.")
 
 (defconst mime-view-menu-title "MIME-View")
 (defconst mime-view-menu-list
-  '((up		 "Move to upper content"      mime-view-move-to-upper)
-    (previous	 "Move to previous content"   mime-view-move-to-previous)
-    (next	 "Move to next content"	      mime-view-move-to-next)
+  '((up		 "Move to upper content"      mime-preview-move-to-upper)
+    (previous	 "Move to previous content"   mime-preview-move-to-previous)
+    (next	 "Move to next content"	      mime-preview-move-to-next)
     (scroll-down "Scroll to previous content" mime-view-scroll-down-entity)
     (scroll-up	 "Scroll to next content"     mime-view-scroll-up-entity)
     (play	 "Play Content"               mime-view-play-current-entity)
@@ -703,15 +703,15 @@ The compressed face will be piped to this command.")
 			      (make-sparse-keymap)
 			      )))
     (define-key mime-view-mode-map
-      "u"        (function mime-view-move-to-upper))
+      "u"        (function mime-preview-move-to-upper))
     (define-key mime-view-mode-map
-      "p"        (function mime-view-move-to-previous))
+      "p"        (function mime-preview-move-to-previous))
     (define-key mime-view-mode-map
-      "n"        (function mime-view-move-to-next))
+      "n"        (function mime-preview-move-to-next))
     (define-key mime-view-mode-map
-      "\e\t"     (function mime-view-move-to-previous))
+      "\e\t"     (function mime-preview-move-to-previous))
     (define-key mime-view-mode-map
-      "\t"       (function mime-view-move-to-next))
+      "\t"       (function mime-preview-move-to-next))
     (define-key mime-view-mode-map
       " "        (function mime-view-scroll-up-entity))
     (define-key mime-view-mode-map
@@ -743,7 +743,7 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       "?"        (function describe-mode))
     (define-key mime-view-mode-map
-      [tab] (function mime-view-move-to-next))
+      [tab] (function mime-preview-move-to-next))
     (define-key mime-view-mode-map
       [delete] (function mime-view-scroll-down-entity))
     (define-key mime-view-mode-map
@@ -1028,7 +1028,7 @@ It calls following-method selected from variable
 ;;; @@ moving
 ;;;
 
-(defun mime-view-move-to-upper ()
+(defun mime-preview-move-to-upper ()
   "Move to upper entity.
 If there is no upper entity, call function `mime-view-quit'."
   (interactive)
@@ -1051,7 +1051,7 @@ If there is no upper entity, call function `mime-view-quit'."
 	(mime-view-quit)
 	))))
 
-(defun mime-view-move-to-previous ()
+(defun mime-preview-move-to-previous ()
   "Move to previous entity.
 If there is no previous entity, it calls function registered in
 variable `mime-view-over-to-previous-method-alist'."
@@ -1069,7 +1069,7 @@ variable `mime-view-over-to-previous-method-alist'."
 	  ))
       )))
 
-(defun mime-view-move-to-next ()
+(defun mime-preview-move-to-next ()
   "Move to next entity.
 If there is no previous entity, it calls function registered in
 variable `mime-view-over-to-next-method-alist'."
