@@ -40,7 +40,7 @@
 	(error "Fatal. Unsupported mode")
 	))))
 
-(defun mime-method-to-combine-message/partial-pieces (entity cal)
+(defun mime-combine-message/partial-pieces-automatically (entity cal)
   "Internal method for mime-view to combine message/partial messages
 automatically.  This function refers variable
 `mime-view-partial-message-method-alist' to select function to display
@@ -65,7 +65,7 @@ partial messages using mime-view."
     (if (or (file-exists-p full-file)
 	    (not (y-or-n-p "Merge partials?"))
 	    )
-	(mime-method-to-store-message/partial entity cal)
+	(mime-store-message/partial-piece entity cal)
       (let (the-id parameters)
 	(setq subject-id (std11-field-body "Subject"))
 	(if (string-match "[0-9\n]+" subject-id)
@@ -78,17 +78,13 @@ partial messages using mime-view."
 	    (while t
 	      (mime-view-partial-message target)
 	      (set-buffer article-buffer)
-	      (setq parameters
-		    (mime-entity-parameters mime-raw-message-info))
+	      (setq parameters (mime-entity-parameters entity))
 	      (setq the-id (cdr (assoc "id" parameters)))
-	      (if (string= the-id id)
-		  (progn
-		    (mime-method-to-store-message/partial
-		     mime-raw-message-info parameters)
-		    (if (file-exists-p full-file)
-			(throw 'tag nil)
-		      )
-		    ))
+	      (when (string= the-id id)
+		(mime-store-message/partial-piece entity parameters)
+		(if (file-exists-p full-file)
+		    (throw 'tag nil)
+		  ))
 	      (if (not (progn
 			 (set-buffer subject-buf)
 			 (end-of-line)

@@ -69,7 +69,7 @@
 	 (highlight-headers (point-min) (re-search-forward "^$" nil t) t)
 	 )
        
-       (add-hook 'mime-view-content-header-filter-hook
+       (add-hook 'mime-display-header-hook
 		 'mime-preview-x-face-function-use-highlight-headers)
        
        )
@@ -92,7 +92,7 @@
        ;; X-Face
        ;;
        (if (exec-installed-p uncompface-program exec-path)
-	   (add-hook 'mime-view-content-header-filter-hook
+	   (add-hook 'mime-display-header-hook
 		     'x-face-decode-message-header)
 	 )
        ))
@@ -115,8 +115,7 @@
 		  'mime-preview-condition
 		  (list (cons 'type type)(cons 'subtype subtype)
 			'(body . visible)
-			'(body-presentation-method . with-filter)
-			(cons 'body-filter #'mime-preview-filter-for-image)
+			(cons 'body-presentation-method #'mime-display-image)
 			(cons 'image-format format))
 		  )))))
 	'((image jpeg		jpeg)
@@ -136,82 +135,46 @@
 ;;;
 ;;    (for XEmacs 19.12 or later)
 
-(defun mime-preview-filter-for-image (situation)
-  (let ((beg (point-min))
-	(end (point-max)))
-    (remove-text-properties beg end '(face nil))
-    (message "Decoding image...")
-    (mime-decode-region beg end (cdr (assq 'encoding situation)))
-    (let ((gl (image-normalize (cdr (assq 'image-format situation))
-			       (buffer-string))))
-      (delete-region (point-min)(point-max))
-      (cond ((image-invalid-glyph-p gl)
-	     (setq gl nil)
-	     (message "Invalid glyph!")
-	     )
-	    ((eq (aref gl 0) 'xbm)
-	     (let ((xbm-file
-		    (make-temp-name
-		     (expand-file-name "tm" mime-temp-directory))))
+(defun mime-display-image (entity situation)
+  (message "Decoding image...")
+  (let ((gl (image-normalize (cdr (assq 'image-format situation))
+			     (with-temp-buffer
+			       (insert-buffer-substring
+				(mime-entity-buffer entity)
+				(mime-entity-body-start entity)
+				(mime-entity-body-end entity))
+			       (mime-decode-region
+				(point-min)(point-max)
+				(mime-entity-encoding entity))
+			       (buffer-string)))))
+    (cond ((image-invalid-glyph-p gl)
+	   (setq gl nil)
+	   (message "Invalid glyph!")
+	   )
+	  ((eq (aref gl 0) 'xbm)
+	   (let ((xbm-file
+		  (make-temp-name
+		   (expand-file-name "tm" mime-temp-directory))))
+	     (with-temp-buffer
 	       (insert (aref gl 2))
 	       (write-region (point-min)(point-max) xbm-file)
-	       (message "Decoding image...")
-	       (delete-region (point-min)(point-max))
-	       (bitmap-insert-xbm-file xbm-file)
-	       (delete-file xbm-file)
 	       )
-	     (message "Decoding image... done")
+	     (message "Decoding image...")
+	     (bitmap-insert-xbm-file xbm-file)
+	     (delete-file xbm-file)
 	     )
-	    (t
-	     (setq gl (make-glyph gl))
-	     (let ((e (make-extent (point) (point))))
-	       (set-extent-end-glyph e gl)
-	       )
-	     (message "Decoding image... done")
-	     ))
-      )
-    (insert "\n")
-    ))
-
-
-;;; @ content filter for Postscript
-;;;
-;;    (for XEmacs 19.14 or later)
-
-;; (defvar mime-view-ps-to-gif-command "pstogif")
-
-;; (defun mime-preview-filter-for-application/postscript (ctype params encoding)
-;;   (let* ((beg (point-min)) (end (point-max))
-;;          (file-base
-;;           (make-temp-name (expand-file-name "tm" mime-temp-directory)))
-;;          (ps-file (concat file-base ".ps"))
-;;          (gif-file (concat file-base ".gif"))
-;;          )
-;;     (remove-text-properties beg end '(face nil))
-;;     (message "Decoding Postscript...")
-;;     (mime-decode-region beg end encoding)
-;;     (write-region (point-min)(point-max) ps-file) 
-;;     (message "Decoding Postscript...")
-;;     (delete-region (point-min)(point-max))
-;;     (call-process mime-view-ps-to-gif-command nil nil nil ps-file)
-;;     (set-extent-end-glyph (make-extent (point) (point))
-;;                           (make-glyph (vector 'gif :file gif-file)))
-;;     (message "Decoding Postscript... done")
-;;     (delete-file ps-file)
-;;     (delete-file gif-file)
-;;     ))
-
-;; If you would like to display inline Postscript image, please
-;; activate following:
-
-;; (set-alist 'mime-view-content-filter-alist
-;;            "application/postscript"
-;;            (function mime-preview-filter-for-application/postscript))
-
-;; (if (featurep 'gif)
-;;     (add-to-list
-;;      'mime-view-visible-media-type-list "application/postscript")
-;;   )
+	   (message "Decoding image... done")
+	   )
+	  (t
+	   (setq gl (make-glyph gl))
+	   (let ((e (make-extent (point) (point))))
+	     (set-extent-end-glyph e gl)
+	     )
+	   (message "Decoding image... done")
+	   ))
+    )
+  (insert "\n")
+  )
 
 
 ;;; @ end
