@@ -1,0 +1,16 @@
+* MIME-View
+
+** Mother entity should modify preview-situation of children
+
+** Better implementation for multipart/alternative
+ 
+** dynamic configuration for 'mime-preview-condition
+
+** Fix problem of dynamic configuration for 'mime-acting-condition
+
+
+* MIME-Edit
+
+** WYSIWYG editing support
+
+** Use MIME-Preview like tag and display

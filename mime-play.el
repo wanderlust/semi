@@ -176,6 +176,9 @@ specified, play as it.  Default MODE is \"play\"."
 		  (fboundp method))
 	     (funcall method beg end ret)
 	     )
+	    ((stringp method)
+	     (mime-activate-mailcap-method beg end ret)
+	     )
 	    ((and (listp method)(stringp (car method)))
 	     (mime-activate-external-method beg end ret)
 	     )
@@ -190,6 +193,26 @@ specified, play as it.  Default MODE is \"play\"."
 
 ;;; @ external decoder
 ;;;
+
+(defun mime-activate-mailcap-method (start end situation)
+  (save-excursion
+    (save-restriction
+      (narrow-to-region start end)
+      (goto-char start)
+      (let ((method (cdr (assoc 'method situation)))
+	    (name (mime-raw-get-filename situation)))
+	(mime-write-decoded-region (if (re-search-forward "^$" end t)
+				       (1+ (match-end 0))
+				     (point-min))
+				   end name
+				   (cdr (assq 'encoding situation)))
+	(message "External method is starting...")
+	(let ((command (format method name)))
+	  (start-process command mime-echo-buffer-name
+			 shell-file-name shell-command-switch command)
+	  )
+	(mime-show-echo-buffer)
+	))))
 
 (defun mime-activate-external-method (beg end cal)
   (save-excursion
