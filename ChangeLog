@@ -1,7 +1,7 @@
 1998-11-10  Katsumi Yamaoka   <yamaoka@jpl.org>
 
-	* semi-def.el (mime-insert-button): Insert entity info as a
-	invisible string under XEmacs.
+	* semi-def.el (mime-insert-button): Insert invisible text as a
+	entity info under XEmacs.
 
 1998-11-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
