@@ -43,30 +43,30 @@ method is selected from variable `mime-acting-condition'.
 If MODE is specified, play as it.  Default MODE is \"play\"."
   (interactive)
   (or mode
-      (setq mode "play")
-      )
-  (let ((cinfo (get-text-property (point) 'mime-view-entity-info)))
-    (if cinfo
+      (setq mode "play"))
+  (let ((entity-info (get-text-property (point) 'mime-view-entity-info)))
+    (if entity-info
 	(let ((the-buf (current-buffer))
-	      (raw-buffer (get-text-property (point) 'mime-view-raw-buffer))
-	      )
+	      (raw-buffer (get-text-property (point) 'mime-view-raw-buffer)))
 	  (setq mime-preview-after-decoded-position (point))
 	  (set-buffer raw-buffer)
-	  (mime-playback-entity cinfo mode)
-	  (if (eq (current-buffer) raw-buffer)
-	      (progn
-		(set-buffer the-buf)
-		(goto-char mime-preview-after-decoded-position)
-		))
-	  ))))
+	  (mime-playback-entity entity-info mode)
+	  (when (eq (current-buffer) raw-buffer)
+	    (set-buffer the-buf)
+	    (goto-char mime-preview-after-decoded-position)
+	    )))))
 
-(defun mime-playback-entity (cinfo &optional mode)
-  (let ((beg (mime-entity-info-point-min cinfo))
-	(end (mime-entity-info-point-max cinfo))
-	(c-type (mime-entity-info-media-type cinfo))
-	(c-subtype (mime-entity-info-media-subtype cinfo))
-	(params (mime-entity-info-parameters cinfo))
-	(encoding (mime-entity-info-encoding cinfo))
+(defun mime-playback-entity (entity-info &optional mode)
+  "Play entity specified by ENTITY-INFO.
+It decodes the entity to call internal or external method.  The method
+is selected from variable `mime-acting-condition'.  If MODE is
+specified, play as it.  Default MODE is \"play\"."
+  (let ((beg (mime-entity-info-point-min entity-info))
+	(end (mime-entity-info-point-max entity-info))
+	(c-type (mime-entity-info-media-type entity-info))
+	(c-subtype (mime-entity-info-media-subtype entity-info))
+	(params (mime-entity-info-parameters entity-info))
+	(encoding (mime-entity-info-encoding entity-info))
 	)
     (or c-type
 	(setq c-type 'text
