@@ -2320,7 +2320,8 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
   (fields subject id number total separator)
   (insert fields)
   (insert (format "Subject: %s (%d/%d)\n" subject number total))
-  (insert (format "Mime-Version: 1.0 (%s)\n" mime-editor/version-name))
+  (insert (format "Mime-Version: 1.0 (split by %s)\n"
+		  mime-editor/version-name))
   (insert (format "\
 Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 		  id number total separator))
