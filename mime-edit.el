@@ -1757,7 +1757,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 	      (let ((beg (match-beginning 0))
 		    (end (match-end 0)))
 		(delete-region beg end)
-		(mime-edit-force-text-tag mime-edit-beginning-tag-regxp)))
+		(mime-edit-force-text-tag mime-edit-beginning-tag-regexp)))
 	  (cond ((string-equal type "quote")
 		 (mime-edit-enquote-region bb eb))
 		((string-equal type "pgp-signed")
