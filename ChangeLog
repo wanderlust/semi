@@ -1,6 +1,15 @@
 1997-09-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el (mime-view-display-entity,
+	mime-article/rcnum-to-cinfo, mime-view-follow-current-entity,
+	mime-view-move-to-upper): Use `mime::content-info/rcnum' instead
+	of `mime-entity-info-rnum'.
+
+	* mime-parse.el (mime-entity-info-rnum): New inline function.
+
+1997-09-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-entity,
 	mime-article/point-content-number,
 	mime-view-follow-current-entity), mime-play.el
 	(mime-display-content), mime-pgp.el
