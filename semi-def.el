@@ -26,7 +26,10 @@
 
 (require 'emu)
 
-(defconst mime-module-version '("WEMI" "Yokohama" 1 2 4)
+(eval-when-compile (require 'cl))
+
+
+(defconst mime-module-version '("WEMI" "Totsuka" 1 3 0)
   "Implementation name, version name and numbers of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
@@ -117,6 +120,43 @@
 	))))
 
 
+;;; @ menu
+;;;
+
+(if window-system
+    (if (featurep 'xemacs)
+	(defun select-menu-alist (title menu-alist)
+	  (let (ret)
+	    (popup-menu
+	     (list* title
+		    "---"
+		    (mapcar (function
+			     (lambda (cell)
+			       (vector (car cell)
+				       `(progn
+					  (setq ret ',(cdr cell))
+					  (throw 'exit nil)
+					  )
+				       t)
+			       ))
+			    menu-alist)
+		    ))
+	    (recursive-edit)
+	    ret))
+      (defun select-menu-alist (title menu-alist)
+	(x-popup-menu
+	 (list '(1 1) (selected-window))
+	 (list title (cons title menu-alist))
+	 ))
+      )
+  (defun select-menu-alist (title menu-alist)
+    (cdr
+     (assoc (completing-read (concat title " : ") menu-alist)
+	    menu-alist)
+     ))
+  )
+
+
 ;;; @ PGP
 ;;;
 
@@ -155,24 +195,6 @@ FUNCTION.")
 	   (autoload (cadr method)(nth 2 method))
 	   ))
 	pgp-function-alist)
-
-
-;;; @ method selector kernel
-;;;
-
-(require 'atype)
-
-;;; @@ field unifier
-;;;
-
-(defun field-unifier-for-mode (a b)
-  (let ((va (cdr a)))
-    (if (if (consp va)
-	    (member (cdr b) va)
-	  (equal va (cdr b))
-	  )
-	(list nil b nil)
-      )))
 
 
 ;;; @ field
