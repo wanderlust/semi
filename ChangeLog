@@ -1,3 +1,17 @@
+2000-02-21   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-pgp.el: When it is compiled, define `smime-output-buffer'
+	and `smime-errors-buffer' to avoid compiler warning.
+
+	* mime-edit.el: Ditto.
+
+	* mime-pgp.el
+	(mime-view-application/pkcs7-mime): Regard smime-type as
+	"enveloped-data" unless it is specified.
+
+	* smime.el (smime-directory-files): Abolish.
+	(smime-verify-region): Abolish local variable `args'.
+
 2000-02-20   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* mime-image.el: Remove X-Face setting; require cl when compiling.
