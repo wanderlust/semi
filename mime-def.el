@@ -386,6 +386,23 @@ ROT47 will be performed for Japanese text in any case."
        ))
 
 
+;;; @ Other Utility
+;;;
+
+(defun call-after-loaded (module func &optional hook-name)
+  "If MODULE is provided, then FUNC is called.
+Otherwise func is set to MODULE-load-hook.
+If optional argument HOOK-NAME is specified,
+it is used as hook to set."
+  (if (featurep module)
+      (funcall func)
+    (or hook-name
+	(setq hook-name (intern (concat (symbol-name module) "-load-hook")))
+	)
+    (add-hook hook-name func)
+    ))
+
+
 ;;; @ end
 ;;;
 
