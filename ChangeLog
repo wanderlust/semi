@@ -1,3 +1,7 @@
+1997-06-27  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mailcap.el: New file.
+
 1997-06-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* eword-encode.el (eword-field-encoding-method-alist): Add
