@@ -1,3 +1,9 @@
+1998-11-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-bbdb.el (mime-bbdb/update-record): Use
+	`mime-decode-field-body' instead of
+	`eword-decode-structured-field-body'.
+
 1998-10-31  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-edit.el (mime-edit-decode-message-in-buffer): Delete fields
