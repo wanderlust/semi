@@ -15,6 +15,7 @@
 	Set up for "text/x-vcard".
 	Add setting for	`fill-flowed' to autoload "flow-fill".
 	(mime-display-text/plain): Handle "format=flowed".
+	(mime-preview-fill-flowed-text): New variable.
 
 2000-08-11  MORIOKA Tomohiko  <tomo@m17n.org>
 
