@@ -1,3 +1,21 @@
+1999-12-11   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* smime.el (smime-encrypt-region): Delete entity header.
+	(smime-sign-region): Ditto.
+
+	* mime-edit.el: Fix autoload settings for `smime-sign-region' and
+	`smime-encrypt-region.
+	(mime-edit-sign-smime): Set Content-Type
+	`application/pkcs7-signature' instead of
+	`application/x-pkcs7-signature'; add Content-Description.
+	(mime-edit-encrypt-smime): Set content-type
+	`application/pkcs7-mime' instead of `x-application/pkcs7-mime'.
+
+	* mime-pgp.el: Fix autoload settings for `smime-verify-region' and
+	`smime-decrypt-region.
+	(mime-decrypt-application/pkcs7-mime):
+	Bind `inhibit-read-only' to t.
+
 1999-12-09   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* semi-def.el (mime-user-interface-product): Bump up to
