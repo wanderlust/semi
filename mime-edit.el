@@ -2286,6 +2286,9 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
 ;;; @ pgp
 ;;;
 
+(defvar mime-edit-pgp-processing nil)
+(make-variable-buffer-local 'mime-edit-pgp-processing)
+
 (defun mime-edit-set-sign (arg)
   (interactive
    (list
@@ -2323,9 +2326,6 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
       )
     (message "This message will not be encrypt.")
     ))
-
-(defvar mime-edit-pgp-processing nil)
-(make-variable-buffer-local 'mime-edit-pgp-processing)
 
 (defun mime-edit-pgp-enclose-buffer ()
   (let ((beg (save-excursion
