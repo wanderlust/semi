@@ -486,65 +486,101 @@ if it is not nil.")
 ;;; @ acting-condition
 ;;;
 
-(defvar mime-acting-condition
-  '(((type . text)(subtype . plain)
-     (method "tm-plain" nil 'file "" 'encoding 'mode 'name)
-     (mode "play" "print")
-     )
-    ((type . text)(subtype . html)
-     (method "tm-html" nil 'file "" 'encoding 'mode 'name)
-     (mode . "play")
-     )
-    ((type . text)(subtype . x-rot13-47)
-     (method . mime-method-to-display-caesar)
-     (mode . "play")
-     )
-    ((type . text)(subtype . x-rot13-47-48)
-     (method . mime-method-to-display-caesar)
-     (mode . "play")
-     )
+(defvar mime-acting-condition nil
+  "Condition-tree about how to process entity.")
 
-    ((type . audio)(subtype . basic)
-     (method "tm-au"    nil 'file "" 'encoding 'mode 'name)
-     (mode . "play")
-     )
-    
-    ((type . image)
-     (method "tm-image" nil 'file "" 'encoding 'mode 'name)
-     (mode "play" "print")
-     )
-    
-    ((type . video)(subtype . mpeg)
-     (method "tm-mpeg"  nil 'file "" 'encoding 'mode 'name)
-     (mode . "play")
-     )
-    
-    ((type . application)(subtype . postscript)
-     (method "tm-ps" nil 'file "" 'encoding 'mode 'name)
-     (mode "play" "print")
-     )
-    ((type . application)(subtype . octet-stream)
-     (method . mime-method-to-save)(mode "play" "print")
-     )
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . text)(subtype . t)(mode . "play")
+   (method "metamail" t "-m" "tm" "-x" "-d" "-z" "-e" 'file)
+   ))
 
-    ((type . message)(subtype . external-body)
-     ("access-type" . "anon-ftp")
-     (method . mime-method-to-display-message/external-ftp)
-     )
-    ((type . message)(subtype . rfc822)
-     (method . mime-method-to-display-message/rfc822)
-     (mode . "play")
-     )
-    ((type . message)(subtype . partial)
-     (method . mime-method-to-store-message/partial)
-     (mode . "play")
-     )
-    
-    ((method "metamail" t "-m" "tm" "-x" "-d" "-z" "-e" 'file)
-     (mode . "play")
-     )
-    ((method . mime-method-to-save)(mode . "extract"))
-    ))
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . text)(subtype . plain)(mode . "play")
+   (method "tm-plain" nil 'file "" 'encoding 'mode 'name)
+   ))
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . text)(subtype . plain)(mode . "print")
+   (method "tm-plain" nil 'file "" 'encoding 'mode 'name)
+   ))
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . text)(subtype . html)(mode . "play")
+   (method "tm-html" nil 'file "" 'encoding 'mode 'name)
+   ))
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . text)(subtype . x-rot13-47)(mode . "play")
+   (method . mime-method-to-display-caesar)
+   ))
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . text)(subtype . x-rot13-47-48)(mode . "play")
+   (method . mime-method-to-display-caesar)
+   ))
+
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . audio)(subtype . basic)(mode . "play")
+   (method "tm-au" nil 'file "" 'encoding 'mode 'name)
+   ))
+
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . image)(mode . "play")
+   (method "tm-image" nil 'file "" 'encoding 'mode 'name)
+   ))
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . image)(mode . "print")
+   (method "tm-image" nil 'file "" 'encoding 'mode 'name)
+   ))
+
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . video)(subtype . mpeg)(mode . "play")
+   (method "tm-mpeg" nil 'file "" 'encoding 'mode 'name)
+   ))
+
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . application)(subtype . postscript)(mode . "play")
+   (method "tm-ps" nil 'file "" 'encoding 'mode 'name)
+   ))
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . application)(subtype . postscript)(mode . "print")
+   (method "tm-ps" nil 'file "" 'encoding 'mode 'name)
+   ))
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . application)(subtype . octet-stream)
+   (method . mime-method-to-save)
+   ))
+
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . message)(subtype . external-body)
+   ("access-type" . "anon-ftp")
+   (method . mime-method-to-display-message/external-ftp)
+   ))
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . message)(subtype . rfc822)(mode . "play")
+   (method . mime-method-to-display-message/rfc822)
+   ))
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . message)(subtype . partial)(mode . "play")
+   (method . mime-method-to-store-message/partial)
+   ))
+
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((mode . "extract")
+   (method . mime-method-to-save)))
 
 
 ;;; @ quitting method
