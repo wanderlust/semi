@@ -65,6 +65,6 @@ tar:
 		-r wemi-`echo $(VERSION) \
 			| sed s/\\\\./_/ | sed s/\\\\./_/` semi'
 	$(RM) /tmp/wemi-$(VERSION)/ftp.in
-	cd /tmp; $(TAR) cvzf $(HOME)/tmp/wemi-$(VERSION).tar.gz wemi-$(VERSION)
+	cd /tmp; $(TAR) cvzf wemi-$(VERSION).tar.gz wemi-$(VERSION)
 	cd /tmp; $(RM) -r wemi-$(VERSION)
 	sed "s/VERSION/$(VERSION)/" < ftp.in > ftp
