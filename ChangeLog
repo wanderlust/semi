@@ -1,3 +1,7 @@
+1999-05-12  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* SEMI: Version 1.13.4 (Terai) released.
+
 1999-04-06  Shuhei KOBAYASHI  <shuhei@aqua.ocn.ne.jp>
 
 	* mime-edit.el (mime-delete-field): Use `std11-field-end'.
@@ -171,7 +175,7 @@
 
 1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.13.0 (Matt.DŽò) released.
+	* SEMI: Version 1.13.0 (MattŽò) released.
 
 1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -2942,7 +2946,7 @@
 	* mime-file.el: Rename `mime-article/extract-file' ->
 	`mime-extract-current-entity'.
 
-1998-03-03  Fran.AŽçois Pinard   <pinard@iro.umontreal.ca>
+1998-03-03  FranŽçois Pinard   <pinard@iro.umontreal.ca>
 
 	* mime-edit.el (mime-edit-insert-signature): Function
  	`mime-edit-insert-tag' is sometimes called with more arguments
@@ -2971,7 +2975,7 @@
 
 1998-02-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.0 (Nukaj.DŽþtaku-mae) was released.
+	* SEMI: Version 1.0.0 (NukajŽþtaku-mae) was released.
 
 	* SEMI-ELS: Remove mime-tar.el.
 
@@ -3115,7 +3119,7 @@
 	* mime-view.el, mime-pgp.el, mime-partial.el: Rename
 	`mime::article/content-info' -> `mime-raw-content-info'.
 
-1997-11-11  Fran.AŽçois Pinard   <pinard@iro.umontreal.ca>
+1997-11-11  FranŽçois Pinard   <pinard@iro.umontreal.ca>
 
 	* mime-edit.el: Modify space in prompt and removespurious trailing
 	spaces in the files. (cf. [tm-en:1507])
