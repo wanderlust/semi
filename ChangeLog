@@ -1,3 +1,9 @@
+1998-03-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-insert-text): New optional argument
+	`subtype'.
+
+
 1998-02-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.0.1 (Magae) was released.
