@@ -2094,7 +2094,7 @@ Content-Transfer-Encoding: 7bit
                    ;;                        (point)
                    ;;                        'hard t)))
 		   ;; End patch for hard newlines
-		   (enriched-encode beg end)
+		   (enriched-encode beg end nil)
 		   (goto-char beg)
 		   (if (search-forward "\n\n")
 		       (delete-region beg (match-end 0))

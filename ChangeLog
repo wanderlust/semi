@@ -1,3 +1,8 @@
+1999-03-05  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-normalize-body): Call `enriched-encode' with
+	three arguments.
+
 1999-02-18  Tanaka Akira  <akr@jaist.ac.jp>
 
 	* Sync up with semi-1_13_2.
