@@ -212,12 +212,12 @@ mother-buffer."
 		    situation)))
 
     ;; major-mode
-    (or (assq 'major-mode situation)
-	(setq situation
-	      (cons (cons 'major-mode
-			  (with-current-buffer (mime-entity-buffer entity)
-			    major-mode))
-		    situation)))
+    ;; (or (assq 'major-mode situation)
+    ;;     (setq situation
+    ;;           (cons (cons 'major-mode
+    ;;                       (with-current-buffer (mime-entity-buffer entity)
+    ;;                         major-mode))
+    ;;                 situation)))
     
     situation))
 
@@ -536,8 +536,14 @@ Each elements are regexp of field-name.")
 
 (defun mime-display-multipart/mixed (entity situation)
   (let ((children (mime-entity-children entity))
+	(original-major-mode (cdr (assq 'major-mode situation)))
 	(default-situation
 	  (cdr (assq 'childrens-situation situation))))
+    (if original-major-mode
+	(setq default-situation
+	      (cons (cons 'major-mode original-major-mode)
+		    default-situation))
+      )
     (while children
       (mime-display-entity (car children) nil default-situation)
       (setq children (cdr children))
@@ -561,12 +567,19 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 
 (defun mime-display-multipart/alternative (entity situation)
   (let* ((children (mime-entity-children entity))
+	 (original-major-mode (cdr (assq 'major-mode situation)))
 	 (default-situation
 	   (cdr (assq 'childrens-situation situation)))
 	 (i 0)
 	 (p 0)
 	 (max-score 0)
-	 (situations
+	 situations)
+    (if original-major-mode
+	(setq default-situation
+	      (cons (cons 'major-mode original-major-mode)
+		    default-situation))
+      )
+    (setq situations
 	  (mapcar (function
 		   (lambda (child)
 		     (let ((situation
@@ -597,7 +610,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 		       (setq i (1+ i))
 		       situation)
 		     ))
-		  children)))
+		  children))
     (setq i 0)
     (while children
       (let ((child (car children))
@@ -735,11 +748,8 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 				   default-situation preview-buffer)
   (or preview-buffer
       (setq preview-buffer (current-buffer)))
-  (let* ((raw-buffer (mime-entity-buffer entity))
-	 (start (mime-entity-point-min entity))
-	 e nb ne nhb nbb)
-    (set-buffer raw-buffer)
-    (goto-char start)
+  (let* (e nb ne nhb nbb)
+    (mime-goto-header-start-point entity)
     (in-calist-package 'mime-view)
     (or situation
 	(setq situation
@@ -942,7 +952,8 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 
 ;;;###autoload
 (defun mime-display-message (message &optional preview-buffer
-				     mother default-keymap-or-function)
+				     mother default-keymap-or-function
+				     original-major-mode)
   "View MESSAGE in MIME-View mode.
 
 Optional argument PREVIEW-BUFFER specifies the buffer of the
@@ -956,17 +967,18 @@ to it.  If it is a function, it will be bound as default binding of
 keymap of MIME-View mode."
   (mime-maybe-hide-echo-buffer)
   (let ((win-conf (current-window-configuration))
-	(raw-buffer (mime-entity-buffer message)))
+        ;; (raw-buffer (mime-entity-buffer message))
+	)
     (or preview-buffer
 	(setq preview-buffer
-	      (concat "*Preview-" (buffer-name raw-buffer) "*")))
-    (set-buffer raw-buffer)
-    (setq mime-preview-buffer preview-buffer)
+	      (concat "*Preview-" (mime-entity-name message) "*")))
+    ;; (set-buffer raw-buffer)
+    ;; (setq mime-preview-buffer preview-buffer)
     (let ((inhibit-read-only t))
       (set-buffer (get-buffer-create preview-buffer))
       (widen)
       (erase-buffer)
-      (setq mime-raw-buffer raw-buffer)
+      ;; (setq mime-raw-buffer raw-buffer)
       (if mother
 	  (setq mime-mother-buffer mother)
 	)
@@ -974,8 +986,9 @@ keymap of MIME-View mode."
       (setq major-mode 'mime-view-mode)
       (setq mode-name "MIME-View")
       (mime-display-entity message nil
-			   '((entity-button . invisible)
-			     (header . visible))
+			   `((entity-button . invisible)
+			     (header . visible)
+			     (major-mode . ,original-major-mode))
 			   preview-buffer)
       (mime-view-define-keymap default-keymap-or-function)
       (let ((point
@@ -988,16 +1001,7 @@ keymap of MIME-View mode."
       (run-hooks 'mime-view-mode-hook)
       (set-buffer-modified-p nil)
       (setq buffer-read-only t)
-      (or (get-buffer-window preview-buffer)
-	  (let ((r-win (get-buffer-window raw-buffer)))
-	    (if r-win
-		(set-window-buffer r-win preview-buffer)
-	      (let ((m-win (and mother (get-buffer-window mother))))
-		(if m-win
-		    (set-window-buffer m-win preview-buffer)
-		  (switch-to-buffer preview-buffer)
-		  )))))
-      )))
+      preview-buffer)))
 
 ;;;###autoload
 (defun mime-view-buffer (&optional raw-buffer preview-buffer mother
@@ -1026,9 +1030,18 @@ message.  It must be nil, `binary' or `cooked'.  If it is nil,
   (if (eq representation-type 'binary)
       (setq representation-type 'buffer)
     )
-  (mime-display-message
-   (mime-open-entity representation-type raw-buffer)
-   preview-buffer mother default-keymap-or-function))
+  (setq preview-buffer (mime-display-message
+			(mime-open-entity representation-type raw-buffer)
+			preview-buffer mother default-keymap-or-function))
+  (or (get-buffer-window preview-buffer)
+      (let ((r-win (get-buffer-window raw-buffer)))
+	(if r-win
+	    (set-window-buffer r-win preview-buffer)
+	  (let ((m-win (and mother (get-buffer-window mother))))
+	    (if m-win
+		(set-window-buffer m-win preview-buffer)
+	      (switch-to-buffer preview-buffer)
+	      ))))))
 
 (defun mime-view-mode (&optional mother ctl encoding
 				 raw-buffer preview-buffer
