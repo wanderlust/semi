@@ -44,7 +44,7 @@ Required environment
   19.14.  WEMI also does not support Emacs 19.29 to 19.34, XEmacs
   19.15 or XEmacs 20.2 without mule, but WEMI may work with them.
 
-  SEMI requires APEL (9.6 or later) and FLIM (1.11.2 or later)
+  SEMI requires APEL (9.11 or later) and FLIM (1.12.0 or later)
   package.  Please install them before installing it.  APEL package is
   available at:
 
