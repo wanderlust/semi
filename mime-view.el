@@ -466,7 +466,7 @@ Each elements are regexp of field-name.")
     (insert (mime-entity-content entity))
     (goto-char (point-min))
     (while (re-search-forward
-            "\\(;\\(encoding=\\)quoted-printable:\\)\\(\\(=[0-9A-F][0-9A-F]\\|=\r\n\\|[^\r\n]\\)*\\)"
+            "\\(;\\(encoding=\\)?quoted-printable:\\)\\(\\(=[0-9A-F][0-9A-F]\\|=\r\n\\|[^\r\n]\\)*\\)"
             nil t)
       (replace-match
        (concat
