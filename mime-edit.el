@@ -581,17 +581,17 @@ Tspecials means any character that matches with it in header must be quoted.")
     ))
 
 (cond (running-xemacs
-       (defconst mime-edit-minor-mime-map nil "Keymap for MIME commands.")
-       (or mime-edit-minor-mime-map
+       (defconst mime-edit-mode-map nil "Keymap for MIME commands.")
+       (or mime-edit-mode-map
 	   (progn
-	     (setq mime-edit-minor-mime-map 
-		   (make-sparse-keymap 'mime-edit-minor-mime-map))
+	     (setq mime-edit-mode-map 
+		   (make-sparse-keymap 'mime-edit-mode-map))
 	     (define-key
-	       mime-edit-minor-mime-map mime-edit-prefix mime-edit-map)
+	       mime-edit-mode-map mime-edit-prefix mime-edit-map)
 	     ))
        (add-minor-mode 'mime-edit-mode-flag
 		       '((" MIME-Edit "  mime-transfer-level-string))
-		       mime-edit-minor-mime-map
+		       mime-edit-mode-map
 		       nil
 		       'mime-edit-toggle-mode)
        )
