@@ -390,6 +390,12 @@ Each elements are regexp of field-name.")
 
 (ctree-set-calist-strictly
  'mime-preview-condition
+ '((type . text)(subtype . x-vcard)
+   (body . visible)
+   (body-presentation-method . mime-display-text/x-vcard)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition
  '((type . text)(subtype . t)
    (body . visible)
    (body-presentation-method . mime-display-text/plain)))
@@ -453,6 +459,29 @@ Each elements are regexp of field-name.")
       (remove-text-properties beg (point-max) '(face nil))
       (enriched-decode beg (point-max))
       )))
+
+(defun mime-display-text/x-vcard (entity situation)
+  (save-restriction
+    (narrow-to-region (point-max)(point-max))
+    (insert (mime-entity-content entity))
+    (goto-char (point-min))
+    (while (re-search-forward
+            "\\(;ENCODING=QUOTED-PRINTABLE:\\)\\(\\(=[0-9A-F][0-9A-F]\\|=\r\n\\|[^\r\n]\\)*\\)"
+            nil t)
+      (replace-match
+       (string-as-multibyte
+        (mime-decode-string
+         (decode-coding-string
+          (buffer-substring (match-beginning 2) (match-end 2)) 'raw-text-dos)
+         "quoted-printable"))
+       t t))
+    (decode-coding-region (point-min) (point-max) 'undecided)
+    (goto-char (point-max))
+    (if (not (eq (char-after (1- (point))) ?\n))
+        (insert "\n"))
+    (mime-add-url-buttons)
+    (run-hooks 'mime-display-text/x-vcard-hook)
+    ))
 
 (defvar mime-view-announcement-for-message/partial
   (if (and (>= emacs-major-version 19) window-system)

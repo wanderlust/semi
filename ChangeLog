@@ -1,3 +1,8 @@
+1998-11-07  Tanaka Akira  <akr@jaist.ac.jp>
+
+        * mime-view.el: (mime-display-text/x-vcard): New function.
+        (mime-preview-condition): Set up for 'mime-preview-text/x-vcard.
+
 1998-10-31  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.10.2 (Higashi-Kanazawa) released.
