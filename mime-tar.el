@@ -318,7 +318,7 @@
 ;;;
 
 (cond ((boundp 'MULE)
-       (define-program-coding-system mime-tar-view-buffer nil *autoconv*)
+       (define-program-coding-system mime-tar-view-buffer nil '*autoconv*)
        )
       ((boundp 'NEMACS)
        (define-program-kanji-code mime-tar-view-buffer nil 1)
