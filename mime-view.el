@@ -719,7 +719,7 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       "\177"     (function mime-preview-scroll-down-entity))
     (define-key mime-view-mode-map
-      "\C-m"     (function mime-view-next-line-content))
+      "\C-m"     (function mime-preview-next-line-content))
     (define-key mime-view-mode-map
       "\C-\M-m"  (function mime-view-previous-line-content))
     (define-key mime-view-mode-map
@@ -1139,7 +1139,7 @@ If reached to (point-min), it calls function registered in variable
           (goto-char point)
         ))))
 
-(defun mime-view-next-line-content ()
+(defun mime-preview-next-line-content ()
   (interactive)
   (mime-preview-scroll-up-entity 1)
   )
