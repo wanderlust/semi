@@ -1,3 +1,8 @@
+1998-02-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-normalize-body): Must not ignore case to
+ 	search "From " in beginning of line.
+
 1998-01-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-image.el: Comment out setting for inline Postscript
@@ -50,7 +55,7 @@
 
 1997-11-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.116 (D-Dòhòji)-A was released.
+	* SEMI: Version 0.116 (D-Dòhòji) was released.-A
 
 1997-11-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
