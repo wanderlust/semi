@@ -777,7 +777,7 @@ The compressed face will be piped to this command.")
 	      ))
     (if mouse-button-2
 	(define-key mime-view-mode-map
-	  mouse-button-2 (function tm:button-dispatcher))
+	  mouse-button-2 (function mime-button-dispatcher))
       )
     (cond (running-xemacs
 	   (define-key mime-view-mode-map
