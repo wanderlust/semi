@@ -1,3 +1,23 @@
+1998-04-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el: Abolish function 'mime-view-body-visible-p and
+ 	'mime-view-entity-separator-visible-p.
+	(mime-view-display-entity): Don't use
+ 	'mime-view-entity-separator-visible-p.
+
+1998-04-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-preview-condition): Specify
+ 	'childrens-situation field for message/rfc822 and message/news.
+	(mime-view-display-message): Use value of 'childrens-situation
+ 	field of preview-situation as default-situation of children.
+	(mime-view-display-entity): Add new argument 'default-situation;
+ 	use it as elements of draft of preview-situation; use value of
+ 	'header field of preview-situation instead of
+ 	'mime-view-header-visible-p; use value of 'childrens-situation
+ 	field of preview-situation as default-situation of children.
+
+
 1998-04-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* WEMI: Version 1.2.2 (Shinagawa) was released.
