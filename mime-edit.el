@@ -2684,9 +2684,10 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 		      (progn
 			(goto-char he)
 			(insert
-			 (mime-create-tag
-			  (concat type "/" stype pstr) encoding)
-			 ))
+			 (concat "\n"
+				 (mime-create-tag
+				  (concat type "/" stype pstr) encoding)))
+			)
 		    (delete-region (point-min) he)
 		    (insert
 		     (mime-create-tag
