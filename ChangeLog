@@ -1,3 +1,10 @@
+1998-10-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-echo-window-is-shared-with-bbdb): Check bbdb
+	is install or not to define default value.
+	(mime-show-echo-buffer): New implementation about
+	`mime-echo-window-is-shared-with-bbdb'.
+
 1998-10-01  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-edit.el (mime-charset-type-list): Use `cn-gb' instead of
