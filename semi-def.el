@@ -26,7 +26,7 @@
 
 (require 'emu)
 
-(defconst mime-module-version '("WEMI" "Shinagawa" 1 2 2)
+(defconst mime-module-version '("WEMI" "Kawasaki" 1 2 3)
   "Implementation name, version name and numbers of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
