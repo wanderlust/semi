@@ -53,6 +53,10 @@
 ;;;
 
 (defun mime-create-widget-button (string function)
+  "Display STRING as a widget button with the callback FUNCTION.
+Under XEmacs, the function `mime-create-xpm-button' might be identical
+to the function `mime-create-widget-button' if the feature `xpm' is not
+provided and TTY frame is used."
   (let ((start (point)))
     (widget-create
      'push-button
@@ -68,16 +72,16 @@
 			       (goto-char point)
 			       (,function))))
      string)
-    (static-if (featurep 'xemacs)
-	(let ((end (point))
-	      extent)
-	  (insert "[" string "]")
-	  (while (setq extent (extent-at start nil nil extent))
-	    (set-extent-endpoints extent end (point)))
-	  (delete-region start end))))
+    (static-when (featurep 'xemacs)
+      (let ((end (point))
+	    extent)
+	(insert "[" string "]")
+	(while (setq extent (extent-at start nil nil extent))
+	  (set-extent-endpoints extent end (point)))
+	(delete-region start end))))
   (insert "\n"))
 
-(static-when (and (featurep 'xemacs) (featurep 'xpm))
+(static-when (featurep 'xemacs)
   (defcustom mime-xpm-button-shadow-thickness 3
     "A number of pixels should be used for the shadows on the edges of
 the buttons."
@@ -96,55 +100,63 @@ the buttons."
 
   (defvar mime-xpm-button-glyph-cache nil)
 
-  (defun mime-create-xpm-button (string function)
-    (set-extent-properties (make-extent (point)
-					(progn
-					  (insert "[" string "]")
-					  (point)))
-			   '(invisible t intangible t))
-    (let* ((spec (list string
-		       mime-xpm-button-shadow-thickness
-		       mime-xpm-button-foreground
-		       mime-xpm-button-background))
-	   (button (cdr (assoc spec mime-xpm-button-glyph-cache))))
-      (or button
-	  (set-alist 'mime-xpm-button-glyph-cache spec
-		     (setq button (apply (function xpm-button-create)
-					 spec))))
-      (let* ((extent (make-extent (point) (point)))
-	     (down-glyph (make-glyph (car (cdr button))))
-	     (up-glyph (make-glyph (car button)))
-	     (down-func `(lambda (event)
-			   (interactive "e")
-			   (set-extent-begin-glyph ,extent ,down-glyph)))
-	     (up-func `(lambda (event)
-			 (interactive "e")
-			 (mouse-set-point event)
-			 (set-extent-begin-glyph ,extent ,up-glyph)
-			 (,function)))
-	     (keymap (make-sparse-keymap)))
-	(define-key keymap 'button1 down-func)
-	(define-key keymap 'button2 down-func)
-	(define-key keymap 'button1up up-func)
-	(define-key keymap 'button2up up-func)
-	(set-extent-begin-glyph extent up-glyph)
-	(set-extent-property extent 'keymap keymap))
-      (insert "\n")))
+  (if (and (featurep 'xpm) (device-on-window-system-p))
+      (defun mime-create-xpm-button (string function)
+	"Display STRING as a XPM button with the callback FUNCTION.
+It might be identical to the function `mime-create-widget-button'
+if the feature `xpm' is not provided and TTY frame is used."
+	(set-extent-properties (make-extent (point)
+					    (progn
+					      (insert "[" string "]")
+					      (point)))
+			       '(invisible t intangible t))
+	(let* ((spec (list string
+			   mime-xpm-button-shadow-thickness
+			   mime-xpm-button-foreground
+			   mime-xpm-button-background))
+	       (button (cdr (assoc spec mime-xpm-button-glyph-cache))))
+	  (or button
+	      (set-alist 'mime-xpm-button-glyph-cache spec
+			 (setq button (apply (function xpm-button-create)
+					     spec))))
+	  (let* ((extent (make-extent (point) (point)))
+		 (down-glyph (make-glyph (car (cdr button))))
+		 (up-glyph (make-glyph (car button)))
+		 (down-func `(lambda (event)
+			       (interactive "e")
+			       (set-extent-begin-glyph ,extent ,down-glyph)))
+		 (up-func `(lambda (event)
+			     (interactive "e")
+			     (mouse-set-point event)
+			     (set-extent-begin-glyph ,extent ,up-glyph)
+			     (,function)))
+		 (keymap (make-sparse-keymap)))
+	    (define-key keymap 'button1 down-func)
+	    (define-key keymap 'button2 down-func)
+	    (define-key keymap 'button1up up-func)
+	    (define-key keymap 'button2up up-func)
+	    (set-extent-begin-glyph extent up-glyph)
+	    (set-extent-property extent 'keymap keymap))
+	  (insert "\n")))
+    (fset 'mime-create-xpm-button 'mime-create-widget-button))
   )
 
-(static-if (and (featurep 'xemacs) (featurep 'xpm))
-    (defcustom mime-create-button-function 'mime-create-widget-button
-      "A function called to create the content button."
-      :group 'mime
-      :type '(radio (const :tag "Widget button" mime-create-widget-button)
-		    (const :tag "Xpm button" mime-create-xpm-button)
-		    (function :tag "Other")))
-  (defcustom mime-create-button-function 'mime-create-widget-button
-    "A function called to create the content button."
-    :group 'mime
-    :type '(radio (const :tag "Widget button" mime-create-widget-button)
-		  (function :tag "Other")))
-  )
+(defcustom mime-create-button-function 'mime-create-widget-button
+  "A function called to create the content button."
+  :group 'mime
+  :type (list
+	 'cons
+	 :convert-widget
+	 (function
+	  (lambda (widget)
+	    (list
+	     'radio
+	     :args
+	     (append
+	      '((const :tag "Widget button" mime-create-widget-button))
+	      (static-when (featurep 'xemacs)
+		'((const :tag "Xpm button" mime-create-xpm-button)))
+	      '((function :tag "Other"))))))))
 
 (defsubst mime-insert-button (string function &optional data)
   "Insert STRING as button with callback FUNCTION and DATA."
@@ -152,13 +164,7 @@ the buttons."
     (narrow-to-region (point) (point))
     (mapcar (function
 	     (lambda (line)
-	       (static-if (featurep 'xemacs)
-		   (if (and (not (device-on-window-system-p))
-			    (eq 'mime-create-xpm-button
-				mime-create-button-function))
-		       (mime-create-widget-button line function)
-		     (funcall mime-create-button-function line function))
-		 (funcall mime-create-button-function line function))))
+	       (funcall mime-create-button-function line function)))
 	    (split-string string "\n"))))
 
 (defvar mime-button-mother-dispatcher nil)

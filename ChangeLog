@@ -1,3 +1,12 @@
+1999-11-09  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* semi-def.el (mime-insert-button): Simplify.
+	(mime-create-button-function): To share the customizing widget.
+	(mime-create-xpm-button): Replace with `mime-create-widget-button'
+	if the feature `xpm' is not provided and TTY frame is used; add
+	doc string.
+	(mime-create-widget-button): Add doc string.
+
 1999-11-05  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* semi-def.el (mime-insert-button): Don't use xpm buttons under TTY.
