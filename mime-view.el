@@ -297,7 +297,7 @@ Please redefine this function if you want to change default setting."
 ;;; @@@ in raw buffer
 ;;;
 
-(defvar mime-raw-content-info
+(defvar mime-raw-entity-info
   "Information about structure of message.
 Please use reference function `mime-entity-info-SLOT' to get value of
 SLOT.
@@ -317,7 +317,7 @@ children	entities included in this entity (list of content-infos)
 If an entity includes other entities in its body, such as multipart or
 message/rfc822, entity-infos of other entities are included in
 `children', so entity-info become a tree.")
-(make-variable-buffer-local 'mime-raw-content-info)
+(make-variable-buffer-local 'mime-raw-entity-info)
 
 (defvar mime-view-buffer nil
   "MIME View buffer corresponding with the (raw) buffer.")
@@ -411,9 +411,9 @@ The compressed face will be piped to this command.")
 	(set-buffer ibuf)
 	))
   (or mime-view-redisplay
-      (setq mime-raw-content-info (mime-parse-message ctl encoding))
+      (setq mime-raw-entity-info (mime-parse-message ctl encoding))
       )
-  (let* ((cinfo mime-raw-content-info)
+  (let* ((cinfo mime-raw-entity-info)
 	 (pcl (mime/flatten-content-info cinfo))
 	 (the-buf (current-buffer))
 	 (mode major-mode)
@@ -579,7 +579,7 @@ The compressed face will be piped to this command.")
 
 (defun mime-article/point-content-number (p &optional cinfo)
   (or cinfo
-      (setq cinfo mime-raw-content-info)
+      (setq cinfo mime-raw-entity-info)
       )
   (let ((b (mime-entity-info-point-min cinfo))
 	(e (mime-entity-info-point-max cinfo))
@@ -605,7 +605,7 @@ The compressed face will be piped to this command.")
 
 (defun mime-article/cnum-to-cinfo (cn &optional cinfo)
   (or cinfo
-      (setq cinfo mime-raw-content-info)
+      (setq cinfo mime-raw-entity-info)
       )
   (if (eq cn t)
       cinfo
@@ -620,7 +620,7 @@ The compressed face will be piped to this command.")
 
 (defun mime/flatten-content-info (&optional cinfo)
   (or cinfo
-      (setq cinfo mime-raw-content-info)
+      (setq cinfo mime-raw-entity-info)
       )
   (let ((dest (list cinfo))
 	(rcl (mime-entity-info-children cinfo))
