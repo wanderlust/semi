@@ -28,6 +28,7 @@
 
 (eval-when-compile (require 'cl))
 
+(require 'custom)
 
 (defconst mime-user-interface-version '("SEMI" "Mizuhashi" 1 7 0)
   "Implementation name, version name and numbers of MIME-kernel package.")
