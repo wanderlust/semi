@@ -25,7 +25,14 @@
 
 ;;; Code:
 
-(require 'emu)
+;;; @ for XEmacs
+;;;
+
+(defvar running-xemacs (string-match "XEmacs" emacs-version))
+
+(if running-xemacs
+    (require 'overlay)
+  )
 
 
 ;;; @ variables
