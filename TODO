@@ -3,8 +3,6 @@
 
 * MIME-View
 
-** Mother entity should modify preview-situation of children
-
 ** Better implementation for multipart/alternative
  
 ** dynamic configuration for 'mime-preview-condition
