@@ -6,6 +6,75 @@
 
 	* mime-view.el (mime-view-buffer): Fix DOC-string.
 
+1998-11-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS (Changes in SEMI 1.11): New section.
+
+1998-11-18  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* semi-setup.el (mime-setup-decode-message-header): Use
+	`mime-decode-header-in-buffer' instead of `eword-decode-header'.
+
+	* mime-view.el (mime-preview-follow-current-entity): Likewise.
+
+1998-11-18  Keiichi Suzuki    <kei-suzu@mail.wbs.ne.jp>
+
+	* mime-edit.el (mime-content-transfer-encoding-priority-list): New
+	variable.
+	(mime-edit-translate-single-part-tag): Change return value to
+	`nil' or a cons which include content-type and encoding.
+	(mime-edit-translate-region): Generate `encodeing' from
+	return value of `mime-edit-translate-single-part-tag'.
+
+
+1998-11-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.11.0 (Kanazawa) released.
+
+	* README.ja, README.en (Required environment): Modify for APEL
+	9.11 and FLIM 1.12.0.
+
+1998-11-12  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-edit.el (mime-edit-split-ignored-field-regexp): Add "^".
+
+1998-11-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-bbdb.el (mime-bbdb/update-record): Use
+	`mime-decode-field-body' instead of
+	`eword-decode-structured-field-body'.
+
+1998-10-31  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-decode-message-in-buffer): Delete fields
+	match with `mime-edit-again-ignored-field-regexp' then call
+	`mime-decode-header-in-buffer'.
+	(mime-edit-again): Delete header filter.
+
+1998-10-31  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-decode-multipart-in-buffer): Change
+	interface.
+	(mime-edit-decode-single-part-in-buffer): New function.
+	(mime-edit-decode-message-in-buffer): Swap arguments; use function
+	`mime-edit-decode-single-part-in-buffer'.
+	(mime-edit-again): Modify for
+	`mime-edit-decode-message-in-buffer'.
+
+1998-10-31  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-decode-multipart-in-buffer): New
+	function.
+	(mime-edit-decode-message-in-buffer): Add new optional argument
+	`default-content-type'; use function
+	`mime-edit-decode-multipart-in-buffer'; add autoload cookie.
+	(mime-edit-again): Add autoload cookie.
+
+	* mime-edit.el (mime-edit-decode-message-in-buffer): Renamed from
+	`mime-edit-decode-buffer'; change `not-decode-text' to optional
+	argument.
+
+
 1998-10-31  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.10.2 (Higashi-Kanazawa) released.

@@ -142,7 +142,7 @@ it is used as hook to set."
 	   (match-beginning 0)
 	 (point-max)
 	 ))
-      (eword-decode-header)
+      (mime-decode-header-in-buffer)
       (set-buffer-modified-p nil)
       )))
 
