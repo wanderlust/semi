@@ -670,7 +670,12 @@ It is registered to variable `mime-preview-quitting-method-alist'."
       (mule-caesar-region (point-min) (point-max))
       (set-buffer-modified-p nil)
       )
+    (let ((win (get-buffer-window (current-buffer))))
+      (or (eq (selected-window) win)
+	  (select-window (or win (get-largest-window)))
+	  ))
     (view-buffer buf)
+    (goto-char (point-min))
     ))
 
 
