@@ -1,5 +1,9 @@
 1999-07-21  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* REMI: Version 1.13.0 (Saigata) released.
+
+1999-07-21  MORIOKA Tomohiko  <tomo@m17n.org>
+
 	* Makefile (EXEC_PREFIX): Deleted.
 	(elc): Change command-line interface to delete `EXEC_PREFIX'.
 	(install-elc): Likewise.
