@@ -72,17 +72,6 @@
   )
 
 
-;;; @ for Gnus
-;;;
-  
-(defun semi-setup-load-gnus ()
-  (let (gnus-load-hook)
-    (require 'gnus-mime)
-    ))
-
-(add-hook 'gnus-load-hook 'semi-setup-load-gnus)
-
-
 ;;; @ end
 ;;;
 
