@@ -1,3 +1,8 @@
+2000-06-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mime-edit.el (mime-edit-quitting-method):
+	Use mime-buffer-entity-buffer-internal instead of mime-entity-buffer.
+
 2000-06-19  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* mime-view.el (mime-display-multipart/encrypted): New function.
