@@ -55,7 +55,7 @@ Please use reference function `mime-entity-SLOT' to get value of SLOT.
 
 Following is a list of slots of the structure:
 
-node-id		reversed entity-number (list of integers or t)
+node-id		reversed entity-number (list of integers)
 point-min	beginning point of region in raw-buffer
 point-max	end point of region in raw-buffer
 type		media-type (symbol)
@@ -66,8 +66,8 @@ encoding	Content-Transfer-Encoding (string or nil)
 children	entities included in this entity (list of content-infos)
 
 If an entity includes other entities in its body, such as multipart or
-message/rfc822, entity-infos of other entities are included in
-`children', so entity-info become a tree.")
+message/rfc822, `mime-entity' structures of them are included in
+`children', so the `mime-entity' structure become a tree.")
 (make-variable-buffer-local 'mime-raw-message-info)
 
 (defvar mime-preview-buffer nil
@@ -284,8 +284,7 @@ Each elements are string of TYPE/SUBTYPE, e.g. \"text/plain\".")
     (and (member ctype mime-view-visible-media-type-list)
 	 (if (and (eq media-type 'application)
 		  (eq media-subtype 'octet-stream))
-	     (member (mime-entity-encoding entity-info)
-		     '(nil "7bit" "8bit"))
+	     (member (mime-entity-encoding entity) '(nil "7bit" "8bit"))
 	   t))))
 
 
@@ -651,15 +650,13 @@ If optional argument MESSAGE-INFO is not specified,
 
 (defsubst mime-raw-find-entity-from-node-id (entity-node-id
 					     &optional message-info)
-  "Return entity-info from ENTITY-NODE-ID in mime-raw-buffer.
+  "Return entity from ENTITY-NODE-ID in mime-raw-buffer.
 If optional argument MESSAGE-INFO is not specified,
 `mime-raw-message-info' is used."
-  (mime-raw-entity-number-to-entity-info (reverse entity-node-id)
-					 message-info))
+  (mime-raw-find-entity-from-number (reverse entity-node-id) message-info))
 
-(defun mime-raw-entity-number-to-entity-info (entity-number
-					      &optional message-info)
-  "Return entity-info from ENTITY-NUMBER in mime-raw-buffer.
+(defun mime-raw-find-entity-from-number (entity-number &optional message-info)
+  "Return entity from ENTITY-NUMBER in mime-raw-buffer.
 If optional argument MESSAGE-INFO is not specified,
 `mime-raw-message-info' is used."
   (or message-info
@@ -671,7 +668,7 @@ If optional argument MESSAGE-INFO is not specified,
 	  message-info
 	(let ((rc (nth sn (mime-entity-children message-info))))
 	  (if rc
-	      (mime-raw-entity-number-to-entity-info (cdr entity-number) rc)
+	      (mime-raw-find-entity-from-number (cdr entity-number) rc)
 	    ))
 	))))
 
