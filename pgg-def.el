@@ -48,6 +48,9 @@
 (defvar pgg-scheme nil
   "Current scheme of PGP implementation")
 
+(defmacro pgg-truncate-key-identifier (key)
+  `(if (> (length ,key) 8) (substring ,key 8) ,key))
+
 (provide 'pgg-def)
 
 ;;; pgg-def.el ends here
