@@ -182,9 +182,6 @@ FUNCTION.")
 ;;; @ field
 ;;;
 
-(defsubst regexp-or (&rest args)
-  (concat "\\(" (mapconcat (function identity) args "\\|") "\\)"))
-
 (defun tm:set-fields (sym field-list &optional regexp-sym)
   (or regexp-sym
       (setq regexp-sym
@@ -261,12 +258,6 @@ FUNCTION.")
 
 ;;; @ Other Utility
 ;;;
-
-(defsubst eliminate-top-spaces (string)
-  "Eliminate top sequence of space or tab in STRING."
-  (if (string-match "^[ \t]+" string)
-      (substring string (match-end 0))
-    string))
 
 (defun call-after-loaded (module func &optional hook-name)
   "If MODULE is provided, then FUNC is called.
