@@ -430,15 +430,6 @@ Each elements are regexp of field-name.")
 			   (body-presentation-method
 			    . mime-view-insert-message/partial-button)))
 
-(defun mime-view-body-visible-p (entity message-info)
-  "Return non-nil if body of ENTITY is visible."
-  (ctree-match-calist mime-preview-condition
-		      (list* (cons 'type (mime-entity-media-type entity))
-			     (cons 'subtype (mime-entity-media-subtype entity))
-			     (cons 'encoding (mime-entity-encoding entity))
-			     (cons 'major-mode major-mode)
-			     (mime-entity-parameters entity))))
-
 
 ;;; @@@ entity filter
 ;;;
@@ -486,15 +477,6 @@ if it is not nil.")
     (mime-add-button (point-min)(point-max)
 		     #'mime-preview-play-current-entity)
     ))
-
-
-;;; @@ entity separator
-;;;
-
-(defun mime-view-entity-separator-visible-p (entity message-info)
-  "Return non-nil if separator is needed for ENTITY."
-  (and (not (mime-view-header-visible-p entity message-info))
-       (not (mime-view-body-visible-p entity message-info))))
 
 
 ;;; @ acting-condition
@@ -808,9 +790,12 @@ The compressed face will be piped to this command.")
 	    ((functionp body-presentation-method)
 	     (funcall body-presentation-method situation)
 	     ))
-      (when (mime-view-entity-separator-visible-p entity message-info)
-	(goto-char (point-max))
-	(insert "\n"))
+      (or header-is-visible
+	  body-presentation-method
+	  (progn
+	    (goto-char (point-max))
+	    (insert "\n")
+	    ))
       (setq ne (point-max))
       (widen)
       (put-text-property nb ne 'mime-view-raw-buffer ibuf)
