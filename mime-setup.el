@@ -143,20 +143,17 @@
 	  (setq default-mime-charset charset)
 	  ))))
 
-(or (boundp 'epoch::version)
-    (progn
-      (add-hook 'message-setup-hook  'turn-on-mime-edit)
-      (add-hook 'message-setup-hook  'message-maybe-setup-default-charset)
-      (add-hook 'message-send-hook   'mime-edit-maybe-translate)
-      (add-hook 'message-header-hook 'eword-encode-header)
-      
-      (call-after-loaded
-       'message
-       (function
-	(lambda ()
-	  (require 'message-mime)
-	  )))
-      ))
+(add-hook 'message-setup-hook  'turn-on-mime-edit)
+(add-hook 'message-setup-hook  'message-maybe-setup-default-charset)
+(add-hook 'message-send-hook   'mime-edit-maybe-translate)
+(add-hook 'message-header-hook 'eword-encode-header)
+
+(call-after-loaded
+ 'message
+ (function
+  (lambda ()
+    (require 'message-mime)
+    )))
 
 
 ;;; @ end
