@@ -1,5 +1,12 @@
 1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-entity-filename): Moved from mime-play.el.
+	(mime-view-entity-title): Use `mime-entity-filename'.
+
+	* mime-play.el: Move `mime-entity-filename' to mime-view.el.
+
+1998-06-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-play.el (mime-entity-filename): New function; abolish
 	`mime-raw-get-original-filename'.
 	(mime-entity-safe-filename): New function; abolish
