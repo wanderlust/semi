@@ -37,22 +37,6 @@
   (lambda ()
     ;; for message/partial
     (require 'mime-partial)
-    
-    ;; for LaTeX
-    (set-atype 'mime/content-decoding-condition
-	       '((type . "text/x-latex")
-		 (method . mime/decode-text/latex)
-		 ))
-    (set-atype 'mime/content-decoding-condition
-	       '((type . "application/x-latex")
-		 (method . mime/decode-text/latex)
-		 ))
-    ;;(set-atype 'mime/content-decoding-condition
-    ;; 	'((type . "application/octet-stream")
-    ;;		  ("type" . "latex")
-    ;;		  (method . mime/decode-text/latex)
-    ;;		  ))
-    (autoload 'mime/decode-text/latex "tm-latex")
     )))
 
 
