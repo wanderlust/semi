@@ -1,3 +1,9 @@
+1998-07-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-preview-play-current-entity): Fix problem
+	when `mode' is omitted with non-interactive mode (maybe for button
+	dispatcher).
+
 1998-07-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-ui-en.texi, mime-ui-en.sgml: New files.
