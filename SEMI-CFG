@@ -77,10 +77,11 @@
 ;;;
 
 (let ((path (get-latest-path "bbdb" 'all-paths)))
-  (when path
-    (add-path path)
-    (add-path (expand-file-name "lisp" path)) ; run-in-place installation
-    ))
+  (if path
+      (progn
+	(add-path path)
+	(add-path (expand-file-name "lisp" path)) ; run-in-place installation
+	)))
 
 ;; Or please specify path.
 ;; (add-path "bbdb-1.50" 'all-paths)
@@ -91,10 +92,11 @@
 ;;;
 
 (let ((path (get-latest-path "w3" 'all-paths)))
-  (when path
-    (add-path path)
-    (add-path (expand-file-name "lisp" path)) ; run-in-place installation
-    ))
+  (if path
+      (progn
+	(add-path path)
+	(add-path (expand-file-name "lisp" path)) ; run-in-place installation
+	)))
 
 ;; Or please specify path.
 ;; (add-path "w3-4.0pre.20" 'all-paths)
