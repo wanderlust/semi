@@ -202,9 +202,9 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
 
 (luna-define-method pgg-scheme-verify-region ((scheme pgg-scheme-pgp5)
 					      start end &optional signature)
-  (let* ((orig-file (make-temp-file "pgg"))
-	 (args '("+verbose=1" "+batchmode=1" "+language=us"))
-	 (orig-mode (default-file-modes)))
+  (let ((orig-file (make-temp-file "pgg"))
+	(args '("+verbose=1" "+batchmode=1" "+language=us"))
+	(orig-mode (default-file-modes)))
     (unwind-protect
 	(progn
 	  (set-default-file-modes 448)

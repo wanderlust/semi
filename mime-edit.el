@@ -2631,10 +2631,10 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	    (or (cdr (assq major-mode mime-edit-message-max-lines-alist))
 		mime-edit-message-default-max-lines))
       )
-  (let* ((separator mail-header-separator)
-	 (id (concat "\""
-		     (replace-space-with-underline (current-time-string))
-		     "@" (system-name) "\"")))
+  (let ((separator mail-header-separator)
+	(id (concat "\""
+		    (replace-space-with-underline (current-time-string))
+		    "@" (system-name) "\"")))
     (run-hooks 'mime-edit-before-split-hook)
     (let ((the-buf (current-buffer))
 	  (copy-buf (get-buffer-create " *Original Message*"))

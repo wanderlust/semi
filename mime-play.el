@@ -379,15 +379,15 @@ occurs."
 	(set-default-file-modes orig-modes)))))
 
 (defun mime-store-message/partial-piece (entity cal)
-  (let* ((root-dir
-	  (expand-file-name
-	   (concat "m-prts-" (user-login-name)) temporary-file-directory))
-	 (id (cdr (assoc "id" cal)))
-	 (number (cdr (assoc "number" cal)))
-	 (total (cdr (assoc "total" cal)))
-	 file
-	 (mother (current-buffer))
-	 (orig-modes (default-file-modes)))
+  (let ((root-dir
+	 (expand-file-name
+	  (concat "m-prts-" (user-login-name)) temporary-file-directory))
+	(id (cdr (assoc "id" cal)))
+	(number (cdr (assoc "number" cal)))
+	(total (cdr (assoc "total" cal)))
+	file
+	(mother (current-buffer))
+	(orig-modes (default-file-modes)))
     (mime-require-safe-directory root-dir)
     (or (file-exists-p root-dir)
 	(unwind-protect
