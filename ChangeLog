@@ -1,5 +1,27 @@
 1999-12-08   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* smime.el (smime-verify-region): Abolish local variable `cert-file'.
+	(smime-find-certificate): Rename from `smime-search-certificate'.
+
+	* mime-edit.el: Add autoload settings for `smime-encrypt-region' and
+	`smime-sign-region'.
+	(mime-edit-process-multipart-1): Handle type "smime-signed" and
+	"smime-encrypted".
+	(mime-edit-sign-smime): New function.
+	(mime-edit-encrypt-smime): New function.
+	(mime-edit-enclose-smime-signed-region): New function.
+	(mime-edit-enclose-smime-encrypted-region): New function.
+
+	* mime-pgp.el: Add autoload settings for `smime-decrypt-region' and
+	`smime-verify-region'.
+	(mime-verify-application/pkcs7-signature): New function.
+	(mime-decrypt-application/pkcs7-mime): New function.
+
+	* semi-setup.el: Set up for `mime-verify-application/pkcs7-signature'
+	and `mime-decrypt-application/pkcs7-mime'.
+
+1999-12-08   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
 	* smime.el (smime-x509-hash): Use `call-process' instead of
 	`call-process-region'.
 	(smime-x509-subject): Ditto.
