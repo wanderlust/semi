@@ -649,6 +649,10 @@ Each elements are regexp of field-name.")
  '((body . visible)
    (body-presentation-method . mime-display-text/plain)))
 
+(defvar mime-preview-fill-flowed-text
+  (module-installed-p 'flow-fill)
+  "If non-nil, fill RFC2646 \"flowed\" text.")
+
 (autoload 'fill-flowed "flow-fill")
 
 (ctree-set-calist-strictly
@@ -734,7 +738,8 @@ Each elements are regexp of field-name.")
     (if (not (eq (char-after (1- (point))) ?\n))
 	(insert "\n")
       )
-    (if (equal (cdr (assoc "format" situation)) "flowed")
+    (if (and mime-preview-fill-flowed-text
+	     (equal (cdr (assoc "format" situation)) "flowed"))
 	(fill-flowed))
     (mime-add-url-buttons)
     (run-hooks 'mime-display-text/plain-hook)
