@@ -4,8 +4,7 @@
 
 ;; Author: OKABE Yasuo @ Kyoto University
 ;;         MORIOKA Tomohiko <morioka@jaist.ac.jp>
-;; Version:
-;;	$Id$ 
+;; Version: $Id$ 
 ;; Keywords: message/partial, MIME, multimedia, mail, news
 
 ;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
@@ -67,7 +66,7 @@ partial messages using mime-view."
     (if (or (file-exists-p full-file)
 	    (not (y-or-n-p "Merge partials?"))
 	    )
-	(mime-article/decode-message/partial beg end cal)
+	(mime-display-message/partial beg end cal)
       (let (the-id parameters)
 	(setq subject-id (std11-field-body "Subject"))
 	(if (string-match "[0-9\n]+" subject-id)
@@ -85,7 +84,7 @@ partial messages using mime-view."
 	      (setq the-id (cdr (assoc "id" parameters)))
 	      (if (string= the-id id)
 		  (progn
-		    (mime-article/decode-message/partial
+		    (mime-display-message/partial
 		     (point-min)(point-max) parameters)
 		    (if (file-exists-p full-file)
 			(throw 'tag nil)

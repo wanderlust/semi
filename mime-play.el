@@ -53,7 +53,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	      )
 	  (setq mime-preview/after-decoded-position (point))
 	  (set-buffer raw-buffer)
-	  (mime-article/decode-content cinfo mode)
+	  (mime-display-content cinfo mode)
 	  (if (eq (current-buffer) raw-buffer)
 	      (progn
 		(set-buffer the-buf)
@@ -61,7 +61,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 		))
 	  ))))
 
-(defun mime-article/decode-content (cinfo &optional mode)
+(defun mime-display-content (cinfo &optional mode)
   (let ((beg (mime::content-info/point-min cinfo))
 	(end (mime::content-info/point-max cinfo))
 	(ctype (or (mime::content-info/type cinfo) "text/plain"))
@@ -303,7 +303,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
     (write-region start end file)
     ))
 
-(defun mime-article/decode-message/partial (beg end cal)
+(defun mime-display-message/partial (beg end cal)
   (goto-char beg)
   (let* ((root-dir
 	  (expand-file-name
@@ -433,7 +433,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
     (dired dir)
     ))
 
-(defun mime-article/decode-message/external-ftp (beg end cal)
+(defun mime-display-message/external-ftp (beg end cal)
   (let* ((site (cdr (assoc "site" cal)))
 	 (directory (cdr (assoc "directory" cal)))
 	 (name (cdr (assoc "name" cal)))
