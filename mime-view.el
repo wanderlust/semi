@@ -251,8 +251,8 @@ If optional argument MESSAGE-INFO is not specified,
 	     ))))
 
 (defun mime-view-entity-title (entity)
-  (or (mime-entity-read-field entity 'Content-Description)
-      (mime-entity-read-field entity 'Subject)
+  (or (mime-read-field 'Content-Description entity)
+      (mime-read-field 'Subject entity)
       (mime-entity-filename entity)
       ""))
 
