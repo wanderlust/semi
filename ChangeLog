@@ -1,9 +1,16 @@
+2001-09-25   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-view.el (mime-view-default-charset): Use
+	`mime-entity-parameters'.
+
+	* semi-def.el (mime-user-interface-product): Bump up to EMIKO 1.14.1.
+
 2001-09-24   Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-view.el (mime-view-default-charset): Rename from
 	`mime-view-default-mime-charset'.
 	(mime-view-read-charset): Rename from `mime-view-read-mime-charset'.
-	(mime-preview-toggle-display): Respect "*charset" condition instead of
+	(mime-preview-toggle-display): Respect "*charset" rather than
 	"*mime-charset".
 
 2001-09-24   Daiki Ueno  <ueno@unixuser.org>
@@ -22,8 +29,8 @@
 	* mime-view.el (mime-view-insert-text-content): New function.
 	(mime-view-insert-fontified-text-content): Rename from
 	`mime-display-inline-fontify'.
-	(mime-display-text/plain): Use `mime-view-insert-text-content' instead of
-	`mime-insert-text-content'.
+	(mime-display-text/plain): Use `mime-view-insert-text-content'
+	instead of `mime-insert-text-content'.
 	(mime-display-text/richtext): Likewise.
 	(mime-display-text/enriched): Likewise.
 	(mime-display-application/emacs-lisp): Likewise.
