@@ -90,8 +90,8 @@ which is available at @uref{http://www.gnupg.org/gph/}.
 The toplevel interface of this library is still simple, and only
 intended to use with public-key cryptographic operation.
 
-To use PGG, please evaluate following expression at the beginning of
-your application program.
+To use PGG, evaluate following expression at the beginning of your
+application program.
 
 @lisp
 (require 'pgg)
@@ -125,7 +125,7 @@ list autoload settings for functions you want as follows.
 @section User Commands
 
 At this time you can use various cryptographic commands.  The behavior
-of these commands relies on the fashion of invocation because these
+of these commands relies on a fashion of invocation because these
 commands are also intended to be used as library functions.  For
 example, in case you don't have the signer's public key, the function
 `pgg-verify-region' fails immediately, but if the function had been
