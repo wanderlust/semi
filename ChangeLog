@@ -1,3 +1,8 @@
+1997-07-02  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-text.el (mime-decode-text-body): Canonicalize line break
+	code.
+
 1997-06-27  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mailcap.el: New file.
