@@ -231,6 +231,7 @@ and END to the keyring.")
       (funcall pgg-read-passphrase prompt)))
 
 (defun pgg-add-passphrase-cache (key passphrase)
+  (setq key (if (> (length key) 8) (substring key 8) key))
   (set (intern key pgg-passphrase-cache)
        passphrase)
   (run-at-time pgg-passphrase-cache-expiry nil
