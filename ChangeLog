@@ -1,5 +1,14 @@
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el, mime-pgp.el, mime-view.el: Rename ` mime-article/'
+	-> `mime-raw-'.
+
+	* mime-view.el: Rename `mime-view-get-original-major-mode' ->
+	`mime-preview-original-major-mode'.
+
+	* mime-view.el: Rename `mime-view-display-x-face' ->
+	`mime-preview-display-x-face'.
+
 	* mime-play.el, mime-pgp.el, mime-bbdb.el, mime-view.el: Rename
 	`mime-view-buffer' -> `mime-preview-buffer'.
 
