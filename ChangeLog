@@ -1,3 +1,9 @@
+2003-11-15  Simon Josefsson  <jas@extundo.com>
+
+	* pgg-gpg.el (pgg-gpg-lookup-key): Use regexp match instead of
+	split-string (split-string is different between emacs 21.2 and
+	21.4).  Reported by ultrasoul@ultrasoul.com (David D. Smith).
+
 2004-09-15  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* mime-view.el (mime-preview-follow-current-entity): Avoid error
