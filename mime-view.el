@@ -1739,9 +1739,12 @@ If LINES is negative, scroll up LINES lines."
 	  ;; might be specified by `universal-coding-system-argument'.
 	  (and coding-system-for-read
 	       (coding-system-to-mime-charset coding-system-for-read)))
-      (intern (mime-content-type-parameter
-	       (mime-entity-content-type entity)
-	       "charset"))
+      (let ((charset-param
+	     (mime-content-type-parameter
+	      (mime-entity-content-type entity)
+	      "charset")))
+	(if charset-param
+	    (intern (downcase charset-param))))
       default-mime-charset))
 
 (defun mime-view-read-mime-charset (entity situation)
