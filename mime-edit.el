@@ -1172,7 +1172,9 @@ Optional argument ENCODING specifies an encoding method such as base64."
 
 (defun mime-editor/choose-charset ()
   "Choose charset of a text following current point."
-  (mime/find-charset-region (point) (mime-editor/content-end))
+  (upcase
+   (symbol-name
+    (detect-mime-charset-region (point) (mime-editor/content-end))))
   )
 
 (defun mime-make-text-tag (&optional subtype)
