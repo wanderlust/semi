@@ -1,5 +1,8 @@
 1998-10-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* README.en (Required environment): Modify to require APEL 9.5 and
+	FLIM 1.11.1.
+
 	* mime-edit.el: - Don't require emu.
 	                - Require invisible.
 
