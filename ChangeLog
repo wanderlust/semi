@@ -1,3 +1,19 @@
+1997-09-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mailcap.el (mailcap-skip-comment): Check `chr' is nil.
+
+	* mime-edit.el (mime-edit-decode-buffer): Modify for new return
+	format of `mime-parse-Content-Type'.
+
+	* mime-parse.el (mime-parse-Content-Type): Change return format.
+	(mime-read-Content-Type): Modify DOC-string.
+	(make-mime-entity-info): New inline function.
+	(mime-parse-multipart): Change interface.
+	(mime-parse-message): Rename names of arguments.
+
+	* mime-def.el (mime-tspecials): Remove `.' and control-characters.
+	(mime-token-regexp): Add specification for control-characters.
+
 1997-09-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el (mime-view-cut-header): Use `defun' instead of
