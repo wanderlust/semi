@@ -212,7 +212,7 @@ If SEPARATOR is not nil, it is used as header separator."
 ;;; @ encoded-word decoder
 ;;;
 
-(defvar tm:warning-face nil "Face used for invalid encoded-word.")
+(defvar eword-warning-face nil "Face used for invalid encoded-word.")
 
 (defun eword-decode-encoded-word (word &optional must-unfold)
   "Decode WORD if it is an encoded-word.
@@ -237,10 +237,11 @@ as a version of Net$cape)."
             (condition-case err
                 (eword-decode-encoded-text charset encoding text must-unfold)
               (error
-               (and (tl:add-text-properties 0 (length word)
-                                            (and tm:warning-face
-                                                 (list 'face tm:warning-face))
-                                            word)
+               (and (tl:add-text-properties
+		     0 (length word)
+		     (and eword-warning-face
+			  (list 'face eword-warning-face))
+		     word)
                     word)))
             ))
       word))
