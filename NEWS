@@ -46,7 +46,7 @@ message at current summary line.  Format of it is mime-entity.
 `mime-edit-insert-user-agent-field' is not nil.  Contents of
 User-Agent is specified by mime-edit-user-agent-value'.
 
-  X-Emacs related features were abolished.
+  X-Emacs field related features were abolished.
 
 
 * Changes in SEMI 1.7
