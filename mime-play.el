@@ -148,6 +148,7 @@
 ;;; @ content decoder
 ;;;
 
+;;;###autoload
 (defun mime-preview-play-current-entity (&optional ignore-examples mode)
   "Play current entity.
 It decodes current entity to call internal or external method.  The
@@ -232,6 +233,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
     (cons match example)
     ))
 
+;;;###autoload
 (defun mime-play-entity (entity &optional situation ignored-method)
   "Play entity specified by ENTITY.
 It decodes the entity to call internal or external method.  The method
