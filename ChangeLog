@@ -1,3 +1,8 @@
+2000-02-02   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg.el (pgg-temp-buffer-show-function): Don't check if the
+	selected window is the only window.
+
 2000-02-01   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* semi-def.el (mime-user-interface-product): Bump up to

@@ -167,12 +167,10 @@ and END to the keyring.")
        ,@body)))
 
 (defun pgg-temp-buffer-show-function (buffer)
-  (if (one-window-p (selected-window))
-      (let ((window (split-window-vertically
-		     (- (window-height) 
-			(/ (window-height) 5)))))
-	(set-window-buffer window buffer))
-    (display-buffer buffer)))
+  (let ((window (split-window-vertically
+		 (- (window-height) 
+		    (/ (window-height) 5)))))
+    (set-window-buffer window buffer)))
 
 (defun pgg-display-output-buffer (start end status)
   (if status
