@@ -207,7 +207,10 @@ specified, play as it.  Default MODE is \"play\"."
 				   end name
 				   (cdr (assq 'encoding situation)))
 	(message "External method is starting...")
-	(let ((command (format method name)))
+	(let ((command
+	       (mailcap-format-command
+		method
+		(cons (cons 'filename name) situation))))
 	  (start-process command mime-echo-buffer-name
 			 shell-file-name shell-command-switch command)
 	  )
