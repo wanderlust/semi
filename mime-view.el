@@ -36,7 +36,7 @@
 (require 'mel)
 (require 'tm-ew-d)
 (require 'tm-def)
-(require 'tm-parse)
+(require 'mime-parse)
 (require 'mime-text)
 
 
@@ -449,7 +449,7 @@ The compressed face will be piped to this command.")
 	(set-buffer ibuf)
 	))
   (or mime-view-redisplay
-      (setq mime::article/content-info (mime/parse-message ctl encoding))
+      (setq mime::article/content-info (mime-parse-message ctl encoding))
       )
   (let ((ret (mime-view-make-preview-buffer obuf)))
     (setq mime::article/preview-buffer (car ret))
