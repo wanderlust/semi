@@ -1,3 +1,12 @@
+1999-01-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-version): Don't use `eval-when-compile'
+	to avoid to break product-code-name.
+
+	* mime-edit.el (mime-edit-version): Don't use `eval-when-compile'
+	to avoid to break product-code-name.
+
+
 1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.13.0 (Matt-Dò)-A released.
