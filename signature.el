@@ -1,18 +1,16 @@
 ;;; signature.el --- a signature utility for GNU Emacs
 
-;; Copyright (C) 1994,1995,1996 Free Software Foundation, Inc.
+;; Copyright (C) 1994,1995,1996,1997 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;;         OKABE Yasuo <okabe@kudpc.kyoto-u.ac.jp>
-;;         Artur Pioro <artur@flugor.if.uj.edu.pl>
 ;;         KOBAYASHI Shuhei <shuhei-k@jaist.ac.jp>
 ;; Maintainer: Shuhei KOBAYASHI <shuhei-k@jaist.ac.jp>
 ;; Created: 1994/7/11
-;; Version:
-;;	$Id$
+;; Version: $Id$
 ;; Keywords: mail, news, signature
 
-;; This file is part of tm (Tools for MIME).
+;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -46,6 +44,10 @@ of file.")
 
 (defvar signature-load-hook nil
   "*List of functions called after signature.el is loaded.")
+
+(defvar signature-separator "-- \n"
+  "*String to separate contents and signature.
+It is inserted when signature is inserted at end of file.")
 
 (defvar signature-file-name "~/.signature"
   "*Name of file containing the user's signature.")
@@ -145,6 +147,9 @@ specify a file named <signature-file-name>-DISTRIBUTION interactively."
           (if signature-delete-blank-lines-at-eof (delete-blank-lines))
           ))
     (run-hooks 'signature-insert-hook)
+    (if (= (point)(point-max))
+	(insert signature-separator)
+      )
     (insert-file-contents signature-file-name)
     (force-mode-line-update)
     signature-file-name))
