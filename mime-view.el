@@ -78,6 +78,8 @@ buttom. Nil means don't scroll at all."
   :group 'mime-view
   :type '(repeat file))
 
+(defvar mime-view-automatic-conversion 'undecided)
+
 
 ;;; @ in raw-buffer (representation space)
 ;;;
@@ -907,14 +909,54 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	      (cons original-major-mode-cell default-situation)))
     (mime-display-entity start nil default-situation)))
 
+(defun mime-view-entity-content (entity situation)
+  (mime-decode-string
+   (mime-entity-body entity)
+   (mime-view-guess-encoding entity situation)))
+  
 (defun mime-view-insert-text-content (entity situation)
-  (insert
-   (decode-mime-charset-string
-    (mime-decode-string
-     (mime-entity-body entity)
-     (mime-view-guess-encoding entity situation))
-    (mime-view-guess-charset entity situation)
-    'CRLF)))
+  (let (compression-info)
+    (cond
+     ((and (mime-entity-filename entity)
+	   (jka-compr-installed-p)
+	   (setq compression-info (jka-compr-get-compression-info
+				   (mime-entity-filename entity))))
+      (insert
+       (mime-view-filter-text-content
+	(mime-view-entity-content entity situation)
+	(jka-compr-info-uncompress-program compression-info)
+	(jka-compr-info-uncompress-args compression-info))))
+     ((or (assq '*encoding situation)	;should be specified by user
+	  (assq '*charset situation))	;should be specified by user
+      (insert
+       (decode-mime-charset-string
+	(mime-view-entity-content entity situation)
+	(mime-view-guess-charset entity situation)
+	'CRLF)))
+     (t
+      (mime-insert-text-content entity)))))
+
+;;; stolen (and renamed) from `mime-display-gzipped' of EMY 1.13.
+(defun mime-view-filter-text-content (content program args)
+  (with-temp-buffer
+    (static-cond
+     ((featurep 'xemacs)
+      (insert content)
+      (apply #'binary-to-text-funcall
+	     mime-view-automatic-conversion
+	     #'call-process-region (point-min)(point-max)
+	     program t t args))
+     (t
+      (if (not (multibyte-string-p content))
+	  (set-buffer-multibyte nil))
+      (insert content)
+      (apply #'binary-funcall
+	     #'call-process-region (point-min)(point-max)
+	     program t t args)
+      (set-buffer-multibyte t)
+      (decode-coding-region (point-min)(point-max)
+			    mime-view-automatic-conversion)))
+    (buffer-string)))
 
 ;;; stolen (and renamed) from mm-view.el.
 (defun mime-view-insert-fontified-text-content (entity situation
