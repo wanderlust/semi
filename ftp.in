@@ -2,7 +2,7 @@
 
   It is available from
 
-    ftp://ftp.jaist.ac.jp/pub/GNU/elisp/mime/alpha/	(Japan)
+    ftp://ftp.jaist.ac.jp/pub/GNU/elisp/semi/	(Japan)
 
 or its mirrors
 
@@ -14,7 +14,7 @@ or its mirrors
 --[[message/external-body;
 	access-type=anon-ftp;
 	site="ftp.jaist.ac.jp";
-	directory="/pub/GNU/elisp/mime/alpha";
+	directory="/pub/GNU/elisp/semi";
 	name="semi-VERSION.tar.gz";
 	mode=image]]
 Content-Type: application/octet-stream;
