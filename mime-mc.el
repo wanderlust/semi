@@ -30,8 +30,7 @@
 (defun mime-mc-pgp-generic-parser (result)
   (let ((ret (mc-pgp-generic-parser result)))
     (if (consp ret)
-	(vector (car ret)(cdr ret))
-      )))
+	(vector (car ret)(cdr ret)))))
 
 (defun mime-mc-process-region
   (beg end passwd program args parser &optional buffer boundary)
@@ -87,12 +86,10 @@ Content-Transfer-Encoding: 7bit
 " boundary))
 			(insert-buffer-substring mybuf (car rgn) (cdr rgn))
 			(goto-char (point-max))
-			(insert (format "\n--%s--\n" boundary))
-			)
+			(insert (format "\n--%s--\n" boundary)))
 		    (delete-region beg end)
 		    (goto-char beg)
-		    (insert-buffer-substring mybuf (car rgn) (cdr rgn))
-		    )
+		    (insert-buffer-substring mybuf (car rgn) (cdr rgn)))
 		  (set-buffer mybuf)
 		  (delete-region (car rgn) (cdr rgn)))))
 	  ;; Return nil on failure and exit code on success
@@ -111,8 +108,7 @@ Content-Transfer-Encoding: 7bit
 	(buffer (get-buffer-create mc-buffer-name))
 	passwd args key
 	(parser (function mc-pgp-generic-parser))
-	(pgp-path mc-pgp-path)
-	)
+	(pgp-path mc-pgp-path))
     (setq key (mc-pgp-lookup-key (or id mc-pgp-user-id)))
     (setq passwd
 	  (mc-activate-passwd
@@ -128,8 +124,7 @@ Content-Transfer-Encoding: 7bit
 		 (format "+clearsig=%s" (if unclear "off" "on"))
 		 "+batchmode" "-u" (cdr key))))
     (if mc-pgp-comment
-	(setq args (cons (format "+comment=%s" mc-pgp-comment) args))
-      )
+	(setq args (cons (format "+comment=%s" mc-pgp-comment) args)))
     (message "Signing as %s ..." (car key))
     (if (mime-mc-process-region
 	 start end passwd pgp-path args parser buffer boundary)
@@ -152,8 +147,7 @@ Content-Transfer-Encoding: 7bit
 			      'never)))
     (mc-pgp-encrypt-region
      (mc-split "\\([ \t\n]*,[ \t\n]*\\)+" recipients)
-     start end id nil)
-    ))
+     start end id nil)))
 
 		
 ;;; @ end

@@ -33,8 +33,7 @@
 (eval-when-compile
   (condition-case nil
       (require 'bbdb)
-    (error (defvar bbdb-buffer-name nil)))
-  )
+    (error (defvar bbdb-buffer-name nil))))
 
 (defcustom mime-save-directory "~/"
   "*Name of the directory where MIME entity will be saved in.
@@ -74,8 +73,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	      (setq situation
 		    (cons (cons 'ignore-examples ignore-examples)
 			  situation)))
-	  (mime-play-entity entity situation)
-	  ))))
+	  (mime-play-entity entity situation)))))
 
 ;;;###autoload
 (defun mime-play-entity (entity &optional situation ignored-method)
@@ -103,19 +101,15 @@ specified, play as it.  Default MODE is \"play\"."
 				  situation)))
 			      ret)))
 	   (setq ret (mime-sort-situation ret))
-	   (add-to-list 'mime-acting-situation-example-list (cons ret 0))
-	   )
+	   (add-to-list 'mime-acting-situation-example-list (cons ret 0)))
 	  (t
-	   (setq ret (car ret))
-	   ))
+	   (setq ret (car ret))))
     (setq method (cdr (assq 'method ret)))
     (cond ((and (symbolp method)
 		(fboundp method))
-	   (funcall method entity ret)
-	   )
+	   (funcall method entity ret))
 	  ((stringp method)
-	   (mime-activate-mailcap-method entity ret)
-	   )
+	   (mime-activate-mailcap-method entity ret))
           ;; ((and (listp method)(stringp (car method)))
           ;;  (mime-activate-external-method entity ret)
           ;;  )
@@ -125,9 +119,7 @@ specified, play as it.  Default MODE is \"play\"."
 				   (cdr (assq 'type situation))
 				   (cdr (assq 'subtype situation))))
 	   (if (y-or-n-p "Do you want to save current entity to disk?")
-	       (mime-save-content entity situation))
-	   ))
-    ))
+	       (mime-save-content entity situation))))))
 
 
 ;;; @ external decoder
@@ -142,8 +134,7 @@ specified, play as it.  Default MODE is \"play\"."
 	  (if (and name (not (string= name "")))
 	      (expand-file-name name temporary-file-directory)
 	    (make-temp-name
-	     (expand-file-name "EMI" temporary-file-directory))
-	    ))
+	     (expand-file-name "EMI" temporary-file-directory))))
     (mime-write-entity-content entity name)
     (message "External method is starting...")
     (let ((process
@@ -152,18 +143,14 @@ specified, play as it.  Default MODE is \"play\"."
 		   method
 		   (cons (cons 'filename name) situation))))
 	     (start-process command mime-echo-buffer-name
-			    shell-file-name shell-command-switch command)
-	     )))
+			    shell-file-name shell-command-switch command))))
       (set-alist 'mime-mailcap-method-filename-alist process name)
-      (set-process-sentinel process 'mime-mailcap-method-sentinel)
-      )
-    ))
+      (set-process-sentinel process 'mime-mailcap-method-sentinel))))
 
 (defun mime-mailcap-method-sentinel (process event)
   (let ((file (cdr (assq process mime-mailcap-method-filename-alist))))
     (if (file-exists-p file)
-	(delete-file file)
-      ))
+	(delete-file file)))
   (remove-alist 'mime-mailcap-method-filename-alist process)
   (message (format "%s %s" process event)))
 
@@ -174,8 +161,7 @@ specified, play as it.  Default MODE is \"play\"."
 (defvar mime-echo-window-height
   (function
    (lambda ()
-     (/ (window-height) 5)
-     ))
+     (/ (window-height) 5)))
   "*Size of mime-echo window.
 It allows function or integer.  If it is function,
 `mime-show-echo-buffer' calls it to get height of mime-echo window.
@@ -198,19 +184,14 @@ window.")
 		   (- (window-height)
 		      (if (functionp mime-echo-window-height)
 			  (funcall mime-echo-window-height)
-			mime-echo-window-height)
-		      )))
-	)
-      (set-window-buffer win mime-echo-buffer-name)
-      )
+			mime-echo-window-height)))))
+      (set-window-buffer win mime-echo-buffer-name))
     (select-window win)
     (goto-char (point-max))
     (if forms
 	(let ((buffer-read-only nil))
-	  (insert (apply (function format) forms))
-	  ))
-    (select-window the-win)
-    ))
+	  (insert (apply (function format) forms))))
+    (select-window the-win)))
 
 
 ;;; @ file name
@@ -235,11 +216,9 @@ window.")
 	       (if (and subj
 			(or (string-match mime-view-file-name-regexp-1 subj)
 			    (string-match mime-view-file-name-regexp-2 subj)))
-		   (substring subj (match-beginning 0)(match-end 0))
-		 )))))
+		   (substring subj (match-beginning 0)(match-end 0)))))))
     (if filename
-	(replace-as-filename filename)
-      )))
+	(replace-as-filename filename))))
 
 
 ;;; @ file extraction
@@ -264,8 +243,7 @@ window.")
     (if (file-exists-p filename)
 	(or (yes-or-no-p (format "File %s exists. Save anyway? " filename))
 	    (error "")))
-    (mime-write-entity-content entity (expand-file-name filename))
-    ))
+    (mime-write-entity-content entity (expand-file-name filename))))
 
 
 ;;; @ file detection
@@ -278,8 +256,7 @@ window.")
     ("^II\\*\000"			image tiff)
     ("^MM\000\\*"			image tiff)
     ("^MThd"				audio midi)
-    ("^\000\000\001\263"		video mpeg)
-    )
+    ("^\000\000\001\263"		video mpeg))
   "*Alist of regexp about magic-number vs. corresponding media-types.
 Each element looks like (REGEXP TYPE SUBTYPE).
 REGEXP is a regular expression to match against the beginning of the
@@ -295,8 +272,7 @@ SUBTYPE is symbol to indicate subtype of media-type.")
 		    (if cell
 			(if (string-match (car cell) mdata)
 			    (setq type (nth 1 cell)
-				  subtype (nth 2 cell))
-			  )
+				  subtype (nth 2 cell)))
 		      t)))
 	(setq rest (cdr rest))))
     (setq situation (del-alist 'method (copy-alist situation)))
@@ -338,8 +314,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	(let ((m-win (get-buffer-window mother)))
 	  (if m-win
 	      (set-window-buffer m-win preview-buffer)
-	    (switch-to-buffer preview-buffer)
-	    )))))
+	    (switch-to-buffer preview-buffer))))))
 
 
 ;;; @ message/partial
@@ -390,10 +365,8 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 			  (erase-buffer)
 			  (insert total)
 			  (write-region (point-min)(point-max) total-file)
-			  (kill-buffer (current-buffer))
-			  ))
-		    (string-to-number total)
-		    )
+			  (kill-buffer (current-buffer))))
+		    (string-to-number total))
 		(and (file-exists-p total-file)
 		     (save-excursion
 		       (set-buffer (find-file-noselect total-file))
@@ -401,11 +374,8 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 			   (and (re-search-forward "[0-9]+" nil t)
 				(string-to-number
 				 (buffer-substring (match-beginning 0)
-						   (match-end 0)))
-				)
-			 (kill-buffer (current-buffer))
-			 )))
-		)))
+						   (match-end 0))))
+			 (kill-buffer (current-buffer))))))))
       (if (and total (> total 0)
 	       (>= (length (directory-files root-dir nil "^[0-9]+$" t))
 		   total))
@@ -418,26 +388,21 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 		  (while (<= i total)
 		    (setq file (concat root-dir "/" (int-to-string i)))
 		    (or (file-exists-p file)
-			(throw 'tag nil)
-			)
+			(throw 'tag nil))
 		    (as-binary-input-file (insert-file-contents file))
 		    (goto-char (point-max))
-		    (setq i (1+ i))
-		    ))
+		    (setq i (1+ i))))
 		(write-region-as-binary (point-min)(point-max)
 					(expand-file-name "FULL" root-dir))
 		(let ((i 1))
 		  (while (<= i total)
 		    (let ((file (format "%s/%d" root-dir i)))
 		      (and (file-exists-p file)
-			   (delete-file file)
-			   ))
-		    (setq i (1+ i))
-		    ))
+			   (delete-file file)))
+		    (setq i (1+ i))))
 		(let ((file (expand-file-name "CT" root-dir)))
 		  (and (file-exists-p file)
-		       (delete-file file)
-		       ))
+		       (delete-file file)))
 		(let ((buf (current-buffer))
 		      (pwin (or (get-buffer-window mother)
 				(get-largest-window)))
@@ -448,9 +413,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 		    (make-local-variable 'mime-view-temp-message-buffer)
 		    (setq mime-view-temp-message-buffer buf))
 		  (set-window-buffer pwin pbuf)
-		  (select-window pwin)
-		  )))))
-      )))
+		  (select-window pwin)))))))))
 
 
 ;;; @ message/external-body
@@ -459,15 +422,13 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 (defvar mime-raw-dired-function
   (if (and (>= emacs-major-version 19) window-system)
       (function dired-other-frame)
-    (function mime-raw-dired-function-for-one-frame)
-    ))
+    (function mime-raw-dired-function-for-one-frame)))
 
 (defun mime-raw-dired-function-for-one-frame (dir)
   (let ((win (or (get-buffer-window mime-preview-buffer)
 		 (get-largest-window))))
     (select-window win)
-    (dired dir)
-    ))
+    (dired dir)))
 
 (defun mime-view-message/external-anon-ftp (entity cal)
   (let* ((site (cdr (assoc "site" cal)))
@@ -477,8 +438,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
     (message (concat "Accessing " (expand-file-name name pathname) " ..."))
     (funcall mime-raw-dired-function pathname)
     (goto-char (point-min))
-    (search-forward name)
-    ))
+    (search-forward name)))
 
 (defvar mime-raw-browse-url-function mime-browse-url-function)
 
@@ -500,15 +460,12 @@ It is registered to variable `mime-preview-quitting-method-alist'."
       (erase-buffer)
       (mime-insert-text-content entity)
       (mule-caesar-region (point-min) (point-max))
-      (set-buffer-modified-p nil)
-      )
+      (set-buffer-modified-p nil))
     (let ((win (get-buffer-window (current-buffer))))
       (or (eq (selected-window) win)
-	  (select-window (or win (get-largest-window)))
-	  ))
+	  (select-window (or win (get-largest-window)))))
     (view-buffer buf)
-    (goto-char (point-min))
-    ))
+    (goto-char (point-min))))
 
 
 ;;; @ end

@@ -28,13 +28,11 @@
 
 (condition-case nil
     (load "gnus-mime-setup")
-  (error (message "gnus-mime-setup is not found."))
-  )
+  (error (message "gnus-mime-setup is not found.")))
 
 (condition-case nil
     (load "emh-setup")
-  (error (message "emh-setup is not found."))
-  )
+  (error (message "emh-setup is not found.")))
 
 
 ;;; @ end

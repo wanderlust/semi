@@ -35,10 +35,8 @@ it is used as hook to set."
   (if (featurep module)
       (funcall func)
     (or hook-name
-	(setq hook-name (intern (concat (symbol-name module) "-load-hook")))
-	)
-    (add-hook hook-name func)
-    ))
+	(setq hook-name (intern (concat (symbol-name module) "-load-hook"))))
+    (add-hook hook-name func)))
 
 
 ;; for image/*
@@ -68,8 +66,7 @@ it is used as hook to set."
 	    (body-presentation-method . mime-preview-text/html)))
 	 
 	 (set-alist 'mime-view-type-subtype-score-alist
-		    '(text . html) 3)
-	 )))
+		    '(text . html) 3))))
 
 ;; for text/x-vcard
 (defvar mime-setup-enable-vcard
@@ -142,9 +139,7 @@ it is used as hook to set."
 	  'action
 	  '((type . application)(subtype . pkcs7-mime)
 	    (method . mime-view-application/pkcs7-mime))
-	  'strict "mime-pgp")
-	 ))
-  )
+	  'strict "mime-pgp"))))
 
 
 ;;; @ for mime-edit
@@ -191,8 +186,7 @@ it is used as hook to set."
 	(let ((key
 	       (or (cdr (assq major-mode mime-setup-signature-key-alist))
 		   mime-setup-default-signature-key)))
-	  (define-key keymap key (function insert-signature))
-	  ))))
+	  (define-key keymap key (function insert-signature))))))
 
 (when mime-setup-use-signature
   (autoload 'insert-signature "signature" "Insert signature" t)

@@ -39,8 +39,7 @@
       `(let ((color (color-name (face-background 'default))))
 	 (prog1
 	     (progn ,@body)
-	   (font-set-face-background 'default color (current-buffer))
-	   ))
+	   (font-set-face-background 'default color (current-buffer))))
     (cons 'progn body)))
 
 (defvar mime-w3-message-structure nil)
@@ -59,8 +58,7 @@
        (condition-case err
 	   (w3-region p (point-max))
 	 (error (message (format "%s" err))))
-       (mime-put-keymap-region p (point-max) w3-mode-map)
-       ))))
+       (mime-put-keymap-region p (point-max) w3-mode-map)))))
 
 (defun url-cid (url &optional proxy-info)
   (let ((entity
@@ -68,8 +66,7 @@
 					   mime-w3-message-structure)))
     (when entity
       (mime-insert-entity-content entity)
-      (setq url-current-mime-type (mime-entity-type/subtype entity))
-      )))
+      (setq url-current-mime-type (mime-entity-type/subtype entity)))))
 
 (url-register-protocol "cid"
 		       'url-cid

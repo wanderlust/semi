@@ -42,8 +42,7 @@
       "Returns a regexp matching the address of the logged-in user"
       '(or bbdb-user-mail-names
 	   (setq bbdb-user-mail-names
-		 (concat "\\b" (regexp-quote (user-login-name)) "\\b"))))
-    ))
+		 (concat "\\b" (regexp-quote (user-login-name)) "\\b"))))))
 
 
 ;;; @ User Variables
@@ -81,8 +80,7 @@ For framepop users: If empty, `framepop-banish' is used instead.")
             methods (cdr methods)))
     (if (string= address "") (setq address nil))
     (if (string= phrase "") (setq phrase nil))
-    (list phrase address)
-    ))
+    (list phrase address)))
 
 (or mime-bbdb/use-mail-extr
     (progn
@@ -91,8 +89,7 @@ For framepop users: If empty, `framepop-banish' is used instead.")
           (fset 'tm:mail-extract-address-components
                 (symbol-function 'mail-extract-address-components)))
       (fset 'mail-extract-address-components
-	    (symbol-function 'mime-bbdb/extract-address-components))
-      ))
+	    (symbol-function 'mime-bbdb/extract-address-components))))
 
 
 ;;; @ bbdb-extract-field-value
@@ -109,8 +106,7 @@ For framepop users: If empty, `framepop-banish' is used instead.")
       (defun bbdb-extract-field-value (field)
         (let ((value (tm:bbdb-extract-field-value field)))
           (and value
-               (eword-decode-string value))))
-      ))
+               (eword-decode-string value))))))
 
 
 ;;; @ full-name canonicalization methods
@@ -120,25 +116,21 @@ For framepop users: If empty, `framepop-banish' is used instead.")
   (let (dest)
     (while (string-match "\\s +" str)
       (setq dest (cons (substring str 0 (match-beginning 0)) dest))
-      (setq str (substring str (match-end 0)))
-      )
+      (setq str (substring str (match-end 0))))
     (or (string= str "")
         (setq dest (cons str dest)))
     (setq dest (nreverse dest))
-    (mapconcat 'identity dest " ")
-    ))
+    (mapconcat 'identity dest " ")))
 
 (defun mime-bbdb/canonicalize-dots (str)
   (let (dest)
     (while (string-match "\\." str)
       (setq dest (cons (substring str 0 (match-end 0)) dest))
-      (setq str (substring str (match-end 0)))
-      )
+      (setq str (substring str (match-end 0))))
     (or (string= str "")
         (setq dest (cons str dest)))
     (setq dest (nreverse dest))
-    (mapconcat 'identity dest " ")
-    ))
+    (mapconcat 'identity dest " ")))
 
 (defvar mime-bbdb/canonicalize-full-name-methods
   '(eword-decode-string
@@ -168,15 +160,13 @@ the user confirms the creation."
                 (string-match (bbdb-user-mail-names)
 			      (std11-address-string addr)))
             (setq from (or (mime-entity-fetch-field message 'To)
-			   from))
-	  )
+			   from)))
         (if from
             (bbdb-annotate-message-sender
              (mime-decode-field-body from 'From) t
              (or (bbdb-invoke-hook-for-value mime-bbdb/auto-create-p)
                  offer-to-create)
-             offer-to-create))
-        ))))
+             offer-to-create))))))
 
 (defun mime-bbdb/annotate-sender (string)
   "Add a line to the end of the Notes field of the BBDB record
@@ -239,8 +229,7 @@ displaying the record corresponding to the sender of the current message."
 (defun mime-bbdb/define-keys ()
   (let ((mime-view-mode-map (current-local-map)))
     (define-key mime-view-mode-map ";" 'mime-bbdb/edit-notes)
-    (define-key mime-view-mode-map ":" 'mime-bbdb/show-sender)
-    ))
+    (define-key mime-view-mode-map ":" 'mime-bbdb/show-sender)))
 
 (add-hook 'mime-view-define-keymap-hook 'mime-bbdb/define-keys)
 
@@ -252,8 +241,7 @@ displaying the record corresponding to the sender of the current message."
   "Extract sigtype information from BBDB."
   (let ((record (bbdb-search-simple nil addr)))
     (and record
-         (bbdb-record-getprop record 'sigtype))
-    ))
+         (bbdb-record-getprop record 'sigtype))))
 
 (defun signature/set-bbdb-sigtype (sigtype addr)
   "Add sigtype information to BBDB."
@@ -266,31 +254,25 @@ displaying the record corresponding to the sender of the current message."
     (if record
         (progn
           (bbdb-record-putprop record 'sigtype sigtype)
-          (bbdb-change-record record nil))
-      )))
+          (bbdb-change-record record nil)))))
 
 (defun signature/get-sigtype-from-bbdb (&optional verbose)
   (let* ((to (std11-field-body "To"))
          (addr (and to
                     (car (cdr (mail-extract-address-components to)))))
          (sigtype (signature/get-bbdb-sigtype addr))
-         return
-         )
+         return)
     (if addr
         (if verbose
             (progn
               (setq return (signature/get-sigtype-interactively sigtype))
               (if (and (not (string-equal return sigtype))
                        (y-or-n-p
-                        (format "Register \"%s\" for <%s>? " return addr))
-                       )
-                  (signature/set-bbdb-sigtype return addr)
-                )
+                        (format "Register \"%s\" for <%s>? " return addr)))
+                  (signature/set-bbdb-sigtype return addr))
               return)
           (or sigtype
-              (signature/get-signature-file-name))
-          ))
-    ))
+              (signature/get-signature-file-name))))))
 
 
 ;;; @ end
