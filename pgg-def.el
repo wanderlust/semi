@@ -58,11 +58,6 @@
   :group 'pgg
   :type 'boolean)
 
-(defcustom pgg-messages-coding-system 'undecided
-  "Coding system used when reading from a PGP external process."
-  :group 'pgg
-  :type 'coding-system)
-
 (defvar pgg-status-buffer " *PGG status*")
 (defvar pgg-errors-buffer " *PGG errors*")
 (defvar pgg-output-buffer " *PGG output*")
