@@ -347,18 +347,31 @@ Each elements are regexp of field-name. [mime-view.el]")
 ;;; @@ buffer local variables
 ;;;
 
-;; for XEmacs
-(defvar mime::article/preview-buffer nil)
-(defvar mime::article/code-converter nil)
-(defvar mime::preview/article-buffer nil)
+;;; @@@ in raw buffer
+;;;
 
 (make-variable-buffer-local 'mime::article/content-info)
+
+(defvar mime::article/preview-buffer nil)
 (make-variable-buffer-local 'mime::article/preview-buffer)
-(make-variable-buffer-local 'mime::article/code-converter)
+
+(defvar mime-raw::text-decoder nil
+  "Function to decode text in current buffer.
+Interface of the function is (CHARSET &optional ENCODING).
+CHARSET is symbol of MIME charset and ENCODING is value of
+Content-Transfer-Encoding.")
+(make-variable-buffer-local 'mime-raw::text-decoder)
+
+
+;;; @@@ in view buffer
+;;;
 
 (make-variable-buffer-local 'mime::preview/mother-buffer)
 (make-variable-buffer-local 'mime::preview/content-list)
+
+(defvar mime::preview/article-buffer nil)
 (make-variable-buffer-local 'mime::preview/article-buffer)
+
 (make-variable-buffer-local 'mime::preview/original-major-mode)
 (make-variable-buffer-local 'mime::preview/original-window-configuration)
 
