@@ -603,10 +603,10 @@ If optional argument MESSAGE-INFO is not specified,
 	    t))))
 
 (defsubst mime-raw-rcnum-to-cinfo (rnum &optional cinfo)
-  (mime-raw-cnum-to-cinfo (reverse rnum) cinfo)
+  (mime-raw-entity-number-to-entity-info (reverse rnum) cinfo)
   )
 
-(defun mime-raw-cnum-to-cinfo (cn &optional cinfo)
+(defun mime-raw-entity-number-to-entity-info (cn &optional cinfo)
   (or cinfo
       (setq cinfo mime-raw-message-info)
       )
@@ -617,7 +617,7 @@ If optional argument MESSAGE-INFO is not specified,
 	  cinfo
 	(let ((rc (nth sn (mime-entity-info-children cinfo))))
 	  (if rc
-	      (mime-raw-cnum-to-cinfo (cdr cn) rc)
+	      (mime-raw-entity-number-to-entity-info (cdr cn) rc)
 	    ))
 	))))
 
