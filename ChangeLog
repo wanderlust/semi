@@ -1,3 +1,40 @@
+1999-11-02  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-edit.el (mime-edit-sign-pgp-mime): Rewrite with PGG functions.
+	(mime-edit-encrypt-pgp-mime): Likewise.
+	(mime-edit-encrypt-recipient-fields-list): Return recipients as list.
+
+	* mime-pgp.el: Add comment that this module is based on
+	draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME) and RFC 2440
+	(OpenPGP Message Format) as well. 
+	(mime-verify-application/pgp-signature): Use
+	`pgg-verify-region' instead of `mime-pgp-check-signature'.
+	(mime-display-application/pgp-signature): New function.
+	(mime-display-application/pgp-encrypted): New function.
+	(mime-display-application/pgp-keys): New function.
+
+	* semi-setup.el: Set up for
+	`mime-display-application/pgp-signature', 
+	`mime-display-application/pgp-encrypted',
+	`mime-display-application/pgp-keys'.
+	(mime-setup-enable-pgp): Default to t.
+
+	* SEMI-ELS (semi-modules-to-compile): Add `pgg', `pgg-parse',
+	`pgg-gpg', `pgg-pgp' and `pgg-pgp5' instead of `mime-mc'.
+
+	* EMIKO-VERSION, pgg-def.el, pgg.el, pgg-gpg.el, 
+	pgg-pgp5.el, pgg-pgp.el, pgg-parse.el: New file.
+
+	* mime-image.el (mime-display-image): Rewrite.
+
+	* semi-def.el (mime-user-interface-product): Modify for EMIKO.
+	(pgp-function-alist): Replace each method with PGG function.
+
+	* mime-view.el (mime-view-popup-menu): New variable.
+	(mime-view-popup-menu): New function.
+	(mime-view-define-keymap): Bind `mime-view-popup-menu' to
+	`mouse-button-3'.
+
 1999-11-01  Tanaka Akira  <akr@jaist.ac.jp>
 	* mime-view.el (mime-display-application/x-postpet): New function.
 	(mime-preview-condition): Set up for
