@@ -29,6 +29,8 @@ New interfaces are following:
 
     mime-view-body-visible-p (entity message-info)
 
+    mime-view-entity-separator-visible-p (entity message-info)
+
 
 ** API
 
@@ -44,14 +46,17 @@ various functions were renamed too.
 New interfaces are following:
 
     mime-view-insert-entity-button (entity message-info subj)
-    mime-view-display-body (start end entity message-info subj)
-    mime-view-entity-separator-function (entity message-info)
 
 
 *** Format of mime-acting-condition (acting-situation)
 
   Format of `mime-acting-condition' were changed.  `type' and
 `subtype' are separated and changed to symbol.
+
+
+*** Renaming
+
+- mime-view-buffer -> mime-preview-buffer
 
 
 Local variables:
