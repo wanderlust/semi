@@ -110,7 +110,6 @@
 (require 'sendmail)
 (require 'mail-utils)
 (require 'mel)
-(require 'eword-encode) ; eword-encode-field-body
 (require 'mime-view)
 (require 'signature)
 (require 'alist)
@@ -711,7 +710,7 @@ Tspecials means any character that matches with it in header must be quoted.")
 
 (defconst mime-edit-mime-version-field-for-message/partial
   (concat "MIME-Version:"
-	  (eword-encode-field-body
+	  (mime-encode-field-body
 	   (concat " 1.0 (split by " mime-edit-version ")\n")
 	   "MIME-Version:"))
   "MIME version field for message/partial.")
