@@ -1006,8 +1006,9 @@ It calls following-method selected from variable
 				(concat "^"
 					(apply (function regexp-or) fields)
 					":") ""))))
-		     (if (string= (mime-entity-info-type/subtype ci)
-				  "message/rfc822")
+		     (if (and
+			  (eq (mime-entity-info-media-type ci) 'message)
+			  (eq (mime-entity-info-media-subtype ci) 'rfc822))
 			 nil
 		       (if str
 			   (insert str)
