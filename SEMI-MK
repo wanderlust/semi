@@ -2,6 +2,7 @@
 ;;;
 ;;; $Id$
 ;;;
+;;; Code:
 
 (defun config-semi ()
   (let (prefix exec-prefix lisp-dir)

@@ -1,14 +1,13 @@
 ;;; mime-bbdb.el --- SEMI shared module for BBDB
 
 ;; Copyright (C) 1995,1996,1997 Shuhei KOBAYASHI
-;; Copyright (C) 1997 MORIOKA Tomohiko
+;; Copyright (C) 1997,1998 MORIOKA Tomohiko
 
 ;; Author: Shuhei KOBAYASHI <shuhei-k@jaist.ac.jp>
 ;; Maintainer: Shuhei KOBAYASHI <shuhei-k@jaist.ac.jp>
-;; Version: $Id$
 ;; Keywords: BBDB, MIME, multimedia, multilingual, mail, news
 
-;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
+;; This file is part of SEMI (Suite of Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as

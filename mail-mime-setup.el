@@ -1,13 +1,11 @@
 ;;; mail-mime-setup.el --- setup file for mail-mode.
 
-;; Copyright (C) 1994,1995,1996,1997 Free Software Foundation, Inc.
+;; Copyright (C) 1994,1995,1996,1997,1998 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
-;; Version:
-;;	$Id$
 ;; Keywords: mail-mode, MIME, multimedia, multilingual, encoded-word
 
-;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
+;; This file is part of SEMI (Setting for Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as

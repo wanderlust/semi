@@ -1,6 +1,6 @@
 ;;; mime-image.el --- mime-view filter to display images
 
-;; Copyright (C) 1995,1996,1997 MORIOKA Tomohiko
+;; Copyright (C) 1995,1996,1997,1998 MORIOKA Tomohiko
 ;; Copyright (C) 1996 Dan Rich
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
@@ -8,12 +8,10 @@
 ;; Maintainer: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Created: 1995/12/15
 ;;	Renamed: 1997/2/21 from tm-image.el
-;; Version:
-;;	$Id$
 
 ;; Keywords: image, picture, X-Face, MIME, multimedia, mail, news
 
-;; This file is part of XEmacs.
+;; This file is part of SEMI (Suite of Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
