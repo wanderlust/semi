@@ -1,5 +1,11 @@
 1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-view-display-message): Don't use
+	'mime-entity-media-type, 'mime-entity-media-subtype and
+	'mime-entity-parameters.
+
+1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-play.el (mime-mailcap-method-filename-alist): New variable.
 	(mime-mailcap-method-sentinel): New function.
 	(mime-activate-mailcap-method): Use 'mime-mailcap-method-sentinel;
