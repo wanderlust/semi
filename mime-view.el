@@ -726,7 +726,11 @@ The compressed face will be piped to this command.")
       (setq mime-preview-original-major-mode mode)
       (setq major-mode 'mime-view-mode)
       (setq mode-name "MIME-View")
-      (mime-view-display-message message-info the-buf obuf)
+      (mime-view-display-entity message-info message-info
+				the-buf obuf
+				'((entity-button . invisible)
+				  (header . visible)
+				  ))
       (set-buffer-modified-p nil)
       )
     (setq buffer-read-only t)
@@ -734,82 +738,6 @@ The compressed face will be piped to this command.")
     )
   (setq mime-preview-buffer obuf)
   )
-
-(defun mime-view-display-message (message-info ibuf obuf)
-  (let* ((start (mime-entity-point-min message-info))
-	 (end (mime-entity-point-max message-info))
-	 (content-type (mime-entity-content-type message-info))
-         (encoding (mime-entity-encoding message-info))
-	 end-of-header e nb ne subj)
-    (set-buffer ibuf)
-    (goto-char start)
-    (setq end-of-header (if (re-search-forward "^$" nil t)
-			    (1+ (match-end 0))
-			  end))
-    (if (> end-of-header end)
-	(setq end-of-header end)
-      )
-    (save-restriction
-      (narrow-to-region start end)
-      (setq subj (eword-decode-string (mime-raw-get-subject message-info)))
-      )
-    (set-buffer obuf)
-    (setq nb (point))
-    (narrow-to-region nb nb)
-    ;; Insert message-header
-    (save-restriction
-      (narrow-to-region (point)(point))
-      (insert-buffer-substring mime-raw-buffer start end-of-header)
-      (let ((f (cdr (assq mime-preview-original-major-mode
-			  mime-view-content-header-filter-alist))))
-	(if (functionp f)
-	    (funcall f)
-	  (mime-view-default-content-header-filter)
-	  ))
-      (run-hooks 'mime-view-content-header-filter-hook)
-      )
-    (let* ((situation
-	    (ctree-match-calist
-	     mime-preview-condition
-	     (list* (cons 'major-mode major-mode)
-		    (cons 'encoding   encoding)
-		    (or content-type
-			(make-mime-content-type 'text 'plain)))))
-	   (message-button
-	    (cdr (assq 'message-button situation)))
-	   (body-presentation-method
-	    (cdr (assq 'body-presentation-method situation))))
-      (when (eq message-button 'visible)
-	(goto-char (point-max))
-	(mime-view-insert-entity-button message-info message-info subj)
-	)
-      (cond ((eq body-presentation-method 'with-filter)
-	     (let ((body-filter (cdr (assq 'body-filter situation))))
-	       (save-restriction
-		 (narrow-to-region (point-max)(point-max))
-		 (insert-buffer-substring mime-raw-buffer end-of-header end)
-		 (funcall body-filter situation)
-		 )))
-	    ((functionp body-presentation-method)
-	     (funcall body-presentation-method situation)
-	     )
-	    ((null (mime-entity-children message-info))
-	     (goto-char (point-max))
-	     (mime-view-insert-entity-button message-info message-info subj)
-	     ))
-      (setq ne (point-max))
-      (widen)
-      (put-text-property nb ne 'mime-view-raw-buffer ibuf)
-      (put-text-property nb ne 'mime-view-entity message-info)
-      (goto-char ne)
-      (let ((children (mime-entity-children message-info))
-	    (default-situation
-	     (cdr (assq 'childrens-situation situation))))
-	(while children
-	  (mime-view-display-entity (car children) message-info ibuf obuf
-				    default-situation)
-	  (setq children (cdr children))
-	  )))))
 
 (defun mime-view-display-entity (entity message-info ibuf obuf
 					default-situation)
@@ -831,13 +759,15 @@ The compressed face will be piped to this command.")
       (setq subj (eword-decode-string (mime-raw-get-subject entity)))
       )
     (let* ((situation
-	    (ctree-match-calist mime-preview-condition
-				(append
-				 (or content-type
-				     (make-mime-content-type 'text 'plain))
-				 (list* (cons 'encoding   encoding)
-					(cons 'major-mode major-mode)
-					default-situation))))
+	    (or
+	     (ctree-match-calist mime-preview-condition
+				 (append
+				  (or content-type
+				      (make-mime-content-type 'text 'plain))
+				  (list* (cons 'encoding   encoding)
+					 (cons 'major-mode major-mode)
+					 default-situation)))
+	     default-situation))
 	   (button-is-invisible
 	    (eq (cdr (assq 'entity-button situation)) 'invisible))
 	   (header-is-visible
