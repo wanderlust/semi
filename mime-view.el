@@ -34,7 +34,7 @@
 (require 'tl-misc)
 (require 'std11)
 (require 'mel)
-(require 'tm-ew-d)
+(require 'eword-decode)
 (require 'mime-parse)
 (require 'mime-text)
 
