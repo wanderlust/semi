@@ -760,7 +760,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
     )
   "Menu for MIME Viewer")
 
-(cond (running-xemacs
+(cond ((featurep 'xemacs)
        (defvar mime-view-xemacs-popup-menu
 	 (cons mime-view-menu-title
 	       (mapcar (function
@@ -830,7 +830,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
     (define-key mime-view-mode-map
       [backspace] (function mime-preview-scroll-down-entity))
     (if (functionp default)
-	(cond (running-xemacs
+	(cond ((featurep 'xemacs)
 	       (set-keymap-default-binding mime-view-mode-map default)
 	       )
 	      (t
@@ -841,7 +841,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	(define-key mime-view-mode-map
 	  mouse-button-2 (function mime-button-dispatcher))
       )
-    (cond (running-xemacs
+    (cond ((featurep 'xemacs)
 	   (define-key mime-view-mode-map
 	     mouse-button-3 (function mime-view-xemacs-popup-menu))
 	   )
