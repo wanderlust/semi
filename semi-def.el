@@ -224,6 +224,7 @@ If optional argument MODE is 'with-default, CONDITION is added with
 default rule.
 If optional argument FILE is specified, it is loaded when CONDITION is
 activate."
+  (in-calist-package 'mime-view)
   (let ((sym (cdr (assq target-type mime-condition-type-alist))))
     (if sym
 	(let ((func (cdr (or (assq mode mime-condition-mode-alist)
