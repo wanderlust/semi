@@ -62,6 +62,7 @@ tar:
 	cd /tmp; cvs export -d semi-$(VERSION) \
 		-r semi-`echo $(VERSION) \
 			| sed s/\\\\./_/ | sed s/\\\\./_/` SEMI/semi'
+	$(RM) /tmp/semi-$(VERSION)/ftp.in
 	cd /tmp; $(TAR) cvzf semi-$(VERSION).tar.gz semi-$(VERSION)
 	cd /tmp; $(RM) -r semi-$(VERSION)
 	sed "s/VERSION/$(VERSION)/" < ftp.in > ftp
