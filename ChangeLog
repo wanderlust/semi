@@ -1,3 +1,7 @@
+1999-05-12  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* WEMI: Version 1.13.4 (Nishi-Yaizu) released.
+
 1999-04-06  Shuhei KOBAYASHI  <shuhei@aqua.ocn.ne.jp>
 
 	* mime-edit.el (mime-delete-field): Use `std11-field-end'.
