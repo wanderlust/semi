@@ -1,11 +1,19 @@
 2000-12-27  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
+	* mime-play.el (mime-play-message-coding-system): Renamed from
+	`mime-mailcap-method-messages-coding-system'.
+
+	* pgg-def.el (pgg-messages-coding-system): Change default value to
+	nil.
+
+2000-12-27  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
 	* mime-play.el (mime-activate-mailcap-method): Fix typo.
 
 2000-12-26   Daiki Ueno  <ueno@unixuser.org>
 
-	* mime-play.el (mime-mailcap-method-messages-coding-system):
-	New user option.
+	* mime-play.el (mime-mailcap-method-messages-coding-system): New
+	variable.
 	(mime-activate-mailcap-method): Use it.
 
 2000-12-26   Daiki Ueno  <ueno@unixuser.org>
@@ -20,6 +28,7 @@
 	(pgg-pgp5-process-region): Use `binary-funcall' instead of
 	`binary-to-text-funcall'.
 
+
 2000-12-25  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
 	* SEMI: Version 1.14.2 (Daish-Dòji)-A released.
