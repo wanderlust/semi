@@ -63,7 +63,7 @@ SITUATION.  It must be symbol."
     (if (not (eq (char-after (1- (point))) ?\n))
 	(insert "\n")
       )
-    (mime-browse-add-url-buttons)
+    (mime-add-url-buttons)
     (run-hooks 'mime-display-text/plain-hook)
     ))
 
