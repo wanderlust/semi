@@ -1,8 +1,8 @@
 ;;; mime-w3.el --- mime-view content filter for text
 
-;; Copyright (C) 1994,1995,1996,1997,1998,1999 Free Software Foundation, Inc.
+;; Copyright (C) 1994,95,96,97,98,99,2000 Free Software Foundation, Inc.
 
-;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;; Author: MORIOKA Tomohiko <tomo@m17n.org>
 ;; Keywords: HTML, MIME, multimedia, mail, news
 
 ;; This file is part of SEMI (Suite of Emacs MIME Interfaces).
