@@ -1195,7 +1195,7 @@ Optional argument ENCODING specifies an encoding method such as base64."
   (save-excursion
     (let ((beg (point)))
       (if (mime-edit-goto-tag)
-	  (let ((top (point)))
+	  (progn
 	    (goto-char (match-end 0))
 	    (if (invisible-p (point))
 		(next-visible-point (point))
