@@ -793,13 +793,18 @@ The compressed face will be piped to this command.")
 		 )))
 	    ((functionp body-presentation-method)
 	     (funcall body-presentation-method entity situation)
+	     )
+	    (t
+	     (when button-is-invisible
+	       (goto-char (point-max))
+	       (mime-view-insert-entity-button entity message-info subj)
+	       )
+	     (or header-is-visible
+		 (progn
+		   (goto-char (point-max))
+		   (insert "\n")
+		   ))
 	     ))
-      (or header-is-visible
-	  body-presentation-method
-	  (progn
-	    (goto-char (point-max))
-	    (insert "\n")
-	    ))
       (setq ne (point-max))
       (widen)
       (put-text-property nb ne 'mime-view-raw-buffer ibuf)
