@@ -184,16 +184,18 @@ If is is not found, return DEFAULT-ENCODING."
 
 (defsubst make-mime-entity (node-id
 			    point-min point-max
-			    content-type encoding children)
+			    content-type content-disposition encoding
+			    children)
   (vector node-id point-min point-max
-	  content-type encoding children))
+	  content-type content-disposition encoding children))
 
-(defsubst mime-entity-node-id (entity-info)       (aref entity-info 0))
-(defsubst mime-entity-point-min (entity-info)     (aref entity-info 1))
-(defsubst mime-entity-point-max (entity-info)     (aref entity-info 2))
-(defsubst mime-entity-content-type (entity-info)  (aref entity-info 3))
-(defsubst mime-entity-encoding (entity-info)      (aref entity-info 4))
-(defsubst mime-entity-children (entity-info)      (aref entity-info 5))
+(defsubst mime-entity-node-id (entity)             (aref entity 0))
+(defsubst mime-entity-point-min (entity)           (aref entity 1))
+(defsubst mime-entity-point-max (entity)           (aref entity 2))
+(defsubst mime-entity-content-type (entity)        (aref entity 3))
+(defsubst mime-entity-content-disposition (entity) (aref entity 4))
+(defsubst mime-entity-encoding (entity)            (aref entity 5))
+(defsubst mime-entity-children (entity)            (aref entity 6))
 
 (defsubst mime-entity-media-type (entity)
   (mime-content-type-primary-type (mime-entity-content-type entity)))
@@ -249,7 +251,7 @@ If is is not found, return DEFAULT-ENCODING."
       (setq children (cons ret children))
       )
     (make-mime-entity node-id beg (point-max)
-		      content-type encoding (nreverse children))
+		      content-type nil encoding (nreverse children))
     ))
 
 (defun mime-parse-message (&optional default-ctl default-encoding node-id)
@@ -258,6 +260,7 @@ DEFAULT-CTL is used when an entity does not have valid Content-Type
 field.  Its format must be as same as return value of
 mime-{parse|read}-Content-Type."
   (let* ((content-type (or (mime-read-Content-Type) default-ctl))
+	 (content-disposition (mime-read-Content-Disposition))
 	 (encoding (mime-read-Content-Transfer-Encoding default-encoding))
 	 (boundary (assoc "boundary"
 			  (mime-content-type-parameters content-type))))
@@ -272,7 +275,7 @@ mime-{parse|read}-Content-Type."
 		)
 	   (goto-char (point-min))
 	   (make-mime-entity node-id (point-min) (point-max)
-			     content-type encoding
+			     content-type content-disposition encoding
 			     (save-restriction
 			       (narrow-to-region
 				(if (re-search-forward "^$" nil t)
@@ -286,7 +289,7 @@ mime-{parse|read}-Content-Type."
 	   )
 	  (t 
 	   (make-mime-entity node-id (point-min) (point-max)
-			     content-type encoding nil)
+			     content-type content-disposition encoding nil)
 	   ))
     ))
 
