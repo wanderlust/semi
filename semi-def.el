@@ -26,6 +26,9 @@
 
 (require 'emu)
 
+(eval-when-compile (require 'cl))
+
+
 (defconst mime-module-version '("SEMI" "Uramoto" 1 3 3)
   "Implementation name, version name and numbers of MIME-kernel package.")
 
@@ -119,6 +122,43 @@
 	    (funcall mime-button-mother-dispatcher event)
 	  )
 	))))
+
+
+;;; @ menu
+;;;
+
+(if window-system
+    (if (featurep 'xemacs)
+	(defun select-menu-alist (title menu-alist)
+	  (let (ret)
+	    (popup-menu
+	     (list* title
+		    "---"
+		    (mapcar (function
+			     (lambda (cell)
+			       (vector (car cell)
+				       `(progn
+					  (setq ret ',(cdr cell))
+					  (throw 'exit nil)
+					  )
+				       t)
+			       ))
+			    menu-alist)
+		    ))
+	    (recursive-edit)
+	    ret))
+      (defun select-menu-alist (title menu-alist)
+	(x-popup-menu
+	 (list '(1 1) (selected-window))
+	 (list title (cons title menu-alist))
+	 ))
+      )
+  (defun select-menu-alist (title menu-alist)
+    (cdr
+     (assoc (completing-read (concat title " : ") menu-alist)
+	    menu-alist)
+     ))
+  )
 
 
 ;;; @ PGP
