@@ -1,4 +1,9 @@
-2000-01-16  MORIOKA Tomohiko  <tomo@etl.go.jp>
+2000-01-16  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-reduce-situation-examples): New function;
+	delete `mime-reduce-acting-situation-examples'.
+
+2000-01-16  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-view.el (mime-view-find-every-situations): Renamed from
 	`mime-view-find-every-acting-situation'; changed to variable.
