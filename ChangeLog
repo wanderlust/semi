@@ -1,3 +1,8 @@
+1998-11-30  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (eliminate-top-spaces): New function (moved from
+	mime-def.el of FLIM).
+
 1998-11-17  Kazuhiro Ohta     <ohta@ele.cst.nihon-u.ac.jp>
 
 	* mime-partial.el
