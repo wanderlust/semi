@@ -24,7 +24,8 @@ VERSION_SPECIFIC_LISPDIR = NONE
 GOMI	= *.elc
 
 VERSION	= $(API).$(RELEASE)
-ARC_DIR = /home/tomo/public_html/comp/emacsen/lisp/semi/semi-$(API)-for-flim-$(FLIM_API)
+ARC_DIR_PREFIX = /home/kanji/tomo/public_html/comp/emacsen/lisp
+ARC_DIR = $(ARC_DIR_PREFIX)/semi/semi-$(API)-for-flim-$(FLIM_API)
 
 
 elc:
