@@ -1,5 +1,13 @@
 2001-09-24   Daiki Ueno  <ueno@unixuser.org>
 
+	* mime-view.el (mime-view-default-charset): Rename from
+	`mime-view-default-mime-charset'.
+	(mime-view-read-charset): Rename from `mime-view-read-mime-charset'.
+	(mime-preview-toggle-display): Respect "*charset" condition instead of
+	"*mime-charset".
+
+2001-09-24   Daiki Ueno  <ueno@unixuser.org>
+
 	* mime-view.el: Require `mcharset'.
 	(mime-view-insert-text-content): Rewrite.
 	(mime-view-default-content-transfer-encoding): New function.
