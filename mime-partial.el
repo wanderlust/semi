@@ -55,7 +55,7 @@ automatically."
 	    (not (y-or-n-p "Merge partials?"))
 	    )
 	(mime-store-message/partial-piece entity situation)
-      (setq subject-id (mime-read-field 'Subject entity))
+      (setq subject-id (mime-entity-read-field entity 'Subject))
       (if (string-match "[0-9\n]+" subject-id)
 	  (setq subject-id (substring subject-id 0 (match-beginning 0)))
 	)
