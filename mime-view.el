@@ -385,9 +385,9 @@ mother-buffer."
               ;;   (symbol-value 'file-coding-system))
               ;;  (t nil))
 	      )
-	(condition-case nil
+	(condition-case error
 	    (eval-buffer)
-	  (error nil))
+	  (error (message "%s is broken: %s" file (cdr error))))
 	;; format check
 	(condition-case nil
 	    (let ((i 0))
