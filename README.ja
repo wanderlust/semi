@@ -1,0 +1,258 @@
+[SEMI の核パッケージの README (日本語版)]
+
+SEMI とは？
+============
+
+  SEMI は GNU Emacs に MIME 機能を提供するライブラリーです。MIME  はメッ
+  セージに (ASCII) plain text 以外の内容やヘッダーを含められるようにす
+  るために提案されている internet standard です。
+
+	RFC 2045 : Internet Message Bodies
+	RFC 2046 : Media Types
+	RFC 2047 : Message Header Extensions
+	RFC 2048 : MIME Registration Procedures
+	RFC 2049 : MIME Conformance
+
+  SEMI は以下の機能があります。
+
+	- MIME メッセージ閲覧 (mime-view-mode) (RFC 2045 .. 2049)
+	- MIME メッセージ作成 (mime-edit-mode) (RFC 2045 .. 2049)
+
+  MIME メッセージ閲覧と作成は以下の機能も提供しています:
+
+	- Content-Disposition フィールドによるファイル名の扱い (RFC
+	- 1806)
+	- PGP/MIME 安全な Multipart (RFC 2015)
+	- application/pgp (draft-kazu-pgp-mime-00.txt; obsolete)
+	- text/richtext (RFC 1521; obsolete; 閲覧のみ)
+	- text/enriched (RFC 1896)
+	- mailcap による外部方法設定 (RFC 1524)
+
+  このパッケージは MUA のための MIME 拡張を含んでいないことに注意して
+  ください。それらは別のパッケージとしてリリースされます。
+
+
+必要な環境
+====================
+
+  SEMI は mule 機能つきの XEmacs 20.2 以降と Emacs 20 をサポートします。
+
+  SEMI は Emacs 19.28 や XEmacs 19.14 以前はサポートしません。SEMI は
+  Emacs 19.29 から Emacs 19.34、XEmacs 19.15 から mule 機能のない
+  XEmacs 20.2 まではサポートしませんが、SEMI はそれらで動作するかもし
+  れません。
+
+  SEMI は APEL (9.5 以降) と FLIM (1.11.1 以降) パッケージを必要としま
+  す。SEMI をインストールする前にそれらをインストールしてください。
+  APEL パッケージは以下のところで取得可能です:
+
+	ftp://ftp.jaist.ac.jp/pub/GNU/elisp/apel/
+
+  FLIM パッケージは以下のところで取得可能です。
+
+	ftp://ftp.jaist.ac.jp/pub/GNU/elisp/flim/
+
+  PGP/MIME と application/pgp は mailcrypt か tiny-pgp パッケージを必
+  要とします。
+
+  パッケージ enriched.el は text/enriched を作成するために必要ですので、
+  Emacs 19.28 以前 (公式版の MULE 2.3 を含む) では、text/enriched の
+  WYSIWYG 作成は使用できません。
+
+インストール
+============
+
+(a) 展開した場所で実行
+
+  他のディレクトリーにインストールしたくないなら、以下のことだけをやっ
+  てください:
+
+	% make
+
+  emacs のコマンド名を指定することができます。例えば、
+
+	% make EMACS=xemacs
+
+  `EMACS=...' が省略されると、Emacs=emacs が使われます。
+
+(b) make install
+
+  他のディレクトリーにインストールしたいなら、以下のことをしてください:
+
+	% make install
+
+  emacs のコマンド名を指定することができます。例えば、
+
+	% make install EMACS=xemacs
+
+  `EMACS=...' が省略されると、Emacs=emacs が使われます。
+
+  Emacs Lisp プログラムとシェルスクリプトのためのディレクトリー木の接
+  頭辞 (prefix) を指定することができます。例えば、
+
+	% make install PREFIX=~/
+
+  `PREFIX=...' が省略されると、指定された emacs コマンドのディレクトリー
+  木の接頭辞が使用されます (おそらく /usr/local です)。
+
+  例えば、PREFIX=/usr/local と Emacs 19.34 が指定されれば、以下のディ
+  レクトリー木が作成されます。
+
+	/usr/local/share/emacs/20.2/site-lisp/	--- emu
+	/usr/local/share/emacs/site-lisp/apel/	--- APEL
+	/usr/local/share/emacs/site-lisp/flim/   --- FLIM
+	/usr/local/share/emacs/site-lisp/semi/   --- SEMI
+
+  site-lisp ディレクトリーを指定することができます。例えば、:
+
+    % make install LISPDIR=~/share/emacs/lisp
+
+  `LISPDIR=...' が省略されると、指定された emacs のコマンドの
+  site-lisp ディレクトリーが使われます (おそらく
+  /usr/local/share/emacs/site-lisp か /usr/local/lib/xemacs/site-lisp)
+  です。
+
+  emu モジュール (APEL パッケージに入っています) が標準でないディレク
+  トリーにインストールされている場合は、それらのある場所を指定する必要
+  があります。例えば、:
+
+    % make install VERSION_SPECIFIC_LISPDIR=~/elisp
+
+(c) XEmacs のパッケージとしてインストールする
+
+  XEmacs のパッケージディレクトリーにインストールする場合は、以下のこ
+  とをしてください:
+
+	% make install-package
+
+  emacs のコマンド名を指定することができます。例えば、
+
+	% make install-package XEMACS=xemacs-21
+
+  `XEMACS=...' が省略されると、XEMACS=xemacs が使用されます。
+
+  パッケージのディレクトリーを指定することができます。例えば:
+
+	% make install PACKAGEDIR=~/.xemacs
+
+  `PACKAGEDIR=...' が省略されると、存在するパッケージディレクトリーの
+  最初のものが使われます。
+
+  XEmacs のパッケージシステムは XEmacs 21.0 かそれ以降を要求することに
+  注意してください。
+
+(a,b,c)
+
+  他の省略可能な設定をファイル ${archive}/SEMI-CFG を編集することで指
+  定できます。${archive}/README.ja と ${archive}/SEMI/CFG のコメントを
+  読んでください。
+
+初期化
+==============
+
+(a) load-path
+
+  Emacs か Mule を使っているなら、FLIM のディレクトリーを
+  load-path に追加してください。初期設定でインストールしたなら、次のよ
+  うに subdirs.el を書くことができます。例:
+
+  --------------------------------------------------------------------
+  (normal-top-level-add-to-load-path
+   '("apel" "flim" "semi"))
+  --------------------------------------------------------------------
+
+  XEmacs を使っているなら、load-path を設定する必要はありません。
+
+(b) mime-setup
+
+  以下のものを ~/.emacs に入れてください。
+
+	(load "mime-setup")
+
+
+説明文書
+=============
+
+  初めに、${archive}/README.en を読んでください。
+
+  RFC 822, 1524, 1806, 1847, 1896, 2015, 2045, 2046, 2047, 2048, 2049
+  は anonymous ftp で以下のところから取得可能です。
+
+	ftp://ftp.merit.edu/internet/documents/rfc/
+
+
+メーリングリスト
+===========
+
+  バグ報告や改善の提案を書いたときは、是非 tm メーリングリストに送って
+  ください:
+
+	bug-tm-en@chamonix.jaist.ac.jp	(英語)
+	bug-tm-ja@chamonix.jaist.ac.jp	(日本語)
+
+  tm ML を通して、SEMIのバグを報告したり、SEMI の最新のリリースを取得
+  したり、SEMI の将来の拡張の議論をしたりすることができます。tm ML に
+  参加するには、空の電子メールを
+
+	tm-en-help@chamonix.jaist.ac.jp	(英語)
+	tm-ja-help@chamonix.jaist.ac.jp	(日本語)
+
+  に送ってください。
+
+  morioka@jaist.ac.jp のような、作者に直接メールを送らないように注意し
+  てください。それは、発生した問題は他の環境でも起こっているはずだから
+  です (もしそうでなければ、それは設定の問題で、SEMI のバグではありま
+  せん)。 tm メーリングリストで議論すべきです。とにかく、作者への直接
+  のメールは反応がないかもしれません。メールは tm メーリングリストへ送っ
+  てください。
+
+
+CVS による開発
+=====================
+
+  CVS による開発に参加したいときは、アカウント名と UNIX 様式で暗号化さ
+  れたパスワードを
+
+	cvs@chamonix.jaist.ac.jp
+
+  に送ってください。開発に参加されることを期待しています。
+
+
+作者
+=======
+
+根本部分の作者
+
+    MORIOKA Tomohiko <morioka@jaist.ac.jp>
+	(the author of mime-view and various parts of SEMI)
+    UMEDA Masanobu <umerin@mse.kyutech.ac.jp>
+	(the author of mime.el of emacs-mime-tools.  mime.el is the
+	origin of mime-edit.el of SEMI)
+
+他の作者
+
+    Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+	(a major author of signature.el and a lot of codes)
+    MASUTANI Yasuhiro <masutani@me.es.osaka-u.ac.jp>
+	(anonymous ftp codes of mime-play.el)
+    OKABE Yasuo <okabe@kudpc.kyoto-u.ac.jp>
+	(a major author of mime-partial.el and signature.el)
+
+    Steinar Bang <sb@metis.no>
+    Steven L. Baur <steve@miranova.com>
+    Kevin Broadey <KevinB@bartley.demon.co.uk>
+    Alastair Burt <burt@dfki.uni-kl.de>
+    Eric Ding <ericding@San-Jose.ate.slb.com>
+    Thierry Emery <Thierry.Emery@aar.alcatel-alsthom.fr>
+    Simon Josefsson <jas@pdc.kth.se>
+    Jens Lautenbacher <jtl@tkm.physik.uni-karlsruhe.de>
+    Carsten Leonhardt <leo@arioch.tng.oche.de>
+    Pekka Marjola <marjola@bilbo.ntc.nokia.com>
+    Hisashi Miyashita <himi@bird.scphys.kyoto-u.ac.jp>
+    Kazuhiro Ohta <ohta@ele.cst.nihon-u.ac.jp>
+    Alexandre Oliva <oliva@dcc.unicamp.br>
+    Fran,Agois Pinard <pinard@iro.umontreal.ca>
+    Artur Pioro <artur@flugor.if.uj.edu.pl>
+    Dan Rich <drich@morpheus.corp.sgi.com>
+        (contribute to evolve mime-image.el with XEmacs)
+    Katsumi Yamaoka <yamaoka@ga.sony.co.jp>
