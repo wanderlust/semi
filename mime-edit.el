@@ -690,18 +690,18 @@ Tspecials means any character that matches with it in header must be quoted.")
 	   )
 	 (get-text-property pos 'invisible)
 	 )
+       (defun next-visible-point (pos)
+	 (save-excursion
+	   (if (save-excursion
+		 (goto-char pos)
+		 (eq (following-char) ?\n)
+		 )
+	       (setq pos (1+ pos))
+	     )
+	   (or (next-single-property-change pos 'invisible)
+	       (point-max))
+	   ))
        )
-      (defun next-visible-point (pos)
-	(save-excursion
-	  (if (save-excursion
-		(goto-char pos)
-		(eq (following-char) ?\n)
-		)
-	      (setq pos (1+ pos))
-	    )
-	  (or (next-single-property-change pos 'invisible)
-	      (point-max))
-	  ))
       (t
        (defun invisible-region (start end)
 	 (if (save-excursion
