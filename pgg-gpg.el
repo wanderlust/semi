@@ -37,7 +37,13 @@
   :type 'string)
 
 (defcustom pgg-gpg-shell-file-name "/bin/sh"
-  "The GnuPG executable."
+  "File name to load inferior shells from.  Bourne shell or its equivalent
+\(not tcsh) is needed for \"2>\"."
+  :group 'pgg-gpg
+  :type 'string)
+
+(defcustom pgg-gpg-shell-command-switch "-c"
+  "Switch used to have the shell execute its command line argument."
   :group 'pgg-gpg
   :type 'string)
 
@@ -77,6 +83,7 @@
 	   (list (concat "2>" errors-file-name)
 		 (concat "3>" status-file-name))))
 	 (shell-file-name pgg-gpg-shell-file-name)
+	 (shell-command-switch pgg-gpg-shell-command-switch)
 	 (output-buffer pgg-output-buffer)
 	 (errors-buffer pgg-errors-buffer)
 	 (status-buffer pgg-status-buffer)
@@ -203,7 +210,7 @@
       (replace-match ""))
     (pgg-process-when-success
       (goto-char (point-min))
-      (while (re-search-forward "\r$" end t)
+      (while (re-search-forward "\r$" nil t)
 	(replace-match ""))
       (when (re-search-forward "^-+BEGIN PGP SIGNATURE" nil t);XXX
 	(let ((packet 
