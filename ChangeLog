@@ -1,5 +1,10 @@
 1998-05-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-parse.el, mime-play.el, mime-view.el: Rename
+	'mime/Content-Disposition -> 'mime-read-Content-Disposition.
+
+1998-05-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* Makefile (PACKAGE): New variable.
 	(tar): Use $(PACKAGE).
 
