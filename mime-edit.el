@@ -36,14 +36,14 @@
 ;; composed in the tagged MIME format are automatically translated
 ;; into a MIME compliant message when exiting the mode.
 
-;; Mule (a multilingual extension to Emacs 18 and 19) has a capability
-;; of handling multilingual text in limited ISO-2022 manner that is
-;; based on early experiences in Japanese Internet community and
-;; resulted in RFC 1468 (ISO-2022-JP charset for MIME).  In order to
-;; enable multilingual capability in single text message in MIME,
-;; charset of multilingual text written in Mule is declared as either
-;; `ISO-2022-JP-2' [RFC 1554].  Mule is required for reading the such
-;; messages.
+;; Mule (multilingual feature of Emacs 20 and multilingual extension
+;; for XEmacs 20) has a capability of handling multilingual text in
+;; limited ISO-2022 manner that is based on early experiences in
+;; Japanese Internet community and resulted in RFC 1468 (ISO-2022-JP
+;; charset for MIME).  In order to enable multilingual capability in
+;; single text message in MIME, charset of multilingual text written
+;; in Mule is declared as either `ISO-2022-JP-2' [RFC 1554].  Mule is
+;; required for reading the such messages.
 
 ;; This MIME composer can work with Mail mode, mh-e letter Mode, and
 ;; News mode.  First of all, you need the following autoload
@@ -368,6 +368,8 @@ If encoding is nil, it is determined from its contents.")
     (iso-2022-jp	7 "base64")
     (iso-2022-kr	7 "base64")
     (euc-kr		8 "base64")
+    (cn-gb2312		8 "quoted-printable")
+    (cn-big5		8 "base64")
     (gb2312		8 "quoted-printable")
     (big5		8 "base64")
     (iso-2022-jp-2	7 "base64")
@@ -675,8 +677,6 @@ Tspecials means any character that matches with it in header must be quoted.")
 		  mime-edit-mode-map)
        ))
 
-;;(defvar mime-edit-mode-old-local-map nil) ; buffer local variable
-
 
 ;;; @ functions
 ;;;
@@ -691,40 +691,35 @@ format. The message tag looks like:
 	--[[text/plain; charset=ISO-2022-JP][7bit]]
 
 The tag specifies the MIME content type, subtype, optional parameters
-and transfer encoding of the message following the tag. Messages
-without any tag are treated as `text/plain' by default. Charset and
+and transfer encoding of the message following the tag.  Messages
+without any tag are treated as `text/plain' by default.  Charset and
 transfer encoding are automatically defined unless explicitly
-specified. Binary messages such as audio and image are usually hidden.
-The messages in the tagged MIME format are automatically translated
-into a MIME compliant message when exiting this mode.
+specified.  Binary messages such as audio and image are usually
+hidden.  The messages in the tagged MIME format are automatically
+translated into a MIME compliant message when exiting this mode.
 
-Available charsets depend on Emacs version being used. The following
+Available charsets depend on Emacs version being used.  The following
 lists the available charsets of each emacs.
 
-EMACS 18:	US-ASCII is only available.
-NEmacs:		US-ASCII and ISO-2022-JP are available.
-EMACS 19:	US-ASCII and ISO-8859-1 (or other charset) are available.
-XEmacs 19:	US-ASCII and ISO-8859-1 (or other charset) are available.
-Mule:		US-ASCII, ISO-8859-* (except for ISO-8859-5), KOI8-R,
-		ISO-2022-JP, ISO-2022-JP-2, ISO-2022-KR, BIG5 and
-		ISO-2022-INT-1 are available.
+Without mule:	US-ASCII and ISO-8859-1 (or other charset) are available.
+With mule:	US-ASCII, ISO-8859-* (except for ISO-8859-5), KOI8-R,
+		ISO-2022-JP, ISO-2022-JP-2, EUC-KR, CN-GB-2312,
+		CN-BIG5 and ISO-2022-INT-1 are available.
 
 ISO-2022-JP-2 and ISO-2022-INT-1 charsets used in mule is expected to
-be used to represent multilingual text in intermixed manner. Any
+be used to represent multilingual text in intermixed manner.  Any
 languages that has no registered charset are represented as either
 ISO-2022-JP-2 or ISO-2022-INT-1 in mule.
 
-If you want to use non-ISO-8859-1 charset in EMACS 19 or XEmacs 19,
-please set variable `default-mime-charset'. This variable must be
-symbol of which name is a MIME charset.
+If you want to use non-ISO-8859-1 charset in Emacs 19 or XEmacs
+without mule, please set variable `default-mime-charset'.  This
+variable must be symbol of which name is a MIME charset.
 
 If you want to add more charsets in mule, please set variable
-`charsets-mime-charset-alist'. This variable must be alist of which
-key is list of leading-char/charset and value is symbol of MIME
-charset. (leading-char is a term of MULE 1.* and 2.*. charset is a
-term of XEmacs/mule, mule merged EMACS and MULE 3.*) If name of
-coding-system is different as MIME charset, please set variable
-`mime-charset-coding-system-alist'. This variable must be alist of
+`charsets-mime-charset-alist'.  This variable must be alist of which
+key is list of charset and value is symbol of MIME charset.  If name
+of coding-system is different as MIME charset, please set variable
+`mime-charset-coding-system-alist'.  This variable must be alist of
 which key is MIME charset and value is coding-system.
 
 Following commands are available in addition to major mode commands:
@@ -822,18 +817,7 @@ User customizable variables (not documented all of them):
   (if mime-edit-mode-flag
       (error "You are already editing a MIME message.")
     (setq mime-edit-mode-flag t)
-    ;; Remember old key bindings.
-    ;; (if running-xemacs
-    ;;     (use-local-map (or (current-local-map) (make-sparse-keymap)))
-    ;;   (make-local-variable 'mime-edit-mode-old-local-map)
-    ;;   (setq mime-edit-mode-old-local-map (current-local-map))
-    ;;   ;; Add MIME commands to current local map.
-    ;;   (use-local-map (copy-keymap (or (current-local-map)
-    ;;                                   (make-sparse-keymap))))
-    ;;   )
-    ;; (if (not (lookup-key (current-local-map) mime-edit-prefix))
-    ;;     (define-key (current-local-map) mime-edit-prefix mime-edit-map))
-
+    
     ;; Set transfer level into mode line
     ;;
     (setq mime-transfer-level-string
@@ -884,14 +868,10 @@ just return to previous mode."
 	  (mime-edit-translate-buffer)))
     ;; Restore previous state.
     (setq mime-edit-mode-flag nil)
-    (cond (running-xemacs
-	   (if (featurep 'menubar) 
-	       (delete-menu-item (list mime-edit-menu-title))))
-          ;; (t
-          ;;  (use-local-map mime-edit-mode-old-local-map)
-          ;;  )
-	  )
-    
+    (if (and running-xemacs
+	     (featurep 'menubar))
+	(delete-menu-item (list mime-edit-menu-title))
+      )
     (end-of-invisible)
     (set-buffer-modified-p (buffer-modified-p))
     (run-hooks 'mime-edit-exit-hook)
