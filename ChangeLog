@@ -1,3 +1,11 @@
+1998-05-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el (mime-content-type-primary-type): New function.
+  	(mime-content-type-subtype): New function.
+  	(mime-content-type-parameters): New function.
+  	(mime-parse-message): Use 'mime-content-type-primary-type,
+ 	'mime-content-type-subtype and 'mime-content-type-parameters.
+
 1998-05-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-parse.el: Abolish function 'symbol-concat because it is not
