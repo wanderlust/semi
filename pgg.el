@@ -156,7 +156,6 @@ and END to the keyring.")
        (let ((buffer (current-buffer)))
 	 (with-temp-buffer
 	   (let (buffer-undo-list)
-	     (set-buffer-multibyte nil)
 	     (insert-buffer-substring buffer ,start ,end)
 	     (encode-coding-region (point-min)(point-max)
 				   buffer-file-coding-system)
