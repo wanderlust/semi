@@ -235,7 +235,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 (defun mime-view-quitting-method-for-mime-show-message-mode ()
   "Quitting method for mime-view.
 It is registered to variable `mime-view-quitting-method-alist'."
-  (let ((mother mime::preview/mother-buffer)
+  (let ((mother mime-mother-buffer)
 	(win-conf mime::preview/original-window-configuration)
 	)
     (kill-buffer mime-raw-buffer)
