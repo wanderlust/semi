@@ -969,9 +969,7 @@ function.  If it is a keymap, keymap of MIME-View mode will be added
 to it.  If it is a function, it will be bound as default binding of
 keymap of MIME-View mode."
   (mime-maybe-hide-echo-buffer)
-  (let ((win-conf (current-window-configuration))
-        ;; (raw-buffer (mime-entity-buffer message))
-	)
+  (let ((win-conf (current-window-configuration)))
     (or preview-buffer
 	(setq preview-buffer
 	      (concat "*Preview-" (mime-entity-name message) "*")))
@@ -979,13 +977,10 @@ keymap of MIME-View mode."
 	(setq original-major-mode
 	      (with-current-buffer (mime-entity-header-buffer message)
 		major-mode)))
-    ;; (set-buffer raw-buffer)
-    ;; (setq mime-preview-buffer preview-buffer)
     (let ((inhibit-read-only t))
       (set-buffer (get-buffer-create preview-buffer))
       (widen)
       (erase-buffer)
-      ;; (setq mime-raw-buffer raw-buffer)
       (if mother
 	  (setq mime-mother-buffer mother)
 	)
