@@ -1,3 +1,13 @@
+2000-02-24  Mito  <mit@nines.nec.co.jp>
+
+	* mime-edit.el (mime-edit-normalize-body): Fix number of arguments
+	against enriched-encode.
+
+2000-02-27  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el: Don't show a child entity of
+	message/external-body.
+
 2000-02-21   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* pgg.el (pgg-temp-buffer-show-function): Use

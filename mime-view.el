@@ -311,7 +311,8 @@ mother-buffer."
        'visible))
 
 (defmacro mime-view-children-is-invisible (situation)
-  `(eq (cdr (or (assq '*children ,situation)))
+  `(eq (cdr (or (assq '*children ,situation)
+		(assq 'children ,situation)))
        'invisible))
 
 (defmacro mime-view-button-is-visible (situation)
@@ -575,21 +576,42 @@ Each elements are regexp of field-name.")
    (body-presentation-method . mime-display-multipart/alternative)))
 
 (ctree-set-calist-strictly
- 'mime-preview-condition '((type . message)(subtype . partial)
-			   (body-presentation-method
-			    . mime-display-message/partial-button)))
+ 'mime-preview-condition
+ '((type . multipart)(subtype . t)
+   (body . visible)
+   (body-presentation-method . mime-display-multipart/mixed)))
 
 (ctree-set-calist-strictly
- 'mime-preview-condition '((type . message)(subtype . rfc822)
-			   (body-presentation-method . nil)
-			   (childrens-situation (header . visible)
-						(entity-button . invisible))))
+ 'mime-preview-condition
+ '((type . message)(subtype . partial)
+   (body . visible)
+   (body-presentation-method . mime-display-message/partial-button)))
 
 (ctree-set-calist-strictly
- 'mime-preview-condition '((type . message)(subtype . news)
-			   (body-presentation-method . nil)
-			   (childrens-situation (header . visible)
-						(entity-button . invisible))))
+ 'mime-preview-condition
+ '((type . message)(subtype . rfc822)
+   (body . visible)
+   (body-presentation-method . mime-display-multipart/mixed)
+   (childrens-situation (header . visible)
+			(entity-button . invisible))))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition
+ '((type . message)(subtype . news)
+   (body . visible)
+   (body-presentation-method . mime-display-multipart/mixed)
+   (childrens-situation (header . visible)
+			(entity-button . invisible))))
+
+;; message/external-body has only one child.
+(ctree-set-calist-strictly
+ 'mime-preview-condition
+ '((type . message)(subtype . external-body)
+   (body . visible)
+   (body-presentation-method . nil)
+   (childrens-situation (header . invisible)
+			(body . invisible)
+			(entity-button . visible))))
 
 
 ;;; @@@ entity presentation
@@ -1081,8 +1103,6 @@ With prefix, it prompts for coding-system."
 	(body-presentation-method
 	 (cdr (assq 'body-presentation-method situation)))
 	(children (mime-entity-children entity))
-	(children-is-invisible (eq (cdr (assq '*children situation))
-				   'invisible))
 	nb ne nhb nbb)
     ;; Check if attachment is specified.
     ;; if inline is forced or not.
@@ -1143,8 +1163,7 @@ With prefix, it prompts for coding-system."
     (put-text-property nb ne 'mime-view-situation situation)
     (put-text-property nbb ne 'mime-view-entity-body entity)
     (goto-char ne)
-    (if (and children
-	     (not children-is-invisible))
+    (if (and children body-is-visible)
 	(if (functionp body-presentation-method)
 	    (funcall body-presentation-method entity situation)
 	  (mime-display-multipart/mixed entity situation)))))
@@ -1704,8 +1723,8 @@ If LINES is negative, scroll up LINES lines."
 	done)
     (while (and (mime-entity-children entity)
 		(not done))
-      (if (mime-view-children-is-invisible
-	   (get-text-property point 'mime-view-situation))
+      (if (not (mime-view-body-is-visible
+		(get-text-property point 'mime-view-situation)))
 	  (setq done t)
 	;; If the part is shown, search the last part.
 	(let ((child (car (last (mime-entity-children entity)))))
@@ -1786,22 +1805,13 @@ When prefix is given, it always displays the content."
     (setq entity (get-text-property (car position) 'mime-view-entity)
 	  situation (get-text-property (car position) 'mime-view-situation))
     (setq situation
-	  (if (mime-entity-children entity)
-	      ;; Entity body is always invisible for composite types.
-	      (if (or show (mime-view-children-is-invisible situation))
-		  (del-alist
-		   '*entity-button
-		   (put-alist '*children 'visible situation))
-		(put-alist
-		 '*entity-button 'visible
-		 (put-alist '*children 'invisible situation)))
-	    (if (or show (not (mime-view-body-is-visible situation)))
-		(del-alist
-		 '*entity-button
-		 (put-alist '*body 'visible situation))
-	      (put-alist
-	       '*entity-button 'visible
-	       (put-alist '*body 'invisible situation)))))
+	  (if (or show (not (mime-view-body-is-visible situation)))
+	      (del-alist
+	       '*entity-button
+	       (put-alist '*body 'visible situation))
+	    (put-alist
+	     '*entity-button 'visible
+	     (put-alist '*body 'invisible situation))))
     (save-excursion
       (delete-region (car position) (cdr position))
       (mime-display-entity entity situation))))

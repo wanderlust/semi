@@ -2111,7 +2111,7 @@ Content-Description: S/MIME Encrypted Message][base64]]\n")
                    ;;                        (point)
                    ;;                        'hard t)))
 		   ;; End patch for hard newlines
-		   (enriched-encode beg end)
+		   (enriched-encode beg end nil)
 		   (goto-char beg)
 		   (if (search-forward "\n\n")
 		       (delete-region beg (match-end 0)))))))
