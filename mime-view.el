@@ -32,6 +32,7 @@
 (require 'eword-decode)
 (require 'mime-parse)
 (require 'mime-text)
+(require 'calist)
 
 
 ;;; @ version
@@ -95,7 +96,7 @@ message/partial, it is called `mother-buffer'.")
 (make-variable-buffer-local 'mime-preview-original-window-configuration)
 
 
-;;; @ entity button
+;;; @ entity-button
 ;;;
 
 (defvar mime-view-content-button-visible-ctype-list
@@ -174,7 +175,7 @@ Please redefine this function if you want to change default setting."
 	)))
 
 
-;;; @ entity header
+;;; @ entity-header
 ;;;
 
 ;;; @@ predicate function
@@ -265,27 +266,60 @@ Each elements are regexp of field-name.")
 ;;; @@ predicate function
 ;;;
 
-(defvar mime-view-visible-media-type-list
-  '("text/plain" nil "text/richtext" "text/enriched"
-    "text/rfc822-headers"
-    "text/x-latex" "application/x-latex"
-    "message/delivery-status"
-    "application/pgp" "text/x-pgp"
-    "application/octet-stream"
-    "application/x-selection" "application/x-comment")
-  "*List of media-types to be able to display in MIME-preview buffer.
-Each elements are string of TYPE/SUBTYPE, e.g. \"text/plain\".")
+(defvar mime-view-body-visible-condition
+  '(type
+    (nil)
+    (text subtype
+	  (plain)
+	  (enriched)
+	  (rfc822-headers)
+	  (richtext)
+	  (x-latex)
+	  (x-pgp))
+    (application subtype
+		 (octet-stream encoding
+			       (nil)
+			       ("7bit")
+			       ("8bit"))
+		 (pgp)
+		 (x-latex)
+		 (x-selection)
+		 (x-comment))
+    (message subtype
+	     (delivery-status)))
+  "Condition-tree to be able to display body of entity.")
 
 (defun mime-view-body-visible-p (entity message-info)
   "Return non-nil if body of ENTITY is visible."
-  (let ((media-type (mime-entity-media-type entity))
-	(media-subtype (mime-entity-media-subtype entity))
-	(ctype (mime-entity-type/subtype entity)))
-    (and (member ctype mime-view-visible-media-type-list)
-	 (if (and (eq media-type 'application)
-		  (eq media-subtype 'octet-stream))
-	     (member (mime-entity-encoding entity) '(nil "7bit" "8bit"))
-	   t))))
+  (ctree-match-calist
+   mime-view-body-visible-condition
+   (list* (cons 'type (mime-entity-media-type entity))
+	  (cons 'subtype (mime-entity-media-subtype entity))
+	  (cons 'encoding (mime-entity-encoding entity))
+	  (cons 'major-mode major-mode)
+	  (mime-entity-parameters entity))))
+
+;; (defvar mime-view-visible-media-type-list
+;;   '("text/plain" nil "text/richtext" "text/enriched"
+;;     "text/rfc822-headers"
+;;     "text/x-latex" "application/x-latex"
+;;     "message/delivery-status"
+;;     "application/pgp" "text/x-pgp"
+;;     "application/octet-stream"
+;;     "application/x-selection" "application/x-comment")
+;;   "*List of media-types to be able to display in MIME-preview buffer.
+;; Each elements are string of TYPE/SUBTYPE, e.g. \"text/plain\".")
+
+;; (defun mime-view-body-visible-p (entity message-info)
+;;   "Return non-nil if body of ENTITY is visible."
+;;   (let ((media-type (mime-entity-media-type entity))
+;;         (media-subtype (mime-entity-media-subtype entity))
+;;         (ctype (mime-entity-type/subtype entity)))
+;;     (and (member ctype mime-view-visible-media-type-list)
+;;          (if (and (eq media-type 'application)
+;;                   (eq media-subtype 'octet-stream))
+;;              (member (mime-entity-encoding entity) '(nil "7bit" "8bit"))
+;;            t))))
 
 
 ;;; @@ entity filter
