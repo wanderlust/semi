@@ -1,5 +1,10 @@
 1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-pgp.el, mime-partial.el, mime-play.el, mime-view.el,
+ 	mime-parse.el: Rename `mime-entity-info' -> `mime-entity'.
+
+1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-view-header-visible-p): Change interface.
 	(mime-view-body-visible-p): Change interface.
 
@@ -200,7 +205,7 @@
 
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae)-A was released.
+	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae) was released.-A
 
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -312,7 +317,7 @@
 
 1998-02-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae)-A was released.
+	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae) was released.-A
 
 	* SEMI-ELS: Remove mime-tar.el.
 
@@ -449,7 +454,7 @@
 
 1997-11-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.116 (D-Dòhòji)-A was released.
+	* SEMI: Version 0.116 (D-Dòhòji) was released.-A
 
 1997-11-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
