@@ -1,16 +1,15 @@
 ;;; mime-edit.el --- Simple MIME Composer for GNU Emacs
 
-;; Copyright (C) 1993,1994,1995,1996,1997 Free Software Foundation, Inc.
+;; Copyright (C) 1993,1994,1995,1996,1997,1998 Free Software Foundation, Inc.
 
 ;; Author: UMEDA Masanobu <umerin@mse.kyutech.ac.jp>
 ;;         MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Maintainer: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Created: 1994/08/21 renamed from mime.el
 ;;	Renamed: 1997/2/21 from tm-edit.el
-;; Version: $Revision$
 ;; Keywords: MIME, multimedia, multilingual, mail, news
 
-;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
+;; This file is part of SEMI (Sophisticated Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -121,14 +120,10 @@
 ;;; @ version
 ;;;
 
-(defconst mime-edit-RCS-ID
-  "$Id$")
-
-(defconst mime-edit-version `,(get-version-string mime-edit-RCS-ID))
-
 (defconst mime-edit-version-string
-  `,(concat "SEMI MIME-Edit " mime-edit-version
-	    " - \"" semi-version-name "\""))
+  `,(concat "SEMI "
+	    (mapconcat #'number-to-string (cdr semi-version) ".")
+	    " - \"" (car semi-version) "\""))
 
 
 ;;; @ variables
