@@ -121,9 +121,9 @@
 ;;;
 
 (defconst mime-edit-version-string
-  `,(concat "SEMI "
-	    (mapconcat #'number-to-string (cdr semi-version) ".")
-	    " - \"" (car semi-version) "\""))
+  `,(concat (car mime-module-version) " "
+	    (mapconcat #'number-to-string (cddr mime-module-version) ".")
+	    " - \"" (cadr mime-module-version) "\""))
 
 
 ;;; @ variables
