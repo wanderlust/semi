@@ -2396,11 +2396,14 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
     ))
   (if arg
       (progn
-	(setq mime-edit-pgp-processing 'sign)
+	(setq mime-edit-pgp-processing 
+	      (nconc mime-edit-pgp-processing 
+		     (copy-sequence '(sign))))
 	(message "This message will be signed.")
 	)
-    (if (eq mime-edit-pgp-processing 'sign)
-	(setq mime-edit-pgp-processing nil)
+    (if (eq (car (last mime-edit-pgp-processing)) 'sign)
+	(setq mime-edit-pgp-processing 
+	      (butlast mime-edit-pgp-processing))
       )
     (message "This message will not be signed.")
     ))
@@ -2412,11 +2415,14 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
     ))
   (if arg
       (progn
-	(setq mime-edit-pgp-processing 'encrypt)
+	(setq mime-edit-pgp-processing 
+	      (nconc mime-edit-pgp-processing 
+		     (copy-sequence '(encrypt))))
 	(message "This message will be encrypt.")
 	)
-    (if (eq mime-edit-pgp-processing 'encrypt)
-	(setq mime-edit-pgp-processing nil)
+    (if (eq (car (last mime-edit-pgp-processing)) 'encrypt)
+	(setq mime-edit-pgp-processing
+	      (butlast mime-edit-pgp-processing))
       )
     (message "This message will not be encrypt.")
     ))
@@ -2427,15 +2433,18 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
 	       (if (search-forward (concat "\n" mail-header-separator "\n"))
 		   (match-end 0)
 		 )))
-	(end (point-max))
 	)
     (if beg
-	(cond ((eq mime-edit-pgp-processing 'sign)
-	       (mime-edit-enclose-pgp-signed-region beg end)
-	       )
-	      ((eq mime-edit-pgp-processing 'encrypt)
-	       (mime-edit-enclose-pgp-encrypted-region beg end)
-	       ))
+	(dolist (pgp-processing mime-edit-pgp-processing)
+	  (case pgp-processing
+	    (sign
+	     (mime-edit-enclose-pgp-signed-region 
+	      beg (point-max))
+	     )
+	    (encrypt
+	     (mime-edit-enclose-pgp-encrypted-region 
+	      beg (point-max))
+	     )))
       )))
 
 
