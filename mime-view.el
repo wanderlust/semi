@@ -245,8 +245,8 @@ Each elements are regexp of field-name. [mime-view.el]")
 	       (if server
 		   (insert (format "[%s %s ([%s] %s)]\n" num subj
 				   access-type (cdr server)))
-		 (let ((site (assoc-value "site" params))
-		       (dir (assoc-value "directory" params))
+		 (let ((site (cdr (assoc "site" params)))
+		       (dir (cdr (assoc "directory" params)))
 		       )
 		   (insert (format "[%s %s ([%s] %s:%s)]\n" num subj
 				   access-type site dir))
