@@ -279,16 +279,19 @@ Please redefine this function if you want to change default setting."
 	   (end (match-end 0))
 	   (name (buffer-substring beg end))
 	   )
-      (or (member-if (function
-		      (lambda (regexp)
-			(string-match regexp name)
-			)) mime-view-visible-field-list)
-	  (delete-region beg
-			 (save-excursion
-			   (if (re-search-forward "^\\([^ \t]\\|$\\)" nil t)
-			       (match-beginning 0)
-			     (point-max))))
-	  ))))
+      (catch 'visible
+	(let ((rest mime-view-visible-field-list))
+	  (while rest
+	    (if (string-match (car rest) name)
+		(throw 'visible nil)
+	      )
+	    (setq rest (cdr rest))))
+	(delete-region beg
+		       (save-excursion
+			 (if (re-search-forward "^\\([^ \t]\\|$\\)" nil t)
+			     (match-beginning 0)
+			   (point-max))))
+	))))
 
 (defun mime-view-default-content-header-filter ()
   (mime-view-cut-header)
