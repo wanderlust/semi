@@ -73,14 +73,14 @@
 It decodes current entity to call internal or external method.  The
 method is selected from variable `mime-acting-condition'.
 If MODE is specified, play as it.  Default MODE is \"play\"."
-  (interactive (list "play"))
+  (interactive)
   (let ((entity (get-text-property (point) 'mime-view-entity)))
     (if entity
 	(let ((the-buf (current-buffer))
 	      (raw-buffer (mime-entity-buffer entity)))
 	  (setq mime-preview-after-decoded-position (point))
 	  (set-buffer raw-buffer)
-	  (mime-raw-play-entity entity mode)
+	  (mime-raw-play-entity entity (or mode "play"))
 	  (when (eq (current-buffer) raw-buffer)
 	    (set-buffer the-buf)
 	    (goto-char mime-preview-after-decoded-position)
