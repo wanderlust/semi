@@ -1,3 +1,79 @@
+1998-04-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* README.en: Modify for FLIM.
+
+1998-04-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI-CFG: Modify messages for FLIM and APEL 8.2.
+
+1998-04-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI-CFG: Add "flim" instead of "mel" to 'load-path.
+
+1998-04-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-calist::field-match-method-as-default-rule):
+ 	New function; setup for calist-field-match-method for 'header and
+ 	'body.
+
+1998-04-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el (mime-preview-condition): Add (message-button
+ 	. visible) to application/pgp.
+
+1998-04-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-message): Abolish unused local
+ 	variable 'ctype.
+	(mime-view-display-entity): Abolish unused local variable 'ctype.
+
+	* mime-view.el (mime-view-display-message): Don't use
+ 	'mime-view-content-button-visible-ctype-list; abolish it.
+
+1998-04-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-entity-button-visible-p): Omit to check
+	entity is not message.
+	(mime-view-header-visible-p): Omit to check entity is message.
+	(mime-view-setup-buffers): Call 'mime-view-display-message instead
+	of 'mime-view-display-entity.
+	(mime-view-display-message): New function.
+	(mime-view-display-entity): Abolish local variable
+	'entity-node-id; don't check entity is message or not.
+
+1998-04-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI-ELS (semi-modules-to-compile): Delete 'mime-def,
+	'eword-encode and 'eword-decode.
+
+	* mime-def.el, eword-encode.el, eword-decode.el: Abolish
+	mime-def.el, eword-decode.el and eword-encode.el; (moved to FLIM).
+
+1998-04-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-parse.el (regexp-or): Moved from semi-def.el.
+
+	* semi-def.el: Move 'regexp-or to mime-parse.el.
+	Move 'eliminate-top-spaces to mime-def.el.
+
+	* mime-def.el (eliminate-top-spaces): Moved from semi-def.el.
+
+1998-04-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI-ELS (semi-modules-to-compile): Add 'semi-def.
+
+	* semi-setup.el: Require 'semi-def instead of 'mime-def.
+
+	* mime-view.el: Require 'semi-def.
+
+	* mime-def.el: Move SEMI depended definitions to semi-def.el.
+
+	* semi-def.el: Move SEMI depended definitions from mime-def.el.
+
+	* eword-decode.el (eword-decode-version): Don't use
+	`mime-module-version'.
+
+
 1998-04-09  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* WEMI: Version 1.2.1 (Shinbashi) was released.
@@ -706,10 +782,10 @@
 	* mime-view.el (mime-maybe-hide-echo-buffer): bury MIME echo
  	buffer.
 
-1997-11-23  MORIOKA Tomohiko  <morioka@mousai.jaist.ac.jp>
+1997-11-23  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el (mime-maybe-hide-echo-buffer): New inline function;
- 	abolish `mime-hide-echo-buffer'.
+	abolish `mime-hide-echo-buffer'.
 	(mime-view-mode): Use `mime-maybe-hide-echo-buffer'.
 
 1997-11-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>

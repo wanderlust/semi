@@ -1,11 +1,11 @@
-;;; mime-def.el --- definition module for WEMI
+;;; semi-def.el --- definition module for SEMI
 
 ;; Copyright (C) 1995,1996,1997,1998 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Keywords: definition, MIME, multimedia, mail, news
 
-;; This file is part of WEMI (Widget based Emacs MIME Interfaces).
+;; This file is part of SEMI (Spadework for Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -25,33 +25,8 @@
 ;;; Code:
 
 (require 'emu)
-(require 'custom)
 
-(defgroup mime nil
-  "Emacs MIME Interfaces"
-  :group 'news
-  :group 'mail)
-
-(custom-handle-keyword 'default-mime-charset :group 'mime
-		       'custom-variable)
-
-(unless (fboundp 'butlast)
-  (defun butlast (x &optional n)
-    "Returns a copy of LIST with the last N elements removed."
-    (if (and n (<= n 0)) x
-      (nbutlast (copy-sequence x) n)))
-  
-  (defun nbutlast (x &optional n)
-    "Modifies LIST to remove the last N elements."
-    (let ((m (length x)))
-      (or n (setq n 1))
-      (and (< n m)
-	   (progn
-	     (if (> n 0) (setcdr (nthcdr (- (1- m) n) x) nil))
-	     x))))
-  )
-
-(defconst mime-module-version '("WEMI" "Shinbashi" 1 2 1)
+(defconst mime-module-version '("SEMI" "Naoetsu" 1 2 2)
   "Implementation name, version name and numbers of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
@@ -80,17 +55,6 @@
 (defconst mime-temp-buffer-name " *MIME-temp*")
 
 
-;;; @ definitions about MIME
-;;;
-
-(defconst mime-tspecials "][()<>@,\;:\\\"/?=")
-(defconst mime-token-regexp (concat "[^" mime-tspecials "\000-\040]+"))
-(defconst mime-charset-regexp mime-token-regexp)
-
-(defconst mime-media-type/subtype-regexp
-  (concat mime-token-regexp "/" mime-token-regexp))
-
-
 ;;; @ button
 ;;;
 
@@ -104,41 +68,32 @@
   :group 'mime
   :type 'face)
 
-;; (defsubst mime-add-button (from to function &optional data)
-;;   "Create a button between FROM and TO with callback FUNCTION and DATA."
-;;   (let ((overlay (make-overlay from to)))
-;;     (and mime-button-face
-;;          (overlay-put overlay 'face mime-button-face))
-;;     (and mime-button-mouse-face
-;;          (overlay-put overlay 'mouse-face mime-button-mouse-face))
-;;     (add-text-properties from to (list 'mime-button-callback function))
-;;     (and data
-;;          (add-text-properties from to (list 'mime-button-data data)))
-;;     (add-text-properties from to (list 'keymap widget-keymap))
-;;     ))
+(defsubst mime-add-button (from to function &optional data)
+  "Create a button between FROM and TO with callback FUNCTION and DATA."
+  (let ((overlay (make-overlay from to)))
+    (and mime-button-face
+	 (overlay-put overlay 'face mime-button-face))
+    (and mime-button-mouse-face
+	 (overlay-put overlay 'mouse-face mime-button-mouse-face))
+    (add-text-properties from to (list 'mime-button-callback function))
+    (and data
+	 (add-text-properties from to (list 'mime-button-data data)))
+    ;;(add-text-properties from to (list 'keymap widget-keymap))
+    ))
 
 (defsubst mime-insert-button (string function &optional data)
   "Insert STRING as button with callback FUNCTION and DATA."
   (save-restriction
     (narrow-to-region (point)(point))
-    (widget-create 'push-button
-		   :action `(lambda (widget &optional event)
-			      (,function)
-			      )
-		   :mouse-down-action `(lambda (widget event)
-					 (let (buf point)
-					   (save-window-excursion
-					     (mouse-set-point event)
-					     (setq buf (current-buffer)
-						   point (point)))
-					   (save-excursion
-					     (set-buffer buf)
-					     (goto-char point)
-					     (,function)
-					     )))
-		   string)
+    (insert (concat "[" string "]"))
+    ;; (widget-push-button-value-create
+    ;;  (widget-convert 'push-button
+    ;;                  :notify (lambda (&rest ignore)
+    ;;                            (mime-preview-play-current-entity)
+    ;;                            )
+    ;;                  string))
     (insert "\n")
-    ;;(mime-add-button (point-min)(point-max) function data)
+    (mime-add-button (point-min)(point-max) function data)
     ))
 
 (defvar mime-button-mother-dispatcher nil)
@@ -227,9 +182,6 @@ FUNCTION.")
 ;;; @ field
 ;;;
 
-(defsubst regexp-or (&rest args)
-  (concat "\\(" (mapconcat (function identity) args "\\|") "\\)"))
-
 (defun tm:set-fields (sym field-list &optional regexp-sym)
   (or regexp-sym
       (setq regexp-sym
@@ -307,12 +259,6 @@ FUNCTION.")
 ;;; @ Other Utility
 ;;;
 
-(defsubst eliminate-top-spaces (string)
-  "Eliminate top sequence of space or tab in STRING."
-  (if (string-match "^[ \t]+" string)
-      (substring string (match-end 0))
-    string))
-
 (defun call-after-loaded (module func &optional hook-name)
   "If MODULE is provided, then FUNC is called.
 Otherwise func is set to MODULE-load-hook.
@@ -330,6 +276,6 @@ it is used as hook to set."
 ;;; @ end
 ;;;
 
-(provide 'mime-def)
+(provide 'semi-def)
 
-;;; mime-def.el ends here
+;;; semi-def.el ends here
