@@ -78,9 +78,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
 	      (raw-buffer (get-text-property (point) 'mime-view-raw-buffer)))
 	  (setq mime-preview-after-decoded-position (point))
 	  (set-buffer raw-buffer)
-	  (save-restriction
-	    (widen)
-	    (mime-raw-play-entity entity-info mode))
+	  (mime-raw-play-entity entity-info mode)
 	  (when (eq (current-buffer) raw-buffer)
 	    (set-buffer the-buf)
 	    (goto-char mime-preview-after-decoded-position)
