@@ -1,5 +1,24 @@
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el, mime-edit.el, mime-view.el: Rename
+	`mime-view-kill-buffer' -> `mime-preview-kill-buffer'.
+
+	* mime-view.el: Rename `mime-view-show-summary' ->
+	`mime-preview-show-summary'.
+
+	* mime-view.el: Rename `mime-view-quit' -> `mime-preview-quit'.
+
+	* mime-view.el: Rename `mime-view-follow-current-entity' ->
+	`mime-preview-follow-current-entity'.
+
+	* mime-view.el: Rename `mime-view-print-current-entity' ->
+	`mime-preview-print-current-entity'.
+
+	* mime-view.el (mime-view-menu-list): Modify menu.
+
+	* mime-view.el: Rename `mime-view-extract-current-entity' ->
+	`mime-preview-extract-current-entity'.
+
 	* mime-def.el, mime-play.el, mime-view.el: Rename
 	`mime-view-play-current-entity' ->
 	`mime-preview-play-current-entity'.
