@@ -620,7 +620,14 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
  'mime-acting-condition
  '((type . message)(subtype . external-body)
    ("access-type" . "anon-ftp")
-   (method . mime-view-message/external-ftp)
+   (method . mime-view-message/external-anon-ftp)
+   ))
+
+(ctree-set-calist-strictly
+ 'mime-acting-condition
+ '((type . message)(subtype . external-body)
+   ("access-type" . "url")
+   (method . mime-view-message/external-url)
    ))
 
 (ctree-set-calist-strictly
