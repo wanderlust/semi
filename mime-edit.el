@@ -2704,11 +2704,14 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
   (mime-editor::edit-again code-conversion)
   (goto-char (point-min))
   (save-restriction
-    (narrow-to-region (point-min)
-		      (if (re-search-forward "^$" nil t)
-			  (match-end 0)
-			(point-max)
-			))
+    (narrow-to-region
+     (point-min)
+     (if (re-search-forward
+	  (concat "^\\(" (regexp-quote mail-header-separator) "\\)?$")
+	  nil t)
+	 (match-end 0)
+       (point-max)
+       ))
     (goto-char (point-min))
     (while (re-search-forward
 	    "^\\(Content-.*\\|Mime-Version\\):" nil t)
