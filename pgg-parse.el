@@ -405,7 +405,7 @@
     (pgg-set-alist result
 		   'version (pgg-read-byte))
     (pgg-set-alist result
-		   'public-key-identifier
+		   'key-identifier
 		   (pgg-format-key-identifier 
 		    (pgg-read-bytes-string 8)))
     (pgg-set-alist result
