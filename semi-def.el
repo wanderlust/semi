@@ -1,11 +1,11 @@
-;;; semi-def.el --- definition module for SEMI
+;;; semi-def.el --- definition module for REMI
 
 ;; Copyright (C) 1995,1996,1997,1998 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Keywords: definition, MIME, multimedia, mail, news
 
-;; This file is part of SEMI (Spadework for Emacs MIME Interfaces).
+;; This file is part of REMI (Radical Emacs MIME Interfaces).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -29,7 +29,7 @@
 (eval-when-compile (require 'cl))
 
 
-(defconst mime-module-version '("SEMI" "Ichiburi" 1 4 3)
+(defconst mime-module-version '("REMI" "Himi" 1 4 0)
   "Implementation name, version name and numbers of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
