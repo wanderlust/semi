@@ -38,6 +38,9 @@ In addition, now it is cleared that current point means beginning of
 header when `mime-display-entity' runs `mime-display-header-hook'.
 Therefore header-presentation-method must not change current point.
 
+
+** Requires FLIM 1.13 API
+
 
 * Changes in SEMI 1.12
 
