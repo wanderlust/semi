@@ -1,5 +1,10 @@
 1998-06-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el: Don't require `std11'.
+
+	* mime-view.el: Require `mime' instead of `mime-lib'.
+	(mime-entity-filename): Don't use `std11-strip-quoted-string'.
+
 	* mime-edit.el: Don't require `eword-encode'.
 
 1998-06-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
