@@ -201,12 +201,16 @@ If optional argument MESSAGE-INFO is not specified,
 `mime-raw-message-info' is used."
   (reverse (mime-raw-point-to-entity-node-id point message-info)))
 
-(defsubst mime-raw-entity-parent (entity &optional message-info)
+(defsubst mime-entity-parent (entity &optional message-info)
   "Return mother entity of ENTITY.
 If optional argument MESSAGE-INFO is not specified,
-`mime-raw-message-info' is used."
-  (mime-raw-find-entity-from-node-id (cdr (mime-entity-node-id entity))
-				     message-info))
+`mime-raw-message-info' in buffer of ENTITY is used."
+  (mime-raw-find-entity-from-node-id
+   (cdr (mime-entity-node-id entity))
+   (or message-info
+       (save-excursion
+	 (set-buffer (mime-entity-buffer entity))
+	 mime-raw-message-info))))
 
 (defun mime-raw-flatten-message-info (&optional message-info)
   "Return list of entity in mime-raw-buffer.
@@ -240,7 +244,7 @@ Please redefine this function if you want to change default setting."
 	(and (not (eq media-subtype 'x-selection))
 	     (or (not (eq media-subtype 'octet-stream))
 		 (let ((mother-entity
-			(mime-raw-entity-parent entity message-info)))
+			(mime-entity-parent entity message-info)))
 		   (or (not (eq (mime-entity-media-type mother-entity)
 				'multipart))
 		       (not (eq (mime-entity-media-subtype mother-entity)
