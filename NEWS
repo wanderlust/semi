@@ -1,6 +1,41 @@
 SEMI NEWS --- history of major-changes.
 Copyright (C) 1998 Free Software Foundation, Inc.
 
+* Changes in SEMI 1.7
+
+** Header-presentation-method
+
+  Now MIME-View uses header-presentation-method instead of
+header-filter.
+
+  - abolish variable `mime-view-content-header-filter-alist'
+
+  - abolish function `mime-view-cut-header'
+
+  - Rename `mime-view-content-header-filter-hook' to
+    `mime-display-header-hook'
+
+
+** Abolish `mime-view-ignored-field-regexp'
+
+  Now mime-view uses `mime-view-ignored-field-list' directly in
+default header-presentation-method.
+
+
+** Abolish body filter support
+
+  Please use body-presentation-method.
+
+
+** Methods for MUAs
+
+  - Rename `mime-view-following-method-alist' to
+    `mime-preview-following-method-alist'
+
+  - Rename `mime-method-to-combine-message/partial-pieces' to
+    `mime-combine-message/partial-pieces-automatically'
+
+
 * Changes in SEMI 1.6
 
 ** Abolish tm-compatible external method support
@@ -15,6 +50,20 @@ method instead of it.
 
   C-c C-m C-e encloses as "pgp-encrypted" which means PGP/MIME
 encryption.
+
+
+** New method to detect content of entity
+
+  Now MIME-View can detect content of entity for
+application/octet-stream in default setting.
+
+  It uses "file" command to detect.  User can customize
+`mime-file-content-type-alist' to specify media-type for output of
+"file" command.  It is an alist of "file" output patterns
+vs. corresponding media-types.  Each element looks like (REGEXP TYPE
+SUBTYPE).  REGEXP is pattern for "file" command output.  TYPE is
+symbol to indicate primary type of media-type.  SUBTYPE is symbol to
+indicate subtype of media-type.
 
 
 ** New interface to display message
