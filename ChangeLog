@@ -1,3 +1,7 @@
+1999-02-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.13.3 (Komaiko) released.
+
 1999-02-26  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* SEMI-MK (install-semi-package): Install mime-setup.el(c).
