@@ -1241,17 +1241,25 @@ Nil if no such parameter."
 
 (defun mime-set-parameter (contype parameter value)
   "For given CONTYPE set PARAMETER to VALUE."
-  (if (string-match
-       (concat
-	";[ \t\n]*\\("
-	(regexp-quote parameter)
-	"[ \t\n]*=[ \t\n]*\\([^\" \t\n;]*\\|\"[^\"]*\"\\)\\)[ \t\n]*\\(;\\|$\\)")
-       contype)
-      ;; Change value
-      (concat (substring contype 0 (match-beginning 1))
-	      parameter "=" value
-	      (substring contype (match-end 1)))
-    (concat contype "; " parameter "=" value)))
+  (let (ctype opt-fields)
+    (if (string-match "\n[^ \t\n\r]+:" contype)
+	(setq ctype (substring contype 0 (match-beginning 0))
+	      opt-fields (substring contype (match-beginning 0)))
+      (setq ctype contype)
+      )
+    (if (string-match
+	 (concat
+	  ";[ \t\n]*\\("
+	  (regexp-quote parameter)
+	  "[ \t\n]*=[ \t\n]*\\([^\" \t\n;]*\\|\"[^\"]*\"\\)\\)[ \t\n]*\\(;\\|$\\)")
+	 ctype)
+	;; Change value
+	(concat (substring ctype 0 (match-beginning 1))
+		parameter "=" value
+		(substring contype (match-end 1))
+		opt-fields)
+      (concat ctype "; " parameter "=" value opt-fields)
+      )))
 
 (defun mime-strip-parameters (contype)
   "Return primary content-type and subtype without parameters for CONTYPE."
@@ -1862,6 +1870,25 @@ Content-Transfer-Encoding: 7bit
 	      (insert encoding)))
 	))))
 
+(defun mime-editor/translate-single-part-tag (&optional prefix)
+  (if (re-search-forward mime-editor/single-part-tag-regexp nil t)
+      (let* ((beg (match-beginning 0))
+	     (end (match-end 0))
+	     (tag (buffer-substring beg end))
+	     )
+	(delete-region beg end)
+	(setq contype (mime-editor/get-contype tag))
+	(setq encoding (mime-editor/get-encoding tag))
+	(insert (concat prefix "--" boundary "\n"))
+	(save-restriction
+	  (narrow-to-region (point)(point))
+	  (insert "Content-Type: " contype "\n")
+	  (if encoding
+	      (insert "Content-Transfer-Encoding: " encoding "\n"))
+	  (mime/encode-message-header)
+	  )
+	t)))
+
 (defun mime-editor/translate-region (beg end &optional boundary multipart)
   (if (null boundary)
       (setq boundary
@@ -1898,32 +1925,9 @@ Content-Transfer-Encoding: 7bit
 	 (t
 	  ;; It's a multipart message.
 	  (goto-char (point-min))
-	  (if (re-search-forward
-	       mime-editor/single-part-tag-regexp nil t)
-	      (progn
-		(setq tag
-		      (buffer-substring
-		       (match-beginning 0) (match-end 0)))
-		(delete-region (match-beginning 0) (match-end 0))
-		(setq contype (mime-editor/get-contype tag))
-		(setq encoding (mime-editor/get-encoding tag))
-		(insert "--" boundary "\n")
-		(insert "Content-Type: " contype "\n")
-		(if encoding
-		    (insert "Content-Transfer-Encoding: " encoding "\n"))
-		
-		(while (re-search-forward
-			mime-editor/single-part-tag-regexp nil t)
-		  (setq tag
-			(buffer-substring (match-beginning 0) (match-end 0)))
-		  (delete-region (match-beginning 0) (match-end 0))
-		  (setq contype (mime-editor/get-contype tag))
-		  (setq encoding (mime-editor/get-encoding tag))
-		  (insert "\n--" boundary "\n")
-		  (insert "Content-Type: " contype "\n")
-		  (if encoding
-		      (insert "Content-Transfer-Encoding: " encoding "\n"))
-		  )))
+	  (and (mime-editor/translate-single-part-tag)
+	       (while (mime-editor/translate-single-part-tag "\n"))
+	       )
 	  ;; Define Content-Type as "multipart/mixed".
 	  (setq contype
 		(concat "multipart/mixed;\n boundary=\"" boundary "\""))
