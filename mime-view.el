@@ -29,7 +29,6 @@
 
 (require 'std11)
 (require 'mime-lib)
-(require 'mime-parse)
 (require 'semi-def)
 (require 'calist)
 (require 'alist)
