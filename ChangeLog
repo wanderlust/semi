@@ -1,3 +1,62 @@
+1999-07-27  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* SEMI: Version 1.13.5 (Meih-Dò)-A released.
+
+1999-07-27  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* NEWS (Don't expect raw-buffer): New subsection.
+	(Now acting-method must not expect to run in raw-buffer): Changed
+	as a subsubsection of subsection `Don't expect raw-buffer'.
+	(Don't refer variable `mime-raw-buffer'): New subsubsection.
+	(Don't refer variable `mime-preview-buffer'): New subsubsection.
+
+	* NEWS (Requires FLIM 1.13 API): New subsection.
+
+1999-07-23  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* README.en (Required environment): Change required FLIM to
+	1.13.1; change location of APEL and FLIM.
+
+
+1999-07-22  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* REMI: Version 1.13.1 (Kubiki) released.
+
+1999-07-22  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el
+	(mime-preview-quitting-method-for-mime-show-message-mode): Don't
+	refer `mime-raw-buffer'.
+
+1999-07-21  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-play.el (mime-store-message/partial-piece): Don't refer
+	`mime-preview-buffer'.
+
+
+1999-07-21  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* REMI: Version 1.13.0 (Saigata) released.
+
+1999-07-21  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* Makefile (EXEC_PREFIX): Deleted.
+	(elc): Change command-line interface to delete `EXEC_PREFIX'.
+	(install-elc): Likewise.
+
+	* SEMI-MK (config-semi): Change command-line interface to delete
+	`EXEC_PREFIX'.
+
+	* SEMI-CFG (EXEC_PREFIX): Deleted.
+
+1999-07-07  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* mime-edit.el (mime-edit-quitting-method): Don't refer
+	`mime-raw-buffer'.
+
+	* mime-view.el (mime-preview-follow-current-entity): Don't refer
+	`mime-raw-buffer'.
+
 1999-06-17  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-edit.el (mime-edit-user-agent-value): Modify for XEmacs
@@ -7,6 +66,23 @@
 
 	* mime-edit.el (mime-edit-user-agent-value): Modify code to get
 	version number of XEmacs. [cf. <tm-ja:4561>]
+
+1999-05-22  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-entity-situation): Don't refer `major-mode'
+	of a mime-entity-buffer.
+	(mime-display-multipart/mixed): Add `major-mode' of SITUATION to
+	default-situation of children.
+	(mime-display-multipart/alternative): Likewise.
+	(mime-display-entity): Don't refer `raw-buffer'; use
+	`mime-goto-header-start-point'.
+	(mime-display-message): Add new optional argument
+	`original-major-mode'; don't refer `raw-buffer'; use
+	`mime-entity-name' to make name of `preview-buffer'; don't set up
+	`mime-raw-buffer' of `preview-buffer'; use `original-major-mode'
+	as value of `major-mode' field of default-situation; don't pop up
+	`preview-buffer' in suitable window; return `preview-buffer'.
+	(mime-view-buffer): Pop up `preview-buffer' in suitable window.
 
 1999-05-31  Keiichi Suzuki  <keiichi@nanap.org>
 

@@ -2585,8 +2585,9 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 
 (defun mime-edit-quitting-method ()
   "Quitting method for mime-view."
-  (let ((temp mime-raw-buffer)
-	buf)
+  (let* ((entity (get-text-property (point-min) 'mime-view-entity))
+	 (temp (mime-entity-buffer entity))
+	 buf)
     (mime-preview-kill-buffer)
     (set-buffer temp)
     (setq buf mime-edit-buffer)

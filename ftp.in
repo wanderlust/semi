@@ -2,12 +2,12 @@
 
   It is available from
 
-    ftp://ftp.etl.go.jp/pub/mule/semi/semi-API-for-flim-1.12
+    ftp://ftp.etl.go.jp/pub/mule/semi/semi-API-for-flim-FLIM_API
 
 --[[message/external-body;
 	access-type=anon-ftp;
 	site="ftp.etl.go.jp";
-	directory="/pub/mule/semi/semi-API-for-flim-1.12";
+	directory="/pub/mule/semi/semi-API-for-flim-FLIM_API";
 	name="PACKAGE-VERSION.tar.gz";
 	mode=image]]
 Content-Type: application/octet-stream;
