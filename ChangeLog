@@ -1,5 +1,15 @@
 1998-04-29  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el (mime-acting-situation-examples): Renamed from
+ 	'mime-user-acting-condition.
+
+	* mime-play.el: Load MIME acting-example file.
+
+	* mime-view.el (mime-acting-situation-examples-file): New
+ 	variable.
+
+1998-04-29  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-play.el (mime-raw-play-entity): Use
  	'ctree-match-calist-partially.
 
