@@ -13,7 +13,7 @@
 @ifinfo
 This file describes the PGG.
 
-Copyright (C) 2000 Daiki Ueno.
+Copyright (C) 2001 Daiki Ueno.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.1 or
@@ -32,7 +32,7 @@ Free Documentation License".
 @page
 
 @vskip 0pt plus 1filll
-Copyright @copyright{} 2000 Daiki Ueno.
+Copyright @copyright{} 2001 Daiki Ueno.
 
 Permission is granted to copy, distribute and/or modify this document
 under the terms of the GNU Free Documentation License, Version 1.1 or
@@ -53,8 +53,8 @@ user interface to encrypt, decrypt, sign, and verify MIME messages.
 
 @menu
 * Overview::                    What PGG is.
-* Prerequisites::               
-* How to use::                  Calling PGP from your applications.
+* Prerequisites::               Complicated stuff you may have to do.
+* How to use::                  Getting started quickly.
 * Architecture::                
 * Parsing OpenPGP packets::     
 * Function Index::              
@@ -79,10 +79,10 @@ PGG requires at least one implementation of privacy guard system.
 This document assumes that you have already obtained and installed them
 and that you are familiar with its basic functions.
 
-By default, PGG assumes to use GnuPG, but Pretty Good Privacy version 2
-or version 5 are also supported.  If you are new to such a system, I
-recomend that you should look over the `GNU Privacy Handbook (GPH)',
-which is available at @uref{http://www.gnupg.org/gph/}.
+By default, PGG assumes that GnuPG is usable, but Pretty Good Privacy
+version 2 or version 5 are also supported.  If you are new to such a
+system, I recomend that you should look over the GNU Privacy Handbook
+(GPH) which is available at @uref{http://www.gnupg.org/gph/}.
 
 @node How to use
 @chapter How to use
@@ -128,7 +128,7 @@ At this time you can use various cryptographic commands.  The behavior
 of these commands relies on a fashion of invocation because these
 commands are also intended to be used as library functions.  For
 example, in case you don't have the signer's public key, the function
-`pgg-verify-region' fails immediately, but if the function had been
+@code{pgg-verify-region} fails immediately, but if the function had been
 called interactively, it would ask you to retrieve the signer's public
 key from the server.
 
