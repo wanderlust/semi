@@ -51,7 +51,7 @@
 	     x))))
   )
 
-(defconst mime-module-version '("SEMI" "Nomachi" 1 2 1)
+(defconst mime-module-version '("SEMI" "Naoetsu" 1 2 2)
   "Implementation name, version name and numbers of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
