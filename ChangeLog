@@ -1,3 +1,17 @@
+1998-11-12  Tanaka Akira  <akr@jaist.ac.jp>
+
+        * mime-view.el: (mime-display-text/x-vcard): Fix multibyteness
+	problem.
+
+1998-11-07  Tanaka Akira  <akr@jaist.ac.jp>
+
+        * mime-view.el: (mime-display-text/x-vcard): Preserve encoding.
+
+1998-11-07  Tanaka Akira  <akr@jaist.ac.jp>
+
+        * mime-view.el: (mime-display-text/x-vcard): New function.
+        (mime-preview-condition): Set up for 'mime-preview-text/x-vcard.
+
 1999-01-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el: Must require `emu'.
