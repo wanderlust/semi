@@ -6,7 +6,7 @@ PACKAGE = remi
 API	= 1.14
 RELEASE = 2
 
-FLIM_API= 1.13
+FLIM_API= 1.14
 
 TAR	= tar
 RM	= /bin/rm -f
