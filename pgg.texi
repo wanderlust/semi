@@ -234,6 +234,7 @@ while finding out how to write the PGG backend.
 * Initializing::                
 * Backend methods::             
 * Getting output::              
+* Registering backend::         
 @end menu
 
 @node Initializing
@@ -327,6 +328,55 @@ The standard output of the execution of the PGP command is stored here.
 The rest of status information of the execution of the PGP command is
 stored here.
 @end defvar
+
+@node Registering backend
+@section Registering backend
+
+When decrypting and verifying PGG searches the registered scheme for an
+implementation from @var{pgg-verify-condition} and
+@var{pgg-decrypt-condition}.  These variable hold capability information
+of backend implementations.
+
+The @code{gpg} backend, for example, is registered as below:
+
+@lisp
+(ctree-set-calist-strictly
+ 'pgg-verify-condition
+ '((signature-version 3 4)
+   (public-key-algorithm ELG-E DSA ELG)
+   (hash-algorithm MD5 SHA1 RIPEMD160)
+   (scheme . gpg)))
+
+(ctree-set-calist-strictly
+ 'pgg-decrypt-condition
+ '((public-key-algorithm ELG-E DSA ELG)
+   (symmetric-key-algorithm 3DES CAST5 BLOWFISH TWOFISH)
+   (scheme . gpg)))
+@end lisp
+
+The former expression says:
+
+@itemize
+@item
+the backend @code{gpg} supports version 3 and 4 of the signature format
+@item
+the backend @code{gpg} supports ELG-E, DSA, and ELG as public-key
+algorithm for signing
+@item
+the backend @code{gpg} supports MD5, SHA1, and RIPEMD160 as hash
+algorithm for signing
+@end itemize
+
+And the latter expression says:
+
+@itemize
+@item
+the backend @code{gpg} supports ELG-E, DSA, and ELG as public-key
+algorithm for decrypting
+@item
+the backend @code{gpg} supports 3DES, CAST5, BLOWFISH, and TWOFISH as
+cipher algorithm for decrypting.
+@end itemize
 
 @node Parsing OpenPGP packets
 @chapter Parsing OpenPGP packets
