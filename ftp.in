@@ -2,14 +2,7 @@
 
   It is available from
 
-    ftp://ftp.jaist.ac.jp/pub/GNU/elisp/semi/	(Japan)
-
-or its mirrors
-
-    ftp://ftp.nis.co.jp/pub/gnu/emacs-lisp/tm/alpha/	(Japan)
-    ftp://ftp.nisiq.net/pub/gnu/emacs-lisp/tm/alpha/	(US)
-    ftp://ftp.miranova.com/pub/mime/jaist.ac.jp/alpha/	(US)
-    ftp://ftp.unicamp.br/pub/mail/mime/tm/alpha/	(Brazil)
+    ftp://ftp.jaist.ac.jp/pub/GNU/elisp/semi/
 
 --[[message/external-body;
 	access-type=anon-ftp;
