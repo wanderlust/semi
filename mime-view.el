@@ -29,7 +29,6 @@
 ;;; Code:
 
 (require 'cl)
-(require 'tl-atype)
 (require 'std11)
 (require 'mel)
 (require 'eword-decode)
