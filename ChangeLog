@@ -1,5 +1,12 @@
 1998-10-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-edit.el: - Don't require emu.
+	                - Require invisible.
+
+	* semi-def.el: Require poe instead of emu.
+
+1998-10-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-edit.el (mime-edit-decode-buffer): Convert encoding to
 	lower case.
 
