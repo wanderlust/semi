@@ -1,5 +1,16 @@
 1998-05-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-raw-get-subject): Use
+	'mime-content-disposition-parameters.
+	
+	* mime-play.el (mime-raw-get-original-filename): Use
+	'mime-content-disposition-parameters.
+
+	* mime-parse.el (mime-content-disposition-type): New function.
+	(mime-content-disposition-parameters): New function.
+
+1998-05-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-parse.el, mime-play.el, mime-view.el: Rename
 	'mime/Content-Disposition -> 'mime-read-Content-Disposition.
 
