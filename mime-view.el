@@ -682,11 +682,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	    (funcall header-presentation-method entity situation)
 	  (mime-insert-decoded-header entity
 				      mime-view-ignored-field-list
-				      mime-view-visible-field-list
-				      (if (mime-entity-cooked-p entity)
-					  nil
-					default-mime-charset))
-	  )
+				      mime-view-visible-field-list))
 	(goto-char (point-max))
 	(insert "\n")
 	(run-hooks 'mime-display-header-hook)

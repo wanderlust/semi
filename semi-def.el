@@ -29,7 +29,7 @@
 (eval-when-compile (require 'cl))
 
 
-(defconst mime-user-interface-version '("WEMI" "Numazu" 1 8 1)
+(defconst mime-user-interface-version '("WEMI" "Katahama" 1 8 2)
   "Implementation name, version name and numbers of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
