@@ -24,6 +24,9 @@
 
 ;;; Code:
 
+(require 'mime-view)
+
+
 ;;; @ buffer local variables in raw-buffer
 ;;;
 
@@ -41,21 +44,6 @@ raw-buffer.")
 
 ;;; @ code conversion
 ;;;
-
-(defvar mime-text-decoder-alist
-  '((mime-show-message-mode	. mime-text-decode-buffer)
-    (mime-temp-message-mode	. mime-text-decode-buffer)
-    (t				. mime-text-decode-buffer-maybe)
-    )
-  "Alist of major-mode vs. mime-text-decoder.
-Each element looks like (SYMBOL . FUNCTION).  SYMBOL is major-mode or
-t.  t means default.
-
-Specification of FUNCTION is described in DOC-string of variable
-`mime-text-decoder'.
-
-This value is overridden by buffer local variable `mime-text-decoder'
-if it is not nil.")
 
 (defun mime-text-decode-buffer (charset &optional encoding)
   "Decode text of current buffer as CHARSET.
