@@ -135,6 +135,9 @@ specified, play as it.  Default MODE is \"play\"."
 
 (defvar mime-mailcap-method-filename-alist nil)
 
+(defvar mime-mailcap-method-messages-coding-system 'undecided
+  "Coding system for an external mailcap method.")
+
 (defun mime-activate-mailcap-method (entity situation)
   (let ((method (cdr (assoc 'method situation)))
 	(name (mime-entity-safe-filename entity)))
@@ -151,8 +154,10 @@ specified, play as it.  Default MODE is \"play\"."
 		  (mime-format-mailcap-command
 		   method
 		   (cons (cons 'filename name) situation))))
-	     (start-process command mime-echo-buffer-name
-			    shell-file-name shell-command-switch command)
+	     (binary-to-text-funcall
+	      #'mime-mailcap-method-messages-coding-system
+	      #'start-process command mime-echo-buffer-name
+	      shell-file-name shell-command-switch command)
 	     )))
       (set-alist 'mime-mailcap-method-filename-alist process name)
       (set-process-sentinel process 'mime-mailcap-method-sentinel)
