@@ -1,8 +1,27 @@
+1999-11-05  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* semi-def.el (mime-insert-button): Funcall
+	`mime-create-button-function'.
+	(mime-create-button-function): New user option.
+	(mime-create-xpm-button): New function.
+	(mime-xpm-button-background): New user option.
+	(mime-xpm-button-foreground): New user option.
+	(mime-xpm-button-shadow-thickness): New user option.
+	(mime-create-widget-button): New function.
+	(mime-button-mouse-face, mime-button-face): Remove.
+
+	* mime-ui-ja.texi (mime-button-mouse-face, mime-button-face):
+	Remove.
+	* mime-ui-ja.sgml: Likewise.
+	* mime-ui-en.texi: Likewise.
+	* mime-ui-en.sgml: Likewise.
+
 1999-11-01  Tanaka Akira  <akr@jaist.ac.jp>
+
 	* mime-view.el (mime-display-application/x-postpet): New function.
 	(mime-preview-condition): Set up for
 	'mime-preview-application/x-postpet.
-	(unpack): New macro.	
+	(unpack): New macro.
 	(unpack-skip): New function.
 	(unpack-fixed): New function.
 	(unpack-byte): New function.
