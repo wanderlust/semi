@@ -868,116 +868,130 @@ It decodes current entity to call internal or external method as
 It calls following-method selected from variable
 `mime-view-following-method-alist'."
   (interactive)
-  (let ((root-cinfo
-	 (mime::preview-content-info/content-info
-	  (car mime::preview/content-list)))
-	pc p-beg p-end cinfo rcnum)
-    (let ((rest mime::preview/content-list)
-	  b e cell len rc)
-      (if (catch 'tag
-	    (while (setq cell (car rest))
-	      (setq b (mime::preview-content-info/point-min cell)
-		    e (mime::preview-content-info/point-max cell))
-	      (setq rest (cdr rest))
-	      (if (and (<= b (point))(<= (point) e))
-		  (throw 'tag cell)
-		)
-	      ))
-	  (progn
-	    (setq pc cell
-		  cinfo (mime::preview-content-info/content-info pc)
-		  rcnum (mime::content-info/rcnum cinfo))
-	    (setq len (length rcnum))
-	    (setq p-beg (mime::preview-content-info/point-min pc)
-		  p-end (mime::preview-content-info/point-max pc))
-	    (while (and (setq cell (car rest))
-			(progn
-			  (setq rc
-				(mime::content-info/rcnum
-				 (mime::preview-content-info/content-info
-				  cell)))
-			  (equal rcnum
-				 (nthcdr (- (length rc) len) rc))
-			  ))
-	      (setq p-end (mime::preview-content-info/point-max cell))
-	      (setq rest (cdr rest))
-	      ))))
-    (if pc
-	(let* ((mode (mime-preview/get-original-major-mode))
-	       (new-name (format "%s-%s" (buffer-name) (reverse rcnum)))
-	       new-buf
-	       (the-buf (current-buffer))
-	       (a-buf mime::preview/article-buffer)
-	       fields)
-	  (save-excursion
-	    (set-buffer (setq new-buf (get-buffer-create new-name)))
-	    (erase-buffer)
-	    (insert-buffer-substring the-buf p-beg p-end)
-	    (goto-char (point-min))
-	    (if (mime-view-header-visible-p rcnum root-cinfo)
-		(delete-region (goto-char (point-min))
-			       (if (re-search-forward "^$" nil t)
-				   (match-end 0)
-				 (point-min)))
-	      )
-	    (goto-char (point-min))
-	    (insert "\n")
-	    (goto-char (point-min))
-	    (let ((rcnum (mime::content-info/rcnum cinfo)) ci str)
-	      (while (progn
-		       (setq str
-			     (save-excursion
-			       (set-buffer a-buf)
-			       (setq ci (mime-article/rcnum-to-cinfo rcnum))
-			       (save-restriction
-				 (narrow-to-region
-				  (mime::content-info/point-min ci)
-				  (mime::content-info/point-max ci)
-				  )
-				 (std11-header-string-except
-				  (concat "^"
-					  (apply (function regexp-or) fields)
-					  ":") ""))))
-		       (if (string= (mime::content-info/type ci)
-				    "message/rfc822")
-			   nil
-			 (if str
-			     (insert str)
-			   )
-			 rcnum))
-		(setq fields (std11-collect-field-names)
-		      rcnum (cdr rcnum))
-		)
-	      )
-	    (let ((rest mime-view-following-required-fields-list))
-	      (while rest
-		(let ((field-name (car rest)))
-		  (or (std11-field-body field-name)
-		      (insert
-		       (format
-			(concat field-name
-				": "
-				(save-excursion
-				  (set-buffer the-buf)
-				  (set-buffer mime::preview/mother-buffer)
-				  (set-buffer mime::preview/article-buffer)
-				  (std11-field-body field-name)
-				  )
-				"\n")))
-		      ))
-		(setq rest (cdr rest))
-		))
-	    (eword-decode-header)
+  (let ((root-cinfo (get-text-property (point-min) 'mime-view-cinfo))
+	cinfo)
+    (while (null (setq cinfo (get-text-property (point) 'mime-view-cinfo)))
+      (backward-char)
+      )
+    (let* ((p-beg (previous-single-property-change (point) 'mime-view-cinfo))
+	   p-end
+	   (rcnum (mime::content-info/rcnum cinfo))
+	   (len (length rcnum))
+	   rc)
+      (cond ((null p-beg)
+	     (setq p-beg
+		   (if (eq (next-single-property-change (point-min)
+							'mime-view-cinfo)
+			   (point))
+		       (point)
+		     (point-min)))
+	     )
+	    ((eq (next-single-property-change p-beg 'mime-view-cinfo)
+		 (point))
+	     (setq p-beg (point))
+	     ))
+      (setq p-end (next-single-property-change p-beg 'mime-view-cinfo))
+      (cond ((null p-end)
+	     (setq p-end (point-max))
+	     )
+	    ((null rcnum)
+	     (setq p-end (point-max))
+	     )
+	    (t
+	     (save-excursion
+	       (goto-char p-end)
+	       (catch 'tag
+		 (let (e)
+		   (while (setq e
+				(next-single-property-change
+				 (point) 'mime-view-cinfo))
+		     (goto-char e)
+		     (let ((rc (mime::content-info/rcnum
+				(get-text-property (point)
+						   'mime-view-cinfo))))
+		       (or (equal rcnum (nthcdr (- (length rc) len) rc))
+			   (throw 'tag nil)
+			   ))
+		     (setq p-end e)
+		     ))
+		 (setq p-end (point-max))
+		 ))
+	     ))
+      (let* ((mode (mime-preview/get-original-major-mode))
+	     (new-name (format "%s-%s" (buffer-name) (reverse rcnum)))
+	     new-buf
+	     (the-buf (current-buffer))
+	     (a-buf mime::preview/article-buffer)
+	     fields)
+	(save-excursion
+	  (set-buffer (setq new-buf (get-buffer-create new-name)))
+	  (erase-buffer)
+	  (insert-buffer-substring the-buf p-beg p-end)
+	  (goto-char (point-min))
+	  (if (mime-view-header-visible-p rcnum root-cinfo)
+	      (delete-region (goto-char (point-min))
+			     (if (re-search-forward "^$" nil t)
+				 (match-end 0)
+			       (point-min)))
 	    )
-	  (let ((f (cdr (assq mode mime-view-following-method-alist))))
-	    (if (functionp f)
-		(funcall f new-buf)
-	      (message
-	       (format
-		"Sorry, following method for %s is not implemented yet."
-		mode))
+	  (goto-char (point-min))
+	  (insert "\n")
+	  (goto-char (point-min))
+	  (let ((rcnum (mime::content-info/rcnum cinfo)) ci str)
+	    (while (progn
+		     (setq str
+			   (save-excursion
+			     (set-buffer a-buf)
+			     (setq ci (mime-article/rcnum-to-cinfo rcnum))
+			     (save-restriction
+			       (narrow-to-region
+				(mime::content-info/point-min ci)
+				(mime::content-info/point-max ci)
+				)
+			       (std11-header-string-except
+				(concat "^"
+					(apply (function regexp-or) fields)
+					":") ""))))
+		     (if (string= (mime::content-info/type ci)
+				  "message/rfc822")
+			 nil
+		       (if str
+			   (insert str)
+			 )
+		       rcnum))
+	      (setq fields (std11-collect-field-names)
+		    rcnum (cdr rcnum))
+	      )
+	    )
+	  (let ((rest mime-view-following-required-fields-list))
+	    (while rest
+	      (let ((field-name (car rest)))
+		(or (std11-field-body field-name)
+		    (insert
+		     (format
+		      (concat field-name
+			      ": "
+			      (save-excursion
+				(set-buffer the-buf)
+				(set-buffer mime::preview/mother-buffer)
+				(set-buffer mime::preview/article-buffer)
+				(std11-field-body field-name)
+				)
+			      "\n")))
+		    ))
+	      (setq rest (cdr rest))
 	      ))
-	  ))))
+	  (eword-decode-header)
+	  )
+	(let ((f (cdr (assq mode mime-view-following-method-alist))))
+	  (if (functionp f)
+	      (funcall f new-buf)
+	    (message
+	     (format
+	      "Sorry, following method for %s is not implemented yet."
+	      mode))
+	    ))
+	))))
 
 (defun mime-view-display-x-face ()
   (interactive)
