@@ -3,6 +3,7 @@
 	* SEMI-MK (install-semi-package): Delte auto-autoloads.el
 	and custom-load.el
 
+
 1999-10-16  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* SEMI: Version 1.13.7 (Awazu) released.
