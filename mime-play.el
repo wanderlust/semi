@@ -369,10 +369,12 @@ SUBTYPE is symbol to indicate subtype of media-type.")
 	  (if (search-forward (concat filename ": ") nil t)
 	      (let ((rest mime-file-content-type-alist))
 		(while (not (let ((cell (car rest)))
-			      (if (looking-at (car cell))
-				  (setq type (nth 1 cell)
-					subtype (nth 2 cell))
-				)))
+			      (if cell
+				  (if (looking-at (car cell))
+				      (setq type (nth 1 cell)
+					    subtype (nth 2 cell))
+				    )
+				t)))
 		  (setq rest (cdr rest))))))
 	(if type
 	    (mime-raw-play-entity
