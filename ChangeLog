@@ -1,5 +1,9 @@
 1997-07-02  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* README.en (Required environment): Updated.
+
+1997-07-02  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-parse.el, mime-def.el: `mime/content-type-subtype-regexp'
 	-> `mime-media-type/subtype-regexp'.
 
