@@ -253,7 +253,7 @@
 	  (re-search-forward "^$")
 	  (append-to-buffer new-buf (+ (match-end 0) 1) end)
 	  )
-	(if (member coding mime-viewer/uuencode-encoding-name-list)
+	(if (member coding mime-view-uuencode-encoding-name-list)
 	    (progn
 	      (goto-char (point-min))
 	      (if (re-search-forward "^begin [0-9]+ " nil t)
@@ -277,7 +277,7 @@
 	       (call-process mime-tar-mmencode-program nil nil nil "-u" "-q"
 			     "-o" mime-tar-file-name mime-tar-tmp-file-name)
 	       )
-	      ((member coding mime-viewer/uuencode-encoding-name-list)
+	      ((member coding mime-view-uuencode-encoding-name-list)
 	       (call-process mime-tar-uudecode-program nil nil nil
 			     mime-tar-tmp-file-name)
 	       )
