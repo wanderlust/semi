@@ -1,3 +1,13 @@
+1999-01-27  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
+
+	* Sync up with semi-1_13.
+
+
+1999-01-27  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.13.2 (Mikawa) released.
+
+
 1999-02-01  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
 
 	* mime-edit.el (mime-edit-mode-entity-map): Add
