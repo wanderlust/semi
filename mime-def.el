@@ -56,12 +56,6 @@
 ;;; @ charset and encoding
 ;;;
 
-(defun mime/encoding-name (transfer-level &optional not-omit)
-  (cond ((> transfer-level 8) "binary")
-	((= transfer-level 8) "8bit")
-	(not-omit "7bit")
-	))
-
 (defun mime/make-charset-default-encoding-alist (transfer-level)
   (mapcar (function
 	   (lambda (charset-type)
