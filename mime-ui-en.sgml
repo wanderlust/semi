@@ -83,7 +83,7 @@ message を閲覧するための mode を提供します。利用者はここで各 entity 
 <h2> Presentation of mime-preview-buffer
 <node> MIME-Preview
 <p>
-mime-view-mode では各 entity に対して
+mime-view-mode displays information about each entity as
 <p>
 <verb>
 	[entity-button]
@@ -94,15 +94,15 @@ mime-view-mode では各 entity に対して
 </verb>
 <p>
 <noindent>
-という情報を表示します。これらは条件に従って design を変更したり、表示
-を抑制することもできます。
+You can change their design or inhibit showing some of them, according
+to some condition
 <p>
-以下に、表示例を示します。
+See following example
 
 
 <verb>
-From: morioka@jaist.ac.jp (守岡 知彦 / MORIOKA Tomohiko)
-Subject: Re: 質問？
+From: morioka@jaist.ac.jp (MORIOKA Tomohiko)
+Subject: Re: question?
 Newsgroups: zxr.message.mime
 Date: 22 Oct 93 11:02:44
 Mime-Version: 1.0
@@ -110,9 +110,9 @@ Organization: Japan Advanced Institute of Science and Technology,
         Ishikawa, Japan
 
 [1  (text/plain)]
-  MIME-Edit mode における、MIME message の作り方。
+  How to compose MIME message in MIME-Edit mode.
 
-  C-c C-x ? を押すと help が出てくる。
+  C-c C-x ? shows its help.
 
 C-c C-x C-t	insert a text message.
 C-c C-x TAB	insert a (binary) file.
@@ -132,15 +132,16 @@ C-c C-x C-k	insert PGP public key.
 C-c C-x C-p	preview editing MIME message.
 ...
 
-って訳で、C-c C-x C-i を押して、挿入したい binary file を指定します。
+therefore, you should type C-c C-x C-i and specify the binary file
+which you want to insert.
 
-  binary file の MIME encoding には、普通、Base64 を指定します。
+  You should select Base64 as MIME encoding for binary file.
 
 [2  (image/gif)]
 
 [3  (text/plain)]
 
-  こんな風に、絵入り message のでき上がり。
+  Like above, you can compose the message with image.
 
 〓〓〓〓〓〓〓〓〓〓〓 ロシアン・ティーを一杯。 〓〓〓〓〓〓〓〓〓〓〓
 〓〓〓〓〓  ☆ ジャムではなくマーマレードでもなく蜂蜜で ☆  〓〓〓〓〓
@@ -152,61 +153,61 @@ C-c C-x C-p	preview editing MIME message.
 <h3> entity-button
 <node> entity-button
 <p>
-<concept>entity-button</concept> は entity の先頭にあって、その entity 
-に関する大まかな情報を表示する部分です。
+<concept>entity-button</concept> is a tag on the top of the entity
+which shows brief information of the part.
 <p>
-標準では
+Normally, it appears as
 
 <verb>
         [1.3 test (text/plain)]
 </verb>
 
-<noindent>
-のような感じに表示されます。
 <p>
-最初の数字は message 中のこの entity の位置を節番号のように表したもの
-で、<concept>entity-number</concept> と呼びます。
+The number on the head describes the place of the entity in the
+message (like the section number) and it is called as
+<concept>entity-number</concept>.
 <p>
-２番目の文字列は表題を表します。この情報は、
+The string in the next describes its title. This information is
+taken from
 
 <ol>
-<li>Content-Description field もしくは Subject field に書かれた表題
-<li>Content-Disposition field の filename parameter に書かれた file 名
-<li>Content-Type field の name parameter に書かれた file 名
-<li> uuencode の場合の file 名
+<li>Title described in Content-Description field or Subject field
+<li>File name specified by filename parameter in Content-Disposition field
+<li>File name specified by name parameter in Content-Type field
+<li>File name for uuencode'ing
 </ol>
 
 <noindent>
-から作ります。どれも存在しない場合は空白が表示されます。
+If none of them are specified, displays a blank.
 <p>
-３番目の括弧の中の情報はその entity の media-type/subtype を表します。
-非 MIME entity の場合、<code>nil</code> が表示されます。
+The 3rd item in the parenthesis describes media-type/subtype of
+the entity. If it is is not MIME entity, it displays <code>nil</code>.
 <p>
-この entity-button は entity の内容を象徴する icon のような役割を果た
-します。例えば、
+This entity-button plays a role like icon that symbolically
+shows the content of the entity. For example, push <kbd>v</kbd> on
 
 <verb>
         [2  (image/gif)]
 </verb>
 
 <noindent>
-の上で <kbd>v</kbd> を押せばここに入っている絵が表示されます。
+shows up the image contained there.
 <p>
-また、mouse 操作が可能な場合、entity-button を第２ボタン（3 button
-mouse の場合、中央のボタン）で押せば、同様にその絵が表示されます。
+If the mouse operation is possible, you can display the image
+by pushing 2nd button (the middle button for 3 button mouse) too.
 
 
 <h3> entity-header
 <node> entity-header
 <p>
-<concept>entity-header</concept> はある entity の header を表示する部
-分です（「そのままやんけ」って怒らないで。そういうもんなんです）。
+<concept>entity-header</concept> is the header of the entity.
+（「そのままやんけ」って怒らないで。そういうもんなんです）。
 
 
 <h3> entity-body
 <node> entity-body
 <p>
-<concept>entity-body</concept> は part の内容を表示する部分です。
+<concept>entity-body</concept> is the content of the part.
 <p>
 これもひねりが足りないですが、まあ、そういうもんです。
 <p>
@@ -215,7 +216,7 @@ mouse の場合、中央のボタン）で押せば、同様にその絵が表示されます。
 text entity の場合は charset に応じて code 変換したりしますし、XEmacs 
 では image entity を変換しないといけないし。
 <p>
-詳しくはまた後で。
+Details will be described later.
 
 
 <h2> Operation in mime-preview-buffer

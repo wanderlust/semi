@@ -98,7 +98,7 @@ message を閲覧するための mode を提供します。利用者はここで各 entity 
 @node MIME-Preview, mime-view-mode, Overview of MIME-View, MIME-View
 @section Presentation of mime-preview-buffer
 
-mime-view-mode では各 entity に対して@refill
+mime-view-mode displays information about each entity as@refill
 
 @example
 	[entity-button]
@@ -109,15 +109,15 @@ mime-view-mode では各 entity に対して@refill
 @end example
 
 @noindent
-という情報を表示します。これらは条件に従って design を変更したり、表示
-を抑制することもできます。
+You can change their design or inhibit showing some of them, according
+to some condition.
 
-以下に、表示例を示します。
+See following example
 
 
 @example
-From: morioka@@jaist.ac.jp (守岡 知彦 / MORIOKA Tomohiko)
-Subject: Re: 質問？
+From: morioka@@jaist.ac.jp (MORIOKA Tomohiko)
+Subject: Re: question?
 Newsgroups: zxr.message.mime
 Date: 22 Oct 93 11:02:44
 Mime-Version: 1.0
@@ -125,9 +125,9 @@ Organization: Japan Advanced Institute of Science and Technology,
         Ishikawa, Japan
 
 [1  (text/plain)]
-  MIME-Edit mode における、MIME message の作り方。
+  How to compose MIME message in MIME-Edit mode.
 
-  C-c C-x ? を押すと help が出てくる。
+  C-c C-x ? shows its help.
 
 C-c C-x C-t	insert a text message.
 C-c C-x TAB	insert a (binary) file.
@@ -147,15 +147,16 @@ C-c C-x C-k	insert PGP public key.
 C-c C-x C-p	preview editing MIME message.
 ...
 
-って訳で、C-c C-x C-i を押して、挿入したい binary file を指定します。
+therefore, you should type C-c C-x C-i and specify the binary file
+which you want to insert.
 
-  binary file の MIME encoding には、普通、Base64 を指定します。
+  You should select Base64 as MIME encoding for binary file.
 
 [2  (image/gif)]
 
 [3  (text/plain)]
 
-  こんな風に、絵入り message のでき上がり。
+  Like above, you can compose the message with image.
 
 〓〓〓〓〓〓〓〓〓〓〓 ロシアン・ティーを一杯。 〓〓〓〓〓〓〓〓〓〓〓
 〓〓〓〓〓  ☆ ジャムではなくマーマレードでもなく蜂蜜で ☆  〓〓〓〓〓
@@ -176,67 +177,69 @@ C-c C-x C-p	preview editing MIME message.
 @cindex entity-number
 @cindex entity-button
 
-@strong{entity-button} は entity の先頭にあって、その entity に関する大
-まかな情報を表示する部分です。@refill
+@strong{entity-button} is a tag on the top of the entity
+which shows brief information of the part.@refill
 
-標準では
+Normally, it appears as
 
 @example
         [1.3 test (text/plain)]
 @end example
 
 @noindent
-のような感じに表示されます。
 
-最初の数字は message 中のこの entity の位置を節番号のように表したもので、
-@strong{entity-number} と呼びます。@refill
+The number on the head describes the place of the entity in the
+message (like the section number) and it is called as
+@strong{entity-number}.@refill
 
-２番目の文字列は表題を表します。この情報は、
+The string in the next describes its title. This information is
+taken from
 
 @enumerate
 @item
-Content-Description field もしくは Subject field に書かれた表題
+Title described in Content-Description field or Subject field
 @item
-Content-Disposition field の filename parameter に書かれた file 名
+File name specified by filename parameter in Content-Disposition field
 @item
-Content-Type field の name parameter に書かれた file 名
+File name specified by name parameter in Content-Type field
 @item
- uuencode の場合の file 名
+File name for uuencode'ing
 @end enumerate
 
 @noindent
-から作ります。どれも存在しない場合は空白が表示されます。
+If none of them are specified, displays a blank.
 
-３番目の括弧の中の情報はその entity の media-type/subtype を表します。非 
-MIME entity の場合、@code{nil} が表示されます。@refill
+The 3rd item in the parenthesis describes media-type/subtype of
+the entity. If it is is not MIME entity, it displays @code{nil}.
+@refill
 
-この entity-button は entity の内容を象徴する icon のような役割を果た
-します。例えば、
+This entity-button plays a role like icon that symbolically
+shows the content of the entity. For example, push @kbd{v} on
 
 @example
         [2  (image/gif)]
 @end example
 
 @noindent
-の上で @kbd{v} を押せばここに入っている絵が表示されます。
+shows up the image contained there.
 
-また、mouse 操作が可能な場合、entity-button を第２ボタン（3 button
-mouse の場合、中央のボタン）で押せば、同様にその絵が表示されます。
+If the mouse operation is possible, you can display the image
+by pushing 2nd button (the middle button for 3 button mouse) too.
 
 
 @node entity-header, entity-body, entity-button, MIME-Preview
 @subsection entity-header
 @cindex entity-header
 
-@strong{entity-header} はある entity の header を表示する部
-分です（「そのままやんけ」って怒らないで。そういうもんなんです）。
+@strong{entity-header} is the header of the entity.
+（「そのままやんけ」って怒らないで。そういうもんなんです）。
 
 
 @node entity-body,  , entity-header, MIME-Preview
 @subsection entity-body
 @cindex entity-body
 
-@strong{entity-body} は part の内容を表示する部分です。@refill
+@strong{entity-body} is the content of the part.@refill
 
 これもひねりが足りないですが、まあ、そういうもんです。@refill
 
@@ -245,72 +248,72 @@ mouse の場合、中央のボタン）で押せば、同様にその絵が表示されます。
 text entity の場合は charset に応じて code 変換したりしますし、XEmacs で
 は image entity を変換しないといけないし。@refill
 
-詳しくはまた後で。
+Details will be described later.
 
 
 @node mime-view-mode,  , MIME-Preview, MIME-View
 @section Operation in mime-preview-buffer
 
-mime-preview-buffer には以下の機能があります。@refill
+mime-preview-buffer posesses following functionalities.@refill
 
 @table @kbd
 @item @key{u}
-上の part に戻る（message の一番上の part でこれを行なうと Summary
-mode に戻る (*1)）
+go back to upper part (in the first part of the message,
+go back to the Summary mode (*1))
 
 @item @key{p}
-前の part に移動する
+go to previous part
 
 @item @key{M-TAB}
-前の part に移動する
+go to previous part
 
 @item @key{n}
-次の part に移動する
+go to next part
 
 @item @key{TAB}
-次の part に移動する
+go to next part
 
 @item @key{SPC}
-scroll up する
+scroll up
 
 @item @key{M-SPC}
-scroll down する
+scroll down
 
 @item @key{DEL}
-scroll down する
+scroll down
 
 @item @key{RET}
-次の行に移動する
+go to next line
 
 @item @key{M-RET}
-前の行に移動する
+go to previous line
 
 @item @key{v}
-part を再生する (*2)
+play current part (*2)
 
 @item @key{e}
-part から file を取り出す (*2)
+extract file from current part (*2)
 
 @item @key{C-c C-p}
-part を印刷する (*2)
+print current part (*2)
 
 @item @key{mouse-button-2}
-preview-buffer 中の mouse button を起動する
+start the mouse button in preview-buffer
 
-content-button を押せば、その part が再生される(*2)@refill
+on content-button, play current part (*2)@refill
 
-URL-button を押せば、その WWW browser が起動される@refill
+on URL-button, start WWW browser@refill
 
 @end table
 
 @noindent
-@strong{[注意]}
+@strong{[Notice]}
 @quotation
 
-(*1) MUA で mime-view の設定をしていない場合、Summary mode には戻りませ
-ん。@refill
+(*1) Do not go back to Summary mode unless appropriately
+configured for mime-view in the MUA.@refill
 
-(*2) 実際の動作は対応する method に依ります。
+(*2) actual behavior depends on the associated method
 @end quotation
 
 
