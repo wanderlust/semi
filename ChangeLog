@@ -1,5 +1,8 @@
 1999-11-22   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* semi-def.el (mime-user-interface-product): Bump up to
+	EMIKO 1.13.8.
+
 	* pgg.el (pgg-remove-passphrase-cache): Don't unbind passphrase.
 
 1999-11-20   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
