@@ -1,3 +1,11 @@
+1999-09-14  Akihiro Arisawa   <ari@atesoft.advantest.co.jp>
+            Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* mime-mc.el (mime-mc-gpg-process-region): Call the parser function
+	with the 6th arg `nil' if `mc-gpg-handle-pre095' is not bound.  It
+	is supposed to be used with another mc-gpg.el which is available
+	from http://www.lothar.com/tech/crypto/.
+
 1999-09-08  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-mc.el (mime-mc-gpg-encrypt-region): Bind `mc-gpg-comment' to
