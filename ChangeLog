@@ -1,3 +1,7 @@
+1998-06-20  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+
+	* semi-def.el: Require 'custom.
+
 1998-06-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el: Don't require `mime-parse'.
