@@ -1,3 +1,627 @@
+1998-03-23  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* eword-decode.el (eword-decode-header): Set default-mime-charset when
+	calling `eword-decode-region'.
+
+1998-03-22  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* eword-decode.el (eword-analyze-atom): Treat encoded-word immediately
+	after an atom.
+
+1998-03-22  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* eword-decode.el (eword-after-encoded-word-regexp): New constant.
+	eword-encoded-text-in-phrase-regexp: New constant.
+	eword-encoded-word-in-phrase-regexp: New constant.
+	eword-after-encoded-word-in-phrase-regexp: New constant.
+	eword-encoded-text-in-comment-regexp: New constant.
+	eword-encoded-word-in-comment-regexp: New constant.
+	eword-after-encoded-word-in-comment-regexp: New constant.
+	eword-encoded-text-in-quoted-string-regexp: New constant.
+	eword-encoded-word-in-quoted-string-regexp: New constant.
+	eword-after-encoded-word-in-quoted-string-regexp: New constant.
+	eword-decode-sticked-encoded-word: Update DOC-STRING.
+	eword-decode-quoted-encoded-word: Update DOC-STRING.
+	eword-decode-first-encoded-words: Add argument eword-regexp.
+	eword-decode-comment-string: Use `eword-encoded-word-in-comment-regexp'
+	and `eword-after-encoded-word-in-comment-regexp'.
+	eword-decode-quoted-string : Use
+	`eword-encoded-word-in-quoted-string-regexp' and
+	`eword-after-encoded-word-in-quoted-string-regexp'.
+	eword-decode-unstructured-string: Use `eword-encoded-word-regexp' and
+	`eword-after-encoded-word-regexp'.
+	eword-analyze-encoded-word: Use `eword-encoded-word-in-phrase-regexp'
+	and `eword-after-encoded-word-in-phrase-regexp'
+	eword-lexical-analyze: Add `default-mime-charset' and `must-unfold' to
+	key of cache.
+ 
+1998-03-21  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* eword-decode.el (eword-decode-sticked-encoded-word): Add
+	document for relation of RFC2047.
+	(eword-decode-quoted-encoded-word): Add document for relation of
+	RFC2047.
+
+1998-03-21  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* eword-decode.el (eword-decode-quoted-encoded-word): New variable.
+	(eword-decode-quoted-string): New function. It has facility that
+	decode encodes-words in quoted-string.
+	(eword-analyze-quoted-string): Call `eword-decode-quoted-string'.
+
+1998-03-20  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* eword-decode.el (eword-decode-before-ewords-regexp): Delete.
+	(eword-decode-between-ewords-regexp): Delete.
+	(eword-decode-after-ewords-regexp): Delete.
+	(eword-decode-sticked-encoded-word): New variable.
+	(eword-decode-first-encoded-words): New function.
+	(eword-decode-comment-string): New function.
+	(eword-decode-unstructured-string): New function. It treats
+	`default-mime-charset' for parts other than encoded-words.
+	(eword-decode-string): Now, it is stub to
+	`eword-decode-unstructured-string'.
+	(eword-decode-region): Now, it is stub to
+	`eword-decode-unstructured-string'.
+	(eword-decode-header): Adapt to new `eword-decode-string'.
+	(eword-analyze-quoted-string): Call
+	`std11-wrap-as-quoted-string' first.
+	(eword-analyze-comment): Call `eword-decode-comment-string'.
+	(eword-analyze-encoded-word): Now, it is stub to
+	`eword-decode-first-encoded-words'.
+	(eword-decode-token): Adapt to new `eword-analyze-quoted-string'
+	and `eword-analyze-comment'.
+	(eword-decode-unstructured-field-body): Adapt to new
+	`eword-decode-string'
+
+1998-03-20  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* eword-decode.el (eword-decode-string): Treat undecodable
+	encoded-words.
+
+1998-03-19  Tanaka Akira  <akr@jaist.ac.jp>
+
+	* eword-decode.el (eword-decode-region): Treat undecodable
+	encoded-words.
+	(eword-decode-before-ewords-regexp): New variable.
+	(eword-decode-between-ewords-regexp): New variable.
+	(eword-decode-after-ewords-regexp): New variable.
+
+1998-03-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.2.0 (Nishiizumi) was released.
+
+	* NEWS: Update for SEMI 1.2.
+
+1998-03-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-text.el: Rename 'mime-view-plain-text-preview-hook ->
+	'mime-preview-text/plain-hook.
+
+	* mime-text.el (mime-text-add-url-buttons): New function.
+	(mime-text-add-url-buttons-maybe): New function.
+
+1998-03-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el, mime-text.el, mime-image.el: Rename
+ 	'mime-view-filter-for-* -> 'mime-preview-filter-for-*.
+
+1998-03-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-text.el: Rename 'mime-decode-text-body ->
+ 	'mime-text-decode-body.
+
+1998-03-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-text.el (mime-decode-text-body): Change interface; call
+ 	'mime-text-decode-hook.
+
+1998-03-23  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* VERSION: New file.
+
+
+1998-03-23  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.1.2 (Shin-Nishikanazawa) was released.
+
+1998-03-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS: Modify about 'image-format.
+
+	* mime-image.el (mime-view-filter-for-image): Refer 'image-format
+	of preview-situation instead of 'mime-view-image-converter-alist;
+	abolish variable 'mime-view-image-converter-alist.
+
+1998-03-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS: Modify about 'body-filter.
+
+1998-03-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-image.el: Abolish 'mime-view-ps-to-gif-command.
+
+	* mime-image.el (mime-view-filter-for-image): Change interface.
+	Abolish `mime-view-filter-for-application/postscript'.
+
+	* mime-text.el (mime-view-filter-for-text/plain): Change
+	interface.
+	(mime-view-filter-for-text/richtext): Change interface.
+	(mime-view-filter-for-text/enriched): Change interface.
+
+	* mime-view.el (mime-view-display-entity): Change interface of
+	body-filter.
+
+1998-03-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-image.el (mime-preview-condition): Set 'with-filter in
+	body-presentation-method for body-filter.
+
+	* mime-view.el (mime-view-display-entity): Call body-filter only
+	when body-presentation-method is 'with-filter.
+
+1998-03-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-entity): Modify to omit check
+	for body-presentation-method.
+
+1998-03-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS: Modify about `mime-preview-condition'.
+
+1998-03-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-image.el: Set up for `mime-preview-condition' instead of
+	`mime-view-body-visible-condition' and
+	`mime-view-content-filter-alist'.
+
+	* mime-view.el (mime-preview-condition): New variable.
+	(mime-view-body-visible-p): Use `mime-preview-condition' instead
+	of `mime-view-body-visible-condition'; abolish variable
+	`mime-view-body-visible-condition'.
+	(mime-view-insert-message/partial-button): Add argument
+	`situation'.
+	(mime-view-display-entity): Use `mime-preview-condition' instead
+	of `mime-view-content-filter-alist'; don't hard-coding for
+	`message/partial-button'; abolish variable
+	`mime-view-content-filter-alist'.
+
+1998-03-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el: Require 'mime-text when compiling.
+
+1998-03-21  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+
+	* eword-decode.el (eword-lexical-analyze-internal): Fixed return
+	value.
+
+	* mime-view.el (mime-view-body-visible-condition): text media-
+	type is always visible.
+
+
+1998-03-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.1.1 (Oshino) was released.
+
+	* mime-play.el (mime-method-to-save): Must treat nil encoding as
+	7bit.
+
+1998-03-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS: Update for latest version.
+
+1998-03-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI-CFG: Must set up load-path before version check codes.
+
+1998-03-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el: Don't require mime-text.el; add autoload setting
+	for mime-text.el.
+	(mime-text-decoder-alist): moved from mime-text.el.
+	(mime-view-entity-separator-visible-p): New function.
+	Abolish `mime-view-display-header', `mime-view-display-body' and
+	`mime-view-entity-separator-function'.
+
+	* mime-text.el: Require mime-view (mime-text.el is autoloaded by
+	mime-view); variable `mime-text-decoder-alist' was moved to
+	mime-view.el.
+
+	* mime-play.el (mime-method-to-save): fixed.
+
+1998-03-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS: New file.
+
+
+1998-03-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.1.0 (Nonoichi) was released.
+
+1998-03-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el (mime-method-to-verify-application/pgp-signature):
+	Abolish unused local-variable `raw-buf'.
+
+	* mime-play.el (mime-raw-play-entity): fixed.
+
+	* mime-view.el (mime-preview-original-window-configuration): Use
+	`defvar' to avoid warning of byte-compiler.
+
+	* mime-view.el (mime-view-display-entity): Don't use
+	`mime-view-entity-button-function' (abolish it); use
+	`mime-root-entity-p'.
+
+1998-03-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-entity-button-visible-p): New function.
+	(mime-view-entity-button-function): Use function
+ 	`mime-view-entity-button-visible-p'.
+
+	* mime-view.el (mime-raw-entity-parent): New function.
+	(mime-view-entity-button-function): Use `mime-raw-entity-parent'.
+
+	* mime-view.el (mime-view-entity-button-function): Use
+ 	`mime-root-entity-p'.
+
+	* mime-parse.el (mime-root-entity-p): New function.
+
+1998-03-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI-CFG: Insert version check code.
+
+1998-03-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-image.el: Set up `mime-view-body-visible-condition' instead
+ 	of `mime-view-visible-media-type-list'.
+
+	* mime-view.el (mime-view-body-visible-condition): New variable.
+	(mime-view-body-visible-p): Use `mime-view-body-visible-condition'
+ 	instead of `mime-view-visible-media-type-list'.  	
+	Abolish `mime-view-visible-media-type-list'.
+
+	* mime-parse.el (mime-type/subtype-string): New function.
+	(mime-entity-type/subtype): Use `mime-type/subtype-string'.
+
+1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el (mime-method-to-verify-application/pgp-signature):
+	Use `mime-raw-write-region'.
+
+	* mime-view.el (mime-raw-buffer-coding-system-alist): Move setting
+	for mh-show-mode.
+
+	* mime-play.el, mime-view.el: Rename
+	`mime-raw-coding-system-alist' ->
+	`mime-raw-buffer-coding-system-alist'.
+
+	* mime-view.el, mime-play.el: Move `mime-raw-coding-system-alist'
+	from mime-play.el to mime-view.el.
+
+1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-raw-point-to-entity-node-id): Use
+	`mime-raw-find-entity-from-point'.
+	(mime-raw-point-to-entity-number): Likewise.
+
+	* mime-view.el (mime-raw-find-entity-from-point): New function.
+
+1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-display-body): Change interface.
+
+1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el, mime-view.el: Rename `mime-view-entity-info' ->
+	`mime-view-entity'.
+
+	* mime-view.el: Rename `mime-raw-entity-number-to-entity-info' ->
+	`mime-raw-find-entity-from-number'.
+
+	* mime-pgp.el, mime-view.el: Rename
+	`mime-raw-entity-node-id-to-entity-info' ->
+	`mime-raw-find-entity-from-node-id'.
+
+	* mime-pgp.el, mime-partial.el, mime-play.el, mime-view.el,
+ 	mime-parse.el: Rename `mime-entity-info' -> `mime-entity'.
+
+1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-header-visible-p): Change interface.
+	(mime-view-body-visible-p): Change interface.
+
+	* mime-view.el (mime-view-insert-entity-button): Change interface.
+	(mime-view-entity-button-function): Change interface.
+
+	* mime-view.el (mime-view-body-visible-p): Add DOC-string.
+
+	* mime-view.el: `rcnum' -> `entity-node-id'.
+
+1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el (mime-method-to-verify-application/pgp-signature):
+	Don't use temporary buffer for signed entity.
+
+	* mime-pgp.el (mime-method-to-verify-application/pgp-signature):
+	Don't use temporary buffer for PGP-signature.
+
+1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el (mime-method-to-verify-application/pgp-signature):
+	Use `write-region-as-binary'.
+
+	* mime-pgp.el (mime-method-to-verify-application/pgp-signature):
+	Use `mime-write-decoded-region'.
+
+	* mime-pgp.el: Rename `rmcnum' -> `mother-node-id'.
+
+1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el (mime-method-to-decrypt-application/pgp-encrypted):
+	Use `mime-raw-point-to-entity-node-id'; abolish `entity-number'.
+
+	* (mime-method-to-verify-application/pgp-signature): Use
+	`mime-raw-point-to-entity-node-id'; abolish `entity-number'.
+
+	* mime-pgp.el (mime-method-to-verify-multipart/signed): Use
+	`mime-raw-point-to-entity-node-id'.
+
+	* mime-view.el (mime-raw-point-to-entity-node-id): New function.
+
+	* mime-view.el, mime-pgp.el: Rename `reversed-entity-number' ->
+	`entity-node-id'.
+
+	* mime-view.el, mime-parse.el: Rename `reversed-number' ->
+	`node-id'.
+
+	* mime-pgp.el: `rcnum' -> `reversed-entity-number'.
+
+	* mime-pgp.el: `cnum' -> `entity-number'.
+
+	* mime-pgp.el: `beg' -> `start'.
+
+1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mailcap.el (mailcap-look-at-field): Change field-name to symbol.
+
+1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mailcap.el (mailcap-look-at-type-field): Must allow
+	"implicit-wild".
+	(mailcap-look-at-field): fixed.
+
+1998-03-13  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
+
+	* README.en (Bug reports): Modify description of tm mailing list.
+
+1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el, mime-play.el: Rename
+	`mime-view-quitting-method-for-mime-show-message-mode' ->
+	`mime-preview-quitting-method-for-mime-show-message-mode'.
+
+	* mime-play.el, mime-edit.el, mime-view.el: Rename
+	`mime-view-quitting-method-alist' ->
+	`mime-preview-quitting-method-alist'.
+
+1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el: Rename `mime-article::write-region' ->
+	`mime-raw-write-region'.
+
+1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el, mime-play.el: Rename `mime-playback-entity' ->
+	`mime-raw-play-entity'.
+
+	* mime-play.el, mime-view.el: Rename `mime-view-cinfo' ->
+	`mime-view-entity-info'.
+
+	* mime-view.el, mime-parse.el: Rename `mime-entity-info-rnum' ->
+	`mime-entity-info-reversed-number'.
+
+	* mime-view.el: Rename `mime/flatten-content-info' ->
+	`mime-raw-flatten-message-info'.
+
+	* mime-pgp.el, mime-view.el: Rename `mime-raw-rcnum-to-cinfo' ->
+	`mime-raw-reversed-entity-number-to-entity-info'.
+
+	* mime-view.el: Rename `mime-raw-cnum-to-cinfo' ->
+	`mime-raw-entity-number-to-entity-info'.
+
+	* mime-pgp.el, mime-partial.el, mime-view.el: Rename
+	`mime-raw-entity-info' -> `mime-raw-message-info'.
+
+	* mime-play.el, mime-pgp.el, mime-view.el: Rename
+	`mime-raw-point-content-number' ->
+	`mime-raw-point-to-entity-number'.
+
+1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el, mime-pgp.el, mime-view.el: Rename ` mime-article/'
+	-> `mime-raw-'.
+
+	* mime-view.el: Rename `mime-view-get-original-major-mode' ->
+	`mime-preview-original-major-mode'.
+
+	* mime-view.el: Rename `mime-view-display-x-face' ->
+	`mime-preview-display-x-face'.
+
+	* mime-play.el, mime-pgp.el, mime-bbdb.el, mime-view.el: Rename
+	`mime-view-buffer' -> `mime-preview-buffer'.
+
+	* mime-play.el, mime-view.el: Rename `mime::preview/' ->
+	`mime-preview-'.
+
+	* mime-view.el: Rename `mime-view-original-major-mode' ->
+	`mime-preview-original-major-mode'.
+
+	* mime-play.el, mime-edit.el, mime-view.el: Rename
+	`mime-view-kill-buffer' -> `mime-preview-kill-buffer'.
+
+	* mime-view.el: Rename `mime-view-show-summary' ->
+	`mime-preview-show-summary'.
+
+	* mime-view.el: Rename `mime-view-quit' -> `mime-preview-quit'.
+
+	* mime-view.el: Rename `mime-view-follow-current-entity' ->
+	`mime-preview-follow-current-entity'.
+
+	* mime-view.el: Rename `mime-view-print-current-entity' ->
+	`mime-preview-print-current-entity'.
+
+	* mime-view.el (mime-view-menu-list): Modify menu.
+
+	* mime-view.el: Rename `mime-view-extract-current-entity' ->
+	`mime-preview-extract-current-entity'.
+
+	* mime-def.el, mime-play.el, mime-view.el: Rename
+	`mime-view-play-current-entity' ->
+	`mime-preview-play-current-entity'.
+
+	* mime-view.el: Rename `mime-view-previous-line-content' ->
+	`mime-preview-previous-line-entity'.
+
+	* mime-view.el: Rename `mime-view-next-line-content' ->
+	`mime-preview-next-line-entity'.
+
+	* mime-view.el: Rename `mime-view-scroll-' ->
+	`mime-preview-scroll-'.
+
+	* mime-view.el: Rename `mime-view-move-to-' ->
+	`mime-preview-move-to-'.
+
+	* mime-play.el, mime-image.el: Rename `mime-preview/' ->
+	`mime-preview-'.
+
+1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-partial.el (mime-method-to-combine-message/partial-pieces):
+	Rename `mime-raw-content-info' -> `mime-raw-entity-info'.
+
+	* mime-pgp.el, mime-view.el: Rename `mime-raw-content-info' ->
+	`mime-raw-entity-info'.
+
+1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-raw-content-info): Modify DOC-string.
+
+1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* eword-encode.el: Abolish `eword-encode-RCS-ID'.
+
+1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-partial.el: Rename
+ 	`mime-combine-message/partials-automatically' ->
+ 	`mime-method-to-combine-message/partial-pieces'.
+
+1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el (mime-acting-condition): Separate type and subtype.
+
+	* mime-view.el (mime-acting-condition): Separate type and subtype.
+
+	* mime-play.el (mime-playback-entity): Separate type and subtype.
+
+
+1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae)-A was released.
+
+1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el: Rename `mime-pgp-add-keys' ->
+	`mime-method-to-add-application/pgp-keys'.
+
+	* mime-pgp.el: Rename `mime-pgp-decrypt-application/pgp-encrypted'
+	-> `mime-method-to-decrypt-application/pgp-encrypted'.
+
+	* mime-pgp.el: Rename `mime-pgp-check-application/pgp-signature'
+	-> `mime-method-to-verify-application/pgp-signature'.
+
+	* mime-pgp.el: Rename `mime-check-multipart/signed' ->
+	`mime-method-to-verify-multipart/signed'.
+
+	* mime-pgp.el: Rename `mime-process-application/pgp' ->
+	`mime-method-for-application/pgp'.
+
+1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mailcap.el (mailcap-look-at-type-field): Change type and subtype
+	to symbol.
+
+	* mailcap.el (mailcap-file): New variable.
+	(mailcap-parse-file): New function.
+
+1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* README.en (What's SEMI?): Remove what does SEMI stand for.
+
+1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-acting-condition): Use `mime-method-to-save'
+	instead of external method "tm-file".
+
+	* mime-play.el: Rename `mime-extract-current-entity' ->
+	`mime-method-to-save'.
+
+1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI-ELS (semi-modules-to-compile): Abolish mime-file.el.
+
+	* mime-play.el (mime-extract-current-entity): New function; copied
+	from mime-file.el; abolish mime-file.el.
+
+	* mime-view.el (mime-acting-condition), mime-partial.el
+	(mime-combine-message/partials-automatically), mime-play.el:
+	Rename `mime-display-message/partial' ->
+	`mime-method-to-store-message/partial'.
+
+1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-acting-condition), mime-play.el: Rename
+	`mime-display-caesar' -> `mime-method-to-display-caesar'.
+
+	* mime-view.el (mime-acting-condition), mime-play.el: Rename
+	`mime-display-message/external-ftp' ->
+	`mime-method-to-display-message/external-ftp'.
+
+	* mime-view.el (mime-acting-condition), mime-play.el: Rename
+	`mime-display-message/rfc822' ->
+	`mime-method-to-display-message/rfc822'.
+
+	* mime-play.el: Rename `mime-article/make-method-args' ->
+	`mime-make-external-method-args'.
+
+	* mime-file.el: Fix setting.
+
+1998-03-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el: Rename `mime-article/start-external-method-region'
+	-> `mime-activate-external-method'.
+
+	* mime-play.el, mime-pgp.el: Rename `mime-display-content' ->
+	`mime-playback-entity'.
+
+	* mime-file.el (mime-extract-current-entity): Use
+	`mime-write-decoded-region'.
+
+	* mime-file.el: Rename `mime-article/extract-file' ->
+	`mime-extract-current-entity'.
+
+1998-03-03  François Pinard   <pinard@iro.umontreal.ca>
+
+	* mime-edit.el (mime-edit-insert-signature): Function
+ 	`mime-edit-insert-tag' is sometimes called with more arguments
+ 	than it is ready to accept. (cf. [tm-en:1585])
+
+1998-03-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-insert-text): New optional argument
+	`subtype'.
+
+
 1998-02-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.0.1 (Magae) was released.
