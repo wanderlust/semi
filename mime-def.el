@@ -26,6 +26,12 @@
 ;;; Code:
 
 (require 'emu)
+(require 'custom)
+
+(defgroup mime nil
+  "Emacs MIME Interfaces"
+  :group 'news
+  :group 'mail)
 
 (unless (fboundp 'butlast)
   (defun butlast (x &optional n)
@@ -85,11 +91,15 @@
 ;;; @ button
 ;;;
 
-(defvar mime-button-face 'bold
-  "Face used for content-button or URL-button of MIME-Preview buffer.")
+(defcustom mime-button-face 'bold
+  "Face used for content-button or URL-button of MIME-Preview buffer."
+  :group 'mime
+  :type 'face)
 
-(defvar mime-button-mouse-face 'highlight
-  "Face used for MIME-preview buffer mouse highlighting.")
+(defcustom mime-button-mouse-face 'highlight
+  "Face used for MIME-preview buffer mouse highlighting."
+  :group 'mime
+  :type 'face)
 
 (defsubst mime-add-button (from to function &optional data)
   "Create a button between FROM and TO with callback FUNCTION and DATA."
