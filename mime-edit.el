@@ -1,6 +1,6 @@
 ;;; mime-edit.el --- Simple MIME Composer for GNU Emacs
 
-;; Copyright (C) 1993,1994,1995,1996,1997,1998 Free Software Foundation, Inc.
+;; Copyright (C) 1993,94,95,96,97,98,99 Free Software Foundation, Inc.
 
 ;; Author: UMEDA Masanobu <umerin@mse.kyutech.ac.jp>
 ;;         MORIOKA Tomohiko <morioka@jaist.ac.jp>
@@ -120,13 +120,11 @@
 
 (eval-and-compile
   (defconst mime-edit-version
-    (eval-when-compile
-      (concat
-       (mime-product-name mime-user-interface-product) " "
-       (mapconcat #'number-to-string
-		  (mime-product-version mime-user-interface-product) ".")
-       " - \"" (mime-product-code-name mime-user-interface-product) "\"")))
-  )
+    (concat
+     (mime-product-name mime-user-interface-product) " "
+     (mapconcat #'number-to-string
+		(mime-product-version mime-user-interface-product) ".")
+     " - \"" (mime-product-code-name mime-user-interface-product) "\"")))
 
 
 ;;; @ variables
