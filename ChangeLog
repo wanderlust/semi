@@ -1,3 +1,8 @@
+2000-09-29  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-edit.el (mime-file-types): Fix to use application/msword
+	instead of application/winword.
+
 2000-08-11  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-view.el (mime-display-text/plain): Display warning message
