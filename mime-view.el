@@ -727,7 +727,11 @@ The compressed face will be piped to this command.")
       (setq mime-preview-original-major-mode mode)
       (setq major-mode 'mime-view-mode)
       (setq mode-name "MIME-View")
-      (mime-view-display-message message-info the-buf obuf)
+      (mime-view-display-entity message-info message-info
+				the-buf obuf
+				'((entity-button . invisible)
+				  (header . visible)
+				  ))
       (set-buffer-modified-p nil)
       )
     (setq buffer-read-only t)
@@ -736,94 +740,12 @@ The compressed face will be piped to this command.")
   (setq mime-preview-buffer obuf)
   )
 
-(defun mime-view-display-message (message-info ibuf obuf)
-  (let* ((start (mime-entity-point-min message-info))
-	 (end (mime-entity-point-max message-info))
-	 (media-type (mime-entity-media-type message-info))
-	 (media-subtype (mime-entity-media-subtype message-info))
-	 (params (mime-entity-parameters message-info))
-	 (encoding (mime-entity-encoding message-info))
-	 end-of-header e nb ne subj)
-    (set-buffer ibuf)
-    (goto-char start)
-    (setq end-of-header (if (re-search-forward "^$" nil t)
-			    (1+ (match-end 0))
-			  end))
-    (if (> end-of-header end)
-	(setq end-of-header end)
-      )
-    (save-restriction
-      (narrow-to-region start end)
-      (setq subj
-	    (eword-decode-string
-	     (mime-raw-get-subject params encoding)))
-      )
-    (set-buffer obuf)
-    (setq nb (point))
-    (narrow-to-region nb nb)
-    ;; Insert message-header
-    (save-restriction
-      (narrow-to-region (point)(point))
-      (insert-buffer-substring mime-raw-buffer start end-of-header)
-      (let ((f (cdr (assq mime-preview-original-major-mode
-			  mime-view-content-header-filter-alist))))
-	(if (functionp f)
-	    (funcall f)
-	  (mime-view-default-content-header-filter)
-	  ))
-      (run-hooks 'mime-view-content-header-filter-hook)
-      )
-    (let* ((situation
-	    (ctree-match-calist mime-preview-condition
-				(list* (cons 'type       media-type)
-				       (cons 'subtype    media-subtype)
-				       (cons 'encoding   encoding)
-				       (cons 'major-mode major-mode)
-				       params)))
-	   (message-button
-	    (cdr (assq 'message-button situation)))
-	   (body-presentation-method
-	    (cdr (assq 'body-presentation-method situation))))
-      (when (eq message-button 'visible)
-	(goto-char (point-max))
-	(mime-view-insert-entity-button message-info message-info subj)
-	)
-      (cond ((eq body-presentation-method 'with-filter)
-	     (let ((body-filter (cdr (assq 'body-filter situation))))
-	       (save-restriction
-		 (narrow-to-region (point-max)(point-max))
-		 (insert-buffer-substring mime-raw-buffer end-of-header end)
-		 (funcall body-filter situation)
-		 )))
-	    ((functionp body-presentation-method)
-	     (funcall body-presentation-method situation)
-	     )
-	    ((null (mime-entity-children message-info))
-	     (goto-char (point-max))
-	     (mime-view-insert-entity-button message-info message-info subj)
-	     ))
-      (setq ne (point-max))
-      (widen)
-      (put-text-property nb ne 'mime-view-raw-buffer ibuf)
-      (put-text-property nb ne 'mime-view-entity message-info)
-      (goto-char ne)
-      (let ((children (mime-entity-children message-info))
-	    (default-situation
-	     (cdr (assq 'childrens-situation situation))))
-	(while children
-	  (mime-view-display-entity (car children) message-info ibuf obuf
-				    default-situation)
-	  (setq children (cdr children))
-	  )))))
-
 (defun mime-view-display-entity (entity message-info ibuf obuf
 					default-situation)
   (let* ((start (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))
-	 (media-type (mime-entity-media-type entity))
-	 (media-subtype (mime-entity-media-subtype entity))
-	 (params (mime-entity-parameters entity))
-	 (encoding (mime-entity-encoding entity))
+         (content-type (mime-entity-content-type entity))
+         (encoding (mime-entity-encoding entity))
 	 end-of-header e nb ne subj)
     (set-buffer ibuf)
     (goto-char start)
@@ -835,18 +757,18 @@ The compressed face will be piped to this command.")
       )
     (save-restriction
       (narrow-to-region start end)
-      (setq subj
-	    (eword-decode-string
-	     (mime-raw-get-subject params encoding)))
+      (setq subj (eword-decode-string (mime-raw-get-subject entity)))
       )
     (let* ((situation
-	    (ctree-match-calist mime-preview-condition
-				(list* (cons 'type       media-type)
-				       (cons 'subtype    media-subtype)
-				       (cons 'encoding   encoding)
-				       (cons 'major-mode major-mode)
-				       (append params
-					       default-situation))))
+	    (or
+	     (ctree-match-calist mime-preview-condition
+				 (append
+				  (or content-type
+				      (make-mime-content-type 'text 'plain))
+				  (list* (cons 'encoding   encoding)
+					 (cons 'major-mode major-mode)
+					 default-situation)))
+	     default-situation))
 	   (button-is-invisible
 	    (eq (cdr (assq 'entity-button situation)) 'invisible))
 	   (header-is-visible
@@ -902,33 +824,33 @@ The compressed face will be piped to this command.")
 	  (setq children (cdr children))
 	  )))))
 
-(defun mime-raw-get-uu-filename (param &optional encoding)
-  (if (member (or encoding
-		  (cdr (assq 'encoding param))
-		  )
-	      mime-view-uuencode-encoding-name-list)
-      (save-excursion
-	(or (if (re-search-forward "^begin [0-9]+ " nil t)
-		(if (looking-at ".+$")
-		    (buffer-substring (match-beginning 0)(match-end 0))
-		  ))
-	    ""))
-    ))
+(defun mime-raw-get-uu-filename ()
+  (save-excursion
+    (if (re-search-forward "^begin [0-9]+ " nil t)
+	(if (looking-at ".+$")
+	    (buffer-substring (match-beginning 0)(match-end 0))
+	  ))))
 
-(defun mime-raw-get-subject (param &optional encoding)
+(defun mime-raw-get-subject (entity)
   (or (std11-find-field-body '("Content-Description" "Subject"))
-      (let (ret)
-	(if (or (and (setq ret (mime-read-Content-Disposition))
-		     (setq ret
-			   (assoc "filename"
-				  (mime-content-disposition-parameters ret)))
-		     )
-		(setq ret (assoc "name" param))
-		(setq ret (assoc "x-name" param))
-		)
-	    (std11-strip-quoted-string (cdr ret))
-	  ))
-      (mime-raw-get-uu-filename param encoding)
+      (let ((ret (mime-entity-content-disposition entity)))
+	(and ret
+	     (setq ret (mime-content-disposition-filename ret))
+	     (std11-strip-quoted-string ret)
+	     ))
+      (let ((ret (mime-entity-content-type entity)))
+	(and ret
+	     (setq ret
+		   (cdr
+		    (let ((param (mime-content-type-parameters ret)))
+		      (or (assoc "name" param)
+			  (assoc "x-name" param))
+		      )))
+	     (std11-strip-quoted-string ret)
+	     ))
+      (if (member (mime-entity-encoding entity)
+		  mime-view-uuencode-encoding-name-list)
+	  (mime-raw-get-uu-filename))
       ""))
 
 

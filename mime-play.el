@@ -123,14 +123,10 @@ is selected from variable `mime-acting-condition'.  If MODE is
 specified, play as it.  Default MODE is \"play\"."
   (let ((beg (mime-entity-point-min entity-info))
 	(end (mime-entity-point-max entity-info))
-	(c-type (mime-entity-media-type entity-info))
-	(c-subtype (mime-entity-media-subtype entity-info))
-	(params (mime-entity-parameters entity-info))
-	(encoding (mime-entity-encoding entity-info))
-	)
-    (or c-type
-	(setq c-type 'text
-	      c-subtype 'plain))
+	(content-type (mime-entity-content-type entity-info))
+	(encoding (mime-entity-encoding entity-info)))
+    (or content-type
+	(setq content-type (make-mime-content-type 'text 'plain)))
     ;; Check for VM
     (if (< beg (point-min))
 	(setq beg (point-min))
@@ -139,11 +135,9 @@ specified, play as it.  Default MODE is \"play\"."
 	(setq end (point-max))
       )
     (let (method cal ret)
-      (setq cal (list* (cons 'type c-type)
-		       (cons 'subtype c-subtype)
+      (setq cal (list* (cons 'major-mode major-mode)
 		       (cons 'encoding encoding)
-		       (cons 'major-mode major-mode)
-		       params))
+		       content-type))
       (if mode
 	  (setq cal (cons (cons 'mode mode) cal))
 	)
@@ -188,14 +182,17 @@ specified, play as it.  Default MODE is \"play\"."
 	    (t
 	     (mime-show-echo-buffer
 	      "No method are specified for %s\n"
-	      (mime-type/subtype-string c-type c-subtype))
-	     ))
-      )
-    ))
+	      (mime-type/subtype-string
+	       (mime-content-type-primary-type content-type)
+	       (mime-content-type-subtype content-type))
+	      )))
+      )))
 
 
 ;;; @ external decoder
 ;;;
+
+(defvar mime-mailcap-method-filename-alist nil)
 
 (defun mime-activate-mailcap-method (start end situation)
   (save-excursion
@@ -203,22 +200,35 @@ specified, play as it.  Default MODE is \"play\"."
       (narrow-to-region start end)
       (goto-char start)
       (let ((method (cdr (assoc 'method situation)))
-	    (name (mime-raw-get-filename situation)))
+	    (name (expand-file-name (mime-raw-get-filename situation)
+				    mime-temp-directory)))
 	(mime-write-decoded-region (if (re-search-forward "^$" end t)
 				       (1+ (match-end 0))
 				     (point-min))
 				   end name
 				   (cdr (assq 'encoding situation)))
 	(message "External method is starting...")
-	(let ((command
-	       (mailcap-format-command
-		method
-		(cons (cons 'filename name) situation))))
-	  (start-process command mime-echo-buffer-name
-			 shell-file-name shell-command-switch command)
+	(let ((process
+	       (let ((command
+		      (mailcap-format-command
+		       method
+		       (cons (cons 'filename name) situation))))
+		 (start-process command mime-echo-buffer-name
+				shell-file-name shell-command-switch command)
+		 )))
+	  (set-alist 'mime-mailcap-method-filename-alist process name)
+	  (set-process-sentinel process 'mime-mailcap-method-sentinel)
 	  )
-	(mime-show-echo-buffer)
+	;;(mime-show-echo-buffer)
 	))))
+
+(defun mime-mailcap-method-sentinel (process event)
+  (let ((file (cdr (assq process mime-mailcap-method-filename-alist))))
+    (if (file-exists-p file)
+	(delete-file file)
+      ))
+  (remove-alist 'mime-mailcap-method-filename-alist process)
+  (message (format "%s %s" process event)))
 
 (defun mime-activate-external-method (beg end cal)
   (save-excursion
@@ -332,8 +342,10 @@ window.")
   (concat (regexp-* mime-view-file-name-char-regexp)
 	  "\\(\\." mime-view-file-name-char-regexp "+\\)*"))
 
-(defun mime-raw-get-original-filename (param &optional encoding)
-  (or (mime-raw-get-uu-filename param encoding)
+(defun mime-raw-get-original-filename (param)
+  (or (if (member (cdr (assq 'encoding param))
+		  mime-view-uuencode-encoding-name-list)
+	  (mime-raw-get-uu-filename))
       (let (ret)
 	(or (if (or (and (setq ret (mime-read-Content-Disposition))
 			 (setq ret
