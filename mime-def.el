@@ -61,7 +61,7 @@
 (defconst mime-token-regexp (concat "[^" mime-tspecials "]+"))
 (defconst mime-charset-regexp mime-token-regexp)
 
-(defconst mime/content-type-subtype-regexp
+(defconst mime-media-type/subtype-regexp
   (concat mime-token-regexp "/" mime-token-regexp))
 
 (defconst mime/disposition-type-regexp mime-token-regexp)
