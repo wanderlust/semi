@@ -1,3 +1,14 @@
+2004-04-04  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* mime-edit.el (mime-file-types): Add application/vnd.ms-excel.
+	(mime-content-types): Add application/vnd.ms-excel and
+	application/msword.
+
+2004-02-12  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-image.el (mime-display-image): Ignore errors about image
+	decoding.
+
 2004-01-15  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* mime-edit.el (mime-edit-normalize-body): Fix a comment that the
