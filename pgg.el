@@ -102,7 +102,8 @@
 (ctree-set-calist-strictly
  'pgg-decrypt-condition
  '((public-key-algorithm ELG-E DSA ELG)
-   (symmetric-key-algorithm 3DES CAST5 BLOWFISH TWOFISH)
+   (symmetric-key-algorithm
+    3DES CAST5 BLOWFISH RIJNDAEL RIJNDAEL192 RIJNDAEL256 TWOFISH)
    (scheme . gpg)))
 
 ;;; @ definition of the implementation scheme
