@@ -1,3 +1,18 @@
+1998-10-01  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-charset-type-list): Use `cn-gb' instead of
+	`cn-gb2312' because `cn-gb2312' is typo.
+
+1998-09-29  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-file-types): Use function
+	`mime-encoding-list' instead of variable
+	`mime-file-encoding-method-alist' to define default value.
+	(mime-edit-insert-voice): Use function `mime-encoding-alist'
+	instead of variable `mime-file-encoding-method-alist' for
+	completion.
+	(mime-prompt-for-encoding): Likewise.
+
 1998-09-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-edit.el (mime-edit-user-agent-value): Add
