@@ -197,6 +197,8 @@ specified, play as it.  Default MODE is \"play\"."
 ;;; @ external decoder
 ;;;
 
+(defvar mime-mailcap-method-filename-alist nil)
+
 (defun mime-activate-mailcap-method (start end situation)
   (save-excursion
     (save-restriction
@@ -211,15 +213,27 @@ specified, play as it.  Default MODE is \"play\"."
 				   end name
 				   (cdr (assq 'encoding situation)))
 	(message "External method is starting...")
-	(let ((command
-	       (mailcap-format-command
-		method
-		(cons (cons 'filename name) situation))))
-	  (start-process command mime-echo-buffer-name
-			 shell-file-name shell-command-switch command)
+	(let ((process
+	       (let ((command
+		      (mailcap-format-command
+		       method
+		       (cons (cons 'filename name) situation))))
+		 (start-process command mime-echo-buffer-name
+				shell-file-name shell-command-switch command)
+		 )))
+	  (set-alist 'mime-mailcap-method-filename-alist process name)
+	  (set-process-sentinel process 'mime-mailcap-method-sentinel)
 	  )
-	(mime-show-echo-buffer)
+	;;(mime-show-echo-buffer)
 	))))
+
+(defun mime-mailcap-method-sentinel (process event)
+  (let ((file (cdr (assq process mime-mailcap-method-filename-alist))))
+    (if (file-exists-p file)
+	(delete-file file)
+      ))
+  (remove-alist 'mime-mailcap-method-filename-alist process)
+  (message (format "%s %s" process event)))
 
 (defun mime-activate-external-method (beg end cal)
   (save-excursion
