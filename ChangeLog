@@ -1,5 +1,14 @@
 1998-06-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-edit.el (mime-edit-normalize-body): Use
+	`mime-charset-type-list' directly; abolish local variable
+	`mime-edit-charset-default-encoding-alist' and function
+	`mime-make-charset-default-encoding-alist'.
+	(mime-edit-toggle-transfer-level): Don't set up
+	`mime-edit-charset-default-encoding-alist'.
+
+1998-06-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-view-display-message): Set up
 	`mime-raw-message-info'.
 	(mime-view-buffer): New function.
