@@ -918,6 +918,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
   (let (compression-info)
     (cond
      ((and (mime-entity-filename entity)
+	   (featurep 'jka-compr)
 	   (jka-compr-installed-p)
 	   (setq compression-info (jka-compr-get-compression-info
 				   (mime-entity-filename entity))))
