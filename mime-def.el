@@ -56,26 +56,6 @@
 ;;; @ charset and encoding
 ;;;
 
-(defvar mime-charset-type-list
-  '((us-ascii		7 nil)
-    (iso-8859-1		8 "quoted-printable")
-    (iso-8859-2		8 "quoted-printable")
-    (iso-8859-3		8 "quoted-printable")
-    (iso-8859-4		8 "quoted-printable")
-    (iso-8859-5		8 "quoted-printable")
-    (koi8-r		8 "quoted-printable")
-    (iso-8859-7		8 "quoted-printable")
-    (iso-8859-8		8 "quoted-printable")
-    (iso-8859-9		8 "quoted-printable")
-    (iso-2022-jp	7 "base64")
-    (iso-2022-kr	7 "base64")
-    (euc-kr		8 "base64")
-    (gb2312		8 "quoted-printable")
-    (big5		8 "base64")
-    (iso-2022-jp-2	7 "base64")
-    (iso-2022-int-1	7 "base64")
-    ))
-
 (defun mime/encoding-name (transfer-level &optional not-omit)
   (cond ((> transfer-level 8) "binary")
 	((= transfer-level 8) "8bit")
