@@ -1,4 +1,19 @@
-1998-04-10  MORIOKA Tomohiko  <morioka@mousai.jaist.ac.jp>
+1998-04-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-entity-button-visible-p): Omit to check
+	entity is not message.
+	(mime-view-header-visible-p): Omit to check entity is message.
+	(mime-view-setup-buffers): Call 'mime-view-display-message instead
+	of 'mime-view-display-entity.
+	(mime-view-display-message): New function.
+	(mime-view-display-entity): Abolish local variable
+	'entity-node-id; don't check entity is message or not.
+
+1998-04-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI-CFG: Add "rime" instead of "mel" to 'load-path.
+
+1998-04-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI-ELS (semi-modules-to-compile): Delete 'mime-def,
 	'eword-encode and 'eword-decode.
@@ -6,7 +21,7 @@
 	* mime-def.el, eword-encode.el, eword-decode.el: Abolish
 	mime-def.el, eword-decode.el and eword-encode.el; (moved to RIME).
 
-1998-04-10  MORIOKA Tomohiko  <morioka@mousai.jaist.ac.jp>
+1998-04-10  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-parse.el (regexp-or): Moved from semi-def.el.
 
