@@ -280,8 +280,9 @@ Each elements are regexp of field-name. [mime-view.el]")
 		     (function mime-view-play-current-entity))
     ))
 
-(defun mime-preview/default-content-button-function
+(defun mime-view-entity-button-function
   (rcnum cinfo ctype params subj encoding)
+  "Insert entity button conditionally."
   (if (and (consp rcnum)
 	   (not (member
 		 ctype
@@ -517,8 +518,7 @@ The compressed face will be piped to this command.")
     (set-buffer obuf)
     (setq nb (point))
     (narrow-to-region nb nb)
-    (mime-preview/default-content-button-function
-     rcnum cinfo ctype params subj encoding)
+    (mime-view-entity-button-function rcnum cinfo ctype params subj encoding)
     (if (mime-view-header-visible-p rcnum cinfo ctype)
 	(mime-preview/display-header beg he)
       )
