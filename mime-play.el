@@ -244,9 +244,9 @@
   (let* ((cnum (mime-article/point-content-number beg))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (mother mime::article/preview-buffer)
-	 (code-converter
-	  (or (cdr (assq major-mode mime-text-decoder-alist))
-	      'mime-view-default-code-convert-region))
+	 (text-decoder
+	  (cdr (or (assq major-mode mime-text-decoder-alist)
+		   (assq t mime-text-decoder-alist))))
 	 str)
     (setq str (buffer-substring beg end))
     (switch-to-buffer new-name)
@@ -257,7 +257,7 @@
 	(delete-region (point-min) (match-end 0))
       )
     (setq major-mode 'mime/show-message-mode)
-    (setq mime::article/code-converter code-converter)
+    (setq mime-raw::text-decoder text-decoder)
     (mime-view-mode mother)
     ))
 
