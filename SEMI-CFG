@@ -4,18 +4,33 @@
 ;;;
 
 (defvar default-load-path load-path)
-(setq load-path (append
-		 (mapcar (function
-			  (lambda (path)
-			    (expand-file-name path default-directory)
-			    ))
-			 '("." "../emu" "../apel" "../bitmap-mule"
-			   "../mu" "../mel")
-			 )
-		 load-path))
+;; (setq load-path (append
+;;                  (mapcar (function
+;;                           (lambda (path)
+;;                             (expand-file-name path default-directory)
+;;                             ))
+;;                          '("." "../emu" "../apel" "../bitmap-mule"
+;;                            "../mu" "../mel")
+;;                          )
+;;                  load-path))
+
+(if (boundp 'LISPDIR)
+    (progn
+      (add-to-list 'default-load-path LISPDIR)
+      (add-to-list 'load-path LISPDIR)
+      (add-to-list 'load-path (expand-file-name "apel" LISPDIR))
+      )
+  (add-to-list 'load-path
+	       (expand-file-name "../../site-lisp/apel" data-directory))
+  )
 
 (require 'install)
 (require 'cl)
+
+(add-path "bitmap-mule")
+(add-path "mel")
+
+(add-to-list 'load-path (expand-file-name "."))
 
 
 ;;; @ Please specify optional package directory if you use them.
