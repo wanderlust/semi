@@ -410,7 +410,9 @@ optional argument COMMENT if it is specified."
 	  ;; feed the parser
 	  (condition-case err
 	      (setq parser-result
-		    (funcall parser mybuf stderr-buf status-buf rc)
+		    (if (boundp 'mc-gpg-handle-pre095)
+			(funcall parser mybuf stderr-buf status-buf rc)
+		      (funcall parser mybuf stderr-buf status-buf rc nil))
 		    )
 	    (error
 	     (message "%s" err)
