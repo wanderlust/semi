@@ -8,7 +8,7 @@
 ;; Version: $Id$
 ;; Keywords: PGP, security, MIME, multimedia, mail, news
 
-;; This file is part of SEMI (SEMI is Emacs MIME Interfaces).
+;; This file is part of SEMI (Secure Emacs MIME Interface).
 
 ;; This program is free software; you can redistribute it and/or
 ;; modify it under the terms of the GNU General Public License as
@@ -48,7 +48,7 @@
 ;;;
 ;;; It is based on draft-kazu-pgp-mime-00.txt
 
-(defun mime-article/view-application/pgp (beg end cal)
+(defun mime-process-application/pgp (beg end cal)
   (let* ((cnum (mime-article/point-content-number beg))
 	 (p-win (or (get-buffer-window mime-view-buffer)
 		    (get-largest-window)))
@@ -105,12 +105,12 @@
 
 (set-atype 'mime-acting-condition
 	   '((type . "application/pgp")
-	     (method . mime-article/view-application/pgp)
+	     (method . mime-process-application/pgp)
 	     ))
 
 (set-atype 'mime-acting-condition
 	   '((type . "text/x-pgp")
-	     (method . mime-article/view-application/pgp)
+	     (method . mime-process-application/pgp)
 	     ))
 
 
@@ -262,7 +262,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	 (obeg (mime-entity-info-point-min oinfo))
 	 (oend (mime-entity-info-point-max oinfo))
 	 )
-    (mime-article/view-application/pgp obeg oend cal)
+    (mime-process-application/pgp obeg oend cal)
     ))
 
 (set-atype 'mime-acting-condition
