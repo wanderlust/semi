@@ -113,7 +113,7 @@ SITUATION.  It must be symbol."
     (run-hooks 'mime-display-text/plain-hook)
     ))
 
-(defun mime-preview-text/richtext (entity situation)
+(defun mime-display-text/richtext (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
     (mime-text-insert-decoded-body entity)
