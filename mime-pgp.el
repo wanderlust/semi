@@ -173,7 +173,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 	 (oinfo (mime-article/rcnum-to-cinfo (cons onum rmcnum)
 					     mime::article/content-info))
 	 status str kbuf
-	 (basename (expand-file-name "tm" mime/tmp-dir))
+	 (basename (expand-file-name "tm" mime-temp-directory))
 	 (orig-file (make-temp-name basename))
 	 (sig-file (concat orig-file ".sig"))
 	 )
