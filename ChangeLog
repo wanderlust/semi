@@ -1,3 +1,7 @@
+1998-06-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* WEMI: Version 1.5.0 (Kamonomiya) released.
+
 1998-06-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* README.en (Required environment): Modify for FLIM 1.3.0.
@@ -50,7 +54,7 @@
 
 1998-06-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* WEMI: Version 1.4.6 (K-Dòzu)-A released.
+	* WEMI: Version 1.4.6 (K-Dòzu) released.-A
 
 1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -199,7 +203,7 @@
 
 1998-05-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* WEMI: Version 1.4.4 (-DÒiso)-A released.
+	* WEMI: Version 1.4.4 (-DÒiso) released.-A
 
 1998-05-17  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -390,7 +394,7 @@
 
 1998-05-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* WEMI: Version 1.4.1 (Tsujid-Dò)-A was released.
+	* WEMI: Version 1.4.1 (Tsujid-Dò) was released.-A
 
 	* README.en (Required environment): Modify for FLIM 1.2.0.
 
@@ -494,7 +498,7 @@
 
 1998-05-02  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* WEMI: Version 1.3.1 (-DÒfuna)-A was released.
+	* WEMI: Version 1.3.1 (-DÒfuna) was released.-A
 
 1998-05-02  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -761,7 +765,7 @@
 
 1998-04-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* WEMI: Version 1.2.0 (T-Dòkyò)-A was released.
+	* WEMI: Version 1.2.0 (T-Dòkyò) was released.-A
 
 	* README.en: Modify for WEMI.
 
@@ -1229,7 +1233,7 @@
 
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae)-A was released.
+	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae) was released.-A
 
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -1341,7 +1345,7 @@
 
 1998-02-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae)-A was released.
+	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae) was released.-A
 
 	* SEMI-ELS: Remove mime-tar.el.
 
@@ -1478,7 +1482,7 @@
 
 1997-11-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.116 (D-Dòhòji)-A was released.
+	* SEMI: Version 0.116 (D-Dòhòji) was released.-A
 
 1997-11-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
