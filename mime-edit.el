@@ -1822,22 +1822,24 @@ Content-Transfer-Encoding: 7bit
 	))))
 
 (defun mime-edit-translate-single-part-tag (&optional prefix)
+  "Translate single-part-tag to MIME header."
   (if (re-search-forward mime-edit-single-part-tag-regexp nil t)
       (let* ((beg (match-beginning 0))
 	     (end (match-end 0))
 	     (tag (buffer-substring beg end))
 	     )
 	(delete-region beg end)
-	(setq contype (mime-edit-get-contype tag))
-	(setq encoding (mime-edit-get-encoding tag))
-	(insert (concat prefix "--" boundary "\n"))
-	(save-restriction
-	  (narrow-to-region (point)(point))
-	  (insert "Content-Type: " contype "\n")
-	  (if encoding
-	      (insert "Content-Transfer-Encoding: " encoding "\n"))
-	  (eword-encode-header)
-	  )
+	(let ((contype (mime-edit-get-contype tag))
+	      (encoding (mime-edit-get-encoding tag))
+	      )
+	  (insert (concat prefix "--" boundary "\n"))
+	  (save-restriction
+	    (narrow-to-region (point)(point))
+	    (insert "Content-Type: " contype "\n")
+	    (if encoding
+		(insert "Content-Transfer-Encoding: " encoding "\n"))
+	    (eword-encode-header)
+	    ))
 	t)))
 
 (defun mime-edit-translate-region (beg end &optional boundary multipart)
