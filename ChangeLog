@@ -1,3 +1,7 @@
+1999-09-13  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* SEMI: Version 1.13.6 (Komatsu) released.
+
 1999-08-30  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-edit.el (mime-edit-mime-version-field-for-message/partial):
