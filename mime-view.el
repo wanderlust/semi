@@ -549,12 +549,7 @@ Each elements are regexp of field-name.")
 	(default-situation
 	  (cdr (assq 'childrens-situation situation))))
     (while children
-      (mime-view-display-entity (car children)
-				(save-excursion
-				  (set-buffer (mime-entity-buffer entity))
-				  mime-raw-message-info)
-				(current-buffer)
-				default-situation)
+      (mime-display-entity (car children) nil default-situation)
       (setq children (cdr children))
       )))
 
@@ -616,16 +611,10 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
     (while children
       (let ((child (car children))
 	    (situation (car situations)))
-	(mime-view-display-entity child
-				  (save-excursion
-				    (set-buffer (mime-entity-buffer child))
-				    mime-raw-message-info)
-				  (current-buffer)
-				  default-situation
-				  (if (= i p)
-				      situation
-				    (del-alist 'body-presentation-method
-					       (copy-alist situation))))
+	(mime-display-entity child (if (= i p)
+				       situation
+				     (del-alist 'body-presentation-method
+						(copy-alist situation))))
 	)
       (setq children (cdr children)
 	    situations (cdr situations)
@@ -776,21 +765,16 @@ The compressed face will be piped to this command.")
 ;;; @ buffer setup
 ;;;
 
-(defun mime-view-display-entity (entity message-info obuf
-					default-situation
-					&optional situation)
+(defun mime-display-entity (entity &optional situation
+				   default-situation preview-buffer)
+  (or preview-buffer
+      (setq preview-buffer (current-buffer)))
   (let* ((raw-buffer (mime-entity-buffer entity))
 	 (start (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))
-	 end-of-header e nb ne subj)
+	 e nb ne subj)
     (set-buffer raw-buffer)
     (goto-char start)
-    (setq end-of-header (if (re-search-forward "^$" nil t)
-			    (1+ (match-end 0))
-			  end))
-    (if (> end-of-header end)
-	(setq end-of-header end)
-      )
     (save-restriction
       (narrow-to-region start end)
       (setq subj (eword-decode-string (mime-raw-get-subject entity)))
@@ -811,7 +795,7 @@ The compressed face will be piped to this command.")
 	  (body-presentation-method
 	   (cdr (assq 'body-presentation-method situation)))
 	  (children (mime-entity-children entity)))
-      (set-buffer obuf)
+      (set-buffer preview-buffer)
       (setq nb (point))
       (narrow-to-region nb nb)
       (or button-is-invisible
@@ -837,7 +821,8 @@ The compressed face will be piped to this command.")
 	     (let ((body-filter (cdr (assq 'body-filter situation))))
 	       (save-restriction
 		 (narrow-to-region (point-max)(point-max))
-		 (insert-buffer-substring raw-buffer end-of-header end)
+		 (insert-buffer-substring
+		  raw-buffer (mime-entity-body-start entity) end)
 		 (funcall body-filter situation)
 		 )))
 	    (children)
@@ -1003,8 +988,8 @@ The compressed face will be piped to this command.")
 
 (defvar mime-view-redisplay nil)
 
-(defun mime-view-display-message (message &optional preview-buffer
-					  mother default-keymap-or-function)
+(defun mime-display-message (message &optional preview-buffer
+				     mother default-keymap-or-function)
   (mime-maybe-hide-echo-buffer)
   (let ((win-conf (current-window-configuration))
 	(raw-buffer (mime-entity-buffer message)))
@@ -1025,11 +1010,10 @@ The compressed face will be piped to this command.")
       (setq mime-preview-original-window-configuration win-conf)
       (setq major-mode 'mime-view-mode)
       (setq mode-name "MIME-View")
-      (mime-view-display-entity message message
-				preview-buffer
-				'((entity-button . invisible)
-				  (header . visible)
-				  ))
+      (mime-display-entity message nil
+			   '((entity-button . invisible)
+			     (header . visible))
+			   preview-buffer)
       (mime-view-define-keymap default-keymap-or-function)
       (let ((point
 	     (next-single-property-change (point-min) 'mime-view-entity)))
@@ -1047,7 +1031,7 @@ The compressed face will be piped to this command.")
 (defun mime-view-buffer (&optional raw-buffer preview-buffer mother
 				   default-keymap-or-function)
   (interactive)
-  (mime-view-display-message
+  (mime-display-message
    (save-excursion
      (if raw-buffer (set-buffer raw-buffer))
      (mime-parse-message)
@@ -1080,7 +1064,7 @@ button-2	Move to point under the mouse cursor
         	and decode current content as `play mode'
 "
   (interactive)
-  (mime-view-display-message
+  (mime-display-message
    (save-excursion
      (if raw-buffer (set-buffer raw-buffer))
      (or mime-view-redisplay
