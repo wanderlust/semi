@@ -2,7 +2,7 @@
 by MORIOKA Tomohiko <morioka@jaist.ac.jp>
 
 What's SEMI?
-------------
+============
 
   SEMI is a library to provide MIME feature for GNU Emacs.  MIME is a
   proposed internet standard for including content and headers other
@@ -33,7 +33,7 @@ What's SEMI?
 
 
 Required environment
---------------------
+====================
 
   SEMI supports XEmacs 20.2 or later with mule, and Emacs 20.
 
@@ -63,7 +63,7 @@ Required environment
 
 
 Installation
-------------
+============
 
 	% make install
 
@@ -103,7 +103,7 @@ Installation
 
 
 Initialization
---------------
+==============
 
 (a) load-path
 
@@ -127,7 +127,7 @@ Initialization
 
 
 Documentation
--------------
+=============
 
   To get started, please read ${archive}/README.en.
 
@@ -137,8 +137,8 @@ Documentation
 	ftp://ftp.merit.edu/internet/documents/rfc/
 
 
-Bug reports
------------
+Mailing lists
+=============
 
   If you write bug-reports and/or suggestions for improvement, please
   send them to the tm Mailing List:
@@ -152,3 +152,14 @@ Bug reports
 
 	tm-en-help@chamonix.jaist.ac.jp	(English)
 	tm-ja-help@chamonix.jaist.ac.jp	(Japanese)
+
+
+CVS based development
+=====================
+
+  If you would like to join CVS based development, please send mail to
+
+	cvs@chamonix.jaist.ac.jp
+
+  with your account name and UNIX style crypted password.  We hope you 
+  will join the open development.
