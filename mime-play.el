@@ -454,6 +454,7 @@ It is registered to variable `mime-view-quitting-method-alist'."
   "Internal method for mime-view to display ROT13-47-48 message."
   (let* ((cnum (mime-article/point-content-number beg))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
+	 (the-buf (current-buffer))
 	 (mother mime-view-buffer)
 	 (charset (cdr (assoc "charset" cal)))
 	 (encoding (cdr (assq 'encoding cal)))
@@ -486,7 +487,8 @@ It is registered to variable `mime-view-quitting-method-alist'."
       (tm:caesar-region)
       )
     (set-buffer-modified-p nil)
-    (view-mode-enter mother 'kill-buffer)
+    (set-buffer mother)
+    (view-buffer new-name)
     ))
 
 
