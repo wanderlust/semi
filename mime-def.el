@@ -33,6 +33,9 @@
   :group 'news
   :group 'mail)
 
+(custom-handle-keyword 'default-mime-charset :group 'mime
+		       'custom-variable)
+
 (unless (fboundp 'butlast)
   (defun butlast (x &optional n)
     "Returns a copy of LIST with the last N elements removed."
