@@ -136,6 +136,27 @@ try persuading me.  Warning: `It's de facto standard' is not enough.
 @node Customize
 @section What you should care about
 
+You can change how EMY works by setting various variables.  Normally you
+should change values after EMY is loaded.  However, there are some
+varaibles which should be set before anything has done.
+
+(Not yet fully documented.)
+
+@table @code
+@c @vindex mime-setup-enable-inline-image
+@item mime-setup-enable-inline-image
+
+@item mime-setup-enable-inline-html
+
+@item mime-setup-enable-pgp
+
+@item mime-setup-use-signature
+
+@c before signature.el is loaded.
+@item mime-setup-default-signature-key
+@item mime-setup-signature-key-alist
+@end table
+
 @node MIME-View
 @chapter Viewing MIME messages
 
@@ -371,7 +392,7 @@ If you are desperate, you can redefine
      (function mime-preview-play-current-entity))))
 @end lisp
 
-@strong{Note:} These settings are unsupported until better way is
+@strong{Note:} These settings are unsupported until a better way is
 implemented.
 
 @node MIME-Edit
