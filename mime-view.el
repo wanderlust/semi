@@ -1508,7 +1508,8 @@ It calls following-method selected from variable
 	(save-excursion
 	  (set-buffer (setq new-buf (get-buffer-create new-name)))
 	  (erase-buffer)
-	  (insert-buffer-substring the-buf ph-end p-end)
+	  ;; #### ???
+	  (insert (buffer-substring-no-properties ph-end p-end the-buf))
 	  (when (= ph-end p-beg)
 	    (goto-char (point-min))
 	    (insert ?\n))
@@ -1516,7 +1517,7 @@ It calls following-method selected from variable
           (let ((current-entity
 		 (if (and (eq (mime-entity-media-type entity) 'message)
 			  (eq (mime-entity-media-subtype entity) 'rfc822))
-		     (mime-entity-children entity)
+		     (car (mime-entity-children entity))
 		   entity))
 		str)
 	    (while (and current-entity

@@ -19,6 +19,7 @@ FLAGS   = $(VANILLA) -l SEMI-MK
 TEXINFMT = $(VANILLA) -l texinfmt
 TEXIF = -f texinfo-format-buffer -f save-buffer
 
+MAKEINFO = makeinfo
 PREFIX	= NONE
 LISPDIR = NONE
 PACKAGEDIR = NONE
@@ -54,7 +55,7 @@ install-package:	package
 info: emy.info
 
 %.info: %.texi
-	makeinfo -o $@ $<
+	$(MAKEINFO) -o $@ $<
 
 texinfmt: emy.texi
 	$(EMACS) $(TEXINFMT) emy.texi $(TEXIF)

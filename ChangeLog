@@ -1,3 +1,7 @@
+2000-02-11  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* Makefile (MAKEINFO): New variable.
+
 2000-02-09  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* Makefile (distclean): New target.
