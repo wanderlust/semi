@@ -135,6 +135,7 @@
 	  ("image/x-xpixmap"		. xpm)
 	  ("image/x-pic"		. pic)
 	  ("image/x-mag"		. mag)
+	  ("image/png"			. png)
 	  ))
 
 (defvar mime-view-ps-to-gif-command "pstogif")
