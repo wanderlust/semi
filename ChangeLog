@@ -1,3 +1,9 @@
+1999-08-31  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* semi-def.el (mime-add-url-buttons): Put `widget-keymap' as an
+	overlay property `local-map' in the URL buttons under FSF Emacsen.
+	(TopLevel): Require `static'.
+
 1999-08-30  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-edit.el (mime-edit-mime-version-field-for-message/partial):
