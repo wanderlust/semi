@@ -1076,8 +1076,7 @@ Optional argument ENCODING specifies an encoding method such as base64."
 	  ))
       (if hide-p
 	  (progn
-	    ;;(mime-flag-region (point-min) (1- (point-max)) ?\^M)
-	    (invisible-region (point-min) (1- (point-max)))
+	    (invisible-region (point-min) (point-max))
 	    (goto-char (point-max))
 	    )
 	))
@@ -1147,7 +1146,7 @@ Optional argument ENCODING specifies an encoding method such as base64."
 	      ;; Move to the end of this text.
 	      (if (re-search-forward mime-editor/tag-regexp nil 'move)
 		  ;; Don't forget a multiline tag.
-		  (goto-char (1- (match-beginning 0)))
+		  (goto-char (match-beginning 0))
 		)
 	      (point)
 	      ))
@@ -1961,7 +1960,7 @@ Content-Transfer-Encoding: 7bit
       (let ((beg (point))
 	    (end (mime-editor/content-end))
 	    )
-	(goto-char (1+ end))
+	(goto-char end)
 	(or (looking-at mime-editor/beginning-tag-regexp)
 	    (eobp)
 	    (insert (mime-make-text-tag) "\n")
