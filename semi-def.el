@@ -1,6 +1,6 @@
 ;;; semi-def.el --- definition module for WEMI
 
-;; Copyright (C) 1995,1996,1997,1998 Free Software Foundation, Inc.
+;; Copyright (C) 1995,1996,1997,1998,1999 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Keywords: definition, MIME, multimedia, mail, news
@@ -30,7 +30,7 @@
 
 (require 'custom)
 
-(defconst mime-user-interface-product ["WEMI" (1 12 1) "Kusanagi"]
+(defconst mime-user-interface-product ["WEMI" (1 13 0) "Shizuoka"]
   "Implementation name, version name and numbers of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"

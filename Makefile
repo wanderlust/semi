@@ -3,8 +3,8 @@
 #
 
 PACKAGE = wemi
-API	= 1.12
-RELEASE = 1
+API	= 1.13
+RELEASE = 0
 
 TAR	= tar
 RM	= /bin/rm -f
