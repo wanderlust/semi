@@ -124,7 +124,7 @@ which are string or symbol."
 	(cons ctype (nreverse dest))
 	)))
 
-(defconst mime::dtype-regexp (concat "^" mime/disposition-type-regexp))
+(defconst mime::dtype-regexp (concat "^" mime-disposition-type-regexp))
 
 (defun mime-parse-Content-Disposition (string)
   "Parse STRING as field-body of Content-Disposition field."
