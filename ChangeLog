@@ -1,3 +1,9 @@
+2004-04-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* mime-edit.el (mime-file-types): Add application/pdf. Use base64
+	for application/postscript.
+	(mime-content-types): Add application/pdf.
+
 2004-04-04  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* mime-edit.el (mime-file-types): Add application/vnd.ms-excel.
