@@ -102,28 +102,27 @@ message/partial, it is called `mother-buffer'.")
 (defvar mime-view-content-button-visible-ctype-list
   '("application/pgp"))
 
-(defun mime-view-insert-entity-button (entity-node-id
-				       message-info
-				       media-type media-subtype params
-				       subj encoding)
-  "Insert entity-button."
-  (mime-insert-button
-   (let ((access-type (assoc "access-type" params))
-	 (num (or (cdr (assoc "x-part-number" params))
-		  (if (consp entity-node-id)
-		      (mapconcat (function
-				  (lambda (num)
-				    (format "%s" (1+ num))
-				    ))
-				 (reverse entity-node-id) ".")
-		    "0"))
-	      ))
-     (cond (access-type
-	    (let ((server (assoc "server" params)))
-	      (setq access-type (cdr access-type))
-	      (if server
-		  (format "%s %s ([%s] %s)"
-			  num subj access-type (cdr server))
+(defun mime-view-insert-entity-button (entity message-info subj)
+  "Insert entity-button of ENTITY."
+  (let ((entity-node-id (mime-entity-info-node-id entity))
+	(params (mime-entity-info-parameters entity)))
+    (mime-insert-button
+     (let ((access-type (assoc "access-type" params))
+	   (num (or (cdr (assoc "x-part-number" params))
+		    (if (consp entity-node-id)
+			(mapconcat (function
+				    (lambda (num)
+				      (format "%s" (1+ num))
+				      ))
+				   (reverse entity-node-id) ".")
+		      "0"))
+		))
+       (cond (access-type
+	      (let ((server (assoc "server" params)))
+		(setq access-type (cdr access-type))
+		(if server
+		    (format "%s %s ([%s] %s)"
+			    num subj access-type (cdr server))
 		(let ((site (cdr (assoc "site" params)))
 		      (dir (cdr (assoc "directory" params)))
 		      )
@@ -132,7 +131,10 @@ message/partial, it is called `mother-buffer'.")
 		  )))
 	    )
 	   (t
-	    (let ((charset (cdr (assoc "charset" params))))
+	    (let ((media-type (mime-entity-info-media-type entity))
+		  (media-subtype (mime-entity-info-media-subtype entity))
+		  (charset (cdr (assoc "charset" params)))
+		  (encoding (mime-entity-info-encoding entity)))
 	      (concat
 	       num " " subj
 	       (let ((rest
@@ -148,31 +150,29 @@ message/partial, it is called `mother-buffer'.")
 		     "\n\t")
 		 rest)))
 	    )))
-   (function mime-preview-play-current-entity))
-  )
+     (function mime-preview-play-current-entity))
+    ))
 
-(defun mime-view-entity-button-function (entity-node-id
-					 message-info
-					 media-type media-subtype
-					 params subj encoding)
-  "Insert entity button conditionally.
+(defun mime-view-entity-button-function (entity message-info subj)
+  "Insert entity-button of ENTITY conditionally.
 Please redefine this function if you want to change default setting."
-  (or (null entity-node-id)
-      (and (eq media-type 'application)
-	   (or (eq media-subtype 'x-selection)
-	       (and (eq media-subtype 'octet-stream)
-		    (let ((entity-info
-			   (mime-raw-entity-node-id-to-entity-info
-			    (cdr entity-node-id) message-info)))
-		      (and (eq (mime-entity-info-media-type entity-info)
-			       'multipart)
-			   (eq (mime-entity-info-media-subtype entity-info)
-			       'encrypted)
-			   )))))
-      (mime-view-insert-entity-button entity-node-id message-info
-				      media-type media-subtype params
-				      subj encoding)
-      ))
+  (let ((entity-node-id (mime-entity-info-node-id entity))
+	(media-type (mime-entity-info-media-type entity))
+	(media-subtype (mime-entity-info-media-subtype entity)))
+    (or (null entity-node-id)
+	(and (eq media-type 'application)
+	     (or (eq media-subtype 'x-selection)
+		 (and (eq media-subtype 'octet-stream)
+		      (let ((mother-entity
+			     (mime-raw-entity-node-id-to-entity-info
+			      (cdr entity-node-id) message-info)))
+			(and (eq (mime-entity-info-media-type mother-entity)
+				 'multipart)
+			     (eq (mime-entity-info-media-subtype mother-entity)
+				 'encrypted)
+			     )))))
+	(mime-view-insert-entity-button entity message-info subj)
+	)))
 
 
 ;;; @ entity header
@@ -496,20 +496,20 @@ The compressed face will be piped to this command.")
   (setq mime-preview-buffer obuf)
   )
 
-(defun mime-view-display-entity (content cinfo ibuf obuf)
-  "Display entity from content-info CONTENT."
-  (let* ((beg (mime-entity-info-point-min content))
-	 (end (mime-entity-info-point-max content))
-	 (media-type (mime-entity-info-media-type content))
-	 (media-subtype (mime-entity-info-media-subtype content))
+(defun mime-view-display-entity (entity cinfo ibuf obuf)
+  "Display ENTITY."
+  (let* ((beg (mime-entity-info-point-min entity))
+	 (end (mime-entity-info-point-max entity))
+	 (media-type (mime-entity-info-media-type entity))
+	 (media-subtype (mime-entity-info-media-subtype entity))
 	 (ctype (if media-type
 		    (if media-subtype
 			(format "%s/%s" media-type media-subtype)
 		      (symbol-name media-type)
 		      )))
-	 (params (mime-entity-info-parameters content))
-	 (encoding (mime-entity-info-encoding content))
-	 (entity-node-id (mime-entity-info-node-id content))
+	 (params (mime-entity-info-parameters entity))
+	 (encoding (mime-entity-info-encoding entity))
+	 (entity-node-id (mime-entity-info-node-id entity))
 	 he e nb ne subj)
     (set-buffer ibuf)
     (goto-char beg)
@@ -528,8 +528,7 @@ The compressed face will be piped to this command.")
     (set-buffer obuf)
     (setq nb (point))
     (narrow-to-region nb nb)
-    (mime-view-entity-button-function
-     entity-node-id cinfo media-type media-subtype params subj encoding)
+    (mime-view-entity-button-function entity cinfo subj)
     (if (mime-view-header-visible-p entity-node-id cinfo)
 	(mime-view-display-header beg he)
       )
@@ -538,8 +537,7 @@ The compressed face will be piped to this command.")
 	      ctype mime-view-content-button-visible-ctype-list))
 	(save-excursion
 	  (goto-char (point-max))
-	  (mime-view-insert-entity-button
-	   entity-node-id cinfo media-type media-subtype params subj encoding)
+	  (mime-view-insert-entity-button entity cinfo subj)
 	  ))
     (cond ((mime-view-body-visible-p entity-node-id cinfo
 				     media-type media-subtype)
@@ -554,16 +552,14 @@ The compressed face will be piped to this command.")
 		(null (mime-entity-info-children cinfo))
 		)
 	   (goto-char (point-max))
-	   (mime-view-insert-entity-button entity-node-id cinfo
-					   media-type media-subtype params
-					   subj encoding)
+	   (mime-view-insert-entity-button entity cinfo subj)
 	   ))
     (mime-view-entity-separator-function
      entity-node-id cinfo media-type media-subtype params subj)
     (setq ne (point-max))
     (widen)
     (put-text-property nb ne 'mime-view-raw-buffer ibuf)
-    (put-text-property nb ne 'mime-view-entity-info content)
+    (put-text-property nb ne 'mime-view-entity-info entity)
     (goto-char ne)
     ))
 
