@@ -833,17 +833,12 @@ button-2	Move to point under the mouse cursor
 	    ))
       (mime-view-define-keymap default-keymap-or-function)
       (setq mime::preview/content-list (nth 1 ret))
-      (goto-char
-       (let ((ce (mime::preview-content-info/point-max
-		  (car mime::preview/content-list)
-		  ))
-	     e)
-	 (goto-char (point-min))
-	 (search-forward "\n\n" nil t)
-	 (setq e (match-end 0))
-	 (if (<= e ce)
-	     e
-	   ce)))
+      (let ((point (next-single-property-change (point-min) 'mime-view-cinfo)))
+	(if point
+	    (goto-char point)
+	  (goto-char (point-min))
+	  (search-forward "\n\n" nil t)
+	  ))
       (run-hooks 'mime-view-mode-hook)
       )))
 
