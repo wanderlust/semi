@@ -1,7 +1,5 @@
 * MIME-View
 
-** Unify entity display specifications to 'mime-preview-condition
-
 ** Mother entity should modify preview-situation of children
 
 ** Better implementation for multipart/alternative
