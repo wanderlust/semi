@@ -113,21 +113,21 @@ MODE is allows `text', `comment', `phrase' or nil.  Default value is
 ;;; @ leading char
 ;;;
 
-(defun tm-eword::char-type (chr)
-  (if (or (= chr ? )(= chr ?\t))
+(defsubst eword-encode-char-type (character)
+  (if (or (eq character ? )(eq character ?\t))
       nil
-    (char-charset chr)
+    (char-charset character)
     ))
 
 (defun tm-eword::parse-lc-word (str)
   (let* ((chr (sref str 0))
-	 (lc (tm-eword::char-type chr))
+	 (lc (eword-encode-char-type chr))
 	 (i (char-bytes chr))
 	 (len (length str))
 	 )
     (while (and (< i len)
 		(setq chr (sref str i))
-		(eq lc (tm-eword::char-type chr))
+		(eq lc (eword-encode-char-type chr))
 		)
       (setq i (+ i (char-bytes chr)))
       )
