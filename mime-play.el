@@ -45,7 +45,7 @@ If MODE is specified, play as it.  Default MODE is \"play\"."
   (or mode
       (setq mode "play")
       )
-  (let ((cinfo (get-text-property (point) 'mime-view-cinfo)))
+  (let ((cinfo (get-text-property (point) 'mime-view-entity-info)))
     (if cinfo
 	(let ((the-buf (current-buffer))
 	      (raw-buffer (get-text-property (point) 'mime-view-raw-buffer))
