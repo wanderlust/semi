@@ -79,15 +79,15 @@ PGG requires at least one implementation of privacy guard system.
 This document assumes that you have already obtained and installed them
 and that you are familiar with its basic functions.
 
-By default, PGG assumes that GnuPG is usable, but Pretty Good Privacy
-version 2 or version 5 are also supported.  If you are new to such a
-system, I recomend that you should look over the GNU Privacy Handbook
-(GPH) which is available at @uref{http://www.gnupg.org/gph/}.
+By default, PGG uses GnuPG, but Pretty Good Privacy version 2 or version
+5 are also supported.  If you are new to such a system, I recomend that
+you should look over the GNU Privacy Handbook (GPH) which is available
+at @uref{http://www.gnupg.org/gph/}.
 
 @node How to use
 @chapter How to use
 
-The toplevel interface of this library is still simple, and only
+The toplevel interface of this library is quite simple, and only
 intended to use with public-key cryptographic operation.
 
 To use PGG, evaluate following expression at the beginning of your
@@ -124,13 +124,12 @@ list autoload settings for functions you want as follows.
 @node User Commands
 @section User Commands
 
-At this time you can use various cryptographic commands.  The behavior
-of these commands relies on a fashion of invocation because these
-commands are also intended to be used as library functions.  For
-example, in case you don't have the signer's public key, the function
-@code{pgg-verify-region} fails immediately, but if the function had been
-called interactively, it would ask you to retrieve the signer's public
-key from the server.
+At this time you can use some cryptographic commands.  The behavior of
+these commands relies on a fashion of invocation because they are also
+intended to be used as library functions.  In case you don't have the
+signer's public key, for example, the function @code{pgg-verify-region}
+fails immediately, but if the function had been called interactively, it
+would ask you to retrieve the signer's public key from the server.
 
 @deffn Command pgg-encrypt-region start end recipients
 Encrypt the current region between @var{start} and @var{end} for
@@ -188,7 +187,7 @@ By default, if the variable @var{pgg-scheme} is not set, PGG searches the
 registered scheme for an implementation of the requested service
 associated with the named algorithm.  If there are no match, PGG uses
 @var{pgg-default-scheme}.  In other words, there are two options to
-controll which command is used to process the incoming PGP armors.  One
+control which command is used to process the incoming PGP armors.  One
 is for encrypting and signing, the other is for decrypting and
 verifying.
 
@@ -211,11 +210,11 @@ arrange the interaction, set the variable @var{pgg-read-passphrase}.
 @defvar pgg-cache-passphrase
 If non-@code{nil}, store passphrases.  The default value of this
 variable is @code{t}.  If you were worry about security issue, however,
-you could stop caching.
+you could stop caching with setting it @code{nil}.
 @end defvar
 
 @defvar pgg-passphrase-cache-expiry
-The elapsed time for expiration in seconds.
+Elapsed time for expiration in seconds.
 @end defvar
 
 @node Architecture
