@@ -699,7 +699,7 @@ The compressed face will be piped to this command.")
 
 (defconst mime-view-menu-title "MIME-View")
 (defconst mime-view-menu-list
-  '((up		 "Move to upper content"      mime-view-up-content)
+  '((up		 "Move to upper content"      mime-view-move-to-upper)
     (previous	 "Move to previous content"   mime-view-previous-content)
     (next	 "Move to next content"	      mime-view-next-content)
     (scroll-down "Scroll to previous content" mime-view-scroll-down-content)
@@ -737,7 +737,7 @@ The compressed face will be piped to this command.")
 			      (make-sparse-keymap)
 			      )))
     (define-key mime-view-mode-map
-      "u"        (function mime-view-up-content))
+      "u"        (function mime-view-move-to-upper))
     (define-key mime-view-mode-map
       "p"        (function mime-view-previous-content))
     (define-key mime-view-mode-map
@@ -1024,7 +1024,9 @@ It decodes current entity to call internal or external method as
     (mime-view-x-face-function)
     ))
 
-(defun mime-view-up-content ()
+(defun mime-view-move-to-upper ()
+  "Move to upper entity.
+If there is no upper entity, call function `mime-view-quit'."
   (interactive)
   (let (cinfo)
     (while (null (setq cinfo (get-text-property (point) 'mime-view-cinfo)))
