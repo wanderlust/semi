@@ -1,5 +1,8 @@
 1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el, mime-view.el: Rename `mime-view-entity-info' ->
+	`mime-view-entity'.
+
 	* mime-view.el: Rename `mime-raw-entity-number-to-entity-info' ->
 	`mime-raw-find-entity-from-number'.
 
