@@ -1,3 +1,38 @@
+1998-06-03  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* REMI: Version 1.5.0 (Shimao) released.
+
+1998-06-02  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el (mime-method-for-application/pgp): Use
+	`mime-raw-representation-type-alist' instead of
+	`mime-text-decoder-alist'; set up to
+	`mime-raw-representation-type' instead of `mime-text-decoder'.
+
+	* mime-play.el (mime-method-to-display-message/rfc822): Use
+	`mime-raw-representation-type-alist' instead of
+	`mime-text-decoder-alist'; set up to
+	`mime-raw-representation-type' instead of `mime-text-decoder'.
+	(mime-method-to-display-caesar): Use
+	`mime-text-insert-decoded-body'.
+
+	* mime-text.el (mime-raw-representation-type): New variable;
+	abolish `mime-text-decoder'.
+	(mime-text-insert-decoded-body): Change interface; refer
+	`mime-raw-representation-type' or
+	`mime-raw-representation-type-alist' instead of
+	`mime-text-decoder' or `mime-text-decoder-alist'; abolish function
+	`mime-text-decode-buffer' and `mime-text-decode-buffer-maybe'.
+	(mime-preview-text/plain): Modify for new interface of
+	`mime-text-insert-decoded-body'.
+	(mime-preview-text/richtext): Modify for new interface of
+	`mime-text-insert-decoded-body'.
+	(mime-preview-text/enriched): Modify for new interface of
+	`mime-text-insert-decoded-body'.
+
+	* mime-view.el (mime-raw-representation-type-alist): New variable;
+	abolish `mime-text-decoder-alist'.
+
 1998-05-29  Katsumi Yamaoka   <yamaoka@jpl.org>
 
 	* mime-view.el (mime-preview-scroll-down-entity): Use (not (bobp))
