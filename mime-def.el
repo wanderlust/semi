@@ -67,10 +67,6 @@
 ;;; @ button
 ;;;
 
-(if running-xemacs
-    (require 'overlay)
-  )
-
 (defvar mime-button-face 'bold
   "Face used for content-button or URL-button of MIME-Preview buffer.")
 
