@@ -160,6 +160,14 @@ and return parsed it."
   "Return disposition-parameters of CONTENT-DISPOSITION."
   (cdr content-disposition))
 
+(defsubst mime-content-disposition-parameter (content-disposition parameter)
+  "Return PARAMETER value of CONTENT-DISPOSITION."
+  (cdr (assoc parameter (cdr content-disposition))))
+
+(defsubst mime-content-disposition-filename (content-disposition)
+  "Return filename of CONTENT-DISPOSITION."
+  (mime-content-disposition-parameter content-disposition "filename"))
+
 
 ;;; @ Content-Transfer-Encoding
 ;;;
