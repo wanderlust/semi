@@ -242,7 +242,6 @@
 
 (defun mime-article/view-message/rfc822 (beg end cal)
   (let* ((cnum (mime-article/point-content-number beg))
-	 (cur-buf (current-buffer))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (mother mime::article/preview-buffer)
 	 (code-converter
