@@ -42,7 +42,11 @@
 	(error "Fatal. Unsupported mode")
 	))))
 
-(defun mime-article/grab-message/partials (beg end cal)
+(defun mime-combine-message/partials-automatically (beg end cal)
+  "Internal method for mime-view to combine message/partial messages
+automatically.  This function refers variable
+`mime-view-partial-message-method-alist' to select function to display
+partial messages using mime-view."
   (interactive)
   (let* ((id (cdr (assoc "id" cal)))
 	 (target (cdr (assq 'major-mode cal)))
