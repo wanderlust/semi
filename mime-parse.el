@@ -72,6 +72,12 @@
 ;;; @ Content-Type
 ;;;
 
+(defsubst make-mime-content-type (type subtype &optional parameters)
+  (list* (cons 'type type)
+	 (cons 'subtype subtype)
+	 (nreverse parameters))
+  )
+
 (defun mime-parse-Content-Type (string)
   "Parse STRING as field-body of Content-Type field.
 Return value is
@@ -91,9 +97,8 @@ are string."
 	  (setq dest (cons (car ret) dest)
 		string (cdr ret))
 	  )
-	(list* (cons 'type (intern type))
-	       (cons 'subtype (intern subtype))
-	       (nreverse dest))
+	(make-mime-content-type (intern type)(intern subtype)
+				(nreverse dest))
 	)))
 
 (defun mime-read-Content-Type ()
@@ -212,8 +217,8 @@ If is is not found, return DEFAULT-ENCODING."
 	 (rsep (concat delimiter "[ \t]*\n"))
 	 (dc-ctl
 	  (if (eq subtype 'digest)
-	      '(message rfc822)
-	    '(text plain)
+	      (make-mime-content-type 'message 'rfc822)
+	    (make-mime-content-type 'text 'plain)
 	    ))
 	 cb ce ret ncb children (i 0))
     (save-restriction
