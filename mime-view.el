@@ -1718,9 +1718,9 @@ If LINES is negative, scroll up LINES lines."
 	  (display)
 	  (t
 	   (setq display
-		 (eq (cdr (or (assq sym situation)
-			      (assq type situation)))
-		     'invisible))))
+		 (memq (cdr (or (assq sym situation)
+				(assq type situation)))
+		       '(nil invisible)))))
     (setq situation (put-alist sym (if display
 				       'visible
 				     'invisible)
