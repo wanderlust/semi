@@ -544,7 +544,7 @@ Each elements are regexp of field-name.")
 		     #'mime-preview-play-current-entity)
     ))
 
-(defun mime-preview-multipart/mixed (entity situation)
+(defun mime-display-multipart/mixed (entity situation)
   (let ((children (mime-entity-children entity))
 	(default-situation
 	  (cdr (assq 'childrens-situation situation))))
@@ -847,7 +847,7 @@ The compressed face will be piped to this command.")
       (if children
 	  (if (functionp body-presentation-method)
 	      (funcall body-presentation-method entity situation)
-	    (mime-preview-multipart/mixed entity situation)
+	    (mime-display-multipart/mixed entity situation)
 	    ))
       )))
 
