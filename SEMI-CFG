@@ -14,14 +14,13 @@
 ;;                          )
 ;;                  load-path))
 
-(if (boundp 'LISPDIR)
-    (progn
-      (add-to-list 'default-load-path LISPDIR)
-      (add-to-list 'load-path LISPDIR)
-      (add-to-list 'load-path (expand-file-name "apel" LISPDIR))
-      )
-  (add-to-list 'load-path
-	       (expand-file-name "../../site-lisp/apel" data-directory))
+(add-to-list 'load-path
+	     (expand-file-name "../../site-lisp/apel" data-directory))
+
+(when (boundp 'LISPDIR)
+  (add-to-list 'default-load-path LISPDIR)
+  (add-to-list 'load-path LISPDIR)
+  (add-to-list 'load-path (expand-file-name "apel" LISPDIR))
   )
 
 (require 'install)
