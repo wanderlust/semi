@@ -156,16 +156,14 @@ message/partial, it is called `mother-buffer'.")
 (defun mime-view-entity-button-function (entity message-info subj)
   "Insert entity-button of ENTITY conditionally.
 Please redefine this function if you want to change default setting."
-  (let ((entity-node-id (mime-entity-node-id entity))
-	(media-type (mime-entity-media-type entity))
+  (let ((media-type (mime-entity-media-type entity))
 	(media-subtype (mime-entity-media-subtype entity)))
     (or (mime-root-entity-p entity)
 	(and (eq media-type 'application)
 	     (or (eq media-subtype 'x-selection)
 		 (and (eq media-subtype 'octet-stream)
 		      (let ((mother-entity
-			     (mime-raw-find-entity-from-node-id
-			      (cdr entity-node-id) message-info)))
+			     (mime-raw-entity-parent entity message-info)))
 			(and (eq (mime-entity-media-type mother-entity)
 				 'multipart)
 			     (eq (mime-entity-media-subtype mother-entity)
@@ -708,6 +706,13 @@ If optional argument MESSAGE-INFO is not specified,
 If optional argument MESSAGE-INFO is not specified,
 `mime-raw-message-info' is used."
   (reverse (mime-raw-point-to-entity-node-id point message-id)))
+
+(defsubst mime-raw-entity-parent (entity &optional message-info)
+  "Return mother entity of ENTITY.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (mime-raw-find-entity-from-node-id
+   (cdr (mime-entity-node-id entity) message-info)))
 
 (defun mime-raw-flatten-message-info (&optional message-info)
   "Return list of entity in mime-raw-buffer.
