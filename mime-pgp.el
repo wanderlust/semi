@@ -301,8 +301,11 @@ or \"v\" for choosing a command of PGP 5.0i."
 (defun mime-pgp-detect-version ()
   "Detect PGP version in the buffer. The buffer is expected to be narrowed
 to just an ascii armor."
-  (std11-narrow-to-header)
-  (let ((version (std11-fetch-field "Version")))
+  (let (version)
+    (save-restriction
+      (std11-narrow-to-header)
+      (setq version (std11-fetch-field "Version"))
+      )
     (cond ((not version)
 	   pgp-version)
 	  ((string-match "GnuPG" version)
