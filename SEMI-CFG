@@ -1,7 +1,8 @@
 ;;; -*-Emacs-Lisp-*-
-;;;
-;;; $Id$
-;;;
+
+;; SEMI-CFG: installation setting about SEMI.
+
+;;; Code:
 
 (defvar default-load-path load-path)
 
