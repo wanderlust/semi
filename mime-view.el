@@ -194,17 +194,13 @@ Each elements are regexp of field-name. [mime-view.el]")
 ;;; @@ predicate functions
 ;;;
 
-(defun mime-view-header-visible-p (rcnum cinfo &optional ctype)
+(defun mime-view-header-visible-p (rcnum cinfo)
   "Return non-nil if header of current entity is visible."
   (or (null rcnum)
-      (progn
-	(or ctype
-	    (setq ctype
-		  (mime::content-info/type
-		   (mime-article/rcnum-to-cinfo (cdr rcnum) cinfo)
-		   )))
-	(member ctype mime-view-childrens-header-showing-Content-Type-list)
-	)))
+      (member (mime::content-info/type
+	       (mime-article/rcnum-to-cinfo (cdr rcnum) cinfo))
+	      mime-view-childrens-header-showing-Content-Type-list)
+      ))
 
 (defun mime-view-body-visible-p (rcnum cinfo &optional ctype)
   (let (ccinfo)
@@ -335,7 +331,7 @@ Each elements are regexp of field-name. [mime-view.el]")
 ;;;
 
 (defun mime-preview/default-content-separator (rcnum cinfo ctype params subj)
-  (if (and (not (mime-view-header-visible-p rcnum cinfo ctype))
+  (if (and (not (mime-view-header-visible-p rcnum cinfo))
 	   (not (mime-view-body-visible-p rcnum cinfo ctype))
 	   )
       (progn
@@ -517,7 +513,7 @@ The compressed face will be piped to this command.")
     (setq nb (point))
     (narrow-to-region nb nb)
     (mime-view-entity-button-function rcnum cinfo ctype params subj encoding)
-    (if (mime-view-header-visible-p rcnum cinfo ctype)
+    (if (mime-view-header-visible-p rcnum cinfo)
 	(mime-preview/display-header beg he)
       )
     (if (and (null rcnum)
