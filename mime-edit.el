@@ -825,6 +825,12 @@ Tspecials means any character that matches with it in header must be quoted.")
 	 (goto-char (point-max)))
        ,@ body))
 
+(defmacro mime-edit-force-text-tag (regexp)
+  `(cond ((looking-at (concat "\n*\\(" ,regexp "\\)"))
+	  (replace-match "\\1"))
+	 ((not (eobp))
+	  (insert (mime-make-text-tag) "\n"))))
+
 ;;; @ functions
 ;;;
 
@@ -1130,9 +1136,7 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
      (save-excursion
        (let ((ret (insert-file-contents file)))
 	 (forward-char (cadr ret))
-     (if (and (not (eobp))
-	      (not (looking-at mime-edit-single-part-tag-regexp)))
-	 (insert (mime-make-text-tag) "\n")))))))
+	 (mime-edit-force-text-tag mime-edit-single-part-regexp))))))
 
 (defun mime-edit-insert-file (file &optional verbose)
   "Insert a message from a FILE.
@@ -1238,9 +1242,7 @@ Content-Transfer-Encoding and Content-Disposition headers."
 	   subtype
 	   (insert "Content-Type: "
 		   pritype "/" subtype (or parameters "") "\n"))
-      (if (and (not (eobp))
-	       (not (looking-at mime-edit-single-part-tag-regexp)))
-	  (insert (mime-make-text-tag) "\n")))))
+      (mime-edit-force-text-tag mime-edit-single-part-tag-regexp))))
 
 (defun mime-edit-insert-voice ()
   "Insert a voice message."
@@ -1359,10 +1361,7 @@ Optional argument ENCODING specifies an encoding method such as base64."
 	    (invisible-region (point-min) (point-max))
 	    (goto-char (point-max)))
 	(goto-char (point-max))))
-    (unless (or (looking-at mime-edit-tag-regexp)
-		(= (point)(point-max)))
-      (insert "\n")
-      (mime-edit-insert-tag "text" "plain"))
+    (mime-edit-force-text-tag mime-edit-tag-regexp)
     ;; Define encoding even if it is 7bit.
     (if (stringp encoding)
 	(save-excursion
@@ -1388,10 +1387,7 @@ Optional argument ENCODING specifies an encoding method such as base64."
 	    (invisible-region (point-min) (point-max))
 	    (goto-char (point-max)))
 	(goto-char (point-max))))
-    (unless (or (looking-at mime-edit-tag-regexp)
-		(= (point)(point-max)))
-      (insert "\n")
-      (mime-edit-insert-tag "text" "plain"))
+    (mime-edit-force-text-tag mime-edit-tag-regexp)
     ;; Define encoding even if it is 7bit.
     (if (stringp encoding)
 	(save-excursion
@@ -1761,9 +1757,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
 	      (let ((beg (match-beginning 0))
 		    (end (match-end 0)))
 		(delete-region beg end)
-		(or (looking-at mime-edit-beginning-tag-regexp)
-		    (eobp)
-		    (insert (concat (mime-make-text-tag) "\n")))))
+		(mime-edit-force-text-tag mime-edit-beginning-tag-regxp)))
 	  (cond ((string-equal type "quote")
 		 (mime-edit-enquote-region bb eb))
 		((string-equal type "pgp-signed")
@@ -2211,9 +2205,7 @@ Content-Description: S/MIME Encrypted Message][base64]]\n")
 	(if (= end (point-max))
 	    nil
 	  (goto-char end)
-	  (or (looking-at mime-edit-beginning-tag-regexp)
-	      (eobp)
-	      (insert (mime-make-text-tag) "\n")))
+	  (mime-edit-force-text-tag mime-edit-beginning-tag-regexp))
 	(visible-region beg end)
 	(goto-char beg))
       (cond
@@ -2386,9 +2378,7 @@ and insert data encoded as ENCODING."
       (goto-char (point-max))
       (insert (format "--}-<<%s>>\n" type))
       (goto-char (point-max)))
-    (or (looking-at mime-edit-beginning-tag-regexp)
-	(eobp)
-	(insert (mime-make-text-tag) "\n"))))
+    (mime-edit-force-text-tag mime-edit-beginning-tag-regexp)))
 
 (defun mime-edit-enclose-quote-region (beg end)
   (interactive "*r")
@@ -2440,9 +2430,7 @@ and insert data encoded as ENCODING."
   (mime-edit-insert-tag "application" "pgp-keys")
   (mime-edit-define-encoding "7bit")
   (pgg-insert-key)
-  (if (and (not (eobp))
-	   (not (looking-at mime-edit-single-part-tag-regexp)))
-      (insert (mime-make-text-tag) "\n")))
+  (mime-edit-force-text-tag mime-edit-single-part-tag-regexp))
 
 
 ;;; @ flag setting

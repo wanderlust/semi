@@ -1,3 +1,22 @@
+2000-10-13  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-edit.el (mime-edit-force-text-tag): New macro.
+	* mime-edit.el (mime-edit-insert-text-file):
+	* mime-edit.el (mime-edit-insert-external):
+	* mime-edit.el (mime-edit-insert-binary-string):
+	* mime-edit.el (mime-edit-insert-binary-file):
+	* mime-edit.el (mime-edit-process-multipart-1):
+	* mime-edit.el (mime-edit-normalize-body):
+	* mime-edit.el (mime-edit-enclose-region-internal):
+	* mime-edit.el (mime-edit-insert-key): Use mime-edit-force-text-tag.
+
+2000-10-12  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-edit.el (mime-edit-insert-insert-binary-string): Don't
+	make a blank only part.
+	(mime-edit-insert-binary-file): Ditto.
+	(mime-edit-insert-text-file): Ditto.
+
 2000-10-10  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* mime-edit.el (mime-edit-insert-place): Barf if on invisible region.
