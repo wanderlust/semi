@@ -43,19 +43,10 @@
 ;;;
 
 (defvar eword-field-encoding-method-alist
-  (if (boundp 'mime/no-encoding-header-fields)
-      (nconc
-       (mapcar (function
-		(lambda (field-name)
-		  (cons field-name 'default-mime-charset)
-		  ))
-	       mime/no-encoding-header-fields)
-       '((t . mime))
-       )
-    '(("X-Nsubject" . iso-2022-jp-2)
-      ("Newsgroups" . nil)
-      (t            . mime)
-      ))
+  '(("X-Nsubject" . iso-2022-jp-2)
+    ("Newsgroups" . nil)
+    (t            . mime)
+    )
   "*Alist to specify field encoding method.
 Its key is field-name, value is encoding method.
 
