@@ -47,14 +47,12 @@
 
 (defun mime-preview/decode-text-buffer (charset encoding)
   (mime-decode-region (point-min) (point-max) encoding)
-  (let* ((mode mime::preview/original-major-mode)
-	 (m (or (save-excursion
-		  (set-buffer mime::preview/article-buffer)
-		  mime::article/code-converter)
-		(cdr (or (assq mode mime-text-decoder-alist)
-			 (assq t mime-text-decoder-alist)))
-		))
-	 )
+  (let ((m (save-excursion
+	     (set-buffer mime::preview/article-buffer)
+	     (or mime::article/code-converter
+		 (cdr (or (assq major-mode mime-text-decoder-alist)
+			  (assq t mime-text-decoder-alist)))
+		 ))))
     (and (functionp m)
 	 (funcall m charset encoding)
 	 )))
