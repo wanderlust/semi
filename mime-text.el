@@ -27,20 +27,6 @@
 (require 'mime-view)
 
 
-;;; @ buffer local variables in raw-buffer
-;;;
-
-(defvar mime-raw-representation-type nil
-  "Representation-type of mime-raw-buffer.
-It must be nil, `binary' or `cooked'.
-If it is nil, `mime-raw-representation-type-alist' is used as default
-value.
-Notice that this variable is usually used as buffer local variable in
-raw-buffer.")
-
-(make-variable-buffer-local 'mime-raw-representation-type)
-
-
 ;;; @ code conversion
 ;;;
 
@@ -50,15 +36,16 @@ It decodes MIME-encoding then code-converts as MIME-charset.
 MIME-encoding is value of field 'encoding of SITUATION.  It must be
 'nil or string.  MIME-charset is value of field \"charset\" of
 SITUATION.  It must be symbol."
-  (let ((presentation-type
+  (let* ((buffer (mime-entity-buffer entity))
+	 (presentation-type
 	 (save-excursion
-	   (set-buffer mime-raw-buffer)
+	   (set-buffer buffer)
 	   (or mime-raw-representation-type
 	       (cdr (or (assq major-mode mime-raw-representation-type-alist)
 			(assq t mime-raw-representation-type-alist)))
 	       ))))
     (save-restriction
-      (insert-buffer-substring mime-raw-buffer
+      (insert-buffer-substring buffer
 			       (mime-entity-body-start entity)
 			       (mime-entity-body-end entity))
       (let ((encoding (mime-entity-encoding entity)))

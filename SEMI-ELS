@@ -1,7 +1,8 @@
 ;;; -*-Emacs-Lisp-*-
-;;;
-;;; $Id$
-;;;
+
+;; SEMI-ELS: list of SEMI modules to install
+
+;;; Code:
 
 (setq semi-modules-to-compile
       '(signature
@@ -26,6 +27,7 @@
 	     )))
 	'((mailcrypt	mime-pgp mime-mc)
 	  (bbdb		mime-bbdb)
+	  (w3		mime-w3)
 	  ))
 
 (if (or (string-match "XEmacs" emacs-version)

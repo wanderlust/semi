@@ -1,6 +1,62 @@
 SEMI NEWS --- history of major-changes.
 Copyright (C) 1998 Free Software Foundation, Inc.
 
+* Changes in SEMI 1.5
+
+** `pgp-elkins' -> `pgp-mime'
+
+  Rename `pgp-elkins' -> `pgp-mime'.  Variable
+`mime-edit-signing-type' and `mime-edit-encrypting-type' does not
+allow `pgp-elkins'.
+
+
+** type-subtype-score
+
+  Now MIME-View chooses one entity to display body in
+multipart/alternative.  In this mechanism,
+`mime-view-type-subtype-score-alist' is used to specify priority of
+each entity.
+
+  Variable `mime-view-type-subtype-score-alist' is alist of
+TYPE-SUBTYPE vs. SCORE.  TYPE-SUBTYPE is cons pair (TYPE . SUBTYPE),
+symbol TYPE or t.  TYPE and SUBTYPE are symbol.  `t' means default.
+SCORE is integer.  Larger number is larger priority.
+
+
+** text presentation
+
+  Change text presentation mechanism.  In anything older than SEMI
+1.4, text presentation mechanism is based on filter model.  However it
+has design problem about conversion between byte representation and
+text presentation.  So SEMI was changed to use
+body-presentation-method to display text entity.  In this purpose, old
+text decoding features were abolished and introduces news features
+(cf. next section).
+
+** mime-raw-representation-type and mime-raw-representation-type-alist
+
+  Abolish `mime-text-decoder' and `mime-text-decoder-alist' because of
+text presentation mechanism change (cf. previous section).  Instead of
+it, SEMI introduces variable about representation-type of
+mime-raw-buffer.  If it is `binary', mime-raw-buffer is as same as
+network representation.  If it is `cooked', mime-raw-buffer is
+code-converted.
+
+  `mime-raw-representation-type-alist' is an alist of major-mode
+vs. representation-type.  Each element looks like
+
+    (SYMBOL . REPRESENTATION-TYPE).
+
+SYMBOL is major-mode or t.  t means default.
+
+  `mime-raw-representation-type' is a buffer local variable of
+mime-raw-buffer.  If it is non-nil, it overrides
+`mime-raw-representation-type-alist'.
+
+  In addition, `mime-raw-buffer-coding-system-alist' was abolished.
+Because representation-type has enough information.
+
+
 * Changes in SEMI 1.4
 
 ** mailcap
