@@ -220,6 +220,9 @@ and return parsed it. [mime-parse.el]"
 (defsubst mime-entity-info-encoding (entity-info)
   (mime::content-info/encoding entity-info))
 
+(defsubst mime-entity-info-children (entity-info)
+  (mime::content-info/children entity-info))
+
 (defun mime-parse-multipart (boundary primtype subtype params encoding rcnum)
   (goto-char (point-min))
   (let* ((dash-boundary   (concat "--" boundary))
