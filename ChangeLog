@@ -1,5 +1,18 @@
 1998-03-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-image.el (mime-view-filter-for-image): Change interface.
+	Abolish `mime-view-filter-for-application/postscript'.
+
+	* mime-text.el (mime-view-filter-for-text/plain): Change
+	interface.
+	(mime-view-filter-for-text/richtext): Change interface.
+	(mime-view-filter-for-text/enriched): Change interface.
+
+	* mime-view.el (mime-view-display-entity): Change interface of
+	body-filter.
+
+1998-03-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-image.el (mime-preview-condition): Set 'with-filter in
 	body-presentation-method for body-filter.
 
