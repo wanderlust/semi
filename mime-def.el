@@ -52,8 +52,8 @@
 	     x))))
   )
 
-(defconst semi-version-name "Nukaj.DN~taku-mae"
-  "Version name of SEMI-kernel package.")
+(defconst semi-version '("Nukaj-D~taku-mae" 1 0 0)
+  "Version name and numbers of SEMI-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
   "Caesar rotation of current region." t)
