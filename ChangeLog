@@ -1,7 +1,19 @@
+1998-06-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-display-message): Use `mime-parse-buffer';
+	abolish variable `mime-raw-message-info'; use
+	`mime-message-structure' instead of `mime-raw-message-info'.
+
+1998-06-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-bbdb.el (mime-bbdb/update-record): Use
+	`mime-entity-fetch-field' and `mime-entity-read-field'.
+
 1998-06-19  Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
 
 	* SEMI-CFG: Require 'cl first.
 
+
 1998-06-18  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* SEMI: Version 1.7.0 (Mizuhashi) released.
