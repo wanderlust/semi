@@ -5,10 +5,9 @@ $Id$
 What's SEMI?
 ------------
 
-  SEMI is a library to provide MIME feature for GNU Emacs.  It stands
-  for "SEMI is Emacs MIME Interfaces".  MIME is a proposed internet
-  standard for including content and headers other than (ASCII) plain
-  text in messages.
+  SEMI is a library to provide MIME feature for GNU Emacs.  MIME is a
+  proposed internet standard for including content and headers other
+  than (ASCII) plain text in messages.
 
 	RFC 2045 : Internet Message Bodies
 	RFC 2046 : Media Types
