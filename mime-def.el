@@ -70,8 +70,8 @@
   (tl:add-text-properties from to
 			  (append (and tm:mouse-face
 				       (list 'mouse-face tm:mouse-face))
-				  (list 'mime-callback func)
-				  (and data (list 'mime-data data))
+				  (list 'semi-callback func)
+				  (and data (list 'semi-data data))
 				  ))
   )
 
@@ -85,8 +85,8 @@
       (mouse-set-point event)
       (setq buf (current-buffer)
 	    point (point)
-	    func (get-text-property (point) 'mime-callback)
-	    data (get-text-property (point) 'mime-data)
+	    func (get-text-property (point) 'semi-callback)
+	    data (get-text-property (point) 'semi-data)
 	    )
       )
     (save-excursion
