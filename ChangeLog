@@ -1,5 +1,13 @@
 1998-06-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-raw-message-info): Fix typo.
+	(mime-view-type-subtype-score-alist): New variable.
+	(mime-preview-multipart/alternative): New function; set up for
+	`mime-preview-condition'.
+	(mime-view-display-entity): Add optional argument `situation'.
+
+1998-06-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-view-display-entity): Call
 	body-presentation-method to display multipart if it is function.
 
