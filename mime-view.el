@@ -76,7 +76,8 @@ Please use reference function `mime-entity-SLOT' to get value of SLOT.
 
 Following is a list of slots of the structure:
 
-node-id			reversed entity-number (list of integers)
+buffer			buffer includes this entity (buffer).
+node-id			node-id (list of integers)
 header-start		minimum point of header in raw-buffer
 header-end		maximum point of header in raw-buffer
 body-start		minimum point of body in raw-buffer
