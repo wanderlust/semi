@@ -119,24 +119,25 @@ MODE is allows `text', `comment', `phrase' or nil.  Default value is
     (char-charset character)
     ))
 
-(defun tm-eword::split-to-lc-words (str)
-  (let (ret dest)
-    (while (not (string= str ""))
-      (let* ((chr (sref str 0))
+(defun eword-encode-divide-into-charset-words (string)
+  (let ((len (length string))
+	dest)
+    (while (> len 0)
+      (let* ((chr (sref string 0))
 	     (charset (eword-encode-char-type chr))
 	     (i (char-bytes chr))
-	     (len (length str))
 	     )
 	(while (and (< i len)
-		    (setq chr (sref str i))
+		    (setq chr (sref string i))
 		    (eq charset (eword-encode-char-type chr))
 		    )
 	  (setq i (+ i (char-bytes chr)))
 	  )
-	(setq dest (cons (cons charset (substring str 0 i)) dest)
-	      str (substring str i))
-	))
-    (reverse dest)
+	(setq dest (cons (cons charset (substring string 0 i)) dest)
+	      string (substring string i)
+	      len (- len i)
+	      )))
+    (nreverse dest)
     ))
 
 
@@ -244,9 +245,10 @@ MODE is allows `text', `comment', `phrase' or nil.  Default value is
 
 (defun tm-eword::split-string (str &optional mode)
   (tm-eword::space-process
-   (tm-eword::words-to-ruled-words (tm-eword::lc-words-to-words
-				    (tm-eword::split-to-lc-words str))
-				   mode)))
+   (tm-eword::words-to-ruled-words
+    (tm-eword::lc-words-to-words
+     (eword-encode-divide-into-charset-words str))
+    mode)))
 
 
 ;;; @ length
@@ -417,17 +419,20 @@ MODE is allows `text', `comment', `phrase' or nil.  Default value is
 			   '(("(" nil nil))
 			   (tm-eword::words-to-ruled-words
 			    (tm-eword::lc-words-to-words
-			     (tm-eword::split-to-lc-words (cdr token)))
+			     (eword-encode-divide-into-charset-words
+			      (cdr token)))
 			    'comment)
 			   '((")" nil nil))
 			   ))
 	     )
 	    (t
-	     (setq dest (append dest
-				(tm-eword::words-to-ruled-words
-				 (tm-eword::lc-words-to-words
-				  (tm-eword::split-to-lc-words (cdr token))
-				  ) 'phrase)))
+	     (setq dest
+		   (append dest
+			   (tm-eword::words-to-ruled-words
+			    (tm-eword::lc-words-to-words
+			     (eword-encode-divide-into-charset-words
+			      (cdr token))
+			     ) 'phrase)))
 	     ))
       (setq phrase (cdr phrase))
       )
