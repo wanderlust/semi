@@ -326,7 +326,11 @@ specified, play as it.  Default MODE is \"play\"."
           ;;  )
 	  (t
 	   (mime-show-echo-buffer "No method are specified for %s\n"
-				  (mime-entity-type/subtype entity))
+				  (mime-type/subtype-string
+				   (cdr (assq 'type situation))
+				   (cdr (assq 'subtype situation))))
+	   (if (y-or-n-p "Do you want to save current entity to disk?")
+	       (mime-save-content entity situation))
 	   ))
     ))
 
@@ -501,16 +505,14 @@ SUBTYPE is symbol to indicate subtype of media-type.")
 			  )
 		      t)))
 	(setq rest (cdr rest))))
-    (if type
-	(mime-play-entity
-	 entity
-	 (put-alist 'type type
-		    (put-alist 'subtype subtype
-			       (del-alist 'method
-					  (copy-alist situation))))
-	 'mime-detect-content)
-      ))
-  )
+    (setq situation (del-alist 'method (copy-alist situation)))
+    (mime-play-entity entity
+		      (if type
+			  (put-alist 'type type
+				     (put-alist 'subtype subtype
+						situation))
+			situation)
+		      'mime-detect-content)))
 
 
 ;;; @ mail/news message
