@@ -703,7 +703,7 @@ The compressed face will be piped to this command.")
     (previous	 "Move to previous content"   mime-view-move-to-previous)
     (next	 "Move to next content"	      mime-view-move-to-next)
     (scroll-down "Scroll to previous content" mime-view-scroll-down-content)
-    (scroll-up	 "Scroll to next content"     mime-view-scroll-up-content)
+    (scroll-up	 "Scroll to next content"     mime-view-scroll-up-entity)
     (play	 "Play Content"               mime-view-play-current-entity)
     (extract	 "Extract Content"            mime-view-extract-current-entity)
     (print	 "Print"                      mime-view-print-current-entity)
@@ -747,7 +747,7 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       "\t"       (function mime-view-move-to-next))
     (define-key mime-view-mode-map
-      " "        (function mime-view-scroll-up-content))
+      " "        (function mime-view-scroll-up-entity))
     (define-key mime-view-mode-map
       "\M- "     (function mime-view-scroll-down-content))
     (define-key mime-view-mode-map
@@ -1080,7 +1080,8 @@ variable `mime-view-over-to-next-method-alist'."
 	  ))
       )))
 
-(defun mime-view-scroll-up-content (&optional h)
+(defun mime-view-scroll-up-entity (&optional h)
+  "Scroll up current entity."
   (interactive)
   (or h
       (setq h (- (window-height) 1))
@@ -1108,7 +1109,6 @@ variable `mime-view-over-to-next-method-alist'."
       (if (> (point) np)
           (goto-char np)
         )
-      ;;(show-subtree)
       ))
   )
 
@@ -1146,7 +1146,7 @@ variable `mime-view-over-to-next-method-alist'."
 
 (defun mime-view-next-line-content ()
   (interactive)
-  (mime-view-scroll-up-content 1)
+  (mime-view-scroll-up-entity 1)
   )
 
 (defun mime-view-previous-line-content ()
