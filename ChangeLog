@@ -1,5 +1,45 @@
 1999-11-05   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* pgg-gpg.el (pgg-gpg-shell-command-switch): New user option.
+	(pgg-gpg-process-region): Bind `shell-command-switch' to the value
+	of `pgg-gpg-shell-command-switch'.
+
+	* pgg-pgp.el (pgg-pgp-shell-command-switch): New user option.
+	(pgg-pgp-process-region): Bind `shell-command-switch' to the value
+	of `pgg-pgp-shell-command-switch'.
+
+	* pgg-pgp5.el (pgg-pgp5-shell-command-switch): New user option.
+	(pgg-pgp5-process-region): Bind `shell-command-switch' to the value
+	of `pgg-pgp5-shell-command-switch'.
+
+	* pgg-gpg.el, pgg-pgp.el, pgg-pgp5.el (sign-region): Use fixed end
+	position of the signature.
+
+	* mime-pgp.el: Add autoload for `pgg-decrypt-region',
+	`pgg-verify-region', `pgg-snarf-keys-region'.
+	(mime-view-application/pgp): Don't use `pgp-function'.
+	(mime-verify-application/pgp-signature): Ditto.
+	(mime-add-application/pgp-keys): Ditto.
+	(mime-pgp-command): Abolish.
+	(mime-pgp-default-language): Abolish.
+	(mime-pgp-good-signature-regexp-alist): Abolish.
+	(mime-pgp-key-expected-regexp-alist): Abolish
+	(mime-pgp-check-signature): Abolish.
+
+	* semi-def.el (pgp-function-alist): Abolish.
+	(pgp-function): Abolish.
+
+	* mime-edit.el: Add autoload for `pgg-encrypt-region',
+	`pgg-sign-region', `pgg-insert-key'.
+	(mime-edit-sign-pgp-mime): Throw an error when
+	`pgg-sign-region' returns nil; don't use `pgp-function'.
+	(mime-edit-encrypt-pgp-mime): Throw an error when
+	`pgg-encrypt-region' returns nil; don't use `pgp-function'.
+	(mime-edit-sign-pgp-kazu): Don't use `pgp-function'.
+	(mime-edit-encrypt-pgp-mime): Ditto.
+
+1999-11-05   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
 	* mime-pgp.el (mime-add-application/pgp-keys): Don't display
 	public key block; snarf keys immediately.
 
