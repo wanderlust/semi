@@ -229,12 +229,12 @@ If is is not found, return DEFAULT-ENCODING."
 	    (make-mime-content-type 'text 'plain)
 	    ))
 	 cb ce ret ncb children (i 0))
-    (goto-char body-end)
-    (if (re-search-backward close-delimiter nil t)
-	(setq body-end (match-beginning 0))
-      )
     (save-restriction
-      (narrow-to-region header-end body-end)
+      (goto-char body-end)
+      (narrow-to-region header-end
+			(if (re-search-backward close-delimiter nil t)
+			    (match-beginning 0)
+			  body-end))
       (goto-char header-start)
       (re-search-forward rsep nil t)
       (setq cb (match-end 0))
