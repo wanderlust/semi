@@ -467,7 +467,7 @@ window.")
   "*Alist of regexp about magic-number vs. corresponding media-types.
 Each element looks like (REGEXP TYPE SUBTYPE).
 REGEXP is a regular expression to match against the beginning of the
-file.
+content of entity.
 TYPE is symbol to indicate primary type of media-type.
 SUBTYPE is symbol to indicate subtype of media-type.")
 
