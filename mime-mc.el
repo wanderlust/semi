@@ -25,10 +25,6 @@
 
 ;;; Code:
 
-(eval-when-compile
-  (load "expect" t)
-  )
-
 (require 'semi-def)
 (require 'mailcrypt)
 
@@ -56,6 +52,12 @@
 (defvar mc-pgp-comment)
 (defvar mc-pgp-path)
 (defvar mc-pgp-user-id)
+
+(defcustom mime-mc-shell-file-name "/bin/sh"
+  "File name to load inferior shells from.  Bourne shell or its equivalent
+\(not tcsh) is needed for \"2>\"."
+  :group 'mime
+  :type 'file)
 
 
 ;;; @ Generic functions
@@ -120,7 +122,7 @@ VERSION should be a string or a symbol."
   (beg end passwd program args parser bufferdummy boundary)
   (let ((obuf (current-buffer))
 	(process-connection-type nil)
-	(shell-file-name "/bin/sh") ;; ??? force? need sh (not tcsh) for "2>"
+	(shell-file-name mime-mc-shell-file-name)
 	; other local vars
 	mybuf
 	stderr-tempfilename stderr-buf
@@ -290,8 +292,7 @@ Content-Transfer-Encoding: 7bit
 	     (if unclear
 		 "--sign"
 	       "--clearsign"))
-	   (list "--passphrase-fd" "0"
-		 "--armor" "--batch" "--textmode" "--verbose"
+	   (list "--armor" "--batch" "--textmode" "--verbose"
 		 "--local-user" (cdr key))))
     (if mc-gpg-comment
 	(setq args (nconc args
@@ -339,7 +340,7 @@ Content-Transfer-Encoding: 7bit
   (beg end passwd program args parser &optional buffer boundary)
   (let ((obuf (current-buffer))
 	(process-connection-type nil)
-	(shell-file-name "/bin/sh")
+	(shell-file-name mime-mc-shell-file-name)
 	mybuf result rgn proc results)
     (unwind-protect
 	(progn
