@@ -457,8 +457,47 @@ MODE is allows `text', `comment', `phrase' or nil.  Default value is
 
 (defun eword-addr-spec-to-rwl (addr-spec)
   (if (eq (car addr-spec) 'addr-spec)
-      (list (list (std11-addr-to-string (cdr addr-spec)) nil nil))
-    ))
+      (let ((seq (cdr addr-spec))
+	    dest pname)
+	(while seq
+	  (let* ((token (car seq))
+		 (name (car token))
+		 )
+	    (cond ((eq name 'spaces)
+		   (setq dest (nconc dest (list (list (cdr token) nil nil))))
+		   )
+		  ((eq name 'comment)
+		   (setq dest
+			 (nconc
+			  dest
+			  (list (list "(" nil nil))
+			  (tm-eword::split-string (cdr token) 'comment)
+			  (list (list ")" nil nil))
+			  ))
+		   )
+		  ((eq name 'quoted-string)
+		   (setq dest
+			 (nconc
+			  dest
+			  (list
+			   (list (concat "\"" (cdr token) "\"") nil nil)
+			   )))
+		   )
+		  (t
+		   (setq dest
+			 (if (or (eq pname 'spaces)
+				 (eq pname 'comment))
+			     (nconc dest (list (list (cdr token) nil nil)))
+			   (nconc (butlast dest)
+				  (list
+				   (list (concat (car (car (last dest)))
+						 (cdr token))
+					 nil nil)))))
+		   ))
+	    (setq seq (cdr seq)
+		  pname name))
+	  )
+	dest)))
 
 (defun tm-eword::mailbox-to-rwl (mbox)
   (let ((addr (nth 1 mbox))
