@@ -218,7 +218,7 @@ If SEPARATOR is not nil, it is used as header separator."
 		      code-conversion
 		    default-mime-charset))))
 	(if default-charset
-	    (let (beg end field-name len)
+	    (let (beg p end field-name len)
 	      (goto-char (point-min))
 	      (while (re-search-forward std11-field-head-regexp nil t)
 		(setq beg (match-beginning 0)
