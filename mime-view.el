@@ -1004,51 +1004,22 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 ;;; @ MIME viewer mode
 ;;;
 
-(defconst mime-view-menu-title "MIME-View")
 (defconst mime-view-menu-list
-  '((up		 "Move to upper entity"    mime-preview-move-to-upper)
-    (previous	 "Move to previous entity" mime-preview-move-to-previous)
-    (next	 "Move to next entity"	   mime-preview-move-to-next)
-    (scroll-down "Scroll-down"             mime-preview-scroll-down-entity)
-    (scroll-up	 "Scroll-up"               mime-preview-scroll-up-entity)
-    (play	 "Play current entity"     mime-preview-play-current-entity)
-    (extract	 "Extract current entity"  mime-preview-extract-current-entity)
-    (print	 "Print current entity"    mime-preview-print-current-entity))
+  '("MIME-View"
+    ["Move to upper entity" mime-preview-move-to-upper]
+    ["Move to previous entity" mime-preview-move-to-previous]
+    ["Move to next entity" mime-preview-move-to-next]
+    ["Scroll-down" mime-preview-scroll-down-entity]
+    ["Scroll-up" mime-preview-scroll-up-entity]
+    ["Play current entity" mime-preview-play-current-entity]
+    ["Extract current entity" mime-preview-extract-current-entity]
+    ["Print current entity" mime-preview-print-current-entity])
   "Menu for MIME Viewer")
 
-(cond ((featurep 'xemacs)
-       (defvar mime-view-xemacs-popup-menu
-	 (cons mime-view-menu-title
-	       (mapcar (function
-			(lambda (item)
-			  (vector (nth 1 item)(nth 2 item) t)))
-		       mime-view-menu-list)))
-       (defun mime-view-xemacs-popup-menu (event)
-	 "Popup the menu in the MIME Viewer buffer"
-	 (interactive "e")
-	 (select-window (event-window event))
-	 (set-buffer (event-buffer event))
-	 (popup-menu 'mime-view-xemacs-popup-menu))
-       (defvar mouse-button-2 'button2))
-      (t
-       (defvar mime-view-popup-menu 
-         (let ((menu (make-sparse-keymap mime-view-menu-title)))
-           (nconc menu
-                  (mapcar (function
-                           (lambda (item)
-                             (list (intern (nth 1 item)) 'menu-item 
-                                   (nth 1 item)(nth 2 item))))
-                          mime-view-menu-list))))
-       (defun mime-view-popup-menu (event)
-         "Popup the menu in the MIME Viewer buffer"
-         (interactive "@e")
-         (let ((menu mime-view-popup-menu) events func)
-           (setq events (x-popup-menu t menu))
-           (and events
-                (setq func (lookup-key menu (apply #'vector events)))
-                (commandp func)
-                (funcall func))))
-       (defvar mouse-button-2 [mouse-2])))
+(defun mime-view-popup-menu (event)
+  "Popup the menu in the MIME Viewer buffer"
+  (interactive "@e")
+  (mime-menu-popup event mime-view-menu-list))
 
 ;;; The current local map is taken precendence over `widget-keymap', because GNU Emacs'
 ;;; widget implementation doesn't set `local-map' property.  So we need to specify derivation.
@@ -1130,26 +1101,12 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
     (define-key mime-view-mode-map
       [backspace] (function mime-preview-scroll-down-entity))
     (if (functionp default)
-	(cond ((featurep 'xemacs)
-	       (set-keymap-default-binding mime-view-mode-map default))
-	      (t
-	       (setq mime-view-mode-map
-		     (append mime-view-mode-map (list (cons t default)))))))
-    (cond ((featurep 'xemacs)
-	   (define-key mime-view-mode-map
-	     mouse-button-3 (function mime-view-xemacs-popup-menu)))
-	  ((>= emacs-major-version 19)
-	   (define-key mime-view-mode-map
-             mouse-button-3 (function mime-view-popup-menu))
-	   (define-key mime-view-mode-map [menu-bar mime-view]
-	     (cons mime-view-menu-title
-		   (make-sparse-keymap mime-view-menu-title)))
-	   (mapcar (function
-		    (lambda (item)
-		      (define-key mime-view-mode-map
-			(vector 'menu-bar 'mime-view (car item))
-			(cons (nth 1 item)(nth 2 item)))))
-		   (reverse mime-view-menu-list))))
+	(static-if (featurep 'xemacs)
+	    (set-keymap-default-binding mime-view-mode-map default)
+	  (setq mime-view-mode-map
+		(append mime-view-mode-map (list (cons t default))))))
+    (define-key mime-view-mode-map
+      mouse-button-3 (function mime-view-popup-menu))
     (use-local-map mime-view-mode-map)
     (run-hooks 'mime-view-define-keymap-hook)))
 

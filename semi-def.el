@@ -50,20 +50,29 @@
 ;;; @ button
 ;;;
 
-(define-widget 'mime-button 'push-button
+(define-widget 'mime-button 'link
   "Widget for MIME button."
   :action 'mime-button-action)
 
 (defun mime-button-action (widget &optional event)
-  (let ((function (widget-get widget :mime-callback))
-	(data (widget-get widget :mime-data)))
+  (let ((function (widget-get widget :mime-button-callback))
+	(data (widget-get widget :mime-button-data)))
     (when function
       (funcall function data))))
     
 (defsubst mime-insert-button (string function &optional data)
   "Insert STRING as button with callback FUNCTION and DATA."
-  (widget-create 'mime-button :mime-callback function :mime-data data string)
-  (insert "\n"))
+  (save-restriction
+    (narrow-to-region (point)(point))
+    ;; Maybe we should introduce button formatter such as
+    ;; `gnus-mime-button-line-format'.
+    (insert "[" string "]")
+    ;; XEmacs -- when `widget-glyph-enable' is non nil, widget values are not
+    ;; guaranteed to be underlain.
+    (widget-convert-button 'mime-button (point-min)(point-max)
+			   :mime-button-callback function
+			   :mime-button-data data)
+    (insert "\n")))
 
 
 ;;; @ for URL
@@ -73,51 +82,65 @@
   (concat "\\(http\\|ftp\\|file\\|gopher\\|news\\|telnet\\|wais\\|mailto\\):"
 	  "\\(//[-a-zA-Z0-9_.]+:[0-9]*\\)?"
 	  "[-a-zA-Z0-9_=?#$@~`%&*+|\\/.,]*[-a-zA-Z0-9_=#$@~`%&*+|\\/]")
-  "*Regexp to match URL in text body."
+  "Regexp to match URL in text body."
   :group 'mime
   :type 'regexp)
 
 (defcustom mime-browse-url-function (function browse-url)
-  "*Function to browse URL."
+  "Function to browse URL."
   :group 'mime
   :type 'function)
+
+(define-widget 'mime-url-link 'url-link
+  "A link to an www page.")
 
 (defsubst mime-add-url-buttons ()
   "Add URL-buttons for text body."
   (goto-char (point-min))
   (while (re-search-forward mime-browse-url-regexp nil t)
-    (widget-convert-button 'url-link (match-beginning 0)(match-end 0)
+    (widget-convert-button 'mime-url-link (match-beginning 0)(match-end 0)
 			   (match-string-no-properties 0))))
 
 
 ;;; @ menu
 ;;;
 
-(if window-system
-    (if (featurep 'xemacs)
-	(defun select-menu-alist (title menu-alist)
-	  (let (ret)
-	    (popup-menu
-	     (list* title
-		    "---"
-		    (mapcar (function
-			     (lambda (cell)
-			       (vector (car cell)
-				       `(progn
-					  (setq ret ',(cdr cell))
-					  (throw 'exit nil))
-				       t)))
-			    menu-alist)))
-	    (recursive-edit)
-	    ret))
-      (defun select-menu-alist (title menu-alist)
-	(x-popup-menu
-	 (list '(1 1) (selected-window))
-	 (list title (cons title menu-alist)))))
-  (defun select-menu-alist (title menu-alist)
-    (cdr
-     (assoc (completing-read (concat title " : ") menu-alist)
-	    menu-alist))))
+(defun-maybe-cond select-menu-alist (title menu-alist)
+  ((fboundp 'popup-menu)
+   ;; While XEmacs can have both X and tty frames at the same time with
+   ;; gnuclient, we shouldn't emulate in text-mode here.
+   (let (ret)
+     (popup-menu
+      ;; list* is CL function, but CL is a part of XEmacs.
+      (list* title
+	     "---"
+	     (mapcar
+	      (lambda (cell)
+		(vector (car cell)
+			`(progn
+			   (setq ret ',(cdr cell))
+			   (throw 'exit nil))
+			t)))
+	     menu-alist))
+     (recursive-edit)
+     ret))
+  (window-system
+   (x-popup-menu t (list title (cons title menu-alist)))))
+
+(defmacro mime-menu-bogus-filter-constructor (name menu)
+  `(let (x y)
+     (setq x (x-popup-menu t ,menu)
+           y (and x (lookup-key ,menu (apply #'vector x))))
+     (if (and x y)
+         (funcall y))))
+
+(defmacro mime-menu-popup (event menu)
+  (if (fboundp 'popup-menu)
+      `(popup-menu ,menu)
+    ;; #### Kludge for GNU Emacs 20.7 or earlier.
+    `(let (bogus-menu)
+       (easy-menu-define bogus-menu nil nil ,menu)
+       (mime-menu-bogus-filter-constructor "Popup" bogus-menu))))
 
 
 ;;; @ Other Utility
