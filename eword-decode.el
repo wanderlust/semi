@@ -345,10 +345,7 @@ It is max size of eword-lexical-analyze-cache - 1.")
 						   must-unfold))
 		string (substring string end))
 	  )
-	(cons (cons 'atom dest)
-	      (if (string= string "")
-		  nil
-		string))
+	(cons (cons 'atom dest) string)
 	)))
 
 (defun eword-lexical-analyze-internal (string must-unfold)
