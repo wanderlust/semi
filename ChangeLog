@@ -1,5 +1,12 @@
 1998-06-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-view-display-entity): Call
+	body-presentation-method to display multipart if it is function.
+
+	* NEWS: Add news about SEMI 1.5.
+
+1998-06-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-preview-multipart/mixed): New function.
 	(mime-view-display-entity): Use `mime-preview-multipart/mixed'.
 
