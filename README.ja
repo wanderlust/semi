@@ -54,8 +54,6 @@ SEMI とは?
         http://www.kanji.zinbun.kyoto-u.ac.jp/~tomo/comp/emacsen/lisp/
                                                         flim/flim-1.14/
 
- PGP/MIME と application/pgp は、mailcrypt か tiny-pgp を必要とします。
-
 インストール
 ============
 

@@ -54,23 +54,9 @@
 ;; Function `add-path' finds path under load-path directories. If a
 ;; package does not exist in load-path, please specify by absolutely
 ;; (`~/' is available), for example
-;;	(add-path "~/lib/elisp/mailcrypt-3.4")
+;;	(add-path "~/lib/elisp/bbdb")
 ;; or
-;;	(add-path "/opt/share/xmule/site-lisp/mailcrypt-3.4")
-
-
-;;; @@ Please specify Mailcrypt path.
-;;;
-
-;; Use latest version installed in load-path.
-
-(let ((path (get-latest-path "mailcrypt" 'all-paths)))
-  (if path
-      (add-path path)
-    ))
-
-;; Or please specify path.
-;; (add-path "mailcrypt-3.4" 'all-paths)
+;;	(add-path "/opt/share/xmule/site-lisp/bbdb")
 
 
 ;;; @@ Please specify BBDB path.
