@@ -71,6 +71,25 @@ it is used as hook to set."
 		    '(text . html) 3)
 	 )))
 
+;; for text/x-vcard
+(defvar mime-setup-enable-vcard
+  (module-installed-p 'vcard)
+  "*If it is non-nil, semi-setup sets uf to use mime-vcard.")
+
+(if mime-setup-enable-vcard
+    (eval-after-load "mime-view"
+      '(progn
+	 (autoload 'mime-display-text/x-vcard "mime-vcard")
+
+	 (mime-add-condition
+	  'preview 
+	  '((type . text)(subtype . x-vcard)
+	    (body . visible)
+	    (body-presentation-method . mime-display-text/x-vcard))
+	  'strict)
+
+	 (set-alist 'mime-view-type-subtype-score-alist
+		    '(text . x-vcard) 3))))
 
 ;; for PGP
 (defvar mime-setup-enable-pgp t
@@ -121,19 +140,7 @@ it is used as hook to set."
 
 	 (mime-add-condition
 	  'action
-	  '((type . application)(subtype . x-pkcs7-signature)
-	    (method . mime-verify-application/pkcs7-signature))
-	  'strict "mime-pgp")
-	 
-	 (mime-add-condition
-	  'action
 	  '((type . application)(subtype . pkcs7-mime)
-	    (method . mime-view-application/pkcs7-mime))
-	  'strict "mime-pgp")
-
-	 (mime-add-condition
-	  'action
-	  '((type . application)(subtype . x-pkcs7-mime)
 	    (method . mime-view-application/pkcs7-mime))
 	  'strict "mime-pgp")
 	 ))
