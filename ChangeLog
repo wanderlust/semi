@@ -1,3 +1,33 @@
+1998-06-24  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el:
+	  - Abolish function `mime-raw-find-entity-from-node-id',
+	    `mime-raw-find-entity-from-number'.
+	  - Move function `mime-entity-parent' to mime.el of FLIM.
+	  - Abolish variable `mime-view-uuencode-encoding-name-list'.
+	  - Move function `mime-entity-uu-filename' and
+	    `mime-entity-filename' to mime.el of FLIM.
+	(mime-preview-follow-current-entity): Use function
+	`mime-find-entity-from-node-id' instead of
+	`mime-raw-find-entity-from-node-id'.
+	(mime-preview-move-to-upper): Don't use
+	`mime-raw-find-entity-from-node-id'.
+
+	* mime-pgp.el (mime-verify-application/pgp-signature): Don't use
+	`mime-raw-find-entity-from-node-id'.
+	(mime-decrypt-application/pgp-encrypted): Likewise.
+
+	* mime-view.el, mime-play.el (mime-entity-safe-filename): Use
+	`mime-read-field' instead of `mime-entity-read-field'.
+
+	* mime-partial.el
+	(mime-combine-message/partial-pieces-automatically): Use
+	`mime-read-field' instead of `mime-entity-read-field'.
+
+	* mime-bbdb.el (mime-bbdb/update-record): Use `mime-fetch-field'
+	and `mime-read-field' instead of `mime-entity-fetch-field' and
+	`mime-entity-read-field'.
+
 1998-06-23  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el (mime-display-message): Use window of
