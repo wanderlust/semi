@@ -93,30 +93,6 @@ This value is overridden by buffer local variable
 `mime-raw-representation-type' if it is not nil.")
 
 
-(defsubst mime-raw-find-entity-from-node-id (entity-node-id
-					     &optional message-info)
-  "Return entity from ENTITY-NODE-ID in mime-raw-buffer.
-If optional argument MESSAGE-INFO is not specified,
-`mime-message-structure' is used."
-  (mime-raw-find-entity-from-number (reverse entity-node-id) message-info))
-
-(defun mime-raw-find-entity-from-number (entity-number &optional message-info)
-  "Return entity from ENTITY-NUMBER in mime-raw-buffer.
-If optional argument MESSAGE-INFO is not specified,
-`mime-message-structure' is used."
-  (or message-info
-      (setq message-info mime-message-structure))
-  (if (eq entity-number t)
-      message-info
-    (let ((sn (car entity-number)))
-      (if (null sn)
-	  message-info
-	(let ((rc (nth sn (mime-entity-children message-info))))
-	  (if rc
-	      (mime-raw-find-entity-from-number (cdr entity-number) rc)
-	    ))
-	))))
-
 (defun mime-raw-find-entity-from-point (point &optional message-info)
   "Return entity from POINT in mime-raw-buffer.
 If optional argument MESSAGE-INFO is not specified,
@@ -183,17 +159,6 @@ mother-buffer."
 (defsubst mime-entity-cooked-p (entity)
   (eq (mime-entity-representation-type entity) 'cooked))
 
-(defsubst mime-entity-parent (entity &optional message-info)
-  "Return mother entity of ENTITY.
-If optional argument MESSAGE-INFO is not specified,
-`mime-message-structure' in buffer of ENTITY is used."
-  (mime-raw-find-entity-from-node-id
-   (cdr (mime-entity-node-id entity))
-   (or message-info
-       (save-excursion
-	 (set-buffer (mime-entity-buffer entity))
-	 mime-message-structure))))
-
 (defun mime-entity-situation (entity)
   "Return situation of ENTITY."
   (append (or (mime-entity-content-type entity)
@@ -225,30 +190,6 @@ If optional argument MESSAGE-INFO is not specified,
 			major-mode)))
 	  ))
 
-
-(defvar mime-view-uuencode-encoding-name-list '("x-uue" "x-uuencode"))
-
-(defun mime-entity-uu-filename (entity)
-  (if (member (mime-entity-encoding entity)
-	      mime-view-uuencode-encoding-name-list)
-      (save-excursion
-	(set-buffer (mime-entity-buffer entity))
-	(goto-char (mime-entity-body-start entity))
-	(if (re-search-forward "^begin [0-9]+ "
-			       (mime-entity-body-end entity) t)
-	    (if (looking-at ".+$")
-		(buffer-substring (match-beginning 0)(match-end 0))
-	      )))))
-
-(defun mime-entity-filename (entity)
-  (or (mime-entity-uu-filename entity)
-      (mime-content-disposition-filename
-       (mime-entity-content-disposition entity))
-      (cdr (let ((param (mime-content-type-parameters
-			 (mime-entity-content-type entity))))
-	     (or (assoc "name" param)
-		 (assoc "x-name" param))
-	     ))))
 
 (defun mime-view-entity-title (entity)
   (or (mime-read-field 'Content-Description entity)
@@ -1113,9 +1054,8 @@ It calls following-method selected from variable
 		      str
 		      (save-excursion
 			(set-buffer a-buf)
-			(setq
-			 ci
-			 (mime-raw-find-entity-from-node-id entity-node-id))
+			(setq ci
+			      (mime-find-entity-from-node-id entity-node-id))
 			(save-restriction
 			  (narrow-to-region
 			   (mime-entity-point-min ci)
@@ -1180,9 +1120,7 @@ If there is no upper entity, call function `mime-preview-quit'."
 		       (get-text-property (point) 'mime-view-entity)))
       (backward-char)
       )
-    (let ((r (mime-raw-find-entity-from-node-id
-	      (cdr (mime-entity-node-id cinfo))
-	      (get-text-property 1 'mime-view-entity)))
+    (let ((r (mime-entity-parent cinfo))
 	  point)
       (catch 'tag
 	(while (setq point (previous-single-property-change
