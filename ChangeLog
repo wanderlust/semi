@@ -1,6 +1,6 @@
 1998-04-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.3.1 (Nadachi) was released.
+	* SEMI: Version 1.3.1 (Tsutsuishi) was released.
 
 	* mime-view.el (mime-preview-follow-current-entity): Abolish
 	unused local variable 'message-info.
