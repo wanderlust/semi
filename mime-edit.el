@@ -2562,7 +2562,10 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	  )
 	))))
 
-(defun mime/edit-again (&optional code-conversion no-separator no-mode)
+(defun mime-edit-again (&optional code-conversion no-separator no-mode)
+  "Convert current buffer to MIME-Edit buffer and turn on MIME-Edit mode.
+Content-Type and Content-Transfer-Encoding header fields will be
+converted to MIME-Edit tags."
   (interactive)
   (mime-editor::edit-again code-conversion)
   (goto-char (point-min))
