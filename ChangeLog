@@ -1,5 +1,11 @@
 1998-10-27  Katsumi Yamaoka   <yamaoka@jpl.org>
 
+	* mime-edit.el (mime-edit-decode-buffer): Limit search bound for
+	"Content-Transfer-Encoding:".
+
+
+1998-10-27  Katsumi Yamaoka   <yamaoka@jpl.org>
+
 	* WEMI: Version 1.10.1 (Kambara) released.
 
 1998-10-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>

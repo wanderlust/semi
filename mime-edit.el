@@ -2657,10 +2657,13 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 					  ))))
 				   params "")))
 		     encoding
-		     encoded)
+		     encoded
+		     (limit (save-excursion
+			      (if (search-forward "\n\n" nil t)
+				  (1- (point))))))
 		(save-excursion
 		  (if (re-search-forward
-		       "Content-Transfer-Encoding:" nil t)
+		       "^Content-Transfer-Encoding:" limit t)
 		      (let ((beg (match-beginning 0))
 			    (hbeg (match-end 0))
 			    (end (std11-field-end)))
