@@ -1,3 +1,45 @@
+2000-02-12  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-display-entity): Prefer visibility of
+	entity-button, not invisibility.
+	(mime-view-children-is-invisible): New macro.
+	(mime-display-entity): Check children can be shown.
+
+2000-02-12  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-preview-toggle-header): New function.
+	(mime-preview-toggle-content): New function.
+	(mime-view-define-keymap): Bind C-c C-t C-h to
+	mime-preview-toggle-header, C-h C-t C-c to mime-preview-toggle-content.
+	Bind C-c C-e to mime-preview-extract-current-entity.
+
+2000-02-12  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-preview-entity-boundary): New function.
+	(mime-preview-follow-current-entity): Use it.
+	(mime-view-button-is-visible): New macro.
+	(mime-view-body-is-visible): Ditto.
+
+2000-02-10  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-display-message): Use `major-mode' of
+	current-buffer as default value of `original-major-mode'; don't
+	use `mime-entity-header-buffer'.
+	(mime-preview-follow-current-entity): Use `mime-insert-header' to
+	insert header; don't use `mime-entity-header-buffer',
+	`mime-entity-header-start-point' and
+	`mime-entity-header-end-point'.
+
+2000-02-12  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-view-insert-entity-button): Add invisible
+	when body is invisible.
+
+2000-02-11  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* mime-view.el (mime-preview-quit): Kill preview buffer
+	when mode-specific function is not found.
+
 2000-02-11  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* Makefile (MAKEINFO): New variable.

@@ -300,6 +300,19 @@ mother-buffer."
 ;;       (setq rcl (cdr rcl)))
 ;;     dest))
 
+(defmacro mime-view-header-is-visible (situation)
+  `(eq (cdr (or (assq '*header ,situation)
+		(assq 'header ,situation)))
+       'visible))
+
+(defmacro mime-view-body-is-visible (situation)
+  `(eq (cdr (or (assq '*body ,situation)
+		(assq 'body ,situation)))
+       'visible))
+
+(defmacro mime-view-children-is-invisible (situation)
+  `(eq (cdr (or (assq '*children ,situation)))
+       'invisible))
 
 ;;; @ presentation of preview
 ;;;
@@ -332,26 +345,30 @@ You can customize the visibility by changing `mime-view-button-place-alist'."
 		    mime-view-button-place-alist))
 	 '(around before))
    (and (mime-entity-parent entity)
-   (let ((prev-entity
-	 (cadr (memq entity
-		     (reverse (mime-entity-children
-			       (mime-entity-parent entity)))))))
-     ;; When previous entity exists
-     (and prev-entity
-	  (or
-	   ;; Check previous entity
-	   ;; type/subtype
-	   (memq (cdr
-		  (assq
-		   (mime-view-entity-type/subtype prev-entity)
-		   mime-view-button-place-alist))
-		 '(around after))
-	   ;; type
-	   (memq (cdr
-		  (assq
-		   (mime-entity-media-type prev-entity)
-		   mime-view-button-place-alist))
-		 '(around after))))))))
+	(let ((prev-entity
+	       (cadr (memq entity
+			   (reverse (mime-entity-children
+				     (mime-entity-parent entity)))))))
+	  ;; When previous entity exists
+	  (and prev-entity
+	       (or
+		;; Check previous entity
+		;; type/subtype
+		(memq (cdr
+		       (assq
+			(mime-view-entity-type/subtype prev-entity)
+			mime-view-button-place-alist))
+		      '(around after))
+		;; type
+		(memq (cdr
+		       (assq
+			(mime-entity-media-type prev-entity)
+			mime-view-button-place-alist))
+		      '(around after))))))
+   ;; default for everything.
+   (memq (cdr (assq t
+		    mime-view-button-place-alist))
+	 '(around before))))
 
 ;;; @@@ entity button generator
 ;;;
@@ -407,7 +424,9 @@ You can customize the visibility by changing `mime-view-button-place-alist'."
       (if body-is-invisible
 	  " ..."
 	""))
-     (function mime-preview-play-current-entity))))
+     (function mime-preview-play-current-entity)
+     (if body-is-invisible
+	 'invisible))))
 
 
 ;;; @@ entity-header
@@ -1080,20 +1099,28 @@ With prefix, it prompts for coding-system."
 				    (append (mime-entity-situation entity)
 					    default-situation))
 		default-situation)))
-  (let ((button-is-invisible
-	 (or (eq (cdr (assq 'entity-button situation)) 'invisible)
-	     (not (mime-view-entity-button-visible-p entity))))
+  (let ((button-is-visible
+	 ;; Kludge.
+	 (or (eq (or (cdr (assq '*entity-button situation))
+		     (cdr (assq 'entity-button situation)))
+		 'visible)
+	     (and (not (eq (or (cdr (assq '*entity-button situation))
+			       (cdr (assq 'entity-button situation)))
+			   'invisible))
+		  (mime-view-entity-button-visible-p entity))))
 	(header-is-visible
-	 (eq (cdr (assq 'header situation)) 'visible))
+	 (mime-view-header-is-visible situation))
 	(header-presentation-method
 	 (or (cdr (assq 'header-presentation-method situation))
 	     (cdr (assq (cdr (assq 'major-mode situation))
 			mime-header-presentation-method-alist))))
 	(body-is-visible
-	 (eq (cdr (assq 'body situation)) 'visible))
+	 (mime-view-body-is-visible situation))
 	(body-presentation-method
 	 (cdr (assq 'body-presentation-method situation)))
 	(children (mime-entity-children entity))
+	(children-is-invisible (eq (cdr (assq '*children situation))
+				   'invisible))
 	nb ne nhb nbb)
     ;; Check if attachment is specified.
     ;; if inline is forced or not.
@@ -1109,13 +1136,14 @@ With prefix, it prompts for coding-system."
 		     (mime-entity-content-disposition entity))))
       ;; This is attachment
       (setq header-is-visible nil
-	    body-is-visible nil))
+	    body-is-visible nil)
+      (put-alist 'header 'invisible situation)
+      (put-alist 'body 'invisible situation))
     (set-buffer preview-buffer)
     (setq nb (point))
     (save-restriction
       (narrow-to-region nb nb)
-      (if (and (not button-is-invisible)
-	       (mime-view-entity-button-visible-p entity))
+      (if button-is-visible
 	  (mime-view-insert-entity-button entity
 					  ;; work around composite type
 					  (not (or children
@@ -1137,7 +1165,9 @@ With prefix, it prompts for coding-system."
 		  (functionp body-presentation-method))
 	     (funcall body-presentation-method entity situation))
 	    (t
-	     (when button-is-invisible
+	     ;; When both body and button is not displayed,
+	     ;; there should be a button to indicate there's a part.
+	     (unless button-is-visible
 	       (goto-char (point-max))
 	       (mime-view-insert-entity-button entity
 					       ;; work around composite type
@@ -1151,11 +1181,11 @@ With prefix, it prompts for coding-system."
     (put-text-property nb ne 'mime-view-situation situation)
     (put-text-property nbb ne 'mime-view-entity-body entity)
     (goto-char ne)
-    (if children
+    (if (and children
+	     (not children-is-invisible))
 	(if (functionp body-presentation-method)
 	    (funcall body-presentation-method entity situation)
 	  (mime-display-multipart/mixed entity situation)))))
-
 
 ;;; @ MIME viewer mode
 ;;;
@@ -1221,6 +1251,8 @@ With prefix, it prompts for coding-system."
     (define-key mime-view-mode-map
       "e"        (function mime-preview-extract-current-entity))
     (define-key mime-view-mode-map
+      "\C-c\C-e"        (function mime-preview-extract-current-entity))
+    (define-key mime-view-mode-map
       "i"        (function mime-preview-inline))
     (define-key mime-view-mode-map
       "c"        (function mime-preview-text))
@@ -1230,6 +1262,10 @@ With prefix, it prompts for coding-system."
       "b"        (function mime-preview-buttonize))
     (define-key mime-view-mode-map
       "B"        (function mime-preview-unbuttonize))
+    (define-key mime-view-mode-map
+      "\C-c\C-t\C-h" (function mime-preview-toggle-header))
+    (define-key mime-view-mode-map
+      "\C-c\C-t\C-c" (function mime-preview-toggle-content))
     (define-key mime-view-mode-map
       "\C-c\C-p" (function mime-preview-print-current-entity))
     (define-key mime-view-mode-map
@@ -1310,9 +1346,7 @@ keymap of MIME-View mode."
 	(setq preview-buffer
 	      (concat "*Preview-" (mime-entity-name message) "*")))
     (or original-major-mode
-	(setq original-major-mode
-	      (with-current-buffer (mime-entity-header-buffer message)
-		major-mode)))
+	(setq original-major-mode major-mode))
     (let ((inhibit-read-only t))
       (set-buffer (get-buffer-create preview-buffer))
       (widen)
@@ -1452,126 +1486,82 @@ It decodes current entity to call internal or external method as
 It calls following-method selected from variable
 `mime-preview-following-method-alist'."
   (interactive)
-  (let (entity)
+  (let (entity position entity-node-id header-exists)
     (while (null (setq entity
 		       (get-text-property (point) 'mime-view-entity)))
       (backward-char))
-    (let* ((p-beg
-	    (previous-single-property-change (point) 'mime-view-entity))
-	   p-end
-	   ph-end
-	   (entity-node-id (mime-entity-node-id entity))
-	   (len (length entity-node-id)))
-      (cond ((null p-beg)
-	     (setq p-beg
-		   (if (eq (next-single-property-change (point-min)
-							'mime-view-entity)
-			   (point))
-		       (point)
-		     (point-min))))
-	    ((eq (next-single-property-change p-beg 'mime-view-entity)
-		 (point))
-	     (setq p-beg (point))))
-      (setq p-end (next-single-property-change p-beg 'mime-view-entity))
-      (cond ((null p-end)
-	     (setq p-end (point-max)))
-	    ((null entity-node-id)
-	     (setq p-end (point-max)))
-	    (t
-	     (save-excursion
-	       (goto-char p-end)
-	       (catch 'tag
-		 (let (e)
-		   (while (setq e
-				(next-single-property-change
-				 (point) 'mime-view-entity))
-		     (goto-char e)
-		     (let ((rc (mime-entity-node-id
-				(get-text-property (point)
-						   'mime-view-entity))))
-		       (or (equal entity-node-id
-				  (nthcdr (- (length rc) len) rc))
-			   (throw 'tag nil)))
-		     (setq p-end e)))
-		 (setq p-end (point-max))))))
-      (setq ph-end
-	    (previous-single-property-change p-end 'mime-view-entity-header))
-      (if (or (null ph-end)
-	      (< ph-end p-beg))
-	  (setq ph-end p-beg))
-      (let* ((mode (mime-preview-original-major-mode 'recursive))
-	     (new-name
-	      (format "%s-%s" (buffer-name) (reverse entity-node-id)))
-	     new-buf
-	     (the-buf (current-buffer))
-	     fields)
-	(save-excursion
-	  (set-buffer (setq new-buf (get-buffer-create new-name)))
-	  (erase-buffer)
-	  ;; #### ???
-	  (insert (buffer-substring-no-properties ph-end p-end the-buf))
-	  (when (= ph-end p-beg)
-	    (goto-char (point-min))
-	    (insert ?\n))
-	  (goto-char (point-min))
-          (let ((current-entity
-		 (if (and (eq (mime-entity-media-type entity) 'message)
-			  (eq (mime-entity-media-subtype entity) 'rfc822))
-		     (car (mime-entity-children entity))
-		   entity))
-		str)
-	    (while (and current-entity
-			(progn
-			  (setq str
-				(with-current-buffer
-				    (mime-entity-header-buffer current-entity)
-				  (save-restriction
-				    (narrow-to-region
-				     (mime-entity-header-start-point
-				      current-entity)
-				     (mime-entity-header-end-point
-				      current-entity))
-				    (std11-header-string-except
-				     (concat
-				      "^"
-				      (apply (function regexp-or) fields)
-				      ":") ""))))
-			  (if (and (eq (mime-entity-media-type
-					current-entity) 'message)
-				   (eq (mime-entity-media-subtype
-					current-entity) 'rfc822))
-			      nil
-			    (if str
-				(insert str))
-			    t)))
-	      (setq fields (std11-collect-field-names)
-		    current-entity (mime-entity-parent current-entity))))
-	  (let ((rest mime-view-following-required-fields-list)
-		field-name ret)
-	    (while rest
-	      (setq field-name (car rest))
-	      (or (std11-field-body field-name)
-		  (progn
-		    (save-excursion
-		      (set-buffer the-buf)
-		      (setq ret
-			    (when mime-mother-buffer
-			      (set-buffer mime-mother-buffer)
-			      (mime-entity-fetch-field
-			       (get-text-property (point)
-						  'mime-view-entity)
-			       field-name))))
-		    (if ret
-			(insert (concat field-name ": " ret "\n")))))
-	      (setq rest (cdr rest))))
-	  (mime-decode-header-in-buffer))
-	(let ((f (cdr (assq mode mime-preview-following-method-alist))))
-	  (if (functionp f)
-	      (funcall f new-buf)
-	    (message
-	     (format
-	      "Sorry, following method for %s is not implemented yet."
-	      mode))))))))
+    (setq position (mime-preview-entity-boundary))
+    (setq entity-node-id (mime-entity-node-id entity)
+	  header-exists
+	  ;; When on an invisible entity, there's no header.
+	  (or (mime-view-header-is-visible
+	       (get-text-property (car position) 'mime-view-situation))
+	      ;; We are on a rfc822 button.
+	      (and (eq 'message (mime-entity-media-type
+				 entity))
+		   (eq 'rfc822 (mime-entity-media-subtype
+				entity))
+		   (get-text-property
+		    (next-single-property-change
+		     (car position) 'mime-button-callback
+		     nil (point-max))
+		    'mime-view-entity-header))))
+    (let* ((mode (mime-preview-original-major-mode 'recursive))
+	   (new-name
+	    (format "%s-%s" (buffer-name) (reverse entity-node-id)))
+	   new-buf
+	   (the-buf (current-buffer))
+	   fields)
+      (save-excursion
+	(set-buffer (setq new-buf (get-buffer-create new-name)))
+	(erase-buffer)
+	(unless header-exists
+	  (insert ?\n))
+	(insert (buffer-substring-no-properties (car position)
+						(cdr position) the-buf))
+	(goto-char (point-min))
+	(let ((current-entity
+	       (if (and (eq (mime-entity-media-type entity) 'message)
+			(eq (mime-entity-media-subtype entity) 'rfc822))
+		   (car (mime-entity-children entity))
+		 entity)))
+	  (while (and current-entity
+		      (if (and (eq (mime-entity-media-type
+				    current-entity) 'message)
+			       (eq (mime-entity-media-subtype
+				    current-entity) 'rfc822))
+			  nil
+			(mime-insert-header current-entity fields)
+			t))
+	    (setq fields (std11-collect-field-names)
+		  current-entity (mime-entity-parent current-entity))))
+	(let ((rest mime-view-following-required-fields-list)
+	      field-name ret)
+	  (while rest
+	    (setq field-name (car rest))
+	    (or (std11-field-body field-name)
+		(progn
+		  (save-excursion
+		    (set-buffer the-buf)
+		    (let ((entity (when mime-mother-buffer
+				    (set-buffer mime-mother-buffer)
+				    (get-text-property (point)
+						       'mime-view-entity))))
+		      (while (and entity
+				  (null (setq ret (mime-entity-fetch-field
+						   entity field-name))))
+			(setq entity (mime-entity-parent entity)))))
+		  (if ret
+		      (insert (concat field-name ": " ret "\n")))))
+	    (setq rest (cdr rest))))
+	(mime-decode-header-in-buffer))
+      (let ((f (cdr (assq mode mime-preview-following-method-alist))))
+	(if (functionp f)
+	    (funcall f new-buf)
+	  (message
+	   (format
+	    "Sorry, following method for %s is not implemented yet."
+	    mode)))))))
 
 
 ;;; @@ moving
@@ -1725,6 +1715,74 @@ If LINES is negative, scroll up LINES lines."
   (interactive "p")
   (mime-preview-scroll-down-entity (or lines 1)))
 
+(defun mime-preview-entity-boundary (&optional point)
+  (or point
+      (setq point (point)))
+  (and (eq point (point-max))
+       (setq point (1- (point-max))))
+  (let ((entity (get-text-property point 'mime-view-entity))
+	(start (previous-single-property-change (1+ point) 'mime-view-entity
+						nil (point-min)))
+	(end point)
+	done)
+    (while (and (mime-entity-children entity)
+		(not done))
+      (if (mime-view-children-is-invisible
+	   (get-text-property point 'mime-view-situation))
+	  (setq done t)
+	;; If the part is shown, search the last part.
+	(let ((child (car (last (mime-entity-children entity)))))
+	  (while (not (eq (get-text-property point 'mime-view-entity) child))
+	    (setq point (next-single-property-change point 'mime-view-entity)))
+	  (setq entity child))))
+    (setq end (next-single-property-change point 'mime-view-entity
+						 nil (point-max)))
+    (cons start end)))
+
+(defun mime-preview-toggle-header ()
+  "Toggle display of entity header."
+  (interactive)
+  (let ((inhibit-read-only t)
+	(mime-view-force-inline-types t)
+	(position (mime-preview-entity-boundary))
+	entity header-is-visible situation)
+    (setq entity (get-text-property (car position) 'mime-view-entity)
+	  situation (get-text-property (car position) 'mime-view-situation))
+    (setq header-is-visible (mime-view-header-is-visible situation))
+    (save-excursion
+      (delete-region (car position) (cdr position))
+      (if header-is-visible
+	  (mime-display-entity entity
+			       (put-alist '*entity-button 'visible
+					  (put-alist '*header 'invisible
+						     situation)))
+	(mime-display-entity entity 
+			     (put-alist '*entity-button 'invisible
+					(put-alist '*header 'visible
+						   situation)))))))
+
+(defun mime-preview-toggle-content ()
+  "Toggle display of entity body."
+  (interactive)
+  (let ((inhibit-read-only t)
+	(mime-view-force-inline-types t)
+	(position (mime-preview-entity-boundary))
+	entity situation)
+    (setq entity (get-text-property (car position) 'mime-view-entity)
+	  situation (get-text-property (car position) 'mime-view-situation))
+    (setq situation
+	  (if (mime-entity-children entity)
+	      ;; Entity body is always invisible for composite types.
+	      (if (mime-view-children-is-invisible situation)
+		  (put-alist '*children 'visible situation)
+		(put-alist '*children 'invisible situation))
+	    (if (mime-view-body-is-visible situation)
+		(put-alist '*body 'invisible situation)
+	      (put-alist '*body 'visible situation))))
+    (save-excursion
+      (delete-region (car position) (cdr position))
+      (mime-display-entity entity situation))))
+
 ;;; @@ quitting
 ;;;
 
@@ -1736,7 +1794,8 @@ It calls function registered in variable
   (let ((r (assq (mime-preview-original-major-mode)
 		 mime-preview-quitting-method-alist)))
     (if r
-	(funcall (cdr r)))))
+	(funcall (cdr r)))
+    (kill-buffer (current-buffer))))
 
 (defun mime-preview-kill-buffer ()
   (interactive)
