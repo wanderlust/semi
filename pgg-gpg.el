@@ -74,7 +74,7 @@
     (unwind-protect
 	(progn
 	  (set-default-file-modes 448)
-	  (as-binary-process
+	  (as-binary-output-file
 	   (setq process
 		 (apply #'start-process "*GnuPG*" errors-buffer program args)))
 	  (set-process-sentinel process #'ignore)
