@@ -1290,11 +1290,13 @@ If there is no upper entity, call function `mime-preview-quit'."
 If there is no previous entity, it calls function registered in
 variable `mime-preview-over-to-previous-method-alist'."
   (interactive)
-  (while (null (get-text-property (point) 'mime-view-entity))
+  (while (and (not (bobp))
+	      (null (get-text-property (point) 'mime-view-entity)))
     (backward-char)
     )
   (let ((point (previous-single-property-change (point) 'mime-view-entity)))
-    (if point
+    (if (and point
+	     (>= point (point-min)))
 	(if (get-text-property (1- point) 'mime-view-entity)
 	    (goto-char point)
 	  (goto-char (1- point))
@@ -1317,7 +1319,8 @@ variable `mime-preview-over-to-next-method-alist'."
     (forward-char)
     )
   (let ((point (next-single-property-change (point) 'mime-view-entity)))
-    (if point
+    (if (and point
+	     (<= point (point-max)))
 	(progn
 	  (goto-char point)
 	  (if (null (get-text-property point 'mime-view-entity))
