@@ -59,7 +59,9 @@ tar:
 	cvs commit
 	sh -c 'cvs tag -RF semi-`echo $(VERSION) \
 				| sed s/\\\\./_/ | sed s/\\\\./_/`; \
-	cd /tmp; cvs -d $(HOME)/master export -d semi-$(VERSION) \
+	cd /tmp; \
+	cvs -d :pserver:anonymous@chamonix.jaist.ac.jp:/hare/cvs/root \
+		export -d semi-$(VERSION) \
 		-r semi-`echo $(VERSION) \
 			| sed s/\\\\./_/ | sed s/\\\\./_/` SEMI/semi'
 	$(RM) /tmp/semi-$(VERSION)/ftp.in
