@@ -758,9 +758,13 @@ The compressed face will be piped to this command.")
     (define-key mime-view-mode-map
       "?"        (function describe-mode))
     (if (functionp default)
-	(setq mime-view-mode-map
-	      (append mime-view-mode-map (list (cons t default)))
-	      ))
+	(cond (running-xemacs
+	       (set-keymap-default-binding mime-view-mode-map default)
+	       )
+	      (t
+	       (setq mime-view-mode-map
+		     (append mime-view-mode-map (list (cons t default))))
+	       )))
     (if mouse-button-2
 	(define-key mime-view-mode-map
 	  mouse-button-2 (function mime-button-dispatcher))
