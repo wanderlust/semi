@@ -149,7 +149,7 @@ If non-nil, the text tag is not inserted unless something different.")
 
 (defvar mime-edit-voice-recorder
   (function mime-edit-voice-recorder-for-sun)
-  "*Function to record a voice message and encode it. [mime-edit.el]")
+  "*Function to record a voice message and encode it.")
 
 (defvar mime-edit-mode-hook nil
   "*Hook called when enter MIME mode.")
@@ -424,7 +424,7 @@ If encoding is nil, it is determined from its contents.")
     "Xref" "X-UIDL" "X-Filter" "X-Gnus-.*" "X-VM-.*")
   "Delete these fields from original message when it is inserted
 as message/rfc822 part.
-Each elements are regexp of field-name. [mime-edit.el]")
+Each elements are regexp of field-name.")
 
 (defvar mime-edit-yank-ignored-field-regexp
   (concat "^"
@@ -439,16 +439,16 @@ Each elements are regexp of field-name. [mime-edit.el]")
 ;;;
 
 (defvar mime-edit-split-message t
-  "*Split large message if it is non-nil. [mime-edit.el]")
+  "*Split large message if it is non-nil.")
 
 (defvar mime-edit-message-default-max-lines 1000
-  "*Default maximum lines of a message. [mime-edit.el]")
+  "*Default maximum lines of a message.")
 
 (defvar mime-edit-message-max-lines-alist
   '((news-reply-mode . 500))
   "Alist of major-mode vs maximum lines of a message.
 If it is not specified for a major-mode,
-`mime-edit-message-default-max-lines' is used. [mime-edit.el]")
+`mime-edit-message-default-max-lines' is used.")
 
 (defconst mime-edit-split-ignored-field-regexp
   "\\(^Content-\\|^Subject:\\|^Mime-Version:\\)")
@@ -465,10 +465,10 @@ If it is not specified for a major-mode,
 ;;;
 
 (defvar mime-edit-signing-type 'pgp-elkins
-  "*PGP signing type (pgp-elkins, pgp-kazu or nil). [mime-edit.el]")
+  "*PGP signing type (pgp-elkins, pgp-kazu or nil).")
 
 (defvar mime-edit-encrypting-type 'pgp-elkins
-  "*PGP encrypting type (pgp-elkins, pgp-kazu or nil). [mime-edit.el]")
+  "*PGP encrypting type (pgp-elkins, pgp-kazu or nil).")
 
 
 ;;; @@ about tag
@@ -1450,7 +1450,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOISE2 ...))."
     ))
 
 (defun mime-prompt-for-encoding (default)
-  "Ask for Content-Transfer-Encoding. [mime-edit.el]"
+  "Ask for Content-Transfer-Encoding."
   (let (encoding)
     (while (string=
 	    (setq encoding
@@ -2044,7 +2044,7 @@ Content-Transfer-Encoding: 7bit
 
 (defun mime-edit-voice-recorder-for-sun (encoding)
   "Record voice in a buffer using Sun audio device,
-and insert data encoded as ENCODING. [mime-edit.el]"
+and insert data encoded as ENCODING."
   (message "Start the recording on %s.  Type C-g to finish the recording..."
 	   (system-name))
   (mime-insert-encoded-file "/dev/audio" encoding)
@@ -2409,7 +2409,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 (defvar mime-edit-buffer nil) ; buffer local variable
 
 (defun mime-edit-preview-message ()
-  "preview editing MIME message. [mime-edit.el]"
+  "preview editing MIME message."
   (interactive)
   (let* ((str (buffer-string))
 	 (separator mail-header-separator)
