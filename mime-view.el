@@ -159,7 +159,7 @@ Please redefine this function if you want to change default setting."
   (let ((entity-node-id (mime-entity-node-id entity))
 	(media-type (mime-entity-media-type entity))
 	(media-subtype (mime-entity-media-subtype entity)))
-    (or (null entity-node-id)
+    (or (mime-root-entity-p entity)
 	(and (eq media-type 'application)
 	     (or (eq media-subtype 'x-selection)
 		 (and (eq media-subtype 'octet-stream)
