@@ -1,5 +1,9 @@
 1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el (mime-view-display-body): Change interface.
+
+1998-03-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-play.el, mime-view.el: Rename `mime-view-entity-info' ->
 	`mime-view-entity'.
 
