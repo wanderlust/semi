@@ -297,7 +297,7 @@ mother-buffer."
 	  (ctree-find-calist condition entity-situation
 			     mime-view-find-every-situations))
     (if required-name
-	(setq ret (mime-delq-null-situation required-name ignored-value)))
+	(setq ret (mime-delq-null-situation ret required-name ignored-value)))
     (or (assq 'ignore-examples entity-situation)
 	(if (cdr ret)
 	    (let ((rest ret)
@@ -1145,6 +1145,8 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
     (define-key mime-view-mode-map
       "\C-c\C-p" (function mime-preview-print-current-entity))
     (define-key mime-view-mode-map
+      "\C-ch" (function mime-preview-toggle-header))
+    (define-key mime-view-mode-map
       "a"        (function mime-preview-follow-current-entity))
     (define-key mime-view-mode-map
       "q"        (function mime-preview-quit))
@@ -1355,6 +1357,59 @@ button-2	Move to point under the mouse cursor
   )
 
 
+;;; @@ utility
+;;;
+
+(defun mime-preview-find-boundary-info (&optional get-mother)
+  (let (entity
+	p-beg p-end
+	entity-node-id len)
+    (while (null (setq entity
+		       (get-text-property (point) 'mime-view-entity)))
+      (backward-char))
+    (setq p-beg (previous-single-property-change (point) 'mime-view-entity))
+    (setq entity-node-id (mime-entity-node-id entity))
+    (setq len (length entity-node-id))
+    (cond ((null p-beg)
+	   (setq p-beg
+		 (if (eq (next-single-property-change (point-min)
+						      'mime-view-entity)
+			 (point))
+		     (point)
+		   (point-min)))
+	   )
+	  ((eq (next-single-property-change p-beg 'mime-view-entity)
+	       (point))
+	   (setq p-beg (point))
+	   ))
+    (setq p-end (next-single-property-change p-beg 'mime-view-entity))
+    (cond ((null p-end)
+	   (setq p-end (point-max))
+	   )
+	  ((null entity-node-id)
+	   (setq p-end (point-max))
+	   )
+	  (get-mother
+	   (save-excursion
+	     (goto-char p-end)
+	     (catch 'tag
+	       (let (e)
+		 (while (setq e
+			      (next-single-property-change
+			       (point) 'mime-view-entity))
+		   (goto-char e)
+		   (let ((rc (mime-entity-node-id
+			      (get-text-property (point)
+						 'mime-view-entity))))
+		     (or (equal entity-node-id
+				(nthcdr (- (length rc) len) rc))
+			 (throw 'tag nil)))
+		   (setq p-end e)))
+	       (setq p-end (point-max))))
+	   ))
+    (vector p-beg p-end entity)))
+
+
 ;;; @@ playing
 ;;;
 
@@ -1388,145 +1443,99 @@ It decodes current entity to call internal or external method as
 It calls following-method selected from variable
 `mime-preview-following-method-alist'."
   (interactive)
-  (let (entity)
-    (while (null (setq entity
-		       (get-text-property (point) 'mime-view-entity)))
-      (backward-char)
-      )
-    (let* ((p-beg
-	    (previous-single-property-change (point) 'mime-view-entity))
-	   p-end
-	   ph-end
+  (let ((entity (mime-preview-find-boundary-info t))
+	p-beg p-end
+	ph-end)
+    (setq p-beg (aref entity 0)
+	  p-end (aref entity 1)
+	  entity (aref entity 2))
+    (setq ph-end
+	  (previous-single-property-change p-end 'mime-view-entity-header))
+    (if (or (null ph-end)
+	    (< ph-end p-beg))
+	(setq ph-end p-beg))
+    (let* ((mode (mime-preview-original-major-mode 'recursive))
 	   (entity-node-id (mime-entity-node-id entity))
-	   (len (length entity-node-id))
-	   )
-      (cond ((null p-beg)
-	     (setq p-beg
-		   (if (eq (next-single-property-change (point-min)
-							'mime-view-entity)
-			   (point))
-		       (point)
-		     (point-min)))
-	     )
-	    ((eq (next-single-property-change p-beg 'mime-view-entity)
-		 (point))
-	     (setq p-beg (point))
-	     ))
-      (setq p-end (next-single-property-change p-beg 'mime-view-entity))
-      (cond ((null p-end)
-	     (setq p-end (point-max))
-	     )
-	    ((null entity-node-id)
-	     (setq p-end (point-max))
-	     )
-	    (t
-	     (save-excursion
-	       (goto-char p-end)
-	       (catch 'tag
-		 (let (e)
-		   (while (setq e
-				(next-single-property-change
-				 (point) 'mime-view-entity))
-		     (goto-char e)
-		     (let ((rc (mime-entity-node-id
-				(get-text-property (point)
-						   'mime-view-entity))))
-		       (or (equal entity-node-id
-				  (nthcdr (- (length rc) len) rc))
-			   (throw 'tag nil)
-			   ))
-		     (setq p-end e)
-		     ))
-		 (setq p-end (point-max))
-		 ))
-	     ))
-      (setq ph-end
-	    (previous-single-property-change p-end 'mime-view-entity-header))
-      (if (or (null ph-end)
-	      (< ph-end p-beg))
-	  (setq ph-end p-beg)
-	)
-      (let* ((mode (mime-preview-original-major-mode 'recursive))
-	     (new-name
-	      (format "%s-%s" (buffer-name) (reverse entity-node-id)))
-	     new-buf
-	     (the-buf (current-buffer))
-	     fields)
-	(save-excursion
-	  (set-buffer (setq new-buf (get-buffer-create new-name)))
-	  (erase-buffer)
-	  (insert-buffer-substring the-buf ph-end p-end)
-	  (when (= ph-end p-beg)
-	    (goto-char (point-min))
-	    (insert ?\n))
+	   (new-name
+	    (format "%s-%s" (buffer-name) (reverse entity-node-id)))
+	   new-buf
+	   (the-buf (current-buffer))
+	   fields)
+      (save-excursion
+	(set-buffer (setq new-buf (get-buffer-create new-name)))
+	(erase-buffer)
+	(insert-buffer-substring the-buf ph-end p-end)
+	(when (= ph-end p-beg)
 	  (goto-char (point-min))
-          (let ((current-entity
-		 (if (and (eq (mime-entity-media-type entity) 'message)
-			  (eq (mime-entity-media-subtype entity) 'rfc822))
-		     (mime-entity-children entity)
-		   entity))
-		str)
-	    (while (and current-entity
-			(progn
-			  (setq str
-				(with-current-buffer
-				    (mime-entity-header-buffer current-entity)
-				  (save-restriction
-				    (narrow-to-region
-				     (mime-entity-header-start-point
-				      current-entity)
-				     (mime-entity-header-end-point
-				      current-entity))
-				    (std11-header-string-except
-				     (concat
-				      "^"
-				      (apply (function regexp-or) fields)
-				      ":") ""))))
-			  (if (and (eq (mime-entity-media-type
-					current-entity) 'message)
-				   (eq (mime-entity-media-subtype
-					current-entity) 'rfc822))
-			      nil
-			    (if str
-				(insert str)
-			      )
-			    t)))
-	      (setq fields (std11-collect-field-names)
-		    current-entity (mime-entity-parent current-entity))
-	      )
+	  (insert ?\n))
+	(goto-char (point-min))
+	(let ((current-entity
+	       (if (and (eq (mime-entity-media-type entity) 'message)
+			(eq (mime-entity-media-subtype entity) 'rfc822))
+		   (car (mime-entity-children entity))
+		 entity))
+	      str)
+	  (while (and current-entity
+		      (progn
+			(setq str
+			      (with-current-buffer
+				  (mime-entity-header-buffer current-entity)
+				(save-restriction
+				  (narrow-to-region
+				   (mime-entity-header-start-point
+				    current-entity)
+				   (mime-entity-header-end-point
+				    current-entity))
+				  (std11-header-string-except
+				   (concat
+				    "^"
+				    (apply (function regexp-or) fields)
+				    ":") ""))))
+			(if (and (eq (mime-entity-media-type
+				      current-entity) 'message)
+				 (eq (mime-entity-media-subtype
+				      current-entity) 'rfc822))
+			    nil
+			  (if str
+			      (insert str)
+			    )
+			  t)))
+	    (setq fields (std11-collect-field-names)
+		  current-entity (mime-entity-parent current-entity))
 	    )
-	  (let ((rest mime-view-following-required-fields-list)
-		field-name ret)
-	    (while rest
-	      (setq field-name (car rest))
-	      (or (std11-field-body field-name)
-		  (progn
-		    (save-excursion
-		      (set-buffer the-buf)
-		      (let ((entity (when mime-mother-buffer
-				      (set-buffer mime-mother-buffer)
-				      (get-text-property (point)
-							 'mime-view-entity))))
-			(while (and entity
-				    (null (setq ret (mime-entity-fetch-field
-						     entity field-name))))
-			  (setq entity (mime-entity-parent entity)))))
-		    (if ret
-			(insert (concat field-name ": " ret "\n"))
-		      )))
-	      (setq rest (cdr rest))
-	      ))
-	  (mime-decode-header-in-buffer)
 	  )
-	(let ((f (cdr (assq mode mime-preview-following-method-alist))))
-	  (if (functionp f)
-	      (funcall f new-buf)
-	    (message
-	     (format
-	      "Sorry, following method for %s is not implemented yet."
-	      mode))
+	(let ((rest mime-view-following-required-fields-list)
+	      field-name ret)
+	  (while rest
+	    (setq field-name (car rest))
+	    (or (std11-field-body field-name)
+		(progn
+		  (save-excursion
+		    (set-buffer the-buf)
+		    (let ((entity (when mime-mother-buffer
+				    (set-buffer mime-mother-buffer)
+				    (get-text-property (point)
+						       'mime-view-entity))))
+		      (while (and entity
+				  (null (setq ret (mime-entity-fetch-field
+						   entity field-name))))
+			(setq entity (mime-entity-parent entity)))))
+		  (if ret
+		      (insert (concat field-name ": " ret "\n"))
+		    )))
+	    (setq rest (cdr rest))
 	    ))
-	))))
+	(mime-decode-header-in-buffer)
+	)
+      (let ((f (cdr (assq mode mime-preview-following-method-alist))))
+	(if (functionp f)
+	    (funcall f new-buf)
+	  (message
+	   (format
+	    "Sorry, following method for %s is not implemented yet."
+	    mode))
+	  ))
+      )))
 
 
 ;;; @@ moving
@@ -1696,6 +1705,27 @@ If LINES is negative, scroll up LINES lines."
   (mime-preview-scroll-down-entity (or lines 1))
   )
 
+
+;;; @@ display
+;;;
+
+(defun mime-preview-toggle-header ()
+  (interactive)
+  (let ((situation (mime-preview-find-boundary-info))
+	entity p-beg p-end)
+    (setq p-beg (aref situation 0)
+	  p-end (aref situation 1)
+	  entity (aref situation 2)
+	  situation (get-text-property p-beg 'mime-view-situation))
+    (if (eq (cdr (assq 'header situation)) 'visible)
+	(setq situation (put-alist 'header 'invisible situation))
+      (setq situation (put-alist 'header 'visible situation)))
+    (save-excursion
+      (let ((inhibit-read-only t))
+	(delete-region p-beg p-end)
+	(mime-display-entity entity situation)))))
+
+    
 ;;; @@ quitting
 ;;;
 
