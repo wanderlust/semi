@@ -93,13 +93,97 @@ message/partial, it is called `mother-buffer'.")
   "Major-mode of mime-raw-buffer.")
 (make-variable-buffer-local 'mime-preview-original-major-mode)
 
+(defvar mime-preview-original-window-configuration nil
+  "Window-configuration before mime-view-mode is called.")
 (make-variable-buffer-local 'mime-preview-original-window-configuration)
 
 
-;;; @ entity-button
+;;; @ entity information
 ;;;
 
-;;; @@ predicate function
+(defsubst mime-raw-find-entity-from-node-id (entity-node-id
+					     &optional message-info)
+  "Return entity from ENTITY-NODE-ID in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (mime-raw-find-entity-from-number (reverse entity-node-id) message-info))
+
+(defun mime-raw-find-entity-from-number (entity-number &optional message-info)
+  "Return entity from ENTITY-NUMBER in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (or message-info
+      (setq message-info mime-raw-message-info))
+  (if (eq entity-number t)
+      message-info
+    (let ((sn (car entity-number)))
+      (if (null sn)
+	  message-info
+	(let ((rc (nth sn (mime-entity-children message-info))))
+	  (if rc
+	      (mime-raw-find-entity-from-number (cdr entity-number) rc)
+	    ))
+	))))
+
+(defun mime-raw-find-entity-from-point (point &optional message-info)
+  "Return entity from POINT in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (or message-info
+      (setq message-info mime-raw-message-info))
+  (if (and (<= (mime-entity-point-min message-info) point)
+	   (<= point (mime-entity-point-max message-info)))
+      (let ((children (mime-entity-children message-info)))
+	(catch 'tag
+	  (while children
+	    (let ((ret
+		   (mime-raw-find-entity-from-point point (car children))))
+	      (if ret
+		  (throw 'tag ret)
+		))
+	    (setq children (cdr children)))
+	  message-info))))
+
+(defsubst mime-raw-point-to-entity-node-id (point &optional message-info)
+  "Return entity-node-id from POINT in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (mime-entity-node-id (mime-raw-find-entity-from-point point message-info)))
+
+(defsubst mime-raw-point-to-entity-number (point &optional message-info)
+  "Return entity-number from POINT in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (reverse (mime-raw-point-to-entity-node-id point message-info)))
+
+(defsubst mime-raw-entity-parent (entity &optional message-info)
+  "Return mother entity of ENTITY.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (mime-raw-find-entity-from-node-id (cdr (mime-entity-node-id entity))
+				     message-info))
+
+(defun mime-raw-flatten-message-info (&optional message-info)
+  "Return list of entity in mime-raw-buffer.
+If optional argument MESSAGE-INFO is not specified,
+`mime-raw-message-info' is used."
+  (or message-info
+      (setq message-info mime-raw-message-info))
+  (let ((dest (list message-info))
+	(rcl (mime-entity-children message-info)))
+    (while rcl
+      (setq dest (nconc dest (mime-raw-flatten-message-info (car rcl))))
+      (setq rcl (cdr rcl)))
+    dest))
+
+
+;;; @ presentation of preview
+;;;
+
+;;; @@ entity-button
+;;;
+
+;;; @@@ predicate function
 ;;;
 
 (defvar mime-view-content-button-visible-ctype-list
@@ -123,7 +207,7 @@ Please redefine this function if you want to change default setting."
 			)
 		      ))))))
 
-;;; @@ entity button generator
+;;; @@@ entity button generator
 ;;;
 
 (defun mime-view-insert-entity-button (entity message-info subj)
@@ -178,10 +262,10 @@ Please redefine this function if you want to change default setting."
     ))
 
 
-;;; @ entity-header
+;;; @@ entity-header
 ;;;
 
-;;; @@ predicate function
+;;; @@@ predicate function
 ;;;
 
 (defvar mime-view-childrens-header-showing-Content-Type-list
@@ -197,7 +281,7 @@ Please redefine this function if you want to change default setting."
 		mime-view-childrens-header-showing-Content-Type-list)
 	)))
 
-;;; @@ entity header filter
+;;; @@@ entity header filter
 ;;;
 
 (defvar mime-view-content-header-filter-alist nil)
@@ -220,7 +304,7 @@ Please redefine this function if you want to change default setting."
     (run-hooks 'mime-view-content-header-filter-hook)
     ))
 
-;;; @@ entity field cutter
+;;; @@@ entity field cutter
 ;;;
 
 (defvar mime-view-ignored-field-list
@@ -263,10 +347,10 @@ Each elements are regexp of field-name.")
 	))))
 
 
-;;; @ entity-body
+;;; @@ entity-body
 ;;;
 
-;;; @@ predicate function
+;;; @@@ predicate function
 ;;;
 
 (defvar mime-view-body-visible-condition
@@ -302,30 +386,8 @@ Each elements are regexp of field-name.")
 	  (cons 'major-mode major-mode)
 	  (mime-entity-parameters entity))))
 
-;; (defvar mime-view-visible-media-type-list
-;;   '("text/plain" nil "text/richtext" "text/enriched"
-;;     "text/rfc822-headers"
-;;     "text/x-latex" "application/x-latex"
-;;     "message/delivery-status"
-;;     "application/pgp" "text/x-pgp"
-;;     "application/octet-stream"
-;;     "application/x-selection" "application/x-comment")
-;;   "*List of media-types to be able to display in MIME-preview buffer.
-;; Each elements are string of TYPE/SUBTYPE, e.g. \"text/plain\".")
 
-;; (defun mime-view-body-visible-p (entity message-info)
-;;   "Return non-nil if body of ENTITY is visible."
-;;   (let ((media-type (mime-entity-media-type entity))
-;;         (media-subtype (mime-entity-media-subtype entity))
-;;         (ctype (mime-entity-type/subtype entity)))
-;;     (and (member ctype mime-view-visible-media-type-list)
-;;          (if (and (eq media-type 'application)
-;;                   (eq media-subtype 'octet-stream))
-;;              (member (mime-entity-encoding entity) '(nil "7bit" "8bit"))
-;;            t))))
-
-
-;;; @@ entity filter
+;;; @@@ entity filter
 ;;;
 
 (defvar mime-view-content-filter-alist
@@ -376,7 +438,7 @@ function.  t means default media-type.")
     ))
 
 
-;;; @ entity separator
+;;; @@ entity separator
 ;;;
 
 (defun mime-view-entity-separator-function (entity message-info)
@@ -654,85 +716,6 @@ The compressed face will be piped to this command.")
 	  ))
       (mime-raw-get-uu-filename param encoding)
       ""))
-
-
-;;; @ entity information
-;;;
-
-(defsubst mime-raw-find-entity-from-node-id (entity-node-id
-					     &optional message-info)
-  "Return entity from ENTITY-NODE-ID in mime-raw-buffer.
-If optional argument MESSAGE-INFO is not specified,
-`mime-raw-message-info' is used."
-  (mime-raw-find-entity-from-number (reverse entity-node-id) message-info))
-
-(defun mime-raw-find-entity-from-number (entity-number &optional message-info)
-  "Return entity from ENTITY-NUMBER in mime-raw-buffer.
-If optional argument MESSAGE-INFO is not specified,
-`mime-raw-message-info' is used."
-  (or message-info
-      (setq message-info mime-raw-message-info))
-  (if (eq entity-number t)
-      message-info
-    (let ((sn (car entity-number)))
-      (if (null sn)
-	  message-info
-	(let ((rc (nth sn (mime-entity-children message-info))))
-	  (if rc
-	      (mime-raw-find-entity-from-number (cdr entity-number) rc)
-	    ))
-	))))
-
-(defun mime-raw-find-entity-from-point (point &optional message-info)
-  "Return entity from POINT in mime-raw-buffer.
-If optional argument MESSAGE-INFO is not specified,
-`mime-raw-message-info' is used."
-  (or message-info
-      (setq message-info mime-raw-message-info))
-  (if (and (<= (mime-entity-point-min message-info) point)
-	   (<= point (mime-entity-point-max message-info)))
-      (let ((children (mime-entity-children message-info)))
-	(catch 'tag
-	  (while children
-	    (let ((ret
-		   (mime-raw-find-entity-from-point point (car children))))
-	      (if ret
-		  (throw 'tag ret)
-		))
-	    (setq children (cdr children)))
-	  message-info))))
-
-(defsubst mime-raw-point-to-entity-node-id (point &optional message-info)
-  "Return entity-node-id from POINT in mime-raw-buffer.
-If optional argument MESSAGE-INFO is not specified,
-`mime-raw-message-info' is used."
-  (mime-entity-node-id (mime-raw-find-entity-from-point point message-info)))
-
-(defsubst mime-raw-point-to-entity-number (point &optional message-info)
-  "Return entity-number from POINT in mime-raw-buffer.
-If optional argument MESSAGE-INFO is not specified,
-`mime-raw-message-info' is used."
-  (reverse (mime-raw-point-to-entity-node-id point message-id)))
-
-(defsubst mime-raw-entity-parent (entity &optional message-info)
-  "Return mother entity of ENTITY.
-If optional argument MESSAGE-INFO is not specified,
-`mime-raw-message-info' is used."
-  (mime-raw-find-entity-from-node-id (cdr (mime-entity-node-id entity))
-				     message-info))
-
-(defun mime-raw-flatten-message-info (&optional message-info)
-  "Return list of entity in mime-raw-buffer.
-If optional argument MESSAGE-INFO is not specified,
-`mime-raw-message-info' is used."
-  (or message-info
-      (setq message-info mime-raw-message-info))
-  (let ((dest (list message-info))
-	(rcl (mime-entity-children message-info)))
-    (while rcl
-      (setq dest (nconc dest (mime-raw-flatten-message-info (car rcl))))
-      (setq rcl (cdr rcl)))
-    dest))
 
 
 ;;; @ MIME viewer mode
