@@ -270,12 +270,13 @@ mother-buffer."
 
 (defun mime-unify-situations (entity-situation
 			      condition situation-examples
-			      &optional required-name ignored-value)
+			      &optional required-name ignored-value
+			      every-situations)
   (let (ret)
     (in-calist-package 'mime-view)
     (setq ret
 	  (ctree-find-calist condition entity-situation
-			     mime-view-find-every-situations))
+			     every-situations))
     (if required-name
 	(setq ret (mime-delq-null-situation ret required-name ignored-value)))
     (or (assq 'ignore-examples entity-situation)
@@ -851,13 +852,11 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	    (situation (car situations)))
 	(mime-display-entity child (if (= i p)
 				       situation
-				     (del-alist 'body-presentation-method
-						(copy-alist situation))))
-	)
+				     (put-alist 'body 'invisible
+						(copy-alist situation)))))
       (setq children (cdr children)
 	    situations (cdr situations)
-	    i (1+ i))
-      )))
+	    i (1+ i)))))
 
 
 ;;; @ acting-condition
