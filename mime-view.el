@@ -817,10 +817,8 @@ The compressed face will be piped to this command.")
 					default-situation)
   (let* ((start (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))
-	 (media-type (mime-entity-media-type entity))
-	 (media-subtype (mime-entity-media-subtype entity))
-	 (params (mime-entity-parameters entity))
-	 (encoding (mime-entity-encoding entity))
+         (content-type (mime-entity-content-type entity))
+         (encoding (mime-entity-encoding entity))
 	 end-of-header e nb ne subj)
     (set-buffer ibuf)
     (goto-char start)
@@ -834,15 +832,15 @@ The compressed face will be piped to this command.")
       (narrow-to-region start end)
       (setq subj
 	    (eword-decode-string
-	     (mime-raw-get-subject params encoding)))
+	     (mime-raw-get-subject
+	      (mime-content-type-parameters content-type)
+	      encoding)))
       )
     (let* ((situation
 	    (ctree-match-calist mime-preview-condition
-				(list* (cons 'type       media-type)
-				       (cons 'subtype    media-subtype)
-				       (cons 'encoding   encoding)
-				       (cons 'major-mode major-mode)
-				       (append params
+				(append content-type
+					(list* (cons 'encoding   encoding)
+					       (cons 'major-mode major-mode)
 					       default-situation))))
 	   (button-is-invisible
 	    (eq (cdr (assq 'entity-button situation)) 'invisible))
