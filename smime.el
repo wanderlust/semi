@@ -39,6 +39,7 @@
 ;;; Code:
 
 (require 'path-util)
+(eval-when-compile (require 'static))
 
 (defgroup smime ()
   "S/MIME interface"
@@ -169,10 +170,30 @@
 	(smime-parse-attribute
 	 (buffer-substring (point)(progn (end-of-line)(point))))))))
 
+(static-condition-case nil
+    (directory-files nil nil nil nil nil)
+  (wrong-number-of-arguments
+   (defmacro smime-directory-files 
+     (directory &optional full match nosort files-only)
+     (if files-only
+	 `(delq nil (mapcar 
+		     (lambda (file) 
+		       ,(if (eq files-only t)
+			    `(if (file-directory-p file) nil file)
+			  `(if (file-directory-p file) file nil)))
+		     (directory-files ,directory ,full ,match ,nosort)))
+       `(directory-files ,directory ,full ,match ,nosort))))
+  (wrong-type-argument
+   (defalias 'smime-directory-files 'directory-files)))
+
 (defsubst smime-find-certificate (attr)
   (let ((files (if (file-directory-p smime-certificate-directory)
-		   (directory-files smime-certificate-directory
-				    'full nil nil t)
+		   (delq nil (mapcar (lambda (file) 
+				       (if (file-directory-p file) nil
+					 file))
+				     (directory-files 
+				      smime-certificate-directory
+				      'full)))
 		 nil)))
     (catch 'found
       (while files
