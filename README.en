@@ -1,13 +1,17 @@
-[README for SEMI kernel package (English Version)]
+[README for WEMI kernel package (English Version)]
 by MORIOKA Tomohiko <morioka@jaist.ac.jp>
 $Id$
 
-What's SEMI?
+What's WEMI?
 ------------
 
-  SEMI is a library to provide MIME feature for GNU Emacs.  MIME is a
-  proposed internet standard for including content and headers other
-  than (ASCII) plain text in messages.
+  WEMI is a branch of SEMI kernel package using widget.  It is a
+  library to provide MIME feature for GNU Emacs based on SEMI API.
+  Namely it contains whole features of SEMI thus it is a replacement
+  of SEMI.
+
+  MIME is a proposed internet standard for including content and
+  headers other than (ASCII) plain text in messages.
 
 	RFC 2045 : Internet Message Bodies
 	RFC 2046 : Media Types
@@ -15,7 +19,7 @@ What's SEMI?
 	RFC 2048 : MIME Registration Procedures
 	RFC 2049 : MIME Conformance
 
-  SEMI has the following features:
+  WEMI has the following features:
 
 	- MIME style multilingual header (RFC 2047)
 	- MIME message viewer   (mime-view-mode) (RFC 2045 .. 2049)
@@ -36,17 +40,17 @@ What's SEMI?
 Required environment
 --------------------
 
-  SEMI supports XEmacs 20.2 or later with mule, and Emacs 20.
+  WEMI supports XEmacs 20.3 or later with mule, and Emacs 20.2.
 
-  SEMI does not support anything older than Emacs 19.28 or XEmacs
-  19.14.  SEMI also does not support Emacs 19.29 to 19.34, XEmacs
-  19.15 or XEmacs 20.2 without mule, but SEMI may work with them.
+  WEMI does not support anything older than Emacs 19.28 or XEmacs
+  19.14.  WEMI also does not support Emacs 19.29 to 19.34, XEmacs
+  19.15 or XEmacs 20.2 without mule, but WEMI may work with them.
 
   If you use Emacs 20, don't set `enable-multibyte-characters' to
   nil. (Maybe non mule setting requires to modify emu.  In addition,
   it is better to use terminal-coding-system feature)
 
-  SEMI requires APEL and MEL package.  Please install them before
+  WEMI requires APEL and MEL package.  Please install them before
   installing it.  APEL package
   is available at:
 
@@ -93,7 +97,7 @@ Installation
 	/usr/local/share/emacs/site-lisp/bitmap/ --- BITMAP-MULE
 	/usr/local/share/emacs/site-lisp/mu/     --- MU
 	/usr/local/share/emacs/site-lisp/mel/    --- MEL
-	/usr/local/share/emacs/site-lisp/semi/   --- SEMI
+	/usr/local/share/emacs/site-lisp/semi/   --- WEMI
 
   You can specify site-lisp directory, for example
 
@@ -104,8 +108,8 @@ Installation
   /usr/local/lib/xemacs/site-lisp).
 
   You can specify other optional settings by editing the file
-  semi/SEMI-CFG.  Please read semi/README.en and comments in
-  semi/SEMI-CFG.
+  ${archive}/SEMI-CFG.  Please read ${archive}/README.en and comments
+  in ${archive}/SEMI-CFG.
 
 
 Initialization
@@ -135,7 +139,7 @@ Initialization
 Documentation
 -------------
 
-  To get started, please read semi/README.en.
+  To get started, please read WEMI/README.en.
 
   RFC's 822, 1806, 1847, 1896, 2015, 2045, 2046, 2047, 2048 and 2049
   are available via anonymous ftp:
@@ -151,8 +155,8 @@ Bug reports
 	bug-tm-en@chamonix.jaist.ac.jp	(English)
 	bug-tm-ja@chamonix.jaist.ac.jp	(Japanese)
 
-  Via the tm ML, you can report SEMI bugs, obtain the latest release
-  of SEMI, and discuss future enhancements to SEMI.  To join the tm
+  Via the tm ML, you can report WEMI bugs, obtain the latest release
+  of WEMI, and discuss future enhancements to WEMI.  To join the tm
   ML, send an empty e-mail to
 
 	tm-en-help@chamonix.jaist.ac.jp	(English)
