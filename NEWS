@@ -58,6 +58,13 @@ header when `mime-display-entity' runs `mime-display-header-hook'.
 Therefore header-presentation-method must not change current point.
 
 
+** New variable `mime-preview-move-scroll'
+
+This variables decides how to scroll in the MIME-View-mode
+when mime-preview-move-upper, mime-preview-move-previous,
+mime-preview-move-next is called. Those are bound to `u', `p', `n',
+respectively.
+
 
 * Changes in SEMI 1.12
 
