@@ -101,8 +101,7 @@
   )
 
 (defun mime-preview/filter-for-text/richtext (ctype params encoding)
-  (let* ((mode mime::preview/original-major-mode)
-	 (charset (cdr (assoc "charset" params)))
+  (let* ((charset (cdr (assoc "charset" params)))
 	 (beg (point-min))
 	 )
     (remove-text-properties beg (point-max) '(face nil))
@@ -111,8 +110,7 @@
     ))
 
 (defun mime-preview/filter-for-text/enriched (ctype params encoding)
-  (let* ((mode mime::preview/original-major-mode)
-	 (charset (cdr (assoc "charset" params)))
+  (let* ((charset (cdr (assoc "charset" params)))
 	 (beg (point-min))
 	 )
     (remove-text-properties beg (point-max) '(face nil))
