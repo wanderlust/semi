@@ -305,7 +305,7 @@ SLOT.
 
 Following is a list of slots of the structure:
 
-rcnum		reversed content-number (list)
+reversed-number	reversed entity-number (list of integers or t)
 point-min	beginning point of region in raw-buffer
 point-max	end point of region in raw-buffer
 type		media-type (symbol)
