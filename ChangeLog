@@ -1,5 +1,12 @@
 1999-11-03  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
+	* pgg.el (pgg-fetch-key): Protect `buffer-file-name'.
+
+	* pgg-gpg.el (snarf-keys-region): Add `-' as extra argument of
+	gpg --import; convert status code into an integer.
+
+1999-11-03  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
 	* semi-def.el (pgp-function-alist): Add `lookup-key'.
 
 	* pgg.el, pgg-gpg.el, pgg-pgp5.el, pgg-pgp.el:
