@@ -1,5 +1,10 @@
 1998-06-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-view.el: Abolish variable `mime-view-show-summary-method'
+	and function `mime-preview-show-summary'.
+
+1998-06-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-entity-situation): Add information of
 	Content-Disposition.
 
