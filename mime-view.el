@@ -134,10 +134,6 @@ message/partial, it is called `mother-buffer'.")
   "Raw buffer corresponding with the (MIME-preview) buffer.")
 (make-variable-buffer-local 'mime-raw-buffer)
 
-(defvar mime-preview-original-major-mode nil
-  "Major-mode of mime-raw-buffer.")
-(make-variable-buffer-local 'mime-preview-original-major-mode)
-
 (defvar mime-preview-original-window-configuration nil
   "Window-configuration before mime-view-mode is called.")
 (make-variable-buffer-local 'mime-preview-original-window-configuration)
@@ -555,9 +551,9 @@ Each elements are regexp of field-name.")
     (while children
       (mime-view-display-entity (car children)
 				(save-excursion
-				  (set-buffer mime-raw-buffer)
+				  (set-buffer (mime-entity-buffer entity))
 				  mime-raw-message-info)
-				mime-raw-buffer (current-buffer)
+				(current-buffer)
 				default-situation)
       (setq children (cdr children))
       )))
@@ -618,12 +614,13 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 		  children)))
     (setq i 0)
     (while children
-      (let ((situation (car situations)))
-	(mime-view-display-entity (car children)
+      (let ((child (car children))
+	    (situation (car situations)))
+	(mime-view-display-entity child
 				  (save-excursion
-				    (set-buffer mime-raw-buffer)
+				    (set-buffer (mime-entity-buffer child))
 				    mime-raw-message-info)
-				  mime-raw-buffer (current-buffer)
+				  (current-buffer)
 				  default-situation
 				  (if (= i p)
 				      situation
@@ -825,13 +822,15 @@ The compressed face will be piped to this command.")
 ;;; @ buffer setup
 ;;;
 
-(defun mime-view-display-entity (entity message-info ibuf obuf
+(defun mime-view-display-entity (entity message-info obuf
 					default-situation
 					&optional situation)
-  (let* ((start (mime-entity-point-min entity))
+  (let* ((raw-buffer (mime-entity-buffer entity))
+	 (start (mime-entity-point-min entity))
 	 (end (mime-entity-point-max entity))
-	 end-of-header e nb ne subj)
-    (set-buffer ibuf)
+	 original-major-mode end-of-header e nb ne subj)
+    (set-buffer raw-buffer)
+    (setq original-major-mode major-mode)
     (goto-char start)
     (setq end-of-header (if (re-search-forward "^$" nil t)
 			    (1+ (match-end 0))
@@ -866,8 +865,8 @@ The compressed face will be piped to this command.")
       (if header-is-visible
 	  (save-restriction
 	    (narrow-to-region (point)(point))
-	    (insert-buffer-substring mime-raw-buffer start end-of-header)
-	    (let ((f (cdr (assq mime-preview-original-major-mode
+	    (insert-buffer-substring raw-buffer start end-of-header)
+	    (let ((f (cdr (assq original-major-mode
 				mime-view-content-header-filter-alist))))
 	      (if (functionp f)
 		  (funcall f)
@@ -879,7 +878,7 @@ The compressed face will be piped to this command.")
 	     (let ((body-filter (cdr (assq 'body-filter situation))))
 	       (save-restriction
 		 (narrow-to-region (point-max)(point-max))
-		 (insert-buffer-substring mime-raw-buffer end-of-header end)
+		 (insert-buffer-substring raw-buffer end-of-header end)
 		 (funcall body-filter situation)
 		 )))
 	    (children)
@@ -899,7 +898,7 @@ The compressed face will be piped to this command.")
 	     ))
       (setq ne (point-max))
       (widen)
-      (put-text-property nb ne 'mime-view-raw-buffer ibuf)
+      (put-text-property nb ne 'mime-view-raw-buffer raw-buffer)
       (put-text-property nb ne 'mime-view-entity entity)
       (goto-char ne)
       (if children
@@ -911,8 +910,7 @@ The compressed face will be piped to this command.")
 
 (defun mime-view-display-message (message &optional preview-buffer)
   (let ((win-conf (current-window-configuration))
-	(raw-buffer (mime-entity-buffer message))
-	(mode major-mode))
+	(raw-buffer (mime-entity-buffer message)))
     (or preview-buffer
 	(setq preview-buffer
 	      (concat "*Preview-" (buffer-name raw-buffer) "*")))
@@ -921,12 +919,11 @@ The compressed face will be piped to this command.")
       (widen)
       (erase-buffer)
       (setq mime-raw-buffer raw-buffer)
-      (setq mime-preview-original-major-mode mode)
       (setq mime-preview-original-window-configuration win-conf)
       (setq major-mode 'mime-view-mode)
       (setq mode-name "MIME-View")
       (mime-view-display-entity message message
-				raw-buffer preview-buffer
+				preview-buffer
 				'((entity-button . invisible)
 				  (header . visible)
 				  ))
@@ -1077,7 +1074,7 @@ The compressed face will be piped to this command.")
 
 (defvar mime-view-redisplay nil)
 
-(defun mime-view-mode (&optional mother ctl encoding ibuf obuf
+(defun mime-view-mode (&optional mother ctl encoding raw-buffer obuf
 				 default-keymap-or-function)
   "Major mode for viewing MIME message.
 
@@ -1106,8 +1103,8 @@ button-2	Move to point under the mouse cursor
   (mime-maybe-hide-echo-buffer)
   (let ((message
 	 (save-excursion
-	   (if ibuf
-	       (set-buffer ibuf)
+	   (if raw-buffer
+	       (set-buffer raw-buffer)
 	     )
 	   (or mime-view-redisplay
 	       (setq mime-raw-message-info (mime-parse-message ctl encoding))
@@ -1158,16 +1155,20 @@ It decodes current entity to call internal or external method as
 ;;; @@ following
 ;;;
 
-(defun mime-preview-original-major-mode ()
+(defun mime-preview-original-major-mode (&optional recursive)
   "Return major-mode of original buffer.
 If a current buffer has mime-mother-buffer, return original major-mode
 of the mother-buffer."
-  (if mime-mother-buffer
+  (if (and recursive mime-mother-buffer)
       (save-excursion
 	(set-buffer mime-mother-buffer)
-	(mime-preview-original-major-mode)
+	(mime-preview-original-major-mode recursive)
 	)
-    mime-preview-original-major-mode))
+    (save-excursion
+      (set-buffer
+       (mime-entity-buffer
+	(get-text-property (point-min) 'mime-view-entity)))
+      major-mode)))
 
 (defun mime-preview-follow-current-entity ()
   "Write follow message to current entity.
@@ -1225,7 +1226,7 @@ It calls following-method selected from variable
 		 (setq p-end (point-max))
 		 ))
 	     ))
-      (let* ((mode (mime-preview-original-major-mode))
+      (let* ((mode (mime-preview-original-major-mode 'recursive))
 	     (new-name
 	      (format "%s-%s" (buffer-name) (reverse entity-node-id)))
 	     new-buf
@@ -1351,7 +1352,7 @@ variable `mime-view-over-to-previous-method-alist'."
 	  (goto-char (1- point))
 	  (mime-preview-move-to-previous)
 	  )
-      (let ((f (assq mime-preview-original-major-mode
+      (let ((f (assq (mime-preview-original-major-mode)
 		     mime-view-over-to-previous-method-alist)))
 	(if f
 	    (funcall (cdr f))
@@ -1373,7 +1374,7 @@ variable `mime-view-over-to-next-method-alist'."
 	  (if (null (get-text-property point 'mime-view-entity))
 	      (mime-preview-move-to-next)
 	    ))
-      (let ((f (assq mime-preview-original-major-mode
+      (let ((f (assq (mime-preview-original-major-mode)
 		     mime-view-over-to-next-method-alist)))
 	(if f
 	    (funcall (cdr f))
@@ -1389,7 +1390,7 @@ If reached to (point-max), it calls function registered in variable
       (setq h (1- (window-height)))
       )
   (if (= (point) (point-max))
-      (let ((f (assq mime-preview-original-major-mode
+      (let ((f (assq (mime-preview-original-major-mode)
                      mime-view-over-to-next-method-alist)))
         (if f
             (funcall (cdr f))
@@ -1412,24 +1413,14 @@ If reached to (point-min), it calls function registered in variable
       (setq h (1- (window-height)))
       )
   (if (= (point) (point-min))
-      (let ((f (assq mime-preview-original-major-mode
-                     mime-view-over-to-previous-method-alist)))
+      (let ((f (assq (mime-preview-original-major-mode)
+		     mime-view-over-to-previous-method-alist)))
         (if f
             (funcall (cdr f))
           ))
-    (let (point)
-      (save-excursion
-	(catch 'tag
-	  (while (not (bobp))
-	    (if (setq point
-		      (previous-single-property-change (point)
-						       'mime-view-entity))
-		(throw 'tag t)
-	      )
-	    (backward-char)
-	    )
-	  (setq point (point-min))
-	  ))
+    (let ((point
+	   (or (previous-single-property-change (point) 'mime-view-entity)
+	       (point-min))))
       (forward-line (- h))
       (if (< (point) point)
           (goto-char point)
@@ -1454,7 +1445,7 @@ If reached to (point-min), it calls function registered in variable
 It calls function registered in variable
 `mime-preview-quitting-method-alist'."
   (interactive)
-  (let ((r (assq mime-preview-original-major-mode
+  (let ((r (assq (mime-preview-original-major-mode)
 		 mime-preview-quitting-method-alist)))
     (if r
 	(funcall (cdr r))
@@ -1465,7 +1456,7 @@ It calls function registered in variable
 It calls function registered in variable
 `mime-view-show-summary-method'."
   (interactive)
-  (let ((r (assq mime-preview-original-major-mode
+  (let ((r (assq (mime-preview-original-major-mode)
 		 mime-view-show-summary-method)))
     (if r
 	(funcall (cdr r))
