@@ -1,3 +1,21 @@
+1999-11-10   Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
+
+	* pgg-gpg.el (pgg-gpg-process-region): Enclose `start-process'
+	with `as-binary-process'.
+
+	* pgg-pgp.el (pgg-pgp-process-region): Enclose `start-process'
+	with `as-binary-process'.
+
+	* pgg-pgp5.el (pgg-pgp5-process-region): Enclose `start-process'
+	with `as-binary-process'.
+
+	* mime-edit.el (mime-edit-set-sign): Remove duplication.
+	(mime-edit-set-encrypt): Ditto.
+
+	* mime-image.el (image-insert-at-point): Check the number of the
+	arguments of `insert-image'.
+	(mime-display-image): Rewrite.
+
 1999-11-10  Yoshiki Hayashi  <t90553@mail.ecc.u-tokyo.ac.jp>
 
 	* mime-play.el: (mime-save-directory): New variable.
@@ -491,7 +509,7 @@
 
 1999-08-18  MORIOKA Tomohiko  <tomo@m17n.org>
 
-	* REMI: Version 1.13.2 (.DŽÒike-Ikoinomori) released.
+	* REMI: Version 1.13.2 (-DÒike-Ikoinomori)-A released.
 
 1999-08-17  Katsumi Yamaoka   <yamaoka@jpl.org>
 
@@ -562,7 +580,7 @@
 
 1999-07-27  MORIOKA Tomohiko  <tomo@m17n.org>
 
-	* SEMI: Version 1.13.5 (MeihŽò) released.
+	* SEMI: Version 1.13.5 (Meih-Dò)-A released.
 
 1999-07-27  MORIOKA Tomohiko  <tomo@m17n.org>
 
@@ -865,7 +883,7 @@
 
 1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.13.0 (MattŽò) released.
+	* SEMI: Version 1.13.0 (Matt-Dò)-A released.
 
 1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -1363,7 +1381,7 @@
 
 1998-07-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* REMI: Version 1.8.3 (EcchŽþ-Nakagawa) released.
+	* REMI: Version 1.8.3 (Ecch-Dþ-Nakagawa)-A released.
 
 	* mime-play.el (mime-delq-null-situation): Add new optional
 	argument `ignored-value'.
@@ -1392,7 +1410,7 @@
 
 1998-07-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* REMI: Version 1.8.2 (NŽòmachi) released.
+	* REMI: Version 1.8.2 (N-Dòmachi)-A released.
 
 1998-07-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -1511,7 +1529,7 @@
 
 1998-06-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* REMI: Version 1.8.0 (EcchŽþ-Kokubu) released.
+	* REMI: Version 1.8.0 (Ecch-Dþ-Kokubu)-A released.
 
 1998-06-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -2347,7 +2365,7 @@
 
 1998-06-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.5.0 (Nishi-NyŽþzen) released.
+	* SEMI: Version 1.5.0 (Nishi-Ny-Dþzen)-A released.
 
 	* README.en (Required environment): Modify for FLIM 1.3.0.
 
@@ -2399,7 +2417,7 @@
 
 1998-06-01  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.4.6 (NyŽþzen) released.
+	* SEMI: Version 1.4.6 (Ny-Dþzen)-A released.
 
 1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -2612,7 +2630,7 @@
 
 1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.4.4 (EcchŽþ-Miyazaki) released.
+	* SEMI: Version 1.4.4 (Ecch-Dþ-Miyazaki)-A released.
 
 	* mime-play.el (mime-mailcap-method-filename-alist): New variable.
 	(mime-mailcap-method-sentinel): New function.
@@ -2738,7 +2756,7 @@
 
 1998-05-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.4.1 (ŽÒmi) released.
+	* SEMI: Version 1.4.1 (-DÒmi)-A released.
 
 	* README.en (Required environment): Modify for FLIM 1.2.0.
 
@@ -2898,7 +2916,7 @@
 
 1998-04-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.3.2 (NŽò) was released.
+	* SEMI: Version 1.3.2 (N-Dò)-A was released.
 
 	* mime-edit.el (mime-edit-mode-entity-prefix): New variable.
 	(mime-edit-mode-entity-map): New variable.
@@ -3553,7 +3571,7 @@
 
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.2 (Nonoichi-KŽòdaimae) was released.
+	* SEMI: Version 1.0.2 (Nonoichi-K-Dòdaimae)-A was released.
 
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -3636,7 +3654,7 @@
 	* mime-file.el: Rename `mime-article/extract-file' ->
 	`mime-extract-current-entity'.
 
-1998-03-03  Fran.AŽçois Pinard   <pinard@iro.umontreal.ca>
+1998-03-03  François Pinard   <pinard@iro.umontreal.ca>
 
 	* mime-edit.el (mime-edit-insert-signature): Function
  	`mime-edit-insert-tag' is sometimes called with more arguments
@@ -3665,7 +3683,7 @@
 
 1998-02-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.0 (Nukaj.DŽþtaku-mae) was released.
+	* SEMI: Version 1.0.0 (Nukaj-Dþtaku-mae)-A was released.
 
 	* SEMI-ELS: Remove mime-tar.el.
 
@@ -3802,14 +3820,14 @@
 
 1997-11-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.116 (DŽòhŽòji) was released.
+	* SEMI: Version 0.116 (D-Dòhòji)-A was released.
 
 1997-11-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el, mime-pgp.el, mime-partial.el: Rename
 	`mime::article/content-info' -> `mime-raw-content-info'.
 
-1997-11-11  Fran.AŽçois Pinard   <pinard@iro.umontreal.ca>
+1997-11-11  François Pinard   <pinard@iro.umontreal.ca>
 
 	* mime-edit.el: Modify space in prompt and removespurious trailing
 	spaces in the files. (cf. [tm-en:1507])
