@@ -84,9 +84,8 @@
 	     (replace-match "-")
 	     )
 	   (setq code-converter
-		 (or
-		  (cdr (assq mode mime-viewer/code-converter-alist))
-		  (function mime-viewer/default-code-convert-region)))
+		 (cdr (or (assq mode mime-text-decoder-alist)
+			  (assq t    mime-text-decoder-alist))))
 	   )
 	  ((progn
 	     (goto-char (point-min))
