@@ -1,3 +1,11 @@
+2000-08-21   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-view.el: Add setting for 'vcard-parse-string',
+	`vcard-format-string' to autoload "vcard";
+	set up for "text/x-vcard"; add setting for
+	`fill-flowed' to autoload "flow-fill".
+	(mime-display-text/plain): Handle "format=flowed".
+
 2000-08-11  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-view.el (mime-display-text/plain): Display warning message
