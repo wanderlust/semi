@@ -1,3 +1,8 @@
+1999-05-31  Keiichi Suzuki  <keiichi@nanap.org>
+
+	* mime-play.el (mime-show-echo-buffer): Bind `buffer-read-only' to
+	nil, while insert messages.
+
 1999-05-28  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* README.en (Required environment): Require APEL 9.20.

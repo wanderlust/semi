@@ -407,8 +407,9 @@ window.")
     (select-window win)
     (goto-char (point-max))
     (if forms
-	(insert (apply (function format) forms))
-      )
+	(let ((buffer-read-only nil))
+	  (insert (apply (function format) forms))
+	  ))
     (select-window the-win)
     ))
 
