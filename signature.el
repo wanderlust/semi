@@ -1,41 +1,38 @@
-;;;
 ;;; signature.el --- a signature utility for GNU Emacs
-;;;
-;;; Copyright (C) 1995 Free Software Foundation, Inc.
-;;; Copyright (C) 1994 .. 1996 MORIOKA Tomohiko
-;;; Copyright (C) 1994 OKABE Yasuo
-;;; Copyright (C) 1996 Artur Pioro
-;;; Copyright (C) 1996 KOBAYASHI Shuhei
-;;;
-;;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
-;;;         OKABE Yasuo <okabe@kudpc.kyoto-u.ac.jp>
-;;;         Artur Pioro <artur@flugor.if.uj.edu.pl>
-;;;         KOBAYASHI Shuhei <shuhei-k@jaist.ac.jp>
-;;; Maintainer: KOBAYASHI Shuhei <shuhei-k@jaist.ac.jp>
-;;; Created: 1994/7/11
-;;; Version:
-;;;	$Id$
-;;; Keywords: mail, news, signature
-;;;
-;;; This file is part of tm (Tools for MIME).
-;;;
-;;; This program is free software; you can redistribute it and/or
-;;; modify it under the terms of the GNU General Public License as
-;;; published by the Free Software Foundation; either version 2, or
-;;; (at your option) any later version.
-;;;
-;;; This program is distributed in the hope that it will be useful,
-;;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-;;; General Public License for more details.
-;;;
-;;; You should have received a copy of the GNU General Public License
-;;; along with This program.  If not, write to the Free Software
-;;; Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
-;;;
+
+;; Copyright (C) 1994,1995,1996 Free Software Foundation, Inc.
+
+;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;;         OKABE Yasuo <okabe@kudpc.kyoto-u.ac.jp>
+;;         Artur Pioro <artur@flugor.if.uj.edu.pl>
+;;         KOBAYASHI Shuhei <shuhei-k@jaist.ac.jp>
+;; Maintainer: Shuhei KOBAYASHI <shuhei-k@jaist.ac.jp>
+;; Created: 1994/7/11
+;; Version:
+;;	$Id$
+;; Keywords: mail, news, signature
+
+;; This file is part of tm (Tools for MIME).
+
+;; This program is free software; you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation; either version 2, or (at
+;; your option) any later version.
+
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program; see the file COPYING.  If not, write to
+;; the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+;; Boston, MA 02111-1307, USA.
+
 ;;; Code:
 
-(require 'tl-822)
+(require 'std11)
+
 
 ;;; @ valiables
 ;;;
@@ -98,7 +95,7 @@ of file.")
         (let ((alist signature-file-alist) cell field value)
           (while alist
             (setq cell  (car alist)
-                  field (rfc822/get-field-body (car (car cell)))
+                  field (std11-field-body (car (car cell)))
                   value (cdr (car cell)))
             (cond ((functionp value)
 		   (let ((name (apply value field (cdr cell))))
