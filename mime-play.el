@@ -507,13 +507,11 @@ SUBTYPE is symbol to indicate subtype of media-type.")
 (defun mime-preview-quitting-method-for-mime-show-message-mode ()
   "Quitting method for mime-view.
 It is registered to variable `mime-preview-quitting-method-alist'."
-  (let ((raw-buffer (mime-entity-body-buffer
-		     (get-text-property (point-min) 'mime-view-entity)))
-	(mother mime-mother-buffer)
+  (let ((mother mime-mother-buffer)
 	(win-conf mime-preview-original-window-configuration))
-    ;; Existence of raw-buffer is not guaranteed.
-    (if raw-buffer
-	(kill-buffer raw-buffer))
+    (if (and (boundp 'mime-view-temp-message-buffer)
+	     (buffer-live-p mime-view-temp-message-buffer))
+	(kill-buffer mime-view-temp-message-buffer))
     (mime-preview-kill-buffer)
     (set-window-configuration win-conf)
     (pop-to-buffer mother)))
@@ -562,10 +560,12 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	  (save-window-excursion
 	    (set-buffer full-buf)
 	    (erase-buffer)
-	    (as-binary-input-file (insert-file-contents file))
+	    (insert-file-contents-as-binary file)
 	    (setq major-mode 'mime-show-message-mode)
 	    (mime-view-buffer (current-buffer) nil mother)
-	    (setq pbuf (current-buffer)))
+	    (setq pbuf (current-buffer))
+	    (make-local-variable 'mime-view-temp-message-buffer)
+	    (setq mime-view-temp-message-buffer full-buf))
 	  (set-window-buffer pwin pbuf)
 	  (select-window pwin))
       (setq file (concat root-dir "/" number))
@@ -598,8 +598,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 	  (catch 'tag
 	    (save-excursion
 	      (set-buffer (get-buffer-create mime-temp-buffer-name))
-	      ;; #### ??? full-buf is not referenced.
-;;	      (let ((full-buf (current-buffer)))
+	      (let ((full-buf (current-buffer)))
 		(erase-buffer)
 		(let ((i 1))
 		  (while (<= i total)
@@ -609,9 +608,8 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 		    (as-binary-input-file (insert-file-contents file))
 		    (goto-char (point-max))
 		    (setq i (1+ i))))
-		(as-binary-output-file
-		 (write-region (point-min)(point-max)
-			       (expand-file-name "FULL" root-dir)))
+		(write-region-as-binary (point-min)(point-max)
+					(expand-file-name "FULL" root-dir))
 		(let ((i 1))
 		  (while (<= i total)
 		    (let ((file (format "%s/%d" root-dir i)))
@@ -621,13 +619,17 @@ It is registered to variable `mime-preview-quitting-method-alist'."
 		(let ((file (expand-file-name "CT" root-dir)))
 		  (and (file-exists-p file)
 		       (delete-file file)))
-		(let ((pwin (or (get-buffer-window mother)
+		(let ((buf (current-buffer))
+		      (pwin (or (get-buffer-window mother)
 				(get-largest-window)))
 		      (pbuf (mime-display-message
 			     (mime-open-entity 'buffer (current-buffer))
 			     nil mother nil 'mime-show-message-mode)))
+		  (with-current-buffer pbuf
+		    (make-local-variable 'mime-view-temp-message-buffer)
+		    (setq mime-view-temp-message-buffer buf))
 		  (set-window-buffer pwin pbuf)
-		  (select-window pwin))))))))
+		  (select-window pwin)))))))))
 
 
 ;;; @ message/external-body

@@ -1,8 +1,8 @@
 ;;; mime-pgp.el --- mime-view internal methods for PGP.
 
-;; Copyright (C) 1995,1996,1997,1998,1999 MORIOKA Tomohiko
+;; Copyright (C) 1995,1996,1997,1998,1999,2000 Free Software Foundation, Inc.
 
-;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
+;; Author: MORIOKA Tomohiko <tomo@m17n.org>
 ;;	Daiki Ueno <ueno@ueda.info.waseda.ac.jp>
 ;; Created: 1995/12/7
 ;;	Renamed: 1997/2/27 from tm-pgp.el
@@ -88,8 +88,8 @@
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
 	 (mother (current-buffer))
 	 (preview-buffer (concat "*Preview-" (buffer-name) "*"))
-	 representation-type)
-    (set-buffer (get-buffer-create new-name))
+	 representation-type message-buf)
+    (set-buffer (setq message-buf (get-buffer-create new-name)))
     (erase-buffer)
     (mime-insert-entity entity)
     (cond ((progn
@@ -119,8 +119,11 @@
 	   (insert-buffer pgg-output-buffer)
 	   (setq representation-type 'binary)))
     (setq major-mode 'mime-show-message-mode)
-    (save-window-excursion (mime-view-buffer nil preview-buffer mother
-					     nil representation-type))
+    (save-window-excursion
+      (mime-view-buffer nil preview-buffer mother
+			nil representation-type)
+      (make-local-variable 'mime-view-temp-message-buffer)
+      (setq mime-view-temp-message-buffer message-buf))
     (set-window-buffer p-win preview-buffer)))
 
 
@@ -252,10 +255,11 @@
 	 (new-name
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
 	 (mother (current-buffer))
-	 (preview-buffer (concat "*Preview-" (buffer-name) "*")))
+	 (preview-buffer (concat "*Preview-" (buffer-name) "*"))
+	 message-buf)
     (when (memq (or (cdr (assq 'smime-type situation)) 'enveloped-data)
 		'(enveloped-data signed-data))
-      (set-buffer (get-buffer-create new-name))
+      (set-buffer (setq message-buf (get-buffer-create new-name)))
       (let ((inhibit-read-only t)
 	    buffer-read-only)
 	(erase-buffer)
@@ -264,8 +268,11 @@
 	(delete-region (point-min)(point-max))
 	(insert-buffer smime-output-buffer))
       (setq major-mode 'mime-show-message-mode)
-      (save-window-excursion (mime-view-buffer nil preview-buffer mother
-					       nil 'binary))
+      (save-window-excursion
+	(mime-view-buffer nil preview-buffer mother
+			  nil 'binary)
+	(make-local-variable 'mime-view-temp-message-buffer)
+	(setq mime-view-temp-message-buffer message-buf))
       (set-window-buffer p-win preview-buffer))))
 
 

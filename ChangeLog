@@ -1,3 +1,19 @@
+2000-07-11  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
+
+	* mime-pgp.el (mime-view-application/pgp): Setup local variable
+	`mime-view-temp-message-buffer' of preview-buffer.
+	(mime-view-application/pkcs7-mime): Likewise.
+
+	* mime-play.el
+	(mime-preview-quitting-method-for-mime-show-message-mode): Don't
+	use `mime-entity-buffer'; refer `mime-view-temp-message-buffer'.
+	(mime-store-message/partial-piece): Use
+	`insert-file-contents-as-binary' instead of
+	`(as-binary-input-file (insert-file-contents ...))'; use
+	`write-region-as-binary' instead of
+	`(as-binary-output-file (write-region ...)); setup local variable
+	`mime-view-temp-message-buffer' of preview-buffer.
+
 2000-07-08  Yoshiki Hayashi  <yoshiki@xemacs.org>
 
 	* mime-view.el (mime-display-text/plain): Make it a little
