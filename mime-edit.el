@@ -634,7 +634,7 @@ If it is not specified for a major-mode,
 	  (if (featurep 'xemacs)
 	      (concat (if (featurep 'mule) "MULE")
 		      " XEmacs"
-		      (if (string-match "\\s +\\\"" emacs-version)
+		      (if (string-match "\\s +\\((\\|\\\"\\)" emacs-version)
 			  (concat "/"
 				  (substring emacs-version 0
 					     (match-beginning 0))
