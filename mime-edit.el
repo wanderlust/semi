@@ -125,9 +125,9 @@
 (autoload 'pgg-insert-key "pgg"
   "Insert PGP public key at point." t)
 (autoload 'smime-encrypt-region "smime"
-  "S/MIME encryption of current region." t)
+  "S/MIME encryption of current region.")
 (autoload 'smime-sign-region "smime"
-  "S/MIME signature of current region." t)
+  "S/MIME signature of current region.")
 
 
 ;;; @ version
@@ -1983,11 +1983,17 @@ Content-Transfer-Encoding: 7bit
 	(goto-char beg)
 	(insert (format "--[[multipart/signed;
  boundary=\"%s\"; micalg=sha1;
- protocol=\"application/x-pkcs7-signature\"][7bit]]
+ protocol=\"application/pkcs7-signature\"][7bit]]
 --%s
 " smime-boundary smime-boundary))
 	(goto-char (point-max))
-	(insert "\n--" smime-boundary "\n")
+	(insert (format "\n--%s
+Content-Type: application/pkcs7-signature; name=\"smime.p7s\"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename=\"smime.p7s\"
+Content-Description: S/MIME Cryptographic Signature
+
+"  smime-boundary))
 	(insert-buffer-substring smime-output-buffer)
 	(goto-char (point-max))
 	(insert (format "\n--%s--\n" smime-boundary))
@@ -2015,13 +2021,9 @@ Content-Transfer-Encoding: 7bit
 	    (throw 'mime-edit-error 'pgp-error)
 	    )
 	(delete-region (point-min)(point-max))
-	(with-current-buffer smime-output-buffer
-	  (goto-char (point-min))
-	  (delete-region (point-min) (progn
-				       (re-search-forward "^$" nil t)
-				       (point))))
-	(insert "--[[application/x-pkcs7-mime
-Content-Disposition: attachment; filename=\"smime.p7m\"][base64]]\n")
+	(insert "--[[application/pkcs7-mime; name=\"smime.p7m\"
+Content-Disposition: attachment; filename=\"smime.p7m\"
+Content-Description: S/MIME Encrypted Message][base64]]\n")
 	(insert-buffer-substring smime-output-buffer)
 	))))
 
