@@ -1,5 +1,33 @@
 1999-04-14  Katsumi Yamaoka   <yamaoka@jpl.org>
 
+	* mime-pgp.el (mime-pgp-fetch-key,
+	mime-pgp-show-fetched-key-for-pgp,
+	mime-pgp-show-fetched-key-for-pgp50,
+	mime-pgp-show-fetched-key-for-gpg): New functions.
+	(mime-pgp-show-fetched-key): New macro.
+	(mime-pgp-fetch-timeout, mime-pgp-http-proxy-server-port,
+	mime-pgp-http-proxy-server-address,
+	mime-pgp-http-proxy-url-template, mime-pgp-keyserver-port,
+	mime-pgp-keyserver-address, mime-pgp-keyserver-url-template): New
+	user options.
+	(mime-pgp-key-expected-regexp-alist,
+	mime-pgp-bad-signature-regexp-alist,
+	mime-pgp-good-signature-regexp-alist,
+	mime-pgp-default-language-alist, mime-pgp-command-alist): Change
+	the customization group to `mime-pgp'.
+	(mime-pgp): New group for customization.
+
+	* mime-mc.el (mime-mc-pgp50-process-region,
+	mime-mc-gpg-process-region): Deactivate passwd if detecting the
+	value of `micalg' is failed and `mc-passwd-timeout' is nil; remove
+	useless `progn's.
+	(mime-mc-comment-alist, mime-mc-omit-micalg,
+	mime-mc-shell-file-name): Change the customization group to
+	`mime-mc'.
+	(mime-mc): New group for customization.
+
+1999-04-14  Katsumi Yamaoka   <yamaoka@jpl.org>
+
 	* mime-mc.el (mime-mc-pgp50-sign-region, mime-mc-gpg-sign-region):
 	Return nil if an erorr has occurred during detecting the value of
 	`micalg'.

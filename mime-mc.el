@@ -49,16 +49,21 @@
      (mc-snarf-keys		"mc-toplev")
      )))
 
+(defgroup mime-mc nil
+  "Mailcrypt interface for SEMI."
+  :prefix "mime-mc-"
+  :group 'mime)
+
 (defcustom mime-mc-shell-file-name "/bin/sh"
   "File name to load inferior shells from.  Bourne shell or its equivalent
 \(not tcsh) is needed for \"2>\"."
-  :group 'mime
+  :group 'mime-mc
   :type 'file)
 
 (defcustom mime-mc-omit-micalg nil
   "Non-nil value means to omit the micalg parameter for multipart/signed.
 See draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME) for more information."
-  :group 'mime
+  :group 'mime-mc
   :type 'boolean)
 
 (defcustom mime-mc-comment-alist
@@ -79,7 +84,7 @@ See draft-yamamoto-openpgp-mime-00.txt (OpenPGP/MIME) for more information."
 	  (cons 'pgp string)))
   "Alist of the schemes and strings of the comment field to appear in ASCII
 armor output."
-  :group 'mime
+  :group 'mime-mc
   :type '(repeat (cons :format "%v"
 		       (choice (choice-item :tag "GnuPG" gpg)
 			       (choice-item :tag "PGP 5.0i" pgp50)
@@ -238,9 +243,8 @@ optional argument COMMENT if it is specified."
 	  (make-temp-name (expand-file-name "mailcrypt-gpg-status-"
 					    mc-temp-directory)))
     (unwind-protect
-	(progn
-	  ;; Returns non-nil if success, otherwise nil with error message.
-	  (catch 'mime-mc-gpg-process-region-done
+	(catch ;; Returns non-nil if success, otherwise nil with error message.
+	    'mime-mc-gpg-process-region-done
 
 	  ;; get output places ready
 	  (setq mybuf (get-buffer-create " *mailcrypt stdout temp"))
@@ -375,7 +379,7 @@ Content-Transfer-Encoding: 7bit
 
 	  ;; return result
 	  (cdr parser-result)
-	  ))
+	  )
       ;; cleanup forms
       (if (and proc (eq 'run (process-status proc)))
 	  ;; it is still running. kill it.
@@ -448,6 +452,7 @@ Content-Transfer-Encoding: 7bit
 			    )
 		      (set-alist 'mime-mc-micalg-alist (cdr key) micalg)
 		      )
+		  (or mc-passwd-timeout (mc-deactivate-passwd t))
 		  ))
 	    )))
     (if (or mime-mc-omit-micalg micalg)
@@ -508,9 +513,8 @@ optional argument COMMENT if it is specified."
 	(setq args (cons "+comment=DUMMY" args))
       )
     (unwind-protect
-	(progn
-	  ;; Returns non-nil if success, otherwise nil with error message.
-	  (catch 'mime-mc-pgp50-process-region-done
+	(catch ;; Returns non-nil if success, otherwise nil with error message.
+	    'mime-mc-pgp50-process-region-done
 
 	  (setq mybuf (or buffer (generate-new-buffer " *mailcrypt temp")))
 	  (set-buffer mybuf)
@@ -576,7 +580,7 @@ Content-Transfer-Encoding: 7bit
 		(delete-region (car rgn) (cdr rgn))))
 
 	  ;; Return nil on failure and exit code on success
-	  (if rgn result nil)))
+	  (if rgn result nil))
 
       ;; Cleanup even on nonlocal exit
       (if (and proc (eq 'run (process-status proc)))
@@ -736,6 +740,7 @@ Content-Transfer-Encoding: 7bit
 		(setq micalg (downcase (or (std11-fetch-field "Hash") "md5")))
 		(set-alist 'mime-mc-micalg-alist (cdr key) micalg)
 		)
+	    (or mc-passwd-timeout (mc-deactivate-passwd t))
 	    ))
       )
     (if (or mime-mc-omit-micalg micalg)
