@@ -447,7 +447,6 @@
 
 (defun mime-article/decode-caesar (beg end cal)
   (let* ((cnum (mime-article/point-content-number beg))
-	 (cur-buf (current-buffer))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (mother mime::article/preview-buffer)
 	 (charset (cdr (assoc "charset" cal)))
