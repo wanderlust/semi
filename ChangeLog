@@ -1,3 +1,8 @@
+2002-05-18  ARISAWA Akihiro  <ari@mbf.sphere.ne.jp>
+
+	* mime-play.el (mime-activate-mailcap-method): Don't use
+	`binary-to-text-funcall'. (Thanks to TANAKA Shingo)
+
 2003-12-14  Tatsuya Kinoshita  <tats@vega.ocn.ne.jp>
 
 	* mime-edit.el (mime-charset-type-list): Add entry for iso-8859-1[45].

@@ -145,11 +145,10 @@ specified, play as it.  Default MODE is \"play\"."
 	   (let ((command
 		  (mime-format-mailcap-command
 		   method
-		   (cons (cons 'filename name) situation))))
-	     (binary-to-text-funcall
-	      mime-play-messages-coding-system
-	      #'start-process command mime-echo-buffer-name
-	      shell-file-name shell-command-switch command))))
+		   (cons (cons 'filename name) situation)))
+		 (coding-system-for-read mime-play-messages-coding-system))
+	     (start-process command mime-echo-buffer-name
+			    shell-file-name shell-command-switch command))))
       (set-alist 'mime-mailcap-method-filename-alist process name)
       (set-process-sentinel process 'mime-mailcap-method-sentinel))))
 
