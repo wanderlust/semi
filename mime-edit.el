@@ -961,7 +961,7 @@ Charset is automatically obtained from the `mime/lc-charset-alist'."
          (function
           (lambda ()
             (apply (function mime-editor/insert-tag)
-                   (mime-find-file-type signature))
+                   (mime-find-file-type signature-file-name))
             )))
         )
     (insert-signature arg)
