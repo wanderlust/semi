@@ -1320,9 +1320,10 @@ It calls following-method selected from variable
 			   (concat "^"
 				   (apply (function regexp-or) fields)
 				   ":") ""))))
-		     (if (and
-			  (eq (mime-entity-media-type ci) 'message)
-			  (eq (mime-entity-media-subtype ci) 'rfc822))
+		     (if (or (null entity-node-id)
+			     (and
+			      (eq (mime-entity-media-type ci) 'message)
+			      (eq (mime-entity-media-subtype ci) 'rfc822)))
 			 nil
 		       (if str
 			   (insert str)

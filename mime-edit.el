@@ -219,6 +219,7 @@ To insert a signature file automatically, call the function
     ("application"
      ("octet-stream" ("type" "" "tar" "shar"))
      ("postscript")
+     ("vnd.ms-powerpoint")
      ("x-kiss" ("x-cnf")))
     ("image"
      ("gif")
@@ -300,6 +301,11 @@ To insert a signature file automatically, call the function
 
     ("\\.doc$"				;MS Word
      "application" "winword" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.ppt$"				; MS Power Point
+     "application" "vnd.ms-powerpoint" nil
      "base64"
      "attachment" (("filename" . file))
      )
@@ -483,6 +489,7 @@ If encoding is nil, it is determined from its contents."
     (cn-big5		8 "base64")
     (big5		8 "base64")
     (shift_jis		8 "base64")
+    (tis-620		8 "base64")
     (iso-2022-jp-2	7 "base64")
     (iso-2022-int-1	7 "base64")
     ))
@@ -2170,8 +2177,7 @@ Content-Transfer-Encoding: 7bit
     (goto-char (point-min))
     (while (re-search-forward regexp nil t)
       (delete-region (match-beginning 0)
-		     (progn (forward-line 1) (point)))
-      )))
+		     (1+ (std11-field-end))))))
 
 
 ;;;
@@ -2706,9 +2712,15 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 			      encoding nil)
 			)))))))
     (if (or encoded (not not-decode-text))
-	(decode-mime-charset-region (point-min)(point-max)
-				    (or charset default-mime-charset))
-      )
+ 	(progn
+ 	  (save-excursion
+ 	    (goto-char (point-min))
+ 	    (while (re-search-forward "\r\n" nil t)
+ 	      (replace-match "\n")
+ 	      ))
+ 	  (decode-mime-charset-region (point-min)(point-max)
+ 				      (or charset default-mime-charset))
+	  ))
     (let ((he (if (re-search-forward "^$" nil t)
 		  (match-end 0)
 		(point-min)
