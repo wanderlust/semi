@@ -227,7 +227,7 @@ Each elements are regexp of field-name. [mime-view.el]")
     ))
 
 
-;;; @@ content button
+;;; @@ entity button
 ;;;
 
 (defun mime-view-insert-entity-button (rcnum cinfo ctype params subj encoding)
@@ -280,11 +280,14 @@ Each elements are regexp of field-name. [mime-view.el]")
 (defun mime-view-entity-button-function
   (rcnum cinfo ctype params subj encoding)
   "Insert entity button conditionally."
-  (if (and (consp rcnum)
-	   (not (string= ctype "application/x-selection"))
-	   )
+  (or (null rcnum)
+      (string= ctype "application/x-selection")
+      (and (string= ctype "application/octet-stream")
+	   (string= (mime::content-info/type
+		     (mime-article/rcnum-to-cinfo (cdr rcnum) cinfo))
+		    "multipart/encrypted"))
       (mime-view-insert-entity-button rcnum cinfo ctype params subj encoding)
-    ))
+      ))
 
 
 ;;; @@ content header filter
