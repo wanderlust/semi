@@ -1,3 +1,14 @@
+1999-07-21  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* Makefile (EXEC_PREFIX): Deleted.
+	(elc): Change command-line interface to delete `EXEC_PREFIX'.
+	(install-elc): Likewise.
+
+	* SEMI-MK (config-semi): Change command-line interface to delete
+	`EXEC_PREFIX'.
+
+	* SEMI-CFG (EXEC_PREFIX): Deleted.
+
 1999-07-07  Daiki Ueno  <ueno@ueda.info.waseda.ac.jp>
 
 	* mime-edit.el (mime-edit-quitting-method): Don't refer
