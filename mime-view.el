@@ -313,10 +313,14 @@ Please redefine this function if you want to change default setting."
 ;;;
 
 (defvar mime-view-content-filter-alist
-  '(("text/enriched" . mime-preview/filter-for-text/enriched)
-    ("text/richtext" . mime-preview/filter-for-text/richtext)
-    (t . mime-preview/filter-for-text/plain)
-    ))
+  '(("text/enriched" . mime-view-filter-for-text/enriched)
+    ("text/richtext" . mime-view-filter-for-text/richtext)
+    (t . mime-view-filter-for-text/plain)
+    )
+  "Alist of media-types vs. corresponding MIME-View filter functions.
+Each element looks like (TYPE/SUBTYPE . FUNCTION) or (t . FUNCTION).
+TYPE/SUBTYPE is a string of media-type and FUNCTION is a filter
+function.  t means default media-type.")
 
 
 ;;; @@ entity separator
