@@ -157,7 +157,7 @@ specified, play as it.  Default MODE is \"play\"."
 		  (mime-format-mailcap-command
 		   method
 		   (cons (cons 'filename name) situation)))
-                 (coding-system-for-read mime-play-messages-coding-system))
+		 (coding-system-for-read mime-play-messages-coding-system))
 	     (start-process command mime-echo-buffer-name
 	      shell-file-name shell-command-switch command))))
       (set-alist 'mime-mailcap-method-filename-alist process name)
@@ -166,15 +166,19 @@ specified, play as it.  Default MODE is \"play\"."
 (defun mime-mailcap-method-sentinel (process event)
   (when mime-play-delete-file-immediately
     (let ((file (cdr (assq process mime-mailcap-method-filename-alist))))
-      (if (file-exists-p file)
-	  (delete-file file)))
+      (when (file-exists-p file)
+	(ignore-errors
+	  (delete-file file)
+	  (delete-directory (file-name-directory file)))))
     (remove-alist 'mime-mailcap-method-filename-alist process))
-  (message (format "%s %s" process event)))
+  (message "%s %s" process event))
 
 (defun mime-mailcap-delete-played-files ()
   (dolist (elem mime-mailcap-method-filename-alist)
     (when (file-exists-p (cdr elem))
-      (delete-file (cdr elem)))))
+      (ignore-errors
+	(delete-file (cdr elem))
+	(delete-directory (file-name-directory (cdr elem)))))))
 
 (add-hook 'kill-emacs-hook 'mime-mailcap-delete-played-files)
 

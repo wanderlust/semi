@@ -1,3 +1,10 @@
+2003-12-14  Yoichi NAKAYAMA <yoichi@geiin.org>
+
+	* mime-play.el (mime-mailcap-method-sentinel): Restore deleting
+	directory routine and protection of 1st arg of `message' dropped
+	in the last change.
+	(mime-mailcap-delete-played-files): Ditto.
+
 2003-12-12  ARISAWA Akihiro  <ari@mbf.sphere.ne.jp>
 
 	* mime-play.el (mime-play-delete-file-immediately): New user option.
