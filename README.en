@@ -49,7 +49,7 @@ Required environment
   nil. (Maybe non mule setting requires to modify emu.  In addition,
   it is better to use terminal-coding-system feature)
 
-  WEMI requires APEL (8.2 or later) and FLIM package.  Please install
+  SEMI requires APEL (8.7 or later) and FLIM package.  Please install
   them before installing it.  APEL package is available at:
 
 	ftp://ftp.jaist.ac.jp/pub/GNU/elisp/apel/
@@ -132,7 +132,7 @@ Initialization
 Documentation
 -------------
 
-  To get started, please read WEMI/README.en.
+  To get started, please read ${archive}/README.en.
 
   RFC's 822, 1806, 1847, 1896, 2015, 2045, 2046, 2047, 2048 and 2049
   are available via anonymous ftp:

@@ -1,3 +1,100 @@
+1998-04-29  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI-CFG: Modify messages for APEL 8.7.
+
+	* README.en (Required environment): Modify for APEL 8.7.
+
+1998-04-29  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-view-find-every-acting-situation): Change
+ 	default value to 't.
+
+1998-04-29  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-save-acting-situation-examples): New
+ 	function; set up for 'kill-emacs-hook.
+
+	* mime-play.el (mime-acting-situation-examples): Renamed from
+ 	'mime-user-acting-condition.
+
+	* mime-play.el: Load MIME acting-example file.
+
+	* mime-view.el (mime-acting-situation-examples-file): New
+ 	variable.
+
+1998-04-29  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-raw-play-entity): Use
+ 	'ctree-match-calist-partially.
+
+1998-04-27  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-raw-play-entity): Refer
+	'mime-view-find-every-acting-situation.
+
+	* mime-view.el (mime-view): New customize group.
+	(mime-view-find-every-acting-situation): New variable.
+
+1998-04-27  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-user-acting-condition): New variable.
+	(mime-raw-play-entity): Refer it.
+
+1998-04-27  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-raw-play-entity): Get all available
+ 	acting-situations; display menu of methods to select
+ 	acting-situation to activate.
+
+	* semi-def.el (select-menu-alist): New function.
+
+1998-04-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-mode-entity-prefix): New variable.
+	(mime-edit-mode-entity-map): New variable.
+	(mime-edit-mode-enclosure-prefix): New variable.
+	(mime-edit-mode-enclosure-map): New variable.
+	(mime-edit-mode-map): Use 'mime-edit-mode-entity-map and
+ 	'mime-edit-mode-enclosure-map.
+
+	* mime-view.el (mime-acting-condition): Fix setting.
+
+1998-04-24  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-raw-play-entity): Use 'ctree-match-calist
+ 	directly; abolish 'mime/get-content-decoding-alist.
+
+1998-04-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el (mime-preview-follow-current-entity): Abolish
+	unused local variable 'message-info.
+
+1998-04-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-edit.el (mime-edit-split-ignored-field-regexp): Add
+ 	Message-Id field.
+
+1998-04-22  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mail-mime-setup.el: Must require 'alist.
+
+1998-04-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* semi-def.el: Don't require 'atype; abolish function
+ 	'field-unifier-for-mode.
+
+1998-04-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el: Use 'ctree-set-calist-strictly instead of
+ 	'set-atype to set up for 'mime-acting-condition.
+
+	* mime-play.el (mime/get-content-decoding-alist): Use
+ 	'ctree-match-calist instead of 'get-unified-alist.
+
+	* mime-view.el (mime-acting-condition): Change format from list of
+ 	atype to ctree.
+
+
 1998-04-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* WEMI: Version 1.2.4 (Yokohama) was released.
