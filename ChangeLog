@@ -1,3 +1,11 @@
+1998-04-19  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-view.el: Abolish variable
+ 	'mime-view-childrens-header-showing-Content-Type-list and function
+ 	'mime-view-header-visible-p.
+	(mime-preview-follow-current-entity): Don't use
+ 	'mime-view-header-visible-p.
+
 1998-04-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el (mime-preview-condition): Don't display body of
