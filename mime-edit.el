@@ -2342,86 +2342,45 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 		     (replace-space-with-underline (current-time-string))
 		     "@" (system-name) "\"")))
     (run-hooks 'mime-editor/before-split-hook)
-    (let* ((header (rfc822/get-header-string-except
-		    mime-editor/split-ignored-field-regexp separator))
-	   (subject (mail-fetch-field "subject"))
-	   (total (+ (/ lines mime-editor/message-max-length)
-		     (if (> (mod lines mime-editor/message-max-length) 0)
-			 1)))
-	   (the-buf (current-buffer))
-	   (buf (get-buffer "*tmp-send*"))
-	   (command
-	    (or cmd
-		(cdr
-		 (assq major-mode
-		       mime-editor/split-message-sender-alist))
-		(cdr
-		 (assq major-mode
-		       mime-editor/message-default-sender-alist))
-		))
-	   data)
-      (goto-char (point-min))
-      (if (re-search-forward (concat "^" (regexp-quote separator) "$")
-			     nil t)
-	  (replace-match "")
-	)
-      (if buf
-	  (progn
-	    (switch-to-buffer buf)
-	    (erase-buffer)
-	    (switch-to-buffer the-buf)
-	    )
-	(setq buf (get-buffer-create "*tmp-send*"))
-	)
-      (switch-to-buffer buf)
-      (make-local-variable 'mail-header-separator)
-      (setq mail-header-separator separator)
-      (switch-to-buffer the-buf)
-      (goto-char (point-min))
-      (re-search-forward "^$" nil t)
-      (let ((mime-editor/partial-number 1))
-	(setq data (buffer-substring
-		    (point-min)
-		    (progn
-		      (goto-line mime-editor/message-max-length)
-		      (point))
-		    ))
-	(delete-region (point-min)(point))
-	(switch-to-buffer buf)
-	(mime-editor/insert-partial-header
-	 header subject id mime-editor/partial-number total separator)
-	(insert data)
-	(save-excursion
-	  (save-restriction
-	    (goto-char (point-min))
-	    (search-forward (concat "\n" mail-header-separator "\n"))
-	    (narrow-to-region
-	     (match-end 0)
-	     (if (re-search-forward "^$" nil t)
-		 (match-beginning 0)
-	       (point-max)
+    (let ((the-buf (current-buffer))
+	  (copy-buf (get-buffer-create " *Original Message*"))
+	  (header (rfc822/get-header-string-except
+		   mime-editor/split-ignored-field-regexp separator))
+	  (subject (mail-fetch-field "subject"))
+	  (total (+ (/ lines mime-editor/message-max-length)
+		    (if (> (mod lines mime-editor/message-max-length) 0)
+			1)))
+	  (command
+	   (or cmd
+	       (cdr
+		(assq major-mode
+		      mime-editor/split-message-sender-alist))
+	       (cdr
+		(assq major-mode
+		      mime-editor/message-default-sender-alist))
 	       ))
-	    (goto-char (point-min))
-	    (while (re-search-forward
-		    mime-editor/split-blind-field-regexp nil t)
-	      (delete-region (match-beginning 0)
-			     (let ((e (rfc822/field-end)))
-			       (if (< e (point-max))
-				   (1+ e)
-				 e)))
-	      )
-	    ))
-	(save-excursion
-	  (message (format "Sending %d/%d..."
-			   mime-editor/partial-number total))
-	  (call-interactively command)
-	  (message (format "Sending %d/%d... done"
-			   mime-editor/partial-number total))
-	  )
+	  (mime-editor/partial-number 1)
+	  data)
+      (save-excursion
+	(set-buffer copy-buf)
 	(erase-buffer)
-	(switch-to-buffer the-buf)
-	(setq mime-editor/partial-number 2)
-	(while (< mime-editor/partial-number total)
+	(insert-buffer the-buf)
+	(save-restriction
+	  (if (re-search-forward
+	       (concat "^" (regexp-quote separator) "$") nil t)
+	      (let ((he (match-beginning 0)))
+		(replace-match "")
+		(narrow-to-region (point-min) he)
+		))
+	  (goto-char (point-min))
+	  (while (re-search-forward mime-editor/split-blind-field-regexp nil t)
+	    (delete-region (match-beginning 0)
+			   (1+ (rfc822/field-end)))
+	    )))
+      (while (< mime-editor/partial-number total)
+	(erase-buffer)
+	(save-excursion
+	  (set-buffer copy-buf)
 	  (setq data (buffer-substring
 		      (point-min)
 		      (progn
@@ -2429,28 +2388,36 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 			(point))
 		      ))
 	  (delete-region (point-min)(point))
-	  (switch-to-buffer buf)
-	  (mime-editor/insert-partial-header
-	   header subject id mime-editor/partial-number total separator)
-	  (insert data)
-	  (save-excursion
-	    (message (format "Sending %d/%d..."
-			     mime-editor/partial-number total))
-	    (call-interactively command)
-	    (message (format "Sending %d/%d... done"
-			     mime-editor/partial-number total))
-	    )
-	  (erase-buffer)
-	  (switch-to-buffer the-buf)
-	  (setq mime-editor/partial-number
-		(1+ mime-editor/partial-number))
 	  )
-	(goto-char (point-min))
 	(mime-editor/insert-partial-header
 	 header subject id mime-editor/partial-number total separator)
+	(insert data)
+	(save-excursion
+	  (message (format "Sending %d/%d..."
+			   mime-editor/partial-number total))
+	  (call-interactively command)
+	  (message (format "Sending %d/%d... done"
+			   mime-editor/partial-number total))
+	  )
+	(setq mime-editor/partial-number
+	      (1+ mime-editor/partial-number))
+	)
+      (erase-buffer)
+      (save-excursion
+	(set-buffer copy-buf)
+	(setq data (buffer-string))
+	(erase-buffer)
+	)
+      (mime-editor/insert-partial-header
+       header subject id mime-editor/partial-number total separator)
+      (insert data)
+      (save-excursion
 	(message (format "Sending %d/%d..."
 			 mime-editor/partial-number total))
-	))))
+	(message (format "Sending %d/%d... done"
+			 mime-editor/partial-number total))
+	)
+      )))
 
 (defun mime-editor/maybe-split-and-send (&optional cmd)
   (interactive)
