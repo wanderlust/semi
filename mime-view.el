@@ -299,22 +299,24 @@ Please redefine this function if you want to change default setting."
 
 (defvar mime-raw-content-info
   "Information about structure of message.
-Please use reference function `mime::content-info/SLOT-NAME' to
-reference slot of content-info.  Their argument is only content-info.
+Please use reference function `mime-entity-info-SLOT' to get value of
+SLOT.
 
 Following is a list of slots of the structure:
 
 rcnum		reversed content-number (list)
 point-min	beginning point of region in raw-buffer
 point-max	end point of region in raw-buffer
-type		media-type/subtype (string or nil)
+type		media-type (symbol)
+subtype		media-subtype (symbol)
+type/subtype	media-type/subtype (string or nil)
 parameters	parameter of Content-Type field (association list)
 encoding	Content-Transfer-Encoding (string or nil)
 children	entities included in this entity (list of content-infos)
 
-If a entity includes other entities in its body, such as multipart or
-message/rfc822, content-infos of other entities are included in
-`children', so content-info become a tree.")
+If an entity includes other entities in its body, such as multipart or
+message/rfc822, entity-infos of other entities are included in
+`children', so entity-info become a tree.")
 (make-variable-buffer-local 'mime-raw-content-info)
 
 (defvar mime-view-buffer nil
