@@ -32,7 +32,9 @@
 ;;; @ variables
 ;;;
 
-(defvar mime-temp-directory (or (getenv "TM_TMP_DIR") "/tmp/")
+(defvar mime-temp-directory (or (getenv "MIME_TMP_DIR")
+				(getenv "TM_TMP_DIR")
+				"/tmp/")
   "*Directory for temporary files.")
 
 (defvar mime/use-multi-frame
