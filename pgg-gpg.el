@@ -244,7 +244,7 @@
 
 (luna-define-method snarf-keys-region ((scheme pgg-scheme-gpg)
 				       start end)
-  (let ((args '("--import" "--batch")) status)
+  (let ((args '("--import" "--batch" "-")) status)
     (pgg-gpg-process-region start end nil pgg-gpg-program args)
     (set-buffer pgg-status-buffer)
     (goto-char (point-min))
@@ -252,18 +252,20 @@
       (setq status (buffer-substring (match-end 0) 
 				     (progn (end-of-line) 
 					    (point)))
-	    status (vconcat (split-string status)))
+	    status (vconcat (mapcar #'string-to-int 
+				    (split-string status))))
       (erase-buffer)
-      (insert (aref status 0) "keys seen\n"
-	      (format "\t%d bad, %d new, %d old\n"
-		      (string-to-int (aref status 1))
-		      (+ (string-to-int (aref status 2))
-			 (string-to-int (aref status 10)))
-		      (+ (string-to-int (aref status 4))
-			 (string-to-int (aref status 11))))
+      (insert (format "Imported %d key(s).
+\tArmor contains %d key(s) [%d bad, %d old].\n"
+		      (+ (aref status 2)
+			 (aref status 10))
+		      (aref status 0)
+		      (aref status 1)
+		      (+ (aref status 4)
+			 (aref status 11)))
 	      (if (zerop (aref status 9))
 		  ""
-		"\tSecret keys are imported\n")))
+		"\tSecret keys are imported.\n")))
     (append-to-buffer pgg-output-buffer
 		      (point-min)(point-max))
     (with-current-buffer pgg-output-buffer
