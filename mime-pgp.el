@@ -5,7 +5,6 @@
 ;; Author: MORIOKA Tomohiko <morioka@jaist.ac.jp>
 ;; Created: 1995/12/7
 ;;	Renamed: 1997/2/27 from tm-pgp.el
-;; Version: $Id$
 ;; Keywords: PGP, security, MIME, multimedia, mail, news
 
 ;; This file is part of SEMI (Secure Emacs MIME Interface).
