@@ -1,8 +1,59 @@
+1999-01-22  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
+
+	* Sync up with semi-1_13.
+
+
+1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.13.0 (Matt-Dò)-A released.
+
+1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-view-message/rfc822): Don't expect called in
+	raw-buffer.
+
+1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS (Function `mime-play-entity'): Add description about
+	interface change of `mime-play-entity'.
+
+	* mime-play.el (mime-play-entity): Change interface.
+
+1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* NEWS (Changes in SEMI 1.13): New section.
+
+	* NEWS (Changes in SEMI 1.12): New section.
+
+1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-pgp.el (mime-view-application/pgp): Don't expect called in
+	raw-buffer.
+	(mime-verify-application/pgp-signature): Likewise.
+
+	* mime-play.el: Abolish variable
+	`mime-preview-after-decoded-position'.
+	(mime-preview-play-current-entity): Use `mime-play-entity' simply;
+	don't switch to raw-buffer.
+	(mime-play-entity): renamed from `mime-raw-play-entity'; don't
+	expect called in raw-buffer.
+	(mime-activate-mailcap-method): Don't expect called in raw-buffer.
+	(mime-show-echo-buffer): Permit to run in preview-buffer.
+
+
 1999-01-21  Keiichi Suzuki  <kei-suzu@mail.wbs.ne.jp>
 
 	* mime-edit.el (mime-edit-line-break-type): New variable.
 	(mime-edit-normalize-body): Canonicalize line break code in the
 	text part with `encode-mime-charset-region'.
+
+
+1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* SEMI: Version 1.12.1 ([JR] Nonoichi) released.
+
+	* mime-play.el (mime-detect-content): Use `mime-entity-content'
+	not to refer to buffer directly.
 
 1999-01-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -38,6 +89,7 @@
 
 1998-11-17  Kazuhiro Ohta     <ohta@ele.cst.nihon-u.ac.jp>
 
+>>>>>>> 1.349.2.5
 	* mime-partial.el
 	(mime-combine-message/partial-pieces-automatically): Fix
 	DOC-string.
