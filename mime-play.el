@@ -375,7 +375,7 @@ window.")
 ;;; @ file extraction
 ;;;
 
-(defun mime-method-to-save (entity cal)
+(defun mime-save-content (entity cal)
   (let ((beg (mime-entity-point-min entity))
 	(end (mime-entity-point-max entity)))
     (goto-char beg)
