@@ -81,7 +81,7 @@
 		    (mime::preview-content-info/content-info
 		     (car mime::preview/content-list)))
 	      (setq parameters (mime::content-info/parameters cinfo))
-	      (setq the-id (assoc-value "id" parameters))
+	      (setq the-id (cdr (assoc "id" parameters)))
 	      (if (equal the-id id)
 		  (progn
 		    (set-buffer article-buffer)
