@@ -28,7 +28,7 @@
 
 (require 'custom)
 
-(defconst mime-user-interface-product ["SEMI" (1 14 4) "Hosorogi"]
+(defconst mime-user-interface-product ["SEMI" (1 14 5) "Awara-Onsen"]
   "Product name, version number and code name of MIME-kernel package.")
 
 (autoload 'mule-caesar-region "mule-caesar"
