@@ -1,3 +1,19 @@
+2000-03-01  MORIOKA Tomohiko  <tomo@m17n.org>
+
+	* mime-view.el (mime-view-define-keymap): Add new binding
+	`mime-preview-show-header' for C-c C-v C-f and C-c C-v h; add new
+	binding `mime-preview-show-content' for C-c C-v C-c; add new
+	binding `mime-preview-hide-header' for C-c C-d C-f and C-c C-d h;
+	add new binding `mime-preview-hide-content' for C-c C-d C-c.
+	(mime-preview-toggle-display): New function.
+	(mime-preview-toggle-header): Add new optional argument
+	`force-visible'; use `mime-preview-toggle-display'.
+	(mime-preview-toggle-content): Likewise.
+	(mime-preview-show-header): New function.
+	(mime-preview-show-content): New function.
+	(mime-preview-hide-header): New function.
+	(mime-preview-hide-content): New function.
+
 2000-02-25  MORIOKA Tomohiko  <tomo@m17n.org>
 
 	* mime-view.el (mime-situation-examples-file-coding-system): New
