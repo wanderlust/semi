@@ -43,6 +43,9 @@ If t, it means current directory."
   :type '(choice (const :tag "Current directory" t)
 		 (directory)))
 
+(defvar mime-play-find-every-situations t
+  "*Find every available situations if non-nil.")
+
 
 ;;; @ content decoder
 ;;;
@@ -85,7 +88,7 @@ specified, play as it.  Default MODE is \"play\"."
 				mime-acting-condition
 				mime-acting-situation-example-list
 				'method ignored-method
-				mime-view-find-every-situations))
+				mime-play-find-every-situations))
 	method)
     (setq mime-acting-situation-example-list (cdr ret)
 	  ret (car ret))
