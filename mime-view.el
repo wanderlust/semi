@@ -950,9 +950,7 @@ button-2	Move to point under the mouse cursor
 	       new-buf
 	       (the-buf (current-buffer))
 	       (a-buf mime::preview/article-buffer)
-	       (hb (mime::content-info/point-min cinfo))
-	       (he (mime::content-info/point-max cinfo))
-	       fields from to cc reply-to subj mid f)
+	       fields)
 	  (save-excursion
 	    (set-buffer (setq new-buf (get-buffer-create new-name)))
 	    (erase-buffer)
@@ -982,8 +980,8 @@ button-2	Move to point under the mouse cursor
 				  (concat "^"
 					  (apply (function regexp-or) fields)
 					  ":") ""))))
-		       (if (string-equal (mime::content-info/type ci)
-					 "message/rfc822")
+		       (if (string= (mime::content-info/type ci)
+				    "message/rfc822")
 			   nil
 			 (if str
 			     (insert str)
