@@ -1,11 +1,9 @@
 ;;; mime-bbdb.el --- SEMI shared module for BBDB
 
-;; Copyright (C) 1995,1996 Shuhei KOBAYASHI
-;; Copyright (C) 1996 Artur Pioro
+;; Copyright (C) 1995,1996,1997 Shuhei KOBAYASHI
 ;; Copyright (C) 1997 MORIOKA Tomohiko
 
 ;; Author: Shuhei KOBAYASHI <shuhei-k@jaist.ac.jp>
-;;         Artur Pioro <artur@flugor.if.uj.edu.pl>
 ;; Maintainer: Shuhei KOBAYASHI <shuhei-k@jaist.ac.jp>
 ;; Version: $Id$
 ;; Keywords: BBDB, MIME, multimedia, multilingual, mail, news
