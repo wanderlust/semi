@@ -72,6 +72,66 @@
   )
 
 
+;;; @ for mime-edit
+;;;
+
+(defun mime-setup-decode-message-header ()
+  (save-excursion
+    (save-restriction
+      (goto-char (point-min))
+      (narrow-to-region
+       (point-min)
+       (if (re-search-forward
+	    (concat "^" (regexp-quote mail-header-separator) "$")
+	    nil t)
+	   (match-beginning 0)
+	 (point-max)
+	 ))
+      (eword-decode-header)
+      (set-buffer-modified-p nil)
+      )))
+
+(add-hook 'mime-edit-mode-hook 'mime-setup-decode-message-header)
+
+
+;;; @@ variables
+;;;
+
+(defvar mime-setup-use-signature t
+  "If it is not nil, mime-setup sets up to use signature.el.")
+
+(defvar mime-setup-default-signature-key "\C-c\C-s"
+  "*Key to insert signature.")
+
+(defvar mime-setup-signature-key-alist '((mail-mode . "\C-c\C-w"))
+  "Alist of major-mode vs. key to insert signature.")
+
+
+;;; @@ for signature
+;;;
+
+(defun mime-setup-set-signature-key ()
+  (let ((key (or (cdr (assq major-mode mime-setup-signature-key-alist))
+		 mime-setup-default-signature-key)))
+    (define-key (current-local-map) key (function insert-signature))
+    ))
+
+(if mime-setup-use-signature
+    (progn
+      (autoload 'insert-signature "signature" "Insert signature" t)
+      (add-hook 'mime-edit-mode-hook 'mime-setup-set-signature-key)
+      (setq gnus-signature-file nil)
+      (setq mail-signature nil)
+      (setq message-signature nil)
+      ))
+
+
+;;; @ for mu-cite
+;;;
+
+(add-hook 'mu-cite/pre-cite-hook 'eword-decode-header)
+
+
 ;;; @ end
 ;;;
 
