@@ -1,3 +1,8 @@
+1998-06-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-play.el (mime-file-content-type-alist): Renamed from
+	`mime-file-type-regexp-type-subtype-alist'.
+
 1998-06-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* NEWS: Add description about
