@@ -1,3 +1,12 @@
+1998-07-14  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
+	* mime-ui-en.sgml, mime-ui-ja.sgml (message/partial sending): New
+	section.
+
+	* mime-edit.el (mime-edit-split-blind-field-regexp): Add
+	DOC-string; change to user option.
+
+
 1998-07-11  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* REMI: Version 1.8.4 (Takaoka) released.
