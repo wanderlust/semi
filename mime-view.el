@@ -1369,13 +1369,14 @@ It calls following-method selected from variable
 		  (progn
 		    (save-excursion
 		      (set-buffer the-buf)
-		      (setq ret
-			    (when mime-mother-buffer
-			      (set-buffer mime-mother-buffer)
-			      (mime-entity-fetch-field
-			       (get-text-property (point)
-						  'mime-view-entity)
-			       field-name))))
+		      (let ((entity (when mime-mother-buffer
+				      (set-buffer mime-mother-buffer)
+				      (get-text-property (point)
+							 'mime-view-entity))))
+			(while (and entity
+				    (null (setq ret (mime-entity-fetch-field
+						     entity field-name))))
+			  (setq entity (mime-entity-parent entity)))))
 		    (if ret
 			(insert (concat field-name ": " ret "\n"))
 		      )))
