@@ -1,5 +1,24 @@
 1997-09-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-parse.el: Abolish macro `define-structure'.
+	
+	(make-mime-entity-info, mime-entity-info-rnum,
+	mime-entity-info-point-min, mime-entity-info-point-max,
+	mime-entity-info-parameters, mime-entity-info-encoding,
+	mime-entity-info-children): New implementation.
+	
+	(mime-entity-info-media-type, mime-entity-info-media-subtype): New
+	inline function.
+
+	* mime-view.el (mime-view-display-entity,
+	mime-article/point-content-number, mime-article/cnum-to-cinfo,
+	mime/flatten-content-info): Use `mime-entity-info-children'
+	instead of `mime::content-info/children'.
+
+	* mime-parse.el (mime-entity-info-children): New inline function.
+
+1997-09-05  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* mime-view.el (mime-view-body-visible-p,
 	mime-view-display-entity): Use `mime-entity-info-encoding' instead
 	of `mime::content-info/encoding'.
