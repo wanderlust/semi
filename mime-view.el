@@ -648,11 +648,6 @@ The compressed face will be piped to this command.")
 	 (end (mime-entity-point-max message-info))
 	 (media-type (mime-entity-media-type message-info))
 	 (media-subtype (mime-entity-media-subtype message-info))
-	 (ctype (if media-type
-		    (if media-subtype
-			(format "%s/%s" media-type media-subtype)
-		      (symbol-name media-type)
-		      )))
 	 (params (mime-entity-parameters message-info))
 	 (encoding (mime-entity-encoding message-info))
 	 end-of-header e nb ne subj)
@@ -731,11 +726,6 @@ The compressed face will be piped to this command.")
 	 (end (mime-entity-point-max entity))
 	 (media-type (mime-entity-media-type entity))
 	 (media-subtype (mime-entity-media-subtype entity))
-	 (ctype (if media-type
-		    (if media-subtype
-			(format "%s/%s" media-type media-subtype)
-		      (symbol-name media-type)
-		      )))
 	 (params (mime-entity-parameters entity))
 	 (encoding (mime-entity-encoding entity))
 	 end-of-header e nb ne subj)
