@@ -1,5 +1,11 @@
 1999-07-28  MORIOKA Tomohiko  <tomo@m17n.org>
 
+	* mime-view.el (mime-view-entity-title): Use
+	`mime-entity-read-field' instead of `mime-read-field'.
+	(mime-display-message): Use `major-mode' of
+	mime-entity-header-buffer as the default value of
+	original-major-mode.
+
 	* mime-play.el (mime-entity-safe-filename): Use
 	`mime-entity-read-field' instead of `mime-read-field'.
 	(mime-view-message/rfc822): New implementation.
