@@ -1,5 +1,10 @@
 1998-03-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
+	* mime-play.el (mime-method-to-save): Must treat nil encoding as
+	7bit.
+
+1998-03-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
+
 	* NEWS: Update for latest version.
 
 1998-03-20  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
