@@ -528,7 +528,9 @@ If it is not specified for a major-mode,
 		   (substring emacs-version 0 (match-beginning 0))
 		 emacs-version)))
       (if (featurep 'mule)
-	  (concat "Emacs " ver ", MULE " mule-version)
+	  (if (featurep 'meadow)
+	      (concat "Emacs " ver ", MULE " mule-version ", " (Meadow-version))
+	    (concat "Emacs " ver ", MULE " mule-version))
 	ver))))
 
 
