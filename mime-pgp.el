@@ -92,8 +92,7 @@
 	   (delete-region
 	    (point-min)
 	    (and
-	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+\n")
-	     (search-forward "\n\n")
+	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+\n\n")
 	     (match-end 0)))
 	   (delete-region
 	    (and (re-search-forward "^-+BEGIN PGP SIGNATURE-+")
@@ -120,9 +119,6 @@
     (setq major-mode 'mime-show-message-mode)
     (save-window-excursion (mime-view-buffer nil preview-buffer mother
 					     nil representation-type))
-    (with-current-buffer preview-buffer
-      (setq mime-raw-buffer (get-buffer new-name)
-	    mime-mother-buffer mother))
     (set-window-buffer p-win preview-buffer)
     ))
 
