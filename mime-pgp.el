@@ -269,7 +269,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 ;;;
 ;;; It is based on RFC 2015.
 
-(defun mime-article/add-pgp-keys (beg end cal)
+(defun mime-pgp-add-keys (beg end cal)
   (let* ((cnum (mime-article/point-content-number beg))
 	 (new-name (format "%s-%s" (buffer-name) cnum))
 	 (encoding (cdr (assq 'encoding cal)))
@@ -290,7 +290,7 @@ It should be ISO 639 2 letter language code such as en, ja, ...")
 
 (set-atype 'mime-acting-condition
 	   '((type . "application/pgp-keys")
-	     (method . mime-article/add-pgp-keys)
+	     (method . mime-pgp-add-keys)
 	     ))
 
 	 
