@@ -1,5 +1,20 @@
 1999-04-06  Katsumi Yamaoka   <yamaoka@jpl.org>
 
+	* mime-pgp.el (mime-pgp-bad-signature-post-function-pgp50-us): New
+	function.
+	(mime-verify-application/pgp-signature): Say "Checking signature..."
+	before verifying; say "Can't check signature" if public key is not
+	available.
+	(mime-pgp-parse-verify-error): Goto beginning of buffer, eval forms
+	and set window start.
+	(mime-pgp-parse-verify-error-for-pgp): Use it
+	(mime-pgp-parse-verify-error-for-pgp50): Use it.
+	(mime-pgp-parse-verify-error-for-gpg): Use it.
+	(mime-pgp-check-signature): Rewrite for detecting "BAD signature".
+	(mime-pgp-bad-signature-post-function): New macro.
+	(mime-pgp-bad-signature-regexp): New macro.
+	(mime-pgp-bad-signature-regexp-alist): New user option.
+
 	* mime-ui-en.texi, mime-ui-ja.texi: Sync up with .sgml files.
 	* mime-ui-en.sgml, mime-ui-ja.sgml (mime-mc-setversion): Use <var>,
 	</var> token in doc string.

@@ -193,6 +193,32 @@ expected that the function returns a string for messaging."
 				     (regexp :tag "Regexp")
 				     (function :tag "Post Function"))))))
 
+(defcustom mime-pgp-bad-signature-regexp-alist
+  '((gpg
+     (nil "BAD signature from.*$" nil)
+     )
+    (pgp50
+     (us "BAD signature made .* by key:$"
+	 mime-pgp-bad-signature-post-function-pgp50-us)
+     )
+    (pgp
+     (en "Bad signature from user.*$" nil)
+     ))
+  "Alist of the schemes and alist of the languages and the regexps for
+detecting ``BAD signature''.  The optional symbol of the post processing
+function for arranging the output message can be specified in each element.
+It will be called just after re-search is done successfully, and it is
+expected that the function returns a string for messaging."
+  :group 'mime
+  :type '(repeat (cons :format "%v"
+		       (choice (choice-item :tag "GnuPG" gpg)
+			       (choice-item :tag "PGP 5.0i" pgp50)
+			       (choice-item :tag "PGP 2.6" pgp))
+		       (repeat (list :format "%v"
+				     (symbol :tag "Language")
+				     (regexp :tag "Regexp")
+				     (function :tag "Post Function"))))))
+
 (defcustom mime-pgp-key-expected-regexp-alist
   '((gpg
      (nil
@@ -257,6 +283,23 @@ or \"v\" for choosing a command of PGP 5.0i."
 	 (cdr (assq pgp-version mime-pgp-good-signature-regexp-alist))
 	 )))
 
+(defmacro mime-pgp-bad-signature-regexp ()
+  "Return a regexp to detect ``BAD signature''."
+  '(nth 1
+	(assq
+	 (mime-pgp-default-language)
+	 (cdr (assq pgp-version mime-pgp-bad-signature-regexp-alist))
+	 )))
+
+(defmacro mime-pgp-bad-signature-post-function ()
+  "Return a post processing function for arranging the message for
+``BAD signature''."
+  '(nth 2
+	(assq
+	 (mime-pgp-default-language)
+	 (cdr (assq pgp-version mime-pgp-bad-signature-regexp-alist))
+	 )))
+
 (defmacro mime-pgp-key-expected-regexp ()
   "Return a regexp to detect ``Key expected''."
   '(cdr (assq (mime-pgp-default-language)
@@ -281,33 +324,46 @@ or \"v\" for choosing a command of PGP 5.0i."
 		     ((eq 'pgp pgp-version)
 		      (list (format "+language=%s" lang) orig-file))
 		     ))
-	 (regexp (mime-pgp-good-signature-regexp))
-	 (post-function (mime-pgp-good-signature-post-function))
+	 (good-regexp (mime-pgp-good-signature-regexp))
+	 (good-post-function (mime-pgp-good-signature-post-function))
+	 (bad-regexp (mime-pgp-bad-signature-regexp))
+	 (bad-post-function (mime-pgp-bad-signature-post-function))
+	 status
 	 )
-    (if (zerop (apply 'call-process-region
-		      (point-min) (point-max) command nil output-buffer nil
-		      args))
-	(with-current-buffer output-buffer
-	  (goto-char (point-min))
-	  (cond
-	   ((not (stringp regexp))
-	    (message "Please specify right regexp for specified language")
-	    )
-	   ((re-search-forward regexp nil t)
-	    (message (if post-function
-			 (funcall post-function)
-		       (buffer-substring (match-beginning 0) (match-end 0))))
-	    (goto-char (point-min))
-	    )
-	   (t
-	    (message "Bad signature")
-	    ;; PGP 5.0i always returns 0 status, so returns nil
-	    ;; in order for attempt to fetch key.
-	    (not (eq 'pgp50 pgp-version))
-	    ))
+    (setq status (apply 'call-process-region (point-min) (point-max)
+			command nil output-buffer nil args)
 	  )
-      (message "Bad signature")
-      nil)))
+    (with-current-buffer output-buffer
+      (goto-char (point-min))
+      (cond ((not (stringp good-regexp))
+	     (message "Please specify right regexp for specified language")
+	     )
+	    ((and (zerop status) (re-search-forward good-regexp nil t))
+	     (message (if good-post-function
+			  (funcall good-post-function)
+			(buffer-substring (match-beginning 0)
+					  (match-end 0))))
+	     (goto-char (point-min))
+	     )
+	    ((not (stringp bad-regexp))
+	     (message "Please specify right regexp for specified language")
+	     )
+	    ((re-search-forward bad-regexp nil t)
+	     (message (if bad-post-function
+			  (funcall bad-post-function)
+			(buffer-substring (match-beginning 0)
+					  (match-end 0))))
+	     (goto-char (point-min))
+	     )
+	    ;; PGP 5.0i always returns 0 status.
+	    ((eq 'pgp50 pgp-version)
+	     (message "Can't check signature")
+	     ;; Returns nil in order for attempt to fetch key.
+	     nil
+	     )
+	    (t
+	     (message "Can't check signature")
+	     )))))
 
 (defmacro mime-pgp-parse-verify-error (&rest forms)
   (` (with-current-buffer mime-echo-buffer-name
@@ -323,34 +379,32 @@ or \"v\" for choosing a command of PGP 5.0i."
 	       (concat "0x" (buffer-substring-no-properties
 			     (match-beginning 1) (match-end 1)))
 	       )))
+	 (goto-char (point-min))
 	 (,@ forms)
+	 (set-window-start
+	  (get-buffer-window mime-echo-buffer-name) (point))
 	 ))))
 
 (defun mime-pgp-parse-verify-error-for-gpg ()
   "Subroutine used for parsing verify error with GnuPG.  Returns expected
 key-ID if it is found."
-  (mime-pgp-parse-verify-error
-   (set-window-start (get-buffer-window mime-echo-buffer-name) (point-min))
-   ))
+  (mime-pgp-parse-verify-error)
+  )
 
 (defun mime-pgp-parse-verify-error-for-pgp50 ()
   "Subroutine used for parsing verify error with PGP 5.0i.  Returns expected
 key-ID if it is found."
   (mime-pgp-parse-verify-error
-   (goto-char (point-min))
    (forward-line 1)
-   (set-window-start (get-buffer-window mime-echo-buffer-name) (point))
    ))
 
 (defun mime-pgp-parse-verify-error-for-pgp ()
   "Subroutine used for parsing verify error with PGP 2.6.  Returns expected
 key-ID if it is found."
   (mime-pgp-parse-verify-error
-   (goto-char (point-min))
    (if (search-forward "\C-g" nil t)
        (goto-char (match-beginning 0))
      (forward-line 7))
-   (set-window-start (get-buffer-window mime-echo-buffer-name) (point))
    ))
 
 (defun mime-verify-application/pgp-signature (entity situation)
@@ -372,6 +426,7 @@ key-ID if it is found."
     (mime-write-entity orig-entity orig-file)
     (save-current-buffer (mime-show-echo-buffer))
     (mime-write-entity-content entity sig-file)
+    (message "Checking signature...")
     (unwind-protect
 	(while (not done)
 	  (if (setq done (mime-pgp-check-signature
@@ -384,14 +439,13 @@ key-ID if it is found."
 	    (if (and
 		 (not pgp-id)
 		 (setq pgp-id (funcall parser))
-		 (prog1
-		     (y-or-n-p (format "Key %s not found; attempt to fetch? "
-				       pgp-id))
-		   (message ""))
+		 (y-or-n-p (format "Key %s not found; attempt to fetch? "
+				   pgp-id))
 		 )
 		(funcall (pgp-function 'fetch-key) (cons nil pgp-id))
 	      (funcall parser)
 	      (setq done t)
+	      (message "Can't check signature")
 	      )))
       (delete-file orig-file)
       (delete-file sig-file)
@@ -401,6 +455,11 @@ key-ID if it is found."
   (forward-line 2)
   (looking-at "\\s +\\(.+\\)$")
   (format "Good signature from %s" (match-string 1)))
+
+(defun mime-pgp-bad-signature-post-function-pgp50-us ()
+  (forward-line 2)
+  (looking-at "\\s +\\(.+\\)$")
+  (format "BAD signature from %s" (match-string 1)))
 
 
 ;;; @ Internal method for application/pgp-encrypted
