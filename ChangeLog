@@ -1,3 +1,8 @@
+2005-03-29  Nakagawa, Makoto  <Makoto.Nakagawa@hp.com>
+
+	* pgg-pgp.el (pgg-scheme-sign-region): Manually convert line
+	endings to CRLF before signing.
+
 2001-09-24   Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-view.el (mime-preview-toggle-display): When both "type" and

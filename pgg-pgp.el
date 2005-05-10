@@ -171,10 +171,11 @@ Bourne shell or its equivalent \(not tcsh) is needed for \"2>\"."
 	   (format "PGP passphrase for %s: " pgg-pgp-user-id)
 	   (pgg-scheme-lookup-key scheme pgg-pgp-user-id 'sign)))
 	 (args
-	  (list (if clearsign "-fast" "-fbast")
+	  (list (if clearsign "-fast" "-fbas")
 		"+verbose=1" "+language=us" "+batchmode"
 		"-u" pgg-pgp-user-id)))
-    (pgg-pgp-process-region start end passphrase pgg-pgp-program args)
+    (pgg-as-lbt start end 'CRLF
+      (pgg-pgp-process-region start end passphrase pgg-pgp-program args))
     (pgg-process-when-success
       (goto-char (point-min))
       (when (re-search-forward "^-+BEGIN PGP" nil t);XXX
