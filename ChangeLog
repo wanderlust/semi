@@ -1,3 +1,10 @@
+2005-06-09  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* mm-view.el (mime-display-text/richtext): Turn off
+	adaptive-fill-mode while executing richtext-decode.
+	(mime-display-text/enriched): Turn off adaptive-fill-mode while
+	executing enriched-decode.
+
 2004-10-21  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* mime-view.el (mime-view-insert-fontified-text-content): Inhibit
