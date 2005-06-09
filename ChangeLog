@@ -1,3 +1,10 @@
+2005-06-09  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* mm-view.el (mime-display-text/richtext): Turn off
+	adaptive-fill-mode while executing richtext-decode.
+	(mime-display-text/enriched): Turn off adaptive-fill-mode while
+	executing enriched-decode.
+
 2005-03-29  Nakagawa, Makoto  <Makoto.Nakagawa@hp.com>
 
 	* pgg-pgp.el (pgg-scheme-sign-region): Manually convert line
