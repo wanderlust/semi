@@ -1,6 +1,12 @@
+2005-06-14  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* mime-view.el (mime-display-text/richtext): Withdraw the last
+	change.
+	(mime-display-text/enriched): Ditto.
+
 2005-06-09  Katsumi Yamaoka  <yamaoka@jpl.org>
 
-	* mm-view.el (mime-display-text/richtext): Turn off
+	* mime-view.el (mime-display-text/richtext): Turn off
 	adaptive-fill-mode while executing richtext-decode.
 	(mime-display-text/enriched): Turn off adaptive-fill-mode while
 	executing enriched-decode.
