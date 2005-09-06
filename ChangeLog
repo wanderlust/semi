@@ -1,3 +1,8 @@
+2005-09-06  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* mm-view.el (mime-view-insert-fontified-text-content): Disable
+	support modes.
+
 2005-06-14  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* mime-view.el (mime-display-text/richtext): Withdraw the last
