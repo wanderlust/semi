@@ -136,8 +136,7 @@
 		   (1- knum)
 		 (1+ knum)))
 	 (orig-entity (nth onum (mime-entity-children mother)))
-	 (sig-file (make-temp-file "tm" nil ".asc"))
-	 status)
+	 (sig-file (make-temp-file "tm" nil ".asc")))
     (save-excursion 
       (mime-show-echo-buffer)
       (set-buffer mime-echo-buffer-name)
@@ -152,12 +151,11 @@
 	  (while (progn (end-of-line) (not (eobp)))
 	    (insert "\r")
 	    (forward-line 1))
-	  (setq status (pgg-verify-region (point-min)(point-max) 
-					  sig-file 'fetch))
+	  (pgg-verify-region (point-min)(point-max) 
+			     sig-file 'fetch)
 	  (save-excursion 
 	    (set-buffer mime-echo-buffer-name)
-	    (insert-buffer-substring (if status pgg-output-buffer
-				       pgg-errors-buffer))))
+	    (insert-buffer-substring pgg-errors-buffer)))
       (delete-file sig-file))))
 
 
@@ -193,11 +191,10 @@
     (mime-insert-entity-content entity)
     (mime-decode-region (point-min) (point-max)
                         (cdr (assq 'encoding situation)))
-    (let ((status (pgg-snarf-keys-region (point-min)(point-max))))
-      (save-excursion 
-	(set-buffer mime-echo-buffer-name)
-	(insert-buffer-substring (if status pgg-output-buffer
-				   pgg-errors-buffer))))))
+    (pgg-snarf-keys-region (point-min)(point-max))
+    (save-excursion 
+      (set-buffer mime-echo-buffer-name)
+      (insert-buffer-substring pgg-errors-buffer))))
 
 
 ;;; @ Internal method for application/pkcs7-signature

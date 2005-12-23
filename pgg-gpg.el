@@ -48,6 +48,9 @@
 (defvar pgg-gpg-user-id nil
   "GnuPG ID of your default identity.")
 
+(defvar pgg-gpg-messages-locale pgg-messages-locale
+  "Locale set before running a GnuPG external process.")
+
 (defvar pgg-scheme-gpg-instance nil)
 
 ;;;###autoload
@@ -69,7 +72,12 @@
 	 (output-buffer pgg-output-buffer)
 	 (errors-buffer pgg-errors-buffer)
 	 (process-connection-type nil)
+	 (process-environment process-environment)
 	 process status exit-status)
+    (when pgg-gpg-messages-locale
+      (setq process-environment (copy-sequence process-environment))
+      (setenv "LC_ALL" pgg-gpg-messages-locale)
+      (setenv "LANGUAGE" pgg-gpg-messages-locale))
     (with-current-buffer (get-buffer-create errors-buffer)
       (buffer-disable-undo)
       (erase-buffer))
@@ -196,9 +204,12 @@
       (goto-char (point-min))
       (prog1 (re-search-forward "^\\[GNUPG:] GOODSIG\\>" nil t)
 	(goto-char (point-min))
-	(delete-matching-lines "^warning\\|\\[GNUPG:]")
-	(set-buffer pgg-output-buffer)
-	(insert-buffer-substring pgg-errors-buffer)))))
+	(delete-matching-lines "^\\[GNUPG:] ")
+	;; XXX: copy contents of pgg-errors-buffer into
+	;; pgg-output-buffer for backward compatibility.
+	(with-current-buffer pgg-output-buffer
+	  (set-buffer-multibyte t)
+	  (insert-buffer-substring pgg-errors-buffer))))))
 
 (luna-define-method pgg-scheme-insert-key ((scheme pgg-scheme-gpg))
   (let* ((user-id (or pgg-overriding-user-id pgg-gpg-user-id
@@ -228,9 +239,13 @@
 			 (aref status 11)))
 	      (if (zerop (aref status 9))
 		  ""
-		"\tSecret keys are imported.\n")))
-    (append-to-buffer pgg-output-buffer (point-min)(point-max))
-    (pgg-process-when-success)))
+		"\tSecret keys are imported.\n"))
+      ;; XXX: copy contents of pgg-errors-buffer into
+      ;; pgg-output-buffer for backward compatibility.
+      (with-current-buffer pgg-output-buffer
+	(set-buffer-multibyte t)
+	(insert-buffer-substring pgg-errors-buffer))
+      t)))
 
 (provide 'pgg-gpg)
 

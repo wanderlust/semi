@@ -1,3 +1,23 @@
+2003-12-18  Daiki Ueno  <ueno@unixuser.org>
+
+	* pgg-gpg.el (pgg-gpg-process-region): Set environment variable
+	LANGUAGE as well.  GNU gettext gives precedence to LANGUAGE over
+	LC_ALL, when different language code is specified.  Thanks to
+	Tatsuya Kinoshita <tats@vega.ocn.ne.jp>.
+	[cf. <emacs-mime-ja:1599>]
+
+2003-12-17  Daiki Ueno  <ueno@unixuser.org>
+
+	* pgg-gpg.el (pgg-gpg-messages-locale): New user option.
+	(pgg-gpg-process-region): Set environment variable LC_ALL when
+	pgg-gpg-messages-locale is specified.
+
+	* pgg-def.el (pgg-messages-locale): New user option.
+
+	* mime-pgp.el (mime-verify-application/pgp-signature): Copy
+	messages from pgg-errors-buffer.
+	(mime-add-application/pgp-keys): Ditto.
+
 2005-09-06  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* mm-view.el (mime-view-insert-fontified-text-content): Disable
