@@ -1792,6 +1792,13 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 
 (defvar mime-edit-pgp-user-id nil)
 
+(defun mime-edit-delete-trailing-whitespace ()
+  (save-match-data
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "[ \t]+$" nil t)
+	(delete-region (match-beginning 0) (match-end 0))))))
+
 (defun mime-edit-sign-pgp-mime (beg end boundary)
   (save-excursion
     (save-restriction
@@ -1803,6 +1810,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 	     (encoding (nth 1 ret))
 	     (pgp-boundary (concat "pgp-sign-" boundary))
 	     micalg)
+	(mime-edit-delete-trailing-whitespace) ; RFC3156
 	(goto-char beg)
 	(insert (format "Content-Type: %s\n" ctype))
 	(if encoding

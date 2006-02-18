@@ -1,3 +1,9 @@
+2006-02-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* mime-edit.el (mime-edit-delete-trailing-whitespace): New
+	Function for RFC3156.
+	(mime-edit-sign-pgp-mime): Use it.
+
 2005-06-14  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* mime-view.el (mime-display-text/richtext): Withdraw the last
