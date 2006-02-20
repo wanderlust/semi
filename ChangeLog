@@ -1,3 +1,9 @@
+2006-02-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* mime-edit.el (mime-edit-delete-trailing-whitespace): New
+	Function for RFC3156.
+	(mime-edit-sign-pgp-mime): Use it.
+
 2003-12-18  Daiki Ueno  <ueno@unixuser.org>
 
 	* pgg-gpg.el (pgg-gpg-process-region): Set environment variable
