@@ -1821,7 +1821,8 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 		   (or mime-edit-pgp-user-id
 		       (if from 
 			   (nth 1 (std11-extract-address-components from))
-			 pgg-default-user-id))))
+			 pgg-default-user-id)))
+		  (pgg-text-mode t))
 	      (pgg-sign-region (point-min)(point-max)))
 	    (throw 'mime-edit-error 'pgp-error)
 	    )
@@ -1912,7 +1913,8 @@ Content-Transfer-Encoding: 7bit
 		     (or mime-edit-pgp-user-id
 			 (if from 
 			     (nth 1 (std11-extract-address-components from))
-			   pgg-default-user-id))))		     
+			   pgg-default-user-id)))
+		    (pgg-text-mode t))
 		(pgg-encrypt-region 
 		 (point-min) (point-max) 
 		 (mapcar (lambda (recipient)

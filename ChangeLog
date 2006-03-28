@@ -1,3 +1,8 @@
+2006-03-28  Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-edit.el (mime-edit-sign-pgp-mime): Set pgg-text-mode.
+	(mime-edit-encrypt-pgp-mime): Ditto.
+
 2006-02-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* mime-edit.el (mime-edit-delete-trailing-whitespace): New
