@@ -612,7 +612,7 @@ If it is not specified for a major-mode,
 	  ") "
 	  (if (fboundp 'apel-version)
 	      (concat (apel-version) " "))
-	  "EasyPG/ " epg-version-number " "
+	  "EasyPG/" epg-version-number " "
 	  (if (featurep 'xemacs)
 	      (concat (cond ((and (featurep 'chise)
 				  (boundp 'xemacs-chise-version))
