@@ -1826,7 +1826,7 @@ Content-Transfer-Encoding: 7bit
 	  (error (signal 'mime-edit-error (cdr error))))
 	(goto-char beg)
 	(insert
-	 "--[[application/pgp; format=mime][7bit]]\n")
+	 "--[[application/pgp; format=mime][7bit]]\n" signature)
 	))))
 
 (defun mime-edit-encrypt-pgp-kazu (beg end boundary)
