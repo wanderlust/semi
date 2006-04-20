@@ -76,7 +76,7 @@
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
 	 (mother (current-buffer))
 	 (preview-buffer (concat "*Preview-" (buffer-name) "*"))
-	 representation-type message-buf context signature plain)
+	 representation-type message-buf context plain)
     (set-buffer (setq message-buf (get-buffer-create new-name)))
     (erase-buffer)
     (mime-insert-entity entity)
@@ -87,15 +87,10 @@
 	   (epg-verify-string
 	    context
 	    (buffer-substring (match-beginning 0)(point-max)))
-	   (setq signature
-		 (reverse (epg-context-result-for context 'verify)))
-	   (while signature
-	     (message "%s: %s %s %s"
-		      (epg-signature-status (car signature))
-		      (epg-signature-key-id (car signature))
-		      (epg-signature-user-id (car signature))
-		      (epg-signature-validity (car signature)))
-	     (setq signature (cdr signature)))
+	   (message "%s"
+	     (mapconcat #'epg-signature-to-string
+			(reverse (epg-context-result-for context 'verify))
+			"\n"))
 	   (goto-char (point-min))
 	   (delete-region
 	    (point-min)
@@ -145,8 +140,7 @@
 		   (1- knum)
 		 (1+ knum)))
 	 (orig-entity (nth onum (mime-entity-children mother)))
-	 (context (epg-make-context))
-	 signature)
+	 (context (epg-make-context)))
     (epg-verify-string context
 		       (mime-entity-content entity)
 		       (with-temp-buffer
@@ -154,15 +148,10 @@
 			     (set-buffer-multibyte nil))
 			 (mime-insert-entity orig-entity)
 			 (buffer-substring)))
-    (setq signature
-	  (reverse (epg-context-result-for context 'verify)))
-    (while signature
-      (message "%s: %s %s %s"
-	       (epg-signature-status (car signature))
-	       (epg-signature-key-id (car signature))
-	       (epg-signature-user-id (car signature))
-	       (epg-signature-validity (car signature)))
-      (setq signature (cdr signature)))))
+    (message "%s"
+	     (mapconcat #'epg-signature-to-string
+			(reverse (epg-context-result-for context 'verify))
+			"\n"))))
 
 
 ;;; @ Internal method for application/pgp-encrypted

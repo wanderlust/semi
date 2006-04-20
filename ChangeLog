@@ -1,5 +1,10 @@
 2006-04-20  Daiki Ueno  <ueno@unixuser.org>
 
+	* mime-pgp.el (mime-view-application/pgp): Use epg-signature-to-string.
+	(mime-verify-application/pgp-signature): Ditto.
+
+2006-04-20  Daiki Ueno  <ueno@unixuser.org>
+
 	* mime-pgp.el: Require 'epg.
 	(mime-view-application/pgp): Use EasyPG.
 	(mime-verify-application/pgp-signature): Ditto.
