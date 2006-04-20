@@ -88,7 +88,7 @@
 	    context
 	    (buffer-substring (match-beginning 0)(point-max)))
 	   (message "%s"
-	     (mapconcat #'epg-signature-to-string
+	     (mapconcat #'epg-verify-result-to-string
 			(reverse (epg-context-result-for context 'verify))
 			"\n"))
 	   (goto-char (point-min))
@@ -149,7 +149,7 @@
 			 (mime-insert-entity orig-entity)
 			 (buffer-substring)))
     (message "%s"
-	     (mapconcat #'epg-signature-to-string
+	     (mapconcat #'epg-verify-result-to-string
 			(reverse (epg-context-result-for context 'verify))
 			"\n"))))
 
