@@ -88,9 +88,8 @@
 	    context
 	    (buffer-substring (match-beginning 0)(point-max)))
 	   (message "%s"
-	     (mapconcat #'epg-verify-result-to-string
-			(reverse (epg-context-result-for context 'verify))
-			"\n"))
+		    (epg-verify-result-to-string
+		     (epg-context-result-for context 'verify)))
 	   (goto-char (point-min))
 	   (delete-region
 	    (point-min)
@@ -149,9 +148,8 @@
 			 (mime-insert-entity orig-entity)
 			 (buffer-substring)))
     (message "%s"
-	     (mapconcat #'epg-verify-result-to-string
-			(reverse (epg-context-result-for context 'verify))
-			"\n"))))
+	     (epg-verify-result-to-string
+	      (epg-context-result-for context 'verify)))))
 
 
 ;;; @ Internal method for application/pgp-encrypted
