@@ -51,14 +51,7 @@
 ;;; Code:
 
 (require 'mime-play)
-(require 'pgg-def)
-
-(autoload 'pgg-decrypt-region "pgg"
-  "PGP decryption of current region." t)
-(autoload 'pgg-verify-region "pgg"
-  "PGP verification of current region." t)
-(autoload 'pgg-snarf-keys-region "pgg"
-  "Snarf PGP public keys in current region." t)
+(require 'epg)
 
 ;;; @ Internal method for multipart/signed
 ;;;
@@ -83,14 +76,26 @@
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
 	 (mother (current-buffer))
 	 (preview-buffer (concat "*Preview-" (buffer-name) "*"))
-	 representation-type message-buf)
+	 representation-type message-buf context signature plain)
     (set-buffer (setq message-buf (get-buffer-create new-name)))
     (erase-buffer)
     (mime-insert-entity entity)
     (cond ((progn
 	     (goto-char (point-min))
 	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
-	   (pgg-verify-region (match-beginning 0)(point-max) nil 'fetch)
+	   (setq context (epg-make-context))
+	   (epg-verify-string
+	    context
+	    (buffer-substring (match-beginning 0)(point-max)))
+	   (setq signature
+		 (reverse (epg-context-result-for context 'verify)))
+	   (while signature
+	     (message "%s: %s %s %s"
+		      (epg-signature-status (car signature))
+		      (epg-signature-key-id (car signature))
+		      (epg-signature-user-id (car signature))
+		      (epg-signature-validity (car signature)))
+	     (setq signature (cdr signature)))
 	   (goto-char (point-min))
 	   (delete-region
 	    (point-min)
@@ -109,9 +114,13 @@
 	  ((progn
 	     (goto-char (point-min))
 	     (re-search-forward "^-+BEGIN PGP MESSAGE-+$" nil t))
-	   (pgg-decrypt-region (point-min)(point-max))
+	   (setq context (epg-make-context))
+	   (setq plain
+		 (epg-decrypt-string
+		  context
+		  (buffer-substring (point-min)(point-max))))
 	   (delete-region (point-min)(point-max))
-	   (insert-buffer pgg-output-buffer)
+	   (insert plain)
 	   (setq representation-type 'binary)))
     (setq major-mode 'mime-show-message-mode)
     (save-window-excursion
@@ -136,27 +145,24 @@
 		   (1- knum)
 		 (1+ knum)))
 	 (orig-entity (nth onum (mime-entity-children mother)))
-	 (sig-file (make-temp-file "tm" nil ".asc")))
-    (save-excursion 
-      (mime-show-echo-buffer)
-      (set-buffer mime-echo-buffer-name)
-      (set-window-start 
-       (get-buffer-window mime-echo-buffer-name)
-       (point-max)))
-    (mime-write-entity-content entity sig-file)
-    (unwind-protect
-	(with-temp-buffer
-	  (mime-insert-entity orig-entity)
-	  (goto-char (point-min))
-	  (while (progn (end-of-line) (not (eobp)))
-	    (insert "\r")
-	    (forward-line 1))
-	  (pgg-verify-region (point-min)(point-max) 
-			     sig-file 'fetch)
-	  (save-excursion 
-	    (set-buffer mime-echo-buffer-name)
-	    (insert-buffer-substring pgg-errors-buffer)))
-      (delete-file sig-file))))
+	 (context (epg-make-context))
+	 signature)
+    (epg-verify-string context
+		       (mime-entity-content entity)
+		       (with-temp-buffer
+			 (if (fboundp 'set-buffer-multibyte)
+			     (set-buffer-multibyte nil))
+			 (mime-insert-entity orig-entity)
+			 (buffer-substring)))
+    (setq signature
+	  (reverse (epg-context-result-for context 'verify)))
+    (while signature
+      (message "%s: %s %s %s"
+	       (epg-signature-status (car signature))
+	       (epg-signature-key-id (car signature))
+	       (epg-signature-user-id (car signature))
+	       (epg-signature-validity (car signature)))
+      (setq signature (cdr signature)))))
 
 
 ;;; @ Internal method for application/pgp-encrypted
@@ -181,20 +187,13 @@
 ;;; draft-ietf-openpgp-mime-02.txt (OpenPGP/MIME).
 
 (defun mime-add-application/pgp-keys (entity situation)
-  (save-excursion 
-    (mime-show-echo-buffer)
-    (set-buffer mime-echo-buffer-name)
-    (set-window-start 
-     (get-buffer-window mime-echo-buffer-name)
-     (point-max)))
   (with-temp-buffer
     (mime-insert-entity-content entity)
     (mime-decode-region (point-min) (point-max)
                         (cdr (assq 'encoding situation)))
-    (pgg-snarf-keys-region (point-min)(point-max))
-    (save-excursion 
-      (set-buffer mime-echo-buffer-name)
-      (insert-buffer-substring pgg-errors-buffer))))
+    (epg-import-keys-from-string (epg-make-context)
+				 (buffer-substring (point-min)(point-max)))
+    (epa-list-keys)))
 
 
 ;;; @ Internal method for application/pkcs7-signature

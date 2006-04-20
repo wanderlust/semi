@@ -1,3 +1,19 @@
+2006-04-20  Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-pgp.el: Require 'epg.
+	(mime-view-application/pgp): Use EasyPG.
+	(mime-verify-application/pgp-signature): Ditto.
+	(mime-add-application/pgp-keys): Ditto.
+
+	* mime-edit.el: Require 'epa.
+	(mime-edit-user-agent-value): Added EasyPG version number.
+	(mime-edit-sign-pgp-mime): Use EasyPG.
+	(mime-edit-encrypt-pgp-mime): Ditto.
+	(mime-edit-sign-pgp-kazu): Ditto.
+	(mime-edit-encrypt-pgp-kazu): Ditto.
+	(mime-edit-insert-key): Ditto.
+	(mime-edit-decode-multipart-in-buffer): Ditto.
+
 2006-02-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* mime-edit.el (mime-edit-delete-trailing-whitespace): New
