@@ -146,6 +146,9 @@
 			 (if (fboundp 'set-buffer-multibyte)
 			     (set-buffer-multibyte nil))
 			 (mime-insert-entity orig-entity)
+			 (goto-char (point-min))
+			 (while (search-forward "\n" nil t)
+			   (replace-match "\r\n"))
 			 (buffer-substring)))
     (message "%s"
 	     (epg-verify-result-to-string
