@@ -1,5 +1,11 @@
 2006-04-23  Daiki Ueno  <ueno@unixuser.org>
 
+	* mime-pgp.el (mime-verify-application/*-signature): New function.
+	(mime-verify-application/pgp-signature): Abolished.
+	(mime-verify-application/pkcs7-signature): Abolished.
+
+2006-04-23  Daiki Ueno  <ueno@unixuser.org>
+
 	* mime-pgp.el (mime-verify-application/pkcs7-signature): Use EasyPG.
 	(mime-view-application/pkcs7-mime): Ditto.
 
