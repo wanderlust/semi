@@ -115,11 +115,6 @@
 (require 'alist)
 (require 'epa)
 
-(autoload 'smime-encrypt-buffer "smime"
-  "S/MIME encryption of current buffer.")
-(autoload 'smime-sign-buffer "smime"
-  "S/MIME signature of current buffer.")
-
 
 ;;; @ version
 ;;;
@@ -739,6 +734,10 @@ Tspecials means any character that matches with it in header must be quoted.")
   "\C-s" 'mime-edit-enclose-pgp-signed-region)
 (define-key mime-edit-mode-enclosure-map
   "\C-e" 'mime-edit-enclose-pgp-encrypted-region)
+(define-key mime-edit-mode-enclosure-map
+  "s" 'mime-edit-enclose-smime-signed-region)
+(define-key mime-edit-mode-enclosure-map
+  "e" 'mime-edit-enclose-smime-encrypted-region)
 (define-key mime-edit-mode-enclosure-map
   "\C-q" 'mime-edit-enclose-quote-region)
 
@@ -1668,8 +1667,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 	     (encoding (nth 1 ret))
 	     (pgp-boundary (concat "pgp-sign-" boundary))
 	     (context (epg-make-context))
-	     signature
-	     micalg)
+	     signature micalg)
 	(mime-edit-delete-trailing-whitespace) ; RFC3156
 	(goto-char beg)
 	(insert (format "Content-Type: %s\n" ctype))
@@ -1681,6 +1679,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 	(epg-context-set-signers
 	 context
 	 (epa-select-keys
+	  context
 	  "\
 Select keys for signing.
 If no one is selected, default secret key is used.  "
@@ -1713,6 +1712,7 @@ If no one is selected, default secret key is used.  "
 	(insert (format "\n--%s
 Content-Type: application/pgp-signature
 Content-Transfer-Encoding: 7bit
+Content-Description: OpenPGP Digital Signature
 
 " pgp-boundary))
 	(insert signature)
@@ -1777,6 +1777,7 @@ Content-Transfer-Encoding: 7bit
 		     context
 		     (buffer-substring (point-min) (point-max))
 		     (epa-select-keys
+		      context
 		      "\
 Select recipents for encryption.
 If no one is selected, symmetric encryption will be performed.  "
@@ -1856,6 +1857,7 @@ Content-Transfer-Encoding: 7bit
 		     context
 		     (buffer-substring beg (point-max))
 		     (epa-select-keys
+		      context
 		      "\
 Select recipents for encryption.
 If no one is selected, symmetric encryption will be performed.  "
@@ -1870,61 +1872,120 @@ If no one is selected, symmetric encryption will be performed.  "
 	   "--[[application/pgp; format=mime][7bit]]\n" cipher)
 	  )))))
 
+(defun mime-edit-convert-lbt-string (string)
+  (let ((index 0)
+	(length (length string)))
+    (while (setq index (string-match "\n" string index))
+      (setq string (replace-match "\r\n" nil nil string)
+	    index (+ index 2)))		;(length "\r\n")
+    string))
+      
 (defun mime-edit-sign-smime (beg end boundary)
   (save-excursion
     (save-restriction
-      (let* ((ret (progn 
+      (let* ((from (std11-field-body "From" mail-header-separator))
+	     (ret (progn 
 		    (narrow-to-region beg end)
 		    (mime-edit-translate-region beg end boundary)))
 	     (ctype    (car ret))
 	     (encoding (nth 1 ret))
-	     (smime-boundary (concat "smime-sign-" boundary)))
+	     (smime-boundary (concat "smime-sign-" boundary))
+	     (context (epg-make-context 'CMS))
+	     signature micalg)
 	(goto-char beg)
 	(insert (format "Content-Type: %s\n" ctype))
 	(if encoding
 	    (insert (format "Content-Transfer-Encoding: %s\n" encoding)))
 	(insert "\n")
-	(let (buffer-undo-list)
-	  (goto-char (point-min))
-	  (while (progn (end-of-line) (not (eobp)))
-	    (insert "\r")
-	    (forward-line 1))
-	  (or (smime-sign-buffer)
-	      (throw 'mime-edit-error 'pgp-error)))
+	(epg-context-set-signers
+	 context
+	 (epa-select-keys
+	  context
+	  "\
+Select keys for signing.
+If no one is selected, default secret key is used.  "
+	  (if from 
+	      (list (nth 1 (std11-extract-address-components from))))
+	  t))
+	(condition-case error
+	    (setq signature
+		  (epg-sign-string context
+				   (mime-edit-convert-lbt-string
+				    (buffer-substring (point-min) (point-max)))
+				   'detached))
+	  (error (signal 'mime-edit-error (cdr error))))
+	(setq micalg (cdr (assq 'digest-algorithm
+				(car (epg-context-result-for context 'sign)))))
 	(goto-char beg)
-	(if (re-search-forward "^Content-Type:\\s-*" nil t)
-	    (let* ((start (match-beginning 0))
-		   (body (buffer-substring (match-end 0) (std11-field-end))))
-	      (delete-region start (line-beginning-position 2))
-	      (goto-char beg)
-	      (insert "--[[" body "][7bit]]\n")))))))
+	(insert (format "--[[multipart/signed;
+ boundary=\"%s\"%s;
+ protocol=\"application/pkcs7-signature\"][7bit]]
+--%s
+"
+			smime-boundary
+			(if micalg
+			    (concat "; micalg="
+				    (downcase
+				     (cdr (assq micalg
+						epg-digest-algorithm-alist))))
+			  "")
+			smime-boundary))
+	(goto-char (point-max))
+	(insert (format "\n--%s
+Content-Type: application/pkcs7-signature; name=smime.p7s
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename=smime.p7s
+Content-Description: S/MIME Digital Signature
+
+" smime-boundary)
+		(base64-encode-string signature))))))
 
 (defun mime-edit-encrypt-smime (beg end boundary)
   (save-excursion
     (save-restriction
-      (let* ((ret (progn 
-		    (narrow-to-region beg end)
-		    (mime-edit-translate-region beg end boundary)))
-	     (ctype    (car ret))
-	     (encoding (nth 1 ret)))
-	(goto-char beg)
-	(insert (format "Content-Type: %s\n" ctype))
-	(if encoding
-	    (insert (format "Content-Transfer-Encoding: %s\n" encoding)))
-	(insert "\n")
-	(goto-char (point-min))
-	(while (progn (end-of-line) (not (eobp)))
-	  (insert "\r")
-	  (forward-line 1))
-	(or (smime-encrypt-buffer)
-	    (throw 'mime-edit-error 'pgp-error))
-	(goto-char beg)
-	(if (re-search-forward "^Content-Type:\\s-*" nil t)
-	    (let* ((start (match-beginning 0))
-		   (body (buffer-substring (match-end 0) (std11-field-end))))
-	      (delete-region start (line-beginning-position 2))
-	      (goto-char beg)
-	      (insert "--[[" body "]]\n")))))))
+      (let (recipients header)
+        (let ((ret (mime-edit-make-encrypt-recipient-header)))
+          (setq recipients (aref ret 1)
+                header (aref ret 2)))
+        (narrow-to-region beg end)
+        (let* ((ret
+                (mime-edit-translate-region beg end boundary))
+               (ctype    (car ret))
+               (encoding (nth 1 ret))
+	       (context (epg-make-context 'CMS))
+	       cipher)
+          (goto-char beg)
+          (insert header)
+          (insert (format "Content-Type: %s\n" ctype))
+          (if encoding
+              (insert (format "Content-Transfer-Encoding: %s\n" encoding)))
+          (insert "\n")
+	  (mime-encode-header-in-buffer)
+	  (condition-case error
+	      (setq cipher
+		    (epg-encrypt-string
+		     context
+		     (buffer-substring (point-min) (point-max))
+		     (epa-select-keys
+		      context
+		      "\
+Select recipents for encryption.
+If no one is selected, symmetric encryption will be performed.  "
+		      (mapcar (lambda (recipient)
+				(nth 1 (std11-extract-address-components
+					recipient)))
+			      (split-string recipients 
+					    "\\([ \t\n]*,[ \t\n]*\\)+")))))
+	    (error (signal 'mime-edit-error (cdr error))))
+	  (delete-region (point-min)(point-max))
+	  (goto-char beg)
+	  (insert (format "--[[application/pkcs7-mime;
+ smime-type=enveloped-data;
+ name=smime.p7m
+Content-Disposition: attachment; filename=smime.p7m][base64]]
+
+")
+		  (base64-encode-string cipher)))))))
 
 (defsubst replace-space-with-underline (str)
   (mapconcat (function
@@ -2318,7 +2379,8 @@ and insert data encoded as ENCODING."
   (let ((context (epg-make-context)))
     (epg-context-set-armor t)
     (epg-export-keys-to-string context
-			       (epa-select-keys "Select keys for export.  ")))
+			       (epa-select-keys context
+						"Select keys for export.  ")))
   (if (and (not (eobp))
 	   (not (looking-at mime-edit-single-part-tag-regexp)))
       (insert (mime-make-text-tag) "\n")))
@@ -2625,20 +2687,15 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 		(narrow-to-region beg end)
 		(cond
 		 ((eq subtype 'pgp-encrypted)
-		  (when (and
-			 (progn
+		  (when (progn
 			   (goto-char (point-min))
 			   (re-search-forward "^-+BEGIN PGP MESSAGE-+$"
 					      nil t))
-			 (prog1 
-			     (save-window-excursion
-			       (epg-decrypt-string
-				(epg-make-context)
-				(buffer-substring
-				 (match-beginning 0)
-				 (point-max))))
-			   (delete-region (point-min)(point-max))))
-		    (insert-buffer-substring pgg-output-buffer)
+		    (insert (epg-decrypt-string
+			     (epg-make-context)
+			     (buffer-substring (match-beginning 0)
+					       (point-max))))
+		    (delete-region (point)(point-max))
 		    (mime-edit-decode-message-in-buffer 
 		     nil not-decode-text)
 		    (delete-region (goto-char (point-min))

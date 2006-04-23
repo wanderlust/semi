@@ -192,48 +192,36 @@
 
 (defun mime-verify-application/pkcs7-signature (entity situation)
   "Internal method to check S/MIME signature."
-  (with-temp-buffer
-    (mime-insert-entity (mime-find-root-entity entity))
-    (let ((good-signature (smime-noverify-buffer))
-	  (good-certificate
-	   (and (or smime-CA-file smime-CA-directory)
-		(smime-verify-buffer))))
-      (if (not good-signature)
-	  ;; we couldn't verify message, fail with openssl output as message
-	  (save-excursion
-	    (mime-show-echo-buffer)
-	    (set-buffer mime-echo-buffer-name)
-	    (set-window-start 
-	     (get-buffer-window mime-echo-buffer-name)
-	     (point-max))
-            (insert-buffer-substring smime-details-buffer))
-	;; verify mail addresses in mail against those in certificate
-	(when (and (smime-pkcs7-region (point-min)(point-max))
-		   (smime-pkcs7-certificates-region (point-min)(point-max)))
-	  (if (not (member
-		    (downcase 
-		     (nth 1 (std11-extract-address-components
-			     (mime-entity-fetch-field
-			      (mime-find-root-entity entity) "From"))))
-		    (mime-smime-pkcs7-email-buffer (current-buffer))))
-	      (message "Sender address forged")
-	    (if good-certificate
-		(message "Ok (sender authenticated)")
-	      (message "Integrity OK (sender unknown)"))))))))
-
-(defun mime-smime-pkcs7-email-buffer (buffer)
-  (with-temp-buffer
-    (insert-buffer-substring buffer)
-    (goto-char (point-min))
-    (let (addresses)
-      (while (re-search-forward "-----END CERTIFICATE-----" nil t)
-	(if (smime-pkcs7-email-region (point-min)(point))
-	    (setq addresses (append (split-string
-				     (buffer-substring (point-min)(point))
-				     "[\n\r]+")
-				    addresses)))
-	(delete-region (point-min)(point)))
-      (mapcar #'downcase addresses))))
+  (let* ((entity-node-id (mime-entity-node-id entity))
+	 (mother (mime-entity-parent entity))
+	 (knum (car entity-node-id))
+	 (onum (if (> knum 0)
+		   (1- knum)
+		 (1+ knum)))
+	 (orig-entity (nth onum (mime-entity-children mother)))
+	 (context (epg-make-context 'CMS))
+	 verify-result)
+    (epg-verify-string context
+		       (mime-entity-content entity)
+		       (with-temp-buffer
+			 (if (fboundp 'set-buffer-multibyte)
+			     (set-buffer-multibyte nil))
+			 (mime-insert-entity orig-entity)
+			 (goto-char (point-min))
+			 (while (search-forward "\n" nil t)
+			   (replace-match "\r\n"))
+			 (buffer-substring)))
+    (setq verify-result
+	  (mapcar (lambda (signature)
+		    (unless (stringp (epg-signature-user-id signature))
+		      (setq signature (copy-sequence signature))
+		      (epg-signature-set-user-id
+		       signature
+		       (epg-decode-dn (epg-signature-user-id signature))))
+		    signature)
+		  (epg-context-result-for context 'verify)))
+    (message "%s"
+	     (epg-verify-result-to-string verify-result))))
 
 
 ;;; @ Internal method for application/pkcs7-mime
@@ -247,6 +235,7 @@
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
 	 (mother (current-buffer))
 	 (preview-buffer (concat "*Preview-" (buffer-name) "*"))
+	 (context (epg-make-context 'CMS))
 	 message-buf)
     (when (memq (or (cdr (assq 'smime-type situation)) 'enveloped-data)
 		'(enveloped-data signed-data))
@@ -254,8 +243,7 @@
       (let ((inhibit-read-only t)
 	    buffer-read-only)
 	(erase-buffer)
-	(mime-insert-entity entity)
-	(smime-decrypt-buffer))
+	(insert (epg-decrypt-string context (mime-entity-content entity))))
       (setq major-mode 'mime-show-message-mode)
       (save-window-excursion
 	(mime-view-buffer nil preview-buffer mother

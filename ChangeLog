@@ -1,3 +1,13 @@
+2006-04-23  Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-pgp.el (mime-verify-application/pkcs7-signature): Use EasyPG.
+	(mime-view-application/pkcs7-mime): Ditto.
+
+	* mime-edit.el (mime-edit-sign-smime): Use EasyPG.
+	(mime-edit-encrypt-smime): Ditto.
+
+	* SEMI-ELS (semi-modules-to-compile): Don't install PGG.
+
 2006-04-20  Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-pgp.el (mime-view-application/pgp): Use epg-signature-to-string.
