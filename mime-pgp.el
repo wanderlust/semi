@@ -125,13 +125,7 @@
     (set-window-buffer p-win preview-buffer)))
 
 
-;;; @ Internal method for application/pgp-signature
-;;;
-;;; It is based on RFC 2015 (PGP/MIME) and
-;;; draft-ietf-openpgp-mime-02.txt (OpenPGP/MIME).
-
-(defun mime-verify-application/pgp-signature (entity situation)
-  "Internal method to check PGP/MIME signature."
+(defun mime-verify-application/*-signature (entity situation)
   (let* ((entity-node-id (mime-entity-node-id entity))
 	 (mother (mime-entity-parent entity))
 	 (knum (car entity-node-id))
@@ -139,7 +133,16 @@
 		   (1- knum)
 		 (1+ knum)))
 	 (orig-entity (nth onum (mime-entity-children mother)))
-	 (context (epg-make-context)))
+	 (protocol (cdr (assoc "protocol" (mime-entity-parameters mother))))
+	 (context (epg-make-context
+		   (if (equal protocol "application/pgp-signature")
+		       'OpenPGP
+		     (if (string-match
+			  "\\`application/\\(x-\\)?pkcs7-signature\\'"
+			  protocol)
+		       'CMS
+		       (error "Unknown protocol: %s" protocol)))))
+	 verify-result)
     (epg-verify-string context
 		       (mime-entity-content entity)
 		       (with-temp-buffer
@@ -150,9 +153,17 @@
 			 (while (search-forward "\n" nil t)
 			   (replace-match "\r\n"))
 			 (buffer-substring)))
+    (setq verify-result
+	  (mapcar (lambda (signature)
+		    (unless (stringp (epg-signature-user-id signature))
+		      (setq signature (copy-sequence signature))
+		      (epg-signature-set-user-id
+		       signature
+		       (epg-decode-dn (epg-signature-user-id signature))))
+		    signature)
+		  (epg-context-result-for context 'verify)))
     (message "%s"
-	     (epg-verify-result-to-string
-	      (epg-context-result-for context 'verify)))))
+	     (epg-verify-result-to-string verify-result))))
 
 
 ;;; @ Internal method for application/pgp-encrypted
@@ -184,44 +195,6 @@
     (epg-import-keys-from-string (epg-make-context)
 				 (buffer-substring (point-min)(point-max)))
     (epa-list-keys)))
-
-
-;;; @ Internal method for application/pkcs7-signature
-;;;
-;;; It is based on the S/MIME user interface in Gnus.
-
-(defun mime-verify-application/pkcs7-signature (entity situation)
-  "Internal method to check S/MIME signature."
-  (let* ((entity-node-id (mime-entity-node-id entity))
-	 (mother (mime-entity-parent entity))
-	 (knum (car entity-node-id))
-	 (onum (if (> knum 0)
-		   (1- knum)
-		 (1+ knum)))
-	 (orig-entity (nth onum (mime-entity-children mother)))
-	 (context (epg-make-context 'CMS))
-	 verify-result)
-    (epg-verify-string context
-		       (mime-entity-content entity)
-		       (with-temp-buffer
-			 (if (fboundp 'set-buffer-multibyte)
-			     (set-buffer-multibyte nil))
-			 (mime-insert-entity orig-entity)
-			 (goto-char (point-min))
-			 (while (search-forward "\n" nil t)
-			   (replace-match "\r\n"))
-			 (buffer-substring)))
-    (setq verify-result
-	  (mapcar (lambda (signature)
-		    (unless (stringp (epg-signature-user-id signature))
-		      (setq signature (copy-sequence signature))
-		      (epg-signature-set-user-id
-		       signature
-		       (epg-decode-dn (epg-signature-user-id signature))))
-		    signature)
-		  (epg-context-result-for context 'verify)))
-    (message "%s"
-	     (epg-verify-result-to-string verify-result))))
 
 
 ;;; @ Internal method for application/pkcs7-mime

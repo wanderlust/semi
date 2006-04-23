@@ -1873,8 +1873,7 @@ If no one is selected, symmetric encryption will be performed.  "
 	  )))))
 
 (defun mime-edit-convert-lbt-string (string)
-  (let ((index 0)
-	(length (length string)))
+  (let ((index 0))
     (while (setq index (string-match "\n" string index))
       (setq string (replace-match "\r\n" nil nil string)
 	    index (+ index 2)))		;(length "\r\n")
@@ -2377,7 +2376,7 @@ and insert data encoded as ENCODING."
   (mime-edit-insert-tag "application" "pgp-keys")
   (mime-edit-define-encoding "7bit")
   (let ((context (epg-make-context)))
-    (epg-context-set-armor t)
+    (epg-context-set-armor context t)
     (epg-export-keys-to-string context
 			       (epa-select-keys context
 						"Select keys for export.  ")))

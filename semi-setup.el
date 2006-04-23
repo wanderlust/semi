@@ -98,7 +98,7 @@
      (mime-add-condition
       'action
       '((type . application)(subtype . pgp-signature)
-	(method . mime-verify-application/pgp-signature))
+	(method . mime-verify-application/*-signature))
       'strict "mime-pgp")
 	 
      (mime-add-condition
@@ -116,13 +116,13 @@
      (mime-add-condition
       'action
       '((type . application)(subtype . pkcs7-signature)
-	(method . mime-verify-application/pkcs7-signature))
+	(method . mime-verify-application/*-signature))
       'strict "mime-pgp")
 
      (mime-add-condition
       'action
       '((type . application)(subtype . x-pkcs7-signature)
-	(method . mime-verify-application/pkcs7-signature))
+	(method . mime-verify-application/*-signature))
       'strict "mime-pgp")
 
      (mime-add-condition
