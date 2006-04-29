@@ -141,8 +141,7 @@
 			  "\\`application/\\(x-\\)?pkcs7-signature\\'"
 			  protocol)
 		       'CMS
-		       (error "Unknown protocol: %s" protocol)))))
-	 verify-result)
+		       (error "Unknown protocol: %s" protocol))))))
     (epg-verify-string context
 		       (mime-entity-content entity)
 		       (with-temp-buffer
@@ -153,17 +152,9 @@
 			 (while (search-forward "\n" nil t)
 			   (replace-match "\r\n"))
 			 (buffer-substring)))
-    (setq verify-result
-	  (mapcar (lambda (signature)
-		    (unless (stringp (epg-signature-user-id signature))
-		      (setq signature (copy-sequence signature))
-		      (epg-signature-set-user-id
-		       signature
-		       (epg-decode-dn (epg-signature-user-id signature))))
-		    signature)
-		  (epg-context-result-for context 'verify)))
     (message "%s"
-	     (epg-verify-result-to-string verify-result))))
+	     (epg-verify-result-to-string
+	      (epg-context-result-for context 'verify)))))
 
 
 ;;; @ Internal method for application/pgp-encrypted
