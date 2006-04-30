@@ -52,6 +52,7 @@
 
 (require 'mime-play)
 (require 'epg)
+(require 'epa)
 
 ;;; @ Internal method for multipart/signed
 ;;;
@@ -110,9 +111,11 @@
 	     (re-search-forward "^-+BEGIN PGP MESSAGE-+$" nil t))
 	   (setq context (epg-make-context))
 	   (setq plain
-		 (epg-decrypt-string
-		  context
-		  (buffer-substring (point-min)(point-max))))
+		 (decode-coding-string
+		  (epg-decrypt-string
+		   context
+		   (buffer-substring (point-min)(point-max)))
+		  'raw-text))
 	   (delete-region (point-min)(point-max))
 	   (insert plain)
 	   (setq representation-type 'binary)))
@@ -151,7 +154,7 @@
 			 (goto-char (point-min))
 			 (while (search-forward "\n" nil t)
 			   (replace-match "\r\n"))
-			 (buffer-substring)))
+			 (buffer-substring (point-min) (point-max))))
     (message "%s"
 	     (epg-verify-result-to-string
 	      (epg-context-result-for context 'verify)))))

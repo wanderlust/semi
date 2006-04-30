@@ -1,3 +1,13 @@
+2006-04-30  Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-pgp.el: Require 'epa.
+	(mime-verify-application/*-signature): Supply required arguments
+	to buffer-substring.
+	(mime-view-application/pgp): Convert line endings of the decrypted
+	text.
+	Thanks to Hiroya Murata <lapis-lazuli@pop06.odn.ne.jp>.
+	[cf. <emacs-mime-ja:02027>]
+
 2006-04-23  Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-pgp.el (mime-verify-application/*-signature): New function.
