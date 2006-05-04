@@ -1,3 +1,8 @@
+2006-05-04  Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-pgp.el (mime-view-application/pgp): Allow to verify
+	signed-and-encrypted messages.
+
 2006-04-30  Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-pgp.el: Require 'epa.

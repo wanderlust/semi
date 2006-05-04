@@ -88,9 +88,6 @@
 	   (epg-verify-string
 	    context
 	    (buffer-substring (match-beginning 0)(point-max)))
-	   (message "%s"
-		    (epg-verify-result-to-string
-		     (epg-context-result-for context 'verify)))
 	   (goto-char (point-min))
 	   (delete-region
 	    (point-min)
@@ -118,14 +115,20 @@
 		  'raw-text))
 	   (delete-region (point-min)(point-max))
 	   (insert plain)
-	   (setq representation-type 'binary)))
+	   (setq representation-type 'binary)
+	   ))
     (setq major-mode 'mime-show-message-mode)
     (save-window-excursion
       (mime-view-buffer nil preview-buffer mother
 			nil representation-type)
       (make-local-variable 'mime-view-temp-message-buffer)
       (setq mime-view-temp-message-buffer message-buf))
-    (set-window-buffer p-win preview-buffer)))
+    (set-window-buffer p-win preview-buffer)
+    (if (and context
+	     (epg-context-result-for context 'verify))
+	(message "%s"
+		 (epg-verify-result-to-string
+		  (epg-context-result-for context 'verify))))))
 
 
 (defun mime-verify-application/*-signature (entity situation)
