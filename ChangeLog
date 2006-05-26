@@ -1,3 +1,9 @@
+2006-05-26  Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-pgp.el (mime-view-application/pgp): Use
+	epa-display-verify-result.
+	(mime-verify-application/*-signature): Ditto.
+
 2006-05-12  Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-edit.el (mime-edit-sign-pgp-mime): Extract micalg from the

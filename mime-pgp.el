@@ -126,9 +126,7 @@
     (set-window-buffer p-win preview-buffer)
     (if (and context
 	     (epg-context-result-for context 'verify))
-	(message "%s"
-		 (epg-verify-result-to-string
-		  (epg-context-result-for context 'verify))))))
+	(epa-display-verify-result (epg-context-result-for context 'verify)))))
 
 
 (defun mime-verify-application/*-signature (entity situation)
@@ -158,9 +156,8 @@
 			 (while (search-forward "\n" nil t)
 			   (replace-match "\r\n"))
 			 (buffer-substring (point-min) (point-max))))
-    (message "%s"
-	     (epg-verify-result-to-string
-	      (epg-context-result-for context 'verify)))))
+    (if (epg-context-result-for context 'verify)
+	(epa-display-verify-result (epg-context-result-for context 'verify)))))
 
 
 ;;; @ Internal method for application/pgp-encrypted
