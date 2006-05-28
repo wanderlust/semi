@@ -182,13 +182,8 @@
 ;;; draft-ietf-openpgp-mime-02.txt (OpenPGP/MIME).
 
 (defun mime-add-application/pgp-keys (entity situation)
-  (with-temp-buffer
-    (mime-insert-entity-content entity)
-    (mime-decode-region (point-min) (point-max)
-                        (cdr (assq 'encoding situation)))
-    (epg-import-keys-from-string (epg-make-context)
-				 (buffer-substring (point-min)(point-max)))
-    (epa-list-keys)))
+  (epg-import-keys-from-string (epg-make-context)
+			       (mime-entity-content entity)))
 
 
 ;;; @ Internal method for application/pkcs7-mime

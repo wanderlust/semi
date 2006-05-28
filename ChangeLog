@@ -1,3 +1,7 @@
+2006-05-28  Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-pgp.el (mime-add-application/pgp-keys): Don't use a temp buffer.
+
 2006-05-26  Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-pgp.el (mime-view-application/pgp): Use
