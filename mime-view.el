@@ -665,6 +665,19 @@ Each elements are regexp of field-name.")
 (define-calist-field-match-method
   'body #'mime-calist::field-match-method-as-default-rule)
 
+(defun mime-calist::field-match-method-ignore-case (calist
+						    field-type field-value)
+  (let ((s-field (assoc field-type calist)))
+    (cond ((null s-field)
+	   (cons (cons field-type field-value) calist))
+	  ((eq field-value t)
+	   calist)
+	  ((string= (downcase (cdr s-field)) (downcase field-value))
+	   calist))))
+
+(define-calist-field-match-method
+  'access-type #'calist-field-match-method-ignore-case)
+
 
 (defvar mime-preview-condition nil
   "Condition-tree about how to display entity.")

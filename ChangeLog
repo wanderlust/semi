@@ -1,3 +1,8 @@
+2006-06-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* mime-view.el (mime-calist::field-match-method-ignore-case):
+	New function; set up for `field-match-method' of calist.
+
 2006-03-28  Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-edit.el (mime-edit-sign-pgp-mime): Set pgg-text-mode.
