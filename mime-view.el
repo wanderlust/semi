@@ -676,7 +676,7 @@ Each elements are regexp of field-name.")
 	   calist))))
 
 (define-calist-field-match-method
-  'access-type #'calist-field-match-method-ignore-case)
+  'access-type #'mime-calist::field-match-method-ignore-case)
 
 
 (defvar mime-preview-condition nil
