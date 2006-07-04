@@ -1913,8 +1913,8 @@ If no one is selected, default secret key is used.  "
 				    (buffer-substring (point-min) (point-max)))
 				   'detached))
 	  (error (signal 'mime-edit-error (cdr error))))
-	(setq micalg (cdr (assq 'digest-algorithm
-				(car (epg-context-result-for context 'sign)))))
+	(setq micalg (epg-new-signature-digest-algorithm
+		      (car (epg-context-result-for context 'sign))))
 	(goto-char beg)
 	(insert (format "--[[multipart/signed;
  boundary=\"%s\"%s;

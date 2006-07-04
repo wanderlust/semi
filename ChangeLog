@@ -1,3 +1,8 @@
+2006-07-04  Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-edit.el (mime-edit-sign-smime): Use
+	epg-new-signature-digest-algorithm.
+
 2006-05-28  Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-pgp.el (mime-add-application/pgp-keys): Don't use a temp buffer.
