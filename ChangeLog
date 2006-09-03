@@ -1,3 +1,20 @@
+2006-09-03  Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-edit.el (mime-edit-pgp-use): New variable.
+	(mime-edit-epg-sign-pgp-mime): Renamed from
+	mime-edit-sign-pgp-mime.
+	(mime-edit-pgg-sign-pgp-mime): Revived for backward compatibility.
+	(mime-edit-epg-encrypt-pgp-mime): Renamed from
+	mime-edit-encrypt-pgp-mime.
+	(mime-edit-pgg-encrypt-pgp-mime): Revived for backward
+	compatibility.
+	(mime-edit-epg-sign-pgp-kazu): Renamed from
+	mime-edit-sign-pgp-kazu.
+	(mime-edit-pgg-sign-pgp-kazu): Revived for backward compatibility.
+	(mime-edit-epg-encrypt-pgp-kazu): Renamed from
+	mime-edit-encrypt-pgp-kazu.
+	(mime-edit-pgg-encrypt-pgp-kazu): Revived for backward compatibility.
+
 2006-07-04  Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-edit.el (mime-edit-sign-smime): Use

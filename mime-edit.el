@@ -113,8 +113,25 @@
 (require 'mime-view)
 (require 'signature)
 (require 'alist)
-(require 'epa)
 
+(autoload 'pgg-encrypt-region "pgg"
+  "PGP encryption of current region." t)
+(autoload 'pgg-sign-region "pgg"
+  "PGP signature of current region." t)
+(autoload 'pgg-insert-key "pgg"
+  "Insert PGP public key at point." t)
+
+(defvar mime-edit-pgp-use
+  (condition-case nil
+      (progn
+	(require 'epg-config)
+	(epg-check-configuration (epg-configuration))
+	'epg)
+    (error
+     (require 'pgg-def)
+     (require 'pgg-parse)
+     'pgg))
+  "Which PGG library to be used in MIME-Edit.")
 
 ;;; @ version
 ;;;
@@ -607,7 +624,8 @@ If it is not specified for a major-mode,
 	  ") "
 	  (if (fboundp 'apel-version)
 	      (concat (apel-version) " "))
-	  "EasyPG/" epg-version-number " "
+	  (if (eq mime-edit-pgp-use 'epg)
+	      (concat "EasyPG/" epg-version-number " "))
 	  (if (featurep 'xemacs)
 	      (concat (cond ((and (featurep 'chise)
 				  (boundp 'xemacs-chise-version))
@@ -1606,13 +1624,21 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 	  (cond ((string-equal type "quote")
 		 (mime-edit-enquote-region bb eb))
 		((string-equal type "pgp-signed")
-		 (mime-edit-sign-pgp-mime bb eb boundary))
+		 (if (eq mime-edit-pgp-use 'epg)
+		     (mime-edit-epg-sign-pgp-mime bb eb boundary)
+		   (mime-edit-pgg-sign-pgp-mime bb eb boundary)))
 		((string-equal type "pgp-encrypted")
-		 (mime-edit-encrypt-pgp-mime bb eb boundary))
+		 (if (eq mime-edit-pgp-use 'epg)
+		     (mime-edit-epg-encrypt-pgp-mime bb eb boundary)
+		   (mime-edit-pgg-encrypt-pgp-mime bb eb boundary)))
 		((string-equal type "kazu-signed")
-		 (mime-edit-sign-pgp-kazu bb eb boundary))
+		 (if (eq mime-edit-pgp-use 'epg)
+		     (mime-edit-epg-sign-pgp-kazu bb eb boundary)
+		   (mime-edit-pgg-sign-pgp-kazu bb eb boundary)))
 		((string-equal type "kazu-encrypted")
-		 (mime-edit-encrypt-pgp-kazu bb eb boundary))
+		 (if (eq mime-edit-pgp-use 'epg)
+		     (mime-edit-epg-encrypt-pgp-kazu bb eb boundary)
+		   (mime-edit-pgg-encrypt-pgp-kazu bb eb boundary)))
 		((string-equal type "smime-signed")
 		 (mime-edit-sign-smime bb eb boundary))
 		((string-equal type "smime-encrypted")
@@ -1656,7 +1682,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
       (while (re-search-forward "[ \t]+$" nil t)
 	(delete-region (match-beginning 0) (match-end 0))))))
 
-(defun mime-edit-sign-pgp-mime (beg end boundary)
+(defun mime-edit-epg-sign-pgp-mime (beg end boundary)
   (save-excursion
     (save-restriction
       (let* ((from (std11-field-body "From" mail-header-separator))
@@ -1719,6 +1745,55 @@ Content-Description: OpenPGP Digital Signature
 	(goto-char (point-max))
 	(insert (format "\n--%s--\n" pgp-boundary))))))
 
+(defun mime-edit-pgg-sign-pgp-mime (beg end boundary)
+  (save-excursion
+    (save-restriction
+      (let* ((from (std11-field-body "From" mail-header-separator))
+	     (ret (progn 
+		    (narrow-to-region beg end)
+		    (mime-edit-translate-region beg end boundary)))
+	     (ctype    (car ret))
+	     (encoding (nth 1 ret))
+	     (pgp-boundary (concat "pgp-sign-" boundary))
+	     micalg)
+	(mime-edit-delete-trailing-whitespace) ; RFC3156
+	(goto-char beg)
+	(insert (format "Content-Type: %s\n" ctype))
+	(if encoding
+	    (insert (format "Content-Transfer-Encoding: %s\n" encoding)))
+	(insert "\n")
+	(or (let ((pgg-default-user-id 
+		   (or mime-edit-pgp-user-id
+		       (if from 
+			   (nth 1 (std11-extract-address-components from))
+			 pgg-default-user-id))))
+	      (pgg-sign-region (point-min)(point-max)))
+	    (throw 'mime-edit-error 'pgp-error))
+	(setq micalg
+	      (cdr (assq 'hash-algorithm
+			 (cdar (with-current-buffer pgg-output-buffer
+				 (pgg-parse-armor-region 
+				  (point-min)(point-max))))))
+	      micalg 
+	      (if micalg
+		  (concat "; micalg=pgp-" (downcase (symbol-name micalg)))
+		""))
+	(goto-char beg)
+	(insert (format "--[[multipart/signed;
+ boundary=\"%s\"%s;
+ protocol=\"application/pgp-signature\"][7bit]]
+--%s
+" pgp-boundary micalg pgp-boundary))
+	(goto-char (point-max))
+	(insert (format "\n--%s
+Content-Type: application/pgp-signature
+Content-Transfer-Encoding: 7bit
+
+" pgp-boundary))
+	(insert-buffer-substring pgg-output-buffer)
+	(goto-char (point-max))
+	(insert (format "\n--%s--\n" pgp-boundary))))))
+
 (defvar mime-edit-encrypt-recipient-fields-list '("To" "cc"))
 
 (defun mime-edit-make-encrypt-recipient-header ()
@@ -1748,7 +1823,7 @@ Content-Description: OpenPGP Digital Signature
 	    values (cdr values)))
     (vector from recipients header)))
 
-(defun mime-edit-encrypt-pgp-mime (beg end boundary)
+(defun mime-edit-epg-encrypt-pgp-mime (beg end boundary)
   (save-excursion
     (save-restriction
       (let (recipients header)
@@ -1804,7 +1879,58 @@ Content-Transfer-Encoding: 7bit
 	  (goto-char (point-max))
 	  (insert (format "\n--%s--\n" pgp-boundary)))))))
 
-(defun mime-edit-sign-pgp-kazu (beg end boundary)
+(defun mime-edit-pgg-encrypt-pgp-mime (beg end boundary)
+  (save-excursion
+    (save-restriction
+      (let (from recipients header)
+        (let ((ret (mime-edit-make-encrypt-recipient-header)))
+          (setq from (aref ret 0)
+                recipients (aref ret 1)
+                header (aref ret 2)))
+        (narrow-to-region beg end)
+        (let* ((ret
+                (mime-edit-translate-region beg end boundary))
+               (ctype    (car ret))
+               (encoding (nth 1 ret))
+               (pgp-boundary (concat "pgp-" boundary)))
+          (goto-char beg)
+          (insert header)
+          (insert (format "Content-Type: %s\n" ctype))
+          (if encoding
+              (insert (format "Content-Transfer-Encoding: %s\n" encoding)))
+          (insert "\n")
+	  (mime-encode-header-in-buffer)
+	  (or (let ((pgg-default-user-id 
+		     (or mime-edit-pgp-user-id
+			 (if from 
+			     (nth 1 (std11-extract-address-components from))
+			   pgg-default-user-id))))		     
+		(pgg-encrypt-region 
+		 (point-min) (point-max) 
+		 (mapcar (lambda (recipient)
+			   (nth 1 (std11-extract-address-components
+				   recipient)))
+			 (split-string recipients 
+				       "\\([ \t\n]*,[ \t\n]*\\)+"))))
+	      (throw 'mime-edit-error 'pgp-error))
+	  (delete-region (point-min)(point-max))
+	  (goto-char beg)
+	  (insert (format "--[[multipart/encrypted;
+ boundary=\"%s\";
+ protocol=\"application/pgp-encrypted\"][7bit]]
+--%s
+Content-Type: application/pgp-encrypted
+
+--%s
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: 7bit
+
+" pgp-boundary pgp-boundary pgp-boundary))
+	  (insert-buffer-substring pgg-output-buffer)
+	  (goto-char (point-max))
+	  (insert (format "\n--%s--\n" pgp-boundary)))))))
+
+(defun mime-edit-epg-sign-pgp-kazu (beg end boundary)
   (save-excursion
     (save-restriction
       (narrow-to-region beg end)
@@ -1830,7 +1956,27 @@ Content-Transfer-Encoding: 7bit
 	 "--[[application/pgp; format=mime][7bit]]\n" signature)
 	))))
 
-(defun mime-edit-encrypt-pgp-kazu (beg end boundary)
+(defun mime-edit-pgg-sign-pgp-kazu (beg end boundary)
+  (save-excursion
+    (save-restriction
+      (narrow-to-region beg end)
+      (let* ((ret
+	      (mime-edit-translate-region beg end boundary))
+	     (ctype    (car ret))
+	     (encoding (nth 1 ret)))
+	(goto-char beg)
+	(insert (format "Content-Type: %s\n" ctype))
+	(if encoding
+	    (insert (format "Content-Transfer-Encoding: %s\n" encoding)))
+	(insert "\n")
+	(or (pgg-sign-region beg (point-max) 'clearsign)
+	    (throw 'mime-edit-error 'pgp-error))
+	(goto-char beg)
+	(insert
+	 "--[[application/pgp; format=mime][7bit]]\n")
+	))))
+
+(defun mime-edit-epg-encrypt-pgp-kazu (beg end boundary)
   (save-excursion
     (let (recipients header)
       (let ((ret (mime-edit-make-encrypt-recipient-header)))
@@ -1870,6 +2016,31 @@ If no one is selected, symmetric encryption will be performed.  "
 	  (goto-char beg)
 	  (insert
 	   "--[[application/pgp; format=mime][7bit]]\n" cipher)
+	  )))))
+
+(defun mime-edit-pgg-encrypt-pgp-kazu (beg end boundary)
+  (save-excursion
+    (let (recipients header)
+      (let ((ret (mime-edit-make-encrypt-recipient-header)))
+	(setq recipients (aref ret 1)
+	      header (aref ret 2)))
+      (save-restriction
+	(narrow-to-region beg end)
+	(let* ((ret
+		(mime-edit-translate-region beg end boundary))
+	       (ctype    (car ret))
+	       (encoding (nth 1 ret)))
+	  (goto-char beg)
+	  (insert header)
+	  (insert (format "Content-Type: %s\n" ctype))
+	  (if encoding
+	      (insert (format "Content-Transfer-Encoding: %s\n" encoding)))
+	  (insert "\n")
+	  (or (pgg-encrypt-region beg (point-max) recipients)
+	      (throw 'mime-edit-error 'pgp-error))
+	  (goto-char beg)
+	  (insert
+	   "--[[application/pgp; format=mime][7bit]]\n")
 	  )))))
 
 (defun mime-edit-convert-lbt-string (string)
