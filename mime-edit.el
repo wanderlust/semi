@@ -114,22 +114,22 @@
 (require 'signature)
 (require 'alist)
 
-(autoload 'pgg-encrypt-region "pgg"
-  "PGP encryption of current region." t)
-(autoload 'pgg-sign-region "pgg"
-  "PGP signature of current region." t)
-(autoload 'pgg-insert-key "pgg"
-  "Insert PGP public key at point." t)
-
 (defvar mime-edit-pgp-use
   (condition-case nil
       (progn
 	(require 'epg-config)
 	(epg-check-configuration (epg-configuration))
+	(autoload 'epg-make-context "epg")
 	'epg)
     (error
      (require 'pgg-def)
      (require 'pgg-parse)
+     (autoload 'pgg-encrypt-region "pgg"
+       "PGP encryption of current region." t)
+     (autoload 'pgg-sign-region "pgg"
+       "PGP signature of current region." t)
+     (autoload 'pgg-insert-key "pgg"
+       "Insert PGP public key at point." t)
      'pgg))
   "Which PGG library to be used in MIME-Edit.")
 
