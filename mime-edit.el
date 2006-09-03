@@ -1625,20 +1625,20 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 		 (mime-edit-enquote-region bb eb))
 		((string-equal type "pgp-signed")
 		 (if (eq mime-edit-pgp-use 'epg)
-		     (mime-edit-epg-sign-pgp-mime bb eb boundary)
-		   (mime-edit-pgg-sign-pgp-mime bb eb boundary)))
+		     (mime-edit-sign-pgp-mime-with-epg bb eb boundary)
+		   (mime-edit-sign-pgp-mime-with-pgg bb eb boundary)))
 		((string-equal type "pgp-encrypted")
 		 (if (eq mime-edit-pgp-use 'epg)
-		     (mime-edit-epg-encrypt-pgp-mime bb eb boundary)
-		   (mime-edit-pgg-encrypt-pgp-mime bb eb boundary)))
+		     (mime-edit-encrypt-pgp-mime-with-epg bb eb boundary)
+		   (mime-edit-encrypt-pgp-mime-with-pgg bb eb boundary)))
 		((string-equal type "kazu-signed")
 		 (if (eq mime-edit-pgp-use 'epg)
-		     (mime-edit-epg-sign-pgp-kazu bb eb boundary)
-		   (mime-edit-pgg-sign-pgp-kazu bb eb boundary)))
+		     (mime-edit-sign-pgp-kazu-with-epg bb eb boundary)
+		   (mime-edit-sign-pgp-kazu-with-pgg bb eb boundary)))
 		((string-equal type "kazu-encrypted")
 		 (if (eq mime-edit-pgp-use 'epg)
-		     (mime-edit-epg-encrypt-pgp-kazu bb eb boundary)
-		   (mime-edit-pgg-encrypt-pgp-kazu bb eb boundary)))
+		     (mime-edit-encrypt-pgp-kazu-with-epg bb eb boundary)
+		   (mime-edit-encrypt-pgp-kazu-with-pgg bb eb boundary)))
 		((string-equal type "smime-signed")
 		 (mime-edit-sign-smime bb eb boundary))
 		((string-equal type "smime-encrypted")
@@ -1682,7 +1682,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
       (while (re-search-forward "[ \t]+$" nil t)
 	(delete-region (match-beginning 0) (match-end 0))))))
 
-(defun mime-edit-epg-sign-pgp-mime (beg end boundary)
+(defun mime-edit-sign-pgp-mime-with-epg (beg end boundary)
   (save-excursion
     (save-restriction
       (let* ((from (std11-field-body "From" mail-header-separator))
@@ -1745,7 +1745,7 @@ Content-Description: OpenPGP Digital Signature
 	(goto-char (point-max))
 	(insert (format "\n--%s--\n" pgp-boundary))))))
 
-(defun mime-edit-pgg-sign-pgp-mime (beg end boundary)
+(defun mime-edit-sign-pgp-mime-with-pgg (beg end boundary)
   (save-excursion
     (save-restriction
       (let* ((from (std11-field-body "From" mail-header-separator))
@@ -1823,7 +1823,7 @@ Content-Transfer-Encoding: 7bit
 	    values (cdr values)))
     (vector from recipients header)))
 
-(defun mime-edit-epg-encrypt-pgp-mime (beg end boundary)
+(defun mime-edit-encrypt-pgp-mime-with-epg (beg end boundary)
   (save-excursion
     (save-restriction
       (let (recipients header)
@@ -1879,7 +1879,7 @@ Content-Transfer-Encoding: 7bit
 	  (goto-char (point-max))
 	  (insert (format "\n--%s--\n" pgp-boundary)))))))
 
-(defun mime-edit-pgg-encrypt-pgp-mime (beg end boundary)
+(defun mime-edit-encrypt-pgp-mime-with-pgg (beg end boundary)
   (save-excursion
     (save-restriction
       (let (from recipients header)
@@ -1930,7 +1930,7 @@ Content-Transfer-Encoding: 7bit
 	  (goto-char (point-max))
 	  (insert (format "\n--%s--\n" pgp-boundary)))))))
 
-(defun mime-edit-epg-sign-pgp-kazu (beg end boundary)
+(defun mime-edit-sign-pgp-kazu-with-epg (beg end boundary)
   (save-excursion
     (save-restriction
       (narrow-to-region beg end)
@@ -1956,7 +1956,7 @@ Content-Transfer-Encoding: 7bit
 	 "--[[application/pgp; format=mime][7bit]]\n" signature)
 	))))
 
-(defun mime-edit-pgg-sign-pgp-kazu (beg end boundary)
+(defun mime-edit-sign-pgp-kazu-with-pgg (beg end boundary)
   (save-excursion
     (save-restriction
       (narrow-to-region beg end)
@@ -1976,7 +1976,7 @@ Content-Transfer-Encoding: 7bit
 	 "--[[application/pgp; format=mime][7bit]]\n")
 	))))
 
-(defun mime-edit-epg-encrypt-pgp-kazu (beg end boundary)
+(defun mime-edit-encrypt-pgp-kazu-with-epg (beg end boundary)
   (save-excursion
     (let (recipients header)
       (let ((ret (mime-edit-make-encrypt-recipient-header)))
@@ -2018,7 +2018,7 @@ If no one is selected, symmetric encryption will be performed.  "
 	   "--[[application/pgp; format=mime][7bit]]\n" cipher)
 	  )))))
 
-(defun mime-edit-pgg-encrypt-pgp-kazu (beg end boundary)
+(defun mime-edit-encrypt-pgp-kazu-with-pgg (beg end boundary)
   (save-excursion
     (let (recipients header)
       (let ((ret (mime-edit-make-encrypt-recipient-header)))
