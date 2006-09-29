@@ -51,24 +51,8 @@
 ;;; Code:
 
 (require 'mime-play)
-
-(defvar mime-pgp-use
-  (condition-case nil
-      (progn
-	(require 'epg-config)
-	(epg-check-configuration (epg-configuration))
-	(autoload 'epg-make-context "epg")
-	'epg)
-    (error
-     (require 'pgg-def)
-     (autoload 'pgg-decrypt-region "pgg"
-       "PGP decryption of current region." t)
-     (autoload 'pgg-verify-region "pgg"
-       "PGP verification of current region." t)
-     (autoload 'pgg-snarf-keys-region "pgg"
-       "Snarf PGP public keys in current region." t)
-     'pgg))
-  "Which PGG library to be used.")
+(require 'epg)
+(require 'epa)
 
 ;;; @ Internal method for multipart/signed
 ;;;
@@ -86,7 +70,7 @@
 ;;;
 ;;; It is based on draft-kazu-pgp-mime-00.txt (PGP-kazu).
 
-(defun mime-view-application/pgp-with-epg (entity situation)
+(defun mime-view-application/pgp (entity situation)
   (let* ((p-win (or (get-buffer-window (current-buffer))
 		    (get-largest-window)))
 	 (new-name
@@ -144,58 +128,8 @@
 	     (epg-context-result-for context 'verify))
 	(epa-display-verify-result (epg-context-result-for context 'verify)))))
 
-(defun mime-view-application/pgp-with-pgg (entity situation)
-  (let* ((p-win (or (get-buffer-window (current-buffer))
-		    (get-largest-window)))
-	 (new-name
-	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
-	 (mother (current-buffer))
-	 (preview-buffer (concat "*Preview-" (buffer-name) "*"))
-	 representation-type message-buf)
-    (set-buffer (setq message-buf (get-buffer-create new-name)))
-    (erase-buffer)
-    (mime-insert-entity entity)
-    (cond ((progn
-	     (goto-char (point-min))
-	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
-	   (pgg-verify-region (match-beginning 0)(point-max) nil 'fetch)
-	   (goto-char (point-min))
-	   (delete-region
-	    (point-min)
-	    (and
-	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+\n\n")
-	     (match-end 0)))
-	   (delete-region
-	    (and (re-search-forward "^-+BEGIN PGP SIGNATURE-+")
-		 (match-beginning 0))
-	    (point-max))
-	   (goto-char (point-min))
-	   (while (re-search-forward "^- -" nil t)
-	     (replace-match "-"))
-	   (setq representation-type (if (mime-entity-cooked-p entity)
-					 'cooked)))
-	  ((progn
-	     (goto-char (point-min))
-	     (re-search-forward "^-+BEGIN PGP MESSAGE-+$" nil t))
-	   (pgg-decrypt-region (point-min)(point-max))
-	   (delete-region (point-min)(point-max))
-	   (insert-buffer pgg-output-buffer)
-	   (setq representation-type 'binary)))
-    (setq major-mode 'mime-show-message-mode)
-    (save-window-excursion
-      (mime-view-buffer nil preview-buffer mother
-			nil representation-type)
-      (make-local-variable 'mime-view-temp-message-buffer)
-      (setq mime-view-temp-message-buffer message-buf))
-    (set-window-buffer p-win preview-buffer)))
-
 
 (defun mime-verify-application/*-signature (entity situation)
-  (if (eq mime-pgp-use 'epg)
-      (mime-verify-application/*-signature-with-epg entity situation)
-    (mime-verify-application/*-signature-with-pgg entity situation)))
-
-(defun mime-verify-application/*-signature-with-epg (entity situation)
   (let* ((entity-node-id (mime-entity-node-id entity))
 	 (mother (mime-entity-parent entity))
 	 (knum (car entity-node-id))
@@ -225,39 +159,6 @@
     (if (epg-context-result-for context 'verify)
 	(epa-display-verify-result (epg-context-result-for context 'verify)))))
 
-(defun mime-verify-application/*-signature-with-pgg (entity situation)
-  (let* ((entity-node-id (mime-entity-node-id entity))
-	 (mother (mime-entity-parent entity))
-	 (knum (car entity-node-id))
-	 (onum (if (> knum 0)
-		   (1- knum)
-		 (1+ knum)))
-	 (orig-entity (nth onum (mime-entity-children mother)))
-	 (protocol (cdr (assoc "protocol" (mime-entity-parameters mother))))
-	 (sig-file (make-temp-file "tm" nil ".asc")))
-    (unless (equal protocol "application/pgp-signature")
-      (error "Not supported protocol: %s" protocol))
-    (save-excursion 
-      (mime-show-echo-buffer)
-      (set-buffer mime-echo-buffer-name)
-      (set-window-start 
-       (get-buffer-window mime-echo-buffer-name)
-       (point-max)))
-    (mime-write-entity-content entity sig-file)
-    (unwind-protect
-	(with-temp-buffer
-	  (mime-insert-entity orig-entity)
-	  (goto-char (point-min))
-	  (while (progn (end-of-line) (not (eobp)))
-	    (insert "\r")
-	    (forward-line 1))
-	  (pgg-verify-region (point-min)(point-max) 
-			     sig-file 'fetch)
-	  (save-excursion 
-	    (set-buffer mime-echo-buffer-name)
-	    (insert-buffer-substring pgg-errors-buffer)))
-      (delete-file sig-file))))
-
 
 ;;; @ Internal method for application/pgp-encrypted
 ;;;
@@ -272,9 +173,7 @@
 		   (1- knum)
 		 (1+ knum)))
 	 (orig-entity (nth onum (mime-entity-children mother))))
-    (if (eq mime-pgp-use 'epg)
-	(mime-view-application/pgp-with-epg orig-entity situation)
-      (mime-view-application/pgp-with-pgg orig-entity situation))))
+    (mime-view-application/pgp orig-entity situation)))
 
 
 ;;; @ Internal method for application/pgp-keys
@@ -283,29 +182,9 @@
 ;;; draft-ietf-openpgp-mime-02.txt (OpenPGP/MIME).
 
 (defun mime-add-application/pgp-keys (entity situation)
-  (if (eq mime-pgp-use 'epg)
-      (mime-add-application/pgp-keys-with-epg entity situation)
-    (mime-add-application/pgp-keys-with-pgg entity situation)))
-
-(defun mime-add-application/pgp-keys-with-epg (entity situation)
   (epg-import-keys-from-string (epg-make-context)
 			       (mime-entity-content entity)))
 
-(defun mime-add-application/pgp-keys-with-pgg (entity situation)
-  (save-excursion 
-    (mime-show-echo-buffer)
-    (set-buffer mime-echo-buffer-name)
-    (set-window-start 
-     (get-buffer-window mime-echo-buffer-name)
-     (point-max)))
-  (with-temp-buffer
-    (mime-insert-entity-content entity)
-    (mime-decode-region (point-min) (point-max)
-                        (cdr (assq 'encoding situation)))
-    (pgg-snarf-keys-region (point-min)(point-max))
-    (save-excursion 
-      (set-buffer mime-echo-buffer-name)
-      (insert-buffer-substring pgg-errors-buffer))))
 
 ;;; @ Internal method for application/pkcs7-mime
 ;;;
