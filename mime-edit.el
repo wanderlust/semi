@@ -1791,16 +1791,6 @@ Content-Description: OpenPGP Digital Signature
 				   (list recipient)))
 			     (delete "" (split-string recipients
 						      "[ \f\t\n\r\v,]+")))))
-	(if mime-edit-pgp-verbose
-	    (setq recipients
-		  (epa-select-keys context "\
-Select recipients for encryption.
-If no one is selected, symmetric encryption will be performed.  "
-				   recipients))
-	  (setq recipients
-		(delq nil (mapcar (lambda (name)
-				    (car (epg-list-keys context name)))
-				  recipients))))
         (narrow-to-region beg end)
         (let* ((ret
                 (mime-edit-translate-region beg end boundary))
@@ -1817,7 +1807,16 @@ If no one is selected, symmetric encryption will be performed.  "
           (insert "\n")
 	  (mime-encode-header-in-buffer)
 	  (epg-context-set-armor context t)
-	  
+	  (if mime-edit-pgp-verbose
+	      (setq recipients
+		    (epa-select-keys context "\
+Select recipients for encryption.
+If no one is selected, symmetric encryption will be performed.  "
+				     recipients))
+	    (setq recipients
+		  (delq nil (mapcar (lambda (name)
+				      (car (epg-list-keys context name)))
+				    recipients))))
 	  (condition-case error
 	      (setq cipher
 		    (epg-encrypt-string
