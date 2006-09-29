@@ -27,27 +27,6 @@
 
 ;;; Commentary:
 
-;;    This module is based on
-
-;;	[security-multipart] RFC 1847: "Security Multiparts for MIME:
-;;	    Multipart/Signed and Multipart/Encrypted" by
-;;          Jim Galvin <galvin@tis.com>, Sandy Murphy <sandy@tis.com>,
-;;	    Steve Crocker <crocker@cybercash.com> and
-;;          Ned Freed <ned@innosoft.com> (1995/10)
-
-;;	[PGP/MIME] RFC 2015: "MIME Security with Pretty Good Privacy
-;;	    (PGP)" by Michael Elkins <elkins@aero.org> (1996/6)
-
-;;	[PGP-kazu] draft-kazu-pgp-mime-00.txt: "PGP MIME Integration"
-;;	    by Kazuhiko Yamamoto <kazu@is.aist-nara.ac.jp> (1995/10;
-;;	    expired)
-
-;;	[OpenPGP/MIME] draft-ietf-openpgp-mime-02.txt: "MIME
-;;	    Security with OpenPGP" by
-;;	    John W. Noerenberg II <jwn2@qualcomm.com>,
-;;	    Dave Del Torto <ddt@cryptorights.org> and
-;;	    Michael Elkins <michael_elkins@nai.com> (2000/8)
-
 ;;; Code:
 
 (require 'mime-play)
@@ -55,8 +34,6 @@
 (require 'epa)
 
 ;;; @ Internal method for multipart/signed
-;;;
-;;; It is based on RFC 1847 (security-multipart).
 
 (defun mime-verify-multipart/signed (entity situation)
   "Internal method to verify multipart/signed."
@@ -66,77 +43,11 @@
    ))
 
 
-;;; @ internal method for application/pgp
-;;;
-;;; It is based on draft-kazu-pgp-mime-00.txt (PGP-kazu).
-
-(defun mime-view-application/pgp (entity situation)
-  (let* ((p-win (or (get-buffer-window (current-buffer))
-		    (get-largest-window)))
-	 (new-name
-	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
-	 (mother (current-buffer))
-	 (preview-buffer (concat "*Preview-" (buffer-name) "*"))
-	 representation-type message-buf context plain)
-    (set-buffer (setq message-buf (get-buffer-create new-name)))
-    (erase-buffer)
-    (mime-insert-entity entity)
-    (cond ((progn
-	     (goto-char (point-min))
-	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
-	   (setq context (epg-make-context))
-	   (epg-verify-string
-	    context
-	    (buffer-substring (match-beginning 0)(point-max)))
-	   (goto-char (point-min))
-	   (delete-region
-	    (point-min)
-	    (and
-	     (re-search-forward "^-+BEGIN PGP SIGNED MESSAGE-+\n\n")
-	     (match-end 0)))
-	   (delete-region
-	    (and (re-search-forward "^-+BEGIN PGP SIGNATURE-+")
-		 (match-beginning 0))
-	    (point-max))
-	   (goto-char (point-min))
-	   (while (re-search-forward "^- -" nil t)
-	     (replace-match "-"))
-	   (setq representation-type (if (mime-entity-cooked-p entity)
-					 'cooked)))
-	  ((progn
-	     (goto-char (point-min))
-	     (re-search-forward "^-+BEGIN PGP MESSAGE-+$" nil t))
-	   (setq context (epg-make-context))
-	   (setq plain
-		 (decode-coding-string
-		  (epg-decrypt-string
-		   context
-		   (buffer-substring (point-min)(point-max)))
-		  'raw-text))
-	   (delete-region (point-min)(point-max))
-	   (insert plain)
-	   (setq representation-type 'binary)
-	   ))
-    (setq major-mode 'mime-show-message-mode)
-    (save-window-excursion
-      (mime-view-buffer nil preview-buffer mother
-			nil representation-type)
-      (make-local-variable 'mime-view-temp-message-buffer)
-      (setq mime-view-temp-message-buffer message-buf))
-    (set-window-buffer p-win preview-buffer)
-    (if (and context
-	     (epg-context-result-for context 'verify))
-	(epa-display-verify-result (epg-context-result-for context 'verify)))))
-
+;;; @ Internal method for application/*-signature
 
 (defun mime-verify-application/*-signature (entity situation)
-  (let* ((entity-node-id (mime-entity-node-id entity))
-	 (mother (mime-entity-parent entity))
-	 (knum (car entity-node-id))
-	 (onum (if (> knum 0)
-		   (1- knum)
-		 (1+ knum)))
-	 (orig-entity (nth onum (mime-entity-children mother)))
+  (let* ((mother (mime-entity-parent entity))
+	 (orig-entity (car (mime-entity-children mother)))
 	 (protocol (cdr (assoc "protocol" (mime-entity-parameters mother))))
 	 (context (epg-make-context
 		   (if (equal protocol "application/pgp-signature")
@@ -145,7 +56,8 @@
 			  "\\`application/\\(x-\\)?pkcs7-signature\\'"
 			  protocol)
 		       'CMS
-		       (error "Unknown protocol: %s" protocol))))))
+		       (error "Unknown protocol: %s" protocol)))))
+	 verify-result)
     (epg-verify-string context
 		       (mime-entity-content entity)
 		       (with-temp-buffer
@@ -156,30 +68,53 @@
 			 (while (search-forward "\n" nil t)
 			   (replace-match "\r\n"))
 			 (buffer-substring (point-min) (point-max))))
-    (if (epg-context-result-for context 'verify)
-	(epa-display-verify-result (epg-context-result-for context 'verify)))))
+    (setq verify-result (epg-context-result-for context 'verify))
+    (if (> (length verify-result) 1)
+	(mime-show-echo-buffer (epg-verify-result-to-string verify-result))
+      (if verify-result
+	  (epa-display-verify-result verify-result)))))
 
 
 ;;; @ Internal method for application/pgp-encrypted
-;;;
-;;; It is based on RFC 2015 (PGP/MIME) and
-;;; draft-ietf-openpgp-mime-02.txt (OpenPGP/MIME).
 
 (defun mime-decrypt-application/pgp-encrypted (entity situation)
-  (let* ((entity-node-id (mime-entity-node-id entity))
-	 (mother (mime-entity-parent entity))
-	 (knum (car entity-node-id))
-	 (onum (if (> knum 0)
-		   (1- knum)
-		 (1+ knum)))
-	 (orig-entity (nth onum (mime-entity-children mother))))
-    (mime-view-application/pgp orig-entity situation)))
+  (let* ((mother (mime-entity-parent entity))
+	 (encrypted-entity (nth 1 (mime-entity-children mother)))
+	 (p-win (or (get-buffer-window (current-buffer))
+		    (get-largest-window)))
+	 (new-name
+	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
+	 (mother (current-buffer))
+	 (preview-buffer (concat "*Preview-" (buffer-name) "*"))
+	 representation-type message-buf context plain verify-result)
+    (set-buffer (setq message-buf (get-buffer-create new-name)))
+    (erase-buffer)
+    (mime-insert-entity encrypted-entity)
+    (goto-char (point-min))
+    (setq context (epg-make-context)
+	  plain (decode-coding-string
+		 (epg-decrypt-string
+		  context
+		  (buffer-substring (point-min)(point-max)))
+		 'raw-text))
+    (delete-region (point-min)(point-max))
+    (insert plain)
+    (setq representation-type 'binary
+	  major-mode 'mime-show-message-mode)
+    (save-window-excursion
+      (mime-view-buffer nil preview-buffer mother
+			nil representation-type)
+      (make-local-variable 'mime-view-temp-message-buffer)
+      (setq mime-view-temp-message-buffer message-buf))
+    (set-window-buffer p-win preview-buffer)
+    (setq verify-result (epg-context-result-for context 'verify))
+    (if (> (length verify-result) 1)
+	(mime-show-echo-buffer (epg-verify-result-to-string verify-result))
+      (if verify-result
+	  (epa-display-verify-result verify-result)))))
 
 
 ;;; @ Internal method for application/pgp-keys
-;;;
-;;; It is based on RFC 2015 (PGP/MIME) and
-;;; draft-ietf-openpgp-mime-02.txt (OpenPGP/MIME).
 
 (defun mime-add-application/pgp-keys (entity situation)
   (epg-import-keys-from-string (epg-make-context)
@@ -187,8 +122,6 @@
 
 
 ;;; @ Internal method for application/pkcs7-mime
-;;;
-;;; It is based on RFC 2633 (S/MIME version 3).
 
 (defun mime-view-application/pkcs7-mime (entity situation)
   (let* ((p-win (or (get-buffer-window (current-buffer))

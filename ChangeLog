@@ -1,3 +1,9 @@
+2006-09-29  Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-pgp.el: Removed obsolete references.
+	(mime-view-application/pgp): Merged into
+	mime-decrypt-application/pgp-encrypted.
+
 2006-07-04  Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-edit.el (mime-edit-sign-smime): Use
