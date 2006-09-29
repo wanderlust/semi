@@ -543,6 +543,28 @@ If it is not specified for a major-mode,
 (defvar mime-edit-news-reply-mode-server-running nil)
 
 
+;;; @@ about PGP/MIME
+;;;
+
+(defgroup mime-edit-pgp nil
+  "MIME edit mode (PGP/MIME)"
+  :group 'mime-edit)
+
+(defcustom mime-edit-pgp-verbose nil
+  "If non-nil, ask the user about the current operation more verbosely."
+  :group 'mime-edit-pgp
+  :type 'boolean)
+
+(defcustom mime-edit-pgp-signers nil
+  "A list of your own key ID which will be used to sign a message."
+  :group 'mime-edit-pgp
+  :type '(repeat (string :tag "Key ID")))
+
+(defcustom mime-edit-pgp-encrypt-to-self nil
+  "If t, add your own key ID to recipient list when encryption."
+  :group 'mime-edit-pgp
+  :type 'boolean)
+
 ;;; @@ about tag
 ;;;
 
@@ -1609,10 +1631,6 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 		 (mime-edit-sign-pgp-mime bb eb boundary))
 		((string-equal type "pgp-encrypted")
 		 (mime-edit-encrypt-pgp-mime bb eb boundary))
-		((string-equal type "kazu-signed")
-		 (mime-edit-sign-pgp-kazu bb eb boundary))
-		((string-equal type "kazu-encrypted")
-		 (mime-edit-encrypt-pgp-kazu bb eb boundary))
 		((string-equal type "smime-signed")
 		 (mime-edit-sign-smime bb eb boundary))
 		((string-equal type "smime-encrypted")
@@ -1676,16 +1694,24 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 	(insert "\n")
 	(epg-context-set-armor context t)
 	(epg-context-set-textmode context t)
-	(epg-context-set-signers
-	 context
-	 (epa-select-keys
-	  context
-	  "\
+	(if mime-edit-pgp-verbose
+	    (epg-context-set-signers
+	     context
+	     (epa-select-keys
+	      context
+	      "\
 Select keys for signing.
 If no one is selected, default secret key is used.  "
-	  (if from 
-	      (list (nth 1 (std11-extract-address-components from))))
-	  t))
+	      (if from
+		  (cons (nth 1 (std11-extract-address-components from))
+			mime-edit-pgp-signers))
+	      t))
+	  (if mime-edit-pgp-signers
+	      (epg-context-set-signers
+	       context
+	       (mapcar (lambda (name)
+			 (car (epg-list-keys context name t)))
+		       mime-edit-pgp-signers))))
 	(condition-case error
 	    (setq signature
 		  (epg-sign-string context
@@ -1751,10 +1777,30 @@ Content-Description: OpenPGP Digital Signature
 (defun mime-edit-encrypt-pgp-mime (beg end boundary)
   (save-excursion
     (save-restriction
-      (let (recipients header)
-        (let ((ret (mime-edit-make-encrypt-recipient-header)))
-          (setq recipients (aref ret 1)
-                header (aref ret 2)))
+      (let* ((config (epg-configuration))
+	     (ret (mime-edit-make-encrypt-recipient-header))
+	     (recipients (aref ret 1))
+	     (header (aref ret 2)))
+	(setq recipients
+	      (apply #'nconc
+		     (mapcar (lambda (recipient)
+			       (setq recipient
+				     (nth 1 (std11-extract-address-components
+					     recipient)))
+			       (or (epg-expand-group config recipient)
+				   (list recipient)))
+			     (delete "" (split-string recipients
+						      "[ \f\t\n\r\v,]+")))))
+	(if mime-edit-pgp-verbose
+	    (setq recipients
+		  (epa-select-keys context "\
+Select recipients for encryption.
+If no one is selected, symmetric encryption will be performed.  "
+				   recipients))
+	  (setq recipients
+		(delq nil (mapcar (lambda (name)
+				    (car (epg-list-keys context name)))
+				  recipients))))
         (narrow-to-region beg end)
         (let* ((ret
                 (mime-edit-translate-region beg end boundary))
@@ -1771,21 +1817,13 @@ Content-Description: OpenPGP Digital Signature
           (insert "\n")
 	  (mime-encode-header-in-buffer)
 	  (epg-context-set-armor context t)
+	  
 	  (condition-case error
 	      (setq cipher
 		    (epg-encrypt-string
 		     context
 		     (buffer-substring (point-min) (point-max))
-		     (epa-select-keys
-		      context
-		      "\
-Select recipents for encryption.
-If no one is selected, symmetric encryption will be performed.  "
-		      (mapcar (lambda (recipient)
-				(nth 1 (std11-extract-address-components
-					recipient)))
-			      (split-string recipients 
-					    "\\([ \t\n]*,[ \t\n]*\\)+")))))
+		     recipients))
 	    (error (signal 'mime-edit-error (cdr error))))
 	  (delete-region (point-min)(point-max))
 	  (goto-char beg)
@@ -1804,81 +1842,13 @@ Content-Transfer-Encoding: 7bit
 	  (goto-char (point-max))
 	  (insert (format "\n--%s--\n" pgp-boundary)))))))
 
-(defun mime-edit-sign-pgp-kazu (beg end boundary)
-  (save-excursion
-    (save-restriction
-      (narrow-to-region beg end)
-      (let* ((ret
-	      (mime-edit-translate-region beg end boundary))
-	     (ctype    (car ret))
-	     (encoding (nth 1 ret))
-	     (context (epg-make-context))
-	     signature)
-	(goto-char beg)
-	(insert (format "Content-Type: %s\n" ctype))
-	(if encoding
-	    (insert (format "Content-Transfer-Encoding: %s\n" encoding)))
-	(insert "\n")
-	(condition-case error
-	    (setq signature
-		  (epg-sign-string context
-				   (buffer-substring beg (point-max))
-				   'clearsign))
-	  (error (signal 'mime-edit-error (cdr error))))
-	(goto-char beg)
-	(insert
-	 "--[[application/pgp; format=mime][7bit]]\n" signature)
-	))))
-
-(defun mime-edit-encrypt-pgp-kazu (beg end boundary)
-  (save-excursion
-    (let (recipients header)
-      (let ((ret (mime-edit-make-encrypt-recipient-header)))
-	(setq recipients (aref ret 1)
-	      header (aref ret 2)))
-      (save-restriction
-	(narrow-to-region beg end)
-	(let* ((ret
-		(mime-edit-translate-region beg end boundary))
-	       (ctype    (car ret))
-	       (encoding (nth 1 ret))
-	       (context (epg-make-context))
-	       cipher)
-	  (goto-char beg)
-	  (insert header)
-	  (insert (format "Content-Type: %s\n" ctype))
-	  (if encoding
-	      (insert (format "Content-Transfer-Encoding: %s\n" encoding)))
-	  (insert "\n")
-	  (epg-context-set-armor context t)
-	  (condition-case error
-	      (setq cipher
-		    (epg-encrypt-string
-		     context
-		     (buffer-substring beg (point-max))
-		     (epa-select-keys
-		      context
-		      "\
-Select recipents for encryption.
-If no one is selected, symmetric encryption will be performed.  "
-		      (mapcar (lambda (recipient)
-				(nth 1 (std11-extract-address-components
-					recipient)))
-			      (split-string recipients 
-					    "\\([ \t\n]*,[ \t\n]*\\)+")))))
-	    (error (signal 'mime-edit-error (cdr error))))
-	  (goto-char beg)
-	  (insert
-	   "--[[application/pgp; format=mime][7bit]]\n" cipher)
-	  )))))
-
 (defun mime-edit-convert-lbt-string (string)
   (let ((index 0))
     (while (setq index (string-match "\n" string index))
       (setq string (replace-match "\r\n" nil nil string)
 	    index (+ index 2)))		;(length "\r\n")
     string))
-      
+
 (defun mime-edit-sign-smime (beg end boundary)
   (save-excursion
     (save-restriction
@@ -1942,10 +1912,9 @@ Content-Description: S/MIME Digital Signature
 (defun mime-edit-encrypt-smime (beg end boundary)
   (save-excursion
     (save-restriction
-      (let (recipients header)
-        (let ((ret (mime-edit-make-encrypt-recipient-header)))
-          (setq recipients (aref ret 1)
-                header (aref ret 2)))
+      (let* ((ret (mime-edit-make-encrypt-recipient-header))
+	     (recipients (aref ret 1))
+	     (header (aref ret 2)))
         (narrow-to-region beg end)
         (let* ((ret
                 (mime-edit-translate-region beg end boundary))
@@ -1968,13 +1937,13 @@ Content-Description: S/MIME Digital Signature
 		     (epa-select-keys
 		      context
 		      "\
-Select recipents for encryption.
+Select recipients for encryption.
 If no one is selected, symmetric encryption will be performed.  "
 		      (mapcar (lambda (recipient)
 				(nth 1 (std11-extract-address-components
 					recipient)))
-			      (split-string recipients 
-					    "\\([ \t\n]*,[ \t\n]*\\)+")))))
+			      (delete "" (split-string recipients 
+						       "[ \f\t\n\r\v,]+"))))))
 	    (error (signal 'mime-edit-error (cdr error))))
 	  (delete-region (point-min)(point-max))
 	  (goto-char beg)
@@ -2353,14 +2322,6 @@ and insert data encoded as ENCODING."
 (defun mime-edit-enclose-pgp-encrypted-region (beg end)
   (interactive "*r")
   (mime-edit-enclose-region-internal 'pgp-encrypted beg end))
-
-(defun mime-edit-enclose-kazu-signed-region (beg end)
-  (interactive "*r")
-  (mime-edit-enclose-region-internal 'kazu-signed beg end))
-
-(defun mime-edit-enclose-kazu-encrypted-region (beg end)
-  (interactive "*r")
-  (mime-edit-enclose-region-internal 'kazu-encrypted beg end))
 
 (defun mime-edit-enclose-smime-signed-region (beg end)
   (interactive "*r")

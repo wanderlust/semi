@@ -1,5 +1,16 @@
 2006-09-29  Daiki Ueno  <ueno@unixuser.org>
 
+	* mime-edit.el (mime-edit-pgp): New custom group.
+	(mime-edit-pgp-verbose): New user option.
+	(mime-edit-pgp-signers): New user option.
+	(mime-edit-pgp-encrypt-to-self): New user option.
+	(mime-edit-process-multipart-1): Don't handle kazu-*.
+	(mime-edit-sign-pgp-kazu): Abolished.
+	(mime-edit-encrypt-pgp-kazu): Abolished.
+	(mime-edit-sign-pgp-mime): Don't query user if
+	mime-edit-pgp-verbose is nil.
+	(mime-edit-encrypt-pgp-mime): Ditto.
+
 	* mime-pgp.el: Removed obsolete references.
 	(mime-view-application/pgp): Merged into
 	mime-decrypt-application/pgp-encrypted.
