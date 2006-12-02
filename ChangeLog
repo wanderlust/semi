@@ -1,3 +1,13 @@
+2006-12-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* mime-edit.el (mime-edit-process-multipart-1): Don't insert a
+	text tag if a multipart end tag is followed.
+
+2006-06-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* mime-view.el (mime-calist::field-match-method-ignore-case):
+	New function; set up for `field-match-method' of calist.
+
 2006-09-29  Daiki Ueno  <ueno@unixuser.org>
 
 	* mime-edit.el (mime-edit-pgp): New custom group.
