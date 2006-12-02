@@ -1733,6 +1733,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 		    )
 		(delete-region beg end)
 		(or (looking-at mime-edit-beginning-tag-regexp)
+		    (looking-at mime-edit-multipart-end-regexp)
 		    (eobp)
 		    (insert (concat (mime-make-text-tag) "\n"))
 		    )))
