@@ -140,17 +140,27 @@
 	"tmdecode"))
 
 (defvar PACKAGEDIR
-  (if (boundp 'early-packages)
-      (let ((dirs (append (if early-package-load-path
-			      early-packages)
-			  (if late-package-load-path
-			      late-packages)
-			  (if last-package-load-path
-			      last-packages)))
-	    dir)
-	(while (not (file-exists-p
-		     (setq dir (car dirs))))
-	  (setq dirs (cdr dirs)))
-	dir)))
+  (let ((dirs (append
+	       (cond ((boundp 'early-package-hierarchies)
+		      (append (if early-package-load-path
+				  early-package-hierarchies)
+			      (if late-package-load-path
+				  late-package-hierarchies)
+			      (if last-package-load-path
+				  last-package-hierarchies)))
+		     ((boundp 'early-packages)
+		      (append (if early-package-load-path
+				  early-packages)
+			      (if late-package-load-path
+				  late-packages)
+			      (if last-package-load-path
+				  last-packages))))
+	       (if (and (boundp 'configure-package-path)
+			(listp configure-package-path))
+		   (delete "" configure-package-path))))
+	dir)
+    (while (not (file-exists-p (setq dir (car dirs))))
+      (setq dirs (cdr dirs)))
+    dir))
 
 ;;; SEMI-CFG ends here
