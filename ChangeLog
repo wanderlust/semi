@@ -1,3 +1,9 @@
+2006-12-12  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* SEMI-MK (compile-semi-package): Use
+	batch-update-directory-autoloads if it is available instead of
+	batch-update-directory.
+
 2006-12-11  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* SEMI-CFG (PACKAGEDIR): Check for
