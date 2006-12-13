@@ -173,7 +173,8 @@
 			(listp configure-package-path))
 		   (delete "" configure-package-path))))
 	dir)
-    (while (not (file-exists-p (setq dir (car dirs))))
+    (while (and (setq dir (car dirs))
+		(not (file-exists-p dir)))
       (setq dirs (cdr dirs)))
     dir))
 
