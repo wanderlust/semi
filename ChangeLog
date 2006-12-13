@@ -1,3 +1,7 @@
+2006-12-13  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* SEMI-CFG (PACKAGEDIR): Avoid an error with Emacs.
+
 2006-12-12  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* SEMI-MK (compile-semi-package): Use
