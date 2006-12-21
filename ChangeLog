@@ -1,7 +1,7 @@
 2006-12-20  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
-	* README.ja, README.en (Required environment): Update required
-	version of APEL to 10.7 or later.
+	* README.en (Required environment): Update required version of
+	APEL to 10.7 or later.
 
 	* SEMI-CFG (PACKAGEDIR): Use
 	`install-get-default-package-directory'.
