@@ -1686,7 +1686,8 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 	     (encoding (nth 1 ret))
 	     (pgp-boundary (concat "pgp-sign-" boundary))
 	     (context (epg-make-context))
-	     signature micalg)
+	     (index 0)
+	     plain signature micalg)
 	(mime-edit-delete-trailing-whitespace) ; RFC3156
 	(goto-char beg)
 	(insert (format "Content-Type: %s\n" ctype))
@@ -1694,7 +1695,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 	    (insert (format "Content-Transfer-Encoding: %s\n" encoding)))
 	(insert "\n")
 	(epg-context-set-armor context t)
-	(epg-context-set-textmode context t)
+	(epg-context-set-textmode context nil)
 	(if mime-edit-pgp-verbose
 	    (epg-context-set-signers
 	     context
@@ -1713,11 +1714,15 @@ If no one is selected, default secret key is used.  "
 	       (mapcar (lambda (name)
 			 (car (epg-list-keys context name t)))
 		       mime-edit-pgp-signers))))
+	(setq plain (buffer-substring (point-min) (point-max)))
+	(while (string-match "\r?\n" plain index)
+	  (if (eq (aref plain (match-beginning 0)) ?\r)
+	      (setq index (match-end 0))
+	    (setq plain (replace-match "\r\n" t t plain)
+		  index (1+ (match-end 0)))))
 	(condition-case error
 	    (setq signature
-		  (epg-sign-string context
-				   (buffer-substring (point-min) (point-max))
-				   'detached))
+		  (epg-sign-string context plain 'detached))
 	  (error (signal 'mime-edit-error (cdr error))))
 	(setq micalg (epg-new-signature-digest-algorithm
 		      (car (epg-context-result-for context 'sign))))
