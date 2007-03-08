@@ -1679,7 +1679,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
   (save-excursion
     (save-restriction
       (let* ((from (std11-field-body "From" mail-header-separator))
-	     (ret (progn 
+	     (ret (let ((mime-transfer-level 7))
 		    (narrow-to-region beg end)
 		    (mime-edit-translate-region beg end boundary)))
 	     (ctype    (car ret))
@@ -1837,6 +1837,8 @@ If no one is selected, symmetric encryption will be performed.  "
  protocol=\"application/pgp-encrypted\"][7bit]]
 --%s
 Content-Type: application/pgp-encrypted
+
+Version: 1
 
 --%s
 Content-Type: application/octet-stream
