@@ -1067,13 +1067,14 @@ User customizable variables (not documented all of them):
 
     (enable-invisible)
 
-    ;; I don't care about saving these.
-    (setq paragraph-start
-	  (regexp-or mime-edit-single-part-tag-regexp
-		     paragraph-start))
-    (setq paragraph-separate
-	  (regexp-or mime-edit-single-part-tag-regexp
-		     paragraph-separate))
+    ;; Make `paragraph-start' and `paragraph-separate' buffer-local
+    ;; and have a value to recognize part tags.
+    (set (make-local-variable 'paragraph-start)
+	 (regexp-or mime-edit-single-part-tag-regexp
+		    (default-value 'paragraph-start)))
+    (set (make-local-variable 'paragraph-separate)
+	 (regexp-or mime-edit-single-part-tag-regexp
+		    (default-value 'paragraph-separate)))
     (run-hooks 'mime-edit-mode-hook)
     (message
      "%s"
