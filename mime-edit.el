@@ -1005,12 +1005,14 @@ User customizable variables (not documented all of them):
     (if (featurep 'xemacs)
 	(mime-edit-define-menu-for-xemacs))
 
-    ;; Make `paragraph-start' and `paragraph-separate' buffer-local
-    ;; and have a value to recognize part tags.
-    (set (make-local-variable 'paragraph-start)
-	 (regexp-or mime-edit-single-part-tag-regexp paragraph-start))
-    (set (make-local-variable 'paragraph-separate)
-	 (regexp-or mime-edit-single-part-tag-regexp paragraph-separate))
+    (make-local-variable 'paragraph-start)
+    (setq paragraph-start
+	  (regexp-or mime-edit-single-part-tag-regexp
+		     paragraph-start))
+    (make-local-variable 'paragraph-separate)
+    (setq paragraph-separate
+	  (regexp-or mime-edit-single-part-tag-regexp
+		     paragraph-separate))
     (run-hooks 'mime-edit-mode-hook)
     (message
      "%s"
