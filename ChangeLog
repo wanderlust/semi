@@ -1,3 +1,8 @@
+2007-06-18  Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-edit.el (turn-on-mime-edit): Remove redundant comments and
+	newlines to make the amount of diff-lines minimal to the original.
+
 2007-06-08  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* mime-edit.el (turn-on-mime-edit): Don't use the default values
