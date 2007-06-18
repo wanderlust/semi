@@ -1020,10 +1020,11 @@ User customizable variables (not documented all of them):
     (if (featurep 'xemacs)
 	(mime-edit-define-menu-for-xemacs))
 
-    ;; I don't care about saving these.
+    (make-local-variable 'paragraph-start)
     (setq paragraph-start
 	  (regexp-or mime-edit-single-part-tag-regexp
 		     paragraph-start))
+    (make-local-variable 'paragraph-separate)
     (setq paragraph-separate
 	  (regexp-or mime-edit-single-part-tag-regexp
 		     paragraph-separate))
