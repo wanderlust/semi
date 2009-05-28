@@ -270,6 +270,17 @@
 	(setq mime-view-temp-message-buffer message-buf))
       (set-window-buffer p-win preview-buffer))))
 
+(defun mime-display-multipart/pgp-encrypted (entity situation)
+   (if pgg-decrypt-automatically
+       (let ((pgp-begin (point)))
+	 (mime-insert-entity entity)
+	 (goto-char pgp-begin)
+	 (when (re-search-forward "^-+BEGIN PGP MESSAGE-+$" nil t)
+	   (pgg-decrypt-region pgp-begin (point-max))
+	   (delete-region pgp-begin (point-max))
+	   (mime-display-entity
+	    (mime-parse-buffer pgg-output-buffer))))
+     (mime-display-multipart/mixed entity situation)))
 
 ;;; @ end
 ;;;
