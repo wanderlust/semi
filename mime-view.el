@@ -1095,7 +1095,7 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	(setq situation
 	      (mime-find-entity-preview-situation entity default-situation)))
     (let ((button-is-invisible
-	   (or mime-view-buttons-visible
+	   (or (not mime-view-buttons-visible)
 	       (eq (cdr (or (assq '*entity-button situation)
 			    (assq 'entity-button situation)))
 		   'invisible)))
