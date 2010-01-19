@@ -77,6 +77,10 @@ buttom. Nil means don't scroll at all."
   :group 'mime-view
   :type '(repeat file))
 
+(defcustom mime-view-buttons-visible t
+  "Toggle visibility of MIME buttons."
+  :group 'mime-view
+  :type 'boolean)
 
 ;;; @ in raw-buffer (representation space)
 ;;;
@@ -1091,9 +1095,10 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	(setq situation
 	      (mime-find-entity-preview-situation entity default-situation)))
     (let ((button-is-invisible
-	   (eq (cdr (or (assq '*entity-button situation)
-			(assq 'entity-button situation)))
-	       'invisible))
+	   (or mime-view-buttons-visible
+	       (eq (cdr (or (assq '*entity-button situation)
+			    (assq 'entity-button situation)))
+		   'invisible)))
 	  (header-is-visible
 	   (eq (cdr (or (assq '*header situation)
 			(assq 'header situation)))
@@ -1134,10 +1139,6 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 	      (if (functionp body-presentation-method)
 		  (funcall body-presentation-method entity situation)
 		(mime-display-text/plain entity situation)))
-	  (when button-is-invisible
-	    (goto-char (point-max))
-	    (mime-view-insert-entity-button entity)
-	    )
 	  (unless header-is-visible
 	    (goto-char (point-max))
 	    (insert "\n"))
