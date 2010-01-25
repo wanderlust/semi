@@ -1,3 +1,7 @@
+2010-01-25  Harald Judt  <h.judt@gmx.at>
+
+	* mime-edit.el (mime-content-types): Added more MIME types.
+
 2010-01-25  Vitaly Mayatskikh  <v.mayatskih@gmail.com>
 
 	* mime-edit.el (mime-edit-insert-file): Ask user for MIME type and

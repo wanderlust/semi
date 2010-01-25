@@ -205,6 +205,7 @@ To insert a signature file automatically, call the function
      ("enriched")
      ("html")
      ("css") ; rfc2318
+     ("csv") ; rfc4180
      ("xml") ; rfc2376
      ("x-latex")
      ;; ("x-rot13-47-48")
@@ -234,26 +235,76 @@ To insert a signature file automatically, call the function
      ("news")
      )
     ("application"
+     ("javascript")
+     ("msword")
      ("octet-stream" ("type" "" "tar" "shar"))
      ("postscript")
      ("pdf")
+     ("rtf")
+     ("zip")
+     ("x-shockwave-flash")
+     ("x-7z-compressed")
+
+                                        ; OpenOffice
+     ("vnd.oasis.opendocument.text")
+     ("vnd.oasis.opendocument.spreadsheet")
+     ("vnd.oasis.opendocument.graphics")
+     ("vnd.oasis.opendocument.chart")
+     ("vnd.oasis.opendocument.formula")
+     ("vnd.oasis.opendocument.text-master")
+     ("vnd.oasis.opendocument.presentation")
+     ("vnd.oasis.opendocument.text-template")
+     ("vnd.oasis.opendocument.spreadsheet-template")
+     ("vnd.oasis.opendocument.presentation-template")
+     ("vnd.oasis.opendocument.graphics-template")
+
      ("msword")
      ("vnd.ms-excel")
      ("vnd.ms-powerpoint")
+                                        ; Microsoft Office (OpenXML)
+     ("vnd.ms-excel.addin.macroEnabled.12")
+     ("vnd.ms-excel.sheet.binary.macroEnabled.12")
+     ("vnd.ms-excel.sheet.macroEnabled.12")
+     ("vnd.ms-excel.template.macroEnabled.12")
+     ("vnd.ms-powerpoint.addin.macroEnabled.12")
+     ("vnd.ms-powerpoint.presentation.macroEnabled.12")
+     ("vnd.ms-powerpoint.slideshow.macroEnabled.12")
+     ("vnd.ms-powerpoint.template.macroEnabled.12")
+     ("vnd.ms-word.document.macroEnabled.12")
+     ("vnd.ms-word.template.macroEnabled.12")
+     ("vnd.openxmlformats-officedocument.presentationml.presentation")
+     ("vnd.openxmlformats-officedocument.presentationml.slideshow")
+     ("vnd.openxmlformats-officedocument.presentationml.template")
+     ("vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+     ("vnd.openxmlformats-officedocument.spreadsheetml.template")
+     ("vnd.openxmlformats-officedocument.wordprocessingml.document")
+     ("vnd.openxmlformats-officedocument.wordprocessingml.template")
+     ("vnd.ms-xpsdocument")
+                                        ; Microsoft Project
+     ("vnd.ms-project")
      ("x-kiss" ("x-cnf")))
     ("image"
+     ("bmp")
      ("gif")
      ("jpeg")
      ("png")
+     ("svg+xml")
      ("tiff")
      ("x-pic")
      ("x-mag")
      ("x-xwd")
-     ("x-xbm")
-     )
-    ("audio" ("basic"))
-    ("video" ("mpeg"))
-    )
+     ("x-xbm"))
+    ("audio"
+     ("basic")
+     ("mpeg")
+     ("ogg")
+     ("vorbis"))
+    ("video"
+     ("mpeg")
+     ("ogg")
+     ("mp4")
+     ("quicktime")
+     ("x-flv")))
   "*Alist of content-type, subtype, parameters and its values.")
 
 (defcustom mime-file-types
@@ -287,8 +338,26 @@ To insert a signature file automatically, call the function
 
     ;; Text or translated text
 
-    ("\\.txt$"
+    ("\\.txt$\\|\\.pln$"
      "text"	"plain"		nil
+     nil
+     "inline"		(("filename" . file))
+     )
+
+    ("\\.css$"
+     "text"	"css"		nil
+     nil
+     "inline"		(("filename" . file))
+     )
+
+    ("\\.csv$"
+     "text"	"csv"		nil
+     nil
+     "inline"		(("filename" . file))
+     )
+
+    ("\\.tex$\\|\\.latex$"
+     "text"	"x-latex"	nil
      nil
      "inline"		(("filename" . file))
      )
@@ -317,8 +386,28 @@ To insert a signature file automatically, call the function
      "text"	"plain"		nil	nil	nil	nil)
 
 
-    ;;  Octect binary text
+    ("\\.js$"
+     "application"	"javascript" nil
+     nil
+     "inline"	(("filename" . file))
+     )
 
+    
+    ;; Microsoft Project
+    ("\\.mpp$"
+     "application" "vnd.ms-project" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    
+    
+    ;; Microsoft Office (none-OpenXML)
+    
+    ("\\.rtf$"				; Rich text format
+     "application" "rtf" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
     ("\\.doc$"				;MS Word
      "application" "msword" nil
      "base64"
@@ -335,11 +424,154 @@ To insert a signature file automatically, call the function
      "attachment" (("filename" . file))
      )
 
-    ("\\.pln$"
-     "text"	"plain"		nil
-     nil
-     "inline"		(("filename" . file))
+    
+    ;; Microsoft Office (OpenXML)
+    
+                                        ; MS Word
+    ("\\.docm$"
+     "application" "vnd.ms-word.document.macroEnabled.12" nil
+     "base64"
+     "attachment" (("filename" . file))
      )
+    ("\\.docx$"
+     "application" "vnd.openxmlformats-officedocument.wordprocessingml.document" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.dotm$"
+     "application" "vnd.ms-word.template.macroEnabled.12" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.dotx$"
+     "application" "vnd.openxmlformats-officedocument.wordprocessingml.template" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    
+                                        ; MS Power Point
+    ("\\.potm$"
+     "application" "vnd.ms-powerpoint.template.macroEnabled.12" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.potx$"
+     "application" "vnd.openxmlformats-officedocument.presentationml.template" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.ppam$"
+     "application" "vnd.ms-powerpoint.addin.macroEnabled.12" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.ppsm$"
+     "application" "vnd.ms-powerpoint.slideshow.macroEnabled.12" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.ppsx$"
+     "application" "vnd.openxmlformats-officedocument.presentationml.slideshow" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.pptm$"
+     "application" "vnd.ms-powerpoint.presentation.macroEnabled.12" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.pptx$"
+     "application" "vnd.openxmlformats-officedocument.presentationml.presentation" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    
+                                        ; MS Excel
+    ("\\.xlam$"
+     "application" "vnd.ms-excel.addin.macroEnabled.12" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.xlsb$"
+     "application" "vnd.ms-excel.sheet.binary.macroEnabled.12" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.xlsm$"
+     "application" "vnd.ms-excel.sheet.macroEnabled.12" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.xlsx$"
+     "application" "vnd.openxmlformats-officedocument.spreadsheetml.sheet" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.xltm$"
+     "application" "vnd.ms-excel.template.macroEnabled.12" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.xltx$"
+     "application" "vnd.openxmlformats-officedocument.spreadsheetml.template" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    
+    
+    ;; Open Office
+    ("\\.odt$"
+     "application" "vnd.oasis.opendocument.text" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.ods$"
+     "application" "vnd.oasis.opendocument.spreadsheet" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.odg$"
+     "application" "vnd.oasis.opendocument.graphics" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.odf$"
+     "application" "vnd.oasis.opendocument.formula" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.odm$"
+     "application" "vnd.oasis.opendocument.text-master" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.odp$"
+     "application" "vnd.oasis.opendocument.presentation" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.ott$"
+     "application" "vnd.oasis.opendocument.text-template" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.ots$"
+     "application" "vnd.oasis.opendocument.spreadsheet-template" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.otp$"
+     "application" "vnd.oasis.opendocument.presentation-template" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    ("\\.otg$"
+     "application" "vnd.oasis.opendocument.graphics-template" nil
+     "base64"
+     "attachment" (("filename" . file))
+     )
+    
+ 	;; Postscript and PDF
     ("\\.ps$"
      "application" "postscript"	nil
      "base64"
@@ -368,6 +600,16 @@ To insert a signature file automatically, call the function
      "base64"
      "inline"		(("filename" . file))
      )
+    ("\\.bmp$"
+     "image"	"bmp"		nil
+     "base64"
+     "inline"		(("filename" . file))
+     )
+    ("\\.svg$"
+     "image"	"svg+xml"   nil
+     "base64"
+     "inline"		(("filename" . file))
+     )
     ("\\.tiff$"
      "image"	"tiff"		nil
      "base64"
@@ -393,16 +635,58 @@ To insert a signature file automatically, call the function
      "base64"
      "inline"		(("filename" . file))
      )
-    ("\\.au$"
+
+	;; Audio and video
+
+    ("\\.au$\\|\\.snd$"
      "audio"	"basic"		nil
      "base64"
      "attachment"		(("filename" . file))
      )
-    ("\\.mpg$"
+    ("\\.mp[234]\\|\\.m4[abp]$"
+     "audio"	"mpeg"		nil
+     "base64"
+     "attachment"		(("filename" . file))
+     )
+    ("\\.ogg$"
+     "audio"	"ogg"		nil
+     "base64"
+     "attachment"		(("filename" . file))
+     )
+    ("\\.ogg$"
+     "audio"	"vorbis"		nil
+     "base64"
+     "attachment"		(("filename" . file))
+     )
+    ("\\.mpg\\|\\.mpeg$"
      "video"	"mpeg"		nil
      "base64"
      "attachment"	(("filename" . file))
      )
+    ("\\.mp4\\|\\.m4v$"
+     "video"	"mp4"		nil
+     "base64"
+     "attachment"	(("filename" . file))
+     )
+    ("\\.qt$\\|\\.mov$"
+     "video"	"quicktime"		nil
+     "base64"
+     "attachment"	(("filename" . file))
+     )
+    ("\\.flv$"
+     "video"	"x-flv"		nil
+     "base64"
+     "attachment"	(("filename" . file))
+     )
+    ("\\.swf$"
+     "application"	"x-shockwave-flash"		nil
+     "base64"
+     "attachment"	(("filename" . file))
+     )
+
+
+	;; Compressed files
+
     ("\\.tar\\.gz$"
      "application" "octet-stream" (("type" . "tar+gzip"))
      "base64"
@@ -440,6 +724,11 @@ To insert a signature file automatically, call the function
      )
     ("\\.zip$"
      "application" "zip" nil
+     "base64"
+     "attachment"	(("filename" . file))
+     )
+    ("\\.7z$"
+     "application" "x-7z-compressed" nil
      "base64"
      "attachment"	(("filename" . file))
      )
