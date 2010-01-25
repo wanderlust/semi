@@ -1,4 +1,10 @@
+2010-01-25  Vitaly Mayatskikh  <v.mayatskih@gmail.com>
+
+	* mime-edit.el (mime-edit-insert-file): Ask user for MIME type and
+	subtype during interactive file insertion, not only encoding.
+
 2010-01-19  Vitaly Mayatskikh  <v.mayatskih@gmail.com>
+
 	* mime-view.el (toplevel): New defcustom: mime-view-buttons-visible
 	* mime-view.el (mime-display-entity): Use mime-view-buttons-visible
 	to control visibility of MIME buttons.
