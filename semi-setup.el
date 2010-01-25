@@ -79,6 +79,8 @@ it is used as hook to set."
 (if mime-setup-enable-pgp
     (eval-after-load "mime-view"
       '(progn
+	 (require 'mime-pgp)
+
 	 (mime-add-condition
 	  'preview '((type . application)(subtype . pgp)
 		     (message-button . visible)))
@@ -136,6 +138,12 @@ it is used as hook to set."
 	  '((type . application)(subtype . x-pkcs7-mime)
 	    (method . mime-view-application/pkcs7-mime))
 	  'strict "mime-pgp")
+
+	 (ctree-set-calist-strictly
+	  'mime-preview-condition
+	  '((type . multipart) (subtype . encrypted) ("protocol" . "application/pgp-encrypted")
+	    (body . visible)
+	    (body-presentation-method . mime-display-multipart/pgp-encrypted)))
 	 ))
   )
 

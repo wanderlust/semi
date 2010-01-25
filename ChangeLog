@@ -6,6 +6,11 @@
 
 	* mime-edit.el (mime-edit-insert-file): Ask user for MIME type and
 	subtype during interactive file insertion, not only encoding.
+	* mime-pgp.el (toplevel): New function:
+	`mime-display-multipart/pgp-encrypted'.
+	* pgg-def.el (toplevel): New custom: `pgg-decrypt-automatically'.
+	* semi-setup.el (toplevel): New mime-preview condtion for MIME
+	type "application/pgp-encrypted".
 
 2010-01-19  Vitaly Mayatskikh  <v.mayatskih@gmail.com>
 

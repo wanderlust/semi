@@ -58,6 +58,11 @@
   :group 'pgg
   :type 'boolean)
 
+(defcustom pgg-decrypt-automatically nil
+  "*If t, decrypt messages automatically."
+  :group 'pgg
+  :type 'boolean)
+
 (defvar pgg-messages-coding-system nil
   "Coding system used when reading from a PGP external process.")
 
