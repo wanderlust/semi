@@ -2,6 +2,8 @@
 
 	* mime-edit.el (mime-edit-encrypt-pgp-mime): Added Version tag for
 	pgp-encrypted messages to comply with RFC3156.
+	* mime-edit.el (mime-edit-pgp-enclose-buffer): Sign and encrypt
+	pgp message in conformance to RFC3156.
 
 2010-01-25  Harald Judt  <h.judt@gmx.at>
 

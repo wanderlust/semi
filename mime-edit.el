@@ -2891,19 +2891,12 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
 		   (match-end 0)
 		 )))
 	)
-    (if beg
-	(dolist (pgp-processing mime-edit-pgp-processing)
-	  (case pgp-processing
-	    (sign
-	     (mime-edit-enclose-pgp-signed-region 
-	      beg (point-max))
-	     )
-	    (encrypt
-	     (mime-edit-enclose-pgp-encrypted-region 
-	      beg (point-max))
-	     )))
+    (when beg
+      (if (memq 'sign mime-edit-pgp-processing)
+	  (mime-edit-enclose-pgp-signed-region beg (point-max)))
+      (if (memq 'encrypt mime-edit-pgp-processing)
+	  (mime-edit-enclose-pgp-encrypted-region beg (point-max)))
       )))
-
 
 ;;; @ split
 ;;;
