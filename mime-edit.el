@@ -2221,6 +2221,7 @@ Content-Transfer-Encoding: 7bit
 --%s
 Content-Type: application/pgp-encrypted
 
+Version: 1
 --%s
 Content-Type: application/octet-stream
 Content-Transfer-Encoding: 7bit

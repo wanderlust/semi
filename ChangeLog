@@ -1,3 +1,8 @@
+2010-02-07  David Maus <maus.david@gmail.com>
+
+	* mime-edit.el (mime-edit-encrypt-pgp-mime): Added Version tag for
+	pgp-encrypted messages to comply with RFC3156.
+
 2010-01-25  Harald Judt  <h.judt@gmx.at>
 
 	* mime-edit.el (mime-content-types): Added more MIME types.
