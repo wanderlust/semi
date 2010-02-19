@@ -1,3 +1,7 @@
+2010-02-19  Heinz Diehl <htd@fancy-poultry.org>
+
+	* mime-edit.el (mime-edit-set-encrypt): Fix typo.
+
 2010-02-07  David Maus <maus.david@gmail.com>
 
 	* mime-edit.el (mime-edit-encrypt-pgp-mime): Added Version tag for

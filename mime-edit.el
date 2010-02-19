@@ -2877,11 +2877,11 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
 	    (setq mime-edit-pgp-processing 
 		  (nconc mime-edit-pgp-processing 
 			 (copy-sequence '(encrypt)))))
-	(message "This message will be encrypt.")
+	(message "This message will be encrypted.")
 	)
     (setq mime-edit-pgp-processing
 	  (delq 'encrypt mime-edit-pgp-processing))
-    (message "This message will not be encrypt.")
+    (message "This message will not be encrypted.")
     ))
 
 (defun mime-edit-pgp-enclose-buffer ()
