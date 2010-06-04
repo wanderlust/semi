@@ -27,6 +27,13 @@
 
 ;;    This module is based on
 
+;;	[OpenPGP] RFC 4880: "OpenPGP Message Format"
+;;	    by Derek Atkins <derek@ihtfp.com>,
+;;          Jon Callas <jon@callas.org>, Lutz Donnerhacke <lutz@iks-jena.de>,
+;;          Hal Finney <hal@finney.org>, David Shaw <dshaw@jabberwocky.com>
+;;          and Rodney Thayer <rodney@canola-jones.com>
+;;	    (2007/11)
+;;
 ;;	[OpenPGP] RFC 2440: "OpenPGP Message Format"
 ;;	    by John W. Noerenberg, II <jwn2@qualcomm.com>,
 ;;          Jon Callas <jon@pgp.com>, Lutz Donnerhacke <lutz@iks-jena.de>,
@@ -54,13 +61,15 @@
   :type 'alist)
 
 (defcustom pgg-parse-symmetric-key-algorithm-alist
-  '((1 . IDEA) (2 . 3DES) (4 . CAST5) (5 . SAFER-SK128))
+  '((1 . IDEA) (2 . 3DES) (3 . CAST5) (4 . BLOWFISH) (5 . SAFER-SK128)
+    (7 . AES) (8 . AES192) (9. AES256) (10 . TWOFISH))
   "Alist of the assigned number to the simmetric key algorithm."
   :group 'pgg-parse
   :type 'alist)
 
 (defcustom pgg-parse-hash-algorithm-alist
-  '((1 . MD5) (2 . SHA1) (3 . RIPEMD160) (5 . MD2))
+  '((1 . MD5) (2 . SHA1) (3 . RIPEMD160) (5 . MD2)
+    (8 . SHA256) (9 . SHA384) (10 . SHA512) (11 . SHA224))
   "Alist of the assigned number to the cryptographic hash algorithm."
   :group 'pgg-parse
   :type 'alist)
@@ -68,7 +77,8 @@
 (defcustom pgg-parse-compression-algorithm-alist
   '((0 . nil); Uncompressed
     (1 . ZIP)
-    (2 . ZLIB))
+    (2 . ZLIB)
+    (3 . BZip2))
   "Alist of the assigned number to the compression algorithm."
   :group 'pgg-parse
   :type 'alist)
@@ -82,11 +92,13 @@
     (18 . "Casual certification of a User ID and Public Key packet")
     (19 . "Positive certification of a User ID and Public Key packet")
     (24 . "Subkey Binding Signature")
+    (25 . "Primary Key Binding Signature")
     (31 . "Signature directly on a key")
     (32 . "Key revocation signature")
     (40 . "Subkey revocation signature")
     (48 . "Certification revocation signature")
-    (64 . "Timestamp signature."))
+    (64 . "Timestamp signature")
+    (80 . "Third-Party Confirmation signature"))
   "Alist of the assigned number to the signature type."
   :group 'pgg-parse
   :type 'alist)

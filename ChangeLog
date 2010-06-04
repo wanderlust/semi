@@ -1,3 +1,11 @@
+2010-06-04  David Maus  <dmaus@ictsoc.de>
+
+	* pgg-parse.el: Add reference to RFC4880.
+	(pgg-parse-symmetric-key-algorithm-alist)
+	(pgg-parse-hash-algorithm-alist)
+	(pgg-parse-compression-algorithm-alist)
+	(pgg-parse-signature-type-alist): Update lists to RFC4880.
+
 2010-02-19  Heinz Diehl <htd@fancy-poultry.org>
 
 	* mime-edit.el (mime-edit-set-encrypt): Fix typo.
