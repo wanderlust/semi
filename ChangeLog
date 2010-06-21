@@ -1,3 +1,8 @@
+2010-06-21  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* SEMI-CFG: Add emu subdirectory to load-path when LISPDIR is
+	specified.  Suggested by Kazuhiro NISHIYAMA <zn@mbf.nifty.com>.
+
 2010-06-04  David Maus  <dmaus@ictsoc.de>
 
 	* pgg-parse.el: Add reference to RFC4880.
