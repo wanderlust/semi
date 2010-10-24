@@ -427,33 +427,34 @@ mother-buffer."
 	  mime-acting-situation-example-list)
       (let ((file mime-situation-examples-file)
 	    print-length print-level)
-	(with-temp-buffer
-	  (insert ";;; " (file-name-nondirectory file) "\n")
-	  (insert "\n;; This file is generated automatically by "
-		  mime-view-version "\n\n")
-	  (insert ";;; Code:\n\n")
-	  (if mime-preview-situation-example-list
-	      (pp `(setq mime-preview-situation-example-list
-			 ',mime-preview-situation-example-list)
-		  (current-buffer)))
-	  (if mime-acting-situation-example-list
-	      (pp `(setq mime-acting-situation-example-list
-			 ',mime-acting-situation-example-list)
-		  (current-buffer)))
-	  (insert "\n;;; "
-		  (file-name-nondirectory file)
-		  " ends here.\n")
-	  (static-cond
-	   ((boundp 'buffer-file-coding-system)
-	    (setq buffer-file-coding-system
-		  mime-situation-examples-file-coding-system))
-	   ((boundp 'file-coding-system)
-	    (setq file-coding-system
-		  mime-situation-examples-file-coding-system)))
-	  ;; (setq buffer-file-coding-system
-	  ;;       mime-situation-examples-file-coding-system)
-	  (setq buffer-file-name file)
-	  (save-buffer)))))
+        (when file
+          (with-temp-buffer
+            (insert ";;; " (file-name-nondirectory file) "\n")
+            (insert "\n;; This file is generated automatically by "
+                    mime-view-version "\n\n")
+            (insert ";;; Code:\n\n")
+            (if mime-preview-situation-example-list
+                (pp `(setq mime-preview-situation-example-list
+                           ',mime-preview-situation-example-list)
+                    (current-buffer)))
+            (if mime-acting-situation-example-list
+                (pp `(setq mime-acting-situation-example-list
+                           ',mime-acting-situation-example-list)
+                    (current-buffer)))
+            (insert "\n;;; "
+                    (file-name-nondirectory file)
+                    " ends here.\n")
+            (static-cond
+             ((boundp 'buffer-file-coding-system)
+              (setq buffer-file-coding-system
+                    mime-situation-examples-file-coding-system))
+             ((boundp 'file-coding-system)
+              (setq file-coding-system
+                    mime-situation-examples-file-coding-system)))
+            ;; (setq buffer-file-coding-system
+            ;;       mime-situation-examples-file-coding-system)
+            (setq buffer-file-name file)
+            (save-buffer))))))
 
 (add-hook 'kill-emacs-hook 'mime-save-situation-examples)
 

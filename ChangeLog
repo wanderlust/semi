@@ -1,3 +1,8 @@
+2010-10-24  Vitaly Mayatskikh  <v.mayatskih@gmail.com>
+
+	* mime-view.el (mime-save-situation-examples): Don't fail when
+	mime-situation-examples-file is nil.
+
 2010-06-21  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* SEMI-CFG: Add emu subdirectory to load-path when LISPDIR is
