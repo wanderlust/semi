@@ -882,7 +882,8 @@ Each elements are regexp of field-name.")
     ((text . plain)    . 1)
     (t . 0))
   "Alist MEDIA-TYPE vs corresponding score.
-MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
+MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default.
+Score is integer or function which receives entity and returns integer."
   :group 'mime-view
   :type '(repeat (cons (choice :tag "Media-Type"
 			       (cons :tag "Type/Subtype"
@@ -890,7 +891,8 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 				     (symbol :tag "Subtype"))
 			       (symbol :tag "Type")
 			       (const :tag "Default" t))
-		       integer)))
+		       (choice (integer :tag "score")
+			       (function :tag "function")))))
 
 (defun mime-display-multipart/alternative (entity situation)
   (let* ((children (mime-entity-children entity))
@@ -925,6 +927,8 @@ MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default."
 					t
 					mime-view-type-subtype-score-alist)
 				       ))))
+			     (when (functionp score)
+			       (setq score (funcall score child)))
 			     (if (> score max-score)
 				 (setq p i
 				       max-score score)
