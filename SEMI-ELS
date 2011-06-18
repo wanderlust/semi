@@ -6,8 +6,7 @@
 
 (setq semi-modules-to-compile
       '(signature
-	pgg-def pgg pgg-parse pgg-gpg pgg-pgp5 pgg-pgp mime-pgp
-	smime
+	mime-epg
 	semi-def mime-view mime-play mime-partial postpet
 	mime-edit
 	semi-setup mail-mime-setup))
@@ -28,6 +27,7 @@
 	     )))
 	'((bbdb		mime-bbdb)
 	  (w3		mime-w3)
+	  (vcard	mime-vcard)
 	  ))
 
 (if (or (string-match "XEmacs" emacs-version)

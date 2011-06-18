@@ -1,3 +1,133 @@
+2011-06-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el (mime-transfer-level): Fix wrong docstring.
+	(mime-file-types): Set 'name' parameter of Content-Type field and
+	'filename' parameter of Content-Disposition field.
+
+2011-06-08  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el (mime-edit-insert-file): Encode a filename when
+	FLIM does not support non-ASCII filename.
+	(mime-edit-decode-single-part-in-buffer): Keep 'name' parameter of
+	Content-Type field.  Unfold and decode it and 'filename' parameter
+	of Content-Disposition field.
+
+2010-12-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-view.el (mime-display-message): Do not hide button when
+	first entity is neither text nor multipart.
+
+2010-12-10  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el (mime-edit-decode-single-part-in-buffer): Keep
+	Content-Id field.
+
+2010-12-09  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-view.el (mime-preview-fill-flowed-text-delsp): New
+	variable.
+	(mime-display-text/plain): Handle "delsp=yes" if
+	mime-preview-fill-flowed-text-delsp's value is non-nil.
+
+2010-12-04  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el (mime-edit-pgp-get-signers): Widen before calling
+	std11-field-body().  Check return value from std11-field-body().
+
+2010-12-04  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el (mime-edit-pgp-get-signers): New function.
+	(mime-edit-sign-pgp-mime, mime-edit-sign-pgp-nomime): Use it.
+
+2010-12-02  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el (mime-edit-sign-pgp-mime): Fix "From:" header
+	string is ignored when non-verbose mode and
+	mime-edit-pgp-signers's value is nil.  Refined.
+	(mime-edit-sign-pgp-nomime): Respect "From:" header string.
+	Respect mime-edit-pgp-verbose's value.  Require epa.el.
+
+2010-12-01  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* semi-def.el (mime-user-interface-product): Rename product name
+	from SEMI to SEMI-EPG.
+
+	* mime-edit.el (mime-edit-pgp-user-id): Removed.
+	(mime-edit-text-coding, mime-edit-sign-pgp-nomime): New functions.
+
+2010-11-29  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* SEMI-MK (install-execs): Removed.
+
+	* SEMI-CFG (METHOD_SRC_DIR, METHODS): Removed.
+
+2010-11-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el: EasyPG support is merged from
+	emiko-1.14.1-for-epg-0.0.13.  All PGG supports are abolished.
+	(smime-output-buffer, smime-errors-buffer): Abolished.
+	(mime-edit-pgp-verbose, mime-edit-pgp-signers)
+	(mime-edit-pgp-encrypt-to-self): New variables.
+	(mime-edit-user-agent-value): Include EasyPG version.
+	(mime-edit-mode-enclosure-map): Map keys for
+	mime-edit-mode-enclosure-map and
+	mime-edit-enclose-smime-encrypted-region.
+	(mime-edit-sign-pgp-mime, mime-edit-encrypt-pgp-mime)
+	(mime-edit-convert-lbt-string, mime-edit-sign-smime)
+	(mime-edit-encrypt-smime, mime-edit-insert-key)
+	(mime-edit-decode-multipart-in-buffer): Merged or ported from
+	emiko-emiko-1.14.1-for-epg-0.0.13.
+	(mime-edit-sign-pgp-kazu, mime-edit-encrypt-pgp-kazu)
+	(mime-edit-enclose-kazu-signed-region)
+	(mime-edit-enclose-kazu-encrypted-region): Abolished.
+
+2010-11-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-vcard.el (mime-vcard-standard-filters): Abolished.
+	(mime-vcard-filter-quoted-printable): Abolished.
+	(mime-display-text/x-vcard): Likewise.  Use vcard-pretty-print().
+
+2010-11-27  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-epg.el: New module.  Merged and renamed from mime-pgp.el of
+	emiko-1.14.1-for-epg-0.0.13.
+
+	* SEMI-ELS (semi-modules-to-compile): Add mime-epg.  Remove
+	mime-pgp.  PGG supports for verifing and decrypting are abolished.
+
+	* mime-pgp.el: Removed.
+
+	* semi-setup.el: Set up to use it.
+	(mime-setup-enable-pgp): Abolished.
+	(mime-setup-enable-epg): New variable.
+
+
+2000-08-22   Daiki Ueno  <ueno@unixuser.org>
+
+	* SEMI-ELS: Compile `mime-vcard' only when vcard.el is available.
+
+2000-08-21   Daiki Ueno  <ueno@unixuser.org>
+
+	* mime-vcard.el: New module.
+
+	* semi-setup.el: Set up for "text/x-vcard".
+	(mime-setup-enable-vcard): New variable.
+
+	* mime-view.el: Add setting for 'vcard-parse-string',
+	`vcard-format-string' and `vcard-filter-html' to autoload "vcard".
+	Set up for "text/x-vcard".
+	Add setting for	`fill-flowed' to autoload "flow-fill".
+	(mime-display-text/plain): Handle "format=flowed".
+	(mime-preview-fill-flowed-text): New variable.
+
+
+2010-11-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* semi-setup.el: Support emacs-w3m.
+	(mime-html-previewer-alist): New variable.
+	(mime-setup-enable-inline-html): Refer to it.  Support other html
+	renderers.
+
 2010-11-10  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-view.el (mime-view-type-subtype-score-alist): Accept

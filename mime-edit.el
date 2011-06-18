@@ -115,22 +115,13 @@
 (require 'signature)
 (require 'alist)
 (require 'invisible)
-(require 'pgg-def)
-(require 'pgg-parse)
 
-(autoload 'pgg-encrypt-region "pgg"
-  "PGP encryption of current region." t)
-(autoload 'pgg-sign-region "pgg"
-  "PGP signature of current region." t)
-(autoload 'pgg-insert-key "pgg"
-  "Insert PGP public key at point." t)
-(autoload 'smime-encrypt-region "smime"
-  "S/MIME encryption of current region.")
-(autoload 'smime-sign-region "smime"
-  "S/MIME signature of current region.")
-(defvar smime-output-buffer)
-(defvar smime-errors-buffer)
-
+(autoload 'eword-encode-string "eword-encode")
+(autoload 'eword-decode-and-unfold-unstructured-field-body "eword-decode")
+(autoload 'epg-make-context "epg"
+  "Return a context object.")
+(autoload 'epa-select-keys "epa")
+(autoload 'epg-configuration "epg-config")
 
 ;;; @ version
 ;;;
@@ -308,438 +299,450 @@ To insert a signature file automatically, call the function
   "*Alist of content-type, subtype, parameters and its values.")
 
 (defcustom mime-file-types
-  '(
+  (eval-when-compile
+    (mapcar
+     (lambda (list)
+       (let ((name  '(nil nil nil "name" nil nil "filename")))
+	 (mapcar (lambda (elt)
+		   (prog1
+		       (if (and (car name)
+				(null (assoc (car name) elt)))
+			   (nreverse `((,(car name) . file)
+				       . ,(reverse elt)))
+			 elt)
+		     (setq name (cdr name))))
+		 list)))
+     '(
+       ;; Programming languages
+       ("\\.cc$"
+	"application" "octet-stream" (("type" . "C++"))
+	"7bit"
+	"attachment"	nil
+	)
 
-    ;; Programming languages
+       ("\\.el$"
+	"application" "octet-stream" (("type" . "emacs-lisp"))
+	"7bit"
+	"attachment"	nil
+	)
 
-    ("\\.cc$"
-     "application" "octet-stream" (("type" . "C++"))
-     "7bit"
-     "attachment"	(("filename" . file))
-     )
+       ("\\.lsp$"
+	"application" "octet-stream" (("type" . "common-lisp"))
+	"7bit"
+	"attachment"	nil
+	)
 
-    ("\\.el$"
-     "application" "octet-stream" (("type" . "emacs-lisp"))
-     "7bit"
-     "attachment"	(("filename" . file))
-     )
+       ("\\.pl$"
+	"application" "octet-stream" (("type" . "perl"))
+	"7bit"
+	"attachment"	nil
+	)
 
-    ("\\.lsp$"
-     "application" "octet-stream" (("type" . "common-lisp"))
-     "7bit"
-     "attachment"	(("filename" . file))
-     )
+       ;; Text or translated text
 
-    ("\\.pl$"
-     "application" "octet-stream" (("type" . "perl"))
-     "7bit"
-     "attachment"	(("filename" . file))
-     )
+       ("\\.txt$\\|\\.pln$"
+	"text"	"plain"		nil
+	nil
+	"inline"		nil
+	)
 
-    ;; Text or translated text
+       ("\\.css$"
+	"text"	"css"		nil
+	nil
+	"inline"		nil
+	)
 
-    ("\\.txt$\\|\\.pln$"
-     "text"	"plain"		nil
-     nil
-     "inline"		(("filename" . file))
-     )
+       ("\\.csv$"
+	"text"	"csv"		nil
+	nil
+	"inline"		nil
+	)
 
-    ("\\.css$"
-     "text"	"css"		nil
-     nil
-     "inline"		(("filename" . file))
-     )
+       ("\\.tex$\\|\\.latex$"
+	"text"	"x-latex"	nil
+	nil
+	"inline"		nil
+	)
 
-    ("\\.csv$"
-     "text"	"csv"		nil
-     nil
-     "inline"		(("filename" . file))
-     )
+       ;; .rc : procmail modules pm-xxxx.rc
+       ;; *rc : other resource files
 
-    ("\\.tex$\\|\\.latex$"
-     "text"	"x-latex"	nil
-     nil
-     "inline"		(("filename" . file))
-     )
+       ("\\.\\(rc\\|lst\\|log\\|sql\\|mak\\)$\\|\\..*rc$"
+	"text"	"plain"		nil
+	nil
+	"attachment"	nil
+	)
 
-     ;; .rc : procmail modules pm-xxxx.rc
-     ;; *rc : other resource files
+       ("\\.html$"
+	"text"	"html"		nil
+	nil
+	nil		nil)
 
-    ("\\.\\(rc\\|lst\\|log\\|sql\\|mak\\)$\\|\\..*rc$"
-     "text"	"plain"		nil
-     nil
-     "attachment"	(("filename" . file))
-     )
+       ("\\.diff$\\|\\.patch$"
+	"application" "octet-stream" (("type" . "patch"))
+	nil
+	"attachment"	nil
+	)
 
-    ("\\.html$"
-     "text"	"html"		nil
-     nil
-     nil		nil)
-
-    ("\\.diff$\\|\\.patch$"
-     "application" "octet-stream" (("type" . "patch"))
-     nil
-     "attachment"	(("filename" . file))
-     )
-
-    ("\\.signature"
-     "text"	"plain"		nil	nil	nil	nil)
+       ("\\.signature"
+	"text"	"plain"		nil	nil	nil	nil)
 
 
-    ("\\.js$"
-     "application"	"javascript" nil
-     nil
-     "inline"	(("filename" . file))
-     )
+       ("\\.js$"
+	"application"	"javascript" nil
+	nil
+	"inline"	nil
+	)
 
-    
-    ;; Microsoft Project
-    ("\\.mpp$"
-     "application" "vnd.ms-project" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    
-    
-    ;; Microsoft Office (none-OpenXML)
-    
-    ("\\.rtf$"				; Rich text format
-     "application" "rtf" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.doc$"				;MS Word
-     "application" "msword" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.xls$"				; MS Excel
-     "application" "vnd.ms-excel" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.ppt$"				; MS Power Point
-     "application" "vnd.ms-powerpoint" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
+       
+       ;; Microsoft Project
+       ("\\.mpp$"
+	"application" "vnd.ms-project" nil
+	"base64"
+	"attachment" nil
+	)
+       
+       
+       ;; Microsoft Office (none-OpenXML)
+       
+       ("\\.rtf$"				; Rich text format
+	"application" "rtf" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.doc$"				;MS Word
+	"application" "msword" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.xls$"				; MS Excel
+	"application" "vnd.ms-excel" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.ppt$"				; MS Power Point
+	"application" "vnd.ms-powerpoint" nil
+	"base64"
+	"attachment" nil
+	)
 
-    
-    ;; Microsoft Office (OpenXML)
-    
+       
+       ;; Microsoft Office (OpenXML)
+       
                                         ; MS Word
-    ("\\.docm$"
-     "application" "vnd.ms-word.document.macroEnabled.12" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.docx$"
-     "application" "vnd.openxmlformats-officedocument.wordprocessingml.document" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.dotm$"
-     "application" "vnd.ms-word.template.macroEnabled.12" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.dotx$"
-     "application" "vnd.openxmlformats-officedocument.wordprocessingml.template" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    
+       ("\\.docm$"
+	"application" "vnd.ms-word.document.macroEnabled.12" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.docx$"
+	"application" "vnd.openxmlformats-officedocument.wordprocessingml.document" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.dotm$"
+	"application" "vnd.ms-word.template.macroEnabled.12" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.dotx$"
+	"application" "vnd.openxmlformats-officedocument.wordprocessingml.template" nil
+	"base64"
+	"attachment" nil
+	)
+       
                                         ; MS Power Point
-    ("\\.potm$"
-     "application" "vnd.ms-powerpoint.template.macroEnabled.12" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.potx$"
-     "application" "vnd.openxmlformats-officedocument.presentationml.template" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.ppam$"
-     "application" "vnd.ms-powerpoint.addin.macroEnabled.12" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.ppsm$"
-     "application" "vnd.ms-powerpoint.slideshow.macroEnabled.12" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.ppsx$"
-     "application" "vnd.openxmlformats-officedocument.presentationml.slideshow" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.pptm$"
-     "application" "vnd.ms-powerpoint.presentation.macroEnabled.12" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.pptx$"
-     "application" "vnd.openxmlformats-officedocument.presentationml.presentation" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    
+       ("\\.potm$"
+	"application" "vnd.ms-powerpoint.template.macroEnabled.12" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.potx$"
+	"application" "vnd.openxmlformats-officedocument.presentationml.template" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.ppam$"
+	"application" "vnd.ms-powerpoint.addin.macroEnabled.12" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.ppsm$"
+	"application" "vnd.ms-powerpoint.slideshow.macroEnabled.12" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.ppsx$"
+	"application" "vnd.openxmlformats-officedocument.presentationml.slideshow" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.pptm$"
+	"application" "vnd.ms-powerpoint.presentation.macroEnabled.12" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.pptx$"
+	"application" "vnd.openxmlformats-officedocument.presentationml.presentation" nil
+	"base64"
+	"attachment" nil
+	)
+       
                                         ; MS Excel
-    ("\\.xlam$"
-     "application" "vnd.ms-excel.addin.macroEnabled.12" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.xlsb$"
-     "application" "vnd.ms-excel.sheet.binary.macroEnabled.12" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.xlsm$"
-     "application" "vnd.ms-excel.sheet.macroEnabled.12" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.xlsx$"
-     "application" "vnd.openxmlformats-officedocument.spreadsheetml.sheet" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.xltm$"
-     "application" "vnd.ms-excel.template.macroEnabled.12" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.xltx$"
-     "application" "vnd.openxmlformats-officedocument.spreadsheetml.template" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    
-    
-    ;; Open Office
-    ("\\.odt$"
-     "application" "vnd.oasis.opendocument.text" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.ods$"
-     "application" "vnd.oasis.opendocument.spreadsheet" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.odg$"
-     "application" "vnd.oasis.opendocument.graphics" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.odf$"
-     "application" "vnd.oasis.opendocument.formula" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.odm$"
-     "application" "vnd.oasis.opendocument.text-master" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.odp$"
-     "application" "vnd.oasis.opendocument.presentation" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.ott$"
-     "application" "vnd.oasis.opendocument.text-template" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.ots$"
-     "application" "vnd.oasis.opendocument.spreadsheet-template" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.otp$"
-     "application" "vnd.oasis.opendocument.presentation-template" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    ("\\.otg$"
-     "application" "vnd.oasis.opendocument.graphics-template" nil
-     "base64"
-     "attachment" (("filename" . file))
-     )
-    
- 	;; Postscript and PDF
-    ("\\.ps$"
-     "application" "postscript"	nil
-     "base64"
-     "attachment"	(("filename" . file))
-     )
-    ("\\.pdf$"
-     "application" "pdf"	nil
-     "base64"
-     "attachment"	(("filename" . file))
-     )
+       ("\\.xlam$"
+	"application" "vnd.ms-excel.addin.macroEnabled.12" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.xlsb$"
+	"application" "vnd.ms-excel.sheet.binary.macroEnabled.12" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.xlsm$"
+	"application" "vnd.ms-excel.sheet.macroEnabled.12" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.xlsx$"
+	"application" "vnd.openxmlformats-officedocument.spreadsheetml.sheet" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.xltm$"
+	"application" "vnd.ms-excel.template.macroEnabled.12" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.xltx$"
+	"application" "vnd.openxmlformats-officedocument.spreadsheetml.template" nil
+	"base64"
+	"attachment" nil
+	)
+       
+       
+       ;; Open Office
+       ("\\.odt$"
+	"application" "vnd.oasis.opendocument.text" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.ods$"
+	"application" "vnd.oasis.opendocument.spreadsheet" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.odg$"
+	"application" "vnd.oasis.opendocument.graphics" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.odf$"
+	"application" "vnd.oasis.opendocument.formula" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.odm$"
+	"application" "vnd.oasis.opendocument.text-master" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.odp$"
+	"application" "vnd.oasis.opendocument.presentation" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.ott$"
+	"application" "vnd.oasis.opendocument.text-template" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.ots$"
+	"application" "vnd.oasis.opendocument.spreadsheet-template" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.otp$"
+	"application" "vnd.oasis.opendocument.presentation-template" nil
+	"base64"
+	"attachment" nil
+	)
+       ("\\.otg$"
+	"application" "vnd.oasis.opendocument.graphics-template" nil
+	"base64"
+	"attachment" nil
+	)
+       
+       ;; Postscript and PDF
+       ("\\.ps$"
+	"application" "postscript"	nil
+	"base64"
+	"attachment"	nil
+	)
+       ("\\.pdf$"
+	"application" "pdf"	nil
+	"base64"
+	"attachment"	nil
+	)
 
-    ;;  Pure binary
+       ;;  Pure binary
 
-    ("\\.jpg$\\|\\.jpeg$"
-     "image"	"jpeg"		nil
-     "base64"
-     "inline"		(("filename" . file))
-     )
-    ("\\.gif$"
-     "image"	"gif"		nil
-     "base64"
-     "inline"		(("filename" . file))
-     )
-    ("\\.png$"
-     "image"	"png"		nil
-     "base64"
-     "inline"		(("filename" . file))
-     )
-    ("\\.bmp$"
-     "image"	"bmp"		nil
-     "base64"
-     "inline"		(("filename" . file))
-     )
-    ("\\.svg$"
-     "image"	"svg+xml"   nil
-     "base64"
-     "inline"		(("filename" . file))
-     )
-    ("\\.tiff$"
-     "image"	"tiff"		nil
-     "base64"
-     "inline"		(("filename" . file))
-     )
-    ("\\.pic$"
-     "image"	"x-pic"		nil
-     "base64"
-     "inline"		(("filename" . file))
-     )
-    ("\\.mag$"
-     "image"	"x-mag"		nil
-     "base64"
-     "inline"		(("filename" . file))
-     )
-    ("\\.xbm$"
-     "image"	"x-xbm"		nil
-     "base64"
-     "inline"		(("filename" . file))
-     )
-    ("\\.xwd$"
-     "image"	"x-xwd"		nil
-     "base64"
-     "inline"		(("filename" . file))
-     )
+       ("\\.jpg$\\|\\.jpeg$"
+	"image"	"jpeg"		nil
+	"base64"
+	"inline"		nil
+	)
+       ("\\.gif$"
+	"image"	"gif"		nil
+	"base64"
+	"inline"		nil
+	)
+       ("\\.png$"
+	"image"	"png"		nil
+	"base64"
+	"inline"		nil
+	)
+       ("\\.bmp$"
+	"image"	"bmp"		nil
+	"base64"
+	"inline"		nil
+	)
+       ("\\.svg$"
+	"image"	"svg+xml"   nil
+	"base64"
+	"inline"		nil
+	)
+       ("\\.tiff$"
+	"image"	"tiff"		nil
+	"base64"
+	"inline"		nil
+	)
+       ("\\.pic$"
+	"image"	"x-pic"		nil
+	"base64"
+	"inline"		nil
+	)
+       ("\\.mag$"
+	"image"	"x-mag"		nil
+	"base64"
+	"inline"		nil
+	)
+       ("\\.xbm$"
+	"image"	"x-xbm"		nil
+	"base64"
+	"inline"		nil
+	)
+       ("\\.xwd$"
+	"image"	"x-xwd"		nil
+	"base64"
+	"inline"		nil
+	)
 
-	;; Audio and video
+       ;; Audio and video
 
-    ("\\.au$\\|\\.snd$"
-     "audio"	"basic"		nil
-     "base64"
-     "attachment"		(("filename" . file))
-     )
-    ("\\.mp[234]\\|\\.m4[abp]$"
-     "audio"	"mpeg"		nil
-     "base64"
-     "attachment"		(("filename" . file))
-     )
-    ("\\.ogg$"
-     "audio"	"ogg"		nil
-     "base64"
-     "attachment"		(("filename" . file))
-     )
-    ("\\.ogg$"
-     "audio"	"vorbis"		nil
-     "base64"
-     "attachment"		(("filename" . file))
-     )
-    ("\\.mpg\\|\\.mpeg$"
-     "video"	"mpeg"		nil
-     "base64"
-     "attachment"	(("filename" . file))
-     )
-    ("\\.mp4\\|\\.m4v$"
-     "video"	"mp4"		nil
-     "base64"
-     "attachment"	(("filename" . file))
-     )
-    ("\\.qt$\\|\\.mov$"
-     "video"	"quicktime"		nil
-     "base64"
-     "attachment"	(("filename" . file))
-     )
-    ("\\.flv$"
-     "video"	"x-flv"		nil
-     "base64"
-     "attachment"	(("filename" . file))
-     )
-    ("\\.swf$"
-     "application"	"x-shockwave-flash"		nil
-     "base64"
-     "attachment"	(("filename" . file))
-     )
+       ("\\.au$\\|\\.snd$"
+	"audio"	"basic"		nil
+	"base64"
+	"attachment"		nil
+	)
+       ("\\.mp[234]\\|\\.m4[abp]$"
+	"audio"	"mpeg"		nil
+	"base64"
+	"attachment"		nil
+	)
+       ("\\.ogg$"
+	"audio"	"ogg"		nil
+	"base64"
+	"attachment"		nil
+	)
+       ("\\.ogg$"
+	"audio"	"vorbis"		nil
+	"base64"
+	"attachment"		nil
+	)
+       ("\\.mpg\\|\\.mpeg$"
+	"video"	"mpeg"		nil
+	"base64"
+	"attachment"	nil
+	)
+       ("\\.mp4\\|\\.m4v$"
+	"video"	"mp4"		nil
+	"base64"
+	"attachment"	nil
+	)
+       ("\\.qt$\\|\\.mov$"
+	"video"	"quicktime"		nil
+	"base64"
+	"attachment"	nil
+	)
+       ("\\.flv$"
+	"video"	"x-flv"		nil
+	"base64"
+	"attachment"	nil
+	)
+       ("\\.swf$"
+	"application"	"x-shockwave-flash"		nil
+	"base64"
+	"attachment"	nil
+	)
 
 
-	;; Compressed files
+       ;; Compressed files
 
-    ("\\.tar\\.gz$"
-     "application" "octet-stream" (("type" . "tar+gzip"))
-     "base64"
-     "attachment"	(("filename" . file))
-     )
-    ("\\.tgz$"
-     "application" "octet-stream" (("type" . "tar+gzip"))
-     "base64"
-     "attachment"	(("filename" . file))
-     )
-    ("\\.tar\\.Z$"
-     "application" "octet-stream" (("type" . "tar+compress"))
-     "base64"
-     "attachment"	(("filename" . file))
-     )
-    ("\\.taz$"
-     "application" "octet-stream" (("type" . "tar+compress"))
-     "base64"
-     "attachment"	(("filename" . file))
-     )
-    ("\\.gz$"
-     "application" "octet-stream" (("type" . "gzip"))
-     "base64"
-     "attachment"	(("filename" . file))
-     )
-    ("\\.Z$"
-     "application" "octet-stream" (("type" . "compress"))
-     "base64"
-     "attachment"	(("filename" . file))
-     )
-    ("\\.lzh$"
-     "application" "octet-stream" (("type" . "lha"))
-     "base64"
-     "attachment"	(("filename" . file))
-     )
-    ("\\.zip$"
-     "application" "zip" nil
-     "base64"
-     "attachment"	(("filename" . file))
-     )
-    ("\\.7z$"
-     "application" "x-7z-compressed" nil
-     "base64"
-     "attachment"	(("filename" . file))
-     )
+       ("\\.tar\\.gz$"
+	"application" "octet-stream" (("type" . "tar+gzip"))
+	"base64"
+	"attachment"	nil
+	)
+       ("\\.tgz$"
+	"application" "octet-stream" (("type" . "tar+gzip"))
+	"base64"
+	"attachment"	nil
+	)
+       ("\\.tar\\.Z$"
+	"application" "octet-stream" (("type" . "tar+compress"))
+	"base64"
+	"attachment"	nil
+	)
+       ("\\.taz$"
+	"application" "octet-stream" (("type" . "tar+compress"))
+	"base64"
+	"attachment"	nil
+	)
+       ("\\.gz$"
+	"application" "octet-stream" (("type" . "gzip"))
+	"base64"
+	"attachment"	nil
+	)
+       ("\\.Z$"
+	"application" "octet-stream" (("type" . "compress"))
+	"base64"
+	"attachment"	nil
+	)
+       ("\\.lzh$"
+	"application" "octet-stream" (("type" . "lha"))
+	"base64"
+	"attachment"	nil
+	)
+       ("\\.zip$"
+	"application" "zip" nil
+	"base64"
+	"attachment"	nil
+	)
+       ("\\.7z$"
+	"application" "x-7z-compressed" nil
+	"base64"
+	"attachment"	nil
+	)
 
-    ;; Rest
+       ;; Rest
 
-    (".*"
-     "application" "octet-stream" nil
-     nil
-     "attachment"	(("filename" . file)))
-    )
+       (".*"
+	"application" "octet-stream" nil
+	nil
+	"attachment"	nil)
+       )
+     ))
   "*Alist of file name, types, parameters, and default encoding.
 If encoding is nil, it is determined from its contents."
   :type `(repeat
@@ -817,7 +820,7 @@ If encoding is nil, it is determined from its contents."
     ))
 
 (defvar mime-transfer-level 7
-  "*A number of network transfer level.  It should be bigger than 7.")
+  "*A number of network transfer level.  It should be 7 or bigger.")
 (make-variable-buffer-local 'mime-transfer-level)
 
 (defsubst mime-encoding-name (transfer-level &optional not-omit)
@@ -889,6 +892,28 @@ If it is not specified for a major-mode,
 
 (defvar mime-edit-news-reply-mode-server-running nil)
 
+;;; @@ about PGP/MIME
+;;;
+
+(defgroup mime-edit-pgp nil
+  "MIME edit mode (PGP/MIME)"
+  :group 'mime-edit)
+
+(defcustom mime-edit-pgp-verbose nil
+  "If non-nil, ask the user about the current operation more verbosely."
+  :group 'mime-edit-pgp
+  :type 'boolean)
+
+(defcustom mime-edit-pgp-signers nil
+  "A list of your own key ID which will be used to sign a message."
+  :group 'mime-edit-pgp
+  :type '(repeat (string :tag "Key ID")))
+
+(defcustom mime-edit-pgp-encrypt-to-self nil
+  "If t, add your own key ID to recipient list when encryption."
+  :group 'mime-edit-pgp
+  :type 'boolean)
+
 
 ;;; @@ about tag
 ;;;
@@ -954,6 +979,8 @@ If it is not specified for a major-mode,
 	  ") "
 	  (if (fboundp 'apel-version)
 	      (concat (apel-version) " "))
+	  (if (boundp 'epg-version-number)
+	      (concat "EasyPG/" epg-version-number " "))
 	  (if (featurep 'xemacs)
 	      (concat (cond ((and (featurep 'chise)
 				  (boundp 'xemacs-chise-version))
@@ -1081,6 +1108,10 @@ Tspecials means any character that matches with it in header must be quoted.")
   "\C-s" 'mime-edit-enclose-pgp-signed-region)
 (define-key mime-edit-mode-enclosure-map
   "\C-e" 'mime-edit-enclose-pgp-encrypted-region)
+(define-key mime-edit-mode-enclosure-map
+  "s" 'mime-edit-enclose-smime-signed-region)
+(define-key mime-edit-mode-enclosure-map
+  "e" 'mime-edit-enclose-smime-encrypted-region)
 (define-key mime-edit-mode-enclosure-map
   "\C-q" 'mime-edit-enclose-quote-region)
 
@@ -1474,10 +1505,19 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 		  (setq cell (car rest))
 		  (setq attribute (car cell))
 		  (setq value (cdr cell))
-		  (if (eq value 'file)
-		      (setq value (std11-wrap-as-quoted-string
-				   (file-name-nondirectory file)))
-		    )
+		  (when (eq value 'file)
+		    (setq value
+			  (std11-wrap-as-quoted-string
+			   (if (or (boundp 'mime-non-attribute-char-regexp)
+				   (string= (mime-product-name
+					     mime-library-product)
+					    "LIMIT"))
+			       (file-name-nondirectory file)
+			     ;; If FLIM does not support non-ASCII
+			     ;; filename, it is encoded.
+			     (eword-encode-string
+			      (file-name-nondirectory file))
+			     ))))
 		  (setq parameters
 			(concat parameters "; " attribute "=" value))
 		  (setq rest (cdr rest))
@@ -2033,12 +2073,6 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 		((string-equal type "pgp-encrypted")
 		 (mime-edit-encrypt-pgp-mime bb eb boundary)
 		 )
-		((string-equal type "kazu-signed")
-		 (mime-edit-sign-pgp-kazu bb eb boundary)
-		 )
-		((string-equal type "kazu-encrypted")
-		 (mime-edit-encrypt-pgp-kazu bb eb boundary)
-		 )
 		((string-equal type "smime-signed")
 		 (mime-edit-sign-smime bb eb boundary)
 		 )
@@ -2078,8 +2112,6 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 	  (replace-match (concat "-" (substring tag 2)))
 	  )))))
 
-(defvar mime-edit-pgp-user-id nil)
-
 (defun mime-edit-delete-trailing-whitespace ()
   (save-match-data
     (save-excursion
@@ -2087,17 +2119,39 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
       (while (re-search-forward "[ \t]+$" nil t)
 	(delete-region (match-beginning 0) (match-end 0))))))
 
+(defun mime-edit-pgp-get-signers (context)
+  (let ((signers
+	 (delete nil (cons
+		      (cadr
+		       (std11-extract-address-components
+			(or (save-restriction
+			      (widen)
+			      (std11-field-body "From" mail-header-separator))
+			    "")))
+		      mime-edit-pgp-signers))))
+    (if mime-edit-pgp-verbose
+	(epa-select-keys
+	 context
+	 "\
+Select keys for signing.
+If no one is selected, default secret key is used.  "
+	 signers
+	 t)
+      (mapcar (lambda (name) (car (epg-list-keys context name t)))
+	      signers))))
+
 (defun mime-edit-sign-pgp-mime (beg end boundary)
   (save-excursion
     (save-restriction
-      (let* ((from (std11-field-body "From" mail-header-separator))
-	     (ret (progn 
+      (let* ((ret (let ((mime-transfer-level 7))
 		    (narrow-to-region beg end)
 		    (mime-edit-translate-region beg end boundary)))
 	     (ctype    (car ret))
 	     (encoding (nth 1 ret))
 	     (pgp-boundary (concat "pgp-sign-" boundary))
-	     micalg)
+	     (context (epg-make-context))
+	     (index 0)
+	     plain signature micalg)
 	(mime-edit-delete-trailing-whitespace) ; RFC3156
 	(goto-char beg)
 	(insert (format "Content-Type: %s\n" ctype))
@@ -2105,40 +2159,86 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 	    (insert (format "Content-Transfer-Encoding: %s\n" encoding))
 	  )
 	(insert "\n")
-	(or (let ((pgg-default-user-id 
-		   (or mime-edit-pgp-user-id
-		       (if from 
-			   (nth 1 (std11-extract-address-components from))
-			 pgg-default-user-id)))
-		  (pgg-text-mode t))
-	      (pgg-sign-region (point-min)(point-max)))
-	    (throw 'mime-edit-error 'pgp-error)
-	    )
-	(setq micalg
-	      (cdr (assq 'hash-algorithm
-			 (cdar (with-current-buffer pgg-output-buffer
-				 (pgg-parse-armor-region 
-				  (point-min)(point-max))))))
-	      micalg 
-	      (if micalg
-		  (concat "; micalg=pgp-" (downcase (symbol-name micalg)))
-		""))
+	(epg-context-set-armor context t)
+	(epg-context-set-textmode context nil)
+	(epg-context-set-signers
+	 context
+	 (mime-edit-pgp-get-signers context))
+	(setq plain (buffer-substring (point-min) (point-max)))
+	(while (string-match "\r?\n" plain index)
+	  (if (eq (aref plain (match-beginning 0)) ?\r)
+	      (setq index (match-end 0))
+	    (setq plain (replace-match "\r\n" t t plain)
+		  index (1+ (match-end 0)))))
+	(condition-case error
+	    (setq signature
+		  (epg-sign-string context plain 'detached))
+	  (error (signal 'mime-edit-error (cdr error))))
+	(setq micalg (epg-new-signature-digest-algorithm
+		      (car (epg-context-result-for context 'sign))))
 	(goto-char beg)
 	(insert (format "--[[multipart/signed;
  boundary=\"%s\"%s;
  protocol=\"application/pgp-signature\"][7bit]]
 --%s
-" pgp-boundary micalg pgp-boundary))
+"
+			pgp-boundary
+			(if micalg
+			    (concat "; micalg=pgp-"
+				    (downcase
+				     (cdr (assq micalg
+						epg-digest-algorithm-alist))))
+			  "")
+			pgp-boundary))
 	(goto-char (point-max))
 	(insert (format "\n--%s
 Content-Type: application/pgp-signature
 Content-Transfer-Encoding: 7bit
+Content-Description: OpenPGP Digital Signature
 
 " pgp-boundary))
-	(insert-buffer-substring pgg-output-buffer)
+	(insert signature)
 	(goto-char (point-max))
 	(insert (format "\n--%s--\n" pgp-boundary))
 	))))
+
+(defun mime-edit-text-coding ()
+  (save-excursion
+    (let* ((tag
+	    ;; Get tag string and set point to the beginnig of
+	    ;; the content.
+	    (or (and (re-search-backward
+		      mime-edit-single-part-tag-regexp nil t)
+		     (goto-char (match-end 0))
+		     (buffer-substring (match-beginning 0) (match-end 0)))
+		(progn (goto-char (point-min))
+		       (re-search-forward
+			(concat "\n" (regexp-quote mail-header-separator)
+				(if mime-ignore-preceding-spaces
+				    "[ \t\n]*\n" "\n")) nil t)
+		       (mime-make-text-tag))))
+	   (contype (mime-edit-get-contype tag))
+	   (charset (mime-get-parameter contype "charset")))
+      (setq charset (if charset (intern (downcase charset))
+		      (mime-edit-choose-charset)))
+      (mime-charset-to-coding-system charset))))
+
+(defun mime-edit-sign-pgp-nomime (start end signers mode)
+  "Sign the current region between START and END by SIGNERS keys selected.  Appropriate coding system is selected automatically.  When called interactively, current mime part is signed."
+  (interactive
+   (progn
+     (require 'epa)
+     (let ((mime-edit-pgp-verbose
+	    (or current-prefix-arg mime-edit-pgp-verbose))
+	   (context (epg-make-context epa-protocol)))
+       (list (mime-edit-content-beginning)
+	     (mime-edit-content-end)
+	     (mime-edit-pgp-get-signers context)
+	     (if mime-edit-pgp-verbose
+		 (epa--read-signature-type)
+	       'clear)))))
+  (setq epa-last-coding-system-specified (mime-edit-text-coding))
+  (epa-sign-region start end signers mode))
 
 (defvar mime-edit-encrypt-recipient-fields-list '("To" "cc"))
 
@@ -2177,42 +2277,54 @@ Content-Transfer-Encoding: 7bit
 (defun mime-edit-encrypt-pgp-mime (beg end boundary)
   (save-excursion
     (save-restriction
-      (let (from recipients header)
-        (let ((ret (mime-edit-make-encrypt-recipient-header)))
-          (setq from (aref ret 0)
-                recipients (aref ret 1)
-                header (aref ret 2))
-	  )
+      (let* ((config (epg-configuration))
+	     (ret (mime-edit-make-encrypt-recipient-header))
+	     (recipients (aref ret 1))
+	     (header (aref ret 2)))
+	(setq recipients
+	      (apply #'nconc
+		     (mapcar (lambda (recipient)
+			       (setq recipient
+				     (nth 1 (std11-extract-address-components
+					     recipient)))
+			       (or (epg-expand-group config recipient)
+				   (list recipient)))
+			     (delete "" (split-string recipients
+						      "[ \f\t\n\r\v,]+")))))
         (narrow-to-region beg end)
         (let* ((ret
                 (mime-edit-translate-region beg end boundary))
                (ctype    (car ret))
                (encoding (nth 1 ret))
-               (pgp-boundary (concat "pgp-" boundary)))
+               (pgp-boundary (concat "pgp-" boundary))
+	       (context (epg-make-context))
+	       cipher)
           (goto-char beg)
           (insert header)
           (insert (format "Content-Type: %s\n" ctype))
           (if encoding
               (insert (format "Content-Transfer-Encoding: %s\n" encoding))
-            )
+	    )
           (insert "\n")
 	  (mime-encode-header-in-buffer)
-	  (or (let ((pgg-default-user-id 
-		     (or mime-edit-pgp-user-id
-			 (if from 
-			     (nth 1 (std11-extract-address-components from))
-			   pgg-default-user-id)))
-		    (pgg-text-mode t))
-		(pgg-encrypt-region 
-		 (point-min) (point-max) 
-		 (mapcar (lambda (recipient)
-			   (nth 1 (std11-extract-address-components
-				   recipient)))
-			 (split-string recipients 
-				       "\\([ \t\n]*,[ \t\n]*\\)+")))
-		)
-	      (throw 'mime-edit-error 'pgp-error)
-	      )
+	  (epg-context-set-armor context t)
+	  (if mime-edit-pgp-verbose
+	      (setq recipients
+		    (epa-select-keys context "\
+Select recipients for encryption.
+If no one is selected, symmetric encryption will be performed.  "
+				     recipients))
+	    (setq recipients
+		  (delq nil (mapcar (lambda (name)
+				      (car (epg-list-keys context name)))
+				    recipients))))
+	  (condition-case error
+	      (setq cipher
+		    (epg-encrypt-string
+		     context
+		     (buffer-substring (point-min) (point-max))
+		     recipients))
+	    (error (signal 'mime-edit-error (cdr error))))
 	  (delete-region (point-min)(point-max))
 	  (goto-char beg)
 	  (insert (format "--[[multipart/encrypted;
@@ -2222,139 +2334,130 @@ Content-Transfer-Encoding: 7bit
 Content-Type: application/pgp-encrypted
 
 Version: 1
+
 --%s
 Content-Type: application/octet-stream
 Content-Transfer-Encoding: 7bit
 
 " pgp-boundary pgp-boundary pgp-boundary))
-	  (insert-buffer-substring pgg-output-buffer)
+	  (insert cipher)
 	  (goto-char (point-max))
 	  (insert (format "\n--%s--\n" pgp-boundary))
 	  )))))
 
-(defun mime-edit-sign-pgp-kazu (beg end boundary)
-  (save-excursion
-    (save-restriction
-      (narrow-to-region beg end)
-      (let* ((ret
-	      (mime-edit-translate-region beg end boundary))
-	     (ctype    (car ret))
-	     (encoding (nth 1 ret)))
-	(goto-char beg)
-	(insert (format "Content-Type: %s\n" ctype))
-	(if encoding
-	    (insert (format "Content-Transfer-Encoding: %s\n" encoding))
-	  )
-	(insert "\n")
-	(or (pgg-sign-region beg (point-max) 'clearsign)
-	    (throw 'mime-edit-error 'pgp-error)
-	    )
-	(goto-char beg)
-	(insert
-	 "--[[application/pgp; format=mime][7bit]]\n")
-	))
-    ))
-
-(defun mime-edit-encrypt-pgp-kazu (beg end boundary)
-  (save-excursion
-    (let (recipients header)
-      (let ((ret (mime-edit-make-encrypt-recipient-header)))
-	(setq recipients (aref ret 1)
-	      header (aref ret 2))
-	)
-      (save-restriction
-	(narrow-to-region beg end)
-	(let* ((ret
-		(mime-edit-translate-region beg end boundary))
-	       (ctype    (car ret))
-	       (encoding (nth 1 ret)))
-	  (goto-char beg)
-	  (insert header)
-	  (insert (format "Content-Type: %s\n" ctype))
-	  (if encoding
-	      (insert (format "Content-Transfer-Encoding: %s\n" encoding))
-	    )
-	  (insert "\n")
-	  (or (pgg-encrypt-region beg (point-max) recipients)
-	      (throw 'mime-edit-error 'pgp-error)
-	      )
-	  (goto-char beg)
-	  (insert
-	   "--[[application/pgp; format=mime][7bit]]\n")
-	  ))
-      )))
+(defun mime-edit-convert-lbt-string (string)
+  (let ((index 0))
+    (while (setq index (string-match "\n" string index))
+      (setq string (replace-match "\r\n" nil nil string)
+	    index (+ index 2)))		;(length "\r\n")
+    string))
 
 (defun mime-edit-sign-smime (beg end boundary)
   (save-excursion
     (save-restriction
-      (let* ((ret (progn 
+      (let* ((from (std11-field-body "From" mail-header-separator))
+	     (ret (progn 
 		    (narrow-to-region beg end)
 		    (mime-edit-translate-region beg end boundary)))
 	     (ctype    (car ret))
 	     (encoding (nth 1 ret))
-	     (smime-boundary (concat "smime-sign-" boundary)))
+	     (smime-boundary (concat "smime-sign-" boundary))
+	     (context (epg-make-context 'CMS))
+	     signature micalg)
 	(goto-char beg)
 	(insert (format "Content-Type: %s\n" ctype))
 	(if encoding
 	    (insert (format "Content-Transfer-Encoding: %s\n" encoding))
 	  )
 	(insert "\n")
-	(let (buffer-undo-list)
-	  (goto-char (point-min))
-	  (while (progn (end-of-line) (not (eobp)))
-	    (insert "\r")
-	    (forward-line 1))
-	  (or (prog1 (smime-sign-region (point-min)(point-max))
-		(push nil buffer-undo-list)
-		(ignore-errors (undo)))
-	      (throw 'mime-edit-error 'pgp-error)
-	      ))
+	(epg-context-set-signers
+	 context
+	 (epa-select-keys
+	  context
+	  "\
+Select keys for signing.
+If no one is selected, default secret key is used.  "
+	  (if from 
+	      (list (nth 1 (std11-extract-address-components from))))
+	  t))
+	(condition-case error
+	    (setq signature
+		  (epg-sign-string context
+				   (mime-edit-convert-lbt-string
+				    (buffer-substring (point-min) (point-max)))
+				   'detached))
+	  (error (signal 'mime-edit-error (cdr error))))
+	(setq micalg (epg-new-signature-digest-algorithm
+		      (car (epg-context-result-for context 'sign))))
 	(goto-char beg)
 	(insert (format "--[[multipart/signed;
- boundary=\"%s\"; micalg=sha1;
+ boundary=\"%s\"%s;
  protocol=\"application/pkcs7-signature\"][7bit]]
 --%s
-" smime-boundary smime-boundary))
+"
+			smime-boundary
+			(if micalg
+			    (concat "; micalg="
+				    (downcase
+				     (cdr (assq micalg
+						epg-digest-algorithm-alist))))
+			  "")
+			smime-boundary))
 	(goto-char (point-max))
 	(insert (format "\n--%s
-Content-Type: application/pkcs7-signature; name=\"smime.p7s\"
+Content-Type: application/pkcs7-signature; name=smime.p7s
 Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename=\"smime.p7s\"
-Content-Description: S/MIME Cryptographic Signature
+Content-Disposition: attachment; filename=smime.p7s
+Content-Description: S/MIME Digital Signature
 
-"  smime-boundary))
-	(insert-buffer-substring smime-output-buffer)
-	(goto-char (point-max))
-	(insert (format "\n--%s--\n" smime-boundary))
-	))))
+" smime-boundary)
+		(base64-encode-string signature))))))
 
 (defun mime-edit-encrypt-smime (beg end boundary)
   (save-excursion
     (save-restriction
-      (let* ((ret (progn 
-		    (narrow-to-region beg end)
-		    (mime-edit-translate-region beg end boundary)))
-	     (ctype    (car ret))
-	     (encoding (nth 1 ret)))
-	(goto-char beg)
-	(insert (format "Content-Type: %s\n" ctype))
-	(if encoding
-	    (insert (format "Content-Transfer-Encoding: %s\n" encoding))
-	  )
-	(insert "\n")
-	(goto-char (point-min))
-	(while (progn (end-of-line) (not (eobp)))
-	  (insert "\r")
-	  (forward-line 1))
-	(or (smime-encrypt-region (point-min)(point-max))
-	    (throw 'mime-edit-error 'pgp-error)
-	    )
-	(delete-region (point-min)(point-max))
-	(insert "--[[application/pkcs7-mime; name=\"smime.p7m\"
-Content-Disposition: attachment; filename=\"smime.p7m\"
-Content-Description: S/MIME Encrypted Message][base64]]\n")
-	(insert-buffer-substring smime-output-buffer)
-	))))
+      (let* ((ret (mime-edit-make-encrypt-recipient-header))
+	     (recipients (aref ret 1))
+	     (header (aref ret 2)))
+        (narrow-to-region beg end)
+        (let* ((ret
+                (mime-edit-translate-region beg end boundary))
+               (ctype    (car ret))
+               (encoding (nth 1 ret))
+	       (context (epg-make-context 'CMS))
+	       cipher)
+          (goto-char beg)
+          (insert header)
+          (insert (format "Content-Type: %s\n" ctype))
+          (if encoding
+              (insert (format "Content-Transfer-Encoding: %s\n" encoding)))
+          (insert "\n")
+	  (mime-encode-header-in-buffer)
+	  (condition-case error
+	      (setq cipher
+		    (epg-encrypt-string
+		     context
+		     (buffer-substring (point-min) (point-max))
+		     (epa-select-keys
+		      context
+		      "\
+Select recipients for encryption.
+If no one is selected, symmetric encryption will be performed.  "
+		      (mapcar (lambda (recipient)
+				(nth 1 (std11-extract-address-components
+					recipient)))
+			      (delete "" (split-string recipients 
+						       "[ \f\t\n\r\v,]+"))))))
+	    (error (signal 'mime-edit-error (cdr error))))
+	  (delete-region (point-min)(point-max))
+	  (goto-char beg)
+	  (insert (format "--[[application/pkcs7-mime;
+ smime-type=enveloped-data;
+ name=smime.p7m
+Content-Disposition: attachment; filename=smime.p7m][base64]]
+
+")
+		  (base64-encode-string cipher)))))))
 
 (defsubst replace-space-with-underline (str)
   (mapconcat (function
@@ -2768,16 +2871,6 @@ and insert data encoded as ENCODING."
   (mime-edit-enclose-region-internal 'pgp-encrypted beg end)
   )
 
-(defun mime-edit-enclose-kazu-signed-region (beg end)
-  (interactive "*r")
-  (mime-edit-enclose-region-internal 'kazu-signed beg end)
-  )
-
-(defun mime-edit-enclose-kazu-encrypted-region (beg end)
-  (interactive "*r")
-  (mime-edit-enclose-region-internal 'kazu-encrypted beg end)
-  )
-
 (defun mime-edit-enclose-smime-signed-region (beg end)
   (interactive "*r")
   (mime-edit-enclose-region-internal 'smime-signed beg end)
@@ -2793,7 +2886,11 @@ and insert data encoded as ENCODING."
   (interactive "P")
   (mime-edit-insert-tag "application" "pgp-keys")
   (mime-edit-define-encoding "7bit")
-  (pgg-insert-key)
+  (let ((context (epg-make-context)))
+    (epg-context-set-armor context t)
+    (epg-export-keys-to-string context
+			       (epa-select-keys context
+						"Select keys for export.  ")))
   (if (and (not (eobp))
 	   (not (looking-at mime-edit-single-part-tag-regexp)))
       (insert (mime-make-text-tag) "\n")))
@@ -3131,17 +3228,15 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 		(narrow-to-region beg end)
 		(cond
 		 ((eq subtype 'pgp-encrypted)
-		  (when (and
-			 (progn
+		  (when (progn
 			   (goto-char (point-min))
 			   (re-search-forward "^-+BEGIN PGP MESSAGE-+$"
 					      nil t))
-			 (prog1 
-			     (save-window-excursion
-			       (pgg-decrypt-region (match-beginning 0)
-						   (point-max)))
-			   (delete-region (point-min)(point-max))))
-		    (insert-buffer-substring pgg-output-buffer)
+		    (insert (epg-decrypt-string
+			     (epg-make-context)
+			     (buffer-substring (match-beginning 0)
+					       (point-max))))
+		    (delete-region (point)(point-max))
 		    (mime-edit-decode-message-in-buffer 
 		     nil not-decode-text)
 		    (delete-region (goto-char (point-min))
@@ -3176,24 +3271,35 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	 (subtype (mime-content-type-subtype content-type))
 	 (ctype (format "%s/%s" type subtype))
 	 charset
-	 (pstr (let ((bytes (+ 14 (length ctype))))
-		 (mapconcat (function
-			     (lambda (attr)
-			       (if (string= (car attr) "charset")
-				   (progn
-				     (setq charset (cdr attr))
-				     "")
-				 (let* ((str (concat (car attr)
-						     "=" (cdr attr)))
-					(bs (length str)))
-				   (setq bytes (+ bytes bs 2))
-				   (if (< bytes 76)
-				       (concat "; " str)
-				     (setq bytes (+ bs 1))
-				     (concat ";\n " str)
-				     )
-				   ))))
-			    (mime-content-type-parameters content-type) "")))
+	 (pstr
+	  (let ((bytes (+ 14 (length ctype))))
+	    (mapconcat
+	     (function
+	      (lambda (attr)
+		(if (string= (car attr) "charset")
+		    (progn
+		      (setq charset (cdr attr))
+		      "")
+		  (let*
+		      ((str
+			(concat
+			 (car attr)
+			 "="
+			 (if (string= "name"
+				      (car attr))
+			     (std11-wrap-as-quoted-string
+			      (eword-decode-and-unfold-unstructured-field-body
+			       (cdr attr)))
+			   (cdr attr))))
+		       (bs (length str)))
+		    (setq bytes (+ bytes bs 2))
+		    (if (< bytes 76)
+			(concat "; " str)
+		      (setq bytes (+ bs 1))
+		      (concat ";\n " str)
+		      )
+		    ))))
+	     (mime-content-type-parameters content-type) "")))
 	 encoding
 	 encoded
 	 (limit (save-excursion
@@ -3212,7 +3318,8 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 					   (if (string-equal "filename"
 							     (car attr))
 					       (std11-wrap-as-quoted-string
-						(cdr attr))
+						(eword-decode-and-unfold-unstructured-field-body
+						 (cdr attr)))
 					     (cdr attr))))
 				     (bs (length str)))
 				(setq bytes (+ bytes bs 2))
@@ -3230,6 +3337,14 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	(setq pstr (format "%s\nContent-Disposition: %s%s"
 			   pstr disposition-type disposition-str))
       )
+    (save-excursion
+      (when (re-search-forward "^Content-Id:" limit t)
+	(setq pstr (concat pstr
+			   "\nContent-Id: "
+			   (eliminate-top-spaces
+			    (std11-unfold-string
+			     (buffer-substring (match-end 0)
+					       (std11-field-end limit))))))))
     (save-excursion
       (if (re-search-forward
 	   "^Content-Transfer-Encoding:" limit t)

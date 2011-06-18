@@ -49,11 +49,6 @@ LISPDIR=%s\n" PREFIX LISPDIR))
   (install-elisp-modules '(mime-setup)	 "."	SETUP_FILE_DIR)
   )
 
-(defun install-execs ()
-  (config-semi)
-  (install-files METHODS METHOD_SRC_DIR METHOD_DIR nil t)
-  )
-
 (defun config-semi-package ()
   (let (package-dir)
     (and (setq package-dir (car command-line-args-left))

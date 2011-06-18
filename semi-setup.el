@@ -52,99 +52,129 @@ it is used as hook to set."
       '(require 'mime-image)))
 
 ;; for text/html
-(defvar mime-setup-enable-inline-html
-  (module-installed-p 'w3)
-  "*If it is non-nil, semi-setup sets up to use mime-w3.")
+(defvar mime-html-previewer-alist
+  '((w3m mime-w3m-preview-text/html "mime-w3m")
+    (w3 mime-preview-text/html "mime-w3"))
+"*Alist for text/html part previewer.
+Each element is a list consists of required module, previewer function and autoload file for previewer function.")
 
-(if mime-setup-enable-inline-html
+(defvar mime-setup-enable-inline-html
+  (let ((alist mime-html-previewer-alist))
+    (while (and alist (null (module-installed-p (caar alist))))
+      (setq alist (cdr alist)))
+    (caar alist))
+  "*If it is a symbol, semi-setup sets up to use html previewer according to `mime-html-previewer-alist'.
+If it is other non-nil value, semi-setup tries to set up for mime-w3.")
+
+(let ((table (cdr (or (assq mime-setup-enable-inline-html
+			    mime-html-previewer-alist)
+		      (assq 'w3 mime-html-previewer-alist)))))
+  (when table
     (eval-after-load "mime-view"
-      '(progn
-	 (autoload 'mime-preview-text/html "mime-w3")
+      `(progn
+	 (autoload (quote ,(car table)) ,(cadr table))
 	 
 	 (ctree-set-calist-strictly
 	  'mime-preview-condition
 	  '((type . text)(subtype . html)
 	    (body . visible)
-	    (body-presentation-method . mime-preview-text/html)))
+	    (body-presentation-method . ,(car table))))
 	 
 	 (set-alist 'mime-view-type-subtype-score-alist
 		    '(text . html) 3)
-	 )))
+	 ))))
 
+;; for text/x-vcard
+(defvar mime-setup-enable-vcard
+  (module-installed-p 'vcard)
+  "*If it is non-nil, semi-setup sets uf to use mime-vcard.")
+
+(eval-after-load "mime-view"
+  '(when mime-setup-enable-vcard
+     (autoload 'mime-display-text/x-vcard "mime-vcard")
+
+     (mime-add-condition
+      'preview 
+      '((type . text)(subtype . x-vcard)
+	(body . visible)
+	(body-presentation-method . mime-display-text/x-vcard))
+      'strict)
+
+     (set-alist 'mime-view-type-subtype-score-alist
+		'(text . x-vcard) 3)
+     ))
 
 ;; for PGP
-(defvar mime-setup-enable-pgp t
-  "*If it is non-nil, semi-setup sets uf to use mime-pgp.")
+(defvar mime-setup-enable-epg (module-installed-p 'epg)
+  "*If it is non-nil, semi-setup sets uf to use mime-epg.")
 
-(if mime-setup-enable-pgp
-    (eval-after-load "mime-view"
-      '(progn
-	 (require 'mime-pgp)
-
-	 (mime-add-condition
-	  'preview '((type . application)(subtype . pgp)
-		     (message-button . visible)))
-	 (mime-add-condition
-	  'action '((type . application)(subtype . pgp)
-		    (method . mime-view-application/pgp))
-	  'strict "mime-pgp")
-	 (mime-add-condition
-	  'action '((type . text)(subtype . x-pgp)
-		    (method . mime-view-application/pgp)))
+(eval-after-load "mime-view"
+  '(when mime-setup-enable-epg
+     (mime-add-condition
+      'preview '((type . application)(subtype . pgp)
+		 (message-button . visible)))
+     (mime-add-condition
+      'action '((type . application)(subtype . pgp)
+		(method . mime-view-application/pgp))
+      'strict "mime-epg")
+     (mime-add-condition
+      'action '((type . text)(subtype . x-pgp)
+		(method . mime-view-application/pgp)))
 	 
-	 (mime-add-condition
-	  'action '((type . multipart)(subtype . signed)
-		    (method . mime-verify-multipart/signed))
-	  'strict "mime-pgp")
+     (mime-add-condition
+      'action '((type . multipart)(subtype . signed)
+		(method . mime-verify-multipart/signed))
+      'strict "mime-epg")
 	 
-	 (mime-add-condition
-	  'action
-	  '((type . application)(subtype . pgp-signature)
-	    (method . mime-verify-application/pgp-signature))
-	  'strict "mime-pgp")
+     (mime-add-condition
+      'action
+      '((type . application)(subtype . pgp-signature)
+	(method . mime-verify-application/*-signature))
+      'strict "mime-epg")
 	 
-	 (mime-add-condition
-	  'action
-	  '((type . application)(subtype . pgp-encrypted)
-	    (method . mime-decrypt-application/pgp-encrypted))
-	  'strict "mime-pgp")
+     (mime-add-condition
+      'action
+      '((type . application)(subtype . pgp-encrypted)
+	(method . mime-decrypt-application/pgp-encrypted))
+      'strict "mime-epg")
 	 
-	 (mime-add-condition
-	  'action
-	  '((type . application)(subtype . pgp-keys)
-	    (method . mime-add-application/pgp-keys))
-	  'strict "mime-pgp")
+     (mime-add-condition
+      'action
+      '((type . application)(subtype . pgp-keys)
+	(method . mime-add-application/pgp-keys))
+      'strict "mime-epg")
 
-	 (mime-add-condition
-	  'action
-	  '((type . application)(subtype . pkcs7-signature)
-	    (method . mime-verify-application/pkcs7-signature))
-	  'strict "mime-pgp")
+     (mime-add-condition
+      'action
+      '((type . application)(subtype . pkcs7-signature)
+	(method . mime-verify-application/*-signature))
+      'strict "mime-epg")
 
-	 (mime-add-condition
-	  'action
-	  '((type . application)(subtype . x-pkcs7-signature)
-	    (method . mime-verify-application/pkcs7-signature))
-	  'strict "mime-pgp")
+     (mime-add-condition
+      'action
+      '((type . application)(subtype . x-pkcs7-signature)
+	(method . mime-verify-application/*-signature))
+      'strict "mime-epg")
 	 
-	 (mime-add-condition
-	  'action
-	  '((type . application)(subtype . pkcs7-mime)
-	    (method . mime-view-application/pkcs7-mime))
-	  'strict "mime-pgp")
+     (mime-add-condition
+      'action
+      '((type . application)(subtype . pkcs7-mime)
+	(method . mime-view-application/pkcs7-mime))
+      'strict "mime-epg")
 
-	 (mime-add-condition
-	  'action
-	  '((type . application)(subtype . x-pkcs7-mime)
-	    (method . mime-view-application/pkcs7-mime))
-	  'strict "mime-pgp")
+     (mime-add-condition
+      'action
+      '((type . application)(subtype . x-pkcs7-mime)
+	(method . mime-view-application/pkcs7-mime))
+      'strict "mime-epg")
 
-	 (ctree-set-calist-strictly
-	  'mime-preview-condition
-	  '((type . multipart) (subtype . encrypted) ("protocol" . "application/pgp-encrypted")
-	    (body . visible)
-	    (body-presentation-method . mime-display-multipart/pgp-encrypted)))
-	 ))
+     ;; (ctree-set-calist-strictly
+     ;;  'mime-preview-condition
+     ;;  '((type . multipart) (subtype . encrypted)
+     ;; 	("protocol" . "application/pgp-encrypted")
+     ;; 	(body . visible)
+     ;; 	(body-presentation-method . mime-display-multipart/pgp-encrypted)))
+     )
   )
 
 

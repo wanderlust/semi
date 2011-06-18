@@ -725,6 +725,29 @@ Each elements are regexp of field-name.")
  '((body . visible)
    (body-presentation-method . mime-display-text/plain)))
 
+(when (module-installed-p 'flow-fill)
+  (autoload 'fill-flowed "flow-fill")
+  (unless (boundp 'mime-preview-fill-flowed-text)
+    (setq mime-preview-fill-flowed-text t))
+  (unless (boundp 'mime-preview-fill-flowed-text-delsp)
+    (setq mime-preview-fill-flowed-text-delsp
+	  (eval-when-compile
+	    ;; Earlier fill-flowed function neither supports
+	    ;; DELETE-SPACE option nor works with DELETE-SPACE option
+	    ;; correctly.
+	    (equal "ABCDEF" (condition-case nil
+				(with-temp-buffer
+				  (insert "ABC \nDEF")
+				  (fill-flowed nil t)
+				  (buffer-string))
+			      (error nil)))))))
+
+(defvar mime-preview-fill-flowed-text nil
+  "If non-nil, fill RFC2646 \"flowed\" text.")
+
+(defvar mime-preview-fill-flowed-text-delsp nil
+  "If non-nil, spport RFC3676 \"DelSp\" parameter for \"flowed\" text.")
+
 (ctree-set-calist-strictly
  'mime-preview-condition
  '((type . nil)
@@ -813,6 +836,12 @@ Each elements are regexp of field-name.")
     (goto-char (point-max))
     (if (not (eq (char-after (1- (point))) ?\n))
 	(insert "\n")
+      )
+    (if (and mime-preview-fill-flowed-text
+	     (equal (cdr (assoc "format" situation)) "flowed"))
+	(if mime-preview-fill-flowed-text-delsp
+	    (fill-flowed nil (equal (cdr (assoc "delsp" situation)) "yes"))
+	  (fill-flowed))
       )
     (mime-add-url-buttons)
     (run-hooks 'mime-display-text/plain-hook)
@@ -1379,11 +1408,16 @@ non-nil, DEFAULT-KEYMAP-OR-FUNCTION is ignored.  If it is nil,
       (setq mime-preview-original-window-configuration win-conf)
       (setq major-mode 'mime-view-mode)
       (setq mode-name "MIME-View")
-      (mime-display-entity message nil
-			   `((entity-button . invisible)
-			     (header . visible)
-			     (major-mode . ,original-major-mode))
-			   preview-buffer)
+      (mime-display-entity
+       message nil (delq nil
+			 ;; Do not hide button when first entity is
+			 ;; neither text nor multipart.
+			 `(,(when (memq (mime-entity-media-type message)
+					'(text multipart nil))
+				'(entity-button . invisible))
+			   (header . visible)
+			   (major-mode . ,original-major-mode)))
+       preview-buffer)
       (use-local-map
        (or keymap
 	   (if default-keymap-or-function
