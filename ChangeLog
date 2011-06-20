@@ -1,3 +1,7 @@
+2011-06-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el: Specify file mode and coding.
+
 2011-06-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-edit.el (mime-transfer-level): Fix wrong docstring.

@@ -1,3 +1,4 @@
+;; -*- mode: emacs-lisp; coding: iso-8859-1-unix -*-
 ;;; mime-edit.el --- Simple MIME Composer for GNU Emacs
 
 ;; Copyright (C) 1993,94,95,96,97,98,99,2000,01,02,03
