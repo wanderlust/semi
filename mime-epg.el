@@ -47,7 +47,7 @@
 
 ;;; @ Internal method for application/*-signature
 
-(defun mime-verify-application/*-signature (entity situation)
+(defun mime-verify-application/*-signature-internal (entity situation)
   (let* ((mother (mime-entity-parent entity))
 	 (orig-entity (car (mime-entity-children mother)))
 	 (protocol (cdr (assoc "protocol" (mime-entity-parameters mother))))
@@ -57,9 +57,8 @@
 		     (if (string-match
 			  "\\`application/\\(x-\\)?pkcs7-signature\\'"
 			  protocol)
-		       'CMS
-		       (error "Unknown protocol: %s" protocol)))))
-	 verify-result)
+			 'CMS
+		       (error "Unknown protocol: %s" protocol))))))
     (epg-verify-string context
 		       (mime-entity-content entity)
 		       (with-temp-buffer
@@ -70,11 +69,21 @@
 			 (while (search-forward "\n" nil t)
 			   (replace-match "\r\n"))
 			 (buffer-substring (point-min) (point-max))))
-    (setq verify-result (epg-context-result-for context 'verify))
+    (epg-context-result-for context 'verify)))
+
+(defun mime-verify-application/*-signature (entity situation)
+  (let ((verify-result
+	 (mime-verify-application/*-signature-internal entity situation)))
     (if (> (length verify-result) 1)
 	(mime-show-echo-buffer (epg-verify-result-to-string verify-result))
       (if verify-result
 	  (epa-display-verify-result verify-result)))))
+
+(defun mime-preview-application/*-signature (entity situation)
+  (let ((verify-result
+	 (mime-verify-application/*-signature-internal entity situation)))
+    (when verify-result
+      (insert (epg-verify-result-to-string verify-result)))))
 
 
 ;;; @ Internal method for application/pgp-encrypted

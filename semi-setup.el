@@ -168,6 +168,14 @@ If it is other non-nil value, semi-setup tries to set up for mime-w3.")
 	(method . mime-view-application/pkcs7-mime))
       'strict "mime-epg")
 
+     (autoload 'mime-preview-application/*-signature "mime-epg")
+     (ctree-set-calist-strictly
+      'mime-preview-condition
+      '((type . application)
+	(subtype . pgp-signature)
+	(body . visible)
+	(body-presentation-method . mime-preview-application/*-signature)))
+
      ;; (ctree-set-calist-strictly
      ;;  'mime-preview-condition
      ;;  '((type . multipart) (subtype . encrypted)
