@@ -2224,7 +2224,7 @@ Content-Description: OpenPGP Digital Signature
 		      (mime-edit-choose-charset)))
       (mime-charset-to-coding-system charset))))
 
-(defun mime-edit-sign-pgp-nomime (start end signers mode)
+(defun mime-edit-sign-pgp-nonmime (start end signers mode)
   "Sign the current region between START and END by SIGNERS keys selected.  Appropriate coding system is selected automatically.  When called interactively, current mime part is signed."
   (interactive
    (progn
