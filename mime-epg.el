@@ -80,10 +80,13 @@
 	  (epa-display-verify-result verify-result)))))
 
 (defun mime-preview-application/*-signature (entity situation)
-  (let ((verify-result
-	 (mime-verify-application/*-signature-internal entity situation)))
-    (when verify-result
-      (insert (epg-verify-result-to-string verify-result)))))
+  (let ((string
+	 (epg-verify-result-to-string
+	  (mime-verify-application/*-signature-internal entity situation))))
+    (when (> (length string) 0)
+      (unless (string-equal (substring string -1) "\n")
+	(setq string (concat string "\n")))
+      (insert string))))
 
 
 ;;; @ Internal method for application/pgp-encrypted
