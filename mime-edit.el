@@ -2241,37 +2241,25 @@ Content-Description: OpenPGP Digital Signature
   (setq epa-last-coding-system-specified (mime-edit-text-coding))
   (epa-sign-region start end signers mode))
 
-(defvar mime-edit-encrypt-recipient-fields-list '("To" "cc"))
+(defvar mime-edit-encrypt-recipient-fields-list '("From" "To" "cc"))
 
 (defun mime-edit-make-encrypt-recipient-header ()
   (let* ((names mime-edit-encrypt-recipient-fields-list)
-	 (values
-	  (std11-field-bodies (cons "From" names)
-			      nil mail-header-separator))
-	 (from (prog1
-		   (car values)
-		 (setq values (cdr values))))
-	 (header (and (stringp from)
-		      (if (string-equal from "")
-			  ""
-			(format "From: %s\n" from)
-			)))
-	 recipients)
+	 (values (std11-field-bodies names nil mail-header-separator))
+	 (from (car values))
+	 header recipients)
     (while (and names values)
       (let ((name (car names))
-	    (value (car values))
-	    )
-	(and (stringp value)
-	     (or (string-equal value "")
-		 (progn
-		   (setq header (concat header name ": " value "\n")
-			 recipients (if recipients
-					(concat recipients " ," value)
-				      value))
-		   ))))
+	    (value (car values)))
+	(when (and (stringp value) (null (string-equal value "")))
+	  (setq header (concat header (format "%s: %s\n" name value)))
+	  (when (or mime-edit-pgp-encrypt-to-self
+		    (null (string-equal name "From")))
+	    (setq recipients (cons value recipients)))))
       (setq names (cdr names)
 	    values (cdr values))
       )
+    (setq recipients (mapconcat 'eval recipients " ,"))
     (vector from recipients header)
     ))
 

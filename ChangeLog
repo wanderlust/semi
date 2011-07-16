@@ -1,5 +1,10 @@
 2011-07-16  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* mime-edit.el (mime-edit-make-encrypt-recipient-header): When
+	mime-edit-pgp-encrypt-to-self is non-nil, add From field value to
+	recipients.
+	(mime-edit-encrypt-recipient-fields-list): Add "From".
+
 	* mime-epg.el (mime-preview-application/*-signature): Result
 	string always terminates with LF.
 
