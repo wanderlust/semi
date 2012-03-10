@@ -915,6 +915,25 @@ If it is not specified for a major-mode,
   :group 'mime-edit-pgp
   :type 'boolean)
 
+(defcustom mime-edit-pgp-filtered-validities
+  '(invalid disabled revoked expired never)
+  "A list of keys's validities which are not used for signing and encrypting."
+  :group 'mime-edit-pgp
+  :type
+  '(choice
+    (const nil :tag "Any keys are used.")
+    (repeat (choice (const unknow)
+		    (const invalid)
+		    (const disabled)
+		    (const revoked)
+		    (const expired)
+		    (const none)
+		    (const undefined)
+		    (const never)
+		    (const marginal)
+		    (const full)
+		    (const ultimate)))))
+
 
 ;;; @@ about tag
 ;;;
@@ -2120,6 +2139,21 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
       (while (re-search-forward "[ \t]+$" nil t)
 	(delete-region (match-beginning 0) (match-end 0))))))
 
+(defun mime-edit-pgp-keys-valid-key (key-list usage)
+  "Return the first valid key for USAGE from KEY-LIST or nil if there is no valid key.
+KEY-LIST is a list of epg key object.  Secret key list couldn't be evaluated appropriately.
+USAGE is a symbol denoting the intended usage."
+  (catch 'found
+    (while key-list
+      (dolist (subkey (epg-key-sub-key-list (car key-list)))
+	(when (and (memq usage (epg-sub-key-capability subkey))
+		   ;; Validity of a secret key could not be gettable.
+		   (epg-sub-key-validity subkey)
+		   (not (memq (epg-sub-key-validity subkey)
+			      mime-edit-pgp-filtered-validities)))
+	  (throw 'found (car key-list))))
+      (setq key-list (cdr key-list)))))
+
 (defun mime-edit-pgp-get-signers (context)
   (let ((signers
 	 (delete nil (cons
@@ -2138,8 +2172,13 @@ Select keys for signing.
 If no one is selected, default secret key is used.  "
 	 signers
 	 t)
-      (mapcar (lambda (name) (car (epg-list-keys context name t)))
-	      signers))))
+      (delq nil
+	    (mapcar (lambda (name)
+		      (mime-edit-pgp-keys-valid-key
+		       ;; A list of secret keys does not have
+		       ;; information about validity.
+		       (epg-list-keys context name) 'sign))
+		    signers)))))
 
 (defun mime-edit-sign-pgp-mime (beg end boundary)
   (save-excursion
@@ -2305,7 +2344,8 @@ If no one is selected, symmetric encryption will be performed.  "
 				     recipients))
 	    (setq recipients
 		  (delq nil (mapcar (lambda (name)
-				      (car (epg-list-keys context name)))
+				      (mime-edit-pgp-keys-valid-key
+				       (epg-list-keys context name) 'encrypt))
 				    recipients))))
 	  (condition-case error
 	      (setq cipher
