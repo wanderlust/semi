@@ -69,10 +69,7 @@ buttom. Nil means don't scroll at all."
 		 (sexp :tag "Situation" 1)))
 
 (defcustom mime-view-mailcap-files
-  (let ((files '("/etc/mailcap" "/usr/etc/mailcap" "~/.mailcap")))
-    (or (member mime-mailcap-file files)
-	(setq files (cons mime-mailcap-file files)))
-    files)
+  '("~/.mailcap" "/usr/etc/mailcap" "/etc/mailcap")
   "List of mailcap files."
   :group 'mime-view
   :type '(repeat file))
@@ -1004,7 +1001,11 @@ Score is integer or function which receives entity and returns integer."
 
 (defun mime-view-read-mailcap-files (&optional files)
   (or files
-      (setq files mime-view-mailcap-files))
+      (setq files
+	    (if mime-mailcap-file
+		(cons mime-mailcap-file
+		      (remove mime-mailcap-file mime-view-mailcap-files))
+	      mime-view-mailcap-files)))
   (let (entries file)
     (while files
       (setq file (car files))
