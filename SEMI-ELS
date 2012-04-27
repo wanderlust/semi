@@ -28,6 +28,7 @@
 	'((bbdb		mime-bbdb)
 	  (w3		mime-w3)
 	  (vcard	mime-vcard)
+	  (shr		mime-shr)
 	  ))
 
 (if (or (string-match "XEmacs" emacs-version)

@@ -53,8 +53,10 @@ it is used as hook to set."
 
 ;; for text/html
 (defvar mime-html-previewer-alist
-  '((w3m mime-w3m-preview-text/html "mime-w3m")
-    (w3 mime-preview-text/html "mime-w3"))
+  (delq nil `((w3m mime-w3m-preview-text/html "mime-w3m")
+	      ,(and (fboundp 'libxml-parse-html-region)
+		    '(shr mime-shr-preview-text/html "mime-shr"))
+	      (w3 mime-preview-text/html "mime-w3")))
 "*Alist for text/html part previewer.
 Each element is a list consists of required module, previewer function and autoload file for previewer function.")
 
