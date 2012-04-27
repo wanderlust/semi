@@ -1,6 +1,6 @@
 2012-04-21  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
-	* mime-view.el (mime-view-mailcap-files): Rverse the order of
+	* mime-view.el (mime-view-mailcap-files): Reverse the order of
 	files.  Do not care of mime-mailcap-file's value.
 	(mime-view-read-mailcap-files): The file indicated by
 	mime-mailcap-file has the most priority.
