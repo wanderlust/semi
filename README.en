@@ -194,26 +194,16 @@ Mailing lists
       http://lists.chise.org/mailman/listinfo/emacs-mime-ja (Japanese)
 
 
-CVS based development
+Git based development
 =====================
 
-  The SEMI development sources can be accessed via CVS pserver.  To
-  check out the SEMI sources, what you should do for the first time
-  is:
+  The SEMI development sources can be accessed via Git repository.
+  You can get the latest SEMI sources by the following:
+  
+  % git clone http://git.chise.org/git/elisp/semi.git
 
-  % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root login
-  CVS password: [CR] # NULL string
-
-  Then you can get the latest SEMI sources by the following:
-
-  % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout -r semi-1_14 semi
-
-  If you would like to join CVS based development, please send mail to
-
-	cvs@cvs.m17n.org
-
-  with your account name and your public key for ssh.  cvsroot is
-  :ext:cvs@cvs.m17n.org:/cvs/root.
+  If you would like to join Git based development, please declare it
+  in the Emacs-MIME mailing list at first.
 
   We hope you will join the open development.
 
