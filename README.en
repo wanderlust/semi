@@ -202,6 +202,10 @@ Git based development
   
   % git clone http://git.chise.org/git/elisp/semi.git
 
+  Or you can view the SEMI repository via WWW at:
+
+    http://git.chise.org/gitweb/?p=elisp/semi.git
+
   If you would like to join Git based development, please declare it
   in the Emacs-MIME mailing list at first.
 
