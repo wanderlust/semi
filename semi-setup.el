@@ -208,6 +208,21 @@ it is used as hook to set."
 ;; (add-hook 'mu-cite/pre-cite-hook 'eword-decode-header)
 
 
+;;; @ for Mac OS X
+;;;
+
+(when (eq system-type 'darwin)
+  (eval-after-load "mime-view"
+    '(progn
+       (mime-add-condition
+	'action
+	'((type . application)
+	  (method . mime-mac-save-and-play-with-open))
+	'with-default
+	"mime-mac")
+       )))
+
+
 ;;; @ end
 ;;;
 
