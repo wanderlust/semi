@@ -1,5 +1,10 @@
 2012-04-28  MORIOKA Tomohiko  <tomo@zinbun.kyoto-u.ac.jp>
 
+	* README.ja, README.en: Remove descriptions about CVS and add
+	description about the new Git repository.
+
+2012-04-28  MORIOKA Tomohiko  <tomo@zinbun.kyoto-u.ac.jp>
+
 	* README.ja, README.en (Required environment): Modify for the new
 	URLs of APEL and FLIM.
 	(Mailing lists): Modify for the new Emacs-MIME mailing lists.
