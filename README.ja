@@ -31,6 +31,7 @@ SEMI とは?
  このパッケージには MUAs に関する MIME 拡張は含まれていないことに注意
  してください。これらは、別のパッケージとして配布されています。
 
+
 必要な環境
 ==========
 
@@ -47,12 +48,12 @@ SEMI とは?
  をインストールする前に、これらをインストールしてください。APEL は、以
  下で入手可能です。:
 
-        ftp://ftp.m17n.org/pub/mule/apel/
+	http://git.chise.org/elisp/dist/apel/
 
  そして、FLIM は以下で入手可能です。:
 
-        http://www.kanji.zinbun.kyoto-u.ac.jp/~tomo/comp/emacsen/lisp/
-                                                        flim/flim-1.14/
+	http://git.chise.org/elisp/dist/flim/flim-1.14/
+
 
 インストール
 ============
@@ -143,6 +144,7 @@ SEMI とは?
  他のオプションの設定を指定することができます。${archive}/README.en と
  ${archive}/SEMI-CFG のコメントを読んでください。
 
+
 初期化
 ======
 
@@ -157,6 +159,7 @@ SEMI とは?
 
         (load "mime-setup")
 
+
 付属資料
 ========
 
@@ -167,33 +170,24 @@ SEMI とは?
 
         ftp://ftp.merit.edu/internet/documents/rfc/
 
+
 メーリングリスト
 ================
 
  もし、あなたが、バグレポートおよび/または改良のための提案を書く場合には、
- それらを EMACS-MIME メーリングリストに送ってください。
+ それらを Emacs-MIME メーリングリストに送ってください。
 
-        emacs-mime-en@m17n.org  (英語)
-        emacs-mime-ja@m17n.org  (日本語)
+        emacs-mime-en@lists.chise.org  (英語)
+        emacs-mime-ja@lists.chise.org  (日本語)
 
- EMACS-MIME ML を経由して、あなたは SEMI のバグを報告することや、SEMI
- の最新版の入手、SEMI の将来の強化について議論することなどができます。
- EMACS-MIME ML に加入するためには、本文に
+ Emacs-MIME ML を通して、SEMI のバグを報告したり、SEMI の最新のリリー
+ スに関する情報を入手したり、SEMI の将来の拡張について議論することなど
+ ができます。Emacs-MIME ML に加入したい方は、以下の頁の記述を見て購読
+ 手続きを行ってください：
 
-	subscribe あなたの名前
-	例: subscribe MORIOKA Tomohiko
+      http://lists.chise.org/mailman/listinfo/emacs-mime-ja （日本語）
+      http://lists.chise.org/mailman/listinfo/emacs-mime-en （英語）
 
-と書いたメールを次のアドレスのどちらかに送信してください。
-
-        emacs-mime-en-ctl@m17n.org      (英語)
-        emacs-mime-ja-ctl@m17n.org      (日本語)
-
- ここで、morioka@jaist.ac.jp などの作者(達)に直接メールを送信してはな
- らないことに注意してください。なぜなら、あなたの問題は、他の環境に生
- じるかもしれないからです(そうでなければそれはSEMIのバクでは無く、あな
- たの問題であるかもしれません)。 我々は、EMACS-MIME メーリングリスト内
- で議論します。とりあえず、作者への直接のメールは無視されるかもしれま
- せん。EMACS-MIME メーリングリストにメールを送信してください。
 
 CVS に基づいた開発
 ==================
@@ -216,6 +210,7 @@ CVS に基づいた開発
  CVSROOT は、:ext:cvs@cvs.m17n.org:/cvs/root です。
 
  我々は、あなたが開かれた開発に参加してくださることを期待しています。
+
 
 作者
 ====
