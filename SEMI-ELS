@@ -36,6 +36,10 @@
 	  (nconc semi-modules-to-compile '(mime-image)))
   )
 
+(when (eq system-type 'darwin)
+  (setq semi-modules-to-compile
+	(nconc semi-modules-to-compile '(mime-mac))))
+
 (setq semi-modules (append semi-modules-to-compile
 			   semi-modules-not-to-compile))
 
