@@ -189,27 +189,22 @@ SEMI とは?
       http://lists.chise.org/mailman/listinfo/emacs-mime-en （英語）
 
 
-CVS に基づいた開発
+Git に基づいた開発
 ==================
 
- SEMI の開発版のソースは、CVS の pserver でアクセスすることができます。
- チェックアウトするためには、最初に以下の操作を行なって下さい。
+ SEMI の開発には Git を用いており、次のような操作により SEMI の最新の
+ ソースを取得することができます。
 
- % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root login
- CVS password: [CR] # 空文字列
+   % git clone http://git.chise.org/git/elisp/semi.git
 
- 以後は次の操作によって、最新の SEMI のソースを取得することができます。
+ この SEMI のリポジトリーは WWW 経由でも閲覧することができます：
 
- % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout -r semi-1_14 semi
+    http://git.chise.org/gitweb/?p=elisp/semi.git
 
- もしあなたが CVS に基づいた開発に参加したいと思うならば、以下のアドレスに、
- あなたのアカウント名と ssh の public key を添えたメールを送信してください。
+ Git に基づいた開発に参加したいときは、まず Emacs-MIME メーリングリス
+ トにてその旨を宣言してください。
 
-        cvs@cvs.m17n.org
-
- CVSROOT は、:ext:cvs@cvs.m17n.org:/cvs/root です。
-
- 我々は、あなたが開かれた開発に参加してくださることを期待しています。
+ 我々は多くの方がこの開かれた開発に参加してくださることを望んでいます。
 
 
 作者
@@ -245,8 +240,7 @@ CVS に基づいた開発
     Hisashi Miyashita <himi@bird.scphys.kyoto-u.ac.jp>
     Kazuhiro Ohta <ohta@ele.cst.nihon-u.ac.jp>
     Alexandre Oliva <oliva@dcc.unicamp.br>
-    Fran苡is Pinard <pinard@iro.umontreal.ca>
-    Artur Pioro <artur@flugor.if.uj.edu.pl>
+    François Pinard <pinard@iro.umontreal.ca>
     Artur Pioro <artur@flugor.if.uj.edu.pl>
     Dan Rich <drich@morpheus.corp.sgi.com>
         (XEmacs と共に mime-image.el を発展させるために寄与)
