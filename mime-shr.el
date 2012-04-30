@@ -46,7 +46,15 @@
 				shr-blocked-images)))
     (setq mime-shr-root-entity (mime-find-root-entity entity))
     (goto-char (point-max))
-    (shr-insert-document dom)))
+    (shr-insert-document dom))
+  ;; Workaround to delete garbage overlay.
+  (let ((overlays (overlays-in (point-min) (point-max))))
+    (while overlays
+      (when (eq (overlay-start (car overlays))
+		(overlay-end (car overlays)))
+	(delete-overlay (car overlays)))
+      (setq overlays (cdr overlays)))))
+
 
 (defun mime-shr-cid-retrieve (url)
   (let ((entity (mime-find-entity-from-content-id

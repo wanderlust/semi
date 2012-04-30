@@ -1,3 +1,8 @@
+2012-04-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-shr.el (mime-shr-preview-text/html): Delete garbage
+	overlay.
+
 2012-04-28  MORIOKA Tomohiko  <tomo@zinbun.kyoto-u.ac.jp>
 
 	* README.ja, README.en: Remove descriptions about CVS and add
