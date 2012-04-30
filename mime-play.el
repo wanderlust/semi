@@ -1,6 +1,7 @@
 ;;; mime-play.el --- Playback processing module for mime-view.el
 
-;; Copyright (C) 1994,95,96,97,98,99,2000 Free Software Foundation, Inc.
+;; Copyright (C) 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2002, 2003,
+;;   2004, 2010 Free Software Foundation, Inc.
 
 ;; Author: MORIOKA Tomohiko <tomo@m17n.org>
 ;; Created: 1995/9/26 (separated from tm-view.el)
@@ -280,7 +281,7 @@ window.")
 	(or (yes-or-no-p (format "File %s exists. Save anyway? " filename))
 	    (error "")))
     (mime-write-entity-content entity (expand-file-name filename))
-    ))
+    filename))
 
 
 ;;; @ file detection

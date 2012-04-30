@@ -1,3 +1,32 @@
+2012-04-28  MORIOKA Tomohiko  <tomo@zinbun.kyoto-u.ac.jp>
+
+	* README.ja, README.en: Remove descriptions about CVS and add
+	description about the new Git repository.
+
+2012-04-28  MORIOKA Tomohiko  <tomo@zinbun.kyoto-u.ac.jp>
+
+	* README.ja, README.en (Required environment): Modify for the new
+	URLs of APEL and FLIM.
+	(Mailing lists): Modify for the new Emacs-MIME mailing lists.
+
+2010-11-12  MORIOKA Tomohiko  <tomo@zinbun.kyoto-u.ac.jp>
+
+	* semi-setup.el: Add setting for mime-mac.el if running with Mac
+	OS X.
+
+2010-11-11  MORIOKA Tomohiko  <tomo@zinbun.kyoto-u.ac.jp>
+
+	* SEMI-ELS (semi-modules-to-compile): Add `mime-mac' if running
+	with Mac OS X.
+
+	* mime-mac.el: New file.
+
+	* mime-play.el (mime-save-content): Return filename.
+
+2005-12-25  MORIOKA Tomohiko  <tomo@zinbun.kyoto-u.ac.jp>
+
+	* semi-def.el (mime-user-interface-product): Update to 1.14.7.
+
 2012-04-27  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Experimental support of shr (Simple HTML Renderer) for html
@@ -678,7 +707,7 @@
 
 2000-12-25  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
-	* SEMI: Version 1.14.2 (Daish.DŽòji) released.
+	* SEMI: Version 1.14.2 (Daish$.1Ž íji) released.
 
 	* README.en (Required environment): Update to FLIM 1.14.2.
 
@@ -913,7 +942,7 @@
 
 2000-07-12  MORIOKA Tomohiko  <tomo@kanji.zinbun.kyoto-u.ac.jp>
 
-	* REMI: Version 1.14.2 (Hokuhoku-ŽÒshima) released.
+	* REMI: Version 1.14.2 (Hokuhoku-Ž ìshima) released.
 
 	* README.en (Required environment): Modify for FLIM-Chao 1.14.1.
 
@@ -961,7 +990,7 @@
 
 2000-03-01  MORIOKA Tomohiko  <tomo@m17n.org>
 
-	* REMI: Version 1.14.1 (MushigawaŽòsugi) released.
+	* REMI: Version 1.14.1 (MushigawaŽ ísugi) released.
 
 2000-03-01  MORIOKA Tomohiko  <tomo@m17n.org>
 
@@ -2045,7 +2074,7 @@
 
 1999-08-18  MORIOKA Tomohiko  <tomo@m17n.org>
 
-	* REMI: Version 1.13.2 (ŽÒike-Ikoinomori) released.
+	* REMI: Version 1.13.2 (Ž ìike-Ikoinomori) released.
 
 1999-08-17  Katsumi Yamaoka   <yamaoka@jpl.org>
 
@@ -2116,7 +2145,7 @@
 
 1999-07-27  MORIOKA Tomohiko  <tomo@m17n.org>
 
-	* SEMI: Version 1.13.5 (MeihŽò) released.
+	* SEMI: Version 1.13.5 (MeihŽ í) released.
 
 1999-07-27  MORIOKA Tomohiko  <tomo@m17n.org>
 
@@ -2419,7 +2448,7 @@
 
 1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.13.0 (MattŽò) released.
+	* SEMI: Version 1.13.0 (MattŽ í) released.
 
 1999-01-21  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -2917,7 +2946,7 @@
 
 1998-07-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* REMI: Version 1.8.3 (EcchŽþ-Nakagawa) released.
+	* REMI: Version 1.8.3 (EcchŽ¡«-Nakagawa) released.
 
 	* mime-play.el (mime-delq-null-situation): Add new optional
 	argument `ignored-value'.
@@ -2946,7 +2975,7 @@
 
 1998-07-08  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* REMI: Version 1.8.2 (NŽòmachi) released.
+	* REMI: Version 1.8.2 (NŽ ímachi) released.
 
 1998-07-07  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -3065,7 +3094,7 @@
 
 1998-06-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* REMI: Version 1.8.0 (EcchŽþ-Kokubu) released.
+	* REMI: Version 1.8.0 (EcchŽ¡«-Kokubu) released.
 
 1998-06-26  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -3901,7 +3930,7 @@
 
 1998-06-04  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.5.0 (Nishi-NyŽþzen) released.
+	* SEMI: Version 1.5.0 (Nishi-NyŽ¡«zen) released.
 
 	* README.en (Required environment): Modify for FLIM 1.3.0.
 
@@ -3953,7 +3982,7 @@
 
 1998-06-01  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.4.6 (NyŽþzen) released.
+	* SEMI: Version 1.4.6 (NyŽ¡«zen) released.
 
 1998-05-28  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -4166,7 +4195,7 @@
 
 1998-05-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.4.4 (EcchŽþ-Miyazaki) released.
+	* SEMI: Version 1.4.4 (EcchŽ¡«-Miyazaki) released.
 
 	* mime-play.el (mime-mailcap-method-filename-alist): New variable.
 	(mime-mailcap-method-sentinel): New function.
@@ -4292,7 +4321,7 @@
 
 1998-05-06  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.4.1 (ŽÒmi) released.
+	* SEMI: Version 1.4.1 (Ž ìmi) released.
 
 	* README.en (Required environment): Modify for FLIM 1.2.0.
 
@@ -4452,7 +4481,7 @@
 
 1998-04-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.3.2 (NŽò) was released.
+	* SEMI: Version 1.3.2 (NŽ í) was released.
 
 	* mime-edit.el (mime-edit-mode-entity-prefix): New variable.
 	(mime-edit-mode-entity-map): New variable.
@@ -5107,7 +5136,7 @@
 
 1998-03-13  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.2 (Nonoichi-KŽòdaimae) was released.
+	* SEMI: Version 1.0.2 (Nonoichi-KŽ ídaimae) was released.
 
 1998-03-12  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
@@ -5190,7 +5219,7 @@
 	* mime-file.el: Rename `mime-article/extract-file' ->
 	`mime-extract-current-entity'.
 
-1998-03-03  Fran.AŽçois Pinard   <pinard@iro.umontreal.ca>
+1998-03-03  Fran $(D+.(Bois Pinard   <pinard@iro.umontreal.ca>
 
 	* mime-edit.el (mime-edit-insert-signature): Function
  	`mime-edit-insert-tag' is sometimes called with more arguments
@@ -5219,7 +5248,7 @@
 
 1998-02-25  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 1.0.0 (Nukaj.DŽþtaku-mae) was released.
+	* SEMI: Version 1.0.0 (NukajŽ¡«taku-mae) was released.
 
 	* SEMI-ELS: Remove mime-tar.el.
 
@@ -5356,14 +5385,14 @@
 
 1997-11-16  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
-	* SEMI: Version 0.116 (DŽòhŽòji) was released.
+	* SEMI: Version 0.116 (DŽ íhŽ íji) was released.
 
 1997-11-15  MORIOKA Tomohiko  <morioka@jaist.ac.jp>
 
 	* mime-view.el, mime-pgp.el, mime-partial.el: Rename
 	`mime::article/content-info' -> `mime-raw-content-info'.
 
-1997-11-11  Fran.AŽçois Pinard   <pinard@iro.umontreal.ca>
+1997-11-11  Fran $(D+.(Bois Pinard   <pinard@iro.umontreal.ca>
 
 	* mime-edit.el: Modify space in prompt and removespurious trailing
 	spaces in the files. (cf. [tm-en:1507])

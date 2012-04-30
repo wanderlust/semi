@@ -47,12 +47,12 @@ Required environment
   package.  Please install them before installing it.  APEL package is
   available at:
 
-	ftp://ftp.m17n.org/pub/mule/apel/
+	http://git.chise.org/elisp/dist/apel/
 
   and FLIM package is available at:
 
-	http://www.kanji.zinbun.kyoto-u.ac.jp/~tomo/comp/emacsen/lisp/
-							flim/flim-1.14/
+	http://git.chise.org/elisp/dist/flim/flim-1.14/
+
 
 Installation
 ============
@@ -180,52 +180,34 @@ Mailing lists
 =============
 
   If you write bug-reports and/or suggestions for improvement, please
-  send them to the EMACS-MIME Mailing List:
+  send them to the Emacs-MIME Mailing Lists:
 
-	emacs-mime-en@m17n.org	(English)
-	emacs-mime-ja@m17n.org	(Japanese)
+	emacs-mime-en@lists.chise.org	(English)
+	emacs-mime-ja@lists.chise.org	(Japanese)
 
-  Via the EMACS-MIME ML, you can report SEMI bugs, obtain the latest
+  Via the Emacs-MIME ML, you can report SEMI bugs, obtain the latest
   release of SEMI, and discuss future enhancements to SEMI.  To join
-  the EMACS-MIME ML, send an e-mail to
+  the Emacs-MIME ML, please see the descriptions of the following
+  pages:
 
-	emacs-mime-en-ctl@m17n.org	(English)
-	emacs-mime-ja-ctl@m17n.org	(Japanese)
-
-  containing
-
-	subscribe YOUR NAME
-
-  in its contents.
-
-  Notice that you should not send mail to author(s), such as
-  morioka@jaist.ac.jp, directly.  Because your problem may occur in
-  other environments (if not, it might be your problem, not bug of
-  SEMI).  We should discuss in the EMACS-MIME mailing lists.  Anyway
-  direct-mail for authors might be ignored.  Please send mail to the
-  EMACS-MIME mailing lists.
+      http://lists.chise.org/mailman/listinfo/emacs-mime-en (English)
+      http://lists.chise.org/mailman/listinfo/emacs-mime-ja (Japanese)
 
 
-CVS based development
+Git based development
 =====================
 
-  The SEMI development sources can be accessed via CVS pserver.  To
-  check out the SEMI sources, what you should do for the first time
-  is:
+  The SEMI development sources can be accessed via Git repository.
+  You can get the latest SEMI sources by the following:
+  
+  % git clone http://git.chise.org/git/elisp/semi.git
 
-  % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root login
-  CVS password: [CR] # NULL string
+  Or you can view the SEMI repository via WWW at:
 
-  Then you can get the latest SEMI sources by the following:
+    http://git.chise.org/gitweb/?p=elisp/semi.git
 
-  % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout -r semi-1_14 semi
-
-  If you would like to join CVS based development, please send mail to
-
-	cvs@cvs.m17n.org
-
-  with your account name and your public key for ssh.  cvsroot is
-  :ext:cvs@cvs.m17n.org:/cvs/root.
+  If you would like to join Git based development, please declare it
+  in the Emacs-MIME mailing list at first.
 
   We hope you will join the open development.
 
@@ -263,7 +245,7 @@ Other authors
     Hisashi Miyashita <himi@bird.scphys.kyoto-u.ac.jp>
     Kazuhiro Ohta <ohta@ele.cst.nihon-u.ac.jp>
     Alexandre Oliva <oliva@dcc.unicamp.br>
-    François Pinard <pinard@iro.umontreal.ca>
+    FranÃ§ois Pinard <pinard@iro.umontreal.ca>
     Artur Pioro <artur@flugor.if.uj.edu.pl>
     Dan Rich <drich@morpheus.corp.sgi.com>
         (contribute to evolve mime-image.el with XEmacs)

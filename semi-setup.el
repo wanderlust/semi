@@ -248,6 +248,21 @@ If it is other non-nil value, semi-setup tries to set up for mime-w3.")
 ;; (add-hook 'mu-cite/pre-cite-hook 'eword-decode-header)
 
 
+;;; @ for Mac OS X
+;;;
+
+(when (eq system-type 'darwin)
+  (eval-after-load "mime-view"
+    '(progn
+       (mime-add-condition
+	'action
+	'((type . application)
+	  (method . mime-mac-save-and-play-with-open))
+	'with-default
+	"mime-mac")
+       )))
+
+
 ;;; @ end
 ;;;
 
