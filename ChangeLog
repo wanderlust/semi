@@ -1,5 +1,8 @@
 2012-04-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* semi-setup.el: Fix the case of that
+	mime-setup-enable-inline-html is nil.
+
 	* mime-shr.el (mime-shr-preview-text/html): Delete garbage
 	overlay.
 

@@ -68,23 +68,24 @@ Each element is a list consists of required module, previewer function and autol
   "*If it is a symbol, semi-setup sets up to use html previewer according to `mime-html-previewer-alist'.
 If it is other non-nil value, semi-setup tries to set up for mime-w3.")
 
-(let ((table (cdr (or (assq mime-setup-enable-inline-html
-			    mime-html-previewer-alist)
-		      (assq 'w3 mime-html-previewer-alist)))))
-  (when table
-    (eval-after-load "mime-view"
-      `(progn
-	 (autoload (quote ,(car table)) ,(cadr table))
-	 
-	 (ctree-set-calist-strictly
-	  'mime-preview-condition
-	  '((type . text)(subtype . html)
-	    (body . visible)
-	    (body-presentation-method . ,(car table))))
-	 
-	 (set-alist 'mime-view-type-subtype-score-alist
-		    '(text . html) 3)
-	 ))))
+(when mime-setup-enable-inline-html
+  (let ((table (cdr (or (assq mime-setup-enable-inline-html
+			      mime-html-previewer-alist)
+			(assq 'w3 mime-html-previewer-alist)))))
+    (when table
+      (eval-after-load "mime-view"
+	`(progn
+	   (autoload (quote ,(car table)) ,(cadr table))
+
+	   (ctree-set-calist-strictly
+	    'mime-preview-condition
+	    '((type . text)(subtype . html)
+	      (body . visible)
+	      (body-presentation-method . ,(car table))))
+
+	   (set-alist 'mime-view-type-subtype-score-alist
+		      '(text . html) 3)
+	   )))))
 
 ;; for text/x-vcard
 (defvar mime-setup-enable-vcard
