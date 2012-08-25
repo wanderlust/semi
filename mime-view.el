@@ -856,19 +856,17 @@ Each elements are regexp of field-name.")
   (save-restriction
     (narrow-to-region (point-max)(point-max))
     (when (mime-display-insert-text-content entity)
-      (let ((beg (point-min)))
-	(remove-text-properties beg (point-max) '(face nil))
-	(richtext-decode beg (point-max))
-	))))
+      (remove-text-properties (point-min) (point-max) '(face nil))
+      (richtext-decode (point-min) (point-max))
+      )))
 
 (defun mime-display-text/enriched (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
     (when (mime-display-insert-text-content entity)
-      (let ((beg (point-min)))
-	(remove-text-properties beg (point-max) '(face nil))
-	(enriched-decode beg (point-max))
-	))))
+      (remove-text-properties (point-min) (point-max) '(face nil))
+      (enriched-decode (point-min) (point-max))
+      )))
 
 
 (defvar mime-view-announcement-for-message/partial
