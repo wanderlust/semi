@@ -1,5 +1,9 @@
 2012-08-25  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* mime-view.el (mime-display-text/plain): Minor refactoring.
+
+2012-08-25  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* mime-view.el (mime-display-insert-text-content): New function.
 	(mime-display-text/plain, mime-display-text/richtext)
 	(mime-display-text/enriched): Use it.

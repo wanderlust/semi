@@ -838,9 +838,9 @@ Each elements are regexp of field-name.")
   (save-restriction
     (narrow-to-region (point-max)(point-max))
     (when (mime-display-insert-text-content entity)
-      (goto-char (point-max))
-      (if (not (eq (char-after (1- (point))) ?\n))
-	  (insert "\n")
+      (when (not (eq (char-before (point-max)) ?\n))
+	(goto-char (point-max))
+	(insert "\n")
 	)
       (if (and mime-preview-fill-flowed-text
 	       (equal (cdr (assoc "format" situation)) "flowed"))
