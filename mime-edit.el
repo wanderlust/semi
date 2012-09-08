@@ -1091,6 +1091,7 @@ Tspecials means any character that matches with it in header must be quoted.")
 
 (define-key mime-edit-mode-entity-map "\C-t" 'mime-edit-insert-text)
 (define-key mime-edit-mode-entity-map "\C-i" 'mime-edit-insert-file)
+(define-key mime-edit-mode-entity-map "i"    'mime-edit-insert-file-as-text)
 (define-key mime-edit-mode-entity-map "\C-e" 'mime-edit-insert-external)
 (define-key mime-edit-mode-entity-map "\C-v" 'mime-edit-insert-voice)
 (define-key mime-edit-mode-entity-map "\C-y" 'mime-edit-insert-message)
@@ -1147,6 +1148,7 @@ Tspecials means any character that matches with it in header must be quoted.")
 (defconst mime-edit-menu-list
   '((mime-help	"Describe MIME editor mode" mime-edit-help)
     (file	"Insert File"		mime-edit-insert-file)
+    (file-as-text "Insert File as text"	mime-edit-insert-file-as-text)
     (external	"Insert External"	mime-edit-insert-external)
     (voice	"Insert Voice"		mime-edit-insert-voice)
     (message	"Insert Message"	mime-edit-insert-message)
@@ -1269,6 +1271,7 @@ Following commands are available in addition to major mode commands:
 \[make single part\]
 \\[mime-edit-insert-text]	insert a text message.
 \\[mime-edit-insert-file]	insert a (binary) file.
+\\[mime-eidt-insert-file-as-text] insert a text file.
 \\[mime-edit-insert-external]	insert a reference to external body.
 \\[mime-edit-insert-voice]	insert a voice message.
 \\[mime-edit-insert-message]	insert a mail or news message.
@@ -1561,6 +1564,35 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
     (mime-edit-insert-binary-file file encoding)
     ))
 
+(defun mime-edit-insert-file-as-text (file &optional verbose)
+  "Insert a text from a file.  This function decodes inserted file and does not define Content-Transfer-Encoding: header and charset parameter."
+  (interactive "fInsert file as text: \nP")
+  (let*  ((guess (mime-find-file-type file))
+	  (type "text")
+	  (subtype (if (equal (nth 0 guess) "text") (nth 1 guess) "plain"))
+	  (parameters (nth 2 guess))
+	  (disposition-type (nth 4 guess))
+	  (disposition-params (nth 5 guess))
+	  )
+    (setq verbose (or (interactive-p) verbose))
+    (if verbose
+	(setq subtype (mime-prompt-for-subtype type subtype)))
+    (when (or (consp parameters) (stringp disposition-type))
+      (setq parameters
+	    (mime-edit-insert-file-parameters
+	     (remove (assoc "charset" parameters) parameters) file verbose))
+      (when disposition-type
+	(setq parameters
+	      (concat
+	       parameters "\n" "Content-Disposition: " disposition-type
+	       (mime-edit-insert-file-parameters
+		(remove
+		 (assoc "charset" disposition-params) disposition-params)
+		file verbose)))))
+    (mime-edit-insert-tag type subtype parameters)
+    (mime-edit-insert-text-file file)
+    ))
+
 (defun mime-edit-insert-external ()
   "Insert a reference to external body."
   (interactive)
@@ -1706,6 +1738,21 @@ Optional argument ENCODING specifies an encoding method such as base64."
 	  (goto-char tagend) ; Make sure which line the tag is on.
 	  (mime-edit-define-encoding encoding)
 	  ))
+    ))
+
+(defun mime-edit-insert-text-file (file &optional encoding)
+  "Insert text FILE at point.
+Optional argument ENCODING is ignored."
+  (let ((tagend (1- (point))))		;End of the tag
+    (save-restriction
+      (narrow-to-region tagend (point))
+      (insert-file-contents file)
+      (goto-char (point-max))
+      )
+    (or (looking-at mime-edit-tag-regexp)
+	(= (point)(point-max))
+	(mime-edit-insert-tag "text" "plain")
+	)
     ))
 
 

@@ -1,3 +1,10 @@
+2012-09-08  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el (mime-edit-insert-text-file)
+	(mime-edit-insert-file-as-text): New functions.
+	(mime-edit-mode-entity-map, mime-edit-menu-list, mime-edit-mode):
+	Add entry for mime-edit-insert-file-as-text.
+
 2012-09-07  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-edit.el (mime-edit-insert-file-filename)
