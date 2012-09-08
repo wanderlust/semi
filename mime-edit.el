@@ -316,25 +316,25 @@ To insert a signature file automatically, call the function
      '(
        ;; Programming languages
        ("\\.cc$"
-	"application" "octet-stream" (("type" . "C++"))
+	"application" "octet-stream" (("type" . "C++") ("charset" . charset))
 	"7bit"
 	"attachment"	nil
 	)
 
        ("\\.el$"
-	"application" "octet-stream" (("type" . "emacs-lisp"))
+	"application" "octet-stream" (("type" . "emacs-lisp") ("charset" . charset))
 	"7bit"
 	"attachment"	nil
 	)
 
        ("\\.lsp$"
-	"application" "octet-stream" (("type" . "common-lisp"))
+	"application" "octet-stream" (("type" . "common-lisp") ("charset" . charset))
 	"7bit"
 	"attachment"	nil
 	)
 
        ("\\.pl$"
-	"application" "octet-stream" (("type" . "perl"))
+	"application" "octet-stream" (("type" . "perl") ("charset" . charset))
 	"7bit"
 	"attachment"	nil
 	)
@@ -342,25 +342,25 @@ To insert a signature file automatically, call the function
        ;; Text or translated text
 
        ("\\.txt$\\|\\.pln$"
-	"text"	"plain"		nil
+	"text"	"plain"		(("charset" . charset))
 	nil
 	"inline"		nil
 	)
 
        ("\\.css$"
-	"text"	"css"		nil
+	"text"	"css"		(("charset" . charset))
 	nil
 	"inline"		nil
 	)
 
        ("\\.csv$"
-	"text"	"csv"		nil
+	"text"	"csv"		(("charset" . charset))
 	nil
 	"inline"		nil
 	)
 
        ("\\.tex$\\|\\.latex$"
-	"text"	"x-latex"	nil
+	"text"	"x-latex"	(("charset" . charset))
 	nil
 	"inline"		nil
 	)
@@ -369,13 +369,13 @@ To insert a signature file automatically, call the function
        ;; *rc : other resource files
 
        ("\\.\\(rc\\|lst\\|log\\|sql\\|mak\\)$\\|\\..*rc$"
-	"text"	"plain"		nil
+	"text"	"plain"		(("charset" . charset))
 	nil
 	"attachment"	nil
 	)
 
        ("\\.html$"
-	"text"	"html"		nil
+	"text"	"html"		(("charset" . charset))
 	nil
 	nil		nil)
 
@@ -386,11 +386,11 @@ To insert a signature file automatically, call the function
 	)
 
        ("\\.signature"
-	"text"	"plain"		nil	nil	nil	nil)
+	"text"	"plain"		(("charset" . charset))	nil	nil	nil)
 
 
        ("\\.js$"
-	"application"	"javascript" nil
+	"application"	"javascript" (("charset" . charset))
 	nil
 	"inline"	nil
 	)
@@ -1486,6 +1486,52 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	  ))
       )))
 
+(defun mime-edit-insert-file-filename (file)
+  (std11-wrap-as-quoted-string
+   (if (or (boundp 'mime-non-attribute-char-regexp)
+	   (string= (mime-product-name
+		     mime-library-product)
+		    "LIMIT"))
+       (file-name-nondirectory file)
+     ;; If FLIM does not support non-ASCII
+     ;; filename, it is encoded.
+     (eword-encode-string
+      (file-name-nondirectory file))
+     )))
+
+(defun mime-edit-insert-file-charset (file &optional verbose)
+  (let ((charset (with-temp-buffer
+		   (insert-file-contents file)
+		   (coding-system-to-mime-charset last-coding-system-used))))
+    (when charset
+      (setq charset (symbol-name charset)))
+    (when verbose
+      (setq charset
+	    (completing-read
+	     "What charset: "
+	     (mapcar (lambda (elt) (cons (symbol-name elt) nil))
+		     (mime-charset-list))
+	     nil nil charset nil nil nil)))
+    (unless (string= charset "") charset)))
+
+(defun mime-edit-insert-file-parameters (parameters file &optional verbose)
+  (let ((rest parameters)
+	cell attribute value)
+    (setq parameters "")
+    (while rest
+      (setq attribute (caar rest)
+	    value (cdar rest))
+      (cond
+       ((eq value 'file)
+	(setq value (mime-edit-insert-file-filename file)))
+       ((eq value 'charset)
+	(setq value (mime-edit-insert-file-charset file verbose))))
+      (when value
+	(if (symbolp value) (setq value (symbol-name value)))
+	(setq parameters (concat parameters "; " attribute "=" value)))
+      (setq rest (cdr rest))))
+  parameters)
+
 (defun mime-edit-insert-file (file &optional verbose)
   "Insert a message from a file."
   (interactive "fInsert file as MIME message: \nP")
@@ -1497,53 +1543,20 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	  (disposition-type (nth 4 guess))
 	  (disposition-params (nth 5 guess))
 	  )
-    (if (or (interactive-p) verbose)
+    (setq verbose (or (interactive-p) verbose))
+    (if verbose
 	(setq type (mime-prompt-for-type type)
 	      subtype (mime-prompt-for-subtype type subtype)
 	      encoding (mime-prompt-for-encoding encoding)))
-    (if (or (consp parameters) (stringp disposition-type))
-	(let ((rest parameters) cell attribute value)
-	  (setq parameters "")
-	  (while rest
-	    (setq cell (car rest))
-	    (setq attribute (car cell))
-	    (setq value (cdr cell))
-	    (if (eq value 'file)
-		(setq value (std11-wrap-as-quoted-string
-			     (file-name-nondirectory file)))
-	      )
-	    (setq parameters (concat parameters "; " attribute "=" value))
-	    (setq rest (cdr rest))
-	    )
-	  (if disposition-type
-	      (progn
-		(setq parameters
-		      (concat parameters "\n"
-			      "Content-Disposition: " disposition-type))
-		(setq rest disposition-params)
-		(while rest
-		  (setq cell (car rest))
-		  (setq attribute (car cell))
-		  (setq value (cdr cell))
-		  (when (eq value 'file)
-		    (setq value
-			  (std11-wrap-as-quoted-string
-			   (if (or (boundp 'mime-non-attribute-char-regexp)
-				   (string= (mime-product-name
-					     mime-library-product)
-					    "LIMIT"))
-			       (file-name-nondirectory file)
-			     ;; If FLIM does not support non-ASCII
-			     ;; filename, it is encoded.
-			     (eword-encode-string
-			      (file-name-nondirectory file))
-			     ))))
-		  (setq parameters
-			(concat parameters "; " attribute "=" value))
-		  (setq rest (cdr rest))
-		  )
-		))
-	  ))
+    (when (or (consp parameters) (stringp disposition-type))
+      (setq parameters
+	    (mime-edit-insert-file-parameters parameters file verbose))
+      (when disposition-type
+	(setq parameters
+	      (concat parameters "\n"
+		      "Content-Disposition: " disposition-type
+		      (mime-edit-insert-file-parameters
+		       disposition-params file verbose)))))
     (mime-edit-insert-tag type subtype parameters)
     (mime-edit-insert-binary-file file encoding)
     ))
@@ -2675,10 +2688,29 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 	(forward-line 1)
 	)
        ((mime-test-content-type contype "text")
-	;; Define charset for text if necessary.
-	(setq charset (if charset
-			  (intern (downcase charset))
-			(mime-edit-choose-charset)))
+	;; Define charset for text.
+	(setq charset
+	      (cond
+	       ;; charset is explicitly defined.
+	       (charset
+		(intern (downcase charset)))
+	       ;; Encoded (inserted text file).
+	       (encoding
+		(let* ((string
+			(mime-decode-string
+			 (buffer-substring (point) (mime-edit-content-end))
+			 encoding))
+		       (coding (detect-coding-string string t)))
+		  (or (coding-system-to-mime-charset coding)
+		      (if (fboundp 'detect-mime-charset-string)
+			  (detect-mime-charset-string string)
+			(with-temp-buffer
+			  (insert string)
+			  (detect-mime-charset-region
+			   (point-min) (point-max)))))))
+	       ;; Inputted directly or reeditting.
+	       (t
+		(mime-edit-choose-charset))))
 	(mime-edit-define-charset charset)
 	(cond ((string-equal contype "text/x-rot13-47-48")
 	       (save-excursion

@@ -1,3 +1,17 @@
+2012-09-07  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el (mime-edit-insert-file-filename)
+	(mime-edit-insert-file-charset)
+	(mime-edit-insert-file-parameters): New functions.
+	(mime-edit-insert-file): Use them.  Capable to define charset
+	while inserting.
+	(mime-file-types): Define charset parameter for text files.
+
+2012-09-07  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el (mime-edit-normalize-body): Define charset more
+	exactly for encoded text entity.
+
 2012-08-25  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-view.el (mime-display-text/plain): Minor refactoring.
