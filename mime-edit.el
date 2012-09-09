@@ -1551,15 +1551,14 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	(setq type (mime-prompt-for-type type)
 	      subtype (mime-prompt-for-subtype type subtype)
 	      encoding (mime-prompt-for-encoding encoding)))
-    (when (or (consp parameters) (stringp disposition-type))
-      (setq parameters
-	    (mime-edit-insert-file-parameters parameters file verbose))
-      (when disposition-type
-	(setq parameters
-	      (concat parameters "\n"
-		      "Content-Disposition: " disposition-type
-		      (mime-edit-insert-file-parameters
-		       disposition-params file verbose)))))
+    (setq parameters
+	  (concat
+	   (when (consp parameters)
+	     (mime-edit-insert-file-parameters parameters file verbose))
+	   (when disposition-type
+	     (concat "\n" "Content-Disposition: " disposition-type
+		     (mime-edit-insert-file-parameters
+		      disposition-params file verbose)))))
     (mime-edit-insert-tag type subtype parameters)
     (mime-edit-insert-binary-file file encoding)
     ))
@@ -1577,18 +1576,17 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
     (setq verbose (or (interactive-p) verbose))
     (if verbose
 	(setq subtype (mime-prompt-for-subtype type subtype)))
-    (when (or (consp parameters) (stringp disposition-type))
-      (setq parameters
-	    (mime-edit-insert-file-parameters
-	     (remove (assoc "charset" parameters) parameters) file verbose))
-      (when disposition-type
-	(setq parameters
-	      (concat
-	       parameters "\n" "Content-Disposition: " disposition-type
-	       (mime-edit-insert-file-parameters
-		(remove
-		 (assoc "charset" disposition-params) disposition-params)
-		file verbose)))))
+    (setq parameters
+	  (concat
+	   (when (consp parameters)
+	     (mime-edit-insert-file-parameters
+	      (remove (assoc "charset" parameters) parameters) file verbose))
+	   (when disposition-type
+	     (concat
+	      "\n" "Content-Disposition: " disposition-type
+	      (mime-edit-insert-file-parameters
+	       (remove (assoc "charset" disposition-params) disposition-params)
+	       file verbose)))))
     (mime-edit-insert-tag type subtype parameters)
     (mime-edit-insert-text-file file)
     ))
