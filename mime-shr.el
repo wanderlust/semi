@@ -24,9 +24,11 @@
 
 ;;; Code:
 
-(condition-case nil
-    (require 'shr)
-  (error nil))
+(eval-and-compile
+  (condition-case nil
+      (require 'shr)
+    (error nil)))
+
 (require 'mime)
 
 (defcustom mime-shr-blocked-images "."
