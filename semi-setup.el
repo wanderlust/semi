@@ -109,7 +109,7 @@ If it is other non-nil value, semi-setup tries to set up for mime-w3.")
 
 ;; for PGP
 (defvar mime-setup-enable-epg (module-installed-p 'epg)
-  "*If it is non-nil, semi-setup sets uf to use mime-epg.")
+  "*If it is non-nil, semi-setup sets uf to use mime-pgp.")
 
 (eval-after-load "mime-view"
   '(when mime-setup-enable-epg
@@ -119,7 +119,7 @@ If it is other non-nil value, semi-setup tries to set up for mime-w3.")
      (mime-add-condition
       'action '((type . application)(subtype . pgp)
 		(method . mime-view-application/pgp))
-      'strict "mime-epg")
+      'strict "mime-pgp")
      (mime-add-condition
       'action '((type . text)(subtype . x-pgp)
 		(method . mime-view-application/pgp)))
@@ -127,51 +127,51 @@ If it is other non-nil value, semi-setup tries to set up for mime-w3.")
      (mime-add-condition
       'action '((type . multipart)(subtype . signed)
 		(method . mime-verify-multipart/signed))
-      'strict "mime-epg")
+      'strict "mime-pgp")
 	 
      (mime-add-condition
       'action
       '((type . application)(subtype . pgp-signature)
 	(method . mime-verify-application/*-signature))
-      'strict "mime-epg")
+      'strict "mime-pgp")
 	 
      (mime-add-condition
       'action
       '((type . application)(subtype . pgp-encrypted)
 	(method . mime-decrypt-application/pgp-encrypted))
-      'strict "mime-epg")
+      'strict "mime-pgp")
 	 
      (mime-add-condition
       'action
       '((type . application)(subtype . pgp-keys)
 	(method . mime-add-application/pgp-keys))
-      'strict "mime-epg")
+      'strict "mime-pgp")
 
      (mime-add-condition
       'action
       '((type . application)(subtype . pkcs7-signature)
 	(method . mime-verify-application/*-signature))
-      'strict "mime-epg")
+      'strict "mime-pgp")
 
      (mime-add-condition
       'action
       '((type . application)(subtype . x-pkcs7-signature)
 	(method . mime-verify-application/*-signature))
-      'strict "mime-epg")
+      'strict "mime-pgp")
 	 
      (mime-add-condition
       'action
       '((type . application)(subtype . pkcs7-mime)
 	(method . mime-view-application/pkcs7-mime))
-      'strict "mime-epg")
+      'strict "mime-pgp")
 
      (mime-add-condition
       'action
       '((type . application)(subtype . x-pkcs7-mime)
 	(method . mime-view-application/pkcs7-mime))
-      'strict "mime-epg")
+      'strict "mime-pgp")
 
-     (autoload 'mime-preview-application/*-signature "mime-epg")
+     (autoload 'mime-preview-application/*-signature "mime-pgp")
      (ctree-set-calist-strictly
       'mime-preview-condition
       '((type . application)

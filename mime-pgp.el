@@ -1,4 +1,4 @@
-;;; mime-epg.el --- mime-view internal methods for EasyPG.
+;;; mime-pgp.el --- mime-view internal methods for EasyPG.
 
 ;; Copyright (C) 1995,1996,1997,1998,1999,2000 Free Software Foundation, Inc.
 
@@ -8,6 +8,7 @@
 ;; Created: 1995/12/7
 ;;	Renamed: 1997/2/27 from tm-pgp.el
 ;;	Renamed: 2010/11/27 from mime-pgp.el in emiko-epg
+;;	Renamed: 2012/10/05 from mime-epg.el
 ;; Keywords: PGP, security, MIME, multimedia, mail, news
 
 ;; This file is part of SEMI (Secure Emacs MIME Interface).
@@ -165,8 +166,8 @@
 ;;; @ end
 ;;;
 
-(provide 'mime-epg)
+(provide 'mime-pgp)
 
-(run-hooks 'mime-epg-load-hook)
+(run-hooks 'mime-pgp-load-hook)
 
-;;; mime-epg.el ends here
+;;; mime-pgp.el ends here

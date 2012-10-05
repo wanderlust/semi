@@ -1,3 +1,13 @@
+2012-10-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-epg.el: Renamed to mime-pgp.el.
+
+	* mime-pgp.el: Renamed from mime-epg.el.
+
+	* SEMI-ELS: Likewise.
+
+	* semi-setup.el: Likewise.
+
 2012-10-04  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-view.el (mime-view-entity-score): New function.  The

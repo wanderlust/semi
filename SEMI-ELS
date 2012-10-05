@@ -6,7 +6,7 @@
 
 (setq semi-modules-to-compile
       '(signature
-	mime-epg
+	mime-pgp
 	semi-def mime-view mime-play mime-partial postpet
 	mime-edit
 	semi-setup mail-mime-setup))
