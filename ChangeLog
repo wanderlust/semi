@@ -1,3 +1,12 @@
+2012-10-04  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-view.el (mime-view-entity-score): New function.  The
+	default score (-1) is hard-coded.
+	(mime-display-multipart/alternative): Use it.
+	(mime-view-multipart-entity-score): New function.
+	(mime-view-type-subtype-score-alist): Add entry for multipart
+	entity.
+
 2012-09-09  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-edit.el (mime-edit-insert-file)

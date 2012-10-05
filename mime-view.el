@@ -910,6 +910,7 @@ Each elements are regexp of field-name.")
   '(((text . enriched) . 3)
     ((text . richtext) . 2)
     ((text . plain)    . 1)
+    (multipart . mime-view-multipart-entity-score)
     (t . 0))
   "Alist MEDIA-TYPE vs corresponding score.
 MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default.
@@ -924,60 +925,63 @@ Score is integer or function which receives entity and returns integer."
 		       (choice (integer :tag "score")
 			       (function :tag "function")))))
 
+(defun mime-view-entity-score (entity &optional situation)
+  (or situation (setq situation (mime-entity-situation entity)))
+  (let ((score
+	 (cdr
+	  (or (assoc (cons (cdr (assq 'type situation))
+			   (cdr (assq 'subtype situation)))
+		     mime-view-type-subtype-score-alist)
+	      (assq (cdr (assq 'type situation))
+		    mime-view-type-subtype-score-alist)
+	      (assq t mime-view-type-subtype-score-alist)
+	      ))))
+    (when (functionp score)
+      (setq score (funcall score entity)))
+    (if (numberp score)
+	score
+      -1)
+    ))
+
+(defun mime-view-multipart-entity-score (entity)
+  (apply 'max (or (mapcar 'mime-view-entity-score
+			  (mime-entity-children entity))
+		  (list (or (assq t mime-view-type-subtype-score-alist)
+			    -1)))))
+
 (defun mime-display-multipart/alternative (entity situation)
-  (let* ((children (mime-entity-children entity))
-	 (original-major-mode-cell (assq 'major-mode situation))
-	 (default-situation
-	   (cdr (assq 'childrens-situation situation)))
-	 (i 0)
-	 (p 0)
-	 (max-score 0)
-	 situations)
-    (if original-major-mode-cell
-	(setq default-situation
-	      (cons original-major-mode-cell default-situation)))
-    (setq situations
-	  (mapcar (function
-		   (lambda (child)
-		     (let ((situation
-			    (mime-find-entity-preview-situation
-			     child default-situation)))
-		       (if (cdr (assq 'body-presentation-method situation))
-			   (let ((score
-				  (cdr
-				   (or (assoc
-					(cons
-					 (cdr (assq 'type situation))
-					 (cdr (assq 'subtype situation)))
-					mime-view-type-subtype-score-alist)
-				       (assq
-					(cdr (assq 'type situation))
-					mime-view-type-subtype-score-alist)
-				       (assq
-					t
-					mime-view-type-subtype-score-alist)
-				       ))))
-			     (when (functionp score)
-			       (setq score (funcall score child)))
-			     (if (> score max-score)
-				 (setq p i
-				       max-score score)
-			       )))
-		       (setq i (1+ i))
-		       situation)
-		     ))
-		  children))
-    (setq i 0)
-    (while children
-      (let ((child (car children))
-	    (situation (car situations)))
-	(mime-display-entity child (if (= i p)
-				       situation
-				     (put-alist 'body 'invisible
-						(copy-alist situation)))))
-      (setq children (cdr children)
-	    situations (cdr situations)
-	    i (1+ i)))))
+  (let ((original-major-mode-cell (assq 'major-mode situation))
+	(default-situation
+	  (cdr (assq 'childrens-situation situation)))
+	(max-score 0)
+	p pairs
+	child-situation score)
+    (when original-major-mode-cell
+      (setq default-situation
+	    (cons original-major-mode-cell default-situation)))
+    (setq pairs
+	  (mapcar
+	   (lambda (child)
+	     (setq child-situation
+		   (mime-find-entity-preview-situation
+		    child default-situation))
+	     (when (cdr (assq 'body-presentation-method child-situation))
+	       (setq score (mime-view-entity-score child child-situation))
+	       (when (> score max-score)
+		 (setq p child
+		       max-score score)
+		 ))
+	     (cons child child-situation))
+	   (mime-entity-children entity)))
+    (or p (setq p (caar pairs)))
+    (mapc (lambda (pair)
+	    (mime-display-entity
+	     (car pair)
+	     (if (eq p (car pair))
+		 (cdr pair)
+	       (put-alist 'body 'invisible (copy-alist (cdr pair))))))
+	  pairs)
+    ))
 
 (defun mime-display-multipart/related (entity situation)
   (let* ((param-start (mime-parse-msg-id
