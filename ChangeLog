@@ -1,5 +1,8 @@
 2012-10-06  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* mime-image.el (mime-image-normalize-xbm-buffer): Use
+	string-to-number instead of string-to-int.
+
 	* mime-shr.el: Load shr.el at compile time.
 
 2012-10-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>

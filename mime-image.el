@@ -51,13 +51,13 @@
       (or (re-search-forward "_width[\t ]+\\([0-9]+\\)" nil t)
 	  (error "!! Illegal xbm file format in the buffer: %s"
 		 (current-buffer)))
-      (setq width (string-to-int (match-string 1))
+      (setq width (string-to-number (match-string 1))
 	    xbytes (/ (+ width 7) 8))
       (goto-char (point-min))
       (or (re-search-forward "_height[\t ]+\\([0-9]+\\)" nil t)
 	  (error "!! Illegal xbm file format in the buffer: %s"
 		 (current-buffer)))
-      (setq height (string-to-int (match-string 1)))
+      (setq height (string-to-number (match-string 1)))
       (goto-char (point-min))
       (re-search-forward "0x[0-9a-f][0-9a-f],")
       (delete-region (point-min) (match-beginning 0))
