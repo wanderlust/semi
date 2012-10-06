@@ -1204,19 +1204,19 @@ Tspecials means any character that matches with it in header must be quoted.")
 				 mime-edit-menu-list)))
 	   )
        )
-      ((>= emacs-major-version 19)
+      (t
        (define-key mime-edit-mode-map [menu-bar mime-edit]
 	 (cons mime-edit-menu-title
 	       (make-sparse-keymap mime-edit-menu-title)))
-       (mapcar (function
-		(lambda (item)
-		  (define-key mime-edit-mode-map
-		    (vector 'menu-bar 'mime-edit (car item))
-		    (cons (nth 1 item)(nth 2 item))
-		    )
-		  ))
-	       (reverse mime-edit-menu-list)
-	       )
+       (mapc (function
+	      (lambda (item)
+		(define-key mime-edit-mode-map
+		  (vector 'menu-bar 'mime-edit (car item))
+		  (cons (nth 1 item)(nth 2 item))
+		  )
+		))
+	     (reverse mime-edit-menu-list)
+	     )
        ))
 
 
