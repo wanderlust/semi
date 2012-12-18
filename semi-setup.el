@@ -179,12 +179,14 @@ If it is other non-nil value, semi-setup tries to set up for mime-w3.")
 	(body . visible)
 	(body-presentation-method . mime-preview-application/*-signature)))
 
-     ;; (ctree-set-calist-strictly
-     ;;  'mime-preview-condition
-     ;;  '((type . multipart) (subtype . encrypted)
-     ;; 	("protocol" . "application/pgp-encrypted")
-     ;; 	(body . visible)
-     ;; 	(body-presentation-method . mime-display-multipart/pgp-encrypted)))
+     (autoload 'mime-display-multipart/pgp-encrypted "mime-pgp")
+     (ctree-set-calist-strictly
+      'mime-preview-condition
+      '((type . multipart)
+	(subtype . encrypted)
+	("protocol" . "application/pgp-encrypted")
+	(body . visible)
+	(body-presentation-method . mime-display-multipart/pgp-encrypted)))
      )
   )
 

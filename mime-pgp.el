@@ -36,6 +36,11 @@
 (require 'epg)
 (require 'epa)
 
+(defcustom mime-pgp-decrypt-when-preview nil
+  "When non-nil, decrypt encrypted part while viewing."
+  :group 'mime-view
+  :type 'boolean)
+
 ;;; @ Internal method for multipart/signed
 
 (defun mime-verify-multipart/signed (entity situation)
@@ -45,6 +50,31 @@
    (list (assq 'mode situation)) ; play-mode
    ))
 
+
+;;; @ Internal method for multipart/encrypted
+
+(defun mime-display-multipart/pgp-encrypted (entity situation)
+  (let ((original-major-mode-cell (assq 'major-mode situation))
+	(default-situation
+	  (cdr (assq 'childrens-situation situation)))
+	child-situation)
+    (unless mime-pgp-decrypt-when-preview
+      (insert "This part is encrypted.\n"))
+    (when original-major-mode-cell
+      (setq default-situation
+	    (cons original-major-mode-cell default-situation)))
+    (mapc
+     (lambda (child)
+       (setq child-situation
+	     (mime-find-entity-preview-situation child default-situation))
+       (if (and (eq (cdr (assq 'type child-situation)) 'application)
+		(eq (cdr (assq 'subtype child-situation)) 'pgp-encrypted))
+	   (mime-display-entity
+	    child (put-alist 'body (if mime-pgp-decrypt-when-preview
+				       'visible
+				     'invisible)
+			     (copy-alist child-situation)))))
+     (mime-entity-children entity))))
 
 ;;; @ Internal method for application/*-signature
 
