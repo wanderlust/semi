@@ -1,3 +1,7 @@
+2012-12-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el (mime-edit-encrypt-pgp-nonmime): New function.
+
 2012-10-07  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-edit.el: Use mapc instead of mapcar for side effect.
