@@ -73,7 +73,10 @@
 	    child (put-alist 'body (if mime-pgp-decrypt-when-preview
 				       'visible
 				     'invisible)
-			     (copy-alist child-situation)))))
+			     (copy-alist child-situation)))
+	 (when mime-view-multipart-show-all-children
+	   (mime-display-entity
+	    child (put-alist 'body 'invisible (copy-alist child-situation))))))
      (mime-entity-children entity))))
 
 ;;; @ Internal method for application/*-signature
