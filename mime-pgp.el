@@ -36,6 +36,8 @@
 (require 'epg)
 (require 'epa)
 
+(eval-when-compile (require 'mmgeneric))
+
 (defcustom mime-pgp-decrypt-when-preview nil
   "When non-nil, decrypt encrypted part while viewing."
   :group 'mime-view
@@ -160,6 +162,34 @@
 	(mime-show-echo-buffer (epg-verify-result-to-string verify-result))
       (if verify-result
 	  (epa-display-info verify-result)))))
+
+;; Imported and modified from Wanderlust.
+(defun mime-preview-application/pgp-encrypted (entity situation)
+  (let ((encrypted-entity
+	 (nth 1 (mime-entity-children (mime-entity-parent entity))))
+	(p (point-max))
+	(to-buf (current-buffer))
+	beg end)
+    (goto-char p)
+    (save-restriction
+      (narrow-to-region p p)
+      (with-temp-buffer
+	(mime-insert-entity encrypted-entity)
+	(setq beg (point-min)
+	      end (point-max))
+	(insert (prog1 (decode-coding-string
+			(epg-decrypt-string
+			 (epg-make-context) (buffer-substring beg end))
+			'raw-text)
+		  (delete-region beg end)))
+	(mime-display-entity
+	 (mime-parse-message
+	  (mm-expand-class-name 'buffer)
+	  nil entity (mime-entity-node-id-internal entity))
+	 nil '((header . visible)
+	       (body . visible)
+	       (entity-button . invisible))
+	 to-buf)))))
 
 
 ;;; @ Internal method for application/pgp-keys

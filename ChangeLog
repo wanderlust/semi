@@ -1,3 +1,17 @@
+2012-12-22  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* semi-setup.el: Remove settings for mime-view-application/pgp
+	function.  SEMI-EPG does not have this funciton.
+
+2012-12-22  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-pgp.el: Require mmgeneric.el in compiling.
+	(mime-preview-application/pgp-encrypted): New function. Imported
+	and modified from Wanderlust.
+
+	* semi-setup.el: Add setting for
+	mime-preview-application/pgp-encrypted.
+
 2012-12-21  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-shr.el (mime-shr-blocked-images): Change its customization

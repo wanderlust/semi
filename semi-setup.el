@@ -116,13 +116,6 @@ If it is other non-nil value, semi-setup tries to set up for mime-w3.")
      (mime-add-condition
       'preview '((type . application)(subtype . pgp)
 		 (message-button . visible)))
-     (mime-add-condition
-      'action '((type . application)(subtype . pgp)
-		(method . mime-view-application/pgp))
-      'strict "mime-pgp")
-     (mime-add-condition
-      'action '((type . text)(subtype . x-pgp)
-		(method . mime-view-application/pgp)))
 	 
      (mime-add-condition
       'action '((type . multipart)(subtype . signed)
@@ -187,6 +180,14 @@ If it is other non-nil value, semi-setup tries to set up for mime-w3.")
 	("protocol" . "application/pgp-encrypted")
 	(body . visible)
 	(body-presentation-method . mime-display-multipart/pgp-encrypted)))
+
+     (autoload 'mime-preview-application/pgp-encrypted "mime-pgp")
+     (ctree-set-calist-strictly
+      'mime-preview-condition
+      '((type . application)
+     	(subtype . pgp-encrypted)
+     	(body . visible)
+     	(body-presentation-method . mime-preview-application/pgp-encrypted)))
      )
   )
 
