@@ -193,9 +193,10 @@ activate."
 	      (progn
 		(funcall func sym condition)
 		(if file
-		    (let ((method (cdr (assq 'method condition))))
-		      (autoload method file)
-		      ))
+		    (mapc (lambda (parameter)
+			    (when (setq func (cdr (assq parameter condition)))
+			      (autoload func file)))
+			  '(method body-presentation-method)))
 		)
 	    (error "Function for mode `%s' is not found." mode)
 	    ))

@@ -75,13 +75,11 @@ If it is other non-nil value, semi-setup tries to set up for mime-w3.")
     (when table
       (eval-after-load "mime-view"
 	`(progn
-	   (autoload (quote ,(car table)) ,(cadr table))
-
-	   (ctree-set-calist-strictly
-	    'mime-preview-condition
-	    '((type . text)(subtype . html)
-	      (body . visible)
-	      (body-presentation-method . ,(car table))))
+	   (mime-add-condition
+	    'preview '((type . text)(subtype . html)
+		       (body . visible)
+		       (body-presentation-method . ,(car table)))
+	    'strict ,(cadr table))
 
 	   (set-alist 'mime-view-type-subtype-score-alist
 		      '(text . html) 3)
@@ -94,14 +92,12 @@ If it is other non-nil value, semi-setup tries to set up for mime-w3.")
 
 (eval-after-load "mime-view"
   '(when mime-setup-enable-vcard
-     (autoload 'mime-display-text/x-vcard "mime-vcard")
-
      (mime-add-condition
       'preview 
       '((type . text)(subtype . x-vcard)
 	(body . visible)
 	(body-presentation-method . mime-display-text/x-vcard))
-      'strict)
+      'strict "mime-vcard")
 
      (set-alist 'mime-view-type-subtype-score-alist
 		'(text . x-vcard) 3)
@@ -164,30 +160,30 @@ If it is other non-nil value, semi-setup tries to set up for mime-w3.")
 	(method . mime-view-application/pkcs7-mime))
       'strict "mime-pgp")
 
-     (autoload 'mime-preview-application/*-signature "mime-pgp")
-     (ctree-set-calist-strictly
-      'mime-preview-condition
+     (mime-add-condition
+      'preview
       '((type . application)
 	(subtype . pgp-signature)
 	(body . visible)
-	(body-presentation-method . mime-preview-application/*-signature)))
+	(body-presentation-method . mime-preview-application/*-signature))
+      'strict "mime-pgp")
 
-     (autoload 'mime-display-multipart/pgp-encrypted "mime-pgp")
-     (ctree-set-calist-strictly
-      'mime-preview-condition
+     (mime-add-condition
+      'preview
       '((type . multipart)
 	(subtype . encrypted)
 	("protocol" . "application/pgp-encrypted")
 	(body . visible)
-	(body-presentation-method . mime-display-multipart/pgp-encrypted)))
+	(body-presentation-method . mime-display-multipart/pgp-encrypted))
+      'strict "mime-pgp")
 
-     (autoload 'mime-preview-application/pgp-encrypted "mime-pgp")
-     (ctree-set-calist-strictly
-      'mime-preview-condition
+     (mime-add-condition
+      'preview
       '((type . application)
-     	(subtype . pgp-encrypted)
-     	(body . visible)
-     	(body-presentation-method . mime-preview-application/pgp-encrypted)))
+	(subtype . pgp-encrypted)
+	(body . visible)
+	(body-presentation-method . mime-preview-application/pgp-encrypted))
+      'strict "mime-pgp")
      )
   )
 
