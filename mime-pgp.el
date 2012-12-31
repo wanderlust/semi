@@ -163,18 +163,28 @@
       (if verify-result
 	  (epa-display-info verify-result)))))
 
+(defvar mime-pgp-decrypted-buffers nil)
+
+(defun mime-pgp-kill-decrypted-buffers ()
+  (mapc (lambda (buffer)
+	  (when (bufferp buffer)
+	    (kill-buffer buffer)))
+	mime-pgp-decrypted-buffers))
+
 ;; Imported and modified from Wanderlust.
 (defun mime-preview-application/pgp-encrypted (entity situation)
-  (let ((encrypted-entity
-	 (nth 1 (mime-entity-children (mime-entity-parent entity))))
-	(p (point-max))
-	(to-buf (current-buffer))
-	beg end)
+  (let ((p (point-max))
+	beg end buffer decrypted-entity)
     (goto-char p)
     (save-restriction
       (narrow-to-region p p)
-      (with-temp-buffer
-	(mime-insert-entity encrypted-entity)
+      (setq buffer (generate-new-buffer (concat mime-temp-buffer-name "PGP*")))
+      (add-hook 'kill-buffer-hook 'mime-pgp-kill-decrypted-buffers nil t)
+      (make-local-variable 'mime-pgp-decrypted-buffers)
+      (add-to-list 'mime-pgp-decrypted-buffers buffer)
+      (with-current-buffer buffer
+	(mime-insert-entity
+	 (nth 1 (mime-entity-children (mime-entity-parent entity))))
 	(setq beg (point-min)
 	      end (point-max))
 	(insert (prog1 (decode-coding-string
@@ -182,14 +192,15 @@
 			 (epg-make-context) (buffer-substring beg end))
 			'raw-text)
 		  (delete-region beg end)))
-	(mime-display-entity
-	 (mime-parse-message
-	  (mm-expand-class-name 'buffer)
-	  nil entity (mime-entity-node-id-internal entity))
-	 nil '((header . visible)
-	       (body . visible)
-	       (entity-button . invisible))
-	 to-buf)))))
+	(setq decrypted-entity
+	      (mime-parse-message
+	       (mm-expand-class-name 'buffer)
+	       nil entity (mime-entity-node-id-internal entity))
+	      buffer-read-only t))
+      (mime-display-entity
+       decrypted-entity nil '((header . visible)
+			      (body . visible)
+			      (entity-button . invisible))))))
 
 
 ;;; @ Internal method for application/pgp-keys

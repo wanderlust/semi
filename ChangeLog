@@ -1,3 +1,13 @@
+2012-12-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-pgp.el (mime-pgp-decrypted-buffers): New variable.
+	(mime-pgp-kill-decrypted-buffers): New function.
+	(mime-preview-application/pgp-encrypted): Keep decrypted content
+	until the preview buffer is killed.
+
+	* mime-view.el (mime-display-entity): Do not propertize with
+	mime-view-* properties on already propertized region.
+
 2012-12-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* semi-def.el (mime-add-condition): Define autoload for method and
