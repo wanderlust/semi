@@ -213,7 +213,7 @@ If it is other non-nil value, semi-setup tries to set up for mime-w3.")
 ;;; @@ variables
 ;;;
 
-(defvar mime-setup-use-signature t
+(defvar mime-setup-use-signature nil
   "If it is not nil, mime-setup sets up to use signature.el.")
 
 (defvar mime-setup-default-signature-key "\C-c\C-s"

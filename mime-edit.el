@@ -113,7 +113,6 @@
 (require 'mail-utils)
 (require 'mel)
 (require 'mime-view)
-(require 'signature)
 (require 'alist)
 (require 'invisible)
 
@@ -1628,19 +1627,7 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	  (goto-char (point-max))
 	  )))))
 
-(defun mime-edit-insert-signature (&optional arg)
-  "Insert a signature file."
-  (interactive "P")
-  (let ((signature-insert-hook
-         (function
-          (lambda ()
-	    (let ((items (mime-find-file-type signature-file-name)))
-	      (apply (function mime-edit-insert-tag)
-		     (car items) (cadr items) (list (caddr items))))
-            )))
-        )
-    (insert-signature arg)
-    ))
+(autoload 'mime-edit-insert-signature "mime-signature" nil t)
 
 
 ;; Insert a new tag around a point.

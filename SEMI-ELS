@@ -8,7 +8,7 @@
       '(signature
 	mime-pgp
 	semi-def mime-view mime-play mime-partial postpet
-	mime-edit
+	mime-edit mime-signature
 	semi-setup mail-mime-setup))
 
 (setq semi-modules-not-to-compile nil)
