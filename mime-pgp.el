@@ -87,43 +87,53 @@
   (let* ((mother (mime-entity-parent entity))
 	 (orig-entity (car (mime-entity-children mother)))
 	 (protocol (cdr (assoc "protocol" (mime-entity-parameters mother))))
-	 (context (epg-make-context
-		   (if (equal protocol "application/pgp-signature")
-		       'OpenPGP
-		     (if (string-match
-			  "\\`application/\\(x-\\)?pkcs7-signature\\'"
-			  protocol)
-			 'CMS
-		       (error "Unknown protocol: %s" protocol))))))
-    (epg-verify-string context
-		       (mime-entity-content entity)
-		       (with-temp-buffer
-			 (if (fboundp 'set-buffer-multibyte)
-			     (set-buffer-multibyte nil))
-			 (mime-insert-entity orig-entity)
-			 (goto-char (point-min))
-			 (while (search-forward "\n" nil t)
-			   (replace-match "\r\n"))
-			 (buffer-substring (point-min) (point-max))))
-    (epg-context-result-for context 'verify)))
+	 context)
+    (if (null protocol)
+	"No protocol is specified."
+      (setq context
+	    (epg-make-context
+	     (cond 
+	      ((equal protocol "application/pgp-signature")
+	       'OpenPGP)
+	      ((string-match
+		"\\`application/\\(x-\\)?pkcs7-signature\\'" protocol)
+	       'CMS))))
+      (if (null context)
+	  (format "Unknown protocol: %s." protocol)
+	(epg-verify-string context
+			   (mime-entity-content entity)
+			   (with-temp-buffer
+			     (if (fboundp 'set-buffer-multibyte)
+				 (set-buffer-multibyte nil))
+			     (mime-insert-entity orig-entity)
+			     (goto-char (point-min))
+			     (while (search-forward "\n" nil t)
+			       (replace-match "\r\n"))
+			     (buffer-substring (point-min) (point-max))))
+	(epg-context-result-for context 'verify)))))
 
 (defun mime-verify-application/*-signature (entity situation)
   (let ((verify-result
 	 (mime-verify-application/*-signature-internal entity situation)))
-    (if (> (length verify-result) 1)
-	(mime-show-echo-buffer (epg-verify-result-to-string verify-result))
-      (if verify-result
-	  (epa-display-info verify-result)))))
+    (cond
+     ((stringp verify-result)
+      (mime-show-echo-buffer verify-result))
+     ((> (length verify-result) 1)
+      (mime-show-echo-buffer (epg-verify-result-to-string verify-result)))
+     (verify-result
+      (epa-display-info verify-result)))))
 
 (defun mime-preview-application/*-signature (entity situation)
-  (let ((string
-	 (epg-verify-result-to-string
-	  (mime-verify-application/*-signature-internal entity situation))))
-    (when (> (length string) 0)
-      (unless (string-equal (substring string -1) "\n")
-	(setq string (concat string "\n")))
-      (insert string))))
-
+  (let ((verify-result
+	 (mime-verify-application/*-signature-internal entity situation))
+	string)
+    (if (stringp verify-result)
+	(insert verify-result)
+      (setq string (epg-verify-result-to-string verify-result))
+      (when (> (length string) 0)
+	(unless (string-equal (substring string -1) "\n")
+	  (setq string (concat string "\n")))
+	(insert string)))))
 
 ;;; @ Internal method for application/pgp-encrypted
 

@@ -1,3 +1,10 @@
+2013-06-09  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-pgp.el (mime-verify-application/*-signature-internal)
+	(mime-verify-application/*-signature)
+	(mime-preview-application/*-signature): Avoid signaling error when
+	protocol parameter of Contetn-Type header is incorrect or missing.
+
 2013-02-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* SEMI-ELS (semi-modules-to-compile): Add mime-signature.el.
