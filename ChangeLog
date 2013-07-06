@@ -156,6 +156,10 @@
 	* mime-shr.el (mime-shr-preview-text/html): Delete garbage
 	overlay.
 
+2012-04-28  MORIOKA Tomohiko  <tomo.git@chise.org>
+
+	* README.en: Add coding cookie to specify UTF-8.
+
 2012-04-28  MORIOKA Tomohiko  <tomo@zinbun.kyoto-u.ac.jp>
 
 	* README.ja, README.en: Remove descriptions about CVS and add
