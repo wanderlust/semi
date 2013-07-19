@@ -88,7 +88,7 @@ If it is other non-nil value, semi-setup tries to set up for mime-w3.")
 ;; for text/x-vcard
 (defvar mime-setup-enable-vcard
   (module-installed-p 'vcard)
-  "*If it is non-nil, semi-setup sets uf to use mime-vcard.")
+  "*If it is non-nil, semi-setup sets up to use mime-vcard.")
 
 (eval-after-load "mime-view"
   '(when mime-setup-enable-vcard
@@ -105,7 +105,7 @@ If it is other non-nil value, semi-setup tries to set up for mime-w3.")
 
 ;; for PGP
 (defvar mime-setup-enable-epg (module-installed-p 'epg)
-  "*If it is non-nil, semi-setup sets uf to use mime-pgp.")
+  "*If it is non-nil, semi-setup sets up to use mime-pgp.")
 
 (eval-after-load "mime-view"
   '(when mime-setup-enable-epg
