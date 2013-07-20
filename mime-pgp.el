@@ -121,7 +121,7 @@
      ((> (length verify-result) 1)
       (mime-show-echo-buffer (epg-verify-result-to-string verify-result)))
      (verify-result
-      (epa-display-info verify-result)))))
+      (epa-display-info (epg-verify-result-to-string verify-result))))))
 
 (defun mime-preview-application/*-signature (entity situation)
   (let ((verify-result
@@ -171,7 +171,7 @@
     (if (> (length verify-result) 1)
 	(mime-show-echo-buffer (epg-verify-result-to-string verify-result))
       (if verify-result
-	  (epa-display-info verify-result)))))
+	  (epa-display-info (epg-verify-result-to-string verify-result))))))
 
 (defvar mime-pgp-decrypted-buffers nil)
 
