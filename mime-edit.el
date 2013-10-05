@@ -198,7 +198,8 @@ To insert a signature file automatically, call the function
      ("css") ; rfc2318
      ("csv") ; rfc4180
      ("xml") ; rfc2376
-     ("x-latex")
+     ("xml") ; rfc2376
+     ("vcard") ; rfc6350
      ;; ("x-rot13-47-48")
      )
     ("message"
@@ -395,6 +396,12 @@ To insert a signature file automatically, call the function
 	)
 
        
+       ("\\.vcf$"
+	"text"	"vcard"		(("charset" . "UTF-8"))
+	nil
+	"inline"		nil
+	)
+
        ;; Microsoft Project
        ("\\.mpp$"
 	"application" "vnd.ms-project" nil

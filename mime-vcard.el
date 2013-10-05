@@ -30,7 +30,9 @@
 
 (require 'vcard)
 
-(defun mime-display-text/x-vcard (entity situation)
+(defvar mime-display-text/vcard-hook nil)
+
+(defun mime-display-text/vcard (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
     (insert
@@ -42,7 +44,7 @@
     (if (not (eq (char-after (1- (point))) ?\n))
         (insert "\n"))
     (mime-add-url-buttons)
-    (run-hooks 'mime-display-text/x-vcard-hook)))
+    (run-hooks 'mime-display-text/vcard-hook)))
 
 (provide 'mime-vcard)
 

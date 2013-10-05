@@ -85,22 +85,24 @@ If it is other non-nil value, semi-setup tries to set up for mime-w3.")
 		      '(text . html) 3)
 	   )))))
 
-;; for text/x-vcard
+;; for text/vcard, text/x-vcard
 (defvar mime-setup-enable-vcard
   (module-installed-p 'vcard)
   "*If it is non-nil, semi-setup sets up to use mime-vcard.")
 
 (eval-after-load "mime-view"
   '(when mime-setup-enable-vcard
-     (mime-add-condition
-      'preview 
-      '((type . text)(subtype . x-vcard)
-	(body . visible)
-	(body-presentation-method . mime-display-text/x-vcard))
-      'strict "mime-vcard")
-
-     (set-alist 'mime-view-type-subtype-score-alist
-		'(text . x-vcard) 3)
+     (mapc (lambda (subtype)
+	     (mime-add-condition
+	      'preview 
+	      `((type . text)(subtype . ,subtype)
+		(body . visible)
+		(body-presentation-method . mime-display-text/vcard))
+	      'strict "mime-vcard")
+	     
+	     (set-alist 'mime-view-type-subtype-score-alist
+			`(text . ,subtype) 3))
+	   '(vcard x-vcard))
      ))
 
 ;; for PGP
