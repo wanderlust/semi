@@ -1,5 +1,11 @@
 2013-10-06  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* mime-view.el (mime-view-multipart/related-show-all-children):
+	Renamed from mime-view-multipart-show-all-children.
+	(mime-display-multipart/related): Likewise.
+
+2013-10-06  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* mime-edit.el (mime-content-types): Add entry for text/vcard.
 	(mime-file-types): Add entry for .vcf file.
 

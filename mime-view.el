@@ -79,7 +79,7 @@ buttom. Nil means don't scroll at all."
   :group 'mime-view
   :type 'boolean)
 
-(defcustom mime-view-multipart-show-all-children nil
+(defcustom mime-view-multipart/related-show-all-children nil
   "When non-nil, do not hide child entities."
   :group 'mime-view
   :type 'boolean)
@@ -1003,7 +1003,7 @@ Score is integer or function which receives entity and returns integer."
     (if original-major-mode-cell
 	(setq default-situation
 	      (cons original-major-mode-cell default-situation)))
-    (if (and start (null mime-view-multipart-show-all-children))
+    (if (and start (null mime-view-multipart/related-show-all-children))
 	(mime-display-entity start nil default-situation)
       (mapc
        (lambda (child)
