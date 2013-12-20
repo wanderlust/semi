@@ -27,12 +27,27 @@
 
 (require 'mime-edit)
 
+(defcustom mime-edit-signature-separator "\n-- \n"
+  "Separator between a message text and a signature.  It should start and must end with LF."
+  :group 'mime-edit
+  :type 'string)
+
 (defcustom mime-edit-default-signature
   (or (and (boundp 'signature-file-name)
 	   signature-file-name)
       (and (boundp 'mail-signature)
 	   (cond ((stringp mail-signature)
-		  (list mail-signature))
+		  (list (if (string-match
+			     (concat
+			      "^\n*"
+			      (regexp-quote
+			       (if (eq ?\n (string-to-char
+					    mime-edit-signature-separator))
+				   (substring mime-edit-signature-separator 1)
+				 mime-edit-signature-separator)))
+			     mail-signature)
+			    (substring mail-signature (match-end 0))
+			  mail-signature)))
 		 ((eq mail-signature t)
 		  (and (boundp 'mail-signaute-file)
 		       mail-signaute-file))
@@ -47,11 +62,6 @@ When signature is list, each string and function's result are inserted.  Functio
 		 (repeat (choice
 			  (string :tag "Inserting string")
 			  (function :tag "Calling function")))))
-
-(defcustom mime-edit-signature-separator "\n-- \n"
-  "Separator between a message text and a signature.  It should start and must end with LF."
-  :group 'mime-edit
-  :type 'string)
 
 (defcustom mime-edit-signature-position 'part
   "Position for signature."
