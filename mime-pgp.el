@@ -76,7 +76,7 @@
 				       'visible
 				     'invisible)
 			     (copy-alist child-situation)))
-	 (when mime-view-multipart-show-all-children
+	 (when mime-view-multipart/related-show-all-children
 	   (mime-display-entity
 	    child (put-alist 'body 'invisible (copy-alist child-situation))))))
      (mime-entity-children entity))))
