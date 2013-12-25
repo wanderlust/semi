@@ -1,3 +1,12 @@
+2013-12-25  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-play.el: Use NOERROR option of require funciton instead of
+	condition-case.
+
+	* mime-shr.el: Likewise.
+
+	* mime-w3.el: Likewise.
+
 2013-12-20  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-pgp.el (mime-display-multipart/pgp-encrypted): Adapt for

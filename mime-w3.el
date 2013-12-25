@@ -24,9 +24,7 @@
 
 ;;; Code:
 
-(condition-case nil
-    (require 'w3)
-  (error nil))
+(require 'w3 nil t)
 (require 'mime)
 
 (defmacro mime-put-keymap-region (start end keymap)

@@ -25,9 +25,7 @@
 ;;; Code:
 
 (eval-and-compile
-  (condition-case nil
-      (require 'shr)
-    (error nil)))
+  (require 'shr nil t))
 
 (require 'mime)
 
