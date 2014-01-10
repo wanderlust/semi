@@ -75,93 +75,89 @@
       (goto-char (point-min))
       (read (current-buffer)))))
 
-(static-if (featurep 'xemacs)
-    (progn
-      (defun mime-image-type-available-p (type)
-	(memq type (image-instantiator-format-list)))
+(static-cond
+ ((featurep 'xemacs)
+  (defun mime-image-type-available-p (type)
+    (memq type (image-instantiator-format-list)))
 
-      (defun mime-image-create (file-or-data &optional type data-p &rest props)
-	(when (and data-p (eq type 'xbm))
-	  (with-temp-buffer
-	    (insert file-or-data)
-	    (setq file-or-data
-		  (mime-image-normalize-xbm-buffer (current-buffer)))))
-	(let ((glyph
-	       (make-glyph
-		(if (and type (mime-image-type-available-p type))
-		    (vconcat
-		     (list type (if data-p :data :file) file-or-data)
-		     props)
-		  file-or-data))))
-	  (if (nothing-image-instance-p (glyph-image-instance glyph)) nil
-	    glyph)))
+  (defun mime-image-create (file-or-data &optional type data-p &rest props)
+    (when (and data-p (eq type 'xbm))
+      (with-temp-buffer
+	(insert file-or-data)
+	(setq file-or-data
+	      (mime-image-normalize-xbm-buffer (current-buffer)))))
+    (let ((glyph
+	   (make-glyph
+	    (if (and type (mime-image-type-available-p type))
+		(vconcat
+		 (list type (if data-p :data :file) file-or-data)
+		 props)
+	      file-or-data))))
+      (if (nothing-image-instance-p (glyph-image-instance glyph)) nil
+	glyph)))
 
-      (defun mime-image-insert (image &optional string area)
-	(let ((extent (make-extent (point)
-				   (progn (and string
-					       (insert string))
-					  (point)))))
-	  (set-extent-property extent 'invisible t)
-	  (set-extent-end-glyph extent image))))
-  (condition-case nil
+  (defun mime-image-insert (image &optional string area)
+    (let ((extent (make-extent (point)
+			       (progn (and string
+					   (insert string))
+				      (point)))))
+      (set-extent-property extent 'invisible t)
+      (set-extent-end-glyph extent image))))
+ ((require 'image nil t)
+  (defalias 'mime-image-type-available-p 'image-type-available-p)
+  (defun mime-image-create
+    (file-or-data &optional type data-p &rest props)
+    (if (and data-p (eq type 'xbm))
+	(with-temp-buffer
+	  (insert file-or-data)
+	  (setq file-or-data
+		(mime-image-normalize-xbm-buffer (current-buffer)))
+	  (apply #'create-image (nth 2 file-or-data) type data-p
+		 (nconc
+		  (list :width (car file-or-data)
+			:height (nth 1 file-or-data))
+		  props)))
+      (apply #'create-image file-or-data type data-p props)))
+  (defalias 'mime-image-insert 'insert-image))
+ (t
+  (if (and (featurep 'mule) (require 'bitmap nil t))
       (progn
-	(require 'image)
-	(defalias 'mime-image-type-available-p 'image-type-available-p)
-	(defun mime-image-create
-	  (file-or-data &optional type data-p &rest props)
-	  (if (and data-p (eq type 'xbm))
-	      (with-temp-buffer
-		(insert file-or-data)
-		(setq file-or-data
-		      (mime-image-normalize-xbm-buffer (current-buffer)))
-		(apply #'create-image (nth 2 file-or-data) type data-p
-		       (nconc
-			(list :width (car file-or-data)
-			      :height (nth 1 file-or-data))
-			props)))
-	    (apply #'create-image file-or-data type data-p props)))
-	(defalias 'mime-image-insert 'insert-image))
-    (error
-     (condition-case nil
-	 (progn
-	   (require (if (featurep 'mule) 'bitmap ""))
-	   (defun mime-image-read-xbm-buffer (buffer)
-	     (condition-case nil
-		 (mapconcat #'bitmap-compose
-			    (append (bitmap-decode-xbm
-				     (bitmap-read-xbm-buffer
-				      (current-buffer))) nil) "\n")
-	       (error nil)))
-	   (defun mime-image-insert (image &optional string area)
-	     (insert image)))
-       (error
-	(defalias 'mime-image-read-xbm-buffer
-	  'mime-image-normalize-xbm-buffer)
+	(defun mime-image-read-xbm-buffer (buffer)
+	  (condition-case nil
+	      (mapconcat #'bitmap-compose
+			 (append (bitmap-decode-xbm
+				  (bitmap-read-xbm-buffer
+				   (current-buffer))) nil) "\n")
+	    (error nil)))
 	(defun mime-image-insert (image &optional string area)
-	  (save-restriction
-	    (narrow-to-region (point)(point))
-	    (let ((face (gensym "mii")))
-	      (or (facep face) (make-face face))
-	      (set-face-stipple face image)
-	      (let ((row (make-string (/ (car image)  (frame-char-width)) ? ))
-		  (height (/ (nth 1 image)  (frame-char-height)))
-		  (i 0))
-		(while (< i height)
-		  (set-text-properties (point) (progn (insert row)(point))
-				       (list 'face face))
-		  (insert "\n")
-		  (setq i (1+ i)))))))))
+	  (insert image)))
+    (defalias 'mime-image-read-xbm-buffer
+      'mime-image-normalize-xbm-buffer)
+    (defun mime-image-insert (image &optional string area)
+      (save-restriction
+	(narrow-to-region (point)(point))
+	(let ((face (gensym "mii")))
+	  (or (facep face) (make-face face))
+	  (set-face-stipple face image)
+	  (let ((row (make-string (/ (car image)  (frame-char-width)) ? ))
+		(height (/ (nth 1 image)  (frame-char-height)))
+		(i 0))
+	    (while (< i height)
+	      (set-text-properties (point) (progn (insert row)(point))
+				   (list 'face face))
+	      (insert "\n")
+	      (setq i (1+ i))))))))
 
-     (defun mime-image-type-available-p (type)
-       (eq type 'xbm))
+  (defun mime-image-type-available-p (type)
+    (eq type 'xbm))
 
-     (defun mime-image-create (file-or-data &optional type data-p &rest props)
-       (when (or (null type) (eq type 'xbm))
-	 (with-temp-buffer
-	   (if data-p
-	       (insert file-or-data)
-	     (insert-file-contents file-or-data))
-	   (mime-image-read-xbm-buffer (current-buffer))))))))
+  (defun mime-image-create (file-or-data &optional type data-p &rest props)
+    (when (or (null type) (eq type 'xbm))
+      (with-temp-buffer
+	(if data-p
+	    (insert file-or-data)
+	  (insert-file-contents file-or-data))
+	(mime-image-read-xbm-buffer (current-buffer)))))))
 
 (defvar mime-image-format-alist
   '((image jpeg		jpeg)
