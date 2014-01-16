@@ -32,6 +32,7 @@
 (require 'calist)
 (require 'alist)
 (require 'mime-conf)
+(require 'path-util)
 
 (eval-when-compile (require 'static))
 
@@ -83,6 +84,34 @@ buttom. Nil means don't scroll at all."
   "When non-nil, do not hide child entities."
   :group 'mime-view
   :type 'boolean)
+
+(defcustom mime-view-text/html-score 3
+  "Score for text/html entity when previewer is available."
+  :group 'mime-view
+  :type 'integer)
+
+(defcustom mime-view-text/html-previewer-alist
+  (delq nil `((w3m mime-w3m-preview-text/html mime-w3m)
+	      ,(and (fboundp 'libxml-parse-html-region)
+		    '(shr mime-shr-preview-text/html mime-shr))
+	      (w3 mime-preview-text/html mime-w3)))
+  "Alist for text/html entity previewer.
+Each element is a list consists of required module, previewer function and required feature for previewer function."
+  :group 'mime-view
+  :type '(repeat (list (symbol :tag "Module")
+		       (symbol :tag "Function")
+		       (symbol :tag "Feature"))))
+
+(defcustom mime-view-text/html-previewer
+  (let ((alist mime-view-text/html-previewer-alist))
+    (while (and alist (null (module-installed-p (caar alist))))
+      (setq alist (cdr alist)))
+    (caar alist))
+  "Indicate text/html entity previewer.  Possible vaules are each car of `mime-view-text/html-previewer-alist' element or nil.  When this value is nil or preview is not available, text/html entity is displayed as if text/plain part."
+  :group 'mime-view
+  :type `(choice ,@(mapcar (lambda (elt) (list 'const (car elt)))
+			   mime-view-text/html-previewer-alist)
+		 (const :tag "Disable previewer" nil)))
 
 ;;; @ in raw-buffer (representation space)
 ;;;
@@ -768,6 +797,12 @@ Each elements are regexp of field-name.")
    (body . visible)
    (body-presentation-method . mime-display-text/richtext)))
 
+(ctree-set-calist-strictly
+ 'mime-preview-condition
+ '((type . text)(subtype . html)
+   (body . visible)
+   (body-presentation-method . mime-display-text/html)))
+
 (autoload 'mime-display-application/x-postpet "postpet")
 
 (ctree-set-calist-strictly
@@ -873,6 +908,22 @@ Each elements are regexp of field-name.")
       (enriched-decode (point-min) (point-max))
       )))
 
+(defun mime-display-text/html-previewer-params ()
+  (and mime-view-text/html-previewer
+       (or (assq mime-view-text/html-previewer
+		 mime-view-text/html-previewer-alist)
+	   ;; For compatibility with mime-setup-enable-inline-html.
+	   (assq 'w3 mime-view-text/html-previewer-alist))))
+
+(defun mime-display-text/html (entity situation)
+  (let ((list (mime-display-text/html-previewer-params)))
+    (if (and list
+	     (require (nth 2 list) nil t)
+	     (fboundp (nth 1 list)))
+	(funcall (nth 1 list) entity situation)
+      ;; text/html entity previewer is not available.
+      (mime-display-text/plain entity situation))))
+
 
 (defvar mime-view-announcement-for-message/partial
   (if (and (>= emacs-major-version 19) window-system)
@@ -911,15 +962,19 @@ Each elements are regexp of field-name.")
       (setq children (cdr children))
       )))
 
+(defvar mime-view-entity-lowest-score -1)
+
 (defcustom mime-view-type-subtype-score-alist
   '(((text . enriched) . 3)
     ((text . richtext) . 2)
     ((text . plain)    . 1)
+    ((text . html)     . mime-view-text/html-entity-score)
     (multipart . mime-view-multipart-entity-score)
-    (t . 0))
+    )
   "Alist MEDIA-TYPE vs corresponding score.
 MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default.
-Score is integer or function which receives entity and returns integer."
+If MEDIA-TYPE does not have corresponding score, `mime-view-entity-lowest-score' is used.
+Score is integer or function or variable.  The function receives entity and returns integer."
   :group 'mime-view
   :type '(repeat (cons (choice :tag "Media-Type"
 			       (cons :tag "Type/Subtype"
@@ -928,7 +983,8 @@ Score is integer or function which receives entity and returns integer."
 			       (symbol :tag "Type")
 			       (const :tag "Default" t))
 		       (choice (integer :tag "score")
-			       (function :tag "function")))))
+			       (function :tag "function")
+			       (variable :tag "variable")))))
 
 (defun mime-view-entity-score (entity &optional situation)
   (or situation (setq situation (mime-entity-situation entity)))
@@ -941,18 +997,28 @@ Score is integer or function which receives entity and returns integer."
 		    mime-view-type-subtype-score-alist)
 	      (assq t mime-view-type-subtype-score-alist)
 	      ))))
-    (when (functionp score)
+    (cond
+     ((functionp score)
       (setq score (funcall score entity)))
+     ((and (symbolp score) (boundp score))
+      (setq score (symbol-value score))))
     (if (numberp score)
 	score
-      -1)
+      mime-view-entity-lowest-score)
     ))
 
 (defun mime-view-multipart-entity-score (entity)
   (apply 'max (or (mapcar 'mime-view-entity-score
 			  (mime-entity-children entity))
 		  (list (or (assq t mime-view-type-subtype-score-alist)
-			    -1)))))
+			    mime-view-entity-lowest-score)))))
+
+(defun mime-view-text/html-entity-score (entity)
+  ;; Module loading is done in mime-display-text/html.
+  ;; So, availability is not checked here.
+  (if (mime-display-text/html-previewer-params)
+      mime-view-text/html-score
+    mime-view-entity-lowest-score))
 
 (defun mime-display-multipart/alternative (entity situation)
   (let ((original-major-mode-cell (assq 'major-mode situation))

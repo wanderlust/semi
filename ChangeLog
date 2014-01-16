@@ -1,3 +1,43 @@
+2014-01-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* semi-setup.el: Prevent mime-w3m-insinuate function from
+	modifying mime-preview-condition and
+	mime-view-type-subtype-score-alist.  Make mime-w3m-insinuate
+	function to mofidy mime-view-text/html-previewer's value.
+
+2014-01-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	More customizable text/html entity handling.  Now you can switch
+	text/html entity previewer and score by modifying
+	mime-view-text/html-previewer and mime-view-text/html-score
+	real-time.
+
+	* mime-view.el (mime-view-text/html-score)
+	(mime-view-text/html-previewer-alist)
+	(mime-view-text/html-previewer): New variables.
+	(mime-preview-condition): Set up for text/html entity.
+	(mime-display-text/html-previewer-params)
+	(mime-display-text/html): New functions.
+	(mime-view-text/html-entity-score): New function.
+	(mime-view-type-subtype-score-alist): Update for text/html entity.
+
+	* semi-setup.el (mime-html-previewer-alist)
+	(mime-setup-enable-inline-html): Obsolete.  Use
+	mime-view-text/html-previewer-alist and
+	mime-view-text/html-previewer respectively.
+
+2014-01-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-view.el (mime-view-type-subtype-score-alist): Accept
+	variable as an alternate of score and function.  Remove
+	entry for default score.
+	(mime-view-entity-score): Likewise.
+
+2014-01-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-view.el (mime-view-entity-lowest-score): New variable.
+	(mime-view-entity-score): Use it.
+
 2014-01-10  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-image.el: Check image feature's availability statically.

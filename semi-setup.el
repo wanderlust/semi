@@ -52,38 +52,22 @@ it is used as hook to set."
       '(require 'mime-image)))
 
 ;; for text/html
-(defvar mime-html-previewer-alist
-  (delq nil `((w3m mime-w3m-preview-text/html "mime-w3m")
-	      ,(and (fboundp 'libxml-parse-html-region)
-		    '(shr mime-shr-preview-text/html "mime-shr"))
-	      (w3 mime-preview-text/html "mime-w3")))
-"*Alist for text/html part previewer.
-Each element is a list consists of required module, previewer function and autoload file for previewer function.")
+(make-obsolete-variable 'mime-html-previewer-alist
+			'mime-view-text/html-previewer-alist)
 
-(defvar mime-setup-enable-inline-html
-  (let ((alist mime-html-previewer-alist))
-    (while (and alist (null (module-installed-p (caar alist))))
-      (setq alist (cdr alist)))
-    (caar alist))
-  "*If it is a symbol, semi-setup sets up to use html previewer according to `mime-html-previewer-alist'.
-If it is other non-nil value, semi-setup tries to set up for mime-w3.")
+(make-obsolete-variable 'mime-setup-enable-inline-html
+			'mime-view-text/html-previewer)
 
-(when mime-setup-enable-inline-html
-  (let ((table (cdr (or (assq mime-setup-enable-inline-html
-			      mime-html-previewer-alist)
-			(assq 'w3 mime-html-previewer-alist)))))
-    (when table
-      (eval-after-load "mime-view"
-	`(progn
-	   (mime-add-condition
-	    'preview '((type . text)(subtype . html)
-		       (body . visible)
-		       (body-presentation-method . ,(car table)))
-	    'strict ,(cadr table))
+(when (and (boundp 'mime-html-previewer-alist)
+	   (null (boundp 'mime-view-text/html-previewer-alist)))
+  (setq mime-view-text/html-previewer-alist 'mime-html-previewer-alist))
 
-	   (set-alist 'mime-view-type-subtype-score-alist
-		      '(text . html) 3)
-	   )))))
+(when (and (boundp 'mime-setup-enable-inline-html)
+	   (null (boundp 'mime-view-text/html-previewer)))
+  (setq mime-view-text/html-previewer mime-setup-enable-inline-html))
+
+(defadvice mime-w3m-insinuate (around insinuate-to-semi-epg activate)
+  (setq mime-view-text/html-previewer 'w3m))
 
 ;; for text/vcard, text/x-vcard
 (defvar mime-setup-enable-vcard
