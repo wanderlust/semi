@@ -795,6 +795,7 @@ If encoding is nil, it is determined from its contents."
 		))
   :group 'mime-edit)
 
+(defvar mime-edit-debug nil)
 
 ;;; @@ about charset, encoding and transfer-level
 ;;;
@@ -2080,14 +2081,22 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
   "Encode the tagged MIME message in current buffer in MIME compliant message."
   (interactive)
   (undo-boundary)
-  (if (catch 'mime-edit-error
+  (let ((modified-p (buffer-modified-p)))
+    (condition-case error
 	(save-excursion
+	  (set-buffer-modified-p nil)
 	  (run-hooks 'mime-edit-translate-buffer-hook)
-	  ))
-      (progn
-	(undo)
-	(error "Translation error!")
-	)))
+	  (set-buffer-modified-p (or (buffer-modified-p) modified-p)))
+      ((error quit)
+       (if mime-edit-debug
+	   (set-buffer-modified-p (or (buffer-modified-p) modified-p))
+	 (when (buffer-modified-p)
+	   (condition-case nil
+	       (undo)
+	     (error nil))
+	   (set-buffer-modified-p modified-p)))
+       (message "Translation failed")
+       (signal (car error) (cdr error))))))
 
 (defun mime-edit-find-inmost ()
   (goto-char (point-min))
@@ -2262,10 +2271,7 @@ If no one is selected, default secret key is used.  "
 	      (setq index (match-end 0))
 	    (setq plain (replace-match "\r\n" t t plain)
 		  index (1+ (match-end 0)))))
-	(condition-case error
-	    (setq signature
-		  (epg-sign-string context plain 'detached))
-	  (error (signal 'mime-edit-error (cdr error))))
+	(setq signature (epg-sign-string context plain 'detached))
 	(setq micalg (epg-new-signature-digest-algorithm
 		      (car (epg-context-result-for context 'sign))))
 	(goto-char beg)
@@ -2420,13 +2426,11 @@ If no one is selected, symmetric encryption will be performed.  "
 				      (mime-edit-pgp-keys-valid-key
 				       (epg-list-keys context name) 'encrypt))
 				    recipients))))
-	  (condition-case error
-	      (setq cipher
-		    (epg-encrypt-string
-		     context
-		     (buffer-substring (point-min) (point-max))
-		     recipients))
-	    (error (signal 'mime-edit-error (cdr error))))
+	  (setq cipher
+		(epg-encrypt-string
+		 context
+		 (buffer-substring (point-min) (point-max))
+		 recipients))
 	  (delete-region (point-min)(point-max))
 	  (goto-char beg)
 	  (insert (format "--[[multipart/encrypted;
@@ -2482,13 +2486,11 @@ If no one is selected, default secret key is used.  "
 	  (if from 
 	      (list (nth 1 (std11-extract-address-components from))))
 	  t))
-	(condition-case error
-	    (setq signature
-		  (epg-sign-string context
-				   (mime-edit-convert-lbt-string
-				    (buffer-substring (point-min) (point-max)))
-				   'detached))
-	  (error (signal 'mime-edit-error (cdr error))))
+	(setq signature
+	      (epg-sign-string context
+			       (mime-edit-convert-lbt-string
+				(buffer-substring (point-min) (point-max)))
+			       'detached))
 	(setq micalg (epg-new-signature-digest-algorithm
 		      (car (epg-context-result-for context 'sign))))
 	(goto-char beg)
@@ -2535,22 +2537,20 @@ Content-Description: S/MIME Digital Signature
               (insert (format "Content-Transfer-Encoding: %s\n" encoding)))
           (insert "\n")
 	  (mime-encode-header-in-buffer)
-	  (condition-case error
-	      (setq cipher
-		    (epg-encrypt-string
-		     context
-		     (buffer-substring (point-min) (point-max))
-		     (epa-select-keys
-		      context
-		      "\
+	  (setq cipher
+		(epg-encrypt-string
+		 context
+		 (buffer-substring (point-min) (point-max))
+		 (epa-select-keys
+		  context
+		  "\
 Select recipients for encryption.
 If no one is selected, symmetric encryption will be performed.  "
-		      (mapcar (lambda (recipient)
-				(nth 1 (std11-extract-address-components
-					recipient)))
-			      (delete "" (split-string recipients 
-						       "[ \f\t\n\r\v,]+"))))))
-	    (error (signal 'mime-edit-error (cdr error))))
+		  (mapcar (lambda (recipient)
+			    (nth 1 (std11-extract-address-components
+				    recipient)))
+			  (delete "" (split-string recipients 
+						   "[ \f\t\n\r\v,]+"))))))
 	  (delete-region (point-min)(point-max))
 	  (goto-char beg)
 	  (insert (format "--[[application/pkcs7-mime;
@@ -3273,7 +3273,13 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
     (setq mime-edit-pgp-processing pgp-processing)
 
     (run-hooks 'mime-edit-translate-hook)
-    (mime-edit-translate-buffer)
+    (condition-case error
+	(mime-edit-translate-buffer)
+      ((error quit)
+       (switch-to-buffer the-buf)
+       (unless mime-edit-debug
+	 (kill-buffer buf))
+       (signal (car error) (cdr error))))
     (goto-char (point-min))
     (if (re-search-forward
 	 (concat "^" (regexp-quote separator) "$"))

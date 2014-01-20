@@ -1,3 +1,24 @@
+2014-01-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el (mime-edit-preview-message): Switch to the original
+	buffer when translation fails.  Moreover, kill temporary buffer
+	if mime-edit-debug is nil.
+
+2014-01-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el (mime-edit-debug): New variable.
+	(mime-edit-translate-buffer): Do not undo if above variable is
+	non-nil.
+
+2014-01-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el (mime-edit-translate-buffer): Undo buffer when
+	translation fails and buffer is modified.  Do not catch
+	mime-edit-error tag, because no one throws in SEMI-EPG.
+	(mime-edit-sign-pgp-mime, mime-edit-encrypt-pgp-mime)
+	(mime-edit-sign-smime, mime-edit-encrypt-smime): Remove
+	condition-case.
+
 2014-01-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* semi-setup.el: Prevent mime-w3m-insinuate function from
