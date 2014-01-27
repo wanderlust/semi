@@ -1,3 +1,10 @@
+2014-01-27  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* semi-setup.el: Add setting for previewing
+	application/pkcs7-signature entity.
+
+	* mime-pgp.el (mime-preview-application/*-signature): Handle errors.
+
 2014-01-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-edit.el (mime-edit-preview-message): Switch to the original

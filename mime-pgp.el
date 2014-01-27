@@ -125,7 +125,9 @@
 
 (defun mime-preview-application/*-signature (entity situation)
   (let ((verify-result
-	 (mime-verify-application/*-signature-internal entity situation))
+	 (condition-case error
+	     (mime-verify-application/*-signature-internal entity situation)
+	   (error (format "Verification failed, %s" error))))
 	string)
     (if (stringp verify-result)
 	(insert verify-result)

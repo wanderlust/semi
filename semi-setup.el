@@ -170,6 +170,14 @@ it is used as hook to set."
 	(body . visible)
 	(body-presentation-method . mime-preview-application/pgp-encrypted))
       'strict "mime-pgp")
+
+     (mime-add-condition
+      'preview
+      '((type . application)
+	(subtype . pkcs7-signature)
+	(body . visible)
+	(body-presentation-method . mime-preview-application/*-signature))
+      'strict "mime-pgp")
      )
   )
 
