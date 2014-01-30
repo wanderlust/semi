@@ -60,7 +60,7 @@
 
 ;;; @ Internal method for multipart/signed
 
-(defun mime-display-multipart/pgp-signed (entity situation)
+(defun mime-display-multipart/signed (entity situation)
   (let ((original-major-mode-cell (assq 'major-mode situation))
 	(default-situation
 	  (cdr (assq 'childrens-situation situation)))
@@ -75,7 +75,8 @@
        (mime-display-entity
 	child
 	(if (and (eq (cdr (assq 'type child-situation)) 'application)
-		 (eq (cdr (assq 'subtype child-situation)) 'pgp-signature))
+		 (memq (cdr (assq 'subtype child-situation))
+		       '(pgp-signature pkcs7-signature)))
 	    (put-alist 'body (if mime-pgp-verify-when-preview
 				 'visible
 			       'invisible)

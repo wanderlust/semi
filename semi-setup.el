@@ -152,7 +152,16 @@ it is used as hook to set."
 	(subtype . signed)
 	("protocol" . "application/pgp-signature")
 	(body . visible)
-	(body-presentation-method . mime-display-multipart/pgp-signed))
+	(body-presentation-method . mime-display-multipart/signed))
+      'strict "mime-pgp")
+
+     (mime-add-condition
+      'preview
+      '((type . multipart)
+	(subtype . signed)
+	("protocol" . "application/pkcs7-signature")
+	(body . visible)
+	(body-presentation-method . mime-display-multipart/signed))
       'strict "mime-pgp")
 
      (mime-add-condition
