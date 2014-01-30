@@ -148,10 +148,11 @@ it is used as hook to set."
 
      (mime-add-condition
       'preview
-      '((type . application)
-	(subtype . pgp-signature)
+      '((type . multipart)
+	(subtype . signed)
+	("protocol" . "application/pgp-signature")
 	(body . visible)
-	(body-presentation-method . mime-preview-application/*-signature))
+	(body-presentation-method . mime-display-multipart/pgp-signed))
       'strict "mime-pgp")
 
      (mime-add-condition
@@ -161,6 +162,14 @@ it is used as hook to set."
 	("protocol" . "application/pgp-encrypted")
 	(body . visible)
 	(body-presentation-method . mime-display-multipart/pgp-encrypted))
+      'strict "mime-pgp")
+
+     (mime-add-condition
+      'preview
+      '((type . application)
+	(subtype . pgp-signature)
+	(body . visible)
+	(body-presentation-method . mime-preview-application/*-signature))
       'strict "mime-pgp")
 
      (mime-add-condition

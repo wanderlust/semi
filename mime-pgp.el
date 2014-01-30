@@ -38,6 +38,11 @@
 
 (eval-when-compile (require 'mmgeneric))
 
+(defcustom mime-pgp-verify-when-preview nil
+  "When non-nil, verify signed part while viewing."
+  :group 'mime-view
+  :type 'boolean)
+
 (defcustom mime-pgp-decrypt-when-preview nil
   "When non-nil, decrypt encrypted part while viewing."
   :group 'mime-view
@@ -52,6 +57,31 @@
    (list (assq 'mode situation)) ; play-mode
    ))
 
+
+;;; @ Internal method for multipart/signed
+
+(defun mime-display-multipart/pgp-signed (entity situation)
+  (let ((original-major-mode-cell (assq 'major-mode situation))
+	(default-situation
+	  (cdr (assq 'childrens-situation situation)))
+	child-situation)
+    (when original-major-mode-cell
+      (setq default-situation
+	    (cons original-major-mode-cell default-situation)))
+    (mapc
+     (lambda (child)
+       (setq child-situation
+	     (mime-find-entity-preview-situation child default-situation))
+       (mime-display-entity
+	child
+	(if (and (eq (cdr (assq 'type child-situation)) 'application)
+		 (eq (cdr (assq 'subtype child-situation)) 'pgp-signature))
+	    (put-alist 'body (if mime-pgp-verify-when-preview
+				 'visible
+			       'invisible)
+		       (copy-alist child-situation))
+	  child-situation)))
+     (mime-entity-children entity))))
 
 ;;; @ Internal method for multipart/encrypted
 
