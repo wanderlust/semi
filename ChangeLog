@@ -1,5 +1,9 @@
 2014-01-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* mime-pgp.el (mime-pgp-verify-when-preview): Set default to t.
+
+2014-01-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* mime-pgp.el (mime-pgp-verify-when-preview): New customizable
 	variable.
 	(mime-display-multipart/pgp-signed): New function.

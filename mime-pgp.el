@@ -38,7 +38,7 @@
 
 (eval-when-compile (require 'mmgeneric))
 
-(defcustom mime-pgp-verify-when-preview nil
+(defcustom mime-pgp-verify-when-preview t
   "When non-nil, verify signed part while viewing."
   :group 'mime-view
   :type 'boolean)
