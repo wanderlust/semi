@@ -48,6 +48,19 @@
   :group 'mime-view
   :type 'boolean)
 
+;;; @ Internal functions
+
+(defun mime-pgp-decrypt-string (context cipher)
+  (let ((string (epg-decrypt-string context cipher)))
+    ;; Remove CRs if header contains CR.
+    (if (string-match "\\`.*\r\n" string)
+	(with-temp-buffer
+	  (insert string)
+	  (while (search-backward "\r\n" nil t)
+	    (replace-match "\n" t t))
+	  (buffer-string))
+      string)))
+
 ;;; @ Internal method for multipart/signed
 
 (defun mime-verify-multipart/signed (entity situation)
@@ -186,7 +199,7 @@
     (goto-char (point-min))
     (setq context (epg-make-context)
 	  plain (decode-coding-string
-		 (epg-decrypt-string
+		 (mime-pgp-decrypt-string
 		  context
 		  (buffer-substring (point-min)(point-max)))
 		 'raw-text))
@@ -231,7 +244,7 @@
 	(setq beg (point-min)
 	      end (point-max))
 	(insert (prog1 (decode-coding-string
-			(epg-decrypt-string
+			(mime-pgp-decrypt-string
 			 (epg-make-context) (buffer-substring beg end))
 			'raw-text)
 		  (delete-region beg end)))
@@ -270,7 +283,7 @@
       (let ((inhibit-read-only t)
 	    buffer-read-only)
 	(erase-buffer)
-	(insert (epg-decrypt-string context (mime-entity-content entity))))
+	(insert (mime-pgp-decrypt-string context (mime-entity-content entity))))
       (setq major-mode 'mime-show-message-mode)
       (save-window-excursion
 	(mime-view-buffer nil preview-buffer mother

@@ -1,3 +1,11 @@
+2014-02-06  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-pgp.el (mime-pgp-decrypt-string): New function.
+	(mime-decrypt-application/pgp-encrypted)
+	(mime-preview-application/pgp-encrypted)
+	(mime-view-application/pkcs7-mime): Use it.  Remove CRs at EOL
+	from result when there is CR at the first EOL.
+
 2014-01-31  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* semi-setup.el: S/MIME signed entity respects
