@@ -230,33 +230,41 @@
 ;; Imported and modified from Wanderlust.
 (defun mime-preview-application/pgp-encrypted (entity situation)
   (let ((p (point-max))
-	beg end buffer decrypted-entity)
+	beg end buffer decrypted-entity failed)
     (goto-char p)
     (save-restriction
       (narrow-to-region p p)
       (setq buffer (generate-new-buffer (concat mime-temp-buffer-name "PGP*")))
-      (add-hook 'kill-buffer-hook 'mime-pgp-kill-decrypted-buffers nil t)
-      (make-local-variable 'mime-pgp-decrypted-buffers)
-      (add-to-list 'mime-pgp-decrypted-buffers buffer)
       (with-current-buffer buffer
 	(mime-insert-entity
 	 (nth 1 (mime-entity-children (mime-entity-parent entity))))
 	(setq beg (point-min)
 	      end (point-max))
-	(insert (prog1 (decode-coding-string
-			(mime-pgp-decrypt-string
-			 (epg-make-context) (buffer-substring beg end))
-			'raw-text)
-		  (delete-region beg end)))
-	(setq decrypted-entity
-	      (mime-parse-message
-	       (mm-expand-class-name 'buffer)
-	       nil entity (mime-entity-node-id-internal entity))
-	      buffer-read-only t))
-      (mime-display-entity
-       decrypted-entity nil '((header . visible)
-			      (body . visible)
-			      (entity-button . invisible))))))
+	(condition-case error
+	    (insert (prog1
+			(decode-coding-string
+			 (mime-pgp-decrypt-string
+			  (epg-make-context) (buffer-substring beg end))
+			 'raw-text)
+		      (delete-region beg end)))
+	  (error (setq failed error)))
+	(unless failed
+	  (setq decrypted-entity
+		(mime-parse-message
+		 (mm-expand-class-name 'buffer)
+		 nil entity (mime-entity-node-id-internal entity))
+		buffer-read-only t)))
+      (if failed
+	  (progn
+	    (insert (format "%s" (cdr failed)))
+	    (kill-buffer buffer))
+	(add-hook 'kill-buffer-hook 'mime-pgp-kill-decrypted-buffers nil t)
+	(make-local-variable 'mime-pgp-decrypted-buffers)
+	(add-to-list 'mime-pgp-decrypted-buffers buffer)
+	(mime-display-entity
+	 decrypted-entity nil '((header . visible)
+				(body . visible)
+				(entity-button . invisible)))))))
 
 
 ;;; @ Internal method for application/pgp-keys
