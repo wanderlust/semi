@@ -38,16 +38,6 @@
 
 (eval-when-compile (require 'mmgeneric))
 
-(defcustom mime-pgp-verify-when-preview t
-  "When non-nil, verify signed part while viewing."
-  :group 'mime-view
-  :type 'boolean)
-
-(defcustom mime-pgp-decrypt-when-preview nil
-  "When non-nil, decrypt encrypted part while viewing."
-  :group 'mime-view
-  :type 'boolean)
-
 ;;; @ Internal functions
 
 (defun mime-pgp-decrypt-string (context cipher)
@@ -299,6 +289,47 @@
 	(make-local-variable 'mime-view-temp-message-buffer)
 	(setq mime-view-temp-message-buffer message-buf))
       (set-window-buffer p-win preview-buffer))))
+
+(defun mime-preview-application/pkcs7-mime (entity situation)
+  (when (memq (or (cdr (assq 'smime-type situation)) 'enveloped-data)
+	      '(enveloped-data signed-data))
+    (let ((p (point-max))
+	  beg end buffer decrypted-entity failed)
+      (goto-char p)
+      (save-restriction
+	(narrow-to-region p p)
+	(setq buffer (generate-new-buffer
+		      (concat mime-temp-buffer-name "PKCS7*")))
+	(with-current-buffer buffer
+	  (insert (mime-entity-content entity))
+	  ;; (mime-insert-entity entity)
+	  (setq beg (point-min)
+		end (point-max))
+	  (condition-case error
+	      (insert (prog1
+			  (decode-coding-string
+			   (mime-pgp-decrypt-string
+			    (epg-make-context 'CMS) (buffer-substring beg end))
+			   'raw-text)
+			(delete-region beg end)))
+	    (error (setq failed error)))
+	  (unless failed
+	    (setq decrypted-entity
+		  (mime-parse-message
+		   (mm-expand-class-name 'buffer)
+		   nil entity (mime-entity-node-id-internal entity))
+		  buffer-read-only t)))
+	(if failed
+	    (progn
+	      (insert (format "%s" (cdr failed)))
+	      (kill-buffer buffer))
+	  (add-hook 'kill-buffer-hook 'mime-pgp-kill-decrypted-buffers nil t)
+	  (make-local-variable 'mime-pgp-decrypted-buffers)
+	  (add-to-list 'mime-pgp-decrypted-buffers buffer)
+	  (mime-display-entity
+	   decrypted-entity nil '((header . visible)
+				  (body . visible)
+				  (entity-button . invisible))))))))
 
 
 ;;; @ end

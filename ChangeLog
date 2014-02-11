@@ -1,3 +1,20 @@
+2014-02-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* semi-setup.el: Set up for previewing application/pkcs7-mime
+	part.
+
+	* mime-view.el (mime-pgp-verify-when-preview)
+	(mime-pgp-decrypt-when-preview): Moved from mime-pgp.el.
+	(mime-display-entity-visible-p): New function.
+	(mime-display-entity): function, variable, t, and nil are
+	acceptable for situation of entity-button, header and body.
+	Function will receive one argument SITUATION and return visible,
+	invisible, t or nil.
+
+	* mime-pgp.el (mime-pgp-verify-when-preview)
+	(mime-pgp-decrypt-when-preview): Moved to mime-view.el.
+	(mime-preview-application/pkcs7-mime): New function.
+
 2014-02-08  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-pgp.el (mime-preview-application/pgp-encrypted): Handle

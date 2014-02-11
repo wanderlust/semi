@@ -166,6 +166,14 @@ it is used as hook to set."
 
      (mime-add-condition
       'preview
+      '((type . application)
+	(subtype . pkcs7-mime)
+	(body . mime-pgp-decrypt-when-preview)
+	(body-presentation-method . mime-preview-application/pkcs7-mime))
+      'strict "mime-pgp")
+
+     (mime-add-condition
+      'preview
       '((type . multipart)
 	(subtype . encrypted)
 	("protocol" . "application/pgp-encrypted")

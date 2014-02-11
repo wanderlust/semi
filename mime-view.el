@@ -113,6 +113,16 @@ Each element is a list consists of required module, previewer function and requi
 			   mime-view-text/html-previewer-alist)
 		 (const :tag "Disable previewer" nil)))
 
+(defcustom mime-pgp-verify-when-preview t
+  "When non-nil, verify signed part while viewing."
+  :group 'mime-view
+  :type 'boolean)
+
+(defcustom mime-pgp-decrypt-when-preview nil
+  "When non-nil, decrypt encrypted part while viewing."
+  :group 'mime-view
+  :type 'boolean)
+
 ;;; @ in raw-buffer (representation space)
 ;;;
 
@@ -1208,6 +1218,24 @@ Score is integer or function or variable.  The function receives entity and retu
 ;;; @ buffer setup
 ;;;
 
+(defun mime-display-entity-visible-p (elements situation &optional default)
+  (catch 'done
+    (let (result)
+      (while elements
+	(when (setq result (cdr (assq (car elements) situation)))
+	  (unless (memq result '(visible invisible))
+	    (setq result (cond ((functionp result)
+				(funcall result situation))
+			       ((and (symbolp result) (boundp result))
+				(symbol-value result))
+			       (t default))))
+	  ;; Non-nil values other than invisible are treated as
+	  ;; visible.
+	  (throw 'done (if (memq result '(invisible nil))
+			   nil t)))
+	(setq elements (cdr elements))))
+    default))
+
 (defun mime-display-entity (entity &optional situation
 				   default-situation preview-buffer)
   (or preview-buffer
@@ -1218,18 +1246,13 @@ Score is integer or function or variable.  The function receives entity and retu
 	(setq situation
 	      (mime-find-entity-preview-situation entity default-situation)))
     (let ((button-is-invisible
-	   (or (not mime-view-buttons-visible)
-	       (eq (cdr (or (assq '*entity-button situation)
-			    (assq 'entity-button situation)))
-		   'invisible)))
+	   (null (and mime-view-buttons-visible
+		      (mime-display-entity-visible-p
+		       '(*entity-button entity-button) situation t))))
 	  (header-is-visible
-	   (eq (cdr (or (assq '*header situation)
-			(assq 'header situation)))
-	       'visible))
+	   (mime-display-entity-visible-p '(*header header) situation))
 	  (body-is-visible
-	   (eq (cdr (or (assq '*body situation)
-			(assq 'body situation)))
-	       'visible))
+	   (mime-display-entity-visible-p '(*body body) situation))
 	  (children (mime-entity-children entity)))
       (set-buffer preview-buffer)
       (setq nb (point))
