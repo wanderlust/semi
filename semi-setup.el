@@ -148,24 +148,6 @@ it is used as hook to set."
 
      (mime-add-condition
       'preview
-      '((type . multipart)
-	(subtype . signed)
-	("protocol" . "application/pgp-signature")
-	(body . visible)
-	(body-presentation-method . mime-display-multipart/signed))
-      'strict "mime-pgp")
-
-     (mime-add-condition
-      'preview
-      '((type . multipart)
-	(subtype . signed)
-	("protocol" . "application/pkcs7-signature")
-	(body . visible)
-	(body-presentation-method . mime-display-multipart/signed))
-      'strict "mime-pgp")
-
-     (mime-add-condition
-      'preview
       '((type . application)
 	(subtype . pkcs7-mime)
 	(body . mime-pgp-decrypt-when-preview)
@@ -185,7 +167,7 @@ it is used as hook to set."
       'preview
       '((type . application)
 	(subtype . pgp-signature)
-	(body . visible)
+	(body . mime-pgp-verify-when-preview)
 	(body-presentation-method . mime-preview-application/*-signature))
       'strict "mime-pgp")
 
@@ -193,7 +175,7 @@ it is used as hook to set."
       'preview
       '((type . application)
 	(subtype . pgp-encrypted)
-	(body . visible)
+	(body . mime-pgp-decrypt-when-preview)
 	(body-presentation-method . mime-preview-application/pgp-encrypted))
       'strict "mime-pgp")
 
@@ -201,7 +183,7 @@ it is used as hook to set."
       'preview
       '((type . application)
 	(subtype . pkcs7-signature)
-	(body . visible)
+	(body . mime-pgp-verify-when-preview)
 	(body-presentation-method . mime-preview-application/*-signature))
       'strict "mime-pgp")
      )

@@ -1,3 +1,15 @@
+2014-02-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* semi-setup.el: Remove preview setting for multipart/signed part.
+	Use mime-pgp-verify-when-preview and mime-pgp-decrypt-when-preview
+	to define visibility conditions.
+
+	* mime-view.el (mime-display-entity): insert LF when inserted
+	content does not end with LF.
+
+	* mime-pgp.el (mime-display-multipart/signed): Removed.
+	(mime-display-multipart/pgp-encrypted): Adapt to recent change.
+
 2014-02-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* semi-setup.el: Set up for previewing application/pkcs7-mime

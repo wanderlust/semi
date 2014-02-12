@@ -1279,16 +1279,14 @@ Score is integer or function or variable.  The function receives entity and retu
 	    (insert "\n")))
       (setq nbb (point))
       (unless children
-	(if body-is-visible
-	    (let ((body-presentation-method
-		   (cdr (assq 'body-presentation-method situation))))
-	      (if (functionp body-presentation-method)
-		  (funcall body-presentation-method entity situation)
-		(mime-display-text/plain entity situation)))
-	  (unless header-is-visible
-	    (goto-char (point-max))
-	    (insert "\n"))
-	  ))
+	(when body-is-visible
+	  (let ((body-presentation-method
+		 (cdr (assq 'body-presentation-method situation))))
+	    (if (functionp body-presentation-method)
+		(funcall body-presentation-method entity situation)
+	      (mime-display-text/plain entity situation))))
+	(goto-char (point-max))
+	(unless (eq (char-before) 10) (insert 10)))
       (setq ne (or (next-single-property-change nb 'mime-view-entity)
 		   (point-max)))
       (widen)
