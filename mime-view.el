@@ -1286,6 +1286,7 @@ Score is integer or function or variable.  The function receives entity and retu
 		(funcall body-presentation-method entity situation)
 	      (mime-display-text/plain entity situation))))
 	(goto-char (point-max))
+	;; Insert LF if needed.
 	(unless (eq (char-before) 10) (insert 10)))
       (setq ne (or (next-single-property-change nb 'mime-view-entity)
 		   (point-max)))
