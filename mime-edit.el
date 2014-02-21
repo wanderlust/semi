@@ -2241,6 +2241,16 @@ If no one is selected, default secret key is used.  "
 		       (epg-list-keys context name) 'sign))
 		    signers)))))
 
+(define-ccl-program mime-edit-normalize-eol-crlf
+  '(2
+    ((r1 = 0)
+     (loop (read r0)
+	   (if (r0 == ?\n)
+	       (if (r1 != ?\r)
+		   (write ?\r)))
+	   (r1 = r0)
+	   (write-repeat r0)))))
+
 (defun mime-edit-sign-pgp-mime (beg end boundary)
   (save-excursion
     (save-restriction
@@ -2251,8 +2261,7 @@ If no one is selected, default secret key is used.  "
 	     (encoding (nth 1 ret))
 	     (pgp-boundary (concat "pgp-sign-" boundary))
 	     (context (epg-make-context))
-	     (index 0)
-	     plain signature micalg)
+	     signature micalg)
 	(mime-edit-delete-trailing-whitespace) ; RFC3156
 	(goto-char beg)
 	(insert (format "Content-Type: %s\n" ctype))
@@ -2265,13 +2274,12 @@ If no one is selected, default secret key is used.  "
 	(epg-context-set-signers
 	 context
 	 (mime-edit-pgp-get-signers context))
-	(setq plain (buffer-substring (point-min) (point-max)))
-	(while (string-match "\r?\n" plain index)
-	  (if (eq (aref plain (match-beginning 0)) ?\r)
-	      (setq index (match-end 0))
-	    (setq plain (replace-match "\r\n" t t plain)
-		  index (1+ (match-end 0)))))
-	(setq signature (epg-sign-string context plain 'detached))
+	(setq signature
+	      (epg-sign-string context
+			       (ccl-execute-on-string
+				'mime-edit-normalize-eol-crlf
+				(make-vector 9 0) (buffer-string))
+			       'detached))
 	(setq micalg (epg-new-signature-digest-algorithm
 		      (car (epg-context-result-for context 'sign))))
 	(goto-char beg)
