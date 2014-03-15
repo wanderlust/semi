@@ -186,6 +186,14 @@ it is used as hook to set."
 	(body . mime-pgp-verify-when-preview)
 	(body-presentation-method . mime-preview-application/*-signature))
       'strict "mime-pgp")
+
+     (mime-add-condition
+      'preview
+      '((type . application)
+	(subtype . x-pkcs7-signature)
+	(body . mime-pgp-verify-when-preview)
+	(body-presentation-method . mime-preview-application/*-signature))
+      'strict "mime-pgp")
      )
   )
 
