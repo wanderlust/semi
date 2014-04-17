@@ -1,5 +1,15 @@
 2014-04-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* mime-view.el (mime-preview-fill-flowed-text)
+	(mime-preview-fill-flowed-text-delsp): Abolished.  Internal
+	decoder is always available.
+	(mime-display-text/plain-flowed-fill-column): New variable.
+	(mime-display-text/plain-flowed-parse-line)
+	(mime-display-text/plain-flowed): New functions.
+	(mime-display-text/plain): Use them.
+
+2014-04-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* SEMI-MK (compile-semi): Set mime-situation-examples-file to nil.
 
 	* mime-view.el: Do not modify mime-situation-examples-file's value.

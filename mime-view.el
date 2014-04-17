@@ -113,6 +113,14 @@ Each element is a list consists of required module, previewer function and requi
 			   mime-view-text/html-previewer-alist)
 		 (const :tag "Disable previewer" nil)))
 
+(defcustom mime-display-text/plain-flowed-fill-column nil
+  "Fill column for formatting flowed text."
+  :group 'mime-view
+  :type '(choice (integer :tag "Fixed value")
+		 (number :tag "ratio to window's width")
+		 (sexp :tag "S-expression")
+		 (const nil :tag "Use fill-column's value")))
+
 (defcustom mime-pgp-verify-when-preview t
   "When non-nil, verify signed part while viewing."
   :group 'mime-view
@@ -766,29 +774,6 @@ Each elements are regexp of field-name.")
  '((body . visible)
    (body-presentation-method . mime-display-text/plain)))
 
-(when (module-installed-p 'flow-fill)
-  (autoload 'fill-flowed "flow-fill")
-  (unless (boundp 'mime-preview-fill-flowed-text)
-    (setq mime-preview-fill-flowed-text t))
-  (unless (boundp 'mime-preview-fill-flowed-text-delsp)
-    (setq mime-preview-fill-flowed-text-delsp
-	  (eval-when-compile
-	    ;; Earlier fill-flowed function neither supports
-	    ;; DELETE-SPACE option nor works with DELETE-SPACE option
-	    ;; correctly.
-	    (equal "ABCDEF" (condition-case nil
-				(with-temp-buffer
-				  (insert "ABC \nDEF")
-				  (fill-flowed nil t)
-				  (buffer-string))
-			      (error nil)))))))
-
-(defvar mime-preview-fill-flowed-text nil
-  "If non-nil, fill RFC2646 \"flowed\" text.")
-
-(defvar mime-preview-fill-flowed-text-delsp nil
-  "If non-nil, spport RFC3676 \"DelSp\" parameter for \"flowed\" text.")
-
 (ctree-set-calist-strictly
  'mime-preview-condition
  '((type . nil)
@@ -884,6 +869,84 @@ Each elements are regexp of field-name.")
 	     (mime-insert-entity-body entity)
 	     nil)))
 
+(defun mime-display-text/plain-flowed-parse-line ()
+  (cons (point)
+	(cond
+	 ;; End of buffer
+	 ((eobp) nil)
+	 ;; Signature separator line
+	 ((looking-at "\\(>+\\)? ?\\(-- \\)$")
+	  (list (length (match-string 1)) 'hard (match-beginning 2)))
+	 ;; Quoted line
+	 ((looking-at "\\(>+\\) ?\\(.*?\\)\\( ?\\)$")
+	  (list (length (match-string 1))
+		(if (zerop (length (match-string 3))) t nil)
+		(match-beginning 2)))
+	 ;; Stuffed or normal line
+	 ((looking-at " ?\\(.*?\\)\\( ?\\)$")
+	  (list 0 (if (zerop (length (match-string 2))) t nil)
+		(match-beginning 1)))
+	 )))
+
+(defun mime-display-text/plain-flowed (&optional buffer delete-space)
+  (with-current-buffer (or (current-buffer) buffer)
+    (goto-char (point-max))
+    (unless (eq (char-before) ?\n)
+      (insert ?\n))
+    (goto-char (point-min))
+    (let ((fill-column
+	   (cond
+	    ((and (integerp mime-display-text/plain-flowed-fill-column)
+		  (< mime-display-text/plain-flowed-fill-column 1))
+	     (+ (window-width) mime-display-text/plain-flowed-fill-column))
+	    ((integerp mime-display-text/plain-flowed-fill-column)
+	     mime-display-text/plain-flowed-fill-column)
+	    ((numberp mime-display-text/plain-flowed-fill-column)
+	     (floor
+	      (* (window-width) mime-display-text/plain-flowed-fill-column)))
+	    (mime-display-text/plain-flowed-fill-column
+	     (eval mime-display-text/plain-flowed-fill-column))
+	    (t fill-column)))
+	  (line (mime-display-text/plain-flowed-parse-line))
+	  beg-flow depth next point fill-prefix adaptive-fill-mode)
+      (setq delete-space (if delete-space -2 -1))
+      (while (cdr line)
+	(unless (eq (point) (car line))
+	  (setcar (cdr (cddr line)) (+ (nth 3 line) (- (point) (car line))))
+	  (setcar line (point)))
+	(forward-line)
+	(setq next (mime-display-text/plain-flowed-parse-line))
+	(when (or (null (cdr next))
+		  (null (eq (nth 1 line) (nth 1 next)))
+		  (eq (nth 2 next) 'hard))
+	  (setcar (cddr line) t))
+	(if beg-flow
+	    ;; Following flowed line.
+	    (progn
+	      (delete-region (+ (car line) delete-space) (nth 3 line))
+	      (when (nth 2 line)
+		;; Fixed line
+		(setq fill-prefix (unless (zerop depth)
+				    (concat (make-string depth ?>) " ")))
+		(fill-region beg-flow (point) 'left t)
+		(setq beg-flow nil)))
+	  ;; Following fixed line.
+	  (if (zerop (nth 1 line))
+	      ;; Remove stuffed space
+	      (delete-region (car line) (nth 3 line))
+	    (when (eq (+ (car line) (nth 1 line)) (nth 3 line))
+	      ;; Insert stuffing space for quoted text
+	      (setq point (point))
+	      (goto-char (nth 3 line))
+	      (insert 32)
+	      (goto-char (1+ point))))
+	  (unless (nth 2 line)
+	    ;; Beginnig of flowed text
+	    (setq beg-flow (car line)
+		  depth (nth 1 line))))
+	(setq line next)
+	))))
+
 (defun mime-display-text/plain (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
@@ -892,12 +955,9 @@ Each elements are regexp of field-name.")
 	(goto-char (point-max))
 	(insert "\n")
 	)
-      (if (and mime-preview-fill-flowed-text
-	       (equal (cdr (assoc "format" situation)) "flowed"))
-	  (if mime-preview-fill-flowed-text-delsp
-	      (fill-flowed nil (equal (cdr (assoc "delsp" situation)) "yes"))
-	    (fill-flowed))
-	)
+      (if (equal (cdr (assoc "format" situation)) "flowed")
+	  (mime-display-text/plain-flowed
+	   nil (equal (cdr (assoc "delsp" situation)) "yes")))
       (mime-add-url-buttons)
       (run-hooks 'mime-display-text/plain-hook)
       )))
