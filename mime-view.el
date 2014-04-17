@@ -1452,13 +1452,13 @@ Score is integer or function or variable.  The function receives entity and retu
 	   (define-key mime-view-mode-map [menu-bar mime-view]
 	     (cons mime-view-menu-title
 		   (make-sparse-keymap mime-view-menu-title)))
-	   (mapcar (function
-		    (lambda (item)
-		      (define-key mime-view-mode-map
-			(vector 'menu-bar 'mime-view (car item))
-			(cons (nth 1 item)(nth 2 item)))
-		      ))
-		   (reverse mime-view-menu-list))
+	   (mapc (function
+		  (lambda (item)
+		    (define-key mime-view-mode-map
+		      (vector 'menu-bar 'mime-view (car item))
+		      (cons (nth 1 item)(nth 2 item)))
+		    ))
+		 (reverse mime-view-menu-list))
 	   ))
     ;; (run-hooks 'mime-view-define-keymap-hook)
     mime-view-mode-map))
