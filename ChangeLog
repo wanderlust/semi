@@ -1,5 +1,11 @@
 2014-04-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* SEMI-MK (compile-semi): Set mime-situation-examples-file to nil.
+
+	* mime-view.el: Do not modify mime-situation-examples-file's value.
+
+2014-04-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* mime-view.el (mime-view-define-keymap): Use mapc instead of
 	mapcar for side effect.
 

@@ -2051,11 +2051,6 @@ It calls function registered in variable
 
 (provide 'mime-view)
 
-(eval-when-compile
-  (setq mime-situation-examples-file nil)
-  ;; to avoid to read situation-examples-file at compile time.
-  )
-
 (mime-view-read-situation-examples-file)
 
 ;;; mime-view.el ends here

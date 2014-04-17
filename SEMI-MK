@@ -36,6 +36,8 @@ LISPDIR=%s\n" PREFIX LISPDIR))
   )
 
 (defun compile-semi ()
+  ;; to avoid to read situation-examples-file at compile time.
+  (setq mime-situation-examples-file nil)
   (config-semi)
   (print load-path)
   (compile-elisp-modules semi-modules-to-compile ".")
