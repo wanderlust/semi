@@ -1,3 +1,10 @@
+2014-05-30  Juliusz Chroboczek  <jch@pps.univ-paris-diderot.fr>
+
+	* mime-view.el (mime-display-multipart/alternative): Pick and
+	display the latter part when there are multiple parts which have
+	the highest score.
+	Cf. https://github.com/wanderlust/wanderlust/issues/60
+
 2014-04-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-view.el (mime-display-text/plain): Check parameter's value

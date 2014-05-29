@@ -1110,7 +1110,7 @@ Score is integer or function or variable.  The function receives entity and retu
 		    child default-situation))
 	     (when (cdr (assq 'body-presentation-method child-situation))
 	       (setq score (mime-view-entity-score child child-situation))
-	       (when (> score max-score)
+	       (when (>= score max-score)
 		 (setq p child
 		       max-score score)
 		 ))
