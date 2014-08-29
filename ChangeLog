@@ -1,3 +1,10 @@
+2014-08-29  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el (mime-edit-pgp-get-signers): Prefer
+	mime-edit-pgp-signers's key to the first found key for the same
+	user ID.
+	(mime-edit-pgp-signers): Update docstring.
+
 2014-05-30  Juliusz Chroboczek  <jch@pps.univ-paris-diderot.fr>
 
 	* mime-view.el (mime-display-multipart/alternative): Pick and

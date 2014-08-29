@@ -913,7 +913,7 @@ If it is not specified for a major-mode,
   :type 'boolean)
 
 (defcustom mime-edit-pgp-signers nil
-  "A list of your own key ID which will be used to sign a message."
+  "A list of your own key ID which will be preferredly used to sign a message."
   :group 'mime-edit-pgp
   :type '(repeat (string :tag "Key ID")))
 
@@ -2216,30 +2216,35 @@ USAGE is a symbol denoting the intended usage."
       (setq key-list (cdr key-list)))))
 
 (defun mime-edit-pgp-get-signers (context)
-  (let ((signers
-	 (delete nil (cons
-		      (cadr
-		       (std11-extract-address-components
-			(or (save-restriction
-			      (widen)
-			      (std11-field-body "From" mail-header-separator))
-			    "")))
-		      mime-edit-pgp-signers))))
+  (let ((signer (cadr (std11-extract-address-components
+		       (or (save-restriction
+			     (widen)
+			     (std11-field-body "From" mail-header-separator))
+			   ""))))
+	keys default-keys)
     (if mime-edit-pgp-verbose
 	(epa-select-keys
 	 context
 	 "\
 Select keys for signing.
 If no one is selected, default secret key is used.  "
-	 signers
+	 (delq nil (cons signer mime-edit-pgp-signers))
 	 t)
-      (delq nil
-	    (mapcar (lambda (name)
-		      (mime-edit-pgp-keys-valid-key
-		       ;; A list of secret keys does not have
-		       ;; information about validity.
-		       (epg-list-keys context name) 'sign))
-		    signers)))))
+      (setq keys (epg-list-keys context signer))
+      (when mime-edit-pgp-signers
+	(setq default-keys
+	      (apply #'nconc (mapcar (lambda (name)
+				       (epg-list-keys context name))
+				     mime-edit-pgp-signers)))
+	(setq keys
+	      (catch 'found
+		(mapcar (lambda (key)
+			  (and key
+			       (member key keys)
+			       (throw 'found (list key))))
+			default-keys)
+		(delq nil (nconc keys default-keys)))))
+      (list (mime-edit-pgp-keys-valid-key keys 'sign)))))
 
 (define-ccl-program mime-edit-normalize-eol-crlf
   '(2
