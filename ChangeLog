@@ -1,3 +1,7 @@
+2014-08-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el (mime-edit-convert-lbt-string): Refactored.
+
 2014-08-29  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-edit.el (mime-edit-pgp-get-signers): Prefer

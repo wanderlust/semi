@@ -2465,11 +2465,8 @@ Content-Transfer-Encoding: 7bit
 	  )))))
 
 (defun mime-edit-convert-lbt-string (string)
-  (let ((index 0))
-    (while (setq index (string-match "\n" string index))
-      (setq string (replace-match "\r\n" nil nil string)
-	    index (+ index 2)))		;(length "\r\n")
-    string))
+  (let (inhibit-eol-conversion)
+    (encode-coding-string string 'raw-text-dos)))
 
 (defun mime-edit-sign-smime (beg end boundary)
   (save-excursion
