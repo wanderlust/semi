@@ -2143,7 +2143,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 		(or (looking-at mime-edit-beginning-tag-regexp)
 		    (looking-at mime-edit-multipart-end-regexp)
 		    (eobp)
-		    (insert (concat (mime-make-text-tag) "\n"))
+		    (insert (mime-make-text-tag) "\n")
 		    )))
 	  (cond ((string-equal type "quote")
 		 (mime-edit-enquote-region bb eb)
@@ -2655,7 +2655,7 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 	(delete-region beg end)
 	(let ((contype (mime-edit-get-contype tag))
 	      (encoding (mime-edit-get-encoding tag)))
-	  (insert (concat prefix "--" boundary "\n"))
+	  (insert prefix "--" boundary "\n")
 	  (save-restriction
 	    (narrow-to-region (point)(point))
 	    (insert "Content-Type: " contype "\n")
@@ -3526,11 +3526,9 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
       (if (= (point-min) 1)
 	  (progn
 	    (goto-char he)
-	    (insert
-	     (concat "\n"
-		     (mime-create-tag
-		      (format "%s/%s%s" type subtype pstr)
-		      encoding)))
+	    (insert "\n"
+		    (mime-create-tag
+		     (format "%s/%s%s" type subtype pstr) encoding))
 	    )
 	(delete-region (point-min) he)
 	(insert

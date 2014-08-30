@@ -1847,7 +1847,7 @@ It calls following-method selected from variable
 						   entity field-name))))
 			(setq entity (mime-entity-parent entity)))))
 		  (if ret
-		      (insert (concat field-name ": " ret "\n"))
+		      (insert field-name ": " ret "\n")
 		    )))
 	    (setq rest (cdr rest))
 	    ))

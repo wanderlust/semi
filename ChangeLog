@@ -1,5 +1,16 @@
 2014-08-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* mime-edit.el (mime-edit-process-multipart-1)
+	(mime-edit-translate-single-part-tag)
+	(mime-edit-decode-single-part-in-buffer): Remove concat from
+	insert and concat combination.
+
+	* mime-view.el (mime-preview-follow-current-entity): Likewise.
+
+	* semi-def.el (mime-insert-button): Likewise.
+
+2014-08-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* mime-edit.el (mime-edit-convert-lbt-string): Refactored.
 
 2014-08-29  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>

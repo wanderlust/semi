@@ -72,7 +72,7 @@
   "Insert STRING as button with callback FUNCTION and DATA."
   (save-restriction
     (narrow-to-region (point)(point))
-    (insert (concat "[" string "]\n"))
+    (insert "[" string "]\n")
     (mime-add-button (point-min)(point-max) function data)
     ))
 
