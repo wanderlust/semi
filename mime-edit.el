@@ -2238,11 +2238,11 @@ If no one is selected, default secret key is used.  "
 				     mime-edit-pgp-signers)))
 	(setq keys
 	      (catch 'found
-		(mapcar (lambda (key)
-			  (and key
-			       (member key keys)
-			       (throw 'found (list key))))
-			default-keys)
+		(mapc (lambda (key)
+			(and key
+			     (member key keys)
+			     (throw 'found (list key))))
+		      default-keys)
 		(delq nil (nconc keys default-keys)))))
       (list (mime-edit-pgp-keys-valid-key keys 'sign)))))
 
