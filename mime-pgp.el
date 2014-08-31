@@ -32,6 +32,7 @@
 
 ;;; Code:
 
+(require 'mime-parse)
 (require 'mime-play)
 (require 'epg)
 (require 'epa)
