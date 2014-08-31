@@ -2655,7 +2655,7 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 	(delete-region beg end)
 	(let ((contype (mime-edit-get-contype tag))
 	      (encoding (mime-edit-get-encoding tag)))
-	  (insert prefix "--" boundary "\n")
+	  (insert (or prefix "") "--" boundary "\n")
 	  (save-restriction
 	    (narrow-to-region (point)(point))
 	    (insert "Content-Type: " contype "\n")
