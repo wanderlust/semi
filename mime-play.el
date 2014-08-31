@@ -429,9 +429,8 @@ occurs."
 	      (if total
 		  (progn
 		    (or (file-exists-p total-file)
-			(save-excursion
-			  (set-buffer
-			   (get-buffer-create mime-temp-buffer-name))
+			(with-current-buffer
+			    (get-buffer-create mime-temp-buffer-name)
 			  (erase-buffer)
 			  (insert total)
 			  (write-region (point-min)(point-max) total-file)
@@ -440,8 +439,7 @@ occurs."
 		    (string-to-number total)
 		    )
 		(and (file-exists-p total-file)
-		     (save-excursion
-		       (set-buffer (find-file-noselect total-file))
+		     (with-current-buffer (find-file-noselect total-file)
 		       (prog1
 			   (and (re-search-forward "[0-9]+" nil t)
 				(string-to-number
@@ -455,8 +453,7 @@ occurs."
 	       (>= (length (directory-files root-dir nil "^[0-9]+$" t))
 		   total))
 	  (catch 'tag
-	    (save-excursion
-	      (set-buffer (get-buffer-create mime-temp-buffer-name))
+	    (with-current-buffer (get-buffer-create mime-temp-buffer-name)
 	      (let ((full-buf (current-buffer)))
 		(erase-buffer)
 		(let ((i 1))

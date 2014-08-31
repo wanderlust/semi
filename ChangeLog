@@ -1,3 +1,27 @@
+2014-08-31  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-image.el (mime-image-normalize-xbm-buffer): Add comment for
+	using save-excursion+set-buffer.
+
+	* mime-partial.el
+	(mime-combine-message/partial-pieces-automatically): Likewise.
+
+	* mime-view.el (mime-view-buffer)
+	(mime-preview-follow-current-entity): Likewise.
+
+	* semi-def.el (mime-button-dispatcher): Likewise.
+
+2014-08-31  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el (mime-edit-split-and-send): Use
+	`with-current-buffer' rather than save-excursion+set-buffer.
+
+	* mime-play.el (mime-store-message/partial-piece): Likewise.
+
+	* mime-view.el (mime-preview-original-major-mode)
+	(mime-maybe-hide-echo-buffer)
+	(mime-preview-follow-current-entity): Likewise.
+
 2014-08-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-edit.el (mime-edit-process-multipart-1)

@@ -3177,8 +3177,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	       ))
 	  (mime-edit-partial-number 1)
 	  data)
-      (save-excursion
-	(set-buffer copy-buf)
+      (with-current-buffer copy-buf
 	(erase-buffer)
 	(insert-buffer the-buf)
 	(save-restriction
@@ -3195,8 +3194,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	    )))
       (while (< mime-edit-partial-number total)
 	(erase-buffer)
-	(save-excursion
-	  (set-buffer copy-buf)
+	(with-current-buffer copy-buf
 	  (setq data (buffer-substring
 		      (point-min)
 		      (progn
@@ -3219,8 +3217,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	      (1+ mime-edit-partial-number))
 	)
       (erase-buffer)
-      (save-excursion
-	(set-buffer copy-buf)
+      (with-current-buffer copy-buf
 	(setq data (buffer-string))
 	(erase-buffer)
 	)

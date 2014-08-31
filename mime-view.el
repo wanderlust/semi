@@ -173,8 +173,7 @@ If optional argument RECURSIVE is non-nil and current buffer has
 mime-mother-buffer, it returns original major-mode of the
 mother-buffer."
   (if (and recursive mime-mother-buffer)
-      (save-excursion
-	(set-buffer mime-mother-buffer)
+      (with-current-buffer mime-mother-buffer
 	(mime-preview-original-major-mode recursive)
 	)
     (cdr (assq 'major-mode
@@ -1532,8 +1531,7 @@ Score is integer or function or variable.  The function receives entity and retu
   "Clear mime-echo buffer and delete window for it."
   (let ((buf (get-buffer mime-echo-buffer-name)))
     (if buf
-	(save-excursion
-	  (set-buffer buf)
+	(with-current-buffer buf
 	  (erase-buffer)
 	  (let ((win (get-buffer-window buf)))
 	    (if win
@@ -1627,6 +1625,8 @@ message.  It must be nil, `binary' or `cooked'.  If it is nil,
       (setq raw-buffer (current-buffer)))
   (or representation-type
       (setq representation-type
+	    ;; Do not use `with-current-buffer'.
+	    ;; raw-buffer may be the current buffer.
 	    (save-excursion
 	      (set-buffer raw-buffer)
 	      (cdr (or (assq major-mode mime-raw-representation-type-alist)
@@ -1807,6 +1807,8 @@ It calls following-method selected from variable
 	   new-buf
 	   (the-buf (current-buffer))
 	   fields)
+      ;; Do not use `with-current-buffer'.  Inner save-excursion(),
+      ;; the current buffer may be accessed.
       (save-excursion
 	(set-buffer (setq new-buf (get-buffer-create new-name)))
 	(erase-buffer)
@@ -1836,8 +1838,7 @@ It calls following-method selected from variable
 	    (setq field-name (car rest))
 	    (or (std11-field-body field-name)
 		(progn
-		  (save-excursion
-		    (set-buffer the-buf)
+		  (with-current-buffer the-buf
 		    (let ((entity (when mime-mother-buffer
 				    (set-buffer mime-mother-buffer)
 				    (get-text-property (point)

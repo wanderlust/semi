@@ -44,6 +44,8 @@
 (require 'path-util)
 
 (defsubst mime-image-normalize-xbm-buffer (buffer)
+  ;; Do not use `with-current-buffer'.
+  ;; buffer may be the current buffer.
   (save-excursion
     (set-buffer buffer)
     (let ((case-fold-search t) width height xbytes right margin)

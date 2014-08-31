@@ -89,6 +89,8 @@
 	    func (get-text-property (point) 'mime-button-callback)
 	    data (get-text-property (point) 'mime-button-data)
 	    ))
+    ;; Do not use `with-current-buffer'.
+    ;; buf may be the current buffer.
     (save-excursion
       (set-buffer buf)
       (goto-char point)

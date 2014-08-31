@@ -59,6 +59,8 @@ automatically."
       (if (string-match "[0-9\n]+" subject-id)
 	  (setq subject-id (substring subject-id 0 (match-beginning 0)))
 	)
+      ;; Do not use `with-current-buffer'.  Inner save-excursion(),
+      ;; the current buffer may be accessed.
       (save-excursion
 	(set-buffer subject-buf)
 	(while (search-backward subject-id nil t))
