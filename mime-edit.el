@@ -3179,7 +3179,8 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	  data)
       (with-current-buffer copy-buf
 	(erase-buffer)
-	(insert-buffer the-buf)
+	(insert-buffer-substring the-buf)
+	(goto-char (point-min))
 	(save-restriction
 	  (if (re-search-forward
 	       (concat "^" (regexp-quote separator) "$") nil t)
@@ -3198,7 +3199,8 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	  (setq data (buffer-substring
 		      (point-min)
 		      (progn
-			(goto-line mime-edit-message-max-length)
+			(goto-char (point-min))
+			(forward-line (1- mime-edit-message-max-length))
 			(point))
 		      ))
 	  (delete-region (point-min)(point))
