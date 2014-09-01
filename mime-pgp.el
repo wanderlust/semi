@@ -45,7 +45,8 @@
   (let ((string (epg-decrypt-string context cipher)))
     ;; Remove CRs if header contains CR.
     (if (string-match "\\`.*\r\n" string)
-	(decode-coding-string string 'raw-text-dos)
+	(let (inhibit-eol-conversion)
+	  (decode-coding-string string 'raw-text-dos))
       string)))
 
 ;;; @ Internal method for multipart/signed
@@ -108,8 +109,9 @@
 			     (if (fboundp 'set-buffer-multibyte)
 				 (set-buffer-multibyte nil))
 			     (mime-insert-entity orig-entity)
-			     (encode-coding-string (buffer-string)
-						   'raw-text-dos)))
+			     (let (inhibit-eol-conversion)
+			       (encode-coding-string (buffer-string)
+						     'raw-text-dos))))
 	(epg-context-result-for context 'verify)))))
 
 (defun mime-verify-application/*-signature (entity situation)
