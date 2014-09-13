@@ -156,7 +156,8 @@ specified, play as it.  Default MODE is \"play\"."
 		  (mime-format-mailcap-command
 		   method
 		   (cons (cons 'filename name) situation)))
-		 (coding-system-for-read mime-play-messages-coding-system))
+		 (coding-system-for-read mime-play-messages-coding-system)
+		 process-connection-type)
 	     (start-process command mime-echo-buffer-name
 	      shell-file-name shell-command-switch command))))
       (set-alist 'mime-mailcap-method-filename-alist process name)
