@@ -1,6 +1,5 @@
 \input texinfo.tex
 @setfilename mime-ui-en.info
-@settitle{SEMI 1.14 Manual}
 @titlepage
 @title SEMI 1.14 Manual
 @author MORIOKA Tomohiko <morioka@@jaist.ac.jp>
@@ -374,17 +373,17 @@ single-part tag represents single part, this form is following:@refill
 @end example
 
 TYPE/SUBTYPE and PARAMETERS indicates type/subtype and parameters of
-Content-Type (@ref{(mime-en)Content-Type}) field.  TYPE/SUBTYPE is
+Content-Type (@ref{file-type specification}) field.  TYPE/SUBTYPE is
 required, PARAMETERS is optional.@refill
 
 ENCODING indicates Content-Transfer-Encoding
-(@ref{(mime-ja)Content-Transfer-Encoding}) field.  It is optional
+(@ref{(mime-ui-ja)Content-Transfer-Encoding}) field.  It is optional
 too.@refill
 
 OPTIONAL-FIELDS is to represent another fields except Content-Type field
 and Content-Transfer-Encoding field.@refill
 
-multi-part tags represent multi part (@ref{(mime-en)multipart}).  They
+multi-part tags represent multi part).  They
 consist of a pair of @strong{multi-part beginning tag} and
 @strong{multi-part ending tag}.@refill
 
@@ -416,7 +415,7 @@ Insert single-part tag indicates text part.
 @item @key{C-c C-x C-i}
 Insert file as a MIME attachment.  If @kbd{C-u} is followed by it, it
 asks media-type, subtype or encoding even if their default values are
-specified. (cf. @ref{tag specification for inserted file})
+specified. (cf. @ref{file-type specification})
 
 @item @key{C-c C-x C-e}
 Insert external part.
@@ -497,10 +496,10 @@ Set current editing message to enable automatic splitting or not.
 Form of automatic split messages is message/partial.
 
 @item @key{C-c C-x 7}
-Set 7bit (@ref{(mime-en)7bit}) to transfer level (@ref{transfer level}).
+Set 7bit to transfer level (@ref{transfer level}).
 
 @item @key{C-c C-x 8}
-Set 8bit (@ref{(mime-en)8bit}) to transfer level (@ref{transfer level}).
+Set 8bit  to transfer level (@ref{transfer level}).
 
 @item @key{C-c C-x v}
 Set current editing message to digital-sign or not. (cf. @ref{PGP})
@@ -589,11 +588,9 @@ Example: Specify application/rtf as default media type for
 @section transfer level
 @cindex transfer level
 
-Each content inserted in a message is represented by 7bit
-(@ref{(mime-en)7bit}), 8bit (@ref{(mime-en)8bit}) or binary
-(@ref{(mime-en)binary}).@refill
+Each content inserted in a message is represented by 7bit, 8bit  or binary.@refill
 
-If a message is translated by 7bit-through MTA (@ref{(mime-en)MTA}),
+If a message is translated by 7bit-through MTA,
 there is no need to encode 7bit data, but 8bit and binary data must be
 encoded to 7bit data.@refill
 
@@ -636,9 +633,9 @@ binary will be 9.  But it will not be implemented.
 @noindent
 @strong{[Memo]}
 @quotation
-transfer level is only for body, not for message header (@ref{header}).
-MIME extends RFC 822 (@ref{(mime-en)RFC 822}) to use 8bit data in body,
-but it requires to use us-ascii (@ref{(mime-en)us-ascii}) in header.
+transfer level is only for body, not for message header (@ref{entity-header}).
+MIME extends RFC 822) to use 8bit data in body,
+but it requires to use us-ascii in header.
 @end quotation
 
 
