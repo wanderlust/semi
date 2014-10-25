@@ -228,8 +228,15 @@
 ;;; @ Internal method for application/pgp-keys
 
 (defun mime-add-application/pgp-keys (entity situation)
-  (epg-import-keys-from-string (epg-make-context)
-			       (mime-entity-content entity)))
+  (when (y-or-n-p "Do you want to import PGP keys? ")
+    (let ((context (epg-make-context))
+	  result window)
+      (epg-import-keys-from-string context (mime-entity-content entity))
+      (when (setq result (epg-context-result-for context 'import))
+	(epa-display-info (epg-import-result-to-string result))
+	(when (and epa-popup-info-window
+		   (setq window (get-buffer-window epa-info-buffer)))
+	  (select-window window))))))
 
 
 ;;; @ Internal method for application/pkcs7-mime

@@ -3019,9 +3019,8 @@ and insert data encoded as ENCODING."
   (mime-edit-define-encoding "7bit")
   (let ((context (epg-make-context)))
     (epg-context-set-armor context t)
-    (epg-export-keys-to-string context
-			       (epa-select-keys context
-						"Select keys for export.  ")))
+    (insert (epg-export-keys-to-string
+	     context (epa-select-keys context "Select keys for export.  "))))
   (if (and (not (eobp))
 	   (not (looking-at mime-edit-single-part-tag-regexp)))
       (insert (mime-make-text-tag) "\n")))

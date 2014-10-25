@@ -1,3 +1,10 @@
+2014-10-25  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-pgp.el (mime-add-application/pgp-keys): Prompt before
+	import.  Show result.
+
+	* mime-edit.el (mime-edit-insert-key): Really insert keys.
+
 2014-09-13  Erik Hetzner  <egh@e6h.org>
 
 	* mime-play.el (mime-activate-mailcap-method): Bind
