@@ -1,3 +1,10 @@
+2014-10-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-pgp.el (mime-verify-application/*-signature): Set
+	epa-info-buffer's buffer to the current buffer when the buffer is
+	displyed.
+	(mime-decrypt-application/pgp-encrypted): Remove unused code.
+
 2014-10-25  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-pgp.el (mime-add-application/pgp-keys): Prompt before

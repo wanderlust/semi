@@ -116,14 +116,18 @@
 
 (defun mime-verify-application/*-signature (entity situation)
   (let ((verify-result
-	 (mime-verify-application/*-signature-internal entity situation)))
+	 (mime-verify-application/*-signature-internal entity situation))
+	window)
     (cond
      ((stringp verify-result)
       (mime-show-echo-buffer verify-result))
      ((> (length verify-result) 1)
       (mime-show-echo-buffer (epg-verify-result-to-string verify-result)))
      (verify-result
-      (epa-display-info (epg-verify-result-to-string verify-result))))))
+      (epa-display-info (epg-verify-result-to-string verify-result))
+	(when (and epa-popup-info-window
+		   (setq window (get-buffer-window epa-info-buffer)))
+	  (select-window window))))))
 
 (defun mime-preview-application/*-signature (entity situation)
   (let ((verify-result
@@ -170,12 +174,7 @@
 			nil representation-type)
       (make-local-variable 'mime-view-temp-message-buffer)
       (setq mime-view-temp-message-buffer message-buf))
-    (set-window-buffer p-win preview-buffer)
-    (setq verify-result (epg-context-result-for context 'verify))
-    (if (> (length verify-result) 1)
-	(mime-show-echo-buffer (epg-verify-result-to-string verify-result))
-      (if verify-result
-	  (epa-display-info (epg-verify-result-to-string verify-result))))))
+    (set-window-buffer p-win preview-buffer)))
 
 (defvar mime-pgp-decrypted-buffers nil)
 
