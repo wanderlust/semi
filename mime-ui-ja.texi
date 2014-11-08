@@ -1,5 +1,7 @@
 \input texinfo.tex
 @setfilename mime-ui-ja.info
+@documentencoding iso-2022-jp
+@documentlanguage ja
 @settitle{SEMI 1.14 説明書}
 @titlepage
 @title SEMI 1.14 説明書
