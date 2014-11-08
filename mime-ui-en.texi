@@ -1,6 +1,6 @@
 \input texinfo.tex
 @setfilename mime-ui-en.info
-@settitle{SEMI 1.14 Manual}
+@settitle SEMI 1.14 Manual
 @titlepage
 @title SEMI 1.14 Manual
 @author MORIOKA Tomohiko <morioka@@jaist.ac.jp>
