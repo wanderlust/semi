@@ -378,13 +378,13 @@ Content-Type (@ref{(mime-en)Content-Type}) field.  TYPE/SUBTYPE is
 required, PARAMETERS is optional.@refill
 
 ENCODING indicates Content-Transfer-Encoding
-(@ref{(mime-ja)Content-Transfer-Encoding}) field.  It is optional
+(@ref{(mime-en)Content-Transfer-Encoding}) field.  It is optional
 too.@refill
 
 OPTIONAL-FIELDS is to represent another fields except Content-Type field
 and Content-Transfer-Encoding field.@refill
 
-multi-part tags represent multi part (@ref{(mime-en)multipart}).  They
+multi-part tags represent multi part.  They
 consist of a pair of @strong{multi-part beginning tag} and
 @strong{multi-part ending tag}.@refill
 
@@ -416,7 +416,7 @@ Insert single-part tag indicates text part.
 @item @key{C-c C-x C-i}
 Insert file as a MIME attachment.  If @kbd{C-u} is followed by it, it
 asks media-type, subtype or encoding even if their default values are
-specified. (cf. @ref{tag specification for inserted file})
+specified. (cf. @ref{file-type specification})
 
 @item @key{C-c C-x C-e}
 Insert external part.
@@ -636,7 +636,7 @@ binary will be 9.  But it will not be implemented.
 @noindent
 @strong{[Memo]}
 @quotation
-transfer level is only for body, not for message header (@ref{header}).
+transfer level is only for body, not for message header (@ref{entity-header}).
 MIME extends RFC 822 (@ref{(mime-en)RFC 822}) to use 8bit data in body,
 but it requires to use us-ascii (@ref{(mime-en)us-ascii}) in header.
 @end quotation
