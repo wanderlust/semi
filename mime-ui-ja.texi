@@ -1,6 +1,8 @@
 \input texinfo.tex
 @setfilename mime-ui-ja.info
-@settitle{SEMI 1.14 $B@bL@=q(B}
+@documentencoding iso-2022-jp
+@documentlanguage ja
+@settitle SEMI 1.14 $B@bL@=q(B
 @titlepage
 @title SEMI 1.14 $B@bL@=q(B
 @author $B<i2,(B $BCNI'(B <morioka@@jaist.ac.jp>
@@ -383,7 +385,7 @@ ENCODING $B$O(B Content-Transfer-Encoding
 OPTIONAL-FIELDS $B$O(B Content-Type, Content-Transfer-Encoding $B0J30$N(B field 
 $B$r=q$/$?$a$NItJ,$G!">JN,2D$G$9!#(B@refill
 
-multi-part tag $B$O(B multi part (@ref{(mime-ja)multipart}) $B$rI=8=$9$k$?$a$N(B 
+multi-part tag $B$O(B multi part $B$rI=8=$9$k$?$a$N(B 
 tag $B$G!"(B@refill
 
 @example
@@ -417,7 +419,7 @@ text part $B$rI=$9(B single-part tag $B$rA^F~$7$^$9!#(B
 
 @item @key{C-c C-x C-i}
 file $B$r(B MIME part $B$H$7$FE:IU$7$^$9!#A0$K(B @kbd{C-u} $B$rIU$1$?>l9g!">o$K(B 
-media-type, subtype $BEy$rJ9$$$FMh$^$9!#(B(cf. @ref{tag specification for inserted file})
+media-type, subtype $BEy$rJ9$$$FMh$^$9!#(B(cf. @ref{file-type specification})
 
 @item @key{C-c C-x C-e}
 external part $B$rA^F~$7$^$9!#(B
@@ -641,7 +643,7 @@ EBCDIC $B$r(B 5, ASCII printable $B$N$_$r(B 6, binary $B$r(B 9 $B$H$9$k$3
 @noindent
 @strong{[Memo]}
 @quotation
-transfer level $B$O(B message header (@ref{header}) $B$K$O4X78$7$J$$!#(BMIME $B$O(B 
+transfer level $B$O(B message header (@ref{entity-header}) $B$K$O4X78$7$J$$!#(BMIME $B$O(B 
 body $B$K$*$$$F!"(B8bit $B$N(B data $B$r;H$($k$h$&$K(B STD 11 (@ref{(mime-ja)STD 11}) $B$r3HD%$7$F$$$k$,!"(Bmessage header $B$G$O(B us-ascii
 (@ref{(mime-ja)us-ascii}) $B$N$_$rMQ$$$k$3$H$r5a$a$F$$$k!#(B
 @end quotation
