@@ -2377,21 +2377,24 @@ If no one is selected, symmetric encryption will be performed.  ")
 (defun mime-edit-make-encrypt-recipient-header ()
   (let* ((names mime-edit-encrypt-recipient-fields-list)
 	 (values (std11-field-bodies names nil mail-header-separator))
-	 (from (car values))
 	 header recipients)
     (while (and names values)
       (let ((name (car names))
 	    (value (car values)))
 	(when (and (stringp value) (null (string-equal value "")))
-	  (setq header (concat header (format "%s: %s\n" name value)))
+	  (setq header (cons (format "%s: %s\n" name value) header))
 	  (when (or mime-edit-pgp-encrypt-to-self
 		    (null (string-equal name "From")))
 	    (setq recipients (cons value recipients)))))
       (setq names (cdr names)
 	    values (cdr values))
       )
-    (setq recipients (mapconcat 'eval recipients " ,"))
-    (vector from recipients header)
+    (cons (apply #'nconc (mapcar
+			  (lambda (value)
+			    (mapcar 'std11-address-string
+				    (std11-parse-addresses-string value)))
+			  recipients))
+	  (apply #'concat (nreverse header)))
     ))
 
 (defun mime-edit-encrypt-pgp-mime (beg end boundary)
@@ -2399,18 +2402,14 @@ If no one is selected, symmetric encryption will be performed.  ")
     (save-restriction
       (let* ((config (epg-configuration))
 	     (ret (mime-edit-make-encrypt-recipient-header))
-	     (recipients (aref ret 1))
-	     (header (aref ret 2)))
+	     (recipients (car ret))
+	     (header (cdr ret)))
 	(setq recipients
 	      (apply #'nconc
 		     (mapcar (lambda (recipient)
-			       (setq recipient
-				     (nth 1 (std11-extract-address-components
-					     recipient)))
 			       (or (epg-expand-group config recipient)
 				   (list recipient)))
-			     (delete "" (split-string recipients
-						      "[ \f\t\n\r\v,]+")))))
+			     recipients)))
         (narrow-to-region beg end)
         (let* ((ret
                 (mime-edit-translate-region beg end boundary))
@@ -2531,8 +2530,8 @@ Content-Description: S/MIME Digital Signature
   (save-excursion
     (save-restriction
       (let* ((ret (mime-edit-make-encrypt-recipient-header))
-	     (recipients (aref ret 1))
-	     (header (aref ret 2)))
+	     (recipients (car ret))
+	     (header (cdr ret)))
         (narrow-to-region beg end)
         (let* ((ret
                 (mime-edit-translate-region beg end boundary))
@@ -2556,11 +2555,7 @@ Content-Description: S/MIME Digital Signature
 		  "\
 Select recipients for encryption.
 If no one is selected, symmetric encryption will be performed.  "
-		  (mapcar (lambda (recipient)
-			    (nth 1 (std11-extract-address-components
-				    recipient)))
-			  (delete "" (split-string recipients 
-						   "[ \f\t\n\r\v,]+"))))))
+		  recipients)))
 	  (delete-region (point-min)(point-max))
 	  (goto-char beg)
 	  (insert (format "--[[application/pkcs7-mime;
