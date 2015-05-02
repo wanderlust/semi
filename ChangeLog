@@ -1,3 +1,11 @@
+2015-05-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Fix for CCL unusable environments.
+	* mime-edit.el (mime-edit-normalize-eol-crlf): Define for only CCL
+	usable environment.
+	(mime-edit-sign-pgp-mime): Use elisp routine for CCL unusable
+	environments.
+
 2015-02-04  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-edit.el (mime-edit-make-encrypt-recipient-header): Returns

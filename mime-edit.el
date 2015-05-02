@@ -115,6 +115,7 @@
 (require 'mime-view)
 (require 'alist)
 (require 'invisible)
+(require 'pccl)
 
 (autoload 'eword-encode-string "eword-encode")
 (autoload 'eword-decode-and-unfold-unstructured-field-body "eword-decode")
@@ -2246,6 +2247,7 @@ If no one is selected, default secret key is used.  "
 		(delq nil (nconc keys default-keys)))))
       (list (mime-edit-pgp-keys-valid-key keys 'sign)))))
 
+(unless-broken ccl-usable
 (define-ccl-program mime-edit-normalize-eol-crlf
   '(2
     ((r1 = 0)
@@ -2255,6 +2257,7 @@ If no one is selected, default secret key is used.  "
 		   (write ?\r)))
 	   (r1 = r0)
 	   (write-repeat r0)))))
+)
 
 (defun mime-edit-sign-pgp-mime (beg end boundary)
   (save-excursion
@@ -2280,11 +2283,24 @@ If no one is selected, default secret key is used.  "
 	 context
 	 (mime-edit-pgp-get-signers context))
 	(setq signature
-	      (epg-sign-string context
-			       (ccl-execute-on-string
-				'mime-edit-normalize-eol-crlf
-				(make-vector 9 0) (buffer-string))
-			       'detached))
+	      (epg-sign-string
+	       context
+	       (if-broken ccl-usable
+		   (let ((index (goto-char (point-min)))
+			 plain)
+		     (while (re-search-forward "\r?\n" nil t)
+		       (setq plain (cons "\r\n"
+					 (cons (buffer-substring
+						index (match-beginning 0))
+					       plain))
+			     index (match-end 0)))
+		     (apply 'concat (nreverse
+				     (cons (buffer-substring index (point-max))
+					   plain))))
+		 (ccl-execute-on-string
+		  'mime-edit-normalize-eol-crlf
+		  (make-vector 9 0) (buffer-string)))
+	       'detached))
 	(setq micalg (epg-new-signature-digest-algorithm
 		      (car (epg-context-result-for context 'sign))))
 	(goto-char beg)
