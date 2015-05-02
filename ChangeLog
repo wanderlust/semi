@@ -1,5 +1,10 @@
 2015-05-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* mime-edit.el (mime-edit-make-encrypt-recipient-header): Handle
+	multiple same name fields.
+
+2015-05-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	Fix for CCL unusable environments.
 	* mime-edit.el (mime-edit-normalize-eol-crlf): Define for only CCL
 	usable environment.

@@ -2391,20 +2391,25 @@ If no one is selected, symmetric encryption will be performed.  ")
 (defvar mime-edit-encrypt-recipient-fields-list '("From" "To" "cc"))
 
 (defun mime-edit-make-encrypt-recipient-header ()
-  (let* ((names mime-edit-encrypt-recipient-fields-list)
-	 (values (std11-field-bodies names nil mail-header-separator))
-	 header recipients)
-    (while (and names values)
-      (let ((name (car names))
-	    (value (car values)))
-	(when (and (stringp value) (null (string-equal value "")))
-	  (setq header (cons (format "%s: %s\n" name value) header))
-	  (when (or mime-edit-pgp-encrypt-to-self
-		    (null (string-equal name "From")))
-	    (setq recipients (cons value recipients)))))
-      (setq names (cdr names)
-	    values (cdr values))
-      )
+  (let ((field-names (mapcar 'downcase
+			     mime-edit-encrypt-recipient-fields-list))
+	header recipients name value)
+    (save-excursion
+      (save-restriction
+	(std11-narrow-to-header mail-header-separator)
+	(goto-char (point-min))
+	(while (re-search-forward
+		(concat "^\\(" std11-field-name-regexp "\\):[ \t]*") nil t)
+	  (when (member (downcase (match-string 1)) field-names)
+	    (setq name (buffer-substring-no-properties
+			(match-beginning 1) (match-end 1))
+		  value (buffer-substring-no-properties
+			 (match-end 0) (std11-field-end)))
+	    (when (and (stringp value) (null (string-equal value "")))
+	      (setq header (cons (format "%s: %s\n" name value) header))
+	      (when (or mime-edit-pgp-encrypt-to-self
+			(null (string-equal (downcase name) "from")))
+		(setq recipients (cons value recipients))))))))
     (cons (apply #'nconc (mapcar
 			  (lambda (value)
 			    (mapcar 'std11-address-string
