@@ -1,3 +1,8 @@
+2015-05-07  Tatsuya Kinoshita  <tats@debian.org>
+
+	* mime-edit.el (mime-edit-make-encrypt-recipient-header): Put angle
+	brackets around an email address to specify a user ID to GnuPG.
+
 2015-05-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-edit.el (mime-edit-make-encrypt-recipient-header): Handle

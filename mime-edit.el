@@ -2410,11 +2410,13 @@ If no one is selected, symmetric encryption will be performed.  ")
 	      (when (or mime-edit-pgp-encrypt-to-self
 			(null (string-equal (downcase name) "from")))
 		(setq recipients (cons value recipients))))))))
-    (cons (apply #'nconc (mapcar
+    (cons (mapcar (lambda (x)
+		    (if (string-match "^[^<].*@" x) (concat "<" x ">") x))
+		  (apply #'nconc (mapcar
 			  (lambda (value)
 			    (mapcar 'std11-address-string
 				    (std11-parse-addresses-string value)))
-			  recipients))
+			  recipients)))
 	  (apply #'concat (nreverse header)))
     ))
 
