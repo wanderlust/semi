@@ -2223,6 +2223,7 @@ USAGE is a symbol denoting the intended usage."
 			     (std11-field-body "From" mail-header-separator))
 			   ""))))
 	keys default-keys)
+    (setq signer (and signer (concat "<" signer ">")))
     (if mime-edit-pgp-verbose
 	(epa-select-keys
 	 context
