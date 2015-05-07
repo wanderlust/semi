@@ -2409,12 +2409,15 @@ If no one is selected, symmetric encryption will be performed.  ")
 	      (setq header (cons (format "%s: %s\n" name value) header))
 	      (when (or mime-edit-pgp-encrypt-to-self
 			(null (string-equal (downcase name) "from")))
-		(setq recipients (cons value recipients))))))))
-    (cons (apply #'nconc (mapcar
-			  (lambda (value)
-			    (mapcar 'std11-address-string
-				    (std11-parse-addresses-string value)))
-			  recipients))
+		(setq recipients (cons (mapcar
+					'std11-address-string
+					(std11-parse-addresses-string value))
+				       recipients))))))))
+    (cons (apply #'nconc
+		 (mapcar (lambda (recipient)
+			   (or (epg-expand-group config recipient)
+			       (list (concat "<" recipient ">"))))
+			 (apply #'nconc recipients)))
 	  (apply #'concat (nreverse header)))
     ))
 
@@ -2425,12 +2428,6 @@ If no one is selected, symmetric encryption will be performed.  ")
 	     (ret (mime-edit-make-encrypt-recipient-header))
 	     (recipients (car ret))
 	     (header (cdr ret)))
-	(setq recipients
-	      (apply #'nconc
-		     (mapcar (lambda (recipient)
-			       (or (epg-expand-group config recipient)
-				   (list recipient)))
-			     recipients)))
         (narrow-to-region beg end)
         (let* ((ret
                 (mime-edit-translate-region beg end boundary))
