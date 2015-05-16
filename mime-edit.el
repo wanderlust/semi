@@ -275,6 +275,8 @@ To insert a signature file automatically, call the function
      ("vnd.ms-xpsdocument")
                                         ; Microsoft Project
      ("vnd.ms-project")
+     ("vnd.ms-tnef")
+     ("ms-tnef")
      ("x-kiss" ("x-cnf")))
     ("image"
      ("bmp")
@@ -739,6 +741,11 @@ To insert a signature file automatically, call the function
 	)
        ("\\.7z$"
 	"application" "x-7z-compressed" nil
+	"base64"
+	"attachment"	nil
+	)
+       ("winmail\\.dat$"
+	"application" "ms-tnef" nil
 	"base64"
 	"attachment"	nil
 	)

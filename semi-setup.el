@@ -198,6 +198,25 @@ it is used as hook to set."
   )
 
 
+(eval-after-load "mime-view"
+  '(progn
+     (mime-add-condition
+      'preview
+      '((type . application)
+	(subtype . ms-tnef)
+	(body . visible)
+	(body-presentation-method . mime-display-application/ms-tnef))
+      'strict "mime-tnef")
+     (mime-add-condition
+      'preview
+      '((type . application)
+	(subtype . vnd.ms-tnef)
+	(body . visible)
+	(body-presentation-method . mime-display-application/ms-tnef))
+      'strict "mime-tnef")
+     ))
+
+
 ;;; @ for mime-edit
 ;;;
 

@@ -1,3 +1,17 @@
+2015-05-16  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Experimental support of application/ms-tnef entity.
+	* mime-edit.el (mime-content-types): Add entries for ms-tnef
+	subtype.
+	(mime-file-types): Add entry for winmail.dat.
+
+	* mime-tnef.el: New file.
+
+	* semi-setup.el: Define preview condition for application/ms-ntef
+	entity.
+
+	* SEMI-ELS (semi-modules-to-compile): Add mime-tnef.el.
+
 2015-05-07  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-edit.el (mime-edit-pgp-get-signers): Search epg-key from
