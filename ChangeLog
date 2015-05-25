@@ -1,5 +1,11 @@
 2015-05-25  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* mime-shr.el (mime-shr-preview-text/html): Workaround for
+	shr-insert-document.
+	Cf. https://github.com/wanderlust/semi/issues/11
+
+2015-05-25  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* mime-tnef.el (mime-tnef-insert-file): Fix for non-ASCII filename.
 	(mime-display-application/ms-tnef): Adjusted.
 

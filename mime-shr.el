@@ -45,8 +45,11 @@
 	(shr-blocked-images (or mime-shr-blocked-images
 				shr-blocked-images)))
     (setq mime-shr-root-entity (mime-find-root-entity entity))
-    (goto-char (point-max))
-    (shr-insert-document dom))
+    (save-restriction
+      ;; shr-insert-document may insert document before current point.
+      ;; Cf. https://github.com/wanderlust/semi/issues/11
+      (narrow-to-region (point-max) (point-max))
+      (shr-insert-document dom)))
   ;; Workaround to delete garbage overlay.
   (let ((overlays (overlays-in (point-min) (point-max))))
     (while overlays
