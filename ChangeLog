@@ -1,3 +1,8 @@
+2015-05-25  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-tnef.el (mime-tnef-insert-file): Fix for non-ASCII filename.
+	(mime-display-application/ms-tnef): Adjusted.
+
 2015-05-16  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Experimental support of application/ms-tnef entity.

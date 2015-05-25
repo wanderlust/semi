@@ -827,8 +827,14 @@
 	     (concat "\n" "Content-Disposition: " disposition-type
 		     (mime-edit-insert-file-parameters
 		      disposition-params file)))))
-    (mime-edit-insert-tag type subtype parameters)
-    (mime-edit-define-encoding encoding)
+    (insert
+     ;; multibyte buffer is needed for non-ASCII filename.
+     (with-temp-buffer
+       (mime-edit-insert-tag type subtype parameters)
+       (mime-edit-define-encoding encoding)
+       (goto-char (point-min))
+       (mime-tnef-translate-single-part-tag)
+       (buffer-string)))
     (insert data "\n")
     ))
 
@@ -889,11 +895,9 @@
 				      (cdr tnef)
 				      (cdr (assq 'start (car files)))
 				      (cdr (assq 'end (car files)))))
-	      (goto-char (point-min))
-	      (mime-tnef-translate-single-part-tag)
 	      (goto-char (point-max))
-	      (setq files (cdr files))
-	      (widen))
+	      (setq files (cdr files)))
+	    (widen)
 	    (insert "--" boundary "--" "\n")
 	    (setq tnef-entity
 	 	  (mime-parse-message
