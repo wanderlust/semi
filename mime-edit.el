@@ -2399,7 +2399,8 @@ If no one is selected, symmetric encryption will be performed.  ")
 (defvar mime-edit-encrypt-recipient-fields-list '("From" "To" "cc"))
 
 (defun mime-edit-make-encrypt-recipient-header ()
-  (let ((field-names (mapcar 'downcase
+  (let ((config (epg-configuration))
+	(field-names (mapcar 'downcase
 			     mime-edit-encrypt-recipient-fields-list))
 	header recipients name value)
     (save-excursion
@@ -2432,8 +2433,7 @@ If no one is selected, symmetric encryption will be performed.  ")
 (defun mime-edit-encrypt-pgp-mime (beg end boundary)
   (save-excursion
     (save-restriction
-      (let* ((config (epg-configuration))
-	     (ret (mime-edit-make-encrypt-recipient-header))
+      (let* ((ret (mime-edit-make-encrypt-recipient-header))
 	     (recipients (car ret))
 	     (header (cdr ret)))
         (narrow-to-region beg end)

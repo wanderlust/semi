@@ -1,3 +1,10 @@
+2016-01-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el (mime-edit-encrypt-pgp-mime): Do not let-bind
+	variable for mime-edit-make-encrypt-recipient-header here.
+	(mime-edit-make-encrypt-recipient-header): Let-bind internal
+	variable here.
+
 2015-05-25  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-shr.el (mime-shr-preview-text/html): Workaround for
