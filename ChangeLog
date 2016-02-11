@@ -1,3 +1,12 @@
+2016-02-04  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	User is now prompted whether proceed PGP/MIME encryption when
+	recipient key is not available.
+	* mime-edit.el (mime-edit-encrypt-pgp-ignore-missing-keys): New
+	variable.
+	(mime-edit-encrypt-pgp-recipients-keys): New function.
+	(mime-edit-encrypt-pgp-mime): Use them.
+
 2016-01-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-edit.el (mime-edit-encrypt-pgp-mime): Do not let-bind
