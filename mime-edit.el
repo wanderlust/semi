@@ -1627,10 +1627,7 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 (defun mime-edit-insert-voice ()
   "Insert a voice message."
   (interactive)
-  (let ((encoding
-	 (completing-read
-	  "What transfer encoding: "
-	  (mime-encoding-alist) nil t nil)))
+  (let ((encoding (mime-prompt-for-encoding)))
     (mime-edit-insert-tag "audio" "basic" nil)
     (mime-edit-define-encoding encoding)
     (save-restriction
@@ -1972,8 +1969,9 @@ Nil if no such parameter."
 			     mime-content-types
 			     nil
 			     'require-match ;Type must be specified.
-			     default
-			     ))
+			     nil
+			     nil
+			     default))
       (if (string-equal type "")
 	  (progn
 	    (message "Content type is required.")
@@ -2000,7 +1998,8 @@ Nil if no such parameter."
 	   nil
 	   'require-match		;Subtype must be specified.
 	   nil
-	   )))
+	   nil
+	   default)))
     (if (string-equal answer "") default answer)))
 
 (defun mime-prompt-for-parameters (pritype subtype &optional delimiter)
@@ -2059,15 +2058,19 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 	  (mime-prompt-for-parameters-1 (cdr (assoc answer (cdr parameter)))))
     ))
 
-(defun mime-prompt-for-encoding (default)
+(defun mime-prompt-for-encoding (&optional default)
   "Ask for Content-Transfer-Encoding."
   (let (encoding)
     (while (string=
 	    (setq encoding
 		  (completing-read
 		   "What transfer encoding: "
-		   (mime-encoding-alist) nil t default)
-		  )
+		   (mime-encoding-alist)
+		   nil
+		   t
+		   nil
+		   nil
+		   default))
 	    ""))
     encoding))
 
