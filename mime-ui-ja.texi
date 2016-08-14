@@ -2,6 +2,12 @@
 @setfilename mime-ui-ja.info
 @documentencoding iso-2022-jp
 @documentlanguage ja
+
+@dircategory GNU Emacs Lisp
+@direntry
+* SEMI (ja): (mime-ui-ja).      MIME user interface.
+@end direntry
+
 @settitle SEMI 1.14 説明書
 @titlepage
 @title SEMI 1.14 説明書
