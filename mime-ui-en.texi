@@ -1,6 +1,13 @@
 \input texinfo.tex
 @setfilename mime-ui-en.info
 @settitle SEMI 1.14 Manual
+@documentlanguage en
+
+@dircategory GNU Emacs Lisp
+@direntry
+* SEMI (en): (mime-ui-en).      MIME user interface.
+@end direntry
+
 @titlepage
 @title SEMI 1.14 Manual
 @author MORIOKA Tomohiko <morioka@@jaist.ac.jp>
