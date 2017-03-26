@@ -165,6 +165,7 @@
 
 (defvar mime-image-format-alist
   '((image jpeg		jpeg)
+    (image jpg  	jpeg)
     (image gif		gif)
     (image tiff		tiff)
     (image x-tiff	tiff)
