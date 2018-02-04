@@ -1,3 +1,16 @@
+2018-02-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Workaround for Apple Mail, which may attach attachment as part of
+	multipart/alternative entity.  It is hard to find the attachment
+	for MIME-View mode user.  When
+	mime-view-multipart/alternative-show-all-children is non-nil, such
+	hidden attachment's button would appear.
+
+	* mime-view.el
+	(mime-view-multipart/alternative-show-all-children): New variable.
+	(mime-view-multipart-descendant-button): New function.
+	(mime-display-multipart/alternative): As above.
+
 2016-08-14  Erik Hetzner  <egh@e6h.org>
 
 	* mime-ui-en.texi: Add dir entry
