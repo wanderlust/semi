@@ -1,5 +1,22 @@
 2018-02-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	Support for multipart/multilingual entity (RFC 8255).
+
+	* mime-edit.el (mime-edit-decode-single-part-in-buffer): Keep
+	Content-Language and Content-Translation-Type fields.
+
+	* mime-view.el (mime-view-insert-entity-button): Show language
+	information in button if Content-Language: header is available.
+	(mime-display-multipart/multilingual-prefered-languages)
+	(mime-display-multipart/multilingual-unknown-translation-type)
+	(mime-display-multipart/multilingual-translation-type-score)
+	(mime-display-multipart/multilingual-interactive): New varaibles.
+	(mime-display-multipart/multilingual-select-interactively)
+	(mime-display-multipart/multilingual-select-automatically)
+	(mime-display-multipart/multilingual): New functions.
+
+2018-02-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* mime-view.el (mime-display-multipart/related): Use
 	mime-view-multipart-descendant-button for multipart children when
 	mime-view-multipart/related-show-all-children is non-nil.

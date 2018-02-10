@@ -91,6 +91,43 @@ multipart/alternative entities."
   :group 'mime-view
   :type 'boolean)
 
+(defvar mime-display-multipart/multilingual-unknown-translation-type
+  "(unknown)")
+
+(defcustom mime-display-multipart/multilingual-prefered-languages
+  (mapcar (lambda (lang)
+	    (format "^%s\\(-.+\\)?" (regexp-quote (symbol-name lang))))
+	  (let ((result (get-language-info
+			 current-language-environment 'iso639-language)))
+	    (if (eq result 'en)
+		(list result)
+	      (cons result '(en)))))
+  "Specify language automatically choiced for
+multipart/multilingual entities. See docstring of
+`mime-display-multipart/multilingual' for details."
+  :group 'mime-view
+  :type '(repeat regexp))
+
+(defcustom mime-display-multipart/multilingual-translation-type-score
+  `(("original" . 2)
+    ("human" . 1)
+    ("automated" . -1)
+    (,mime-display-multipart/multilingual-unknown-translation-type . 0)
+    )
+  "Specify scores Content-Translation-Type: header fields.  When
+score is negative value, corresponding entity is not displayed
+automatically.  If field calue is missing or field does not
+exist, field value is treated as \"(unknown)\".  See docstring of
+`mime-display-multipart/multilingual' for details."
+  :group 'mime-view
+  :type '(repeat (cons string integer)))
+
+(defcustom mime-display-multipart/multilingual-interactive nil
+  "When non-nil, you are asked which language entity should be
+displayed for multipart/multilingual entity."
+  :group 'mime-view
+  :type 'boolean)
+
 (defcustom mime-view-text/html-score 3
   "Score for text/html entity when previewer is available."
   :group 'mime-view
@@ -660,9 +697,14 @@ mother-buffer."
 	   (t
 	    (let* ((charset (cdr (assoc "charset" params)))
 		   (encoding (mime-entity-encoding entity))
-		   (rest (format " <%s/%s%s%s>"
+		   (language (mime-entity-read-field
+			      entity "Content-Language"))
+		   (rest (format " <%s/%s%s%s%s>"
 				 (mime-entity-media-type entity)
 				 (mime-entity-media-subtype entity)
+				 (if language
+				     (concat " (" language ")")
+				   "")
 				 (if charset
 				     (concat "; " charset)
 				   "")
@@ -828,6 +870,12 @@ Each elements are regexp of field-name.")
  '((type . multipart)(subtype . related)
    (body . visible)
    (body-presentation-method . mime-display-multipart/related)))
+
+(ctree-set-calist-strictly
+ 'mime-preview-condition
+ '((type . multipart)(subtype . multilingual)
+   (body . visible)
+   (body-presentation-method . mime-display-multipart/multilingual)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
@@ -1184,6 +1232,111 @@ Score is integer or function or variable.  The function receives entity and retu
 			   child-situation)
 	      (put-alist 'body 'invisible child-situation)))))))
      (mime-entity-children entity))))
+
+(defun mime-display-multipart/multilingual-select-interactively (pairs)
+  (let (count counts result elt)
+    (setq pairs
+	  (dolist (pair pairs (nreverse result))
+	    (when (caar pair)
+	      (setq elt (format "%s/%s"
+				(or (caar pair) "")
+				(or (cdar pair)
+				    mime-display-multipart/multilingual-unknown-translation-type)))
+	      (if (setq count (assoc elt counts))
+		  (setq elt
+			(format "%s:%d" elt (setcdr count (1+ (cdr count)))))
+		(setq counts (cons (cons elt 1) counts)))
+	      (setq result (cons (cons elt (cdr pair)) result)))))
+    (when (> (length pairs) 0)
+      (cdr (assoc
+	    (completing-read
+	     "Which language is displayed for this multilingual message? "
+	     (mapcar 'car pairs) nil t nil nil (caar pairs))
+	    pairs)))))
+
+(defun mime-display-multipart/multilingual-select-automatically (pairs)
+  (let ((max-score '(0 . 0))
+	(case-fold-search t)
+	score choice first zxx)
+    (dolist (pair pairs)
+      (when (caar pair)
+	(unless first
+	  ;; The first language message part
+	  (setq first (cdr pair)))
+	(when (string-match "^zxx$" (caar pair))
+	  ;; The language-independent message part
+	  (setq zxx (cdr pair)))
+	(setq score
+	      (cons
+	       (let ((langs
+		      mime-display-multipart/multilingual-prefered-languages))
+		 (catch 'done
+		   (while langs
+		     (when (string-match (car langs) (caar pair))
+		       (throw 'done (length langs)))
+		     (setq langs (cdr langs)))
+		   -1))
+	       (or
+		(cdr
+		 (assoc
+		  (or (cdar pair)
+		      mime-display-multipart/multilingual-unknown-translation-type)
+		  mime-display-multipart/multilingual-translation-type-score))
+		-1)))
+	(when (or (> (cdr score) (cdr max-score))
+		  (and (eq (cdr score) (cdr max-score))
+		       (> (car score) (car max-score))))
+	  (setq max-score score)
+	  (setq choice (cdr pair)))))
+    (or choice zxx first)))
+
+(defun mime-display-multipart/multilingual (entity situation)
+  "MIME-View mode preview method for multipart/multilingual entity.
+When `mime-display-multipart/multilingual-interactive' is nil, select child entity to display automatically.
+Automatic selection algorithm is below.
+
+1. Select highest score entity calculated from
+Content-Translation-Type: field and
+`mime-display-multipart/multilingual-translation-type-score'.
+But if score is negative, never selected.
+2. If there are multiple highest score entities, select entities
+whose Content-Language: field values matches former element of
+`mime-display-multipart/multilingual-prefered-languages'.  If not
+matched, never selected.
+3. If no entity is selected, select the language-independent
+part (if exist) or the first language message part."
+  (let ((default-situation
+	  (delq nil (cons (assq 'major-mode situation)
+			  (cdr (assq 'childrens-situation situation)))))
+	child-situation score choice pairs)
+    (setq pairs
+	  (mapcar
+	   (lambda (child)
+	     (cons (cons
+		    (cdr (assq 'atom
+			       (std11-lexical-analyze
+				(mime-entity-read-field
+				 child "Content-Language"))))
+		    (cdr (assq 'atom
+			       (std11-lexical-analyze
+				(mime-entity-fetch-field
+				 child "Content-Translation-Type")))))
+		   child))
+	   (mime-entity-children entity)))
+    (setq choice
+	  (if mime-display-multipart/multilingual-interactive
+	      (mime-display-multipart/multilingual-select-interactively pairs)
+	    (mime-display-multipart/multilingual-select-automatically pairs)))
+    (mapc (lambda (child)
+	    (mime-display-entity
+	     child nil
+	     (if (eq choice child)
+		 default-situation
+	       (put-alist 'body 'invisible
+			  (copy-alist (mime-find-entity-preview-situation
+				       child default-situation))))))
+	  (mime-entity-children entity))
+    ))
 
 ;;; @ acting-condition
 ;;;

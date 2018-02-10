@@ -3512,14 +3512,16 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	(setq pstr (format "%s\nContent-Disposition: %s%s"
 			   pstr disposition-type disposition-str))
       )
-    (save-excursion
-      (when (re-search-forward "^Content-Id:" limit t)
-	(setq pstr (concat pstr
-			   "\nContent-Id: "
-			   (eliminate-top-spaces
-			    (std11-unfold-string
-			     (buffer-substring (match-end 0)
-					       (std11-field-end limit))))))))
+    (mapc (lambda (field)
+	    (save-excursion
+	      (when (re-search-forward (concat "^" field ":") limit t)
+		(setq pstr (concat
+			    pstr "\n" field ": "
+			    (eliminate-top-spaces
+			     (std11-unfold-string
+			      (buffer-substring (match-end 0)
+						(std11-field-end limit)))))))))
+	  '("Content-Id" "Content-Language" "Content-Translation-Type"))
     (save-excursion
       (if (re-search-forward
 	   "^Content-Transfer-Encoding:" limit t)
