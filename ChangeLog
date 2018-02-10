@@ -1,3 +1,9 @@
+2018-02-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-view.el (mime-display-multipart/related): Use
+	mime-view-multipart-descendant-button for multipart children when
+	mime-view-multipart/related-show-all-children is non-nil.
+
 2018-02-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Workaround for Apple Mail, which may attach attachment as part of

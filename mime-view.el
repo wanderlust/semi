@@ -1168,17 +1168,22 @@ Score is integer or function or variable.  The function receives entity and retu
     (if original-major-mode-cell
 	(setq default-situation
 	      (cons original-major-mode-cell default-situation)))
-    (if (and start (null mime-view-multipart/related-show-all-children))
-	(mime-display-entity start nil default-situation)
-      (mapc
-       (lambda (child)
-	 (if (eq start child)
-	     (mime-display-entity child nil default-situation)
+    (mapc
+     (lambda (child)
+       (cond
+	((eq start child)
+	 (mime-display-entity start nil default-situation))
+	(mime-view-multipart/related-show-all-children
+	 (let ((child-situation (copy-alist (mime-find-entity-preview-situation
+					     child default-situation))))
 	   (mime-display-entity
-	    child (put-alist 'body 'invisible
-			     (copy-alist (mime-find-entity-preview-situation
-					  child default-situation))))))
-	    (mime-entity-children entity)))))
+	    child nil
+	    (if (eq (mime-entity-media-type child) 'multipart)
+		(put-alist 'body-presentation-method
+			   'mime-view-multipart-descendant-button
+			   child-situation)
+	      (put-alist 'body 'invisible child-situation)))))))
+     (mime-entity-children entity))))
 
 ;;; @ acting-condition
 ;;;
