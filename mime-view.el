@@ -440,8 +440,8 @@ mother-buffer."
 
 (defun mime-view-entity-title (entity)
   (or (mime-entity-read-field entity 'Content-Description)
-      (mime-entity-read-field entity 'Subject)
       (mime-entity-filename entity)
+      (mime-entity-read-field entity 'Subject)
       ""))
 
 (defvar mime-preview-situation-example-list nil)
@@ -893,17 +893,15 @@ Each elements are regexp of field-name.")
  'mime-preview-condition
  '((type . message)(subtype . rfc822)
    (body . visible)
-   (body-presentation-method . mime-display-multipart/mixed)
-   (childrens-situation (header . visible)
-			(entity-button . invisible))))
+   (body-presentation-method . mime-display-message/rfc822)
+   (childrens-situation (header . visible))))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
  '((type . message)(subtype . news)
    (body . visible)
-   (body-presentation-method . mime-display-multipart/mixed)
-   (childrens-situation (header . visible)
-			(entity-button . invisible))))
+   (body-presentation-method . mime-display-message/rfc822)
+   (childrens-situation (header . visible))))
 
 
 ;;; @@@ entity presentation
@@ -1073,6 +1071,19 @@ Each elements are regexp of field-name.")
     (mime-add-button (point-min)(point-max)
 		     #'mime-preview-play-current-entity)
     ))
+
+(defun mime-display-message/rfc822 (entity situation)
+  (let ((child (car (mime-entity-children entity)))
+	(default-situation
+	  (copy-alist
+	   (delq nil (cons (assq 'major-mode situation)
+			   (cdr (assq 'childrens-situation situation)))))))
+    (mime-display-entity
+     child nil
+     (if (memq (mime-entity-media-type child)
+	       '(text multipart nil))
+	 (put-alist 'entity-button 'invisible default-situation)
+       (put-alist 'button-position 'after default-situation)))))
 
 (defun mime-display-multipart/mixed (entity situation)
   (let ((children (mime-entity-children entity))
@@ -1487,15 +1498,16 @@ part (if exist) or the first language message part."
 				   default-situation preview-buffer)
   (or preview-buffer
       (setq preview-buffer (current-buffer)))
-  (let* (e nb ne nhb nbb)
+  (let* (nb ne nbb)
     (in-calist-package 'mime-view)
     (or situation
 	(setq situation
 	      (mime-find-entity-preview-situation entity default-situation)))
-    (let ((button-is-invisible
-	   (null (and mime-view-buttons-visible
-		      (mime-display-entity-visible-p
-		       '(*entity-button entity-button) situation t))))
+    (let ((button-is-visible
+	   (and mime-view-buttons-visible
+		(mime-display-entity-visible-p
+		 '(*entity-button entity-button) situation t)))
+	  (button-position (cdr (assq 'button-position situation)))
 	  (header-is-visible
 	   (mime-display-entity-visible-p '(*header header) situation))
 	  (body-is-visible
@@ -1504,26 +1516,25 @@ part (if exist) or the first language message part."
       (set-buffer preview-buffer)
       (setq nb (point))
       (narrow-to-region nb nb)
-      (or button-is-invisible
-          ;; (if (mime-view-entity-button-visible-p entity)
-	  (mime-view-insert-entity-button entity)
-          ;;   )
-	  )
       (if header-is-visible
 	  (let ((header-presentation-method
 		 (or (cdr (assq 'header-presentation-method situation))
 		     (cdr (assq (cdr (assq 'major-mode situation))
 				mime-header-presentation-method-alist)))))
-	    (setq nhb (point))
 	    (if header-presentation-method
 		(funcall header-presentation-method entity situation)
 	      (mime-insert-header entity
 				  mime-view-ignored-field-list
 				  mime-view-visible-field-list))
 	    (run-hooks 'mime-display-header-hook)
-	    (put-text-property nhb (point-max) 'mime-view-entity-header entity)
+	    (put-text-property nb (point-max) 'mime-view-entity-header entity)
 	    (goto-char (point-max))
 	    (insert "\n")))
+      (when button-is-visible
+	(unless (eq button-position 'after)
+	  (goto-char (point-min)))
+	(mime-view-insert-entity-button entity)
+	(goto-char (point-max)))
       (setq nbb (point))
       (unless children
 	(when body-is-visible
@@ -1766,15 +1777,15 @@ non-nil, DEFAULT-KEYMAP-OR-FUNCTION is ignored.  If it is nil,
       (setq mime-preview-original-window-configuration win-conf)
       (setq major-mode 'mime-view-mode)
       (setq mode-name "MIME-View")
+      ;; Do not hide button when first entity is
+      ;; neither text nor multipart.
       (mime-display-entity
-       message nil (delq nil
-			 ;; Do not hide button when first entity is
-			 ;; neither text nor multipart.
-			 `(,(when (memq (mime-entity-media-type message)
-					'(text multipart nil))
-				'(entity-button . invisible))
-			   (header . visible)
-			   (major-mode . ,original-major-mode)))
+       message nil `(,(if (memq (mime-entity-media-type message)
+				'(text multipart nil))
+			  '(entity-button . invisible)
+			'(button-position . after))
+		     (header . visible)
+		     (major-mode . ,original-major-mode))
        preview-buffer)
       (use-local-map
        (or keymap
