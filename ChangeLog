@@ -1,3 +1,9 @@
+2018-02-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-view.el (mime-view-multipart-descendant-button)
+	(mime-display-multipart/alternative): pass situation as
+	DEFAULT-SITUATION to mime-display-entity function.
+
 2018-02-10  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Show entity's button after header when content type is message and

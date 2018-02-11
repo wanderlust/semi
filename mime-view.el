@@ -1165,11 +1165,11 @@ Score is integer or function or variable.  The function receives entity and retu
        (setq situation (copy-alist (mime-find-entity-preview-situation
 				    child default-situation)))
        (mime-display-entity
-	child (if (eq (cdr (assq 'type situation)) 'multipart)
-		  (put-alist 'body-presentation-method
-			     'mime-view-multipart-descendant-button
-			     situation)
-		(put-alist 'body 'invisible situation))))
+	child nil (if (eq (cdr (assq 'type situation)) 'multipart)
+		      (put-alist 'body-presentation-method
+				 'mime-view-multipart-descendant-button
+				 situation)
+		    (put-alist 'body 'invisible situation))))
      (mime-entity-children entity))))
 
 (defun mime-display-multipart/alternative (entity situation)
@@ -1199,7 +1199,7 @@ Score is integer or function or variable.  The function receives entity and retu
     (or p (setq p (caar pairs)))
     (mapc (lambda (pair)
 	    (mime-display-entity
-	     (car pair)
+	     (car pair) nil
 	     (cond
 	      ((eq p (car pair))
 	       (cdr pair))
