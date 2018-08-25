@@ -1,3 +1,11 @@
+2018-08-25  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Displaying resized image is supported.  Emacs 24.4 or later with
+	built-in imagemagick is required.
+	* mime-image.el (mime-image-max-height, mime-image-max-width): New
+	variables.
+	(mime-image-create): Use them.
+
 2018-02-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-view.el (mime-view-multipart-descendant-button)

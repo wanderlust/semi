@@ -106,10 +106,39 @@
       (set-extent-property extent 'invisible t)
       (set-extent-end-glyph extent image))))
  ((require 'image nil t)
+  (defcustom mime-image-max-height nil
+    "*Max displayed image height of attachment image to a message.
+It has effect only when imagemagick support is available."
+    :group 'mime-view
+    :type '(choice (const :tag "Use original size" nil)
+		   integer))
+
+  (defcustom mime-image-max-width nil
+    "*Max displayed image width of attachment image to a message.
+It has effect only when imagemagick support is available."
+    :group 'mime-view
+    :type '(choice (const :tag "Use original size" nil)
+		   integer))
+
   (defalias 'mime-image-type-available-p 'image-type-available-p)
   (defun mime-image-create
-    (file-or-data &optional type data-p &rest props)
-    (if (and data-p (eq type 'xbm))
+      (file-or-data &optional type data-p &rest props)
+    (let ((imagemagick
+	   (and (image-type-available-p 'imagemagick)
+		(fboundp 'imagemagick-filter-types)
+		(member (downcase (symbol-name type))
+			(mapcar (lambda (e) (downcase (symbol-name e)))
+				(imagemagick-filter-types)))
+		(or mime-image-max-height mime-image-max-width))))
+      (cond
+       (imagemagick
+	(apply #'create-image file-or-data 'imagemagick data-p
+	       (nconc (and mime-image-max-width
+			   `(:max-width ,mime-image-max-width))
+		      (and mime-image-max-height
+			   `(:max-heigh ,mime-image-max-height))
+		      props)))
+       ((and data-p (eq type 'xbm))
 	(with-temp-buffer
 	  (insert file-or-data)
 	  (setq file-or-data
@@ -118,8 +147,9 @@
 		 (nconc
 		  (list :width (car file-or-data)
 			:height (nth 1 file-or-data))
-		  props)))
-      (apply #'create-image file-or-data type data-p props)))
+		  props))))
+       (t
+	(apply #'create-image file-or-data type data-p props)))))
   (defalias 'mime-image-insert 'insert-image))
  (t
   (if (and (featurep 'mule) (require 'bitmap nil t))
