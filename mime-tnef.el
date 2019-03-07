@@ -664,11 +664,11 @@
     (decode-coding-string string
 			  (if (coding-system-p coding)
 			      coding
-			    (car (detect-coding-string string))))))
+			    (detect-coding-string string t)))))
 
 (defun mime-tnef-decode-unicode-string (string)
   (decode-coding-string string (and mime-tnef-unicode-coding-system
-				    (car (detect-coding-string string)))))
+				    (detect-coding-string string t))))
 
 
 ;;; MAPI
