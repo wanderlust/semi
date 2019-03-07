@@ -811,6 +811,28 @@
 
 ;;; MIME-view
 
+(defun mime-tnef-insert-file-parameters (params file data)
+  (let (charset
+	result)
+    (dolist (elt params)
+      (setq result
+	    (cons
+	     (cons
+	      (car elt)
+	      (if (eq (cdr elt) 'charset)
+		  (or charset
+		      (let ((codings (detect-coding-string data)))
+			(while (and (null charset) codings)
+			  (setq charset (coding-system-to-mime-charset
+					 (car codings)))
+			  (when charset
+			    (setq charset (symbol-name charset)))
+			  (setq codings (cdr codings)))
+			charset))
+		(cdr elt)))
+	     result)))
+    (mime-edit-insert-file-parameters (nreverse result) file)))
+
 (defun mime-tnef-insert-file (file data)
   (let*  ((guess (mime-find-file-type file))
 	  (type (nth 0 guess))
@@ -822,7 +844,7 @@
     (setq parameters
 	  (concat
 	   (when (consp parameters)
-	     (mime-edit-insert-file-parameters parameters file))
+	     (mime-tnef-insert-file-parameters parameters file data))
 	   (when disposition-type
 	     (concat "\n" "Content-Disposition: " disposition-type
 		     (mime-edit-insert-file-parameters
