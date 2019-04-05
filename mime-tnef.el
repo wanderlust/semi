@@ -605,8 +605,9 @@
 
 (defun mime-tnef-parse (string)
   (catch :done
-    (unless (equal (string-make-unibyte (substring string 0 4))
-		   (string-make-unibyte "\x78\x9f\x3e\x22"))
+    (unless (and (> (length string) 6)
+		 (equal (string-make-unibyte (substring string 0 4))
+			(string-make-unibyte "\x78\x9f\x3e\x22")))
       (message "Input data does not seem to be MS-TNEF format")
       (throw :done nil))
     (mime-tnef-debug "TNEF Key: %04x\n" (mime-tnef-2bytes string 4))
