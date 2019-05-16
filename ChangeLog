@@ -1,3 +1,11 @@
+2019-05-16  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Native image scaling support.
+
+	* mime-image.el (mime-image-max-height, mime-image-max-width):
+	Update docstring.
+	(mime-image-create): Use image scaling if available.
+
 2019-04-04  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-tnef.el (mime-tnef-parse): Fix the case input STRING is too
