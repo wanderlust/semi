@@ -1,3 +1,15 @@
+2019-05-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	New customizable variable mime-image-normalize-xbm is introduced.
+	When it is nil, xbm image is not normalized but scalable.
+
+	* mime-image.el (mime-image-normalize-xbm): New customizable
+	variable.
+	(mime-image-max-height, mime-image-max-width): Update docstring to
+	refer to mime-image-normalize-xbm.
+	(mime-image-create): Do not normalize xbm image when
+	mime-image-normalize-xbm is nil.
+
 2019-05-16  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Native image scaling support.

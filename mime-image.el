@@ -109,7 +109,9 @@
   (defcustom mime-image-max-height nil
     "*Max displayed image height of attachment image to a message.
 It has effect only when imagemagick or image scaling support is
-available."
+available.
+When `mime-image-normalize-xbm' is non-nil, original size is
+always used for xbm image."
     :group 'mime-view
     :type '(choice (const :tag "Use original size" nil)
 		   integer))
@@ -117,10 +119,18 @@ available."
   (defcustom mime-image-max-width nil
     "*Max displayed image width of attachment image to a message.
 It has effect only when imagemagick or image scaling support is
-available."
+available.
+When `mime-image-normalize-xbm' is non-nil, original size is
+always used for xbm image."
     :group 'mime-view
     :type '(choice (const :tag "Use original size" nil)
 		   integer))
+
+  (defcustom mime-image-normalize-xbm t
+    "*When non-nil, build binary xbm image to display.
+Furthermore, image scaling for xbm image is disabled."
+    :group 'mime-view
+    :type 'boolean)
 
   (defalias 'mime-image-type-available-p 'image-type-available-p)
   (defun mime-image-create
@@ -129,39 +139,36 @@ available."
 			 (image-scaling-p)))
 	   (imagemagick
 	    (and (null scale-p)
+		 (or mime-image-max-height mime-image-max-width)
 		 (image-type-available-p 'imagemagick)
 		 (fboundp 'imagemagick-filter-types)
 		 (member (downcase (symbol-name type))
 			 (mapcar (lambda (e) (downcase (symbol-name e)))
-				 (imagemagick-filter-types)))
-		 (or mime-image-max-height mime-image-max-width))))
-      (cond
-       (imagemagick
-	(apply #'create-image file-or-data 'imagemagick data-p
-	       (nconc (and mime-image-max-width
-			   `(:max-width ,mime-image-max-width))
-		      (and mime-image-max-height
-			   `(:max-heigh ,mime-image-max-height))
-		      props)))
-       ((and data-p (eq type 'xbm))
+				 (imagemagick-filter-types)))))
+	   height width)
+      (when (and mime-image-normalize-xbm data-p (eq type 'xbm))
 	(with-temp-buffer
 	  (insert file-or-data)
 	  (setq file-or-data
-		(mime-image-normalize-xbm-buffer (current-buffer)))
-	  (apply #'create-image (nth 2 file-or-data) type data-p
-		 (nconc
-		  (list :width (car file-or-data)
-			:height (nth 1 file-or-data))
-		  props))))
+		(mime-image-normalize-xbm-buffer (current-buffer))))
+	(setq width (car file-or-data)
+	      height (nth 1 file-or-data)
+	      file-or-data (nth 2 file-or-data)))
+      (setq props
+	    (nconc (and width `(:width ,width))
+		   (and height `(:height ,height))
+		   (and (or scale-p imagemagick)
+			mime-image-max-width scale-p
+			`(:max-width ,mime-image-max-width))
+		   (and (or scale-p imagemagick)
+			mime-image-max-height
+			`(:max-heigh ,mime-image-max-height))
+		   props))
+      (cond
+       (imagemagick
+	(apply #'create-image file-or-data 'imagemagick data-p props))
        (t
-	(apply #'create-image file-or-data type data-p
-	       (nconc (and scale-p
-			   mime-image-max-width
-			   `(:max-width ,mime-image-max-width))
-		      (and scale-p
-			   mime-image-max-height
-			   `(:max-heigh ,mime-image-max-height))
-		      props))))))
+	(apply #'create-image file-or-data type data-p props)))))
   (defalias 'mime-image-insert 'insert-image))
  (t
   (if (and (featurep 'mule) (require 'bitmap nil t))
