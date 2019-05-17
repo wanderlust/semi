@@ -925,7 +925,7 @@ If it is not specified for a major-mode,
   :group 'mime-edit-pgp
   :type '(repeat (string :tag "Key ID")))
 
-(defcustom mime-edit-pgp-encrypt-to-self nil
+(defcustom mime-edit-pgp-encrypt-to-self t
   "If t, add your own key ID to recipient list when encryption."
   :group 'mime-edit-pgp
   :type 'boolean)
