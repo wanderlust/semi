@@ -43,11 +43,8 @@
 (require 'alist)
 (require 'path-util)
 
-(defsubst mime-image-normalize-xbm-buffer (buffer)
-  ;; Do not use `with-current-buffer'.
-  ;; buffer may be the current buffer.
+(defsubst mime-image-normalize-xbm-buffer ()
   (save-excursion
-    (set-buffer buffer)
     (let ((case-fold-search t) width height xbytes right margin)
       (goto-char (point-min))
       (or (re-search-forward "_width[\t ]+\\([0-9]+\\)" nil t)
@@ -87,7 +84,7 @@
       (with-temp-buffer
 	(insert file-or-data)
 	(setq file-or-data
-	      (mime-image-normalize-xbm-buffer (current-buffer)))))
+	      (mime-image-normalize-xbm-buffer))))
     (let ((glyph
 	   (make-glyph
 	    (if (and type (mime-image-type-available-p type))
@@ -150,7 +147,7 @@ Furthermore, image scaling for xbm image is disabled."
 	(with-temp-buffer
 	  (insert file-or-data)
 	  (setq file-or-data
-		(mime-image-normalize-xbm-buffer (current-buffer))))
+		(mime-image-normalize-xbm-buffer)))
 	(setq width (car file-or-data)
 	      height (nth 1 file-or-data)
 	      file-or-data (nth 2 file-or-data)))
@@ -173,7 +170,7 @@ Furthermore, image scaling for xbm image is disabled."
  (t
   (if (and (featurep 'mule) (require 'bitmap nil t))
       (progn
-	(defun mime-image-read-xbm-buffer (buffer)
+	(defun mime-image-read-xbm-buffer
 	  (condition-case nil
 	      (mapconcat #'bitmap-compose
 			 (append (bitmap-decode-xbm
@@ -208,7 +205,7 @@ Furthermore, image scaling for xbm image is disabled."
 	(if data-p
 	    (insert file-or-data)
 	  (insert-file-contents file-or-data))
-	(mime-image-read-xbm-buffer (current-buffer)))))))
+	(mime-image-read-xbm-buffer))))))
 
 (defvar mime-image-format-alist
   '((image jpeg		jpeg)

@@ -1,5 +1,12 @@
 2019-05-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* mime-image.el (mime-image-normalize-xbm-buffer)
+	(mime-image-read-xbm-buffer): Do not receive arguemnt nor change
+	current buffer.  All callers call it with current buffer.
+	(mime-image-create): Caller adjusted.
+
+2019-05-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	New customizable variable mime-image-normalize-xbm is introduced.
 	When it is nil, xbm image is not normalized but scalable.
 
