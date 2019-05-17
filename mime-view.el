@@ -80,12 +80,12 @@ buttom. Nil means don't scroll at all."
   :group 'mime-view
   :type 'boolean)
 
-(defcustom mime-view-multipart/related-show-all-children nil
+(defcustom mime-view-multipart/related-show-all-children t
   "When non-nil, do not hide child entities."
   :group 'mime-view
   :type 'boolean)
 
-(defcustom mime-view-multipart/alternative-show-all-children nil
+(defcustom mime-view-multipart/alternative-show-all-children t
   "When non-nil, show hidden descendant entities's buttons in
 multipart/alternative entities."
   :group 'mime-view
