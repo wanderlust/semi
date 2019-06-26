@@ -1,3 +1,20 @@
+2019-06-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Support previewing unencrypted pkcs7-mime part.
+
+	* mime-pgp.el (mime-pgp-maybe-remove-cr): New funcion.
+	(mime-pgp-decrypt-string): Use it.
+	(mime-pgp-entity-string): New function.
+	(mime-verify-application/*-signature-internal): Use it.
+	(mime-pgp-verify-result-to-string)
+	(mime-pgp-pkcs7-decrypt-enveloped-data)
+	(mime-pgp-pkcs7-verify-signed-data)
+	(mime-pgp-smime-type-from-situation)
+	(mime-pgp-register-decrypted-buffer): New functions.
+	(mime-preview-application/pgp-encrypted): Refactored.
+	(mime-view-application/pkcs7-mime)
+	(mime-preview-application/pkcs7-mime): Support unencrypted part.
+
 2019-05-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-edit.el (mime-edit-pgp-encrypt-to-self): Change default

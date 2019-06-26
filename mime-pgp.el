@@ -41,13 +41,70 @@
 
 ;;; @ Internal functions
 
+(defun mime-pgp-maybe-remove-cr (string)
+  ;; Remove CRs if header contains CR.
+  (if (string-match "\\`.*\r\n" string)
+      (let (inhibit-eol-conversion)
+	(decode-coding-string string 'raw-text-dos))
+    string))
+
 (defun mime-pgp-decrypt-string (context cipher)
-  (let ((string (epg-decrypt-string context cipher)))
-    ;; Remove CRs if header contains CR.
-    (if (string-match "\\`.*\r\n" string)
-	(let (inhibit-eol-conversion)
-	  (decode-coding-string string 'raw-text-dos))
-      string)))
+  (mime-pgp-maybe-remove-cr (epg-decrypt-string context cipher)))
+
+(defun mime-pgp-verify-string (context cipher)
+  (mime-pgp-maybe-remove-cr (epg-verify-string context cipher)))
+
+(defun mime-pgp-verify-result-to-string (context)
+  (let ((result (epg-context-result-for context 'verify)))
+    (unless (stringp result)
+      (setq result (epg-verify-result-to-string result)))
+    (when (> (length result) 0)
+      (unless (string-equal (substring result -1) "\n")
+	(setq result (concat result "\n"))))
+    result))
+
+(defun mime-pgp-pkcs7-decrypt-enveloped-data (context content)
+  (let (result failure)
+    (condition-case error
+	(setq result (decode-coding-string
+		      (mime-pgp-decrypt-string context content)
+		      'raw-text))
+      (error (setq result error)))
+    result))
+
+(defun mime-pgp-pkcs7-verify-signed-data (context content)
+  (let (result)
+    (if (condition-case error
+	    (setq result (decode-coding-string
+			  (mime-pgp-verify-string context content)
+			  'raw-text))
+	  (error (setq result error) nil))
+	(let ((boundary (concat "PKCS7--" (mime-edit-make-boundary))))
+	  (concat "Content-Type: multipart/mixed;\n"
+		  " boundary=\"" boundary "\"\n"
+		  "Content-Transfer-Encoding: 7bit\n\n"
+		  "--" boundary "\n"
+		  result
+		  "--" boundary "\n"
+		  "Content-Type: text/plain; charset=UTF-8\n"
+		  "Content-Transfer-Encoding: 8bit\n\n"
+		  (encode-coding-string
+		   (mime-pgp-verify-result-to-string context) 'utf-8)
+		  "--" boundary "--\n"))
+      result)))
+
+(defun mime-pgp-smime-type-from-situation (situation)
+  (let ((type (cdr (assoc "smime-type" situation))))
+    (if type
+	(intern (downcase type))
+      'enveloped-data)))
+
+(defun mime-pgp-entity-string (entity)
+  (with-temp-buffer
+    (buffer-disable-undo)
+    (set-buffer-multibyte nil)
+    (mime-insert-entity entity)
+    (buffer-string)))
 
 ;;; @ Internal method for multipart/signed
 
@@ -105,13 +162,9 @@
 	  (format "Unknown protocol: %s." protocol)
 	(epg-verify-string context
 			   (mime-entity-content entity)
-			   (with-temp-buffer
-			     (if (fboundp 'set-buffer-multibyte)
-				 (set-buffer-multibyte nil))
-			     (mime-insert-entity orig-entity)
-			     (let (inhibit-eol-conversion)
-			       (encode-coding-string (buffer-string)
-						     'raw-text-dos))))
+			   (let (inhibit-eol-conversion)
+			     (encode-coding-string (mime-pgp-entity-string orig-entity)
+						   'raw-text-dos)))
 	(epg-context-result-for context 'verify)))))
 
 (defun mime-verify-application/*-signature (entity situation)
@@ -184,40 +237,33 @@
 	    (kill-buffer buffer)))
 	mime-pgp-decrypted-buffers))
 
+(defun mime-pgp-register-decrypted-buffer (buffer)
+  (add-hook 'kill-buffer-hook 'mime-pgp-kill-decrypted-buffers nil t)
+  (make-local-variable 'mime-pgp-decrypted-buffers)
+  (add-to-list 'mime-pgp-decrypted-buffers buffer))
+
 ;; Imported and modified from Wanderlust.
 (defun mime-preview-application/pgp-encrypted (entity situation)
-  (let ((p (point-max))
-	beg end buffer decrypted-entity failed)
-    (goto-char p)
+  (let (p buffer decrypted-entity failed result)
+    (goto-char (setq p (point-max)))
     (save-restriction
       (narrow-to-region p p)
       (setq buffer (generate-new-buffer (concat mime-temp-buffer-name "PGP*")))
-      (with-current-buffer buffer
-	(mime-insert-entity
-	 (nth 1 (mime-entity-children (mime-entity-parent entity))))
-	(setq beg (point-min)
-	      end (point-max))
-	(condition-case error
-	    (insert (prog1
-			(decode-coding-string
-			 (mime-pgp-decrypt-string
-			  (epg-make-context) (buffer-substring beg end))
-			 'raw-text)
-		      (delete-region beg end)))
-	  (error (setq failed error)))
-	(unless failed
+      (if (null (stringp
+		 (setq result (mime-pgp-pkcs7-decrypt-enveloped-data
+			       (epg-make-context)
+			       (mime-pgp-entity-string
+				(nth 1 (mime-entity-children
+					(mime-entity-parent entity))))))))
+	  (insert (format "%s" (cdr failed)))
+	(with-current-buffer buffer
+	  (insert result)
 	  (setq decrypted-entity
 		(mime-parse-message
 		 (mm-expand-class-name 'buffer)
 		 nil entity (mime-entity-node-id entity))
-		buffer-read-only t)))
-      (if failed
-	  (progn
-	    (insert (format "%s" (cdr failed)))
-	    (kill-buffer buffer))
-	(add-hook 'kill-buffer-hook 'mime-pgp-kill-decrypted-buffers nil t)
-	(make-local-variable 'mime-pgp-decrypted-buffers)
-	(add-to-list 'mime-pgp-decrypted-buffers buffer)
+		buffer-read-only t))
+	(mime-pgp-register-decrypted-buffer buffer)
 	(mime-display-entity
 	 decrypted-entity nil '((header . visible)
 				(body . visible)
@@ -241,70 +287,71 @@
 ;;; @ Internal method for application/pkcs7-mime
 
 (defun mime-view-application/pkcs7-mime (entity situation)
-  (let* ((p-win (or (get-buffer-window (current-buffer))
-		    (get-largest-window)))
-	 (new-name
-	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
-	 (mother (current-buffer))
-	 (preview-buffer (concat "*Preview-" (buffer-name) "*"))
-	 (context (epg-make-context 'CMS))
-	 message-buf)
-    (when (memq (or (cdr (assq 'smime-type situation)) 'enveloped-data)
-		'(enveloped-data signed-data))
+  (let ((smime-type (mime-pgp-smime-type-from-situation situation))
+	(p-win (or (get-buffer-window (current-buffer))
+		   (get-largest-window)))
+	(new-name
+	 (format "%s-%s" (buffer-name) (mime-entity-number entity)))
+	(mother (current-buffer))
+	(preview-buffer (concat "*Preview-" (buffer-name) "*"))
+	(context (epg-make-context 'CMS))
+	message-buf result fn)
+    (setq fn
+	  (cdr
+	   (assq smime-type
+		 '((signed-data . mime-pgp-pkcs7-verify-signed-data)
+		   (enveloped-data . mime-pgp-pkcs7-decrypt-enveloped-data)))))
+    (unless fn
+      (error "Unsupported smime-type (%s)" smime-type))
+    (if (null (stringp (setq result (funcall fn context
+					     (mime-entity-content entity)))))
+	(signal (car result) (cdr result))
       (set-buffer (setq message-buf (get-buffer-create new-name)))
       (let ((inhibit-read-only t)
 	    buffer-read-only)
+	(set-buffer-multibyte nil)
 	(erase-buffer)
-	(insert (mime-pgp-decrypt-string context (mime-entity-content entity))))
-      (setq major-mode 'mime-show-message-mode)
-      (save-window-excursion
-	(mime-view-buffer nil preview-buffer mother
-			  nil 'binary)
-	(make-local-variable 'mime-view-temp-message-buffer)
-	(setq mime-view-temp-message-buffer message-buf))
-      (set-window-buffer p-win preview-buffer))))
+	(insert result)
+	(setq major-mode 'mime-show-message-mode)
+	(save-window-excursion
+	  (mime-view-buffer nil preview-buffer mother nil 'binary)
+	  (make-local-variable 'mime-view-temp-message-buffer)
+	  (setq mime-view-temp-message-buffer message-buf))
+	(set-window-buffer p-win preview-buffer)))))
 
 (defun mime-preview-application/pkcs7-mime (entity situation)
-  (when (memq (or (cdr (assq 'smime-type situation)) 'enveloped-data)
-	      '(enveloped-data signed-data))
-    (let ((p (point-max))
-	  beg end buffer decrypted-entity failed)
-      (goto-char p)
+  (let ((smime-type (mime-pgp-smime-type-from-situation situation))
+	(context (epg-make-context 'CMS))
+	p buffer decrypted-entity result fn)
+    (setq fn
+	  (cdr
+	   (assq smime-type
+		 '((signed-data . mime-pgp-pkcs7-verify-signed-data)
+		   (enveloped-data . mime-pgp-pkcs7-decrypt-enveloped-data)))))
+    (if (null fn)
+	(insert "Unsupported smime-type (" smime-type ")\n")
+      (goto-char (setq p (point-max)))
       (save-restriction
 	(narrow-to-region p p)
-	(setq buffer (generate-new-buffer
-		      (concat mime-temp-buffer-name "PKCS7*")))
-	(with-current-buffer buffer
-	  (insert (mime-entity-content entity))
-	  ;; (mime-insert-entity entity)
-	  (setq beg (point-min)
-		end (point-max))
-	  (condition-case error
-	      (insert (prog1
-			  (decode-coding-string
-			   (mime-pgp-decrypt-string
-			    (epg-make-context 'CMS) (buffer-substring beg end))
-			   'raw-text)
-			(delete-region beg end)))
-	    (error (setq failed error)))
-	  (unless failed
+	(if (null (stringp (setq result
+				 (funcall fn context
+					  (mime-entity-content entity)))))
+	    (insert (format "%s" (cdr result)))
+	  (setq buffer (generate-new-buffer
+			(concat mime-temp-buffer-name "PKCS7*")))
+	  (with-current-buffer buffer
+	    (set-buffer-multibyte nil)
+	    (insert result)
 	    (setq decrypted-entity
 		  (mime-parse-message
 		   (mm-expand-class-name 'buffer)
 		   nil entity (mime-entity-node-id-internal entity))
-		  buffer-read-only t)))
-	(if failed
-	    (progn
-	      (insert (format "%s" (cdr failed)))
-	      (kill-buffer buffer))
-	  (add-hook 'kill-buffer-hook 'mime-pgp-kill-decrypted-buffers nil t)
-	  (make-local-variable 'mime-pgp-decrypted-buffers)
-	  (add-to-list 'mime-pgp-decrypted-buffers buffer)
+		  buffer-read-only t))
+	  (mime-pgp-register-decrypted-buffer buffer)
 	  (mime-display-entity
-	   decrypted-entity nil '((header . visible)
+	   decrypted-entity nil '((header . invisible)
 				  (body . visible)
 				  (entity-button . invisible))))))))
-
 
 ;;; @ end
 ;;;
