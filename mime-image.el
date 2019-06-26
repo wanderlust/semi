@@ -132,8 +132,8 @@ Furthermore, image scaling for xbm image is disabled."
   (defalias 'mime-image-type-available-p 'image-type-available-p)
   (defun mime-image-create
       (file-or-data &optional type data-p &rest props)
-    (let* ((scale-p (and (fboundp 'image-scaling-p)
-			 (image-scaling-p)))
+    (let* ((scale-p (and (fboundp 'image-transforms-p)
+			 (image-transforms-p)))
 	   (imagemagick
 	    (and (null scale-p)
 		 (or mime-image-max-height mime-image-max-width)

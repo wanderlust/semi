@@ -1,5 +1,10 @@
 2019-06-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* mime-image.el (mime-image-create): Update native image scaling
+	checker.
+
+2019-06-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	Support previewing unencrypted pkcs7-mime part.
 
 	* mime-pgp.el (mime-pgp-maybe-remove-cr): New funcion.
