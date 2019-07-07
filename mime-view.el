@@ -97,8 +97,10 @@ multipart/alternative entities."
 (defcustom mime-display-multipart/multilingual-prefered-languages
   (mapcar (lambda (lang)
 	    (format "^%s\\(-.+\\)?" (regexp-quote (symbol-name lang))))
-	  (let ((result (get-language-info
-			 current-language-environment 'iso639-language)))
+	  (let ((result (if (fboundp 'get-language-info)
+			    (get-language-info
+			     current-language-environment 'iso639-language)
+			  'en)))
 	    (if (eq result 'en)
 		(list result)
 	      (cons result '(en)))))
