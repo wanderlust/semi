@@ -1,3 +1,8 @@
+2020-04-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-image.el (mime-image-create): Check native image scaling
+	more strictly.  Fix typo.
+
 2019-07-07  Tatsuya Kinoshita  <tats@debian.org>
 
 	* mime-view.el (mime-display-multipart/multilingual-prefered-languages):

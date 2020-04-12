@@ -133,7 +133,7 @@ Furthermore, image scaling for xbm image is disabled."
   (defun mime-image-create
       (file-or-data &optional type data-p &rest props)
     (let* ((scale-p (and (fboundp 'image-transforms-p)
-			 (image-transforms-p)))
+			 (memq 'scale (image-transforms-p))))
 	   (imagemagick
 	    (and (null scale-p)
 		 (or mime-image-max-height mime-image-max-width)
@@ -155,11 +155,11 @@ Furthermore, image scaling for xbm image is disabled."
 	    (nconc (and width `(:width ,width))
 		   (and height `(:height ,height))
 		   (and (or scale-p imagemagick)
-			mime-image-max-width scale-p
+			mime-image-max-width
 			`(:max-width ,mime-image-max-width))
 		   (and (or scale-p imagemagick)
 			mime-image-max-height
-			`(:max-heigh ,mime-image-max-height))
+			`(:max-height ,mime-image-max-height))
 		   props))
       (cond
        (imagemagick
