@@ -1,3 +1,10 @@
+2020-04-13  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-image.el (mime-image-max-width, mime-image-max-height):
+	Accept floating-point value which indicates ratio to frame pixel
+	width and height, respectively.
+	(mime-image-create): calculate max-width and max-height as above.
+
 2020-04-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-image.el (mime-image-create): Check native image scaling

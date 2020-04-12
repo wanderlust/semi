@@ -107,21 +107,27 @@
     "*Max displayed image height of attachment image to a message.
 It has effect only when imagemagick or image scaling support is
 available.
+When value is floating-point, it indicates ratio
+to `(frame-pixel-width)'.
 When `mime-image-normalize-xbm' is non-nil, original size is
 always used for xbm image."
     :group 'mime-view
     :type '(choice (const :tag "Use original size" nil)
-		   integer))
+		   (float :tag "Ratio to frame width")
+		   (integer :tag "Specify in pixel")))
 
   (defcustom mime-image-max-width nil
     "*Max displayed image width of attachment image to a message.
 It has effect only when imagemagick or image scaling support is
 available.
+When value is floating-point number, it indicates ratio
+to `(frame-pixel-height)'.
 When `mime-image-normalize-xbm' is non-nil, original size is
 always used for xbm image."
     :group 'mime-view
     :type '(choice (const :tag "Use original size" nil)
-		   integer))
+		   (float :tag "Ratio to frame height")
+		   (integer :tag "Specify in pixel")))
 
   (defcustom mime-image-normalize-xbm t
     "*When non-nil, build binary xbm image to display.
@@ -156,10 +162,18 @@ Furthermore, image scaling for xbm image is disabled."
 		   (and height `(:height ,height))
 		   (and (or scale-p imagemagick)
 			mime-image-max-width
-			`(:max-width ,mime-image-max-width))
+			`(:max-width
+			  ,(if (integerp mime-image-max-width)
+			       mime-image-max-width
+			     (floor (* (frame-pixel-width)
+				       mime-image-max-width)))))
 		   (and (or scale-p imagemagick)
 			mime-image-max-height
-			`(:max-height ,mime-image-max-height))
+			`(:max-height
+			  ,(if (integerp mime-image-max-height)
+			       mime-image-max-height
+			     (floor (* (frame-pixel-height)
+				       mime-image-max-height)))))
 		   props))
       (cond
        (imagemagick
