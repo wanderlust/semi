@@ -1049,7 +1049,8 @@ If it is not specified for a major-mode,
 			   " ("
 			   system-configuration ")")
 			" (" emacs-version ")"))
-	    (let ((ver (if (string-match "\\.[0-9]+$" emacs-version)
+	    (let ((ver (if (and (not (boundp 'emacs-build-number))
+				(string-match "\\.[0-9]+$" emacs-version))
 			   (substring emacs-version 0 (match-beginning 0))
 			 emacs-version)))
 	      (if (featurep 'mule)
