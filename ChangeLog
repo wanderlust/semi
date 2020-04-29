@@ -1,3 +1,8 @@
+2020-04-28  Tatsuya Kinoshita  <tats@debian.org>
+
+	* mime-edit.el (mime-edit-user-agent-value): Check for
+	emacs-build-number existence to handle emacs-version correctly.
+
 2020-04-13  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-image.el (mime-image-max-width, mime-image-max-height):
