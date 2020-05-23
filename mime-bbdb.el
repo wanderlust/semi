@@ -1,4 +1,4 @@
-;;; mime-bbdb.el --- SEMI shared module for BBDB
+;;; mime-bbdb.el --- SEMI shared module for BBDB  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1995,1996,1997 Shuhei KOBAYASHI
 ;; Copyright (C) 1997,1998 MORIOKA Tomohiko

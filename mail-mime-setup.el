@@ -1,4 +1,4 @@
-;;; mail-mime-setup.el --- setup file for mail-mode.
+;;; mail-mime-setup.el --- setup file for mail-mode.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1994,1995,1996,1997,1998,2000 Free Software Foundation, Inc.
 

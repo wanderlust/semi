@@ -1,4 +1,4 @@
-;;; mime-signature.el --- signature handling module for mime-edit
+;;; mime-signature.el --- signature handling module for mime-edit  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2013 Kazuhiro Ito
 
@@ -151,7 +151,7 @@ When SIGNATURE is list, each string and function's result is inserted.  Function
   (interactive)
   (let ((point (point))
 	(signature (mime-edit-signature-guess))
-	start end text-part-p plain-signature-p file-type)
+	start end text-part-p plain-signature-p)
     (setq plain-signature-p
 	  (or (null (stringp signature))
 	      (let ((file-type (mime-find-file-type signature)))

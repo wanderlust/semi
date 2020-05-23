@@ -1,4 +1,4 @@
-;;; mime-partial.el --- Grabbing all MIME "message/partial"s.
+;;; mime-partial.el --- Grabbing all MIME "message/partial"s.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1995,1996,1997,1998 Free Software Foundation, Inc.
 

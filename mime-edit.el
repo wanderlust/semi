@@ -1,4 +1,4 @@
-;; -*- mode: emacs-lisp; coding: iso-8859-1-unix -*-
+;; -*- mode: emacs-lisp; coding: iso-8859-1-unix; lexical-binding: t -*-
 ;;; mime-edit.el --- Simple MIME Composer for GNU Emacs
 
 ;; Copyright (C) 1993,94,95,96,97,98,99,2000,01,02,03
@@ -1439,7 +1439,7 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 
 (defun mime-edit-insert-file-parameters (parameters file &optional verbose)
   (let ((rest parameters)
-	cell attribute value)
+	attribute value)
     (setq parameters "")
     (while rest
       (setq attribute (caar rest)
@@ -1643,7 +1643,7 @@ Optional argument ENCODING specifies an encoding method such as base64."
 	  ))
     ))
 
-(defun mime-edit-insert-text-file (file &optional encoding)
+(defun mime-edit-insert-text-file (file &optional _encoding)
   "Insert text FILE at point.
 Optional argument ENCODING is ignored."
   (let ((tagend (1- (point))))		;End of the tag
@@ -2278,7 +2278,8 @@ When SIGN is non-nil, also sign by SIGNERS keys selected."
      (require 'epa)
      (let ((mime-edit-pgp-verbose
 	    (or current-prefix-arg mime-edit-pgp-verbose))
-	   (context (epg-make-context epa-protocol)))
+	   (context (epg-make-context epa-protocol))
+	   sign)
        (list (mime-edit-content-beginning)
 	     (mime-edit-content-end)
 	     (epa-select-keys context
@@ -2956,7 +2957,7 @@ and insert data encoded as ENCODING."
   (mime-edit-enclose-region-internal 'smime-encrypted beg end)
   )
 
-(defun mime-edit-insert-key (&optional arg)
+(defun mime-edit-insert-key (&optional _arg)
   "Insert a pgp public key."
   (interactive "P")
   (mime-edit-insert-tag "application" "pgp-keys")

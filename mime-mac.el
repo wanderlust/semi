@@ -1,4 +1,4 @@
-;;; mime-mac.el --- Playback processing module for Mac OS X
+;;; mime-mac.el --- Playback processing module for Mac OS X  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2010 Free Software Foundation, Inc.
 

@@ -1,4 +1,4 @@
-;;; mime-setup.el --- setup file for MIME viewer and composer.
+;;; mime-setup.el --- setup file for MIME viewer and composer.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1995,1996,1997,1998 Free Software Foundation, Inc.
 

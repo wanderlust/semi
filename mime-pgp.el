@@ -1,4 +1,4 @@
-;;; mime-pgp.el --- mime-view internal methods for EasyPG.
+;;; mime-pgp.el --- mime-view internal methods for EasyPG.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1995,1996,1997,1998,1999,2000 Free Software Foundation, Inc.
 
@@ -64,7 +64,7 @@
     result))
 
 (defun mime-pgp-pkcs7-decrypt-enveloped-data (context content)
-  (let (result failure)
+  (let (result)
     (condition-case error
 	(setq result (decode-coding-string
 		      (mime-pgp-decrypt-string context content)
@@ -145,7 +145,7 @@
 
 ;;; @ Internal method for application/*-signature
 
-(defun mime-verify-application/*-signature-internal (entity situation)
+(defun mime-verify-application/*-signature-internal (entity _situation)
   (let* ((mother (mime-entity-parent entity))
 	 (orig-entity (car (mime-entity-children mother)))
 	 (protocol (cdr (assoc "protocol" (mime-entity-parameters mother))))
@@ -200,7 +200,7 @@
 
 ;;; @ Internal method for application/pgp-encrypted
 
-(defun mime-decrypt-application/pgp-encrypted (entity situation)
+(defun mime-decrypt-application/pgp-encrypted (entity _situation)
   (let* ((mother (mime-entity-parent entity))
 	 (encrypted-entity (nth 1 (mime-entity-children mother)))
 	 (p-win (or (get-buffer-window (current-buffer))
@@ -209,7 +209,7 @@
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
 	 (mother (current-buffer))
 	 (preview-buffer (concat "*Preview-" (buffer-name) "*"))
-	 representation-type message-buf context plain verify-result)
+	 representation-type message-buf context plain)
     (set-buffer (setq message-buf (get-buffer-create new-name)))
     (erase-buffer)
     (mime-insert-entity encrypted-entity)
@@ -245,7 +245,7 @@
   (add-to-list 'mime-pgp-decrypted-buffers buffer))
 
 ;; Imported and modified from Wanderlust.
-(defun mime-preview-application/pgp-encrypted (entity situation)
+(defun mime-preview-application/pgp-encrypted (entity _situation)
   (let (p buffer decrypted-entity failed result)
     (goto-char (setq p (point-max)))
     (save-restriction
@@ -274,7 +274,7 @@
 
 ;;; @ Internal method for application/pgp-keys
 
-(defun mime-add-application/pgp-keys (entity situation)
+(defun mime-add-application/pgp-keys (entity _situation)
   (when (y-or-n-p "Do you want to import PGP keys? ")
     (let ((context (epg-make-context))
 	  result window)

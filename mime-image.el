@@ -1,4 +1,4 @@
-;;; mime-image.el --- mime-view filter to display images
+;;; mime-image.el --- mime-view filter to display images  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1995,1996,1997,1998 MORIOKA Tomohiko
 ;; Copyright (C) 1996 Dan Rich
@@ -41,13 +41,12 @@
 
 (defsubst mime-image-normalize-xbm-buffer ()
   (save-excursion
-    (let ((case-fold-search t) width height xbytes right margin)
+    (let ((case-fold-search t) width height)
       (goto-char (point-min))
       (or (re-search-forward "_width[\t ]+\\([0-9]+\\)" nil t)
 	  (error "!! Illegal xbm file format in the buffer: %s"
 		 (current-buffer)))
-      (setq width (string-to-number (match-string 1))
-	    xbytes (/ (+ width 7) 8))
+      (setq width (string-to-number (match-string 1)))
       (goto-char (point-min))
       (or (re-search-forward "_height[\t ]+\\([0-9]+\\)" nil t)
 	  (error "!! Illegal xbm file format in the buffer: %s"

@@ -1,4 +1,4 @@
-;;; mime-w3.el --- mime-view content filter for text
+;;; mime-w3.el --- mime-view content filter for text  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1994,95,96,97,98,99,2000 Free Software Foundation, Inc.
 

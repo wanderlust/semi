@@ -1,4 +1,4 @@
-;;; signature.el --- a signature utility for GNU Emacs
+;;; signature.el --- a signature utility for GNU Emacs  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1994,1995,1996,1997,2000 Free Software Foundation, Inc.
 

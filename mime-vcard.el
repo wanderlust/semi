@@ -1,4 +1,4 @@
-;;; mime-vcard.el --- mime-view content filter for vCard.
+;;; mime-vcard.el --- mime-view content filter for vCard.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2000 Free Software Foundation, Inc.
 

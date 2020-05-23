@@ -1,4 +1,4 @@
-;;; mime-shr.el --- mime-view content filter using shr for html
+;;; mime-shr.el --- mime-view content filter using shr for html  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2012 Kazuhiro Ito
 
@@ -37,7 +37,7 @@
 (defvar mime-shr-root-entity nil)
 (make-variable-buffer-local 'mime-shr-root-entity)
 
-(defun mime-shr-preview-text/html (entity situation)
+(defun mime-shr-preview-text/html (entity _situation)
   (let ((dom (with-temp-buffer
 	       (mime-insert-text-content entity)
 	       (libxml-parse-html-region (point-min) (point-max))))

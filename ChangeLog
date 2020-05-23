@@ -1,5 +1,43 @@
 2020-05-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	Use lexical binding.
+
+	* mail-mime-setup.el: Likewise.
+
+	* mime-bbdb.el: Likewise.
+
+	* mime-edit.el: Likewise.
+
+	* mime-image.el: Likewise.
+
+	* mime-mac.el: Likewise.
+
+	* mime-partial.el: Likewise.
+
+	* mime-pgp.el: Likewise.
+
+	* mime-play.el: Likewise.
+
+	* mime-setup.el: Likewise.
+
+	* mime-shr.el: Likewise.
+
+	* mime-signature.el: Likewise.
+
+	* mime-vcard.el: Likewise.
+
+	* mime-view.el: Likewise.
+
+	* mime-w3.el: Likewise.
+
+	* semi-def.el: Likewise.
+
+	* semi-setup.el: Likewise.
+
+	* signature.el: Likewise.
+
+2020-05-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* semi-setup.el (mime-setup-enable-epg): Default value is always
 	t.
 

@@ -1,4 +1,4 @@
-;;; mime-view.el --- interactive MIME viewer for GNU Emacs
+;;; mime-view.el --- interactive MIME viewer for GNU Emacs  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1995,96,97,98,99,2000 Free Software Foundation, Inc.
 
@@ -1019,7 +1019,7 @@ Each elements are regexp of field-name.")
 
 (autoload 'richtext-decode "richtext")
 
-(defun mime-display-text/richtext (entity situation)
+(defun mime-display-text/richtext (entity _situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
     (when (mime-display-insert-text-content entity)
@@ -1027,7 +1027,7 @@ Each elements are regexp of field-name.")
       (richtext-decode (point-min) (point-max))
       )))
 
-(defun mime-display-text/enriched (entity situation)
+(defun mime-display-text/enriched (entity _situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
     (when (mime-display-insert-text-content entity)
@@ -1063,7 +1063,7 @@ Each elements are regexp of field-name.")
 \[[ Please press `v' key in this buffer.         ]]"
     ))
 
-(defun mime-display-message/partial-button (&optional entity situation)
+(defun mime-display-message/partial-button (&optional _entity _situation)
   (save-restriction
     (goto-char (point-max))
     (if (not (search-backward "\n\n" nil t))
@@ -1153,7 +1153,7 @@ Score is integer or function or variable.  The function receives entity and retu
 		  (list (or (assq t mime-view-type-subtype-score-alist)
 			    mime-view-entity-lowest-score)))))
 
-(defun mime-view-text/html-entity-score (entity)
+(defun mime-view-text/html-entity-score (_entity)
   ;; Module loading is done in mime-display-text/html.
   ;; So, availability is not checked here.
   (if (mime-display-text/html-previewer-params)
@@ -1323,7 +1323,7 @@ part (if exist) or the first language message part."
   (let ((default-situation
 	  (delq nil (cons (assq 'major-mode situation)
 			  (cdr (assq 'childrens-situation situation)))))
-	child-situation score choice pairs)
+	choice pairs)
     (setq pairs
 	  (mapcar
 	   (lambda (child)
@@ -1590,7 +1590,7 @@ part (if exist) or the first language message part."
                            (nth 1 item) (nth 2 item)))
                    mime-view-menu-list))))
 
-(defun mime-view-popup-menu (event)
+(defun mime-view-popup-menu (_event)
   "Popup the menu in the MIME Viewer buffer"
   (interactive "@e")
   (let ((menu mime-view-popup-menu) events func)

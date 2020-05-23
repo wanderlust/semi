@@ -1,4 +1,4 @@
-;;; mime-play.el --- Playback processing module for mime-view.el
+;;; mime-play.el --- Playback processing module for mime-view.el  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2002, 2003,
 ;;   2004, 2010 Free Software Foundation, Inc.
@@ -260,7 +260,7 @@ window.")
 ;;; @ file extraction
 ;;;
 
-(defun mime-save-content (entity situation)
+(defun mime-save-content (entity _situation)
   (let ((name (or (mime-entity-safe-filename entity)
 		  (format "%s" (mime-entity-media-type entity))))
 	(dir (if (eq t mime-save-directory)
@@ -338,7 +338,7 @@ It is registered to variable `mime-preview-quitting-method-alist'."
     (set-window-configuration win-conf)
     (pop-to-buffer mother)))
 
-(defun mime-view-message/rfc822 (entity situation)
+(defun mime-view-message/rfc822 (entity _situation)
   (let* ((new-name
 	  (format "%s-%s" (buffer-name) (mime-entity-number entity)))
 	 (mother (current-buffer))
@@ -455,41 +455,40 @@ occurs."
 		   total))
 	  (catch 'tag
 	    (with-current-buffer (get-buffer-create mime-temp-buffer-name)
-	      (let ((full-buf (current-buffer)))
-		(erase-buffer)
-		(let ((i 1))
-		  (while (<= i total)
-		    (setq file (concat root-dir "/" (int-to-string i)))
-		    (or (file-exists-p file)
-			(throw 'tag nil)
-			)
-		    (binary-insert-encoded-file file)
-		    (goto-char (point-max))
-		    (setq i (1+ i))))
-		(binary-write-decoded-region
-		 (point-min)(point-max)
-		 (expand-file-name "FULL" root-dir))
-		(let ((i 1))
-		  (while (<= i total)
-		    (let ((file (format "%s/%d" root-dir i)))
-		      (and (file-exists-p file)
-			   (delete-file file)))
-		    (setq i (1+ i))))
-		(let ((file (expand-file-name "CT" root-dir)))
-		  (and (file-exists-p file)
-		       (delete-file file)))
-		(let ((buf (current-buffer))
-		      (pwin (or (get-buffer-window mother)
-				(get-largest-window)))
-		      (pbuf (mime-display-message
-			     (mime-open-entity 'buffer (current-buffer))
-			     nil mother nil 'mime-show-message-mode)))
-		  (with-current-buffer pbuf
-		    (make-local-variable 'mime-view-temp-message-buffer)
-		    (setq mime-view-temp-message-buffer buf))
-		  (set-window-buffer pwin pbuf)
-		  (select-window pwin)
-		  )))))
+	      (erase-buffer)
+	      (let ((i 1))
+		(while (<= i total)
+		  (setq file (concat root-dir "/" (int-to-string i)))
+		  (or (file-exists-p file)
+		      (throw 'tag nil)
+		      )
+		  (binary-insert-encoded-file file)
+		  (goto-char (point-max))
+		  (setq i (1+ i))))
+	      (binary-write-decoded-region
+	       (point-min)(point-max)
+	       (expand-file-name "FULL" root-dir))
+	      (let ((i 1))
+		(while (<= i total)
+		  (let ((file (format "%s/%d" root-dir i)))
+		    (and (file-exists-p file)
+			 (delete-file file)))
+		  (setq i (1+ i))))
+	      (let ((file (expand-file-name "CT" root-dir)))
+		(and (file-exists-p file)
+		     (delete-file file)))
+	      (let ((buf (current-buffer))
+		    (pwin (or (get-buffer-window mother)
+			      (get-largest-window)))
+		    (pbuf (mime-display-message
+			   (mime-open-entity 'buffer (current-buffer))
+			   nil mother nil 'mime-show-message-mode)))
+		(with-current-buffer pbuf
+		  (make-local-variable 'mime-view-temp-message-buffer)
+		  (setq mime-view-temp-message-buffer buf))
+		(set-window-buffer pwin pbuf)
+		(select-window pwin)
+		))))
       )))
 
 
@@ -509,7 +508,7 @@ occurs."
     (dired dir)
     ))
 
-(defun mime-view-message/external-anon-ftp (entity cal)
+(defun mime-view-message/external-anon-ftp (_entity cal)
   (let* ((site (cdr (assoc "site" cal)))
 	 (directory (cdr (assoc "directory" cal)))
 	 (name (cdr (assoc "name" cal)))
@@ -522,7 +521,7 @@ occurs."
 
 (defvar mime-raw-browse-url-function mime-browse-url-function)
 
-(defun mime-view-message/external-url (entity cal)
+(defun mime-view-message/external-url (_entity cal)
   (let ((url (cdr (assoc "url" cal))))
     (message "%s" (concat "Accessing " url "..."))
     (funcall mime-raw-browse-url-function url)))
@@ -531,7 +530,7 @@ occurs."
 ;;; @ rot13-47
 ;;;
 
-(defun mime-view-caesar (entity situation)
+(defun mime-view-caesar (entity _situation)
   "Internal method for mime-view to display ROT13-47-48 message."
   (let ((buf (get-buffer-create
 	      (format "%s-%s" (buffer-name) (mime-entity-number entity)))))
