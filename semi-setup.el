@@ -91,7 +91,7 @@ it is used as hook to set."
      ))
 
 ;; for PGP
-(defvar mime-setup-enable-epg (module-installed-p 'epg)
+(defvar mime-setup-enable-epg t
   "*If it is non-nil, semi-setup sets up to use mime-pgp.")
 
 (eval-after-load "mime-view"
