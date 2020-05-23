@@ -497,7 +497,7 @@ occurs."
 ;;;
 
 (defvar mime-raw-dired-function
-  (if (and (>= emacs-major-version 19) window-system)
+  (if window-system
       (function dired-other-frame)
     (function mime-raw-dired-function-for-one-frame)
     ))

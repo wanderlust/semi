@@ -43,8 +43,7 @@ it is used as hook to set."
 
 ;; for image/*
 (defvar mime-setup-enable-inline-image
-  (and window-system
-       (or (featurep 'xemacs)(featurep 'mule)))
+  window-system
   "*If it is non-nil, semi-setup sets up to use mime-image.")
 
 (if mime-setup-enable-inline-image
@@ -53,10 +52,12 @@ it is used as hook to set."
 
 ;; for text/html
 (make-obsolete-variable 'mime-html-previewer-alist
-			'mime-view-text/html-previewer-alist)
+			'mime-view-text/html-previewer-alist
+			"12 Jan 2014")
 
 (make-obsolete-variable 'mime-setup-enable-inline-html
-			'mime-view-text/html-previewer)
+			'mime-view-text/html-previewer
+			"12 Jan 2014")
 
 (when (and (boundp 'mime-html-previewer-alist)
 	   (null (boundp 'mime-view-text/html-previewer-alist)))

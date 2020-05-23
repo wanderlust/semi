@@ -1,3 +1,40 @@
+2020-05-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Drop old platforms support, dependency on cl.el.  Now supported
+	Emacsen are version 24 and later.
+
+	* SEMI-ELS (semi-modules-to-compile): Remove postpet.el.
+
+	* mime-edit.el: Assuse Emacs 24 or later.
+	(mime-edit-help): Use help-print-return-message instead of
+	print-help-return-message
+	(mime-edit-insert-file-as-text, mime-edit-insert-file): Use
+	called-interactively-p instead of interactive-p.
+	(mime-edit-encrypt-pgp-recipients-keys): Now arguments are CONTEXT
+	and RECIPIENTS.
+	(mime-edit-encrypt-pgp-mime): Caller adjusted.
+
+	* mime-image.el: Assume Emacs 24 or later.  Don't require cl.el,
+	static.el
+
+	* mime-pgp.el (mime-edit-make-boundary): Add autoload cookie.
+
+	* mime-view.el: Assume Emacs 24 or later.
+	(mime-view-mode): Don't use mime-message-structure
+	variable, which is obsolete.
+	(richtext-decode): Add autoload cookie.
+
+	* mime-w3.el: Assume Emacs 24 or later.
+
+	* postpet.el: Removed.
+
+	* semi-def.el: Remove dependency on cl.el.  Assume Emacs 24 or
+	later.
+
+	* semi-setup.el (mime-setup-enable-inline-html)
+	(mime-html-previewer-alist): Add obsolete date.
+	(mime-setup-enable-inline-image): Assume Emacs 24 or later.
+
 2020-04-28  Tatsuya Kinoshita  <tats@debian.org>
 
 	* mime-edit.el (mime-edit-user-agent-value): Check for

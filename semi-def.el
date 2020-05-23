@@ -24,8 +24,6 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl))
-
 (require 'custom)
 
 (defconst mime-user-interface-product ["SEMI-EPG" (1 14 7) "Harue"]
@@ -130,42 +128,18 @@
 ;;; @ menu
 ;;;
 
-(static-cond ((featurep 'xemacs)
-	      (defun mime-should-use-popup-menu ()
-		(and window-system
-		     (mouse-event-p last-command-event)))
-	      (defun mime-select-menu-alist (title menu-alist)
-		(if (mime-should-use-popup-menu)
-		    (let (ret)
-		      (popup-menu
-		       (list* title
-			      "---"
-			      (mapcar (function
-				       (lambda (cell)
-					 (vector (car cell)
-						 `(progn
-						    (setq ret ',(cdr cell))
-						    (throw 'exit nil))
-						 t)))
-				      menu-alist)))
-		      (recursive-edit)
-		      ret)
-		  (cdr
-		   (assoc (completing-read (concat title " : ") menu-alist)
-			  menu-alist)))))
-	     (t
-	      (defun mime-should-use-popup-menu ()
-		(and window-system
-		     (memq (event-basic-type last-command-event)
-			   '(mouse-1 mouse-2 mouse-3))))
-	      (defun mime-select-menu-alist (title menu-alist)
-		(if (mime-should-use-popup-menu)
-		    (x-popup-menu
-		     (list '(1 1) (selected-window))
-		     (list title (cons title menu-alist)))
-		  (cdr
-		   (assoc (completing-read (concat title " : ") menu-alist)
-			  menu-alist))))))
+(defun mime-should-use-popup-menu ()
+  (and window-system
+       (memq (event-basic-type last-command-event)
+	     '(mouse-1 mouse-2 mouse-3))))
+(defun mime-select-menu-alist (title menu-alist)
+  (if (mime-should-use-popup-menu)
+      (x-popup-menu
+       (list '(1 1) (selected-window))
+       (list title (cons title menu-alist)))
+    (cdr
+     (assoc (completing-read (concat title " : ") menu-alist)
+	    menu-alist))))
 
 ;;; @ Other Utility
 ;;;

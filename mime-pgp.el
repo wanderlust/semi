@@ -72,6 +72,8 @@
       (error (setq result error)))
     result))
 
+(autoload 'mime-edit-make-boundary "mime-edit")
+
 (defun mime-pgp-pkcs7-verify-signed-data (context content)
   (let (result)
     (if (condition-case error

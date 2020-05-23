@@ -28,20 +28,10 @@
 (require 'mime)
 
 (defmacro mime-put-keymap-region (start end keymap)
-  `(put-text-property ,start ,end
-		      ',(if (featurep 'xemacs)
-			    'keymap
-			  'local-map)
-		      ,keymap))
+  `(put-text-property ,start ,end 'local-map ,keymap))
 
 (defmacro mime-save-background-color (&rest body)
-  (if (featurep 'xemacs)
-      `(let ((color (color-name (face-background 'default))))
-	 (prog1
-	     (progn ,@body)
-	   (font-set-face-background 'default color (current-buffer))
-	   ))
-    (cons 'progn body)))
+  `(cons 'progn ,body))
 
 (defvar mime-w3-message-structure nil)
 

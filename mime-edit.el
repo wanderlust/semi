@@ -1016,60 +1016,20 @@ If it is not specified for a major-mode,
 	      (concat (apel-version) " "))
 	  (if (boundp 'epg-version-number)
 	      (concat "EasyPG/" epg-version-number " "))
-	  (if (featurep 'xemacs)
-	      (concat (cond ((and (featurep 'chise)
-				  (boundp 'xemacs-chise-version))
-			     (concat "CHISE-MULE/" xemacs-chise-version))
-			    ((featurep 'utf-2000)
-			     (concat "UTF-2000-MULE/" utf-2000-version))
-			    ((featurep 'mule) "MULE"))
-		      " XEmacs"
-		      (if (string-match "^[0-9]+\\(\\.[0-9]+\\)" emacs-version)
-			  (concat
-			   "/"
-			   (substring emacs-version 0 (match-end 0))
-			   (cond ((and (boundp 'xemacs-betaname)
-				       xemacs-betaname)
-				  ;; It does not exist in XEmacs
-				  ;; versions prior to 20.3.
-				  (concat " " xemacs-betaname))
-				 ((and (boundp 'emacs-patch-level)
-				       emacs-patch-level)
-				  ;; It does not exist in FSF Emacs or in
-				  ;; XEmacs versions earlier than 21.1.1.
-				  (format " (patch %d)" emacs-patch-level))
-				 (t ""))
-			   " (" xemacs-codename ")"
-			   ;; `xemacs-extra-name' has appeared in the
-			   ;; development version of XEmacs 21.5-b8.
-			   (if (and (boundp 'xemacs-extra-name)
-				    (symbol-value 'xemacs-extra-name))
-			       (concat " " (symbol-value 'xemacs-extra-name))
-			     "")
-			   " ("
-			   system-configuration ")")
-			" (" emacs-version ")"))
-	    (let ((ver (if (and (not (boundp 'emacs-build-number))
-				(string-match "\\.[0-9]+$" emacs-version))
-			   (substring emacs-version 0 (match-beginning 0))
-			 emacs-version)))
-	      (if (featurep 'mule)
-		  (if (boundp 'enable-multibyte-characters)
-		      (concat "Emacs/" ver
-			      " (" system-configuration ")"
-			      (if enable-multibyte-characters
-				  (concat " MULE/" mule-version)
-				" (with unibyte mode)")
-			      (if (featurep 'meadow)
-				  (let ((mver (Meadow-version)))
-				    (if (string-match "^Meadow-" mver)
-					(concat " Meadow/"
-						(substring mver
-							   (match-end 0)))
-				      ))))
-		    (concat "MULE/" mule-version
-			    " (based on Emacs " ver ")"))
-		(concat "Emacs/" ver " (" system-configuration ")")))))
+	  (let ((ver (if (and (not (boundp 'emacs-build-number))
+			      (string-match "\\.[0-9]+$" emacs-version))
+			 (substring emacs-version 0 (match-beginning 0))
+		       emacs-version)))
+	    (if (featurep 'mule)
+		(if (boundp 'enable-multibyte-characters)
+		    (concat "Emacs/" ver
+			    " (" system-configuration ")"
+			    (if enable-multibyte-characters
+				(concat " MULE/" mule-version)
+			      " (with unibyte mode)"))
+		  (concat "MULE/" mule-version
+			  " (based on Emacs " ver ")"))
+	      (concat "Emacs/" ver " (" system-configuration ")"))))
   "Body of User-Agent field.
 If variable `mime-edit-insert-user-agent-field' is not nil, it is
 inserted into message header.")
@@ -1189,52 +1149,14 @@ Tspecials means any character that matches with it in header must be quoted.")
     )
   "MIME-edit menubar entry.")
 
-(cond ((featurep 'xemacs)
-       ;; modified by Pekka Marjola <pema@iki.fi>
-       ;;	1995/9/5 (c.f. [tm-en:69])
-       (defun mime-edit-define-menu-for-xemacs ()
-	 "Define menu for XEmacs."
-	 (cond ((featurep 'menubar)
-		(make-local-variable 'current-menubar)
-		(set-buffer-menubar current-menubar)
-		(add-submenu
-		 nil
-		 (cons mime-edit-menu-title
-		       (mapcar (function
-				(lambda (item)
-				  (vector (nth 1 item)(nth 2 item)
-					  mime-edit-mode-flag)
-				  ))
-			       mime-edit-menu-list)))
-		)))
-
-       ;; modified by Steven L. Baur <steve@miranova.com>
-       ;;	1995/12/6 (c.f. [tm-en:209])
-       (or (boundp 'mime-edit-popup-menu-for-xemacs)
-	   (setq mime-edit-popup-menu-for-xemacs
-		 (append '("MIME Commands" "---")
-			 (mapcar (function (lambda (item)
-					     (vector (nth 1 item)
-						     (nth 2 item)
-						     t)))
-				 mime-edit-menu-list)))
-	   )
-       )
-      (t
-       (define-key mime-edit-mode-map [menu-bar mime-edit]
-	 (cons mime-edit-menu-title
-	       (make-sparse-keymap mime-edit-menu-title)))
-       (mapc (function
-	      (lambda (item)
-		(define-key mime-edit-mode-map
-		  (vector 'menu-bar 'mime-edit (car item))
-		  (cons (nth 1 item)(nth 2 item))
-		  )
-		))
-	     (reverse mime-edit-menu-list)
-	     )
-       ))
-
+(define-key mime-edit-mode-map [menu-bar mime-edit]
+  (cons mime-edit-menu-title
+	(make-sparse-keymap mime-edit-menu-title)))
+(mapc (lambda (item)
+	(define-key mime-edit-mode-map
+	  (vector 'menu-bar 'mime-edit (car item))
+	  (cons (nth 1 item) (nth 2 item))))
+      (reverse mime-edit-menu-list))
 
 ;;; @ functions
 ;;;
@@ -1388,21 +1310,12 @@ User customizable variables (not documented all of them):
       )))
 
 
-(cond ((featurep 'xemacs)
-       (add-minor-mode 'mime-edit-mode-flag
-		       '((" MIME-Edit "  mime-transfer-level-string))
-		       mime-edit-mode-map
-		       nil
-		       'mime-edit-mode)
-       )
-      (t
-       (set-alist 'minor-mode-alist
-		  'mime-edit-mode-flag
-		  '((" MIME-Edit "  mime-transfer-level-string)))
-       (set-alist 'minor-mode-map-alist
-		  'mime-edit-mode-flag
-		  mime-edit-mode-map)
-       ))
+(set-alist 'minor-mode-alist
+	   'mime-edit-mode-flag
+	   '((" MIME-Edit "  mime-transfer-level-string)))
+(set-alist 'minor-mode-map-alist
+	   'mime-edit-mode-flag
+	   mime-edit-mode-map)
 
 
 ;;;###autoload
@@ -1418,11 +1331,6 @@ User customizable variables (not documented all of them):
     (setq mime-transfer-level-string
  	  (mime-encoding-name mime-transfer-level 'not-omit))
     (force-mode-line-update)
-
-    ;; Define menu for XEmacs.
-    (if (featurep 'xemacs)
-	(mime-edit-define-menu-for-xemacs)
-      )
 
     (enable-invisible)
 
@@ -1460,11 +1368,6 @@ just return to previous mode."
 	  (mime-edit-translate-buffer)))
     ;; Restore previous state.
     (setq mime-edit-mode-flag nil)
-    (if (and (featurep 'xemacs)
-	     (featurep 'menubar))
-	(delete-menu-item (list mime-edit-menu-title))
-      )
-    (end-of-invisible)
     (set-buffer-modified-p (buffer-modified-p))
     (run-hooks 'mime-edit-exit-hook)
     (message "Exit MIME editor mode.")
@@ -1482,7 +1385,7 @@ just return to previous mode."
   (with-output-to-temp-buffer "*Help*"
     (princ "MIME editor mode:\n")
     (princ (documentation 'mime-edit-mode))
-    (print-help-return-message)))
+    (help-print-return-message)))
 
 (defun mime-edit-insert-text (&optional subtype)
   "Insert a text message.
@@ -1563,7 +1466,7 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	  (disposition-type (nth 4 guess))
 	  (disposition-params (nth 5 guess))
 	  )
-    (setq verbose (or (interactive-p) verbose))
+    (setq verbose (or (called-interactively-p 'interactive) verbose))
     (if verbose
 	(setq type (mime-prompt-for-type type)
 	      subtype (mime-prompt-for-subtype type subtype)
@@ -1590,7 +1493,7 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	  (disposition-type (nth 4 guess))
 	  (disposition-params (nth 5 guess))
 	  )
-    (setq verbose (or (interactive-p) verbose))
+    (setq verbose (or (called-interactively-p 'interactive) verbose))
     (if verbose
 	(setq subtype (mime-prompt-for-subtype type subtype)))
     (setq parameters
@@ -2433,7 +2336,7 @@ When value is other non-nil, show only message and proceed."
 	  (const :tag "Show message and proceed" t)
 	  (const :tag "Stop encryption and raise error" nil)))
 
-(defun mime-edit-encrypt-pgp-recipients-keys (recipients)
+(defun mime-edit-encrypt-pgp-recipients-keys (context recipients)
   (delq
    nil
    (mapcar
@@ -2483,7 +2386,7 @@ When value is other non-nil, show only message and proceed."
 Select recipients for encryption.
 If no one is selected, symmetric encryption will be performed.  "
 				     recipients)
-		  (mime-edit-encrypt-pgp-recipients-keys recipients)))
+		  (mime-edit-encrypt-pgp-recipients-keys context recipients)))
 	  (setq cipher
 		(epg-encrypt-string
 		 context

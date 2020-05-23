@@ -1017,6 +1017,8 @@ Each elements are regexp of field-name.")
       (run-hooks 'mime-display-text/plain-hook)
       )))
 
+(autoload 'richtext-decode "richtext")
+
 (defun mime-display-text/richtext (entity situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
@@ -1051,8 +1053,8 @@ Each elements are regexp of field-name.")
 
 
 (defvar mime-view-announcement-for-message/partial
-  (if (and (>= emacs-major-version 19) window-system)
-      "\
+  (when window-system
+    "\
 \[[ This is message/partial style split message. ]]
 \[[ Please press `v' key in this buffer          ]]
 \[[ or click here by mouse button-2.             ]]"
@@ -1580,45 +1582,25 @@ part (if exist) or the first language message part."
     )
   "Menu for MIME Viewer")
 
-(cond ((featurep 'xemacs)
-       (defvar mime-view-xemacs-popup-menu
-	 (cons mime-view-menu-title
-	       (mapcar (function
-			(lambda (item)
-			  (vector (nth 1 item)(nth 2 item) t)
-			  ))
-		       mime-view-menu-list)))
-       (defun mime-view-xemacs-popup-menu (event)
-	 "Popup the menu in the MIME Viewer buffer"
-	 (interactive "e")
-	 (select-window (event-window event))
-	 (set-buffer (event-buffer event))
-	 (popup-menu 'mime-view-xemacs-popup-menu))
-       (defvar mouse-button-2 'button2)
-       (defvar mouse-button-3 'button3)
-       )
-      (t
-       (defvar mime-view-popup-menu 
-         (let ((menu (make-sparse-keymap mime-view-menu-title)))
-           (nconc menu
-                  (mapcar (function
-                           (lambda (item)
-                             (list (intern (nth 1 item)) 'menu-item 
-                                   (nth 1 item)(nth 2 item))
-                             ))
-                          mime-view-menu-list))))
-       (defun mime-view-popup-menu (event)
-         "Popup the menu in the MIME Viewer buffer"
-         (interactive "@e")
-         (let ((menu mime-view-popup-menu) events func)
-           (setq events (x-popup-menu t menu))
-           (and events
-                (setq func (lookup-key menu (apply #'vector events)))
-                (commandp func)
-                (funcall func))))
-       (defvar mouse-button-2 [mouse-2])
-       (defvar mouse-button-3 [mouse-3])
-       ))
+(defvar mime-view-popup-menu
+  (let ((menu (make-sparse-keymap mime-view-menu-title)))
+    (nconc menu
+           (mapcar (lambda (item)
+                     (list (intern (nth 1 item)) 'menu-item
+                           (nth 1 item) (nth 2 item)))
+                   mime-view-menu-list))))
+
+(defun mime-view-popup-menu (event)
+  "Popup the menu in the MIME Viewer buffer"
+  (interactive "@e")
+  (let ((menu mime-view-popup-menu) events func)
+    (setq events (x-popup-menu t menu))
+    (and events
+         (setq func (lookup-key menu (apply #'vector events)))
+         (commandp func)
+         (funcall func))))
+(defvar mouse-button-2 [mouse-2])
+(defvar mouse-button-3 [mouse-3])
 
 (defun mime-view-define-keymap (&optional default)
   (let ((mime-view-mode-map (if (keymapp default)
@@ -1691,35 +1673,25 @@ part (if exist) or the first language message part."
     (define-key mime-view-mode-map
       [backspace] (function mime-preview-scroll-down-entity))
     (if (functionp default)
-	(cond ((featurep 'xemacs)
-	       (set-keymap-default-binding mime-view-mode-map default)
-	       )
-	      (t
-	       (setq mime-view-mode-map
-		     (append mime-view-mode-map (list (cons t default))))
-	       )))
+	(setq mime-view-mode-map
+	      (append mime-view-mode-map (list (cons t default)))))
     (if mouse-button-2
 	(define-key mime-view-mode-map
 	  mouse-button-2 (function mime-button-dispatcher))
       )
-    (cond ((featurep 'xemacs)
-	   (define-key mime-view-mode-map
-	     mouse-button-3 (function mime-view-xemacs-popup-menu))
-	   )
-	  ((>= emacs-major-version 19)
-	   (define-key mime-view-mode-map
-             mouse-button-3 (function mime-view-popup-menu))
-	   (define-key mime-view-mode-map [menu-bar mime-view]
-	     (cons mime-view-menu-title
-		   (make-sparse-keymap mime-view-menu-title)))
-	   (mapc (function
-		  (lambda (item)
-		    (define-key mime-view-mode-map
-		      (vector 'menu-bar 'mime-view (car item))
-		      (cons (nth 1 item)(nth 2 item)))
-		    ))
-		 (reverse mime-view-menu-list))
-	   ))
+    (define-key mime-view-mode-map
+      mouse-button-3 (function mime-view-popup-menu))
+    (define-key mime-view-mode-map [menu-bar mime-view]
+      (cons mime-view-menu-title
+	    (make-sparse-keymap mime-view-menu-title)))
+    (mapc (function
+	   (lambda (item)
+	     (define-key mime-view-mode-map
+	       (vector 'menu-bar 'mime-view (car item))
+	       (cons (nth 1 item)(nth 2 item)))
+	     ))
+	  (reverse mime-view-menu-list))
+
     ;; (run-hooks 'mime-view-define-keymap-hook)
     mime-view-mode-map))
 
@@ -1873,26 +1845,27 @@ button-2	Move to point under the mouse cursor
         	and decode current content as `play mode'
 "
   (interactive)
-  (unless mime-view-redisplay
-    (save-excursion
-      (if raw-buffer (set-buffer raw-buffer))
-      (let ((type
-	     (cdr
-	      (or (assq major-mode mime-raw-representation-type-alist)
-		  (assq t mime-raw-representation-type-alist)))))
-	(if (eq type 'binary)
-	    (setq type 'buffer)
+  (let (message)
+    (unless mime-view-redisplay
+      (save-excursion
+	(if raw-buffer (set-buffer raw-buffer))
+	(let ((type
+	       (cdr
+		(or (assq major-mode mime-raw-representation-type-alist)
+		    (assq t mime-raw-representation-type-alist)))))
+	  (if (eq type 'binary)
+	      (setq type 'buffer)
+	    )
+	  (setq message (mime-open-entity type raw-buffer))
+	  (or (mime-entity-content-type message)
+	      (mime-entity-set-content-type message ctl))
 	  )
-	(setq mime-message-structure (mime-open-entity type raw-buffer))
-	(or (mime-entity-content-type mime-message-structure)
-	    (mime-entity-set-content-type mime-message-structure ctl))
-	)
-      (or (mime-entity-encoding mime-message-structure)
-	  (mime-entity-set-encoding mime-message-structure encoding))
-      ))
-  (mime-display-message mime-message-structure preview-buffer
-			mother default-keymap-or-function)
-  )
+	(or (mime-entity-encoding message)
+	    (mime-entity-set-encoding message encoding))
+	))
+    (mime-display-message message preview-buffer
+			  mother default-keymap-or-function)
+    ))
 
 
 ;;; @@ utility
