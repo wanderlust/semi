@@ -1,5 +1,12 @@
 2020-05-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	Suppress byte-compiler's warnings.
+
+	* semi-setup.el (insert-signature): Move autoload cookie to top
+	level.
+
+2020-05-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	Drop old platforms support, dependency on cl.el.  Now supported
 	Emacsen are version 24 and later.
 

@@ -256,6 +256,8 @@ it is used as hook to set."
 ;;; @@ for signature
 ;;;
 
+(autoload 'insert-signature "signature" "Insert signature" t)
+
 (defun mime-setup-set-signature-key ()
   (let ((keymap (current-local-map)))
     (if keymap
@@ -266,7 +268,6 @@ it is used as hook to set."
 	  ))))
 
 (when mime-setup-use-signature
-  (autoload 'insert-signature "signature" "Insert signature" t)
   (add-hook 'mime-edit-mode-hook 'mime-setup-set-signature-key)
   ;; (setq message-signature nil)
   )
