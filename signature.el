@@ -64,10 +64,8 @@ FIELD, the contents of FILENAME is inserted.")
 (defvar signature-insert-hook nil
   "*List of functions called before inserting a signature.")
 
-(defvar signature-use-bbdb nil
-  "*If non-nil, Register sigtype to BBDB.")
-
-(autoload 'signature/get-sigtype-from-bbdb "mime-bbdb")
+(make-obsolete-variable
+ 'signature-use-bbdb "feature abolished" "29 May 2020")
 
 (defun signature/get-sigtype-interactively (&optional default)
   (read-file-name "Insert your signature: "
@@ -125,11 +123,9 @@ specify a file named <signature-file-name>-DISTRIBUTION interactively."
   (interactive "P")
   (let ((signature-file-name
          (expand-file-name
-          (or (and signature-use-bbdb
-                   (signature/get-sigtype-from-bbdb arg))
-              (and arg
-                   (signature/get-sigtype-interactively))
-              (signature/get-signature-file-name))
+          (or (and arg
+		   (signature/get-sigtype-interactively))
+	      (signature/get-signature-file-name))
           )))
     (or (file-readable-p signature-file-name)
         (error "Cannot open signature file: %s" signature-file-name))
