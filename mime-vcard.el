@@ -32,7 +32,7 @@
 
 (defvar mime-display-text/vcard-hook nil)
 
-(defun mime-display-text/vcard (entity situation)
+(defun mime-display-text/vcard (entity _situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
     (insert

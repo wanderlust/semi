@@ -1,5 +1,9 @@
 2020-05-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* mime-vcard.el: Suppress byte compiler warning.
+
+2020-05-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* mime-bbdb.el: Removed.
 
 	* SEMI-ELS: Likewise.
