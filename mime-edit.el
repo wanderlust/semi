@@ -114,7 +114,6 @@
 (require 'mel)
 (require 'mime-view)
 (require 'alist)
-(require 'invisible)
 (require 'pccl)
 
 (autoload 'eword-encode-string "eword-encode")
@@ -1331,8 +1330,6 @@ User customizable variables (not documented all of them):
     (setq mime-transfer-level-string
  	  (mime-encoding-name mime-transfer-level 'not-omit))
     (force-mode-line-update)
-
-    (enable-invisible)
 
     (make-local-variable 'paragraph-start)
     (setq paragraph-start

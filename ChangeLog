@@ -1,5 +1,12 @@
 2020-06-02  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	Use invisibility feature directly.
+
+	* mime-edit.el: Don't require invisible.el.
+	(turn-on-mime-edit): Don't call enable-invisible function.
+
+2020-06-02  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	Strip use of function wrapping lambda.
 
 	* mail-mime-setup.el (mime-edit-split-message-sender-alist): Likewise.
