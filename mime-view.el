@@ -1498,6 +1498,8 @@ part (if exist) or the first language message part."
 	(setq elements (cdr elements))))
     default))
 
+(defvar mime-display-header-hook nil)
+
 (defun mime-display-entity (entity &optional situation
 				   default-situation preview-buffer)
   (or preview-buffer
