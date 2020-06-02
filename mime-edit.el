@@ -1926,9 +1926,8 @@ Optional DELIMITER specifies parameter delimiter (';' by default)."
   "Ask for PARAMETER.
 Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
   (let* ((prompt (car parameter))
-	 (choices (mapcar (function
-			   (lambda (e)
-			     (if (consp e) e (list e))))
+	 (choices (mapcar (lambda (e)
+			    (if (consp e) e (list e)))
 			  (cdr parameter)))
 	 (default (car (car choices)))
 	 (answer nil))
@@ -2517,12 +2516,11 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 		  (base64-encode-string cipher)))))))
 
 (defsubst replace-space-with-underline (str)
-  (mapconcat (function
-	      (lambda (arg)
-		(char-to-string
-		 (if (eq arg ?\ )
-		     ?_
-		   arg)))) str "")
+  (mapconcat (lambda (arg)
+	       (char-to-string
+		(if (eq arg ?\ )
+		    ?_
+		  arg))) str "")
   )
 
 (defun mime-edit-make-boundary ()
@@ -3113,11 +3111,10 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	       (cdr
 		(assq major-mode
 		      mime-edit-split-message-sender-alist))
-	       (function
-		(lambda ()
-		  (interactive)
-		  (error "Split sender is not specified for `%s'." major-mode)
-		  ))
+	       (lambda ()
+		 (interactive)
+		 (error "Split sender is not specified for `%s'." major-mode)
+		 )
 	       ))
 	  (mime-edit-partial-number 1)
 	  data)
@@ -3354,31 +3351,30 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	 (pstr
 	  (let ((bytes (+ 14 (length ctype))))
 	    (mapconcat
-	     (function
-	      (lambda (attr)
-		(if (string= (car attr) "charset")
-		    (progn
-		      (setq charset (cdr attr))
-		      "")
-		  (let*
-		      ((str
-			(concat
-			 (car attr)
-			 "="
-			 (if (string= "name"
-				      (car attr))
-			     (std11-wrap-as-quoted-string
-			      (eword-decode-and-unfold-unstructured-field-body
-			       (cdr attr)))
-			   (cdr attr))))
-		       (bs (length str)))
-		    (setq bytes (+ bytes bs 2))
-		    (if (< bytes 76)
-			(concat "; " str)
-		      (setq bytes (+ bs 1))
-		      (concat ";\n " str)
-		      )
-		    ))))
+	     (lambda (attr)
+	       (if (string= (car attr) "charset")
+		   (progn
+		     (setq charset (cdr attr))
+		     "")
+		 (let*
+		     ((str
+		       (concat
+			(car attr)
+			"="
+			(if (string= "name"
+				     (car attr))
+			    (std11-wrap-as-quoted-string
+			     (eword-decode-and-unfold-unstructured-field-body
+			      (cdr attr)))
+			  (cdr attr))))
+		      (bs (length str)))
+		   (setq bytes (+ bytes bs 2))
+		   (if (< bytes 76)
+		       (concat "; " str)
+		     (setq bytes (+ bs 1))
+		     (concat ";\n " str)
+		     )
+		   )))
 	     (mime-content-type-parameters content-type) "")))
 	 encoding
 	 encoded
@@ -3390,25 +3386,24 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	 (disposition-str
 	  (if disposition-type
 	      (let ((bytes (+ 21 (length (format "%s" disposition-type)))))
-		(mapconcat (function
-			    (lambda (attr)
-			      (let* ((str (concat
-					   (car attr)
-					   "="
-					   (if (string-equal "filename"
-							     (car attr))
-					       (std11-wrap-as-quoted-string
-						(eword-decode-and-unfold-unstructured-field-body
-						 (cdr attr)))
-					     (cdr attr))))
-				     (bs (length str)))
-				(setq bytes (+ bytes bs 2))
-				(if (< bytes 76)
-				    (concat "; " str)
-				  (setq bytes (+ bs 1))
-				  (concat ";\n " str)
-				  )
-				)))
+		(mapconcat (lambda (attr)
+			     (let* ((str (concat
+					  (car attr)
+					  "="
+					  (if (string-equal "filename"
+							    (car attr))
+					      (std11-wrap-as-quoted-string
+					       (eword-decode-and-unfold-unstructured-field-body
+						(cdr attr)))
+					    (cdr attr))))
+				    (bs (length str)))
+			       (setq bytes (+ bytes bs 2))
+			       (if (< bytes 76)
+				   (concat "; " str)
+				 (setq bytes (+ bs 1))
+				 (concat ";\n " str)
+				 )
+			       ))
 			   (mime-content-disposition-parameters
 			    content-disposition)
 			   ""))))

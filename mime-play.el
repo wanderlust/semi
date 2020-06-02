@@ -102,12 +102,11 @@ specified, play as it.  Default MODE is \"play\"."
     (cond ((cdr ret)
 	   (setq ret (mime-select-menu-alist
 		      "Methods"
-		      (mapcar (function
-			       (lambda (situation)
-				 (cons
-				  (format "%s"
-					  (cdr (assq 'method situation)))
-				  situation)))
+		      (mapcar (lambda (situation)
+				(cons
+				 (format "%s"
+					 (cdr (assq 'method situation)))
+				 situation))
 			      ret)))
 	   (setq ret (mime-sort-situation ret))
 	   (add-to-list 'mime-acting-situation-example-list (cons ret 0))
@@ -187,10 +186,7 @@ specified, play as it.  Default MODE is \"play\"."
   "*If non-nil, mime-echo window is shared with BBDB window.")
 
 (defvar mime-echo-window-height
-  (function
-   (lambda ()
-     (/ (window-height) 5)
-     ))
+  (lambda () (/ (window-height) 5))
   "*Size of mime-echo window.
 It allows function or integer.  If it is function,
 `mime-show-echo-buffer' calls it to get height of mime-echo window.

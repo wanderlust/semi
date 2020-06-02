@@ -42,11 +42,10 @@
 (add-hook 'mail-setup-hook 'turn-on-mime-edit 'append)
 (add-hook 'mail-send-hook  'mime-edit-maybe-translate)
 (set-alist 'mime-edit-split-message-sender-alist
-           'mail-mode (function
-                       (lambda ()
-                         (interactive)
-                         (funcall send-mail-function)
-                         )))
+           'mail-mode (lambda ()
+                        (interactive)
+                        (funcall send-mail-function)
+                        ))
 
 
 ;;; @ for signature
