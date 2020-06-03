@@ -41,7 +41,7 @@
        (vcard-parse-string
 	(mime-entity-content entity)
 	#'vcard-standard-filter))))
-    (if (not (eq (char-after (1- (point))) ?\n))
+    (if (/= (preceding-char) ?\n)
         (insert "\n"))
     (mime-add-url-buttons)
     (run-hooks 'mime-display-text/vcard-hook)))

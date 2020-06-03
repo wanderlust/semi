@@ -143,7 +143,7 @@ When SIGNATURE is list, each string and function's result is inserted.  Function
        ((functionp (car signature))
 	(insert (funcall (car signature)))))
       (setq signature (cdr signature))))
-  (unless (eq (char-before) ?\n)
+  (unless (eq (preceding-char) ?\n)
     (insert ?\n)))
 
 (defun mime-edit-insert-signature ()
@@ -180,11 +180,11 @@ When SIGNATURE is list, each string and function's result is inserted.  Function
 		     (t
 		      point)))
     (unless (and text-part-p plain-signature-p)
-      (unless (eq (char-before) ?\n) (insert ?\n))
+      (unless (eq (preceding-char) ?\n) (insert ?\n))
       (mime-edit-insert-tag "text" "plain"))
     (if plain-signature-p
 	(progn
-	  (unless (eq (char-before) ?\n) (insert ?\n))
+	  (unless (eq (preceding-char) ?\n) (insert ?\n))
 	  (when (or mime-edit-signature-position
 		    (eq end point))
 	    (insert mime-edit-signature-separator))
