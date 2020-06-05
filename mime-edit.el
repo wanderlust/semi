@@ -109,12 +109,13 @@
 
 ;;; Code:
 
-(require 'sendmail)
 (require 'mail-utils)
-(require 'mel)
-(require 'mime-view)
+(require 'sendmail)
 (require 'alist)
 (require 'pccl)
+(require 'invisible)
+(require 'mel)
+(require 'mime-view)
 
 (autoload 'eword-encode-string "eword-encode")
 (autoload 'eword-decode-and-unfold-unstructured-field-body "eword-decode")
