@@ -67,15 +67,9 @@ LISPDIR=%s\n" PREFIX LISPDIR))
 (defun compile-semi-package ()
   (config-semi-package)
 
-  (if (fboundp 'batch-update-directory-autoloads)
-      ;; XEmacs 21.5.19 and newer.
-      (progn
-	(add-to-list 'command-line-args-left ".")
-	(add-to-list 'command-line-args-left "semi")
-	(batch-update-directory-autoloads))
-    (setq autoload-package-name "semi")
-    (add-to-list 'command-line-args-left ".")
-    (batch-update-directory))
+  (setq autoload-package-name "semi")
+  (add-to-list 'command-line-args-left ".")
+  (batch-update-directory)
 
   (add-to-list 'command-line-args-left ".")
   (Custom-make-dependencies)
