@@ -1004,7 +1004,7 @@ Each elements are regexp of field-name.")
   (save-restriction
     (narrow-to-region (point-max)(point-max))
     (when (mime-display-insert-text-content entity)
-      (when (/= (char-before (point-max)) ?\n)
+      (when (null (eq (char-before (point-max)) ?\n))
 	(goto-char (point-max))
 	(insert "\n")
 	)
