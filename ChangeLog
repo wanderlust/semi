@@ -1,3 +1,13 @@
+2020-06-14  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Minor refactorings.
+
+	* mime-edit.el (mime-edit-insert-file-parameters): Reduce use of
+	concat functions.
+	(mime-make-tag): Remove redundant codes.
+	(replace-space-with-underline)
+	(mime-edit-decode-single-part-in-buffer): Minor refactorings.
+
 2020-06-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* mime-view.el (mime-display-text/plain): Revert the last

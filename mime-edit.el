@@ -1436,12 +1436,10 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
     (unless (string= charset "") charset)))
 
 (defun mime-edit-insert-file-parameters (parameters file &optional verbose)
-  (let ((rest parameters)
-	attribute value)
-    (setq parameters "")
-    (while rest
-      (setq attribute (caar rest)
-	    value (cdar rest))
+  (let (attribute value strings)
+    (while parameters
+      (setq attribute (caar parameters)
+	    value (cdar parameters))
       (cond
        ((eq value 'file)
 	(setq value (mime-edit-insert-file-filename file)))
@@ -1449,9 +1447,9 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	(setq value (mime-edit-insert-file-charset file verbose))))
       (when value
 	(if (symbolp value) (setq value (symbol-name value)))
-	(setq parameters (concat parameters "; " attribute "=" value)))
-      (setq rest (cdr rest))))
-  parameters)
+	(setq strings (nconc strings (list "; " attribute "=" value))))
+      (setq parameters (cdr parameters))))
+  (apply 'concat strings))
 
 (defun mime-edit-insert-file (file &optional verbose)
   "Insert a message from a file."
@@ -1773,8 +1771,7 @@ Otherwise, it is obtained from mime-content-types."
 
 (defun mime-make-tag (pritype subtype &optional parameters encoding)
   "Make a tag of MIME message of PRITYPE, SUBTYPE and optional PARAMETERS."
-  (mime-create-tag (concat (or pritype "") "/" (or subtype "")
-			   (or parameters ""))
+  (mime-create-tag (concat pritype "/" subtype parameters)
 		   encoding))
 
 (defun mime-create-tag (contype &optional encoding)
@@ -2515,10 +2512,10 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 
 (defsubst replace-space-with-underline (str)
   (mapconcat (lambda (arg)
-	       (char-to-string
+	       (list
 		(if (eq arg ?\ )
 		    ?_
-		  arg))) str "")
+		  arg))) str nil)
   )
 
 (defun mime-edit-make-boundary ()
@@ -3353,7 +3350,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	       (if (string= (car attr) "charset")
 		   (progn
 		     (setq charset (cdr attr))
-		     "")
+		     nil)
 		 (let*
 		     ((str
 		       (concat
@@ -3373,7 +3370,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 		     (concat ";\n " str)
 		     )
 		   )))
-	     (mime-content-type-parameters content-type) "")))
+	     (mime-content-type-parameters content-type) nil)))
 	 encoding
 	 encoded
 	 (limit (save-excursion
@@ -3404,7 +3401,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 			       ))
 			   (mime-content-disposition-parameters
 			    content-disposition)
-			   ""))))
+			   nil))))
 	 )
     (if disposition-type
 	(setq pstr (format "%s\nContent-Disposition: %s%s"
