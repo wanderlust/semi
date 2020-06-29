@@ -1448,8 +1448,8 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
       (when value
 	(if (symbolp value) (setq value (symbol-name value)))
 	(setq strings (nconc strings (list "; " attribute "=" value))))
-      (setq parameters (cdr parameters))))
-  (apply 'concat strings))
+      (setq parameters (cdr parameters)))
+    (apply 'concat strings)))
 
 (defun mime-edit-insert-file (file &optional verbose)
   "Insert a message from a file."

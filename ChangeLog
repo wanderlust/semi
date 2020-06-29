@@ -1,3 +1,7 @@
+2020-06-29  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* mime-edit.el (mime-edit-insert-file-parameters): Fix typo.
+
 2020-06-14  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Minor refactorings.
