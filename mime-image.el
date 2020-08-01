@@ -201,7 +201,7 @@ Furthermore, image scaling for xbm image is disabled."
 	(let ((face (gensym "mii")))
 	  (or (facep face) (make-face face))
 	  (set-face-stipple face image)
-	  (let ((row (make-string (/ (car image)  (frame-char-width)) ? ))
+	  (let ((row (make-string (/ (car image)  (frame-char-width)) ?\s))
 		(height (/ (nth 1 image)  (frame-char-height)))
 		(i 0))
 	    (while (< i height)
