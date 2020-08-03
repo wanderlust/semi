@@ -222,11 +222,9 @@ To insert a signature file automatically, call the function
        ("mail-server"
 	("server" "ftpmail@nic.karrn.ad.jp")
 	("subject"))
-       ("url"         ("url"))
-       ))
+       ("url"         ("url"))))
      ("rfc822")
-     ("news")
-     )
+     ("news"))
     ("application"
      ("javascript")
      ("msword")
@@ -321,52 +319,44 @@ To insert a signature file automatically, call the function
        ("\\.cc$"
 	"application" "octet-stream" (("type" . "C++") ("charset" . charset))
 	"7bit"
-	"attachment"	nil
-	)
+	"attachment"	nil)
 
        ("\\.el$"
 	"application" "octet-stream" (("type" . "emacs-lisp") ("charset" . charset))
 	"7bit"
-	"attachment"	nil
-	)
+	"attachment"	nil)
 
        ("\\.lsp$"
 	"application" "octet-stream" (("type" . "common-lisp") ("charset" . charset))
 	"7bit"
-	"attachment"	nil
-	)
+	"attachment"	nil)
 
        ("\\.pl$"
 	"application" "octet-stream" (("type" . "perl") ("charset" . charset))
 	"7bit"
-	"attachment"	nil
-	)
+	"attachment"	nil)
 
        ;; Text or translated text
 
        ("\\.txt$\\|\\.pln$"
 	"text"	"plain"		(("charset" . charset))
 	nil
-	"inline"		nil
-	)
+	"inline"		nil)
 
        ("\\.css$"
 	"text"	"css"		(("charset" . charset))
 	nil
-	"inline"		nil
-	)
+	"inline"		nil)
 
        ("\\.csv$"
 	"text"	"csv"		(("charset" . charset))
 	nil
-	"inline"		nil
-	)
+	"inline"		nil)
 
        ("\\.tex$\\|\\.latex$"
 	"text"	"x-latex"	(("charset" . charset))
 	nil
-	"inline"		nil
-	)
+	"inline"		nil)
 
        ;; .rc : procmail modules pm-xxxx.rc
        ;; *rc : other resource files
@@ -374,8 +364,7 @@ To insert a signature file automatically, call the function
        ("\\.\\(rc\\|lst\\|log\\|sql\\|mak\\)$\\|\\..*rc$"
 	"text"	"plain"		(("charset" . charset))
 	nil
-	"attachment"	nil
-	)
+	"attachment"	nil)
 
        ("\\.html$"
 	"text"	"html"		(("charset" . charset))
@@ -385,8 +374,7 @@ To insert a signature file automatically, call the function
        ("\\.diff$\\|\\.patch$"
 	"application" "octet-stream" (("type" . "patch"))
 	nil
-	"attachment"	nil
-	)
+	"attachment"	nil)
 
        ("\\.signature"
 	"text"	"plain"		(("charset" . charset))	nil	nil	nil)
@@ -395,22 +383,19 @@ To insert a signature file automatically, call the function
        ("\\.js$"
 	"application"	"javascript" (("charset" . charset))
 	nil
-	"inline"	nil
-	)
+	"inline"	nil)
 
        
        ("\\.vcf$"
 	"text"	"vcard"		(("charset" . "UTF-8"))
 	nil
-	"inline"		nil
-	)
+	"inline"		nil)
 
        ;; Microsoft Project
        ("\\.mpp$"
 	"application" "vnd.ms-project" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        
        
        ;; Microsoft Office (none-OpenXML)
@@ -418,23 +403,19 @@ To insert a signature file automatically, call the function
        ("\\.rtf$"				; Rich text format
 	"application" "rtf" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.doc$"				;MS Word
 	"application" "msword" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.xls$"				; MS Excel
 	"application" "vnd.ms-excel" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.ppt$"				; MS Power Point
 	"application" "vnd.ms-powerpoint" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
 
        
        ;; Microsoft Office (OpenXML)
@@ -443,258 +424,210 @@ To insert a signature file automatically, call the function
        ("\\.docm$"
 	"application" "vnd.ms-word.document.macroEnabled.12" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.docx$"
 	"application" "vnd.openxmlformats-officedocument.wordprocessingml.document" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.dotm$"
 	"application" "vnd.ms-word.template.macroEnabled.12" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.dotx$"
 	"application" "vnd.openxmlformats-officedocument.wordprocessingml.template" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        
                                         ; MS Power Point
        ("\\.potm$"
 	"application" "vnd.ms-powerpoint.template.macroEnabled.12" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.potx$"
 	"application" "vnd.openxmlformats-officedocument.presentationml.template" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.ppam$"
 	"application" "vnd.ms-powerpoint.addin.macroEnabled.12" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.ppsm$"
 	"application" "vnd.ms-powerpoint.slideshow.macroEnabled.12" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.ppsx$"
 	"application" "vnd.openxmlformats-officedocument.presentationml.slideshow" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.pptm$"
 	"application" "vnd.ms-powerpoint.presentation.macroEnabled.12" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.pptx$"
 	"application" "vnd.openxmlformats-officedocument.presentationml.presentation" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        
                                         ; MS Excel
        ("\\.xlam$"
 	"application" "vnd.ms-excel.addin.macroEnabled.12" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.xlsb$"
 	"application" "vnd.ms-excel.sheet.binary.macroEnabled.12" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.xlsm$"
 	"application" "vnd.ms-excel.sheet.macroEnabled.12" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.xlsx$"
 	"application" "vnd.openxmlformats-officedocument.spreadsheetml.sheet" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.xltm$"
 	"application" "vnd.ms-excel.template.macroEnabled.12" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.xltx$"
 	"application" "vnd.openxmlformats-officedocument.spreadsheetml.template" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        
        
        ;; Open Office
        ("\\.odt$"
 	"application" "vnd.oasis.opendocument.text" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.ods$"
 	"application" "vnd.oasis.opendocument.spreadsheet" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.odg$"
 	"application" "vnd.oasis.opendocument.graphics" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.odf$"
 	"application" "vnd.oasis.opendocument.formula" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.odm$"
 	"application" "vnd.oasis.opendocument.text-master" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.odp$"
 	"application" "vnd.oasis.opendocument.presentation" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.ott$"
 	"application" "vnd.oasis.opendocument.text-template" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.ots$"
 	"application" "vnd.oasis.opendocument.spreadsheet-template" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.otp$"
 	"application" "vnd.oasis.opendocument.presentation-template" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        ("\\.otg$"
 	"application" "vnd.oasis.opendocument.graphics-template" nil
 	"base64"
-	"attachment" nil
-	)
+	"attachment" nil)
        
        ;; Postscript and PDF
        ("\\.ps$"
 	"application" "postscript"	nil
 	"base64"
-	"attachment"	nil
-	)
+	"attachment"	nil)
        ("\\.pdf$"
 	"application" "pdf"	nil
 	"base64"
-	"attachment"	nil
-	)
+	"attachment"	nil)
 
        ;;  Pure binary
 
        ("\\.jpg$\\|\\.jpeg$"
 	"image"	"jpeg"		nil
 	"base64"
-	"inline"		nil
-	)
+	"inline"		nil)
        ("\\.gif$"
 	"image"	"gif"		nil
 	"base64"
-	"inline"		nil
-	)
+	"inline"		nil)
        ("\\.png$"
 	"image"	"png"		nil
 	"base64"
-	"inline"		nil
-	)
+	"inline"		nil)
        ("\\.bmp$"
 	"image"	"bmp"		nil
 	"base64"
-	"inline"		nil
-	)
+	"inline"		nil)
        ("\\.svg$"
 	"image"	"svg+xml"   nil
 	"base64"
-	"inline"		nil
-	)
+	"inline"		nil)
        ("\\.tiff$"
 	"image"	"tiff"		nil
 	"base64"
-	"inline"		nil
-	)
+	"inline"		nil)
        ("\\.pic$"
 	"image"	"x-pic"		nil
 	"base64"
-	"inline"		nil
-	)
+	"inline"		nil)
        ("\\.mag$"
 	"image"	"x-mag"		nil
 	"base64"
-	"inline"		nil
-	)
+	"inline"		nil)
        ("\\.xbm$"
 	"image"	"x-xbm"		nil
 	"base64"
-	"inline"		nil
-	)
+	"inline"		nil)
        ("\\.xwd$"
 	"image"	"x-xwd"		nil
 	"base64"
-	"inline"		nil
-	)
+	"inline"		nil)
 
        ;; Audio and video
 
        ("\\.au$\\|\\.snd$"
 	"audio"	"basic"		nil
 	"base64"
-	"attachment"		nil
-	)
+	"attachment"		nil)
        ("\\.mp[234]\\|\\.m4[abp]$"
 	"audio"	"mpeg"		nil
 	"base64"
-	"attachment"		nil
-	)
+	"attachment"		nil)
        ("\\.ogg$"
 	"audio"	"ogg"		nil
 	"base64"
-	"attachment"		nil
-	)
+	"attachment"		nil)
        ("\\.ogg$"
 	"audio"	"vorbis"		nil
 	"base64"
-	"attachment"		nil
-	)
+	"attachment"		nil)
        ("\\.mpg\\|\\.mpeg$"
 	"video"	"mpeg"		nil
 	"base64"
-	"attachment"	nil
-	)
+	"attachment"	nil)
        ("\\.mp4\\|\\.m4v$"
 	"video"	"mp4"		nil
 	"base64"
-	"attachment"	nil
-	)
+	"attachment"	nil)
        ("\\.qt$\\|\\.mov$"
 	"video"	"quicktime"		nil
 	"base64"
-	"attachment"	nil
-	)
+	"attachment"	nil)
        ("\\.flv$"
 	"video"	"x-flv"		nil
 	"base64"
-	"attachment"	nil
-	)
+	"attachment"	nil)
        ("\\.swf$"
 	"application"	"x-shockwave-flash"		nil
 	"base64"
-	"attachment"	nil
-	)
+	"attachment"	nil)
 
 
        ;; Compressed files
@@ -702,62 +635,50 @@ To insert a signature file automatically, call the function
        ("\\.tar\\.gz$"
 	"application" "octet-stream" (("type" . "tar+gzip"))
 	"base64"
-	"attachment"	nil
-	)
+	"attachment"	nil)
        ("\\.tgz$"
 	"application" "octet-stream" (("type" . "tar+gzip"))
 	"base64"
-	"attachment"	nil
-	)
+	"attachment"	nil)
        ("\\.tar\\.Z$"
 	"application" "octet-stream" (("type" . "tar+compress"))
 	"base64"
-	"attachment"	nil
-	)
+	"attachment"	nil)
        ("\\.taz$"
 	"application" "octet-stream" (("type" . "tar+compress"))
 	"base64"
-	"attachment"	nil
-	)
+	"attachment"	nil)
        ("\\.gz$"
 	"application" "octet-stream" (("type" . "gzip"))
 	"base64"
-	"attachment"	nil
-	)
+	"attachment"	nil)
        ("\\.Z$"
 	"application" "octet-stream" (("type" . "compress"))
 	"base64"
-	"attachment"	nil
-	)
+	"attachment"	nil)
        ("\\.lzh$"
 	"application" "octet-stream" (("type" . "lha"))
 	"base64"
-	"attachment"	nil
-	)
+	"attachment"	nil)
        ("\\.zip$"
 	"application" "zip" nil
 	"base64"
-	"attachment"	nil
-	)
+	"attachment"	nil)
        ("\\.7z$"
 	"application" "x-7z-compressed" nil
 	"base64"
-	"attachment"	nil
-	)
+	"attachment"	nil)
        ("winmail\\.dat$"
 	"application" "ms-tnef" nil
 	"base64"
-	"attachment"	nil
-	)
+	"attachment"	nil)
 
        ;; Rest
 
        (".*"
 	"application" "octet-stream" nil
 	nil
-	"attachment"	nil)
-       )
-     ))
+	"attachment"	nil))))
   "*Alist of file name, types, parameters, and default encoding.
 If encoding is nil, it is determined from its contents."
   :type `(repeat
@@ -765,8 +686,7 @@ If encoding is nil, it is determined from its contents."
 		;; primary-type
 		(choice :tag "Primary-Type"
 			,@(nconc (mapcar (lambda (cell)
-					   (list 'item (car cell))
-					   )
+					   (list 'item (car cell)))
 					 mime-content-types)
 				 '(string)))
 		;; subtype
@@ -775,8 +695,7 @@ If encoding is nil, it is determined from its contents."
 			   (apply #'nconc
 				  (mapcar (lambda (cell)
 					    (mapcar (lambda (cell)
-						      (list 'item (car cell))
-						      )
+						      (list 'item (car cell)))
 						    (cdr cell)))
 					  mime-content-types))
 			   '(string)))
@@ -788,8 +707,7 @@ If encoding is nil, it is determined from its contents."
 			,@(cons
 			   '(const nil)
 			   (mapcar (lambda (cell)
-				     (list 'item cell)
-				     )
+				     (list 'item cell))
 				   (mime-encoding-list))))
 		;; disposition-type
 		(choice :tag "Disposition-Type"
@@ -799,8 +717,7 @@ If encoding is nil, it is determined from its contents."
 			string)
 		;; parameters
 		(repeat :tag "Parameters of Content-Disposition field"
-			(cons string (choice string symbol)))
-		))
+			(cons string (choice string symbol)))))
   :group 'mime-edit)
 
 (defvar mime-edit-debug nil)
@@ -832,8 +749,7 @@ If encoding is nil, it is determined from its contents."
     (shift_jis		8 "base64")
     (tis-620		8 "base64")
     (iso-2022-jp-2	7 "base64")
-    (iso-2022-int-1	7 "base64")
-    ))
+    (iso-2022-int-1	7 "base64")))
 
 (defvar mime-transfer-level 7
   "*A number of network transfer level.  It should be 7 or bigger.")
@@ -842,8 +758,7 @@ If encoding is nil, it is determined from its contents."
 (defsubst mime-encoding-name (transfer-level &optional not-omit)
   (cond ((> transfer-level 8) "binary")
 	((= transfer-level 8) "8bit")
-	(not-omit "7bit")
-	))
+	(not-omit "7bit")))
 
 (defvar mime-transfer-level-string
   (mime-encoding-name mime-transfer-level 'not-omit)
@@ -1145,8 +1060,7 @@ Tspecials means any character that matches with it in header must be quoted.")
     (sign	"PGP sign"		mime-edit-set-sign)
     (encrypt	"PGP encrypt"		mime-edit-set-encrypt)
     (preview	"Preview Message"	mime-edit-preview-message)
-    (level	"Toggle transfer-level"	mime-edit-toggle-transfer-level)
-    )
+    (level	"Toggle transfer-level"	mime-edit-toggle-transfer-level))
   "MIME-edit menubar entry.")
 
 (define-key mime-edit-mode-map [menu-bar mime-edit]
@@ -1306,8 +1220,7 @@ User customizable variables (not documented all of them):
 	(mime-edit-again)
       (make-local-variable 'mime-edit-touched-flag)
       (setq mime-edit-touched-flag t)
-      (turn-on-mime-edit)
-      )))
+      (turn-on-mime-edit))))
 
 
 (set-alist 'minor-mode-alist
@@ -1344,8 +1257,7 @@ User customizable variables (not documented all of them):
     (message
      "%s"
      (substitute-command-keys
-      "Type \\[mime-edit-exit] to exit MIME mode, and type \\[mime-edit-help] to get help."))
-    ))
+      "Type \\[mime-edit-exit] to exit MIME mode, and type \\[mime-edit-help] to get help."))))
 
 ;;;###autoload
 (defalias 'edit-mime 'turn-on-mime-edit) ; for convenience
@@ -1358,8 +1270,7 @@ just return to previous mode."
   (interactive "P")
   (if (not mime-edit-mode-flag)
       (if (null no-error)
-	  (error "You aren't editing a MIME message.")
-	)
+	  (error "You aren't editing a MIME message."))
     (if (not nomime)
 	(progn
 	  (run-hooks 'mime-edit-translate-hook)
@@ -1368,14 +1279,12 @@ just return to previous mode."
     (setq mime-edit-mode-flag nil)
     (set-buffer-modified-p (buffer-modified-p))
     (run-hooks 'mime-edit-exit-hook)
-    (message "Exit MIME editor mode.")
-    ))
+    (message "Exit MIME editor mode.")))
 
 (defun mime-edit-maybe-translate ()
   (interactive)
   (mime-edit-exit nil t)
-  (call-interactively 'mime-edit-maybe-split-and-send)
-  )
+  (call-interactively 'mime-edit-maybe-split-and-send))
 
 (defun mime-edit-help ()
   "Show help message about MIME mode."
@@ -1396,15 +1305,12 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	  (progn
 	    ;; Make a space between the following message.
 	    (insert "\n")
-	    (forward-char -1)
-	    ))
+	    (forward-char -1)))
       (if (and (member (cadr ret) '("enriched"))
 	       (fboundp 'enriched-mode))
 	  (enriched-mode t)
 	(if (boundp 'enriched-mode)
-	    (enriched-mode -1)
-	  ))
-      )))
+	    (enriched-mode -1))))))
 
 (defun mime-edit-insert-file-filename (file)
   (std11-wrap-as-quoted-string
@@ -1416,8 +1322,7 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
      ;; If FLIM does not support non-ASCII
      ;; filename, it is encoded.
      (eword-encode-string
-      (file-name-nondirectory file))
-     )))
+      (file-name-nondirectory file)))))
 
 (defun mime-edit-insert-file-charset (file &optional verbose)
   (let ((charset (with-temp-buffer
@@ -1460,8 +1365,7 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	  (parameters (nth 2 guess))
 	  (encoding (nth 3 guess))
 	  (disposition-type (nth 4 guess))
-	  (disposition-params (nth 5 guess))
-	  )
+	  (disposition-params (nth 5 guess)))
     (setq verbose (or (called-interactively-p 'interactive) verbose))
     (if verbose
 	(setq type (mime-prompt-for-type type)
@@ -1476,8 +1380,7 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 		     (mime-edit-insert-file-parameters
 		      disposition-params file verbose)))))
     (mime-edit-insert-tag type subtype parameters)
-    (mime-edit-insert-binary-file file encoding)
-    ))
+    (mime-edit-insert-binary-file file encoding)))
 
 (defun mime-edit-insert-file-as-text (file &optional verbose)
   "Insert a text from a file.  This function decodes inserted file and does not define Content-Transfer-Encoding: header and charset parameter."
@@ -1487,8 +1390,7 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	  (subtype (if (equal (nth 0 guess) "text") (nth 1 guess) "plain"))
 	  (parameters (nth 2 guess))
 	  (disposition-type (nth 4 guess))
-	  (disposition-params (nth 5 guess))
-	  )
+	  (disposition-params (nth 5 guess)))
     (setq verbose (or (called-interactively-p 'interactive) verbose))
     (if verbose
 	(setq subtype (mime-prompt-for-subtype type subtype)))
@@ -1504,8 +1406,7 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	       (remove (assoc "charset" disposition-params) disposition-params)
 	       file verbose)))))
     (mime-edit-insert-tag type subtype parameters)
-    (mime-edit-insert-text-file file)
-    ))
+    (mime-edit-insert-text-file file)))
 
 (defun mime-edit-insert-external ()
   "Insert a reference to external body."
@@ -1538,8 +1439,7 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	(progn
 	  (insert "\n")
 	  (invisible-region (point-min)(point-max))
-	  (goto-char (point-max))
-	  )))))
+	  (goto-char (point-max)))))))
 
 (autoload 'mime-edit-insert-signature "mime-signature" nil t)
 
@@ -1554,15 +1454,12 @@ If nothing is inserted, return nil."
     (mime-edit-goto-tag)
     (if (and (re-search-forward mime-edit-tag-regexp nil t)
 	     (< (match-beginning 0) p)
-	     (< p (match-end 0))
-	     )
+	     (< p (match-end 0)))
 	(goto-char (match-beginning 0))
-      (goto-char p)
-      ))
+      (goto-char p)))
   (let ((oldtag nil)
 	(newtag nil)
-	(current (point))
-	)
+	(current (point)))
     (setq pritype
 	  (or pritype
 	      (mime-prompt-for-type)))
@@ -1580,8 +1477,7 @@ If nothing is inserted, return nil."
 	    (if (mime-edit-goto-tag)
 		(buffer-substring (match-beginning 0) (match-end 0))
 	      ;; Assume content type is 'text/plan'.
-	      (mime-make-tag "text" "plain")
-	      )))
+	      (mime-make-tag "text" "plain"))))
     ;; We are only interested in TEXT.
     (if (and oldtag
 	     (not (mime-test-content-type
@@ -1600,8 +1496,7 @@ If nothing is inserted, return nil."
       ;; Restore previous point.
       (goto-char current)
       nil				;Nothing is created.
-      )
-    ))
+      )))
 
 (defun mime-edit-insert-binary-file (file &optional encoding)
   "Insert binary FILE at point.
@@ -1613,31 +1508,24 @@ Optional argument ENCODING specifies an encoding method such as base64."
 		       (let ((en (downcase encoding)))
 			 (or (string-equal en "7bit")
 			     (string-equal en "8bit")
-			     (string-equal en "binary")
-			     )))))
-	 )
+			     (string-equal en "binary")))))))
     (save-restriction
       (narrow-to-region tagend (point))
       (mime-insert-encoded-file file encoding)
       (if hide-p
 	  (progn
 	    (invisible-region (point-min) (point-max))
-	    (goto-char (point-max))
-	    )
-	(goto-char (point-max))
-	))
+	    (goto-char (point-max)))
+	(goto-char (point-max))))
     (or hide-p
 	(looking-at mime-edit-tag-regexp)
 	(= (point)(point-max))
-	(mime-edit-insert-tag "text" "plain")
-	)
+	(mime-edit-insert-tag "text" "plain"))
     ;; Define encoding even if it is 7bit.
     (if (stringp encoding)
 	(save-excursion
 	  (goto-char tagend) ; Make sure which line the tag is on.
-	  (mime-edit-define-encoding encoding)
-	  ))
-    ))
+	  (mime-edit-define-encoding encoding)))))
 
 (defun mime-edit-insert-text-file (file &optional _encoding)
   "Insert text FILE at point.
@@ -1646,13 +1534,10 @@ Optional argument ENCODING is ignored."
     (save-restriction
       (narrow-to-region tagend (point))
       (insert-file-contents file)
-      (goto-char (point-max))
-      )
+      (goto-char (point-max)))
     (or (looking-at mime-edit-tag-regexp)
 	(= (point)(point-max))
-	(mime-edit-insert-tag "text" "plain")
-	)
-    ))
+	(mime-edit-insert-tag "text" "plain"))))
 
 
 ;; Commands work on a current message flagment.
@@ -1667,17 +1552,14 @@ Optional argument ENCODING is ignored."
 	     (goto-char (1- (match-beginning 0))) ;For multiline tag
 	     )
 	    (t
-	     (goto-char (point-max))
-	     ))
+	     (goto-char (point-max))))
       ;; Then search for the beginning.
       (re-search-backward mime-edit-end-tag-regexp nil t)
       (or (looking-at mime-edit-beginning-tag-regexp)
 	  ;; Restore previous point.
 	  (progn
 	    (goto-char current)
-	    nil
-	    ))
-      )))
+	    nil)))))
 
 (defun mime-edit-content-beginning ()
   "Return the point of the beginning of content."
@@ -1698,8 +1580,7 @@ Optional argument ENCODING is ignored."
 	 (concat "\n" (regexp-quote mail-header-separator)
 		 (if mime-ignore-preceding-spaces
 		     "[ \t\n]*\n" "\n")) nil 'move)
-	(point))
-      )))
+	(point)))))
 
 (defun mime-edit-content-end ()
   "Return the point of the end of content."
@@ -1712,17 +1593,14 @@ Optional argument ENCODING is ignored."
 	    ;; Move to the end of this text.
 	    (if (re-search-forward mime-edit-tag-regexp nil 'move)
 		;; Don't forget a multiline tag.
-		(goto-char (match-beginning 0))
-	      )
-	    (point)
-	    ))
+		(goto-char (match-beginning 0)))
+	    (point)))
       ;; Assume the message begins with text/plain.
       (goto-char (mime-edit-content-beginning))
       (if (re-search-forward mime-edit-tag-regexp nil 'move)
 	  ;; Don't forget a multiline tag.
 	  (goto-char (match-beginning 0)))
-      (point))
-    ))
+      (point))))
 
 (defun mime-edit-define-charset (charset)
   "Set charset of current tag to CHARSET."
@@ -1739,8 +1617,7 @@ Optional argument ENCODING is ignored."
 	       (if comment
 		   (concat (upcase (symbol-name charset)) " (" comment ")")
 		 (upcase (symbol-name charset)))))
-	    (mime-edit-get-encoding tag)))
-	  ))))
+	    (mime-edit-get-encoding tag)))))))
 
 (defun mime-edit-define-encoding (encoding)
   "Set encoding of current tag to ENCODING."
@@ -1748,13 +1625,11 @@ Optional argument ENCODING is ignored."
     (if (mime-edit-goto-tag)
 	(let ((tag (buffer-substring (match-beginning 0) (match-end 0))))
 	  (delete-region (match-beginning 0) (match-end 0))
-	  (insert (mime-create-tag (mime-edit-get-contype tag) encoding)))
-      )))
+	  (insert (mime-create-tag (mime-edit-get-contype tag) encoding))))))
 
 (defun mime-edit-choose-charset ()
   "Choose charset of a text following current point."
-  (detect-mime-charset-region (point) (mime-edit-content-end))
-  )
+  (detect-mime-charset-region (point) (mime-edit-content-end)))
 
 (defun mime-make-text-tag (&optional subtype)
   "Make a tag for a text after current point.
@@ -1784,10 +1659,8 @@ Otherwise, it is obtained from mime-content-types."
   (and (stringp tag)
        (or (string-match mime-edit-single-part-tag-regexp tag)
 	   (string-match mime-edit-multipart-beginning-regexp tag)
-	   (string-match mime-edit-multipart-end-regexp tag)
-	   )
-       (substring tag (match-beginning 1) (match-end 1))
-       ))
+	   (string-match mime-edit-multipart-end-regexp tag))
+       (substring tag (match-beginning 1) (match-end 1))))
 
 (defun mime-edit-get-encoding (tag)
   "Return encoding of TAG."
@@ -1816,8 +1689,7 @@ Nil if no such parameter."
     (if (string-match "\n[^ \t\n\r]+:" contype)
 	(setq ctype (substring contype 0 (match-beginning 0))
 	      opt-fields (substring contype (match-beginning 0)))
-      (setq ctype contype)
-      )
+      (setq ctype contype))
     (if (string-match
 	 (concat
 	  ";[ \t\n]*\\("
@@ -1856,8 +1728,7 @@ Nil if no such parameter."
       (if (string-match (car (car guesses)) file)
 	  (setq guess (cdr (car guesses))))
       (setq guesses (cdr guesses)))
-    guess
-    ))
+    guess))
 
 (defun mime-prompt-for-type (&optional default)
   "Ask for Content-type."
@@ -1905,8 +1776,7 @@ Optional DELIMITER specifies parameter delimiter (';' by default)."
 		 (mime-prompt-for-parameters-1
 		  (cdr (assoc subtype
 			      (cdr (assoc pritype mime-content-types))))))
-	   delimiter
-	   )))
+	   delimiter)))
     (if (and (stringp parameters)
 	     (not (string-equal parameters "")))
 	(concat delimiter parameters)
@@ -1940,8 +1810,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 		      ;; Note: control characters ignored!
 		      (if (string-match mime-tspecials-regexp answer)
 			  (concat "\"" answer "\"") answer)))
-	  (mime-prompt-for-parameters-1 (cdr (assoc answer (cdr parameter)))))
-    ))
+	  (mime-prompt-for-parameters-1 (cdr (assoc answer (cdr parameter)))))))
 
 (defun mime-prompt-for-encoding (&optional default)
   "Ask for Content-Transfer-Encoding."
@@ -2006,26 +1875,22 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 	(widen)
 	(if (re-search-forward end-exp nil t)
 	    (setq eb (match-beginning 0))
-	  (setq eb (point-max))
-	  )
+	  (setq eb (point-max)))
 	(narrow-to-region be eb)
 	(goto-char be)
 	(if (re-search-forward mime-edit-multipart-beginning-regexp nil t)
 	    (progn
 	      (narrow-to-region (match-beginning 0)(point-max))
-	      (mime-edit-find-inmost)
-	      )
+	      (mime-edit-find-inmost))
 	  (widen)
-	  (list type bb be eb)
-	  ))))
+	  (list type bb be eb)))))
 
 (defun mime-edit-process-multipart-1 (boundary)
   (let ((ret (mime-edit-find-inmost)))
     (if ret
 	(let ((type (car ret))
 	      (bb (nth 1 ret))(be (nth 2 ret))
-	      (eb (nth 3 ret))
-	      )
+	      (eb (nth 3 ret)))
 	  (narrow-to-region bb eb)
 	  (delete-region bb be)
 	  (setq bb (point-min))
@@ -2034,29 +1899,22 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 	  (goto-char eb)
 	  (if (looking-at mime-edit-multipart-end-regexp)
 	      (let ((beg (match-beginning 0))
-		    (end (match-end 0))
-		    )
+		    (end (match-end 0)))
 		(delete-region beg end)
 		(or (looking-at mime-edit-beginning-tag-regexp)
 		    (looking-at mime-edit-multipart-end-regexp)
 		    (eobp)
-		    (insert (mime-make-text-tag) "\n")
-		    )))
+		    (insert (mime-make-text-tag) "\n"))))
 	  (cond ((string-equal type "quote")
-		 (mime-edit-enquote-region bb eb)
-		 )
+		 (mime-edit-enquote-region bb eb))
 		((string-equal type "pgp-signed")
-		 (mime-edit-sign-pgp-mime bb eb boundary)
-		 )
+		 (mime-edit-sign-pgp-mime bb eb boundary))
 		((string-equal type "pgp-encrypted")
-		 (mime-edit-encrypt-pgp-mime bb eb boundary)
-		 )
+		 (mime-edit-encrypt-pgp-mime bb eb boundary))
 		((string-equal type "smime-signed")
-		 (mime-edit-sign-smime bb eb boundary)
-		 )
+		 (mime-edit-sign-smime bb eb boundary))
 		((string-equal type "smime-encrypted")
-		 (mime-edit-encrypt-smime bb eb boundary)
-		 )
+		 (mime-edit-encrypt-smime bb eb boundary))
 		(t
 		 (setq boundary
 		       (nth 2 (mime-edit-translate-region bb eb
@@ -2065,8 +1923,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 		 (insert
 		  (format "--[[multipart/%s;
  boundary=\"%s\"][7bit]]\n"
-			  type boundary))
-		 ))
+			  type boundary))))
 	  boundary))))
 
 (defun mime-edit-enquote-region (beg end)
@@ -2076,8 +1933,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
       (goto-char beg)
       (while (re-search-forward mime-edit-single-part-tag-regexp nil t)
 	(let ((tag (buffer-substring (match-beginning 0)(match-end 0))))
-	  (replace-match (concat "- " (substring tag 1)))
-	  )))))
+	  (replace-match (concat "- " (substring tag 1))))))))
 
 (defun mime-edit-dequote-region (beg end)
   (save-excursion
@@ -2087,8 +1943,7 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
       (while (re-search-forward
 	      mime-edit-quoted-single-part-tag-regexp nil t)
 	(let ((tag (buffer-substring (match-beginning 0)(match-end 0))))
-	  (replace-match (concat "-" (substring tag 2)))
-	  )))))
+	  (replace-match (concat "-" (substring tag 2))))))))
 
 (defun mime-edit-delete-trailing-whitespace ()
   (save-match-data
@@ -2153,8 +2008,7 @@ If no one is selected, default secret key is used.  "
 	       (if (r1 != ?\r)
 		   (write ?\r)))
 	   (r1 = r0)
-	   (write-repeat r0)))))
-)
+	   (write-repeat r0))))))
 
 (defun mime-edit-sign-pgp-mime (beg end boundary)
   (save-excursion
@@ -2171,8 +2025,7 @@ If no one is selected, default secret key is used.  "
 	(goto-char beg)
 	(insert (format "Content-Type: %s\n" ctype))
 	(if encoding
-	    (insert (format "Content-Transfer-Encoding: %s\n" encoding))
-	  )
+	    (insert (format "Content-Transfer-Encoding: %s\n" encoding)))
 	(insert "\n")
 	(epg-context-set-armor context t)
 	(epg-context-set-textmode context nil)
@@ -2223,8 +2076,7 @@ Content-Description: OpenPGP Digital Signature
 " pgp-boundary))
 	(insert signature)
 	(goto-char (point-max))
-	(insert (format "\n--%s--\n" pgp-boundary))
-	))))
+	(insert (format "\n--%s--\n" pgp-boundary))))))
 
 (defun mime-edit-text-coding ()
   (save-excursion
@@ -2317,8 +2169,7 @@ If no one is selected, symmetric encryption will be performed.  ")
 			   (or (epg-expand-group config recipient)
 			       (list (concat "<" recipient ">"))))
 			 (apply #'nconc recipients)))
-	  (apply #'concat (nreverse header)))
-    ))
+	  (apply #'concat (nreverse header)))))
 
 (defcustom mime-edit-encrypt-pgp-ignore-missing-keys 'ask
   "Define the behavior when no available key for recipient was found.
@@ -2370,8 +2221,7 @@ When value is other non-nil, show only message and proceed."
           (insert header)
           (insert (format "Content-Type: %s\n" ctype))
           (if encoding
-              (insert (format "Content-Transfer-Encoding: %s\n" encoding))
-	    )
+              (insert (format "Content-Transfer-Encoding: %s\n" encoding)))
           (insert "\n")
 	  (mime-encode-header-in-buffer)
 	  (epg-context-set-armor context t)
@@ -2404,8 +2254,7 @@ Content-Transfer-Encoding: 7bit
 " pgp-boundary pgp-boundary pgp-boundary))
 	  (insert cipher)
 	  (goto-char (point-max))
-	  (insert (format "\n--%s--\n" pgp-boundary))
-	  )))))
+	  (insert (format "\n--%s--\n" pgp-boundary)))))))
 
 (defun mime-edit-convert-lbt-string (string)
   (let (inhibit-eol-conversion)
@@ -2426,8 +2275,7 @@ Content-Transfer-Encoding: 7bit
 	(goto-char beg)
 	(insert (format "Content-Type: %s\n" ctype))
 	(if encoding
-	    (insert (format "Content-Transfer-Encoding: %s\n" encoding))
-	  )
+	    (insert (format "Content-Transfer-Encoding: %s\n" encoding)))
 	(insert "\n")
 	(epg-context-set-signers
 	 context
@@ -2515,13 +2363,11 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 	       (list
 		(if (eq arg ?\ )
 		    ?_
-		  arg))) str nil)
-  )
+		  arg))) str nil))
 
 (defun mime-edit-make-boundary ()
   (concat mime-multipart-boundary "_"
-	  (replace-space-with-underline (current-time-string))
-	  ))
+	  (replace-space-with-underline (current-time-string))))
 
 (defun mime-edit-translate-body ()
   "Encode the tagged MIME body in current buffer in MIME compliant message."
@@ -2532,8 +2378,7 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 	  ret)
       (while (mime-edit-process-multipart-1
 	      (format "%s-%d" boundary i))
-	(setq i (1+ i))
-	)
+	(setq i (1+ i)))
       (save-restriction
 	;; We are interested in message body.
 	(let* ((beg
@@ -2553,8 +2398,7 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 		  (point))))
 	  (setq ret (mime-edit-translate-region
 		     beg end
-		     (format "%s-%d" boundary i)))
-	  ))
+		     (format "%s-%d" boundary i)))))
       (mime-edit-dequote-region (point-min)(point-max))
       (let ((contype (car ret))		;Content-Type
 	    (encoding (nth 1 ret))	;Content-Transfer-Encoding
@@ -2562,8 +2406,7 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 	;; Insert User-Agent field
 	(and mime-edit-insert-user-agent-field
 	     (or (mail-position-on-field "User-Agent")
-		 (insert mime-edit-user-agent-value)
-		 ))
+		 (insert mime-edit-user-agent-value)))
 	;; Make primary MIME headers.
 	(or (mail-position-on-field "MIME-Version")
 	    (insert mime-edit-mime-version-value))
@@ -2581,8 +2424,7 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 	(if encoding
 	    (progn
 	      (mail-position-on-field "Content-Transfer-Encoding")
-	      (insert encoding)))
-	))))
+	      (insert encoding)))))))
 
 (defun mime-edit-translate-single-part-tag (boundary &optional prefix)
   "Translate single-part-tag to MIME header."
@@ -2603,13 +2445,11 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 	  (cons (and contype
 		     (downcase contype))
 		(and encoding
-		     (downcase encoding))))
-	)))
+		     (downcase encoding)))))))
 
 (defun mime-edit-translate-region (beg end &optional boundary multipart)
   (or boundary
-      (setq boundary (mime-edit-make-boundary))
-      )
+      (setq boundary (mime-edit-make-boundary)))
   (save-excursion
     (save-restriction
       (narrow-to-region beg end)
@@ -2635,8 +2475,7 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 		  (buffer-substring (match-beginning 0) (match-end 0)))
 	    (delete-region (match-beginning 0) (1+ (match-end 0)))
 	    (setq contype (mime-edit-get-contype tag))
-	    (setq encoding (mime-edit-get-encoding tag))
-	    ))
+	    (setq encoding (mime-edit-get-encoding tag))))
 	 (t
 	  ;; It's a multipart message.
 	  (goto-char (point-min))
@@ -2656,10 +2495,8 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 	    (setq encoding (car prio))
 	    ;; Insert the trailer.
 	    (goto-char (point-max))
-	    (insert "\n--" boundary "--\n")
-	    )))
-	 (list contype encoding boundary nparts)
-	 ))))
+	    (insert "\n--" boundary "--\n"))))
+	 (list contype encoding boundary nparts)))))
 
 (defun mime-edit-normalize-body ()
   "Normalize the body part by inserting appropriate message tags."
@@ -2678,23 +2515,19 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
       (if (looking-at "[ \t]+$")
 	  (delete-region (match-beginning 0) (match-end 0)))
       (let ((beg (point))
-	    (end (mime-edit-content-end))
-	    )
+	    (end (mime-edit-content-end)))
 	(if (= end (point-max))
 	    nil
 	  (goto-char end)
 	  (or (looking-at mime-edit-beginning-tag-regexp)
 	      (eobp)
-	      (insert (mime-make-text-tag) "\n")
-	      ))
+	      (insert (mime-make-text-tag) "\n")))
 	(visible-region beg end)
-	(goto-char beg)
-	)
+	(goto-char beg))
       (cond
        ((mime-test-content-type contype "message")
 	;; Content-type "message" should be sent as is.
-	(forward-line 1)
-	)
+	(forward-line 1))
        ((mime-test-content-type contype "text")
 	;; Define charset for text.
 	(setq charset
@@ -2723,15 +2556,13 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 	(cond ((string-equal contype "text/x-rot13-47-48")
 	       (save-excursion
 		 (forward-line)
-		 (mule-caesar-region (point) (mime-edit-content-end))
-		 ))
+		 (mule-caesar-region (point) (mime-edit-content-end))))
 	      ((string-equal contype "text/enriched")
 	       (save-excursion
 		 (let ((beg (progn
 			      (forward-line)
 			      (point)))
-		       (end (mime-edit-content-end))
-		       )
+		       (end (mime-edit-content-end)))
 		   ;; Patch for hard newlines
                    ;; (save-excursion
                    ;;   (goto-char beg)
@@ -2743,9 +2574,7 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 		   (enriched-encode beg end nil)
 		   (goto-char beg)
 		   (if (search-forward "\n\n")
-		       (delete-region beg (match-end 0))
-		     )
-		   ))))
+		       (delete-region beg (match-end 0)))))))
 	;; Point is now on current tag.
 	;; Define encoding and encode text if necessary.
 	(or encoding	;Encoding is not specified.
@@ -2776,10 +2605,8 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 					    x-ctext))
 			    (while (progn
 				     (replace-match "\e(BFrom ")
-				     (re-search-forward "^From " nil t)
-				     ))
-			  (setq encoding "quoted-printable")
-			  )))))
+				     (re-search-forward "^From " nil t)))
+			  (setq encoding "quoted-printable"))))))
 	      ;; canonicalize line break code
 	      (or (member encoding '(nil "7bit" "8bit" "quoted-printable"))
 		  (save-restriction
@@ -2796,10 +2623,8 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 	      (goto-char beg)
 	      (mime-encode-region beg (mime-edit-content-end)
 				  (or encoding "7bit"))
-	      (mime-edit-define-encoding encoding)
-	      ))
-	(goto-char (mime-edit-content-end))
-	)
+	      (mime-edit-define-encoding encoding)))
+	(goto-char (mime-edit-content-end)))
        ((null encoding)		;Encoding is not specified.
 	;; Application, image, audio, video, and any other
 	;; unknown content-type without encoding should be
@@ -2809,9 +2634,7 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 	       (end (mime-edit-content-end)))
 	  (mime-encode-region beg end encoding)
 	  (mime-edit-define-encoding encoding))
-	(forward-line 1)
-	))
-      )))
+	(forward-line 1))))))
 
 (defun mime-delete-field (field)
   "Delete header FIELD."
@@ -2833,8 +2656,7 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 and insert data encoded as ENCODING."
   (message "Start the recording on %s.  Type C-g to finish the recording..."
 	   (system-name))
-  (mime-insert-encoded-file "/dev/audio" encoding)
-  )
+  (mime-insert-encoded-file "/dev/audio" encoding))
 
 
 ;;; @ Other useful commands.
@@ -2848,10 +2670,8 @@ and insert data encoded as ENCODING."
     (if (and inserter (fboundp inserter))
 	(progn
 	  (mime-edit-insert-tag "message" "rfc822")
-	  (funcall inserter message)
-	  )
-      (message "Sorry, I don't have message inserter for your MUA.")
-      )))
+	  (funcall inserter message))
+      (message "Sorry, I don't have message inserter for your MUA."))))
 
 (defun mime-edit-insert-mail (&optional message)
   (interactive)
@@ -2859,10 +2679,8 @@ and insert data encoded as ENCODING."
     (if (and inserter (fboundp inserter))
 	(progn
 	  (mime-edit-insert-tag "message" "rfc822")
-	  (funcall inserter message)
-	  )
-      (message "Sorry, I don't have mail inserter for your MUA.")
-      )))
+	  (funcall inserter message))
+      (message "Sorry, I don't have mail inserter for your MUA."))))
 
 (defun mime-edit-inserted-message-filter ()
   (save-excursion
@@ -2873,17 +2691,13 @@ and insert data encoded as ENCODING."
 	;; for Emacs 18
 	;; (if (re-search-forward "^$" (marker-position (mark-marker)))
 	(if (re-search-forward "^$" (mark t))
-	    (narrow-to-region header-start (match-beginning 0))
-	  )
+	    (narrow-to-region header-start (match-beginning 0)))
 	(goto-char header-start)
 	(while (and (re-search-forward
 		     mime-edit-yank-ignored-field-regexp nil t)
 		    (setq beg (match-beginning 0))
-		    (setq end (1+ (std11-field-end)))
-		    )
-	  (delete-region beg end)
-	  )
-	))))
+		    (setq end (1+ (std11-field-end))))
+	  (delete-region beg end))))))
 
 
 ;;; @ multipart enclosure
@@ -2897,58 +2711,46 @@ and insert data encoded as ENCODING."
       (insert (format "--<<%s>>-{\n" type))
       (goto-char (point-max))
       (insert (format "--}-<<%s>>\n" type))
-      (goto-char (point-max))
-      )
+      (goto-char (point-max)))
     (or (looking-at mime-edit-beginning-tag-regexp)
 	(eobp)
-	(insert (mime-make-text-tag) "\n")
-	)
-    ))
+	(insert (mime-make-text-tag) "\n"))))
 
 (defun mime-edit-enclose-quote-region (beg end)
   (interactive "*r")
-  (mime-edit-enclose-region-internal 'quote beg end)
-  )
+  (mime-edit-enclose-region-internal 'quote beg end))
 
 (defun mime-edit-enclose-mixed-region (beg end)
   (interactive "*r")
-  (mime-edit-enclose-region-internal 'mixed beg end)
-  )
+  (mime-edit-enclose-region-internal 'mixed beg end))
 
 (defun mime-edit-enclose-parallel-region (beg end)
   (interactive "*r")
-  (mime-edit-enclose-region-internal 'parallel beg end)
-  )
+  (mime-edit-enclose-region-internal 'parallel beg end))
 
 (defun mime-edit-enclose-digest-region (beg end)
   (interactive "*r")
-  (mime-edit-enclose-region-internal 'digest beg end)
-  )
+  (mime-edit-enclose-region-internal 'digest beg end))
 
 (defun mime-edit-enclose-alternative-region (beg end)
   (interactive "*r")
-  (mime-edit-enclose-region-internal 'alternative beg end)
-  )
+  (mime-edit-enclose-region-internal 'alternative beg end))
 
 (defun mime-edit-enclose-pgp-signed-region (beg end)
   (interactive "*r")
-  (mime-edit-enclose-region-internal 'pgp-signed beg end)
-  )
+  (mime-edit-enclose-region-internal 'pgp-signed beg end))
 
 (defun mime-edit-enclose-pgp-encrypted-region (beg end)
   (interactive "*r")
-  (mime-edit-enclose-region-internal 'pgp-encrypted beg end)
-  )
+  (mime-edit-enclose-region-internal 'pgp-encrypted beg end))
 
 (defun mime-edit-enclose-smime-signed-region (beg end)
   (interactive "*r")
-  (mime-edit-enclose-region-internal 'smime-signed beg end)
-  )
+  (mime-edit-enclose-region-internal 'smime-signed beg end))
 
 (defun mime-edit-enclose-smime-encrypted-region (beg end)
   (interactive "*r")
-  (mime-edit-enclose-region-internal 'smime-encrypted beg end)
-  )
+  (mime-edit-enclose-region-internal 'smime-encrypted beg end))
 
 (defun mime-edit-insert-key (&optional _arg)
   "Insert a pgp public key."
@@ -2970,13 +2772,11 @@ and insert data encoded as ENCODING."
 (defun mime-edit-set-split (arg)
   (interactive
    (list
-    (y-or-n-p "Do you want to enable split? ")
-    ))
+    (y-or-n-p "Do you want to enable split? ")))
   (setq mime-edit-split-message arg)
   (if arg
       (message "This message is enabled to split.")
-    (message "This message is not enabled to split.")
-    ))
+    (message "This message is not enabled to split.")))
 
 (defun mime-edit-toggle-transfer-level (&optional transfer-level)
   "Toggle transfer-level is 7bit or 8bit through.
@@ -2987,24 +2787,20 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
       (setq mime-transfer-level transfer-level)
     (if (< mime-transfer-level 8)
 	(setq mime-transfer-level 8)
-      (setq mime-transfer-level 7)
-      ))
+      (setq mime-transfer-level 7)))
   (message (format "Current transfer-level is %d bit"
 		   mime-transfer-level))
   (setq mime-transfer-level-string
 	(mime-encoding-name mime-transfer-level 'not-omit))
-  (force-mode-line-update)
-  )
+  (force-mode-line-update))
 
 (defun mime-edit-set-transfer-level-7bit ()
   (interactive)
-  (mime-edit-toggle-transfer-level 7)
-  )
+  (mime-edit-toggle-transfer-level 7))
 
 (defun mime-edit-set-transfer-level-8bit ()
   (interactive)
-  (mime-edit-toggle-transfer-level 8)
-  )
+  (mime-edit-toggle-transfer-level 8))
 
 
 ;;; @ pgp
@@ -3016,52 +2812,43 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
 (defun mime-edit-set-sign (arg)
   (interactive
    (list
-    (y-or-n-p "Do you want to sign? ")
-    ))
+    (y-or-n-p "Do you want to sign? ")))
   (if arg
       (progn
 	(or (memq 'sign mime-edit-pgp-processing)
 	    (setq mime-edit-pgp-processing 
 		  (nconc mime-edit-pgp-processing 
 			 (copy-sequence '(sign)))))
-	(message "This message will be signed.")
-	)
+	(message "This message will be signed."))
     (setq mime-edit-pgp-processing 
 	  (delq 'sign mime-edit-pgp-processing))
-    (message "This message will not be signed.")
-    ))
+    (message "This message will not be signed.")))
 
 (defun mime-edit-set-encrypt (arg)
   (interactive
    (list
-    (y-or-n-p "Do you want to encrypt? ")
-    ))
+    (y-or-n-p "Do you want to encrypt? ")))
   (if arg
       (progn
 	(or (memq 'encrypt mime-edit-pgp-processing)
 	    (setq mime-edit-pgp-processing 
 		  (nconc mime-edit-pgp-processing 
 			 (copy-sequence '(encrypt)))))
-	(message "This message will be encrypted.")
-	)
+	(message "This message will be encrypted."))
     (setq mime-edit-pgp-processing
 	  (delq 'encrypt mime-edit-pgp-processing))
-    (message "This message will not be encrypted.")
-    ))
+    (message "This message will not be encrypted.")))
 
 (defun mime-edit-pgp-enclose-buffer ()
   (let ((beg (save-excursion
 	       (goto-char (point-min))
 	       (if (search-forward (concat "\n" mail-header-separator "\n"))
-		   (match-end 0)
-		 )))
-	)
+		   (match-end 0)))))
     (when beg
       (if (memq 'sign mime-edit-pgp-processing)
 	  (mime-edit-enclose-pgp-signed-region beg (point-max)))
       (if (memq 'encrypt mime-edit-pgp-processing)
-	  (mime-edit-enclose-pgp-encrypted-region beg (point-max)))
-      )))
+	  (mime-edit-enclose-pgp-encrypted-region beg (point-max))))))
 
 ;;; @ split
 ;;;
@@ -3073,21 +2860,18 @@ Optional TRANSFER-LEVEL is a number of transfer-level, 7 or 8."
   (insert mime-edit-mime-version-field-for-message/partial)
   (insert (format "\
 Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
-		  id number total separator))
-  )
+		  id number total separator)))
 
 (defun mime-edit-split-and-send
   (&optional cmd lines mime-edit-message-max-length)
   (interactive)
   (or lines
       (setq lines
-	    (count-lines (point-min) (point-max)))
-      )
+	    (count-lines (point-min) (point-max))))
   (or mime-edit-message-max-length
       (setq mime-edit-message-max-length
 	    (or (cdr (assq major-mode mime-edit-message-max-lines-alist))
-		mime-edit-message-default-max-lines))
-      )
+		mime-edit-message-default-max-lines)))
   (let ((separator mail-header-separator)
 	(id (concat "\""
 		    (replace-space-with-underline (current-time-string))
@@ -3108,9 +2892,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 		      mime-edit-split-message-sender-alist))
 	       (lambda ()
 		 (interactive)
-		 (error "Split sender is not specified for `%s'." major-mode)
-		 )
-	       ))
+		 (error "Split sender is not specified for `%s'." major-mode))))
 	  (mime-edit-partial-number 1)
 	  data)
       (with-current-buffer copy-buf
@@ -3122,13 +2904,11 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	       (concat "^" (regexp-quote separator) "$") nil t)
 	      (let ((he (match-beginning 0)))
 		(replace-match "")
-		(narrow-to-region (point-min) he)
-		))
+		(narrow-to-region (point-min) he)))
 	  (goto-char (point-min))
 	  (while (re-search-forward mime-edit-split-blind-field-regexp nil t)
 	    (delete-region (match-beginning 0)
-			   (1+ (std11-field-end)))
-	    )))
+			   (1+ (std11-field-end))))))
       (while (< mime-edit-partial-number total)
 	(erase-buffer)
 	(with-current-buffer copy-buf
@@ -3137,10 +2917,8 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 		      (progn
 			(goto-char (point-min))
 			(forward-line (1- mime-edit-message-max-length))
-			(point))
-		      ))
-	  (delete-region (point-min)(point))
-	  )
+			(point))))
+	  (delete-region (point-min)(point)))
 	(mime-edit-insert-partial-header
 	 header subject id mime-edit-partial-number total separator)
 	(insert data)
@@ -3149,16 +2927,13 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 			   mime-edit-partial-number total))
 	  (call-interactively command)
 	  (message (format "Sending %d/%d...done"
-			   mime-edit-partial-number total))
-	  )
+			   mime-edit-partial-number total)))
 	(setq mime-edit-partial-number
-	      (1+ mime-edit-partial-number))
-	)
+	      (1+ mime-edit-partial-number)))
       (erase-buffer)
       (with-current-buffer copy-buf
 	(setq data (buffer-string))
-	(erase-buffer)
-	)
+	(erase-buffer))
       (mime-edit-insert-partial-header
        header subject id mime-edit-partial-number total separator)
       (insert data)
@@ -3166,9 +2941,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	(message (format "Sending %d/%d..."
 			 mime-edit-partial-number total))
 	(message (format "Sending %d/%d...done"
-			 mime-edit-partial-number total))
-	)
-      )))
+			 mime-edit-partial-number total))))))
 
 (defun mime-edit-maybe-split-and-send (&optional cmd)
   (interactive)
@@ -3176,12 +2949,10 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
   (let ((mime-edit-message-max-length
 	 (or (cdr (assq major-mode mime-edit-message-max-lines-alist))
 	     mime-edit-message-default-max-lines))
-	(lines (count-lines (point-min) (point-max)))
-	)
+	(lines (count-lines (point-min) (point-max))))
     (if (and (> lines mime-edit-message-max-length)
 	     mime-edit-split-message)
-	(mime-edit-split-and-send cmd lines mime-edit-message-max-length)
-      )))
+	(mime-edit-split-and-send cmd lines mime-edit-message-max-length))))
 
 
 ;;; @ preview message
@@ -3199,16 +2970,13 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	 (buf-name (buffer-name))
 	 (temp-buf-name (concat "*temp-article:" buf-name "*"))
 	 (buf (get-buffer temp-buf-name))
-	 (pgp-processing mime-edit-pgp-processing)
-	 )
+	 (pgp-processing mime-edit-pgp-processing))
     (if buf
 	(progn
 	  (switch-to-buffer buf)
-	  (erase-buffer)
-	  )
+	  (erase-buffer))
       (setq buf (get-buffer-create temp-buf-name))
-      (switch-to-buffer buf)
-      )
+      (switch-to-buffer buf))
     (insert str)
     (setq major-mode 'mime-temp-message-mode)
     (make-local-variable 'mail-header-separator)
@@ -3228,8 +2996,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
     (goto-char (point-min))
     (if (re-search-forward
 	 (concat "^" (regexp-quote separator) "$"))
-	(replace-match "")
-      )
+	(replace-match ""))
     (mime-view-buffer)
     (make-local-variable 'mime-edit-temp-message-buffer)
     (setq mime-edit-temp-message-buffer buf)))
@@ -3294,8 +3061,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	    (save-excursion
 	      (if (re-search-forward boundary-pat nil t)
 		  (setq end (match-beginning 0))
-		(setq end (point-max))
-		)
+		(setq end (point-max)))
 	      (save-restriction
 		(narrow-to-region beg end)
 		(cond
@@ -3315,27 +3081,20 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 				   (if (search-forward "\n\n" nil t)
 				       (match-end 0)
 				     (point-min)))
-		    (goto-char (point-max))
-		    ))
+		    (goto-char (point-max))))
 		 (t 
 		  (mime-edit-decode-message-in-buffer
 		   (if (eq subtype 'digest)
 		       (eval-when-compile
-			 (make-mime-content-type 'message 'rfc822))
-		     )
+			 (make-mime-content-type 'message 'rfc822)))
 		   not-decode-text)
-		  (goto-char (point-max))
-		  ))
-		))))
-	))
+		  (goto-char (point-max))))))))))
     (goto-char (point-min))
     (or (= (point-min) 1)
 	(delete-region (point-min)
 		       (if (search-forward "\n\n" nil t)
 			   (match-end 0)
-			 (point-min)
-			 )))
-    ))
+			 (point-min))))))
 
 (defun mime-edit-decode-single-part-in-buffer
   (content-type not-decode-text &optional content-disposition)
@@ -3368,8 +3127,7 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 		       (concat "; " str)
 		     (setq bytes (+ bs 1))
 		     (concat ";\n " str)
-		     )
-		   )))
+		     ))))
 	     (mime-content-type-parameters content-type) nil)))
 	 encoding
 	 encoded
@@ -3397,16 +3155,13 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 				   (concat "; " str)
 				 (setq bytes (+ bs 1))
 				 (concat ";\n " str)
-				 )
-			       ))
+				 )))
 			   (mime-content-disposition-parameters
 			    content-disposition)
-			   nil))))
-	 )
+			   nil)))))
     (if disposition-type
 	(setq pstr (format "%s\nContent-Disposition: %s%s"
-			   pstr disposition-type disposition-str))
-      )
+			   pstr disposition-type disposition-str)))
     (mapc (lambda (field)
 	    (save-excursion
 	      (when (re-search-forward (concat "^" field ":") limit t)
@@ -3437,40 +3192,32 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 			(mime-decode-region
 			 (match-end 0)(point-max) encoding)
 			(setq encoded t
-			      encoding nil)
-			)))))))
+			      encoding nil))))))))
     (if (and (eq type 'text)
 	     (or encoded (not not-decode-text)))
  	(progn
  	  (save-excursion
  	    (goto-char (point-min))
  	    (while (re-search-forward "\r\n" nil t)
- 	      (replace-match "\n")
- 	      ))
+ 	      (replace-match "\n")))
  	  (decode-mime-charset-region (point-min)(point-max)
- 				      (or charset default-mime-charset))
-	  ))
+ 				      (or charset default-mime-charset))))
     (let ((he (if (re-search-forward "^$" nil t)
 		  (match-end 0)
-		(point-min)
-		)))
+		(point-min))))
       (if (and (eq type 'text)
 	       (eq subtype 'x-rot13-47-48))
-	  (mule-caesar-region he (point-max))
-	)
+	  (mule-caesar-region he (point-max)))
       (if (= (point-min) 1)
 	  (progn
 	    (goto-char he)
 	    (insert "\n"
 		    (mime-create-tag
-		     (format "%s/%s%s" type subtype pstr) encoding))
-	    )
+		     (format "%s/%s%s" type subtype pstr) encoding)))
 	(delete-region (point-min) he)
 	(insert
 	 (mime-create-tag (format "%s/%s%s" type subtype pstr)
-			  encoding))
-	))
-    ))
+			  encoding))))))
 
 ;;;###autoload
 (defun mime-edit-decode-message-in-buffer (&optional default-content-type
@@ -3484,19 +3231,15 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	    (cond
 	     ((and (eq type 'application)
 		   (eq (mime-content-type-subtype ctl) 'pgp-signature))
-	      (delete-region (point-min)(point-max))
-	      )
+	      (delete-region (point-min)(point-max)))
 	     ((eq type 'multipart)
-	      (mime-edit-decode-multipart-in-buffer ctl not-decode-text)
-	      )
+	      (mime-edit-decode-multipart-in-buffer ctl not-decode-text))
 	     (t
 	      (mime-edit-decode-single-part-in-buffer
-	       ctl not-decode-text (mime-read-Content-Disposition))
-	      )))
+	       ctl not-decode-text (mime-read-Content-Disposition)))))
 	(or not-decode-text
 	    (decode-mime-charset-region (point-min) (point-max)
-					default-mime-charset))
-	)
+					default-mime-charset)))
       (if (= (point-min) 1)
 	  (progn
 	    (save-restriction
@@ -3504,11 +3247,8 @@ Content-Type: message/partial; id=%s; number=%d; total=%d\n%s\n"
 	      (goto-char (point-min))
 	      (while (re-search-forward
 		      mime-edit-again-ignored-field-regexp nil t)
-		(delete-region (match-beginning 0) (1+ (std11-field-end)))
-		))
-	    (mime-decode-header-in-buffer (not not-decode-text))
-	    ))
-      )))
+		(delete-region (match-beginning 0) (1+ (std11-field-end)))))
+	    (mime-decode-header-in-buffer (not not-decode-text)))))))
 
 ;;;###autoload
 (defun mime-edit-again (&optional not-decode-text no-separator not-turn-on)
@@ -3520,17 +3260,14 @@ converted to MIME-Edit tags."
   (if (search-forward
        (concat "\n" (regexp-quote mail-header-separator) "\n")
        nil t)
-      (replace-match "\n\n")
-    )
+      (replace-match "\n\n"))
   (mime-edit-decode-message-in-buffer nil not-decode-text)
   (goto-char (point-min))
   (or no-separator
       (and (re-search-forward "^$")
-	   (replace-match mail-header-separator)
-	   ))
+	   (replace-match mail-header-separator)))
   (or not-turn-on
-      (turn-on-mime-edit)
-      ))
+      (turn-on-mime-edit)))
 
 
 ;;; @ end

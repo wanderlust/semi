@@ -44,16 +44,14 @@
 (set-alist 'mime-edit-split-message-sender-alist
            'mail-mode (lambda ()
                         (interactive)
-                        (funcall send-mail-function)
-                        ))
+                        (funcall send-mail-function)))
 
 
 ;;; @ for signature
 ;;;
 
 (if mime-setup-use-signature
-    (setq mail-signature nil)
-  )
+    (setq mail-signature nil))
 
 
 ;;; @ end

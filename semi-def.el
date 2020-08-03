@@ -63,16 +63,14 @@
        (put-text-property from to 'mouse-face mime-button-mouse-face))
   (put-text-property from to 'mime-button-callback function)
   (and data
-       (put-text-property from to 'mime-button-data data))
-  )
+       (put-text-property from to 'mime-button-data data)))
 
 (defsubst mime-insert-button (string function &optional data)
   "Insert STRING as button with callback FUNCTION and DATA."
   (save-restriction
     (narrow-to-region (point)(point))
     (insert "[" string "]\n")
-    (mime-add-button (point-min)(point-max) function data)
-    ))
+    (mime-add-button (point-min)(point-max) function data)))
 
 (defvar mime-button-mother-dispatcher nil)
 
@@ -85,8 +83,7 @@
       (setq buf (current-buffer)
 	    point (point)
 	    func (get-text-property (point) 'mime-button-callback)
-	    data (get-text-property (point) 'mime-button-data)
-	    ))
+	    data (get-text-property (point) 'mime-button-data)))
     ;; Do not use `with-current-buffer'.
     ;; buf may be the current buffer.
     (save-excursion
@@ -95,8 +92,7 @@
       (if func
 	  (apply func data)
 	(if (fboundp mime-button-mother-dispatcher)
-	    (funcall mime-button-mother-dispatcher event)
-	  )))))
+	    (funcall mime-button-mother-dispatcher event))))))
 
 
 ;;; @ for URL
@@ -172,12 +168,9 @@ activate."
 		    (mapc (lambda (parameter)
 			    (when (setq func (cdr (assq parameter condition)))
 			      (autoload func file)))
-			  '(method body-presentation-method)))
-		)
-	    (error "Function for mode `%s' is not found." mode)
-	    ))
-      (error "Variable for target-type `%s' is not found." target-type)
-      )))
+			  '(method body-presentation-method))))
+	    (error "Function for mode `%s' is not found." mode)))
+      (error "Variable for target-type `%s' is not found." target-type))))
 
 
 ;;; @ end

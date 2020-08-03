@@ -49,8 +49,7 @@
        (condition-case err
 	   (w3-region p (point-max))
 	 (error (message "%s" err)))
-       (mime-put-keymap-region p (point-max) w3-mode-map)
-       ))))
+       (mime-put-keymap-region p (point-max) w3-mode-map)))))
 
 (defun url-cid (url &optional proxy-info)
   (let ((entity

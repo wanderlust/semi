@@ -35,10 +35,8 @@ it is used as hook to set."
   (if (featurep module)
       (funcall func)
     (or hook-name
-	(setq hook-name (intern (concat (symbol-name module) "-load-hook")))
-	)
-    (add-hook hook-name func)
-    ))
+	(setq hook-name (intern (concat (symbol-name module) "-load-hook"))))
+    (add-hook hook-name func)))
 
 
 ;; for image/*
@@ -87,8 +85,7 @@ it is used as hook to set."
 	     
 	     (set-alist 'mime-view-type-subtype-score-alist
 			`(text . ,subtype) 3))
-	   '(vcard x-vcard))
-     ))
+	   '(vcard x-vcard))))
 
 ;; for PGP
 (defvar mime-setup-enable-epg t
@@ -194,9 +191,7 @@ it is used as hook to set."
 	(subtype . x-pkcs7-signature)
 	(body . mime-pgp-verify-when-preview)
 	(body-presentation-method . mime-preview-application/*-signature))
-      'strict "mime-pgp")
-     )
-  )
+      'strict "mime-pgp")))
 
 
 (eval-after-load "mime-view"
@@ -214,8 +209,7 @@ it is used as hook to set."
 	(subtype . vnd.ms-tnef)
 	(body . visible)
 	(body-presentation-method . mime-display-application/ms-tnef))
-      'strict "mime-tnef")
-     ))
+      'strict "mime-tnef")))
 
 
 ;;; @ for mime-edit
@@ -264,8 +258,7 @@ it is used as hook to set."
 	(let ((key
 	       (or (cdr (assq major-mode mime-setup-signature-key-alist))
 		   mime-setup-default-signature-key)))
-	  (define-key keymap key (function insert-signature))
-	  ))))
+	  (define-key keymap key (function insert-signature))))))
 
 (when mime-setup-use-signature
   (add-hook 'mime-edit-mode-hook 'mime-setup-set-signature-key)
@@ -290,8 +283,7 @@ it is used as hook to set."
 	'((type . application)
 	  (method . mime-mac-save-and-play-with-open))
 	'with-default
-	"mime-mac")
-       )))
+	"mime-mac"))))
 
 
 ;;; @ end
