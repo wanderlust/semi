@@ -572,8 +572,7 @@
     (+ (mime-tnef-byte array idx)
        (* (mime-tnef-byte array (1+ idx)) 256)
        (* (mime-tnef-byte array (+ idx 2)) 65536)
-       (* (mime-tnef-byte array (+ idx 3)) 16777216)))
-  )
+       (* (mime-tnef-byte array (+ idx 3)) 16777216))))
 
 
 ;;; Debug
@@ -743,12 +742,10 @@
 		  (setq read (+ read 4 (mime-tnef-padded-length length)))))
 	       (t
 		(message "TNEF may be corrupted!!")
-		(throw :done (nreverse result)))
-	       ))
+		(throw :done (nreverse result)))))
 	    (setq result
 		  (cons `((name . ,name) (type . ,type) (values . ,values))
-			result))
-	    )))
+			result)))))
       (nreverse result))))
 
 (defun mime-tnef-mapi-string (mapi-element tnef)
@@ -776,8 +773,7 @@
 	  (mime-tnef-debug "Multiple ATTACHDATA for single ATTACHRENDDATA"))
 	(setq file (append
 		    `(,(assq 'start (car elements))
-		      ,(assq 'end (car elements))
-		      )
+		      ,(assq 'end (car elements)))
 		    (delq (assq 'start file)
 			  (delq (assq 'end file) file)))))
        ((eq type 'ATTACHTITLE)
@@ -803,8 +799,7 @@
 		;; ATTACH_LONG_FILENAME is preferred.
 		(unless (assq 'longname file)
 		  (setq file (cons `(name . ,(mime-tnef-mapi-string elt tnef))
-				   (delq (assq 'name file) file)))))
-	       ))
+				   (delq (assq 'name file) file)))))))
 	    (setq mapi (cdr mapi))))))
       (setq elements (cdr elements)))
     (delq nil (nreverse (cons file files)))))
@@ -858,8 +853,7 @@
        (goto-char (point-min))
        (mime-tnef-translate-single-part-tag)
        (buffer-string)))
-    (insert data "\n")
-    ))
+    (insert data "\n")))
 
 (defun mime-tnef-translate-single-part-tag ()
   (if (re-search-forward mime-edit-single-part-tag-regexp nil t)
@@ -878,8 +872,7 @@
 	  (cons (and contype
 		     (downcase contype))
 		(and encoding
-		     (downcase encoding))))
-	)))
+		     (downcase encoding)))))))
 
 (defvar mime-tnef-buffers nil)
 
@@ -933,8 +926,7 @@
 	(mime-display-entity
 	 tnef-entity nil '((header . invisible)
 			   (body . visible)
-			   (entity-button . invisible))))
-      )))
+			   (entity-button . invisible)))))))
 
 ;;; @ end
 ;;;

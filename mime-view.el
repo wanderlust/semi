@@ -114,8 +114,7 @@ multipart/multilingual entities. See docstring of
   `(("original" . 2)
     ("human" . 1)
     ("automated" . -1)
-    (,mime-display-multipart/multilingual-unknown-translation-type . 0)
-    )
+    (,mime-display-multipart/multilingual-unknown-translation-type . 0))
   "Specify scores Content-Translation-Type: header fields.  When
 score is negative value, corresponding entity is not displayed
 automatically.  If field calue is missing or field does not
@@ -187,8 +186,7 @@ Each element is a list consists of required module, previewer function and requi
 (defvar mime-raw-representation-type-alist
   '((mime-show-message-mode     . binary)
     (mime-temp-message-mode     . binary)
-    (t                          . cooked)
-    )
+    (t                          . cooked))
   "Alist of major-mode vs. representation-type of mime-raw-buffer.
 Each element looks like (SYMBOL . REPRESENTATION-TYPE).  SYMBOL is
 major-mode or t.  t means default.  REPRESENTATION-TYPE must be
@@ -219,8 +217,7 @@ mime-mother-buffer, it returns original major-mode of the
 mother-buffer."
   (if (and recursive mime-mother-buffer)
       (with-current-buffer mime-mother-buffer
-	(mime-preview-original-major-mode recursive)
-	)
+	(mime-preview-original-major-mode recursive))
     (cdr (assq 'major-mode
 	       (get-text-property (or point
 				      (if (> (point) (buffer-size))
@@ -240,15 +237,13 @@ mother-buffer."
       (setq rest (or (mime-entity-content-type entity)
 		     (make-mime-content-type 'text 'plain))
 	    situation (cons (car rest) situation)
-	    rest (cdr rest))
-      )
+	    rest (cdr rest)))
     (unless (assq 'subtype situation)
       (or rest
 	  (setq rest (or (cdr (mime-entity-content-type entity))
 			 '((subtype . plain)))))
       (setq situation (cons (car rest) situation)
-	    rest (cdr rest))
-      )
+	    rest (cdr rest)))
     (while rest
       (setq param (car rest))
       (or (assoc (car param) situation)
@@ -263,8 +258,7 @@ mother-buffer."
 	  (setq situation (cons (cons 'disposition-type
 				      (mime-content-disposition-type rest))
 				situation)
-		rest (mime-content-disposition-parameters rest))
-	))
+		rest (mime-content-disposition-parameters rest))))
     (while rest
       (setq param (car rest)
 	    name (car param))
@@ -314,8 +308,7 @@ mother-buffer."
 	     (cell (assq field situation)))
 	(if cell
 	    (or (memq (cdr cell) ignored-values)
-		(setq dest (cons situation dest))
-		)))
+		(setq dest (cons situation dest)))))
       (setq situations (cdr situations)))
     dest))
 
@@ -329,13 +322,9 @@ mother-buffer."
 	(when ecell
 	  (if (equal cell ecell)
 	      (setq match (1+ match))
-	    (setq example (delq ecell example))
-	    ))
-	)
-      (setq situation (cdr situation))
-      )
-    (cons match example)
-    ))
+	    (setq example (delq ecell example)))))
+      (setq situation (cdr situation)))
+    (cons match example)))
 
 (defun mime-sort-situation (situation)
   (sort situation
@@ -347,30 +336,23 @@ mother-buffer."
 			   (mode . 3)
 			   (method . 4)
 			   (major-mode . 5)
-			   (disposition-type . 6)
-			   ))
+			   (disposition-type . 6)))
 		  a-order b-order)
 	      (if (symbolp a-t)
 		  (let ((ret (assq a-t order)))
 		    (if ret
 			(setq a-order (cdr ret))
-		      (setq a-order 7)
-		      ))
-		(setq a-order 8)
-		)
+		      (setq a-order 7)))
+		(setq a-order 8))
 	      (if (symbolp b-t)
 		  (let ((ret (assq b-t order)))
 		    (if ret
 			(setq b-order (cdr ret))
-		      (setq b-order 7)
-		      ))
-		(setq b-order 8)
-		)
+		      (setq b-order 7)))
+		(setq b-order 8))
 	      (if (= a-order b-order)
 		  (string< (format "%s" a-t)(format "%s" b-t))
-		(< a-order b-order))
-	      )))
-  )
+		(< a-order b-order))))))
 
 (defun mime-unify-situations (entity-situation
 			      condition situation-examples
@@ -403,21 +385,18 @@ mother-buffer."
 			     (setq max-score ret-score
 				   max-escore (cdar examples)
 				   max-examples (list (cdr ret))
-				   max-situations (list situation))
-			     )
+				   max-situations (list situation)))
 			    ((= ret-score max-score)
 			     (cond ((> (cdar examples) max-escore)
 				    (setq max-escore (cdar examples)
 					  max-examples (list (cdr ret))
-					  max-situations (list situation))
-				    )
+					  max-situations (list situation)))
 				   ((= (cdar examples) max-escore)
 				    (setq max-examples
 					  (cons (cdr ret) max-examples))
 				    (or (member situation max-situations)
 					(setq max-situations
-					      (cons situation max-situations)))
-				    )))))
+					      (cons situation max-situations))))))))
 		    (setq examples (cdr examples))))
 		(setq rest (cdr rest)))
 	      (when max-situations
@@ -430,10 +409,8 @@ mother-buffer."
 			(setcdr cell (1+ (cdr cell)))
 		      (setq situation-examples
 			    (cons (cons example 0)
-				  situation-examples))
-		      ))
-		  (setq max-examples (cdr max-examples))
-		  )))))
+				  situation-examples))))
+		  (setq max-examples (cdr max-examples)))))))
     (cons ret situation-examples)
     ;; ret: list of situations
     ;; situation-examples: new examples (notoce that contents of
@@ -580,8 +557,7 @@ mother-buffer."
 		       min-freq freq
 		       d-i i
 		       d-j j
-		       dest (cons (cdr ret) freq))
-		 )
+		       dest (cons (cdr ret) freq)))
 		((= max-sim sim)
 		 (cond ((> min-det-ret det-ret)
 			(setq min-det-ret det-ret
@@ -589,27 +565,20 @@ mother-buffer."
 			      min-freq freq
 			      d-i i
 			      d-j j
-			      dest (cons (cdr ret) freq))
-			)
+			      dest (cons (cdr ret) freq)))
 		       ((= min-det-ret det-ret)
 			(cond ((> min-det-org det-org)
 			       (setq min-det-org det-org
 				     min-freq freq
 				     d-i i
 				     d-j j
-				     dest (cons (cdr ret) freq))
-			       )
+				     dest (cons (cdr ret) freq)))
 			      ((= min-det-org det-org)
 			       (cond ((> min-freq freq)
 				      (setq min-freq freq
 					    d-i i
 					    d-j j
-					    dest (cons (cdr ret) freq))
-				      ))
-			       ))
-			))
-		 ))
-	  )
+					    dest (cons (cdr ret) freq)))))))))))
 	(setq jr (cdr jr)
 	      j (1+ j)))
       (setq ir (cdr ir)
@@ -624,8 +593,7 @@ mother-buffer."
 	(setq situation-examples
 	      (cdr situation-examples))
       (setq ir (nthcdr (1- d-i) situation-examples))
-      (setcdr ir (cddr ir))
-      )
+      (setcdr ir (cddr ir)))
     (if (setq ir (assoc (car dest) situation-examples))
 	(progn
 	  (setcdr ir (+ (cdr ir)(cdr dest)))
@@ -674,11 +642,9 @@ mother-buffer."
 		    (if (consp entity-node-id)
 			(mapconcat (function
 				    (lambda (num)
-				      (format "%s" (1+ num))
-				      ))
+				      (format "%s" (1+ num))))
 				   (reverse entity-node-id) ".")
-		      "0"))
-		))
+		      "0"))))
        (cond (access-type
 	      (let ((server (assoc "server" params)))
 		(setq access-type (cdr access-type))
@@ -687,15 +653,12 @@ mother-buffer."
 			    num subject access-type (cdr server))
 		(let ((site (cdr (assoc "site" params)))
 		      (dir (cdr (assoc "directory" params)))
-		      (url (cdr (assoc "url" params)))
-		      )
+		      (url (cdr (assoc "url" params))))
 		  (if url
 		      (format "%s %s ([%s] %s)"
 			      num subject access-type url)
 		    (format "%s %s ([%s] %s:%s)"
-			    num subject access-type site dir))
-		  )))
-	    )
+			    num subject access-type site dir))))))
 	   (t
 	    (let* ((charset (cdr (assoc "charset" params)))
 		   (encoding (mime-entity-encoding entity))
@@ -717,10 +680,8 @@ mother-buffer."
 	       num " " subject
 	       (if (>= (+ (current-column)(length rest))(window-width))
 		   "\n\t")
-	       rest))
-	    )))
-     (function mime-preview-play-current-entity))
-    ))
+	       rest)))))
+     (function mime-preview-play-current-entity))))
 
 
 ;;; @@ entity-header
@@ -758,8 +719,7 @@ Each elements are regexp of field-name.")
 							field-type field-value)
   (let ((s-field (assq field-type calist)))
     (cond ((null s-field)
-	   (cons (cons field-type field-value) calist)
-	   )
+	   (cons (cons field-type field-value) calist))
 	  (t calist))))
 
 (define-calist-field-match-method
@@ -938,8 +898,7 @@ Each elements are regexp of field-name.")
 	 ;; Stuffed or normal line
 	 ((looking-at " ?\\(.*?\\)\\( ?\\)$")
 	  (list 0 (if (zerop (length (match-string 2))) t nil)
-		(match-beginning 1)))
-	 )))
+		(match-beginning 1))))))
 
 (defun mime-display-text/plain-flowed (&optional buffer delete-space)
   (with-current-buffer (or (current-buffer) buffer)
@@ -997,8 +956,7 @@ Each elements are regexp of field-name.")
 	    ;; Beginnig of flowed text
 	    (setq beg-flow (car line)
 		  depth (nth 1 line))))
-	(setq line next)
-	))))
+	(setq line next)))))
 
 (defun mime-display-text/plain (entity situation)
   (save-restriction
@@ -1006,16 +964,14 @@ Each elements are regexp of field-name.")
     (when (mime-display-insert-text-content entity)
       (when (null (eq (char-before (point-max)) ?\n))
 	(goto-char (point-max))
-	(insert "\n")
-	)
+	(insert "\n"))
       (when (equal (downcase (or (cdr (assoc "format" situation)) ""))
 		   "flowed")
 	(mime-display-text/plain-flowed
 	 nil (equal (downcase (or (cdr (assoc "delsp" situation)) ""))
 		    "yes")))
       (mime-add-url-buttons)
-      (run-hooks 'mime-display-text/plain-hook)
-      )))
+      (run-hooks 'mime-display-text/plain-hook))))
 
 (autoload 'richtext-decode "richtext")
 
@@ -1024,16 +980,14 @@ Each elements are regexp of field-name.")
     (narrow-to-region (point-max)(point-max))
     (when (mime-display-insert-text-content entity)
       (remove-text-properties (point-min) (point-max) '(face nil))
-      (richtext-decode (point-min) (point-max))
-      )))
+      (richtext-decode (point-min) (point-max)))))
 
 (defun mime-display-text/enriched (entity _situation)
   (save-restriction
     (narrow-to-region (point-max)(point-max))
     (when (mime-display-insert-text-content entity)
       (remove-text-properties (point-min) (point-max) '(face nil))
-      (enriched-decode (point-min) (point-max))
-      )))
+      (enriched-decode (point-min) (point-max)))))
 
 (defun mime-display-text/html-previewer-params ()
   (and mime-view-text/html-previewer
@@ -1060,21 +1014,18 @@ Each elements are regexp of field-name.")
 \[[ or click here by mouse button-2.             ]]"
     "\
 \[[ This is message/partial style split message. ]]
-\[[ Please press `v' key in this buffer.         ]]"
-    ))
+\[[ Please press `v' key in this buffer.         ]]"))
 
 (defun mime-display-message/partial-button (&optional _entity _situation)
   (save-restriction
     (goto-char (point-max))
     (if (not (search-backward "\n\n" nil t))
-	(insert "\n")
-      )
+	(insert "\n"))
     (goto-char (point-max))
     (narrow-to-region (point-max)(point-max))
     (insert mime-view-announcement-for-message/partial)
     (mime-add-button (point-min)(point-max)
-		     #'mime-preview-play-current-entity)
-    ))
+		     #'mime-preview-play-current-entity)))
 
 (defun mime-display-message/rfc822 (entity situation)
   (let ((child (car (mime-entity-children entity)))
@@ -1099,8 +1050,7 @@ Each elements are regexp of field-name.")
 	      (cons original-major-mode-cell default-situation)))
     (while children
       (mime-display-entity (car children) nil default-situation)
-      (setq children (cdr children))
-      )))
+      (setq children (cdr children)))))
 
 (defvar mime-view-entity-lowest-score -1)
 
@@ -1109,8 +1059,7 @@ Each elements are regexp of field-name.")
     ((text . richtext) . 2)
     ((text . plain)    . 1)
     ((text . html)     . mime-view-text/html-entity-score)
-    (multipart . mime-view-multipart-entity-score)
-    )
+    (multipart . mime-view-multipart-entity-score))
   "Alist MEDIA-TYPE vs corresponding score.
 MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default.
 If MEDIA-TYPE does not have corresponding score, `mime-view-entity-lowest-score' is used.
@@ -1135,8 +1084,7 @@ Score is integer or function or variable.  The function receives entity and retu
 		     mime-view-type-subtype-score-alist)
 	      (assq (cdr (assq 'type situation))
 		    mime-view-type-subtype-score-alist)
-	      (assq t mime-view-type-subtype-score-alist)
-	      ))))
+	      (assq t mime-view-type-subtype-score-alist)))))
     (cond
      ((functionp score)
       (setq score (funcall score entity)))
@@ -1144,8 +1092,7 @@ Score is integer or function or variable.  The function receives entity and retu
       (setq score (symbol-value score))))
     (if (numberp score)
 	score
-      mime-view-entity-lowest-score)
-    ))
+      mime-view-entity-lowest-score)))
 
 (defun mime-view-multipart-entity-score (entity)
   (apply 'max (or (mapcar 'mime-view-entity-score
@@ -1196,8 +1143,7 @@ Score is integer or function or variable.  The function receives entity and retu
 	       (setq score (mime-view-entity-score child child-situation))
 	       (when (>= score max-score)
 		 (setq p child
-		       max-score score)
-		 ))
+		       max-score score)))
 	     (cons child child-situation))
 	   (mime-entity-children entity)))
     (or p (setq p (caar pairs)))
@@ -1213,8 +1159,7 @@ Score is integer or function or variable.  The function receives entity and retu
 			  'mime-view-multipart-descendant-button
 			  (copy-alist (cdr pair))))
 	      (t (put-alist 'body 'invisible (copy-alist (cdr pair)))))))
-	  pairs)
-    ))
+	  pairs)))
 
 (defun mime-display-multipart/related (entity situation)
   (let* ((param-start (mime-parse-msg-id
@@ -1350,8 +1295,7 @@ part (if exist) or the first language message part."
 	       (put-alist 'body 'invisible
 			  (copy-alist (mime-find-entity-preview-situation
 				       child default-situation))))))
-	  (mime-entity-children entity))
-    ))
+	  (mime-entity-children entity))))
 
 ;;; @ acting-condition
 ;;;
@@ -1381,8 +1325,7 @@ part (if exist) or the first language message part."
 	    (cond ((eq field-type 'view)  (setq view field))
 		  ((eq field-type 'print) (setq print field))
 		  ((memq field-type '(compose composetyped edit)))
-		  (t (setq shared (cons field shared))))
-	    )
+		  (t (setq shared (cons field shared)))))
 	  (setq entry (cdr entry)))
 	(setq shared (nreverse shared))
 	(ctree-set-calist-with-default
@@ -1401,8 +1344,7 @@ part (if exist) or the first language message part."
  'mime-acting-condition
  '((type . application)(subtype . octet-stream)
    (mode . "play")
-   (method . mime-detect-content)
-   ))
+   (method . mime-detect-content)))
 
 (ctree-set-calist-with-default
  'mime-acting-condition
@@ -1412,44 +1354,37 @@ part (if exist) or the first language message part."
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . text)(subtype . x-rot13-47)(mode . "play")
-   (method . mime-view-caesar)
-   ))
+   (method . mime-view-caesar)))
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . text)(subtype . x-rot13-47-48)(mode . "play")
-   (method . mime-view-caesar)
-   ))
+   (method . mime-view-caesar)))
 
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . message)(subtype . rfc822)(mode . "play")
-   (method . mime-view-message/rfc822)
-   ))
+   (method . mime-view-message/rfc822)))
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . message)(subtype . partial)(mode . "play")
-   (method . mime-store-message/partial-piece)
-   ))
+   (method . mime-store-message/partial-piece)))
 
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . message)(subtype . external-body)
    ("access-type" . "anon-ftp")
-   (method . mime-view-message/external-anon-ftp)
-   ))
+   (method . mime-view-message/external-anon-ftp)))
 
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . message)(subtype . external-body)
    ("access-type" . "url")
-   (method . mime-view-message/external-url)
-   ))
+   (method . mime-view-message/external-url)))
 
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . application)(subtype . octet-stream)
-   (method . mime-save-content)
-   ))
+   (method . mime-save-content)))
 
 
 ;;; @ quitting method
@@ -1564,8 +1499,7 @@ part (if exist) or the first language message part."
 		 (cdr (assq 'body-presentation-method situation))))
 	    (if (functionp body-presentation-method)
 		(funcall body-presentation-method entity situation)
-	      (mime-display-multipart/mixed entity situation))))
-      )))
+	      (mime-display-multipart/mixed entity situation)))))))
 
 
 ;;; @ MIME viewer mode
@@ -1580,8 +1514,7 @@ part (if exist) or the first language message part."
     (scroll-up	 "Scroll-up"               mime-preview-scroll-up-entity)
     (play	 "Play current entity"     mime-preview-play-current-entity)
     (extract	 "Extract current entity"  mime-preview-extract-current-entity)
-    (print	 "Print current entity"    mime-preview-print-current-entity)
-    )
+    (print	 "Print current entity"    mime-preview-print-current-entity))
   "Menu for MIME Viewer")
 
 (defvar mime-view-popup-menu
@@ -1679,8 +1612,7 @@ part (if exist) or the first language message part."
 	      (append mime-view-mode-map (list (cons t default)))))
     (if mouse-button-2
 	(define-key mime-view-mode-map
-	  mouse-button-2 (function mime-button-dispatcher))
-      )
+	  mouse-button-2 (function mime-button-dispatcher)))
     (define-key mime-view-mode-map
       mouse-button-3 (function mime-view-popup-menu))
     (define-key mime-view-mode-map [menu-bar mime-view]
@@ -1690,8 +1622,7 @@ part (if exist) or the first language message part."
 	   (lambda (item)
 	     (define-key mime-view-mode-map
 	       (vector 'menu-bar 'mime-view (car item))
-	       (cons (nth 1 item)(nth 2 item)))
-	     ))
+	       (cons (nth 1 item)(nth 2 item)))))
 	  (reverse mime-view-menu-list))
 
     ;; (run-hooks 'mime-view-define-keymap-hook)
@@ -1708,10 +1639,8 @@ part (if exist) or the first language message part."
 	  (erase-buffer)
 	  (let ((win (get-buffer-window buf)))
 	    (if win
-		(delete-window win)
-	      ))
-	  (bury-buffer buf)
-	  ))))
+		(delete-window win)))
+	  (bury-buffer buf)))))
 
 (defvar mime-view-redisplay nil)
 
@@ -1803,11 +1732,9 @@ message.  It must be nil, `binary' or `cooked'.  If it is nil,
 	    (save-excursion
 	      (set-buffer raw-buffer)
 	      (cdr (or (assq major-mode mime-raw-representation-type-alist)
-		       (assq t mime-raw-representation-type-alist)))
-	      )))
+		       (assq t mime-raw-representation-type-alist))))))
   (if (eq representation-type 'binary)
-      (setq representation-type 'buffer)
-    )
+      (setq representation-type 'buffer))
   (setq preview-buffer (mime-display-message
 			(mime-open-entity representation-type raw-buffer)
 			preview-buffer mother default-keymap-or-function))
@@ -1818,8 +1745,7 @@ message.  It must be nil, `binary' or `cooked'.  If it is nil,
 	  (let ((m-win (and mother (get-buffer-window mother))))
 	    (if m-win
 		(set-window-buffer m-win preview-buffer)
-	      (switch-to-buffer preview-buffer)
-	      ))))))
+	      (switch-to-buffer preview-buffer)))))))
 
 (defun mime-view-mode (&optional mother ctl encoding
 				 raw-buffer preview-buffer
@@ -1856,18 +1782,14 @@ button-2	Move to point under the mouse cursor
 		(or (assq major-mode mime-raw-representation-type-alist)
 		    (assq t mime-raw-representation-type-alist)))))
 	  (if (eq type 'binary)
-	      (setq type 'buffer)
-	    )
+	      (setq type 'buffer))
 	  (setq message (mime-open-entity type raw-buffer))
 	  (or (mime-entity-content-type message)
-	      (mime-entity-set-content-type message ctl))
-	  )
+	      (mime-entity-set-content-type message ctl)))
 	(or (mime-entity-encoding message)
-	    (mime-entity-set-encoding message encoding))
-	))
+	    (mime-entity-set-encoding message encoding))))
     (mime-display-message message preview-buffer
-			  mother default-keymap-or-function)
-    ))
+			  mother default-keymap-or-function)))
 
 
 ;;; @@ utility
@@ -1893,19 +1815,15 @@ If WITH-CHILDREN, refer boundary surrounding current part and its branches."
 						      'mime-view-entity)
 			 (point))
 		     (point)
-		   (point-min)))
-	   )
+		   (point-min))))
 	  ((eq (next-single-property-change p-beg 'mime-view-entity)
 	       (point))
-	   (setq p-beg (point))
-	   ))
+	   (setq p-beg (point))))
     (setq p-end (next-single-property-change p-beg 'mime-view-entity))
     (cond ((null p-end)
-	   (setq p-end (point-max))
-	   )
+	   (setq p-end (point-max)))
 	  ((null entity-node-id)
-	   (setq p-end (point-max))
-	   )
+	   (setq p-end (point-max)))
 	  (with-children
 	   (save-excursion
 	     (catch 'tag
@@ -1923,8 +1841,7 @@ If WITH-CHILDREN, refer boundary surrounding current part and its branches."
 		   (setq p-end (or (next-single-property-change
 				    (point) 'mime-view-entity)
 				   (point-max)))))
-	       (setq p-end (point-max))))
-	   ))
+	       (setq p-end (point-max))))))
     (vector p-beg p-end entity)))
 
 
@@ -1940,8 +1857,7 @@ It decodes current entity to call internal or external method as
 \"extract\" mode.  The method is selected from variable
 `mime-acting-condition'."
   (interactive "P")
-  (mime-preview-play-current-entity ignore-examples "extract")
-  )
+  (mime-preview-play-current-entity ignore-examples "extract"))
 
 (defun mime-preview-print-current-entity (&optional ignore-examples)
   "Print current entity (maybe).
@@ -1949,8 +1865,7 @@ It decodes current entity to call internal or external method as
 \"print\" mode.  The method is selected from variable
 `mime-acting-condition'."
   (interactive "P")
-  (mime-preview-play-current-entity ignore-examples "print")
-  )
+  (mime-preview-play-current-entity ignore-examples "print"))
 
 
 ;;; @@ following
@@ -2004,8 +1919,7 @@ It calls following-method selected from variable
 			(mime-insert-header current-entity fields)
 			t))
 	    (setq fields (std11-collect-field-names)
-		  current-entity (mime-entity-parent current-entity))
-	    ))
+		  current-entity (mime-entity-parent current-entity))))
 	(let ((rest mime-view-following-required-fields-list)
 	      field-name ret)
 	  (while rest
@@ -2022,19 +1936,14 @@ It calls following-method selected from variable
 						   entity field-name))))
 			(setq entity (mime-entity-parent entity)))))
 		  (if ret
-		      (insert field-name ": " ret "\n")
-		    )))
-	    (setq rest (cdr rest))
-	    ))
-	)
+		      (insert field-name ": " ret "\n"))))
+	    (setq rest (cdr rest)))))
       (let ((f (cdr (assq mode mime-preview-following-method-alist))))
 	(if (functionp f)
 	    (funcall f new-buf)
 	  (message
 	   "Sorry, following method for %s is not implemented yet."
-	   mode)
-	  ))
-      )))
+	   mode))))))
 
 
 ;;; @@ moving
@@ -2047,8 +1956,7 @@ If there is no upper entity, call function `mime-preview-quit'."
   (let (cinfo)
     (while (null (setq cinfo
 		       (get-text-property (point) 'mime-view-entity)))
-      (backward-char)
-      )
+      (backward-char))
     (let ((r (mime-entity-parent cinfo))
 	  point)
       (catch 'tag
@@ -2065,11 +1973,8 @@ If there is no upper entity, call function `mime-preview-quit'."
 			       (beginning-of-line)
 			       (point)))))
 		(recenter next-screen-context-lines))
-	    (throw 'tag t)
-	    )
-	  )
-	(mime-preview-quit)
-	))))
+	    (throw 'tag t)))
+	(mime-preview-quit)))))
 
 (defun mime-preview-move-to-previous ()
   "Move to previous entity.
@@ -2078,8 +1983,7 @@ variable `mime-preview-over-to-previous-method-alist'."
   (interactive)
   (while (and (not (bobp))
 	      (null (get-text-property (point) 'mime-view-entity)))
-    (backward-char)
-    )
+    (backward-char))
   (let ((point (previous-single-property-change (point) 'mime-view-entity)))
     (if (and point
 	     (>= point (point-min)))
@@ -2096,14 +2000,11 @@ variable `mime-preview-over-to-previous-method-alist'."
 				  (point)))))
 			(recenter (* -1 next-screen-context-lines))))
 	  (goto-char (1- point))
-	  (mime-preview-move-to-previous)
-	  )
+	  (mime-preview-move-to-previous))
       (let ((f (assq (mime-preview-original-major-mode)
 		     mime-preview-over-to-previous-method-alist)))
 	(if f
-	    (funcall (cdr f))
-	  ))
-      )))
+	    (funcall (cdr f)))))))
 
 (defun mime-preview-move-to-next ()
   "Move to next entity.
@@ -2112,8 +2013,7 @@ variable `mime-preview-over-to-next-method-alist'."
   (interactive)
   (while (and (not (eobp))
 	      (null (get-text-property (point) 'mime-view-entity)))
-    (forward-char)
-    )
+    (forward-char))
   (let ((point (next-single-property-change (point) 'mime-view-entity)))
     (if (and point
 	     (<= point (point-max)))
@@ -2131,14 +2031,11 @@ variable `mime-preview-over-to-next-method-alist'."
 			    (* -1 next-screen-context-lines))
 			   (beginning-of-line)
 			   (point)))))
-		 (recenter next-screen-context-lines))
-	    ))
+		 (recenter next-screen-context-lines))))
       (let ((f (assq (mime-preview-original-major-mode)
 		     mime-preview-over-to-next-method-alist)))
 	(if f
-	    (funcall (cdr f))
-	  ))
-      )))
+	    (funcall (cdr f)))))))
 
 (defun mime-preview-scroll-up-entity (&optional h)
   "Scroll up current entity.
@@ -2149,8 +2046,7 @@ If reached to (point-max), it calls function registered in variable
       (let ((f (assq (mime-preview-original-major-mode)
 		     mime-preview-over-to-next-method-alist)))
 	(if f
-	    (funcall (cdr f))
-	  ))
+	    (funcall (cdr f))))
     (let ((point
 	   (or (next-single-property-change (point) 'mime-view-entity)
 	       (point-max)))
@@ -2162,8 +2058,7 @@ If reached to (point-max), it calls function registered in variable
 	(condition-case nil
 	    (scroll-up h)
 	  (end-of-buffer
-	   (goto-char (point-max)))))
-      )))
+	   (goto-char (point-max))))))))
 
 (defun mime-preview-scroll-down-entity (&optional h)
   "Scroll down current entity.
@@ -2174,8 +2069,7 @@ If reached to (point-min), it calls function registered in variable
       (let ((f (assq (mime-preview-original-major-mode)
 		     mime-preview-over-to-previous-method-alist)))
 	(if f
-	    (funcall (cdr f))
-	  ))
+	    (funcall (cdr f))))
     (let ((point
 	   (or (previous-single-property-change (point) 'mime-view-entity)
 	       (point-min)))
@@ -2187,22 +2081,19 @@ If reached to (point-min), it calls function registered in variable
 	(condition-case nil
 	    (scroll-down h)
 	  (beginning-of-buffer
-	   (goto-char (point-min)))))
-      )))
+	   (goto-char (point-min))))))))
 
 (defun mime-preview-next-line-entity (&optional lines)
   "Scroll up one line (or prefix LINES lines).
 If LINES is negative, scroll down LINES lines."
   (interactive "p")
-  (mime-preview-scroll-up-entity (or lines 1))
-  )
+  (mime-preview-scroll-up-entity (or lines 1)))
 
 (defun mime-preview-previous-line-entity (&optional lines)
   "Scrroll down one line (or prefix LINES lines).
 If LINES is negative, scroll up LINES lines."
   (interactive "p")
-  (mime-preview-scroll-down-entity (or lines 1))
-  )
+  (mime-preview-scroll-down-entity (or lines 1)))
 
 
 ;;; @@ display
@@ -2274,13 +2165,11 @@ It calls function registered in variable
   (let ((r (assq (mime-preview-original-major-mode)
 		 mime-preview-quitting-method-alist)))
     (if r
-	(funcall (cdr r))
-      )))
+	(funcall (cdr r)))))
 
 (defun mime-preview-kill-buffer ()
   (interactive)
-  (kill-buffer (current-buffer))
-  )
+  (kill-buffer (current-buffer)))
 
 
 ;;; @ end

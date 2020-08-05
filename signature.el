@@ -82,8 +82,7 @@ FIELD, the contents of FILENAME is inserted.")
             (concat "^" (regexp-quote mail-header-separator) "$")
             nil t)
            (match-beginning 0)
-         (point-max)
-         ))
+         (point-max)))
       (catch 'found
         (let ((alist signature-file-alist) cell field value)
           (while alist
@@ -94,8 +93,7 @@ FIELD, the contents of FILENAME is inserted.")
 		   (let ((name (apply value field (cdr cell))))
 		     (if name
 			 (throw 'found
-				(concat signature-file-prefix name))
-		       )))
+				(concat signature-file-prefix name)))))
 		  ((stringp field)
 		   (cond ((consp value)
 			  (while value
@@ -103,16 +101,13 @@ FIELD, the contents of FILENAME is inserted.")
 				(throw 'found
 				       (concat
 					signature-file-prefix (cdr cell)))
-			      (setq value (cdr value))
-			      )))
+			      (setq value (cdr value)))))
 			 ((stringp value)
 			  (if (string-match value field)
 			      (throw 'found
 				     (concat
-				      signature-file-prefix (cdr cell)))
-			    )))))
-            (setq alist (cdr alist))
-            ))
+				      signature-file-prefix (cdr cell))))))))
+            (setq alist (cdr alist))))
         signature-file-name))))
 
 (defun insert-signature (&optional arg)
@@ -125,20 +120,17 @@ specify a file named <signature-file-name>-DISTRIBUTION interactively."
          (expand-file-name
           (or (and arg
 		   (signature/get-sigtype-interactively))
-	      (signature/get-signature-file-name))
-          )))
+	      (signature/get-signature-file-name)))))
     (or (file-readable-p signature-file-name)
         (error "Cannot open signature file: %s" signature-file-name))
     (if signature-insert-at-eof
         (progn
           (goto-char (point-max))
           (or (bolp) (insert "\n"))
-          (if signature-delete-blank-lines-at-eof (delete-blank-lines))
-          ))
+          (if signature-delete-blank-lines-at-eof (delete-blank-lines))))
     (run-hooks 'signature-insert-hook)
     (if (= (point)(point-max))
-	(insert signature-separator)
-      )
+	(insert signature-separator))
     (insert-file-contents signature-file-name)
     (force-mode-line-update)
     signature-file-name))
