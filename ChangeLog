@@ -1,3 +1,13 @@
+2020-08-10  Jan Seeger  <jan.seeger@thenybble.de>
+
+	New variable `mime-edit-insert-file-confirm' is introduced
+
+	When nil, don't confirm MIME parameters when inserting files.
+
+	* mime-edit.el (mime-edit-insert-file-confirm): New variable.
+	(mime-edit-insert-file, mime-edit-insert-file-as-text): Refer to
+	it.
+
 2020-08-05  Naoya Yamashita  <conao3@gmail.com>
 
 	Fix closing parens position (cosmetic change only).
