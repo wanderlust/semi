@@ -1,4 +1,4 @@
-;; -*- mode: emacs-lisp; coding: iso-8859-1-unix; lexical-binding: t -*-
+;; -*- mode: emacs-lisp; coding: utf-8; lexical-binding: t -*-
 ;;; mime-edit.el --- Simple MIME Composer for GNU Emacs
 
 ;; Copyright (C) 1993,94,95,96,97,98,99,2000,01,02,03
@@ -99,7 +99,7 @@
 ;;--[[text/plain; charset=ISO-8859-1]]
 ;; This is also a plain text.  But charset is specified as iso-8859-1.
 ;;
-;; ¡Hola!  Buenos días.  ¿Cómo está usted?
+;; Â¡Hola!  Buenos dÃ­as.  Â¿CÃ³mo estÃ¡ usted?
 ;;--[[text/enriched]]
 ;; <center>This is a richtext.</center>
 ;;
@@ -1176,7 +1176,7 @@ TABs at the beginning of the line are not a part of the message:
 	This is also a plain text.  But charset is specified as
 	iso-8859-1.
 
-	¡Hola!  Buenos días.  ¿Cómo está usted?
+	Â¡Hola!  Buenos dÃ­as.  Â¿CÃ³mo estÃ¡ usted?
 	--[[text/enriched]]
 	This is a <bold>enriched text</bold>.
 	--[[image/gif][base64]]...image encoded in base64 here...

@@ -1,4 +1,4 @@
-;;; semi-def.el --- definition module for SEMI -*- coding: iso-8859-4; lexical-binding: t -*-
+;;; semi-def.el --- definition module for SEMI -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1995,96,97,98,99,2000,01,03,05 Free Software Foundation, Inc.
 

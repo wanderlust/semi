@@ -1,6 +1,6 @@
-\input texinfo.tex
+\input texinfo-ja @c -*-texinfo -*- coding: utf-8 -*-
 @setfilename mime-ui-ja.info
-@documentencoding iso-2022-jp
+@documentencoding utf-8
 @documentlanguage ja
 
 @dircategory GNU Emacs Lisp
@@ -8,109 +8,109 @@
 * SEMI (ja): (mime-ui-ja).      MIME user interface.
 @end direntry
 
-@settitle SEMI 1.14 $B@bL@=q(B
+@settitle SEMI 1.14 説明書
 @titlepage
-@title SEMI 1.14 $B@bL@=q(B
-@author $B<i2,(B $BCNI'(B <morioka@@jaist.ac.jp>
+@title SEMI 1.14 説明書
+@author 守岡 知彦 <morioka@@jaist.ac.jp>
 @subtitle 1998/07/03
 @end titlepage
 @node Top, Introduction, (dir), (dir)
-@top SEMI 1.14 $B@bL@=q(B
+@top SEMI 1.14 説明書
 
 @ifinfo
 
 This file documents SEMI, a MIME user interface for GNU Emacs.@refill
 
-GNU Emacs $BMQ$N(B MIME user interface $B$G$"$k(B SEMI $B$K$D$$$F@bL@$7$^$9!#(B
+GNU Emacs 用の MIME user interface である SEMI について説明します。
 @end ifinfo
 
 @menu
-* Introduction::                SEMI $B$C$F2?!)(B
-* MIME-View::                   MIME message $B$N1\Mw(B
-* MIME-Edit::                   MIME message $B$NJT=8(B
-* Various::                     $B$=$NB>(B
-* Concept Index::               $B35G0:w0z(B
-* Function Index::              $B4X?t:w0z(B
-* Variable Index::              $BJQ?t:w0z(B
+* Introduction::                SEMI って何？
+* MIME-View::                   MIME message の閲覧
+* MIME-Edit::                   MIME message の編集
+* Various::                     その他
+* Concept Index::               概念索引
+* Function Index::              関数索引
+* Variable Index::              変数索引
 @end menu
 
 @node Introduction, MIME-View, Top, Top
-@chapter SEMI $B$C$F2?!)(B
+@chapter SEMI って何？
 
-SEMI $B$O(B GNU Emacs $BMQ$N(B MIME user interface $B$rDs6!$9$k(B package $B$G$9!#(B
+SEMI は GNU Emacs 用の MIME user interface を提供する package です。
 @refill
 
-SEMI $B$,Ds6!$9$k(B MIME user interface $B$O(B MIME-View $B$H(B MIME-Edit $B$+$i$J$j$^(B
-$B$9!#(B@refill
+SEMI が提供する MIME user interface は MIME-View と MIME-Edit からなりま
+す。@refill
 
  
-MIME-View $B$O(B MIME $B$d(B STD 11 $B$*$h$S!XCO0h2=$5$l$?(B RFC 822$B!Y(Bmessage $B$rI=<((B
-$B$7$?$j!"A`:n$7$?$j$9$k$?$a$N(B user interface $B$NCf3K$G$9!#(B@refill
+MIME-View は MIME や STD 11 および『地域化された RFC 822』message を表示
+したり、操作したりするための user interface の中核です。@refill
 
-MIME-Edit $B$O(B MIME message $B$r@8@.$9$k$?$a$N(B user interface $B$G$9!#(B@refill
+MIME-Edit は MIME message を生成するための user interface です。@refill
 
-$B3F(B MUA $B$G$3$l$i$N5!G=$rMxMQ$9$k$3$H$K$h$j!"9bEY$J(B MIME $B5!G=$rMxMQ$9$k$3(B
-$B$H$,$G$-$^$9!#(B
+各 MUA でこれらの機能を利用することにより、高度な MIME 機能を利用するこ
+とができます。
 
 
 @node MIME-View, MIME-Edit, Introduction, Top
-@chapter MIME message $B$N1\Mw(B
+@chapter MIME message の閲覧
 
-MIME-View $B$O(B GNU Emacs $B$GF0:n$9$kHFMQE*$J(B MIME viewer $B$G$9!#(B@refill
+MIME-View は GNU Emacs で動作する汎用的な MIME viewer です。@refill
 
-MIME-View $B$O(B MIME message $B$r1\Mw$9$k$?$a$NMxMQ<T3&LL(B (user interface) 
-$B$N3K$G$"$j!"$3$N>e$G(B presentation-method $B$H8F$P$l$kI=<($r:n$k%W%m%0%i%`(B
-$B$rF0$+$7$?$j!"(Bacting-method $B$H8F$P$l$k(B entity $B$N=hM}%W%m%0%i%`$rF0$+$9(B
-$B$3$H$,2DG=$G!"$5$^$6$^$J<oN`$N(B entity $B$r07$&;v$,$G$-$k$h$&$K$J$C$F$$$^$9!#(B
+MIME-View は MIME message を閲覧するための利用者界面 (user interface) 
+の核であり、この上で presentation-method と呼ばれる表示を作るプログラム
+を動かしたり、acting-method と呼ばれる entity の処理プログラムを動かす
+ことが可能で、さまざまな種類の entity を扱う事ができるようになっています。
 
 
 @menu
-* Overview of MIME-View::       MIME-View $B35@b(B
-* MIME-Preview::                mime-preview-buffer $B$N2hLL9=@.(B
-* mime-view-mode::              mime-preview-buffer $B$G$NA`:n(B
+* Overview of MIME-View::       MIME-View 概説
+* MIME-Preview::                mime-preview-buffer の画面構成
+* mime-view-mode::              mime-preview-buffer での操作
 @end menu
 
 @node Overview of MIME-View, MIME-Preview, MIME-View, MIME-View
-@section MIME-View $B35@b(B
+@section MIME-View 概説
 
-Internet $B$NEE;R=q4J!&%M%C%H%K%e!<%9$J$I$N=qLL(B (message) $B$NI=8=7A<0$O(B STD
-11 $B$K4p$E$$$F$$$^$9!#(BSTD 11 $B$N=qLLK\BN(B (message body) $B$O9T$rM#0l$N9=B$$H(B
-$B$9$k4J0WJ8LL(B (plain text) $B$G$"$j!"J8;zId9f$b(B us-ascii $B$HDj$a$i$l$F$$$^$9!#(B
-$B<B:]$K$O!"J8;zId9f$r(B us-ascii $B$NBe$o$j$K$=$N8@8l7w$GMQ$$$i$l$kJ8;zId9f$H(B
-$B$7$?!XCO0h2=$5$l$?(B STD 11$B!Y=qLL$bMQ$$$i$l$F$-$^$7$?$,!"$3$N>l9g$b=qLL$N(B
-$BJ8;zId9f$O#1$D$G$9!#$3$N$?$a!"MxMQ<T3&LL(B (Message User Agent) $B$O!"$7$P$7(B
-$B$P!"(Bbyte $BNs(B = us-ascii $BJ8;zNs!"$J$$$7$O!"(Bbyte $BNs(B = $B$=$N8@8l7w$GMQ$$$kJ8(B
-$B;zId9f$NJ8;zNs$N$h$&$K8+Jo$7$F$-$^$7$?!#(B@refill
+Internet の電子書簡・ネットニュースなどの書面 (message) の表現形式は STD
+11 に基づいています。STD 11 の書面本体 (message body) は行を唯一の構造と
+する簡易文面 (plain text) であり、文字符号も us-ascii と定められています。
+実際には、文字符号を us-ascii の代わりにその言語圏で用いられる文字符号と
+した『地域化された STD 11』書面も用いられてきましたが、この場合も書面の
+文字符号は１つです。このため、利用者界面 (Message User Agent) は、しばし
+ば、byte 列 = us-ascii 文字列、ないしは、byte 列 = その言語圏で用いる文
+字符号の文字列のように見倣してきました。@refill
 
-$B$7$+$7$J$,$i!"(BMIME $B$G$O=qLL$O(B entity $B$rC10L$H$9$kLZ9=B$$K$J$j!"$^$?!"#1(B
-$B$D$N=qLL$GJ#?t$NJ8;zId9f$rMQ$$$k$3$H$,$G$-$^$9!#$^$?!"(Bentity $B$NFbMF$OJ8(B
-$BLL$d3($N$h$&$JC1=c$KI=<(2DG=$J$b$N$@$1$G$J$/!"2;@<$dF02h$J$I$N0lDj;~4V:F(B
-$B@8$5$l$k$h$&$J$b$N$dFCDj$N%"%W%j%1!<%7%g%s$N%G!<%?$d%W%m%0%i%`$N%=!<%9!"(B
-$B$"$k$$$O!"(Bftp $B$d(B mail service $B$NMxMQK!$d(B URL $B$H$$$C$?7A$GI=$5$l$?30It;2(B
-$B>H$J$I$N$5$^$6$^$J$b$N$,9M$($i$^$9!#$3$N$?$a!"I=<($@$1$r9M$($F$$$?(B STD
-11 $B$K$*$1$kMxMQ<T3&LL$NC1=c$J1dD9$G$O(B MIME $B$NA4$F$N5!G=$r07$&$3$H$O$G$-(B
-$B$^$;$s!#$D$^$j!"(BMIME $B$N7A<0$K9g$o$;$FI|9f$9$k$@$1$G$OIT==J,$G$"$j!"MxMQ(B
-$B<T$H$NBPOCE*$J:F@8=hM}$r9MN8$9$kI,MW$,$"$j$^$9!#(BMIME $B=qLL$N7A<0$O<+F0=h(B
-$BM}$,$7$d$9$/@_7W$5$l$F$$$^$9$,!"(BMIME $B=qLL$K4^$^$l$kFbMF$NCf$K$O%;%-%e%j(B
-$B%F%#!<>e$NLdBj$+$i<+F0=hM}$r$9$k$Y$-$G$J$$$b$N$,$"$j!"$3$&$$$C$?$b$N$N:F(B
-$B@8$K4X$7$F$OMxMQ<T$NH=CG$r6D$0$h$&$K@_7W$5$l$k$Y$-$G$7$g$&!#7k6I!"(BMIME 
-$B=qLL$r07$&$?$a$K$O(B STD 11 $B$*$h$S(B MIME $B$N9=J8$G5-=R$5$l$?%a%C%;!<%8$N>pJs(B
-$B8r49MQI=8=$H$=$N2r<a7k2L$G$"$kI=<(2hLL$d:F@8Ey$N=hM}$r6hJL$7$F9M$($kI,MW(B
-$B$,$"$j$^$9!#$^$?!"MxMQ<T$H$NBPOCE*$J:F@8=hM}$,I,MW$G$9!#(B@refill
+しかしながら、MIME では書面は entity を単位とする木構造になり、また、１
+つの書面で複数の文字符号を用いることができます。また、entity の内容は文
+面や絵のような単純に表示可能なものだけでなく、音声や動画などの一定時間再
+生されるようなものや特定のアプリケーションのデータやプログラムのソース、
+あるいは、ftp や mail service の利用法や URL といった形で表された外部参
+照などのさまざまなものが考えらます。このため、表示だけを考えていた STD
+11 における利用者界面の単純な延長では MIME の全ての機能を扱うことはでき
+ません。つまり、MIME の形式に合わせて復号するだけでは不十分であり、利用
+者との対話的な再生処理を考慮する必要があります。MIME 書面の形式は自動処
+理がしやすく設計されていますが、MIME 書面に含まれる内容の中にはセキュリ
+ティー上の問題から自動処理をするべきでないものがあり、こういったものの再
+生に関しては利用者の判断を仰ぐように設計されるべきでしょう。結局、MIME 
+書面を扱うためには STD 11 および MIME の構文で記述されたメッセージの情報
+交換用表現とその解釈結果である表示画面や再生等の処理を区別して考える必要
+があります。また、利用者との対話的な再生処理が必要です。@refill
 
-$B$3$N$?$a!"(BMIME-View $B$O#1$D$N=qLL$KBP$7$F!">pJs8r49MQI=8=$r3JG<$9$k(B 
-mime-raw-buffer $B$HI=<(MQI=8=$r3JG<$9$k(B mime-preview-buffer $B$N#2$D$N(B 
-buffer $B$rMQ$$$^$9!#(B@refill
+このため、MIME-View は１つの書面に対して、情報交換用表現を格納する 
+mime-raw-buffer と表示用表現を格納する mime-preview-buffer の２つの 
+buffer を用います。@refill
 
-MIME-View $B$O(B mime-preview-buffer $B$KBP$7$F(B mime-view-mode $B$H$$$&(B MIME
-message $B$r1\Mw$9$k$?$a$N(B mode $B$rDs6!$7$^$9!#MxMQ<T$O$3$3$G3F(B entity $B$K(B
-$BBP$7$FA`:n$r9T$&$3$H$,$G$-$^$9!#(B
+MIME-View は mime-preview-buffer に対して mime-view-mode という MIME
+message を閲覧するための mode を提供します。利用者はここで各 entity に
+対して操作を行うことができます。
 
 
 @node MIME-Preview, mime-view-mode, Overview of MIME-View, MIME-View
-@section mime-preview-buffer $B$N2hLL9=@.(B
+@section mime-preview-buffer の画面構成
 
-mime-view-mode $B$G$O3F(B entity $B$KBP$7$F(B@refill
+mime-view-mode では各 entity に対して@refill
 
 @example
 	[entity-button]
@@ -121,15 +121,15 @@ mime-view-mode $B$G$O3F(B entity $B$KBP$7$F(B@refill
 @end example
 
 @noindent
-$B$H$$$&>pJs$rI=<($7$^$9!#$3$l$i$O>r7o$K=>$C$F(B design $B$rJQ99$7$?$j!"I=<((B
-$B$rM^@)$9$k$3$H$b$G$-$^$9!#(B
+という情報を表示します。これらは条件に従って design を変更したり、表示
+を抑制することもできます。
 
-$B0J2<$K!"I=<(Nc$r<($7$^$9!#(B
+以下に、表示例を示します。
 
 
 @example
-From: morioka@@jaist.ac.jp ($B<i2,(B $BCNI'(B / MORIOKA Tomohiko)
-Subject: Re: $B<ALd!)(B
+From: morioka@@jaist.ac.jp (守岡 知彦 / MORIOKA Tomohiko)
+Subject: Re: 質問？
 Newsgroups: zxr.message.mime
 Date: 22 Oct 93 11:02:44
 Mime-Version: 1.0
@@ -137,9 +137,9 @@ Organization: Japan Advanced Institute of Science and Technology,
         Ishikawa, Japan
 
 [1  (text/plain)]
-  MIME-Edit mode $B$K$*$1$k!"(BMIME message $B$N:n$jJ}!#(B
+  MIME-Edit mode における、MIME message の作り方。
 
-  C-c C-x ? $B$r2!$9$H(B help $B$,=P$F$/$k!#(B
+  C-c C-x ? を押すと help が出てくる。
 
 C-c C-x C-t	insert a text message.
 C-c C-x TAB	insert a (binary) file.
@@ -159,20 +159,20 @@ C-c C-x C-k	insert PGP public key.
 C-c C-x p	preview editing MIME message.
 ...
 
-$B$C$FLu$G!"(BC-c C-x C-i $B$r2!$7$F!"A^F~$7$?$$(B binary file $B$r;XDj$7$^$9!#(B
+って訳で、C-c C-x C-i を押して、挿入したい binary file を指定します。
 
-  binary file $B$N(B MIME encoding $B$K$O!"IaDL!"(BBase64 $B$r;XDj$7$^$9!#(B
+  binary file の MIME encoding には、普通、Base64 を指定します。
 
 [2  (image/gif)]
 
 [3  (text/plain)]
 
-  $B$3$s$JIw$K!"3(F~$j(B message $B$N$G$->e$,$j!#(B
+  こんな風に、絵入り message のでき上がり。
 
-$B".".".".".".".".".".".(B $B%m%7%"%s!&%F%#!<$r0lGU!#(B $B".".".".".".".".".".".(B
-$B".".".".".(B  $B!y(B $B%8%c%`$G$O$J$/%^!<%^%l!<%I$G$b$J$/K*L*$G(B $B!y(B  $B".".".".".(B
-$B".".".".".(B         $B'.'0'2$$'0','!(B  $B'4'0'.'0'7'*','0(B         $B".".".".".(B
-$B".".".".".".".(B  Internet E-mail: <morioka@@jaist.ac.jp>  $B".".".".".".".(B
+〓〓〓〓〓〓〓〓〓〓〓 ロシアン・ティーを一杯。 〓〓〓〓〓〓〓〓〓〓〓
+〓〓〓〓〓  ☆ ジャムではなくマーマレードでもなく蜂蜜で ☆  〓〓〓〓〓
+〓〓〓〓〓         МОРいОКА  ТОМОХИКО         〓〓〓〓〓
+〓〓〓〓〓〓〓  Internet E-mail: <morioka@@jaist.ac.jp>  〓〓〓〓〓〓〓
 @end example
 
 
@@ -188,177 +188,177 @@ C-c C-x p	preview editing MIME message.
 @cindex entity-number
 @cindex entity-button
 
-@strong{entity-button} $B$O(B entity $B$N@hF,$K$"$C$F!"$=$N(B entity $B$K4X$9$kBg(B
-$B$^$+$J>pJs$rI=<($9$kItJ,$G$9!#(B@refill
+@strong{entity-button} は entity の先頭にあって、その entity に関する大
+まかな情報を表示する部分です。@refill
 
-$BI8=`$G$O(B
+標準では
 
 @example
         [1.3 test (text/plain)]
 @end example
 
 @noindent
-$B$N$h$&$J46$8$KI=<($5$l$^$9!#(B
+のような感じに表示されます。
 
-$B:G=i$N?t;z$O(B message $BCf$N$3$N(B entity $B$N0LCV$r@aHV9f$N$h$&$KI=$7$?$b$N$G!"(B
-@strong{entity-number} $B$H8F$S$^$9!#(B@refill
+最初の数字は message 中のこの entity の位置を節番号のように表したもので、
+@strong{entity-number} と呼びます。@refill
 
-$B#2HVL\$NJ8;zNs$OI=Bj$rI=$7$^$9!#$3$N>pJs$O!"(B
+２番目の文字列は表題を表します。この情報は、
 
 @enumerate
 @item
-Content-Description field $B$b$7$/$O(B Subject field $B$K=q$+$l$?I=Bj(B
+Content-Description field もしくは Subject field に書かれた表題
 @item
-Content-Disposition field $B$N(B filename parameter $B$K=q$+$l$?(B file $BL>(B
+Content-Disposition field の filename parameter に書かれた file 名
 @item
-Content-Type field $B$N(B name parameter $B$K=q$+$l$?(B file $BL>(B
+Content-Type field の name parameter に書かれた file 名
 @item
- uuencode $B$N>l9g$N(B file $BL>(B
+ uuencode の場合の file 名
 @end enumerate
 
 @noindent
-$B$+$i:n$j$^$9!#$I$l$bB8:_$7$J$$>l9g$O6uGr$,I=<($5$l$^$9!#(B
+から作ります。どれも存在しない場合は空白が表示されます。
 
-$B#3HVL\$N3g8L$NCf$N>pJs$O$=$N(B entity $B$N(B media-type/subtype $B$rI=$7$^$9!#Hs(B 
-MIME entity $B$N>l9g!"(B@code{nil} $B$,I=<($5$l$^$9!#(B@refill
+３番目の括弧の中の情報はその entity の media-type/subtype を表します。非 
+MIME entity の場合、@code{nil} が表示されます。@refill
 
-$B$3$N(B entity-button $B$O(B entity $B$NFbMF$r>]D'$9$k(B icon $B$N$h$&$JLr3d$r2L$?(B
-$B$7$^$9!#Nc$($P!"(B
+この entity-button は entity の内容を象徴する icon のような役割を果た
+します。例えば、
 
 @example
         [2  (image/gif)]
 @end example
 
 @noindent
-$B$N>e$G(B @kbd{v} $B$r2!$;$P$3$3$KF~$C$F$$$k3($,I=<($5$l$^$9!#(B
+の上で @kbd{v} を押せばここに入っている絵が表示されます。
 
-$B$^$?!"(Bmouse $BA`:n$,2DG=$J>l9g!"(Bentity-button $B$rBh#2%\%?%s!J(B3 button
-mouse $B$N>l9g!"Cf1{$N%\%?%s!K$G2!$;$P!"F1MM$K$=$N3($,I=<($5$l$^$9!#(B
+また、mouse 操作が可能な場合、entity-button を第２ボタン（3 button
+mouse の場合、中央のボタン）で押せば、同様にその絵が表示されます。
 
 
 @node entity-header, entity-body, entity-button, MIME-Preview
 @subsection entity-header
 @cindex entity-header
 
-@strong{entity-header} $B$O$"$k(B entity $B$N(B header $B$rI=<($9$kIt(B
-$BJ,$G$9!J!V$=$N$^$^$d$s$1!W$C$FE\$i$J$$$G!#$=$&$$$&$b$s$J$s$G$9!K!#(B
+@strong{entity-header} はある entity の header を表示する部
+分です（「そのままやんけ」って怒らないで。そういうもんなんです）。
 
 
 @node entity-body,  , entity-header, MIME-Preview
 @subsection entity-body
 @cindex entity-body
 
-@strong{entity-body} $B$O(B part $B$NFbMF$rI=<($9$kItJ,$G$9!#(B@refill
+@strong{entity-body} は part の内容を表示する部分です。@refill
 
-$B$3$l$b$R$M$j$,B-$j$J$$$G$9$,!"$^$"!"$=$&$$$&$b$s$G$9!#(B@refill
+これもひねりが足りないですが、まあ、そういうもんです。@refill
 
-$B$H$O$$$(!"<B:]$K$O>/$7$R$M$C$F$^$9!#(B@refill
+とはいえ、実際には少しひねってます。@refill
 
-text entity $B$N>l9g$O(B charset $B$K1~$8$F(B code $BJQ49$7$?$j$7$^$9$7!"(BXEmacs $B$G(B
-$B$O(B image entity $B$rJQ49$7$J$$$H$$$1$J$$$7!#(B@refill
+text entity の場合は charset に応じて code 変換したりしますし、XEmacs で
+は image entity を変換しないといけないし。@refill
 
-$B>\$7$/$O$^$?8e$G!#(B
+詳しくはまた後で。
 
 
 @node mime-view-mode,  , MIME-Preview, MIME-View
-@section mime-preview-buffer $B$G$NA`:n(B
+@section mime-preview-buffer での操作
 
-mime-preview-buffer $B$K$O0J2<$N5!G=$,$"$j$^$9!#(B@refill
+mime-preview-buffer には以下の機能があります。@refill
 
 @table @kbd
 @item @key{u}
-$B>e$N(B part $B$KLa$k!J(Bmessage $B$N0lHV>e$N(B part $B$G$3$l$r9T$J$&$H(B Summary
-mode $B$KLa$k(B (*1)$B!K(B
+上の part に戻る（message の一番上の part でこれを行なうと Summary
+mode に戻る (*1)）
 
 @item @key{p}
-$BA0$N(B part $B$K0\F0$9$k(B
+前の part に移動する
 
 @item @key{M-TAB}
-$BA0$N(B part $B$K0\F0$9$k(B
+前の part に移動する
 
 @item @key{n}
-$B<!$N(B part $B$K0\F0$9$k(B
+次の part に移動する
 
 @item @key{TAB}
-$B<!$N(B part $B$K0\F0$9$k(B
+次の part に移動する
 
 @item @key{SPC}
-scroll up $B$9$k(B
+scroll up する
 
 @item @key{M-SPC}
-scroll down $B$9$k(B
+scroll down する
 
 @item @key{DEL}
-scroll down $B$9$k(B
+scroll down する
 
 @item @key{RET}
-$B<!$N9T$K0\F0$9$k(B
+次の行に移動する
 
 @item @key{M-RET}
-$BA0$N9T$K0\F0$9$k(B
+前の行に移動する
 
 @item @key{v}
-part $B$r:F@8$9$k(B (*2)
+part を再生する (*2)
 
 @item @key{e}
-part $B$+$i(B file $B$r<h$j=P$9(B (*2)
+part から file を取り出す (*2)
 
 @item @key{C-c C-p}
-part $B$r0u:~$9$k(B (*2)
+part を印刷する (*2)
 
 @item @key{mouse-button-2}
-preview-buffer $BCf$N(B mouse button $B$r5/F0$9$k(B
+preview-buffer 中の mouse button を起動する
 
-content-button $B$r2!$;$P!"$=$N(B part $B$,:F@8$5$l$k(B(*2)@refill
+content-button を押せば、その part が再生される(*2)@refill
 
-URL-button $B$r2!$;$P!"$=$N(B WWW browser $B$,5/F0$5$l$k(B@refill
+URL-button を押せば、その WWW browser が起動される@refill
 
 @end table
 
 @noindent
-@strong{[$BCm0U(B]}
+@strong{[注意]}
 @quotation
 
-(*1) MUA $B$G(B mime-view $B$N@_Dj$r$7$F$$$J$$>l9g!"(BSummary mode $B$K$OLa$j$^$;(B
-$B$s!#(B@refill
+(*1) MUA で mime-view の設定をしていない場合、Summary mode には戻りませ
+ん。@refill
 
-(*2) $B<B:]$NF0:n$OBP1~$9$k(B method $B$K0M$j$^$9!#(B
+(*2) 実際の動作は対応する method に依ります。
 @end quotation
 
 
 
 @node MIME-Edit, Various, MIME-View, Top
-@chapter MIME message $B$NJT=8(B
+@chapter MIME message の編集
 @cindex MIME-Edit
 
-@strong{MIME-Edit} $B$O(B GNU Emacs $B$GF0:n$9$kHFMQE*$J(B MIME
-composer $B$G$9!#(B
+@strong{MIME-Edit} は GNU Emacs で動作する汎用的な MIME
+composer です。
 
 
 @menu
-* mime-edit-mode::              MIME message $B$rJT=8$9$k$?$a$N(B minor-mode
-* single-part tags::            single-part $B$KBP$9$kA`:n(B
-* enclosure tags::              enclosure $B$KBP$9$kA`:n(B
-* other MIME-Edit operations::  mime-edit-mode $B$K$*$1$k$=$NB>$NA`:n(B
-* file-type specification::     $BA^F~$5$l$k(B file $B$KBP$9$k(B tag $B$N7hDj(B
+* mime-edit-mode::              MIME message を編集するための minor-mode
+* single-part tags::            single-part に対する操作
+* enclosure tags::              enclosure に対する操作
+* other MIME-Edit operations::  mime-edit-mode におけるその他の操作
+* file-type specification::     挿入される file に対する tag の決定
 * transfer level::              
 * message/partial sending::     Splitting
 @end menu
 
 @node mime-edit-mode, single-part tags, MIME-Edit, MIME-Edit
-@section MIME message $B$rJT=8$9$k$?$a$N(B minor-mode
+@section MIME message を編集するための minor-mode
 @cindex enclosure
-@cindex multi-part $B=*N;(B tag
-@cindex multi-part $B3+;O(B tag
+@cindex multi-part 終了 tag
+@cindex multi-part 開始 tag
 @cindex tag
 @cindex mime-edit-mode
 
-@strong{mime-edit-mode} $B$O(B MIME message $B$r:n@.$9$k$?$a$N(B minor-mode $B$G$9!#(B
-$B$3$N(B mode $B$G$O(B @strong{tag} $B$r;H$C$F$5$^$6$^$J<oN`$N(B data $B$rI=8=$7!"$5$^(B
-$B$6$^$J<oN`$N(B data $B$+$i$J$kJ#?t$NItJ,$+$i$J$k(B message $B$rJT=8$9$k$3$H$r2D(B
-$BG=$K$7$F$$$^$9!#(B@refill
+@strong{mime-edit-mode} は MIME message を作成するための minor-mode です。
+この mode では @strong{tag} を使ってさまざまな種類の data を表現し、さま
+ざまな種類の data からなる複数の部分からなる message を編集することを可
+能にしています。@refill
 
-tag $B$K$O(B
+tag には
 
 @itemize @bullet
 @item
@@ -368,9 +368,9 @@ tag $B$K$O(B
 @end itemize
 
 @noindent
-$B$N#2$D$,$"$j$^$9!#(B
+の２つがあります。
 
-single-part tag $B$O(B single part $B$rI=8=$9$k$?$a$N(B tag $B$G!"(B@refill
+single-part tag は single part を表現するための tag で、@refill
 
 @example
         --[[TYPE/SUBTYPE;PARAMETERS][ENCODING]
@@ -378,174 +378,174 @@ single-part tag $B$O(B single part $B$rI=8=$9$k$?$a$N(B tag $B$G!"(B@refil
 @end example
 
 @noindent
-$B$H$$$&$h$&$J7A$r$7$F$$$^$9!#(B
+というような形をしています。
 
-TYPE/SUBTYPE $B$*$h$S(B PARAMETERS $B$O(B Content-Type
-(@ref{(mime-ja)Content-Type}) $BMs$N(B type/subtype $B$*$h$S(B parameters $B$rI=$7(B
-$B$^$9!#(BTYPE/SUBTYPE $B$OI,?\$G$"$j!"(BPARAMETERS $B$O>JN,2D$G$9!#(B@refill
+TYPE/SUBTYPE および PARAMETERS は Content-Type
+(@ref{(mime-ja)Content-Type}) 欄の type/subtype および parameters を表し
+ます。TYPE/SUBTYPE は必須であり、PARAMETERS は省略可です。@refill
 
-ENCODING $B$O(B Content-Transfer-Encoding
-(@ref{(mime-ja)Content-Transfer-Encoding}) $BMs$rI=$7$^$9!#$3$l$b>JN,2D$G(B
-$B$9!#(B@refill
+ENCODING は Content-Transfer-Encoding
+(@ref{(mime-ja)Content-Transfer-Encoding}) 欄を表します。これも省略可で
+す。@refill
 
-OPTIONAL-FIELDS $B$O(B Content-Type, Content-Transfer-Encoding $B0J30$N(B field 
-$B$r=q$/$?$a$NItJ,$G!">JN,2D$G$9!#(B@refill
+OPTIONAL-FIELDS は Content-Type, Content-Transfer-Encoding 以外の field 
+を書くための部分で、省略可です。@refill
 
-multi-part tag $B$O(B multi part $B$rI=8=$9$k$?$a$N(B 
-tag $B$G!"(B@refill
+multi-part tag は multi part を表現するための 
+tag で、@refill
 
 @example
         --<<TYPE>>-@@@{
 @end example
 
 @noindent
-$B$H$$$&7A$N(B @strong{multi-part $B3+;O(B tag} $B$H8F$P$l$k(B multi
-part $B$N3+;O$r<($9(B tag $B$H(B
+という形の @strong{multi-part 開始 tag} と呼ばれる multi
+part の開始を示す tag と
 
 @example
         --@@@}-<<TYPE>>
 @end example
 
 @noindent
-$B$H$$$&7A$N(B @strong{multi-part $B=*N;(B tag} $B$H8F$P$l$k(B multi
-part $B$N=*N;$r<($9(B tag $B$,$"$j$^$9!#(B
+という形の @strong{multi-part 終了 tag} と呼ばれる multi
+part の終了を示す tag があります。
 
-$B$^$?!"(Bmulti-part $B3+;O(B tag $B$H(B multi-part $B=*N;(B tag $B$G0O$^$l$?ItJ,$r(B 
-@strong{enclosure} $B$H8F$S$^$9!#(B
+また、multi-part 開始 tag と multi-part 終了 tag で囲まれた部分を 
+@strong{enclosure} と呼びます。
 
 
 @node single-part tags, enclosure tags, mime-edit-mode, MIME-Edit
-@section single-part $B$KBP$9$kA`:n(B
+@section single-part に対する操作
 
-single-part $B$r:n$k$?$a$NA`:n$K$O0J2<$N$h$&$J$b$N$,$"$j$^$9!#(B
+single-part を作るための操作には以下のようなものがあります。
 
 @table @kbd
 @item @key{C-c C-x C-t}
-text part $B$rI=$9(B single-part tag $B$rA^F~$7$^$9!#(B
+text part を表す single-part tag を挿入します。
 
 @item @key{C-c C-x C-i}
-file $B$r(B MIME part $B$H$7$FE:IU$7$^$9!#A0$K(B @kbd{C-u} $B$rIU$1$?>l9g!">o$K(B 
-media-type, subtype $BEy$rJ9$$$FMh$^$9!#(B(cf. @ref{file-type specification})
+file を MIME part として添付します。前に @kbd{C-u} を付けた場合、常に 
+media-type, subtype 等を聞いて来ます。(cf. @ref{file-type specification})
 
 @item @key{C-c C-x C-e}
-external part $B$rA^F~$7$^$9!#(B
+external part を挿入します。
 
 @item @key{C-c C-x C-v}
-@kbd{C-g} $B$,2!$5$l$k$^$GO?2;$r9T$$!"2;@<(B part $B$rA^F~$7$^$9!#!J;H(B
-$BMQ$G$-$J$$>l9g$,$"$j$^$9!K(B
+@kbd{C-g} が押されるまで録音を行い、音声 part を挿入します。（使
+用できない場合があります）
 
 @item @key{C-c C-x C-y}
-$B8=:_I=<(Cf$N(B (mail or news) message $B$rA^F~$7$^$9!#!J<B:]$NF0:n$O;HMQ$7(B
-$B$F$$$k(B MUA $B$K0MB8$7$^$9!K(B
+現在表示中の (mail or news) message を挿入します。（実際の動作は使用し
+ている MUA に依存します）
 
 @item @key{C-c C-x C-m}
-mail message $B$rA^F~$7$^$9!#(B
+mail message を挿入します。
 
 @item @key{C-c C-x C-w}, @key{C-c C-x C-s}
-signature $B$rA^F~$7$^$9!#(B
+signature を挿入します。
 
 @item @key{C-c C-x C-k}
-PGP (@ref{PGP}) $B$N8x3+80$rA^F~$7$^$9!#(B
+PGP (@ref{PGP}) の公開鍵を挿入します。
 
 @item @key{C-c C-x t}
-$BG$0U$N(B single-part tag $B$rA^F~$7$^$9!#(B
+任意の single-part tag を挿入します。
 
 @end table
 
 
 
 @node enclosure tags, other MIME-Edit operations, single-part tags, MIME-Edit
-@section enclosure $B$KBP$9$kA`:n(B
+@section enclosure に対する操作
 
-enclosure $B$r:n$k$?$a$NA`:n$H$7$F$O0J2<$N$h$&$J$b$N$,$"$j$^$9!#(B
+enclosure を作るための操作としては以下のようなものがあります。
 
 @table @kbd
 @item @key{C-c C-m C-a}
-$B;XDj$7$?(B region $B$r(B multipart/alternative $B$H$7$F0O$_$^$9!#(B
+指定した region を multipart/alternative として囲みます。
 
 @item @key{C-c C-m C-p}
-$B;XDj$7$?(B region $B$r(B multipart/parallel $B$H$7$F0O$_$^$9!#(B
+指定した region を multipart/parallel として囲みます。
 
 @item @key{C-c C-m C-m}
-$B;XDj$7$?(B region $B$r(B multipart/mixed $B$H$7$F0O$_$^$9!#(B
+指定した region を multipart/mixed として囲みます。
 
 @item @key{C-c C-m C-d}
-$B;XDj$7$?(B region $B$r(B multipart/digest $B$H$7$F0O$_$^$9!#(B
+指定した region を multipart/digest として囲みます。
 
 @item @key{C-c C-m C-s}
-$B;XDj$7$?(B region $B$KEE;R=pL>$r9T$$$^$9!#(B(cf. @ref{PGP})
+指定した region に電子署名を行います。(cf. @ref{PGP})
 
 @item @key{C-c C-m C-e}
-$B;XDj$7$?(B region $B$r0E9f2=$7$^$9!#(B(cf. @ref{PGP})
+指定した region を暗号化します。(cf. @ref{PGP})
 
 @item @key{C-c C-m C-q}
-$B;XDj$7$?(B region $BFb$N(B tag $B$rL58z$K$7!"$=$N(B tag $B$rJ8;zNs$H$7$FMxMQ$G$-$k(B
-$B$h$&$K$7$^$9!#!J8=:_$NHG$G$O$&$^$/F/$+$J$$$3$H$,$"$j$^$9!#$^$?!"EE;R=p(B
-$BL>$H$NJ;MQ$K4X$7$F$bIT40A4$G$9!K(B
+指定した region 内の tag を無効にし、その tag を文字列として利用できる
+ようにします。（現在の版ではうまく働かないことがあります。また、電子署
+名との併用に関しても不完全です）
 
 @end table
 
 
 
 @node other MIME-Edit operations, file-type specification, enclosure tags, MIME-Edit
-@section mime-edit-mode $B$K$*$1$k$=$NB>$NA`:n(B
+@section mime-edit-mode におけるその他の操作
 
-mime-edit-mode $B$K$*$1$k$=$NB>$NA`:n$r@bL@$7$^$9!#(B
+mime-edit-mode におけるその他の操作を説明します。
 
 @table @kbd
 @item @key{C-c C-c}
-$BJT=8Cf$N(B message $B$rAw?.$7$^$9!#(B
+編集中の message を送信します。
 
 @item @key{C-c C-x p}
-$BJT=8Cf$N(B message $B$r(B preview $B$7$^$9!#(B(cf. @ref{MIME-View})
+編集中の message を preview します。(cf. @ref{MIME-View})
 
 @item @key{C-c C-x C-z}
-$BJT=8Cf$N(B message $B$rAw?.$9$k$3$H$J$/!"(Bmime-edit-mode $B$r=*N;$7$^$9!#(B
+編集中の message を送信することなく、mime-edit-mode を終了します。
 
 @item @key{C-c C-x /}
-$BBg$-$J(B message $B$rAw?.$9$k>l9g$K(B message/partial $B7A<0$K<+F0J,3d2DG=$H$9(B
-$B$k$+$I$&$+$r7h$a$^$9!#(B
+大きな message を送信する場合に message/partial 形式に自動分割可能とす
+るかどうかを決めます。
 
 @item @key{C-c C-x 7}
-transfer level (@ref{transfer level}) $B$r(B 7bit (@ref{(mime-ja)7bit}) $B$K$7(B
-$B$^$9!#(B
+transfer level (@ref{transfer level}) を 7bit (@ref{(mime-ja)7bit}) にし
+ます。
 
 @item @key{C-c C-x 8}
-transfer level (@ref{transfer level}) $B$r(B 8bit (@ref{(mime-ja)8bit}) $B$K$7(B
-$B$^$9!#(B
+transfer level (@ref{transfer level}) を 8bit (@ref{(mime-ja)8bit}) にし
+ます。
 
 @item @key{C-c C-x v}
-message $BA4BN$rEE;R=pL>$9$k$+$I$&$+$r7h$a$^$9!#(B(cf. @ref{PGP})
+message 全体を電子署名するかどうかを決めます。(cf. @ref{PGP})
 
 @item @key{C-c C-x h}
-message $BA4BN$r0E9f2=$9$k$+$I$&$+$r7h$a$^$9!#(B(cf. @ref{PGP})
+message 全体を暗号化するかどうかを決めます。(cf. @ref{PGP})
 
 @item @key{C-c C-x ?}
-help message $B$rI=<($7$^$9!#(B
+help message を表示します。
 
 @end table
 
 
 
 @node file-type specification, transfer level, other MIME-Edit operations, MIME-Edit
-@section $BA^F~$5$l$k(B file $B$KBP$9$k(B tag $B$N7hDj(B
+@section 挿入される file に対する tag の決定
 
-@kbd{C-c C-x C-i} (@code{mime-edit-insert-file}) $B$r<B9T$7$?;~!"A^F~$5$l(B
-$B$k(B file $B$KBP$9$k(B media-type $B$d(B encoding $B$J$I$N(B tag $B$N>pJs$OJQ?t(B 
-@code{mime-file-types} $B$K$h$C$F(B file $BL>$+$i?dB,$5$l$^$9!#(B@refill
+@kbd{C-c C-x C-i} (@code{mime-edit-insert-file}) を実行した時、挿入され
+る file に対する media-type や encoding などの tag の情報は変数 
+@code{mime-file-types} によって file 名から推測されます。@refill
 
-$BA0$K(B @kbd{C-u} $B$rIU$1$?;~!"$*$h$S!"E,Ev$JCM$,8+IU$+$i$J$+$C$?>l9g!"(Buser 
-$B$KBP$7$FCM$NF~NO$rB%$7$^$9!#!JA0$K(B @kbd{C-u} $B$rIU$1$?;~!"?dB,$5$l$?CM$,(B
-$B4{DjCM$H$7$FMQ$$$i$l$^$9!K(B@refill
+前に @kbd{C-u} を付けた時、および、適当な値が見付からなかった場合、user 
+に対して値の入力を促します。（前に @kbd{C-u} を付けた時、推測された値が
+既定値として用いられます）@refill
 
-file $BL>$KBP$9$k4{DjCM$rJQ$($?$$>l9g$OJQ?t(B @code{mime-file-types}
-$B$r@_Dj$7$F2<$5$$!#(B
+file 名に対する既定値を変えたい場合は変数 @code{mime-file-types}
+を設定して下さい。
 
 @defvar mime-file-types
 
-$BA^F~$5$l$k(B file $B$N(B file $BL>$KBP$9$k(B tag $B$N4{DjCM$rM?$($k!#(B@refill
+挿入される file の file 名に対する tag の既定値を与える。@refill
 
-$B$3$NJQ?t$O(B
+この変数は
 
 @lisp
 	(FILE_PAT TYPE SUBTYPE PARAMS ENCODING
@@ -553,11 +553,11 @@ file $BL>$KBP$9$k4{DjCM$rJQ$($?$$>l9g$OJQ?t(B @code{mime-file-types}
 @end lisp
 
 
-$B$H$$$&(B list $B$N(B list $B$G!"3FMWAG$O0J2<$NDL$j$G$"$k!'(B
+という list の list で、各要素は以下の通りである：
 
 @table @samp
 @item FILE_PAT
-file $BL>$rI=$9@55,I=8=(B
+file 名を表す正規表現
 
 @item TYPE
 media type
@@ -566,7 +566,7 @@ media type
 media subtype
 
 @item PARAMS
-Content-Type field $B$N(B parameter
+Content-Type field の parameter
 
 @item ENCODING
 Content-Transfer-Encoding
@@ -575,13 +575,13 @@ Content-Transfer-Encoding
 disposition-type
 
 @item DISPOSITION_PARAMS
-Content-Disposition field $B$N(B parameter
+Content-Disposition field の parameter
 
 @end table
 
 @noindent
-$B@_DjNc!'(B @file{*.rtf} $B$KBP$9$k(B media type $B$r(B application/rtf $B$K(B
-$B$9$k>l9g(B
+設定例： @file{*.rtf} に対する media type を application/rtf に
+する場合
 
 @lisp
 (eval-after-load
@@ -600,48 +600,48 @@ Content-Disposition field $B$N(B parameter
 @section transfer level
 @cindex transfer level
 
-message $B$KA^F~$9$k(B data $B$O(B 7bit (@ref{(mime-ja)7bit}) $B$J$$$7(B 8bit
-(@ref{(mime-ja)8bit}) $B$b$7$/$O(B binary (@ref{(mime-ja)binary}) $B$GI=8=$9$k(B
-$B$3$H$,$G$-$^$9!#(B@refill
+message に挿入する data は 7bit (@ref{(mime-ja)7bit}) ないし 8bit
+(@ref{(mime-ja)8bit}) もしくは binary (@ref{(mime-ja)binary}) で表現する
+ことができます。@refill
 
-$B$h$C$F!"(B7bit $B$7$+DL$5$J$$(B MTA (@ref{(mime-ja)MTA}) $B$r7PM3$9$k>l9g!"(B7bit 
-$B$N(B data $B$O$=$N$^$^$GAw$l$^$9$,!"(B8bit $B$d(B binary $B$N(B data $B$O(B 7bit $B$KJQ49$7(B
-$B$J$1$l$P$J$j$^$;$s!#(B@refill
+よって、7bit しか通さない MTA (@ref{(mime-ja)MTA}) を経由する場合、7bit 
+の data はそのままで送れますが、8bit や binary の data は 7bit に変換し
+なければなりません。@refill
 
-$BF1MM$K!"(B8bit $B$7$+DL$5$J$$(B MTA $B$r7PM3$9$k>l9g!"(B7bit $B$d(B 8bit $B$N(B data $B$O$=(B
-$B$N$^$^$GAw$l$^$9$,!"(Bbinary $B$N(B data $B$O(B 7bit $B$+(B 8bit $B$KJQ49$7$J$1$l$P$J$j(B
-$B$^$;$s!#(B@refill
+同様に、8bit しか通さない MTA を経由する場合、7bit や 8bit の data はそ
+のままで送れますが、binary の data は 7bit か 8bit に変換しなければなり
+ません。@refill
 
 @noindent
 @strong{[Memo]}
 @quotation
-EBCDIC $B$7$+DL$5$J$$(B MTA $B$r7PM3$9$k>l9g!"(B7bit $B$N(B data $B$b(B base64 $BEy$GJQ(B
-$B49$7$J$$$HAw$l$^$;$s$,!";d$O(B EBCDIC $B$N$3$H$^$G$OCN$j$^$;$s!#(B(^_^;
+EBCDIC しか通さない MTA を経由する場合、7bit の data も base64 等で変
+換しないと送れませんが、私は EBCDIC のことまでは知りません。(^_^;
 
-$BF1MM$K!"@)8fJ8;z$rDL$5$J$$(B MTA $B$N$3$H$d(B code $BJQ49$r9T$J$&(B MTA $B$b>C$($F$J(B
-$B$/$J$C$FM_$7$$$G$9!#(B(^_^;@refill
+同様に、制御文字を通さない MTA のことや code 変換を行なう MTA も消えてな
+くなって欲しいです。(^_^;@refill
 
-binary $B$bDL$9(B MTA $B$bB8:_$9$k$s$G$7$g$&$,!":#$N$H$3$m$"$^$j0lHLE*$H$O$$$((B
-$B$J$$$G$7$g$&!#(B
+binary も通す MTA も存在するんでしょうが、今のところあまり一般的とはいえ
+ないでしょう。
 @end quotation
 
-@strong{transfer level} $B$H$$$&$N$O$I$NHO0O$N(B data $B$^$GAw$l$k$+(B
-$B$H$$$&$3$H$rI=$9$b$N$G$9!#(Bmime-edit $B$O(B 
-@code{mime-transfer-level} $B$H$$$&JQ?t$r;}$C$F$*$j!"$3$l$G(B 
-transfer level $B$rI=8=$7$^$9!#(B
+@strong{transfer level} というのはどの範囲の data まで送れるか
+ということを表すものです。mime-edit は 
+@code{mime-transfer-level} という変数を持っており、これで 
+transfer level を表現します。
 
 
 @defvar mime-transfer-level
 
-transfer level $B$rI=$9!#(B@refill
+transfer level を表す。@refill
 
-$B$"$k(B data $B$N(B transfer level $B$,$3$NCM$r1[$($k>l9g!"(B7bit data $B$X$NJQ49$,9T(B
-$B$o$l$k!#(B@refill
+ある data の transfer level がこの値を越える場合、7bit data への変換が行
+われる。@refill
 
-$B8=:_$N$H$3$m!"(B7 $B$+(B 8 $B$,M-8z$G$"$k!#4{DjCM$O(B 7 $B$G$"$k!#(B@refill
+現在のところ、7 か 8 が有効である。既定値は 7 である。@refill
 
-EBCDIC $B$r(B 5, ASCII printable $B$N$_$r(B 6, binary $B$r(B 9 $B$H$9$k$3$H$r7W2h$7$F(B
-$B$$$k$,!"<BAu$NM=Dj$O$J$$!#(B
+EBCDIC を 5, ASCII printable のみを 6, binary を 9 とすることを計画して
+いるが、実装の予定はない。
 @end defvar
 
 
@@ -649,9 +649,9 @@ EBCDIC $B$r(B 5, ASCII printable $B$N$_$r(B 6, binary $B$r(B 9 $B$H$9$k$3
 @noindent
 @strong{[Memo]}
 @quotation
-transfer level $B$O(B message header (@ref{entity-header}) $B$K$O4X78$7$J$$!#(BMIME $B$O(B 
-body $B$K$*$$$F!"(B8bit $B$N(B data $B$r;H$($k$h$&$K(B STD 11 (@ref{(mime-ja)STD 11}) $B$r3HD%$7$F$$$k$,!"(Bmessage header $B$G$O(B us-ascii
-(@ref{(mime-ja)us-ascii}) $B$N$_$rMQ$$$k$3$H$r5a$a$F$$$k!#(B
+transfer level は message header (@ref{entity-header}) には関係しない。MIME は 
+body において、8bit の data を使えるように STD 11 (@ref{(mime-ja)STD 11}) を拡張しているが、message header では us-ascii
+(@ref{(mime-ja)us-ascii}) のみを用いることを求めている。
 @end quotation
 
 
@@ -661,40 +661,40 @@ body $B$K$*$$$F!"(B8bit $B$N(B data $B$r;H$($k$h$&$K(B STD 11 (@ref{(mime-
 
 @defvar mime-edit-split-message
 
-Non-nil $B$J$i$PBg$-$J%a%C%;!<%8$rJ,3d$7$FAw?.$7$^$9!#(B
+Non-nil ならば大きなメッセージを分割して送信します。
 @end defvar
 
 
 @defvar mime-edit-message-default-max-lines
 
-$B%a%C%;!<%8$N:GBg9T?t$N%G%U%)%k%HCM$G$9!#(B
+メッセージの最大行数のデフォルト値です。
 @end defvar
 
 
 @defvar mime-edit-message-max-lines-alist
 
-$B%a%8%c!<%b!<%IBP%a%C%;!<%8$N:GBg9T?t$+$i@.$kO"A[%j%9%H$G$9!#(B@refill
+メジャーモード対メッセージの最大行数から成る連想リストです。@refill
 
-$B%a%8%c!<%b!<%I$,$3$3$G;XDj$5$l$F$J$$>l9g$K$O(B
-@code{mime-edit-message-default-max-lines} $B$rMQ$$$^$9!#(B
+メジャーモードがここで指定されてない場合には
+@code{mime-edit-message-default-max-lines} を用います。
 @end defvar
 
 
 @defvar mime-edit-split-blind-field-regexp
 
-$BJ,3dAw?.$N:]$KL5;k$5$l$k%U%#!<%k%IL>$K%^%C%A$9$k@55,I=8=$G$9!#(B
+分割送信の際に無視されるフィールド名にマッチする正規表現です。
 @end defvar
 
 
 
 @node Various, Concept Index, MIME-Edit, Top
-@chapter $B$=$NB>(B
+@chapter その他
 
 
 @menu
-* PGP::                         $B0E9f2=!"=pL>(B
-* Buttons::                     $B2!KU(B
-* Acting-condition configuration::  $B<B9T>r7o$N@_Dj(B
+* PGP::                         暗号化、署名
+* Buttons::                     押釦
+* Acting-condition configuration::  実行条件の設定
 @end menu
 
 @node PGP, Buttons, Various, Various
@@ -702,33 +702,33 @@ Non-nil $B$J$i$PBg$-$J%a%C%;!<%8$rJ,3d$7$FAw?.$7$^$9!#(B
 @cindex PGP-kazu
 @cindex PGP/MIME
 
-mime-edit $B$G$O(B @strong{PGP/MIME} (RFC 2015) $B$*$h$S(B@strong{PGP-kazu}
-(draft-kazu-pgp-mime-00.txt) $B$K$h$k0E9f2=!&EE;R=pL>!&8x3+80$NA^F~5!G=$r(B
-$BMxMQ$9$k$3$H$,$G$-$^$9!#(B@refill
+mime-edit では @strong{PGP/MIME} (RFC 2015) および@strong{PGP-kazu}
+(draft-kazu-pgp-mime-00.txt) による暗号化・電子署名・公開鍵の挿入機能を
+利用することができます。@refill
 
-$BC"$7!"$3$N5!G=$rMxMQ$9$k$K$O3F<o(B pgp command $B$,I,MW$G$9!#(B
+但し、この機能を利用するには各種 pgp command が必要です。
 
 @defvar pgg-default-scheme
 
-$B0E9f2=$b$7$/$O=pL>$KMQ$$$k(B PGP $B$b$7$/$O(B GnuPG $B%3%^%s%I$N%P!<%8%g%s$G$9!#(B
-$BCM$O(B symbol $B$r;XDj$7$^$9!#;H$($k%P!<%8%g%s$O(B @code{gpg}$B!"(B
-@code{pgp} $B$b$7$/$O(B @code{pgp5} $B$G$9!#(B@refill
+暗号化もしくは署名に用いる PGP もしくは GnuPG コマンドのバージョンです。
+値は symbol を指定します。使えるバージョンは @code{gpg}、
+@code{pgp} もしくは @code{pgp5} です。@refill
 @end defvar
 
 
 @defvar pgg-scheme
 
-$BI|9f$b$7$/$O8!>Z$KMQ$$$k(B PGP $B$b$7$/$O(B GnuPG $B%3%^%s%I$N%P!<%8%g%s$G$9!#(B
-$BCM$O(B symbol $B$r;XDj$7$^$9!#;H$($k%P!<%8%g%s$O(B @code{gpg}$B!"(B
-@code{pgp} $B$b$7$/$O(B @code{pgp5} $B$G$9!#(B@refill
+復号もしくは検証に用いる PGP もしくは GnuPG コマンドのバージョンです。
+値は symbol を指定します。使えるバージョンは @code{gpg}、
+@code{pgp} もしくは @code{pgp5} です。@refill
 @end defvar
 
 
 @defvar pgg-insert-url-function
 
-$B80%5!<%P$+$i8x3+80$r<h$j4s$;$k:]$K;H$&4X?t$G$9!#%G%U%)%k%H$G$O(B
-Emacs/W3 $B$r;H$&@_Dj$K$J$C$F$$$^$9!#(Bemacs-w3m $B$r;H$&>l9g$K$O(B
-$B<!$N$h$&$K@_Dj$7$^$9!#(B
+鍵サーバから公開鍵を取り寄せる際に使う関数です。デフォルトでは
+Emacs/W3 を使う設定になっています。emacs-w3m を使う場合には
+次のように設定します。
 @lisp
 (setq pgg-insert-url-function #'w3m-retrieve)
 @end lisp
@@ -737,30 +737,30 @@ Emacs/W3 $B$r;H$&@_Dj$K$J$C$F$$$^$9!#(Bemacs-w3m $B$r;H$&>l9g$K$O(B
 
 
 @node Buttons, Acting-condition configuration, PGP, Various
-@section $B2!KU(B
+@section 押釦
 
 @defvar mime-button-face
 
-MIME-Preview $B%P%C%U%!$G(B  content-button $B$b$7$/$O(B URL-button  $B$KMQ$$$k(B
-face $B$G$9!#(B
+MIME-Preview バッファで  content-button もしくは URL-button  に用いる
+face です。
 @end defvar
 
 
 @defvar mime-button-mouse-face
 
-MIME-preview $B%P%C%U%!$G%^%&%9$r%O%$%i%$%H$9$k:]$KMQ$$$k(B face $B$G$9!#(B
+MIME-preview バッファでマウスをハイライトする際に用いる face です。
 @end defvar
 
 
 @defvar mime-browse-url-function
 
-URL $B$r%V%i%&%:$9$k4X?t$G$9!#(B
+URL をブラウズする関数です。
 @end defvar
 
 
 
 @node Acting-condition configuration,  , Buttons, Various
-@section $B<B9T>r7o$N@_Dj(B
+@section 実行条件の設定
 
 @defun mime-add-condition target-type condition  &optional  mode file
 
@@ -781,17 +781,17 @@ If optional argument @var{file} is specified, it is loaded when
 
 
 @node Concept Index, Function Index, Various, Top
-@chapter $B35G0:w0z(B
+@chapter 概念索引
 
 @printindex cp
 
 @node Function Index, Variable Index, Concept Index, Top
-@chapter $B4X?t:w0z(B
+@chapter 関数索引
 
 @printindex fn
 
 @node Variable Index,  , Function Index, Top
-@chapter $BJQ?t:w0z(B
+@chapter 変数索引
 
 @printindex vr
 @bye

@@ -1,11 +1,11 @@
-[README for SEMI kernel package ($BF|K\8lHG(B)]
+[README for SEMI kernel package (日本語版)]
 
-SEMI $B$H$O(B?
+SEMI とは?
 =========
 
- SEMI $B$O(B GNU Emacs $B$KBP$7$F(B MIME $B5!G=$rDs6!$9$k%i%$%V%i%j$G$9!#(BMIME $B$O!"(B
- $B%a%C%;!<%8Fb$K%W%l!<%s%F%-%9%H(B (ASCII) $B0J30$NFbMF$d%X%C%@$r4^$`$b$N$K(B
- $B4X$7$FDs0F$5$l$?%$%s%?!<%M%C%H5,3J$G$9!#(B
+ SEMI は GNU Emacs に対して MIME 機能を提供するライブラリです。MIME は、
+ メッセージ内にプレーンテキスト (ASCII) 以外の内容やヘッダを含むものに
+ 関して提案されたインターネット規格です。
 
         RFC 2045 : Internet Message Bodies
         RFC 2046 : Media Types
@@ -13,13 +13,13 @@ SEMI $B$H$O(B?
         RFC 2048 : MIME Registration Procedures
         RFC 2049 : MIME Conformance
 
- SEMI $B$O!"0J2<$N5!G=$r;}$C$F$$$^$9(B:
+ SEMI は、以下の機能を持っています:
 
         - MIME message viewer   (mime-view-mode) (RFC 2045 .. 2049)
         - MIME message composer (mime-edit-mode) (RFC 2045 .. 2049)
 
- MIME message viewer $B$H(B MIME message compiser $B$O$5$i$K<!$NFCD'$r;}$C$F(B
- $B$$$^$9(B:
+ MIME message viewer と MIME message compiser はさらに次の特徴を持って
+ います:
 
         - filename handling by Content-Disposition field (RFC 1806)
         - PGP/MIME security Multiparts (RFC 2015)
@@ -28,204 +28,204 @@ SEMI $B$H$O(B?
         - text/enriched (RFC 1896)
         - External method configuration by mailcap (RFC 1524)
 
- $B$3$N%Q%C%1!<%8$K$O(B MUAs $B$K4X$9$k(B MIME $B3HD%$O4^$^$l$F$$$J$$$3$H$KCm0U(B
- $B$7$F$/$@$5$$!#$3$l$i$O!"JL$N%Q%C%1!<%8$H$7$FG[I[$5$l$F$$$^$9!#(B
+ このパッケージには MUAs に関する MIME 拡張は含まれていないことに注意
+ してください。これらは、別のパッケージとして配布されています。
 
 
-$BI,MW$J4D6-(B
+必要な環境
 ==========
 
- SEMI $B$O!"(BXEmacs 21.1 $B0J9_!"$*$h$S(B GNU Emacs 20.4 $B0J9_$KBP1~$7$F$$$^$9!#(B
+ SEMI は、XEmacs 21.1 以降、および GNU Emacs 20.4 以降に対応しています。
 
- SEMI $B$O!"(BGNU Emacs 19.28 $B$^$?$O(B XEmacs 19.14 $B$h$j$b8E$$$b$N$K$D$$$F$O!"(B
- $B0l@ZBP1~$7$F$$$^$;$s!#2C$($F!"(BSEMI $B$O(B Mule 1, Mule 2 $B$*$h$S(B GNU Emacs
- 20.1/20.2 $B$J$I$G<BAu$5$l$F$$$k(B byte-indexing $B$G$OF0:n$7$^$;$s!#(B
+ SEMI は、GNU Emacs 19.28 または XEmacs 19.14 よりも古いものについては、
+ 一切対応していません。加えて、SEMI は Mule 1, Mule 2 および GNU Emacs
+ 20.1/20.2 などで実装されている byte-indexing では動作しません。
 
- SEMI $B$O!"(BEmacs 19.29 $B$+$i(B 19.34, XEmacs 19.15 $B$^$?$O(B XEmacs 20.2 $B$K$D(B
- $B$$$F$bBP1~$O$7$F$$$^$;$s$,!"F0$/$+$b$7$l$^$;$s!#(B
+ SEMI は、Emacs 19.29 から 19.34, XEmacs 19.15 または XEmacs 20.2 につ
+ いても対応はしていませんが、動くかもしれません。
 
- SEMI $B$O!"(BAPEL (10.7 $B0J9_(B) $B$H(B FLIM (1.14.2 $B0J9_(B) $B$rI,MW$H$7$^$9!#(B SEMI
- $B$r%$%s%9%H!<%k$9$kA0$K!"$3$l$i$r%$%s%9%H!<%k$7$F$/$@$5$$!#(BAPEL $B$O!"0J(B
- $B2<$GF~<j2DG=$G$9!#(B:
+ SEMI は、APEL (10.7 以降) と FLIM (1.14.2 以降) を必要とします。 SEMI
+ をインストールする前に、これらをインストールしてください。APEL は、以
+ 下で入手可能です。:
 
 	http://git.chise.org/elisp/dist/apel/
 
- $B$=$7$F!"(BFLIM $B$O0J2<$GF~<j2DG=$G$9!#(B:
+ そして、FLIM は以下で入手可能です。:
 
 	http://git.chise.org/elisp/dist/flim/flim-1.14/
 
 
-$B%$%s%9%H!<%k(B
+インストール
 ============
 
-(a) $BE83+$7$?>l=j$G<B9T$9$k(B
+(a) 展開した場所で実行する
 
- $B$b$7!"B>$N%G%#%l%/%H%j$K%$%s%9%H!<%k$9$k$3$H$rK>$^$J$$$J$i$P!"0J2<$N(B
- $B$_$r<B9T$7$F$/$@$5$$!#(B:
+ もし、他のディレクトリにインストールすることを望まないならば、以下の
+ みを実行してください。:
 
         % make
 
- $B$"$J$?$O(B emacs $B%3%^%s%IL>$r;XDj$9$k$3$H$,2DG=$G$9!#Nc$($P!"(B
+ あなたは emacs コマンド名を指定することが可能です。例えば、
 
         % make EMACS=xemacs
 
- $B$b$7!"(B`EMACS=...' $B$,>JN,$5$l$k$H!"(BEMACS=emacs $B$,MQ$$$i$l$^$9!#(B
+ もし、`EMACS=...' が省略されると、EMACS=emacs が用いられます。
 
 (b) make install
 
- $B$b$7$"$J$?$,!"B>$N%G%#%l%/%H%j$K%$%s%9%H!<%k$9$k$3$H$rK>$`$J$i$P!"0J2<(B
- $B$r<B9T$7$F$/$@$5$$!#(B:
+ もしあなたが、他のディレクトリにインストールすることを望むならば、以下
+ を実行してください。:
 
         % make install
 
- $B$"$J$?$O(B emacs $B%3%^%s%IL>$r;XDj$9$k$3$H$,2DG=$G$9!#Nc$($P!"(B
+ あなたは emacs コマンド名を指定することが可能です。例えば、
 
         % make install EMACS=xemacs
 
- $B$b$7!"(B`EMACS=...' $B$,>JN,$5$l$k$H!"(BEMACS=emacs $B$,MQ$$$i$l$^$9!#(B
+ もし、`EMACS=...' が省略されると、EMACS=emacs が用いられます。
 
- $B$"$J$?$O!"(BEmacs Lisp $B%W%m%0%i%`$H%7%'%k%9%/%j%W%H$K4X$9$k%G%#%l%/%H%j3,(B
- $BAX$N@\F,8l$r;XDj$9$k$3$H$,$G$-$^$9!#$?$H$($P!"(B:
+ あなたは、Emacs Lisp プログラムとシェルスクリプトに関するディレクトリ階
+ 層の接頭語を指定することができます。たとえば、:
 
         % make install PREFIX=~/
 
- $B$b$7!"(B`PREFIX=...' $B$,>JN,$5$l$k$H!";XDj$7$?(B emacs $B%3%^%s%I$N%G%#%l%/(B
- $B%H%j3,AX$N@\F,8l$,;HMQ$5$l$^$9!#(B($B$?$V$s!"(B/usr/local)
+ もし、`PREFIX=...' が省略されると、指定した emacs コマンドのディレク
+ トリ階層の接頭語が使用されます。(たぶん、/usr/local)
 
- $BNc$($P!"$b$7!"(BPREFIX=/usr/local $B$*$h$S!"(BEMACS 19.34 $B$,;XDj$5$l$k$H!"(B
- $B0J2<$N$h$&$J%G%#%l%/%H%j3,AX$,:n@.$5$l$k$G$7$g$&!#(B:
+ 例えば、もし、PREFIX=/usr/local および、EMACS 19.34 が指定されると、
+ 以下のようなディレクトリ階層が作成されるでしょう。:
 
         /usr/local/share/emacs/19.34/site-lisp/  --- emu
         /usr/local/share/emacs/site-lisp/apel/   --- APEL
         /usr/local/share/emacs/site-lisp/flim/   --- FLIM
         /usr/local/share/emacs/site-lisp/semi/   --- SEMI
 
- $B$"$J$?$O!"(Bsite-lisp $B$N%G%#%l%/%H%j$r;XDj$9$k$3$H$,$G$-$^$9!#Nc$($P!"(B
+ あなたは、site-lisp のディレクトリを指定することができます。例えば、
 
         % make install LISPDIR=~/share/emacs/lisp
 
- $B$b$7!"(B`LISPDIR=...' $B$,>JN,$5$l$k$H!";XDj$7$?(B emacs $B%3%^%s%I$N(B
- site-lisp $B%G%#%l%/%H%j$,;HMQ$5$l$^$9(B($B$?$V$s!"(B
- /usr/local/share/emacs/site-lisp $B$^$?$O(B
- /usr/local/lib/xemacs/site-lisp)$B!#(B
+ もし、`LISPDIR=...' が省略されると、指定した emacs コマンドの
+ site-lisp ディレクトリが使用されます(たぶん、
+ /usr/local/share/emacs/site-lisp または
+ /usr/local/lib/xemacs/site-lisp)。
 
- $B$b$7!"(Bemu $B%b%8%e!<%k(B (APEL $B$K4^$^$l$F$$$k(B)$B$,0lHLE*$G$O$J$$%G%#%l%/%H(B
- $B%j$K%$%s%9%H!<%k$5$l$F$$$k>l9g$K$O!"$"$J$?$O!"$3$l$i$,$I$3$G8+IU$1$i(B
- $B$l$k$+;XDj$9$kI,MW$,$"$j$^$9!#(B:
+ もし、emu モジュール (APEL に含まれている)が一般的ではないディレクト
+ リにインストールされている場合には、あなたは、これらがどこで見付けら
+ れるか指定する必要があります。:
 
         % make install VERSION_SPECIFIC_LISPDIR=~/elisp
 
-(c) XEmacs package $B$H$7$F$N%$%s%9%H!<%k(B
+(c) XEmacs package としてのインストール
 
- $B$b$7$"$J$?$,!"(BXEmacs package $B$N%G%#%l%/%H%j$K%$%s%9%H!<%k$9$k$3$H$rK>(B
- $B$`$J$i$P!"0J2<$r<B9T$7$F$/$@$5$$!#(B:
+ もしあなたが、XEmacs package のディレクトリにインストールすることを望
+ むならば、以下を実行してください。:
 
         % make install-package
 
- $B$"$J$?$O!"(Bemacs command $B$NL>A0$r;XDj$9$k$3$H$,$G$-$^$9!#$?$H$($P!"(B:
+ あなたは、emacs command の名前を指定することができます。たとえば、:
 
         % make install-package XEMACS=xemacs-21
 
- $B$b$7!"(B`XEMACS=...' $B$,>JN,$5$l$k$H!"(BXEMACS=xemacs $B$,MQ$$$i$l$^$9!#(B
+ もし、`XEMACS=...' が省略されると、XEMACS=xemacs が用いられます。
 
- $B$"$J$?$O!"(Bpackage $B$N%G%#%l%/%H%j$r;XDj$9$k$3$H$,$G$-$^$9!#$?$H$($P!"(B:
+ あなたは、package のディレクトリを指定することができます。たとえば、:
 
         % make install PACKAGEDIR=~/.xemacs
 
- $B$b$7!"(B`PACKAGEDIR=...' $B$,>JN,$5$l$k$H!":G=i$KB8:_$9$k(B package $B$N%G%#(B
- $B%l%/%H%j$,;HMQ$5$l$^$9!#(B
+ もし、`PACKAGEDIR=...' が省略されると、最初に存在する package のディ
+ レクトリが使用されます。
 
- XEmacs package $B%7%9%F%`$O!"(BXEmacs 21.0 $B0J9_$rI,MW$H$9$k$3$H$KCm0U$7$F$/(B
- $B$@$5$$!#(B
+ XEmacs package システムは、XEmacs 21.0 以降を必要とすることに注意してく
+ ださい。
 
 (a,b,c)
 
- $B$"$J$?$O!"(B${archive}/SEMI-CFG $B$H$$$&%U%!%$%k$r=q$-49$($k$3$H$K$h$j!"(B
- $BB>$N%*%W%7%g%s$N@_Dj$r;XDj$9$k$3$H$,$G$-$^$9!#(B${archive}/README.en $B$H(B
- ${archive}/SEMI-CFG $B$N%3%a%s%H$rFI$s$G$/$@$5$$!#(B
+ あなたは、${archive}/SEMI-CFG というファイルを書き換えることにより、
+ 他のオプションの設定を指定することができます。${archive}/README.en と
+ ${archive}/SEMI-CFG のコメントを読んでください。
 
 
-$B=i4|2=(B
+初期化
 ======
 
 (a) load-path
 
- $B$"$J$?$,(B XEmacs 21.1 $B0J9_$"$k$$$O(B GNU Emacs 20.4 $B0J9_$r;HMQ$7$F$$$k$J(B
- $B$i!"(Bload-path $B$K4X$7$FI,MW$J@_Dj$O$"$j$^$;$s!#(B
+ あなたが XEmacs 21.1 以降あるいは GNU Emacs 20.4 以降を使用しているな
+ ら、load-path に関して必要な設定はありません。
 
 (b) mime-setup
 
- $B$"$J$?$N(B ~/.emacs $B$K0J2<$N5-=R$rDI2C$7$F$/$@$5$$!#(B:
+ あなたの ~/.emacs に以下の記述を追加してください。:
 
         (load "mime-setup")
 
 
-$BIUB0;qNA(B
+付属資料
 ========
 
- SEMI $B$r;H$$;O$a$k$?$a$K!"(B${archive}/README.en $B$rFI$s$G$/$@$5$$!#(B
+ SEMI を使い始めるために、${archive}/README.en を読んでください。
 
- RFC 822, 1524, 1806, 1847, 1896, 2015, 2045, 2046, 2047, 2048 $B$*$h$S(B
- 2049 $B$O(B anonymous ftp $B$r7PM3$7$FF~<j2DG=$G$9!#(B:
+ RFC 822, 1524, 1806, 1847, 1896, 2015, 2045, 2046, 2047, 2048 および
+ 2049 は anonymous ftp を経由して入手可能です。:
 
         ftp://ftp.merit.edu/internet/documents/rfc/
 
 
-$B%a!<%j%s%0%j%9%H(B
+メーリングリスト
 ================
 
- $B$b$7!"$"$J$?$,!"%P%0%l%]!<%H$*$h$S(B/$B$^$?$O2~NI$N$?$a$NDs0F$r=q$/>l9g$K$O!"(B
- $B$=$l$i$r(B Emacs-MIME $B%a!<%j%s%0%j%9%H$KAw$C$F$/$@$5$$!#(B
+ もし、あなたが、バグレポートおよび/または改良のための提案を書く場合には、
+ それらを Emacs-MIME メーリングリストに送ってください。
 
-        emacs-mime-en@lists.chise.org  ($B1Q8l(B)
-        emacs-mime-ja@lists.chise.org  ($BF|K\8l(B)
+        emacs-mime-en@lists.chise.org  (英語)
+        emacs-mime-ja@lists.chise.org  (日本語)
 
- Emacs-MIME ML $B$rDL$7$F!"(BSEMI $B$N%P%0$rJs9p$7$?$j!"(BSEMI $B$N:G?7$N%j%j!<(B
- $B%9$K4X$9$k>pJs$rF~<j$7$?$j!"(BSEMI $B$N>-Mh$N3HD%$K$D$$$F5DO@$9$k$3$H$J$I(B
- $B$,$G$-$^$9!#(BEmacs-MIME ML $B$K2CF~$7$?$$J}$O!"0J2<$NJG$N5-=R$r8+$F9XFI(B
- $B<jB3$-$r9T$C$F$/$@$5$$!'(B
+ Emacs-MIME ML を通して、SEMI のバグを報告したり、SEMI の最新のリリー
+ スに関する情報を入手したり、SEMI の将来の拡張について議論することなど
+ ができます。Emacs-MIME ML に加入したい方は、以下の頁の記述を見て購読
+ 手続きを行ってください：
 
-      http://lists.chise.org/mailman/listinfo/emacs-mime-ja $B!JF|K\8l!K(B
-      http://lists.chise.org/mailman/listinfo/emacs-mime-en $B!J1Q8l!K(B
+      http://lists.chise.org/mailman/listinfo/emacs-mime-ja （日本語）
+      http://lists.chise.org/mailman/listinfo/emacs-mime-en （英語）
 
 
-Git $B$K4p$E$$$?3+H/(B
+Git に基づいた開発
 ==================
 
- SEMI $B$N3+H/$K$O(B Git $B$rMQ$$$F$*$j!"<!$N$h$&$JA`:n$K$h$j(B SEMI $B$N:G?7$N(B
- $B%=!<%9$r<hF@$9$k$3$H$,$G$-$^$9!#(B
+ SEMI の開発には Git を用いており、次のような操作により SEMI の最新の
+ ソースを取得することができます。
 
    % git clone http://git.chise.org/git/elisp/semi.git
 
- $B$3$N(B SEMI $B$N%j%]%8%H%j!<$O(B WWW $B7PM3$G$b1\Mw$9$k$3$H$,$G$-$^$9!'(B
+ この SEMI のリポジトリーは WWW 経由でも閲覧することができます：
 
     http://git.chise.org/gitweb/?p=elisp/semi.git
 
- Git $B$K4p$E$$$?3+H/$K;22C$7$?$$$H$-$O!"$^$:(B Emacs-MIME $B%a!<%j%s%0%j%9(B
- $B%H$K$F$=$N;]$r@k8@$7$F$/$@$5$$!#(B
+ Git に基づいた開発に参加したいときは、まず Emacs-MIME メーリングリス
+ トにてその旨を宣言してください。
 
- $B2f!9$OB?$/$NJ}$,$3$N3+$+$l$?3+H/$K;22C$7$F$/$@$5$k$3$H$rK>$s$G$$$^$9!#(B
+ 我々は多くの方がこの開かれた開発に参加してくださることを望んでいます。
 
 
-$B:n<T(B
+作者
 ====
 
-$B85$N:n<T(B
+元の作者
 
     MORIOKA Tomohiko <morioka@jaist.ac.jp>
-        (SEMI $B$N$$$m$$$m$JItJ,$H(B mime-view $B$N:n<T(B)
+        (SEMI のいろいろな部分と mime-view の作者)
     UMEDA Masanobu <umerin@mse.kyutech.ac.jp>
-        (emacs-mime-tools $B$N(B mime.el $B$N:n<T!#(Bmime.el $B$O(B SEMI $B$N(B
-        meme-edit.el $B$N867?$G$9(B)
+        (emacs-mime-tools の mime.el の作者。mime.el は SEMI の
+        meme-edit.el の原型です)
 
-$BB>$N:n<T(B
+他の作者
 
     Shuhei KOBAYASHI  <shuhei-k@jaist.ac.jp>
-        ($B$?$/$5$s$N%3!<%I$H(B signature.el $B$N<gMW$J:n<T(B)
+        (たくさんのコードと signature.el の主要な作者)
     MASUTANI Yasuhiro <masutani@me.es.osaka-u.ac.jp>
-        (mime-play.el $B$N(B anonymous ftp $B%3!<%I(B)
+        (mime-play.el の anonymous ftp コード)
     OKABE Yasuo <okabe@kudpc.kyoto-u.ac.jp>
-        (mime-partial.el $B$H(B signature.el $B$N<gMW$J:n<T(B)
+        (mime-partial.el と signature.el の主要な作者)
 
     Steinar Bang <sb@metis.no>
     Steven L. Baur <steve@miranova.com>
@@ -240,8 +240,8 @@ Git $B$K4p$E$$$?3+H/(B
     Hisashi Miyashita <himi@bird.scphys.kyoto-u.ac.jp>
     Kazuhiro Ohta <ohta@ele.cst.nihon-u.ac.jp>
     Alexandre Oliva <oliva@dcc.unicamp.br>
-    Fran.ANgois Pinard <pinard@iro.umontreal.ca>
+    François Pinard <pinard@iro.umontreal.ca>
     Artur Pioro <artur@flugor.if.uj.edu.pl>
     Dan Rich <drich@morpheus.corp.sgi.com>
-        (XEmacs $B$H6&$K(B mime-image.el $B$rH/E8$5$;$k$?$a$K4sM?(B)
+        (XEmacs と共に mime-image.el を発展させるために寄与)
     Katsumi Yamaoka <yamaoka@jpl.org>
