@@ -797,7 +797,7 @@ Each elements are regexp of field-name.")
 ;;; @@ about message splitting
 ;;;
 
-(defcustom mime-edit-split-message t
+(defcustom mime-edit-split-message nil
   "*Split large message if it is non-nil."
   :group 'mime-edit
   :type 'boolean)
