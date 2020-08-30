@@ -1371,9 +1371,10 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	  (encoding (nth 3 guess))
 	  (disposition-type (nth 4 guess))
 	  (disposition-params (nth 5 guess)))
-    (setq verbose (or (and (called-interactively-p 'interactive)
-			   mime-edit-insert-file-confirm)
-		      verbose))
+    (setq verbose (if (called-interactively-p 'interactive)
+		      (null (eq (null verbose)
+				(null mime-edit-insert-file-confirm)))
+		    verbose))
     (if verbose
 	(setq type (mime-prompt-for-type type)
 	      subtype (mime-prompt-for-subtype type subtype)
@@ -1398,9 +1399,10 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	  (parameters (nth 2 guess))
 	  (disposition-type (nth 4 guess))
 	  (disposition-params (nth 5 guess)))
-    (setq verbose (or (and (called-interactively-p 'interactive)
-			   mime-edit-insert-file-confirm)
-		      verbose))
+    (setq verbose (if (called-interactively-p 'interactive)
+		      (null (eq (null verbose)
+				(null mime-edit-insert-file-confirm)))
+		    verbose))
     (if verbose
 	(setq subtype (mime-prompt-for-subtype type subtype)))
     (setq parameters
