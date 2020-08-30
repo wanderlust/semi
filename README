@@ -1,0 +1,39 @@
+-*- outline -*-
+
+[README for SEMI-EPG]
+
+
+* What's SEMI-EPG?
+
+SEMI-EPG is a variant of SEMI.  The remarkable features are that it
+uses EasyPG and lexical binding, so Emacs 24.5 and later are
+supported.  See README.[en|ja] for details of original SEMI.
+
+
+* GitHub
+
+Development of SEMI-EPG uses Git.  The latest developing version is
+available at the following Git repository:
+
+  % git clone https://github.com/wanderlust/semi.git
+
+Or you can view the SEMI-EPG repository via WWW at:
+
+    https://github.com/wanderlust/semi
+
+We hope you will join the open development.
+
+
+* Bug reports
+
+If you write bug-reports and/or suggestions for improvement, please
+send them to the Wanderlust Mailing List.  See
+https://wanderlust.github.io/wl-docs/wl.html#Wanderlust-Mailing-List
+for details.
+
+Alternatively, You can also use GitHub.  If you send a pull request,
+please embed unindented ChangeLog entries in commit messages like
+Emacs's.  See "Commit messages" section of Emacs's CONTRIBUTE
+file.
+
+https://git.savannah.gnu.org/cgit/emacs.git/plain/CONTRIBUTE
