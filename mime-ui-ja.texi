@@ -208,10 +208,13 @@ C-c C-x p	preview editing MIME message.
 @enumerate
 @item
 Content-Description field もしくは Subject field に書かれた表題
+
 @item
 Content-Disposition field の filename parameter に書かれた file 名
+
 @item
 Content-Type field の name parameter に書かれた file 名
+
 @item
  uuencode の場合の file 名
 @end enumerate
@@ -363,6 +366,7 @@ tag には
 @itemize @bullet
 @item
  single-part tag
+
 @item
  multi-part tag
 @end itemize
@@ -380,13 +384,13 @@ single-part tag は single part を表現するための tag で、@refill
 @noindent
 というような形をしています。
 
-TYPE/SUBTYPE および PARAMETERS は Content-Type
-(@ref{(mime-ja)Content-Type}) 欄の type/subtype および parameters を表し
-ます。TYPE/SUBTYPE は必須であり、PARAMETERS は省略可です。@refill
+TYPE/SUBTYPE および PARAMETERS は Content-Type (@ref{Content-Type,,,
+mime-ja, FLIM 説明書}) 欄の type/subtype および parameters を表します。
+TYPE/SUBTYPE は必須であり、PARAMETERS は省略可です。@refill
 
 ENCODING は Content-Transfer-Encoding
-(@ref{(mime-ja)Content-Transfer-Encoding}) 欄を表します。これも省略可で
-す。@refill
+(@ref{(Content-Transfer-Encoding,,, mime-ja, FLIM 説明書}) 欄を表しま
+す。これも省略可です。@refill
 
 OPTIONAL-FIELDS は Content-Type, Content-Transfer-Encoding 以外の field 
 を書くための部分で、省略可です。@refill
@@ -507,12 +511,12 @@ mime-edit-mode におけるその他の操作を説明します。
 るかどうかを決めます。
 
 @item @key{C-c C-x 7}
-transfer level (@ref{transfer level}) を 7bit (@ref{(mime-ja)7bit}) にし
-ます。
+transfer level (@ref{transfer level}) を 7bit (@ref{7bit,,, mime-ja,
+FLIM 説明書}) にします。
 
 @item @key{C-c C-x 8}
-transfer level (@ref{transfer level}) を 8bit (@ref{(mime-ja)8bit}) にし
-ます。
+transfer level (@ref{transfer level}) を 8bit (@ref{8bit,,, mime-ja,
+FLIM 説明書}) にします。
 
 @item @key{C-c C-x v}
 message 全体を電子署名するかどうかを決めます。(cf. @ref{PGP})
@@ -600,13 +604,14 @@ Content-Disposition field の parameter
 @section transfer level
 @cindex transfer level
 
-message に挿入する data は 7bit (@ref{(mime-ja)7bit}) ないし 8bit
-(@ref{(mime-ja)8bit}) もしくは binary (@ref{(mime-ja)binary}) で表現する
-ことができます。@refill
+message に挿入する data は 7bit (@ref{7bit,,, mime-ja, FLIM 説明書})
+ないし 8bit (@ref{8bit,,, mime-ja, FLIM 説明書}) もしくは binary
+(@ref{binary,,, mime-ja, FLIM 説明書}) で表現することができます。
+@refill
 
-よって、7bit しか通さない MTA (@ref{(mime-ja)MTA}) を経由する場合、7bit 
-の data はそのままで送れますが、8bit や binary の data は 7bit に変換し
-なければなりません。@refill
+よって、7bit しか通さない MTA (@ref{MTA,,, mime-ja, FLIM 説明書}) を経
+由する場合、7bit の data はそのままで送れますが、8bit や binary の
+data は 7bit に変換しなければなりません。@refill
 
 同様に、8bit しか通さない MTA を経由する場合、7bit や 8bit の data はそ
 のままで送れますが、binary の data は 7bit か 8bit に変換しなければなり
@@ -649,9 +654,11 @@ EBCDIC を 5, ASCII printable のみを 6, binary を 9 とすることを計画
 @noindent
 @strong{[Memo]}
 @quotation
-transfer level は message header (@ref{entity-header}) には関係しない。MIME は 
-body において、8bit の data を使えるように STD 11 (@ref{(mime-ja)STD 11}) を拡張しているが、message header では us-ascii
-(@ref{(mime-ja)us-ascii}) のみを用いることを求めている。
+transfer level は message header (@ref{entity-header}) には関係しない。
+MIME は body において、8bit の data を使えるように STD 11 (@ref{STD
+11,,, mime-ja, FLIM 説明書}) を拡張しているが、message header では
+us-ascii (@ref{us-ascii,,, mime-ja, FLIM 説明書}) のみを用いることを求
+めている。
 @end quotation
 
 

@@ -213,10 +213,13 @@ taken from
 @enumerate
 @item
 Title described in Content-Description field or Subject field
+
 @item
 File name specified by filename parameter in Content-Disposition field
+
 @item
 File name specified by name parameter in Content-Type field
+
 @item
 File name for uuencode'ing
 @end enumerate
@@ -369,6 +372,7 @@ There are 2 kinds of tags:
 @itemize @bullet
 @item
  single-part tag
+
 @item
  multi-part tag
 @end itemize
@@ -381,12 +385,12 @@ single-part tag represents single part, this form is following:@refill
 @end example
 
 TYPE/SUBTYPE and PARAMETERS indicates type/subtype and parameters of
-Content-Type (@ref{(mime-en)Content-Type}) field.  TYPE/SUBTYPE is
-required, PARAMETERS is optional.@refill
+Content-Type (@ref{Content-Type,,, mime-en, FLIM Manual}) field.
+TYPE/SUBTYPE is required, PARAMETERS is optional.@refill
 
 ENCODING indicates Content-Transfer-Encoding
-(@ref{(mime-en)Content-Transfer-Encoding}) field.  It is optional
-too.@refill
+(@ref{Content-Transfer-Encoding,,, mime-en, FLIM Manual}) field.  It
+is optional too.@refill
 
 OPTIONAL-FIELDS is to represent another fields except Content-Type field
 and Content-Transfer-Encoding field.@refill
@@ -504,10 +508,12 @@ Set current editing message to enable automatic splitting or not.
 Form of automatic split messages is message/partial.
 
 @item @key{C-c C-x 7}
-Set 7bit (@ref{(mime-en)7bit}) to transfer level (@ref{transfer level}).
+Set 7bit (@ref{7bit,,, mime-en, FLIM Manual}) to transfer level
+(@ref{transfer level}).
 
 @item @key{C-c C-x 8}
-Set 8bit (@ref{(mime-en)8bit}) to transfer level (@ref{transfer level}).
+Set 8bit (@ref{8bit,,, mime-en, FLIM Manual}) to transfer level
+(@ref{transfer level}).
 
 @item @key{C-c C-x v}
 Set current editing message to digital-sign or not. (cf. @ref{PGP})
@@ -597,12 +603,12 @@ Example: Specify application/rtf as default media type for
 @cindex transfer level
 
 Each content inserted in a message is represented by 7bit
-(@ref{(mime-en)7bit}), 8bit (@ref{(mime-en)8bit}) or binary
-(@ref{(mime-en)binary}).@refill
+(@ref{7bit,,, mime-en, FLIM Manual}), 8bit (@ref{8bit,,, mime-en, FLIM
+Manual}) or binary (@ref{binary,,, mime-en, FLIM Manual}).@refill
 
-If a message is translated by 7bit-through MTA (@ref{(mime-en)MTA}),
-there is no need to encode 7bit data, but 8bit and binary data must be
-encoded to 7bit data.@refill
+If a message is translated by 7bit-through MTA (@ref{MTA,,, mime-en,
+FLIM Manual}), there is no need to encode 7bit data, but 8bit and
+binary data must be encoded to 7bit data.@refill
 
 Similarly, if a message is translated by 8bit-through MTA, there is no
 need to encode 7bit or 8bit data, but binary data must be encoded to
@@ -643,9 +649,10 @@ binary will be 9.  But it will not be implemented.
 @noindent
 @strong{[Memo]}
 @quotation
-transfer level is only for body, not for message header (@ref{entity-header}).
-MIME extends RFC 822 (@ref{(mime-en)RFC 822}) to use 8bit data in body,
-but it requires to use us-ascii (@ref{(mime-en)us-ascii}) in header.
+transfer level is only for body, not for message header
+(@ref{entity-header}).  MIME extends RFC 822 (@ref{RFC 822,,, mime-en,
+FLIM Manual}) to use 8bit data in body, but it requires to use
+us-ascii (@ref{us-ascii,,, mime-en, FLIM Manual}) in header.
 @end quotation
 
 
