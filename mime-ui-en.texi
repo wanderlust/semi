@@ -1,20 +1,21 @@
 \input texinfo.tex
 @setfilename mime-ui-en.info
-@settitle SEMI 1.14 Manual
+@settitle SEMI-EPG 1.14 Manual
 @documentlanguage en
 
 @dircategory GNU Emacs Lisp
 @direntry
-* SEMI (en): (mime-ui-en).      MIME user interface.
+* SEMI-EPG (en): (mime-ui-en).      MIME user interface.
 @end direntry
 
 @titlepage
-@title SEMI 1.14 Manual
+@title SEMI-EPG 1.14 Manual
 @author MORIOKA Tomohiko <morioka@@jaist.ac.jp>
-@subtitle 1998/07/03
+@author Kazuhiro Ito
+@subtitle 2020/09/17
 @end titlepage
 @node Top, Introduction, (dir), (dir)
-@top SEMI 1.14 Manual
+@top SEMI-EPG 1.14 Manual
 
 @ifinfo
 
@@ -22,7 +23,7 @@ This file documents SEMI, a MIME user interface for GNU Emacs.
 @end ifinfo
 
 @menu
-* Introduction::                What is SEMI?
+* Introduction::                What is SEMI-EPG?
 * MIME-View::                   MIME message viewing
 * MIME-Edit::                   MIME message editing
 * Various::                     Miscellaneous
@@ -32,10 +33,11 @@ This file documents SEMI, a MIME user interface for GNU Emacs.
 @end menu
 
 @node Introduction, MIME-View, Top, Top
-@chapter What is SEMI?
+@chapter What is SEMI-EPG?
 
 SEMI is a package for GNU Emacs to provide features related with MIME
-user interface.@refill
+user interface.  SEMI-EPG is a variant of SEMI, which
+features supports to EasyPG and latest Emacs.@refill
 
 SEMI provides two user interfaces: MIME-View and MIME-Edit.@refill
 
@@ -700,41 +702,27 @@ Regular expression to match field-name to be ignored when split sending.
 
 @node PGP, Buttons, Various, Various
 @section PGP
-@cindex PGP-kazu
 @cindex PGP/MIME
 
 mime-edit provides PGP encryption, signature and inserting public-key
-features based on @strong{PGP/MIME} (RFC 2015) or @strong{PGP-kazu}
-(draft-kazu-pgp-mime-00.txt).@refill
+features based on @strong{PGP/MIME} (RFC 3156) by using EasyPG.@refill
 
-This feature requires your pgp command.
-
-@defvar pgg-default-scheme
-
-Version of PGP or GnuPG command to be used for encryption or sign.
-The value should be a symbol.  Allowed versions are @code{gpg},
-@code{pgp} or @code{pgp5}.@refill
+@defvar mime-edit-pgp-verbose
+When non-nil, ask the user about the current operation more verbosely.
 @end defvar
 
-
-@defvar pgg-scheme
-
-Version of PGP or GnuPG command to be used for decryption or verification.
-The value should be a symbol.  Allowed versions are @code{gpg},
-@code{pgp} or @code{pgp5}.@refill
+@defvar mime-edit-pgp-signers
+A list of your own key ID which will be preferredly used to sign a message.
 @end defvar
 
-
-@defvar pgg-insert-url-function
-
-The function to fetch public key from the keyserver.
-Use Emacs/W3 by the default setting. To use emacs-w3m
-instead, set as follows:
-@lisp
-(setq pgg-insert-url-function #'w3m-retrieve)
-@end lisp
+@defvar mime-edit-pgp-encrypt-to-self
+When non-nil, add sender's key ID to recipient list when encryption.
+When nil, sender can't decrypt encrypted content in general.
 @end defvar
 
+@defvar mime-edit-pgp-filtered-validities
+A list of keys's validities which are used for neither signing nor encrypting.
+@end defvar
 
 
 @node Buttons, Acting-condition configuration, PGP, Various

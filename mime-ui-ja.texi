@@ -5,27 +5,29 @@
 
 @dircategory GNU Emacs Lisp
 @direntry
-* SEMI (ja): (mime-ui-ja).      MIME user interface.
+* SEMI-EPG (ja): (mime-ui-ja).      MIME user interface.
 @end direntry
 
-@settitle SEMI 1.14 説明書
+@settitle SEMI-EPG 1.14 説明書
 @titlepage
-@title SEMI 1.14 説明書
+@title SEMI-EPG 1.14 説明書
 @author 守岡 知彦 <morioka@@jaist.ac.jp>
-@subtitle 1998/07/03
+@author 伊藤 和博
+@subtitle 2020/09/17
 @end titlepage
 @node Top, Introduction, (dir), (dir)
-@top SEMI 1.14 説明書
+@top SEMI-EPG 1.14 説明書
 
 @ifinfo
 
-This file documents SEMI, a MIME user interface for GNU Emacs.@refill
+This file documents SEMI-EPG, a MIME user interface for GNU
+Emacs.@refill
 
-GNU Emacs 用の MIME user interface である SEMI について説明します。
+GNU Emacs 用の MIME user interface である SEMI-EPG について説明します。
 @end ifinfo
 
 @menu
-* Introduction::                SEMI って何？
+* Introduction::                SEMI-EPG って何？
 * MIME-View::                   MIME message の閲覧
 * MIME-Edit::                   MIME message の編集
 * Various::                     その他
@@ -35,9 +37,11 @@ GNU Emacs 用の MIME user interface である SEMI について説明します�
 @end menu
 
 @node Introduction, MIME-View, Top, Top
-@chapter SEMI って何？
+@chapter SEMI-EPG って何？
 
 SEMI は GNU Emacs 用の MIME user interface を提供する package です。
+SEMI-EPG は SEMI のバリアントの一つで、
+EasyPG や最新バージョンの Emacs への対応などを特徴とします。
 @refill
 
 SEMI が提供する MIME user interface は MIME-View と MIME-Edit からなりま
@@ -389,7 +393,7 @@ mime-ja, FLIM 説明書}) 欄の type/subtype および parameters を表しま�
 TYPE/SUBTYPE は必須であり、PARAMETERS は省略可です。@refill
 
 ENCODING は Content-Transfer-Encoding
-(@ref{(Content-Transfer-Encoding,,, mime-ja, FLIM 説明書}) 欄を表しま
+(@ref{Content-Transfer-Encoding,,, mime-ja, FLIM 説明書}) 欄を表しま
 す。これも省略可です。@refill
 
 OPTIONAL-FIELDS は Content-Type, Content-Transfer-Encoding 以外の field 
@@ -706,41 +710,27 @@ Non-nil ならば大きなメッセージを分割して送信します。
 
 @node PGP, Buttons, Various, Various
 @section PGP
-@cindex PGP-kazu
 @cindex PGP/MIME
 
-mime-edit では @strong{PGP/MIME} (RFC 2015) および@strong{PGP-kazu}
-(draft-kazu-pgp-mime-00.txt) による暗号化・電子署名・公開鍵の挿入機能を
-利用することができます。@refill
+mime-edit では EasyPG を利用した @strong{PGP/MIME} (RFC 3156) による暗
+号化・電子署名・公開鍵の挿入機能を利用することができます。@refill
 
-但し、この機能を利用するには各種 pgp command が必要です。
-
-@defvar pgg-default-scheme
-
-暗号化もしくは署名に用いる PGP もしくは GnuPG コマンドのバージョンです。
-値は symbol を指定します。使えるバージョンは @code{gpg}、
-@code{pgp} もしくは @code{pgp5} です。@refill
+@defvar mime-edit-pgp-verbose
+When non-nil, ask the user about the current operation more verbosely.
 @end defvar
 
-
-@defvar pgg-scheme
-
-復号もしくは検証に用いる PGP もしくは GnuPG コマンドのバージョンです。
-値は symbol を指定します。使えるバージョンは @code{gpg}、
-@code{pgp} もしくは @code{pgp5} です。@refill
+@defvar mime-edit-pgp-signers
+署名時に優先的に使用する鍵 ID のリストです。
 @end defvar
 
-
-@defvar pgg-insert-url-function
-
-鍵サーバから公開鍵を取り寄せる際に使う関数です。デフォルトでは
-Emacs/W3 を使う設定になっています。emacs-w3m を使う場合には
-次のように設定します。
-@lisp
-(setq pgg-insert-url-function #'w3m-retrieve)
-@end lisp
+@defvar mime-edit-pgp-encrypt-to-self
+non-nilの場合、暗号化の際に送信者の鍵 ID を recipient に含めます。
+nilの場合、送信者は暗号化した内容を通常は復号できません。
 @end defvar
 
+@defvar mime-edit-pgp-filtered-validities
+A list of keys's validities which are used for neither signing nor encrypting.
+@end defvar
 
 
 @node Buttons, Acting-condition configuration, PGP, Various
