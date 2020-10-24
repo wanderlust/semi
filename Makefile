@@ -49,22 +49,6 @@ install-package:	package
 clean:
 	-$(RM) $(GOMI)
 
-
-tar:
-	cvs commit
-	sh -c 'cvs tag -R $(PACKAGE)-`echo $(VERSION) | tr . _`; \
-	cd /tmp; \
-	cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root \
-		export -d $(PACKAGE)-$(VERSION) \
-		-r $(PACKAGE)-`echo $(VERSION) | tr . _` \
-		semi'
-	$(RM) /tmp/$(PACKAGE)-$(VERSION)/ftp.in
-	cd /tmp; $(TAR) cvzf $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION)
-	cd /tmp; $(RM) -r $(PACKAGE)-$(VERSION)
-	sed "s/VERSION/$(VERSION)/" < ftp.in | sed "s/API/$(API)/" \
-		| sed "s/PACKAGE/$(PACKAGE)/" \
-		| sed "s/FLIM_API/$(FLIM_API)/" > ftp
-
 release:
 	-$(RM) $(ARC_DIR)/$(PACKAGE)-$(VERSION).tar.gz
 	mv /tmp/$(PACKAGE)-$(VERSION).tar.gz $(ARC_DIR)
