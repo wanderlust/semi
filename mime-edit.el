@@ -940,16 +940,9 @@ If it is not specified for a major-mode,
 			      (string-match "\\.[0-9]+$" emacs-version))
 			 (substring emacs-version 0 (match-beginning 0))
 		       emacs-version)))
-	    (if (featurep 'mule)
-		(if (boundp 'enable-multibyte-characters)
-		    (concat "Emacs/" ver
-			    " (" system-configuration ")"
-			    (if enable-multibyte-characters
-				(concat " MULE/" mule-version)
-			      " (with unibyte mode)"))
-		  (concat "MULE/" mule-version
-			  " (based on Emacs " ver ")"))
-	      (concat "Emacs/" ver " (" system-configuration ")"))))
+	    (concat "Emacs/" ver " (" system-configuration ")"
+		    (concat " MULE/" mule-version)
+		    " (with unibyte mode)")))
   "Body of User-Agent field.
 If variable `mime-edit-insert-user-agent-field' is not nil, it is
 inserted into message header.")
@@ -1311,23 +1304,12 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
 	    ;; Make a space between the following message.
 	    (insert "\n")
 	    (forward-char -1)))
-      (if (and (member (cadr ret) '("enriched"))
-	       (fboundp 'enriched-mode))
+      (if (member (cadr ret) '("enriched"))
 	  (enriched-mode t)
-	(if (boundp 'enriched-mode)
-	    (enriched-mode -1))))))
+	(enriched-mode -1)))))
 
 (defun mime-edit-insert-file-filename (file)
-  (std11-wrap-as-quoted-string
-   (if (or (boundp 'mime-non-attribute-char-regexp)
-	   (string= (mime-product-name
-		     mime-library-product)
-		    "LIMIT"))
-       (file-name-nondirectory file)
-     ;; If FLIM does not support non-ASCII
-     ;; filename, it is encoded.
-     (eword-encode-string
-      (file-name-nondirectory file)))))
+  (std11-wrap-as-quoted-string (file-name-nondirectory file)))
 
 (defun mime-edit-insert-file-charset (file &optional verbose)
   (let ((charset (with-temp-buffer
@@ -2554,12 +2536,7 @@ Content-Disposition: attachment; filename=smime.p7m][base64]]
 			 encoding))
 		       (coding (detect-coding-string string t)))
 		  (or (coding-system-to-mime-charset coding)
-		      (if (fboundp 'detect-mime-charset-string)
-			  (detect-mime-charset-string string)
-			(with-temp-buffer
-			  (insert string)
-			  (detect-mime-charset-region
-			   (point-min) (point-max)))))))
+		      (detect-mime-charset-string string))))
 	       ;; Inputted directly or reeditting.
 	       (t
 		(mime-edit-choose-charset))))

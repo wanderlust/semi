@@ -97,10 +97,8 @@ multipart/alternative entities."
 (defcustom mime-display-multipart/multilingual-prefered-languages
   (mapcar (lambda (lang)
 	    (format "^%s\\(-.+\\)?" (regexp-quote (symbol-name lang))))
-	  (let ((result (if (fboundp 'get-language-info)
-			    (get-language-info
-			     current-language-environment 'iso639-language)
-			  'en)))
+	  (let ((result (get-language-info
+			 current-language-environment 'iso639-language)))
 	    (if (eq result 'en)
 		(list result)
 	      (cons result '(en)))))
@@ -453,15 +451,7 @@ mother-buffer."
       (with-temp-buffer
 	(insert-file-contents file)
 	(setq mime-situation-examples-file-coding-system
-              (static-cond
-	       ((boundp 'buffer-file-coding-system)
-		(symbol-value 'buffer-file-coding-system))
-	       ((boundp 'file-coding-system)
-		(symbol-value 'file-coding-system))
-	       (t nil))
-	      ;; (and (boundp 'buffer-file-coding-system)
-              ;;      buffer-file-coding-system)
-	      )
+	      buffer-file-coding-system)
 	(condition-case error
 	    (eval-buffer)
 	  (error (message "%s is broken: %s" file (cdr error))))
@@ -514,15 +504,8 @@ mother-buffer."
             (insert "\n;;; "
                     (file-name-nondirectory file)
                     " ends here.\n")
-            (static-cond
-             ((boundp 'buffer-file-coding-system)
-              (setq buffer-file-coding-system
-                    mime-situation-examples-file-coding-system))
-             ((boundp 'file-coding-system)
-              (setq file-coding-system
-                    mime-situation-examples-file-coding-system)))
-            ;; (setq buffer-file-coding-system
-            ;;       mime-situation-examples-file-coding-system)
+            (setq buffer-file-coding-system
+                  mime-situation-examples-file-coding-system)
             (setq buffer-file-name file)
             (save-buffer))))))
 

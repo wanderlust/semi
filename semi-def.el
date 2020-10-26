@@ -24,8 +24,6 @@
 
 ;;; Code:
 
-(require 'custom)
-
 (defconst mime-user-interface-product ["SEMI-EPG" (1 14 7) "Harue"]
   "Product name, version number and code name of MIME-kernel package.")
 
