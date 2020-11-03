@@ -941,8 +941,7 @@ If it is not specified for a major-mode,
 			 (substring emacs-version 0 (match-beginning 0))
 		       emacs-version)))
 	    (concat "Emacs/" ver " (" system-configuration ")"
-		    (concat " MULE/" mule-version)
-		    " (with unibyte mode)")))
+		    (concat " MULE/" mule-version))))
   "Body of User-Agent field.
 If variable `mime-edit-insert-user-agent-field' is not nil, it is
 inserted into message header.")
