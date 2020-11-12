@@ -80,6 +80,14 @@ buttom. Nil means don't scroll at all."
   :group 'mime-view
   :type 'boolean)
 
+(defcustom mime-view-nobreak-char-display nil
+  "Override `nobreak-char-display' in preview buffer.
+See `nobreak-char-display' for details."
+  :type '(choice (const :tag "Use harcoded face" t)
+		 (const :tag "Use escape glyph" 'escape)
+		 (const :tag "No special handling" nil))
+  :group 'mime-view)
+
 (defcustom mime-view-multipart/related-show-all-children t
   "When non-nil, do not hide child entities."
   :group 'mime-view
@@ -1665,6 +1673,8 @@ non-nil, DEFAULT-KEYMAP-OR-FUNCTION is ignored.  If it is nil,
       (setq mime-preview-original-window-configuration win-conf)
       (setq major-mode 'mime-view-mode)
       (setq mode-name "MIME-View")
+      (make-local-variable 'nobreak-char-display)
+      (setq nobreak-char-display mime-view-nobreak-char-display)
       ;; Do not hide button when first entity is
       ;; neither text nor multipart.
       (mime-display-entity
