@@ -307,6 +307,8 @@ SUBTYPE is symbol to indicate subtype of media-type.")
 ;;; @ mail/news message
 ;;;
 
+(defvar mime-view-temp-message-buffer nil) ; buffer local variable
+
 (defun mime-preview-quitting-method-for-mime-show-message-mode ()
   "Quitting method for mime-view.
 It is registered to variable `mime-preview-quitting-method-alist'."
@@ -355,8 +357,6 @@ occurs."
 	    (set-default-file-modes 448)
 	    (make-directory dir))
 	(set-default-file-modes orig-modes)))))
-
-(defvar mime-view-temp-message-buffer nil) ; buffer local variable
 
 (defun mime-store-message/partial-piece (entity cal)
   (let ((root-dir

@@ -116,13 +116,10 @@
 (require 'invisible)
 (require 'mel)
 (require 'mime-view)
+(require 'epa)
 
 (autoload 'eword-encode-string "eword-encode")
 (autoload 'eword-decode-and-unfold-unstructured-field-body "eword-decode")
-(autoload 'epg-make-context "epg"
-  "Return a context object.")
-(autoload 'epa-select-keys "epa")
-(autoload 'epg-configuration "epg-config")
 
 ;;; @ version
 ;;;
@@ -2095,7 +2092,6 @@ Content-Description: OpenPGP Digital Signature
   "Sign the current region between START and END by SIGNERS keys selected.  Appropriate coding system is selected automatically.  When called interactively, current mime part is signed."
   (interactive
    (progn
-     (require 'epa)
      (let ((mime-edit-pgp-verbose
 	    (or current-prefix-arg mime-edit-pgp-verbose))
 	   (context (epg-make-context epa-protocol)))
@@ -2112,21 +2108,19 @@ Content-Description: OpenPGP Digital Signature
   "Encrypt the current region between START and END for RECIPIENTS.  Appropriate coding system is selected automatically.  When called interactively, current mime part is encrypted.
 When SIGN is non-nil, also sign by SIGNERS keys selected."
   (interactive
-   (progn
-     (require 'epa)
-     (let ((mime-edit-pgp-verbose
-	    (or current-prefix-arg mime-edit-pgp-verbose))
-	   (context (epg-make-context epa-protocol))
-	   sign)
-       (list (mime-edit-content-beginning)
-	     (mime-edit-content-end)
-	     (epa-select-keys context
-			      "Select recipients for encryption.
+   (let ((mime-edit-pgp-verbose
+	  (or current-prefix-arg mime-edit-pgp-verbose))
+	 (context (epg-make-context epa-protocol))
+	 sign)
+     (list (mime-edit-content-beginning)
+	   (mime-edit-content-end)
+	   (epa-select-keys context
+			    "Select recipients for encryption.
 If no one is selected, symmetric encryption will be performed.  ")
-	     (setq sign (if mime-edit-pgp-verbose (y-or-n-p "Sign? ")))
-	     (if sign
-		 (epa-select-keys context
-				  "Select keys for signing.  "))))))
+	   (setq sign (if mime-edit-pgp-verbose (y-or-n-p "Sign? ")))
+	   (if sign
+	       (epa-select-keys context
+				"Select keys for signing.  ")))))
   (setq epa-last-coding-system-specified (mime-edit-text-coding))
   (epa-encrypt-region start end recipients sign signers))
 

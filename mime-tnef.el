@@ -882,6 +882,8 @@
 	    (kill-buffer buffer)))
 	mime-tnef-buffers))
 
+(eval-when-compile (require 'mmgeneric))
+
 (defun mime-display-application/ms-tnef (entity situation)
   (let ((tnef (mime-tnef-parse (mime-entity-content entity)))
 	files p beg end buffer tnef-entity)
@@ -896,6 +898,7 @@
       	(setq buffer (generate-new-buffer
 		      (concat mime-temp-buffer-name "TNEF*")))
       	(with-current-buffer buffer
+	  (require 'mmbuffer)
 	  (set-buffer-multibyte nil)
 	  (let ((boundary (concat "TNEF-" (mime-edit-make-boundary))))
 	    (insert "Content-Type: multipart/mixed;\n"

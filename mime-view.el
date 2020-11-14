@@ -433,6 +433,9 @@ mother-buffer."
 (defvar mime-preview-situation-example-list-max-size 16)
 ;; (defvar mime-preview-situation-example-condition nil)
 
+(defvar mime-preview-condition nil
+  "Condition-tree about how to display entity.")
+
 (defun mime-find-entity-preview-situation (entity
 					   &optional default-situation)
   (or (let ((ret
@@ -732,9 +735,6 @@ Each elements are regexp of field-name.")
 (define-calist-field-match-method
   'access-type #'mime-calist::field-match-method-ignore-case)
 
-
-(defvar mime-preview-condition nil
-  "Condition-tree about how to display entity.")
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . application)(subtype . octet-stream)

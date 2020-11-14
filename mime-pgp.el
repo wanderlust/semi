@@ -259,6 +259,7 @@
 					(mime-entity-parent entity))))))))
 	  (insert (format "%s" (cdr failed)))
 	(with-current-buffer buffer
+	  (require 'mmbuffer)
 	  (insert result)
 	  (setq decrypted-entity
 		(mime-parse-message
@@ -342,6 +343,7 @@
 	  (setq buffer (generate-new-buffer
 			(concat mime-temp-buffer-name "PKCS7*")))
 	  (with-current-buffer buffer
+	    (require 'mmbuffer)
 	    (set-buffer-multibyte nil)
 	    (insert result)
 	    (setq decrypted-entity

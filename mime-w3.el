@@ -27,31 +27,31 @@
 (require 'w3 nil t)
 (require 'mime)
 
-(defmacro mime-put-keymap-region (start end keymap)
-  `(put-text-property ,start ,end 'local-map ,keymap))
+(eval-and-compile
+  (defmacro mime-put-keymap-region (start end keymap)
+    `(put-text-property ,start ,end 'local-map ,keymap)))
 
 (defmacro mime-save-background-color (&rest body)
   `(cons 'progn ,body))
 
 (defvar mime-w3-message-structure nil)
 
-(defun mime-preview-text/html (entity situation)
+(defun mime-preview-text/html (entity _situation)
   (setq mime-w3-message-structure (mime-find-root-entity entity))
   (goto-char (point-max))
   (let ((p (point)))
     (insert "\n")
     (goto-char p)
-    (mime-save-background-color
-     (save-restriction
-       (narrow-to-region p p)
-       (mime-insert-text-content entity)
-       (run-hooks 'mime-text-decode-hook)
-       (condition-case err
-	   (w3-region p (point-max))
+    (save-restriction
+      (narrow-to-region p p)
+      (mime-insert-text-content entity)
+      (run-hooks 'mime-text-decode-hook)
+      (condition-case err
+	  (w3-region p (point-max))
 	 (error (message "%s" err)))
-       (mime-put-keymap-region p (point-max) w3-mode-map)))))
+      (mime-put-keymap-region p (point-max) w3-mode-map))))
 
-(defun url-cid (url &optional proxy-info)
+(defun url-cid (url &optional _proxy-info)
   (let ((entity
 	 (mime-find-entity-from-content-id (mime-uri-parse-cid url)
 					   mime-w3-message-structure))

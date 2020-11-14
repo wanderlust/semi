@@ -49,6 +49,17 @@ it is used as hook to set."
       '(require 'mime-image)))
 
 ;; for text/html
+(when (and (boundp 'mime-html-previewer-alist)
+	   (null (boundp 'mime-view-text/html-previewer-alist)))
+  (defvar mime-view-text/html-previewer-alist 'mime-html-previewer-alist))
+
+(when (and (boundp 'mime-setup-enable-inline-html)
+	   (null (boundp 'mime-view-text/html-previewer)))
+  (defvar mime-view-text/html-previewer mime-setup-enable-inline-html))
+
+(defadvice mime-w3m-insinuate (around insinuate-to-semi-epg activate)
+  (setq mime-view-text/html-previewer 'w3m))
+
 (make-obsolete-variable 'mime-html-previewer-alist
 			'mime-view-text/html-previewer-alist
 			"12 Jan 2014")
@@ -56,17 +67,6 @@ it is used as hook to set."
 (make-obsolete-variable 'mime-setup-enable-inline-html
 			'mime-view-text/html-previewer
 			"12 Jan 2014")
-
-(when (and (boundp 'mime-html-previewer-alist)
-	   (null (boundp 'mime-view-text/html-previewer-alist)))
-  (setq mime-view-text/html-previewer-alist 'mime-html-previewer-alist))
-
-(when (and (boundp 'mime-setup-enable-inline-html)
-	   (null (boundp 'mime-view-text/html-previewer)))
-  (setq mime-view-text/html-previewer mime-setup-enable-inline-html))
-
-(defadvice mime-w3m-insinuate (around insinuate-to-semi-epg activate)
-  (setq mime-view-text/html-previewer 'w3m))
 
 ;; for text/vcard, text/x-vcard
 (defvar mime-setup-enable-vcard
