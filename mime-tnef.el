@@ -1,4 +1,4 @@
-;;; mime-tnef.el --- mime-view content filter for ms-tnef
+;;; mime-tnef.el --- mime-view content filter for ms-tnef  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2015 Kazuhiro Ito
 
@@ -681,11 +681,10 @@
 	   result)
       (setq read (+ read 4))
       (mime-tnef-debug "MAPI count is %d" count)
-      (dotimes (i count)
+      (dotimes (_i count)
 	(let ((type (mime-tnef-2bytes raw read))
 	      (name (mime-tnef-2bytes raw (+ read 2)))
-	      (multi 1)
-	      elt)
+	      (multi 1))
 	  (setq read (+ read 4))
 	  (when (> (logand name 32768) 0) ;; #x8000
 	    (mime-tnef-debug "MAPI element have GUID")
@@ -695,7 +694,7 @@
 		  (setq name (mime-tnef-2bytes raw (+ read 20))
 			read (+ read 24))
 		(setq read (+ read 20))
-		(dotimes (i num)
+		(dotimes (_i num)
 		  (setq read (+ read 4
 				(mime-tnef-padded-length
 				 (mime-tnef-4bytes raw (+ read)))))))))
@@ -712,7 +711,7 @@
 	   "MAPI %s (type %s), number of values is %d"
 	   (if (integerp name) (format "%x" name) name) type multi)
 	  (let (values)
-	    (dotimes (i multi)
+	    (dotimes (_i multi)
 	      (cond
 	       ((memq type '(SHORT BOOLEAN))
 		(setq values (cons (mime-tnef-2bytes raw read) values)
@@ -884,9 +883,9 @@
 
 (eval-when-compile (require 'mmgeneric))
 
-(defun mime-display-application/ms-tnef (entity situation)
+(defun mime-display-application/ms-tnef (entity _situation)
   (let ((tnef (mime-tnef-parse (mime-entity-content entity)))
-	files p beg end buffer tnef-entity)
+	files p buffer tnef-entity)
     (setq files (and (car tnef) (mime-tnef-files tnef)))
     (if (null files)
 	(insert (if (car tnef)
