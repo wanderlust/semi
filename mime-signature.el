@@ -152,8 +152,9 @@ When SIGNATURE is list, each string and function's result is inserted.  Function
   (let ((point (point))
 	(signature (mime-edit-signature-guess))
 	start end text-part-p plain-signature-p)
-    (when signature
-      (setq plain-signature-p
+    (if signature
+        (progn
+          (setq plain-signature-p
 	    (or (null (stringp signature))
 	        (let ((file-type (mime-find-file-type signature)))
 		  (and (equal "text" (car file-type))
@@ -190,7 +191,8 @@ When SIGNATURE is list, each string and function's result is inserted.  Function
 		      (eq end point))
 	      (insert mime-edit-signature-separator))
 	    (mime-edit-signature-insert-plain signature))
-        (mime-edit-insert-file signature)))))
+        (mime-edit-insert-file signature)))
+      (message "No signature defined."))))
 
 ;;; @ end
 ;;;
