@@ -893,9 +893,6 @@ Each elements are regexp of field-name.")
 
 (defun mime-display-text/plain-flowed (&optional buffer delete-space)
   (with-current-buffer (or (current-buffer) buffer)
-    (goto-char (point-max))
-    (unless (eq (preceding-char) ?\n)
-      (insert ?\n))
     (goto-char (point-min))
     (let ((fill-column
 	   (cond
