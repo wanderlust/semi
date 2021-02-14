@@ -1490,6 +1490,7 @@ If nothing is inserted, return nil."
 (defun mime-edit-insert-binary-file (file &optional encoding)
   "Insert binary FILE at point.
 Optional argument ENCODING specifies an encoding method such as base64."
+  (setq encoding (or encoding "base64"))
   (let* ((tagend (1- (point)))		;End of the tag
 	 (hide-p (and mime-auto-hide-body
 		      (stringp encoding)
