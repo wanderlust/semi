@@ -31,9 +31,7 @@
 (require 'alist)
 (require 'filename)
 
-(eval-when-compile
-  (unless (require 'bbdb nil t)
-    (defvar bbdb-buffer-name nil)))
+(defvar bbdb-buffer-name)
 
 (defcustom mime-save-directory "~/"
   "*Name of the directory where MIME entity will be saved in.
