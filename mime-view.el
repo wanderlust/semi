@@ -892,7 +892,7 @@ Each elements are regexp of field-name.")
 		(match-beginning 1))))))
 
 (defun mime-display-text/plain-flowed (&optional buffer delete-space)
-  (with-current-buffer (or (current-buffer) buffer)
+  (with-current-buffer (or buffer (current-buffer))
     (goto-char (point-min))
     (let ((fill-column
 	   (cond
@@ -1717,10 +1717,7 @@ message.  It must be nil, `binary' or `cooked'.  If it is nil,
       (setq raw-buffer (current-buffer)))
   (or representation-type
       (setq representation-type
-	    ;; Do not use `with-current-buffer'.
-	    ;; raw-buffer may be the current buffer.
-	    (save-excursion
-	      (set-buffer raw-buffer)
+	    (with-current-buffer raw-buffer
 	      (cdr (or (assq major-mode mime-raw-representation-type-alist)
 		       (assq t mime-raw-representation-type-alist))))))
   (if (eq representation-type 'binary)
