@@ -246,7 +246,7 @@
 
 ;; Imported and modified from Wanderlust.
 (defun mime-preview-application/pgp-encrypted (entity _situation)
-  (let (p buffer decrypted-entity failed result)
+  (let (p buffer decrypted-entity result)
     (goto-char (setq p (point-max)))
     (save-restriction
       (narrow-to-region p p)
@@ -257,7 +257,7 @@
 			       (mime-pgp-entity-string
 				(nth 1 (mime-entity-children
 					(mime-entity-parent entity))))))))
-	  (insert (format "%s" (cdr failed)))
+	  (insert (format "%s" (cdr result)))
 	(with-current-buffer buffer
 	  (require 'mmbuffer)
 	  (insert result)
