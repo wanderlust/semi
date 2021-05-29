@@ -41,6 +41,35 @@
 
 ;;; @ Internal functions
 
+(eval-and-compile
+  (defun mime-pgp-concurrency-available-p ()
+    (and (fboundp 'make-mutex)
+	 (fboundp 'with-mutex)
+	 (fboundp 'make-thread)
+	 (fboundp 'thread-signal)))
+
+  (defcustom mime-pgp-use-concurrency
+    (and (mime-pgp-concurrency-available-p)
+	 ;; The feature may make Emacs crash on Windows.
+	 (null (memq system-type '(windows-nt)))
+	 ;; Emacs's concurrency feature seems to be unstable on earlier version.
+	 (>= emacs-major-version 28))
+    "When non-nil, use concurrency feature for inline verifying if available."
+    :group 'mime-view
+    :type 'boolean)
+
+  (if (mime-pgp-concurrency-available-p)
+      (progn
+	(defalias 'mime-pgp-make-mutex 'make-mutex)
+	(defalias 'mime-pgp-with-mutex 'with-mutex))
+    (defalias 'mime-pgp-make-mutex 'ignore)
+    (defmacro mime-pgp-with-mutex (_mutex &rest body)
+      `(progn ,@body))
+    ))
+
+;; I'm not sure epg-* functions are thread safe.
+(defvar mime-pgp-mutex (mime-pgp-make-mutex "MIME-PGP"))
+
 (defun mime-pgp-maybe-remove-cr (string)
   ;; Remove CRs if header contains CR.
   (if (string-match "\\`.*\r\n" string)
@@ -49,10 +78,14 @@
     string))
 
 (defun mime-pgp-decrypt-string (context cipher)
-  (mime-pgp-maybe-remove-cr (epg-decrypt-string context cipher)))
+  (mime-pgp-maybe-remove-cr
+   (mime-pgp-with-mutex mime-pgp-mutex
+     (epg-decrypt-string context cipher))))
 
 (defun mime-pgp-verify-string (context cipher)
-  (mime-pgp-maybe-remove-cr (epg-verify-string context cipher)))
+  (mime-pgp-maybe-remove-cr
+   (mime-pgp-with-mutex mime-pgp-mutex
+     (epg-verify-string context cipher))))
 
 (defun mime-pgp-verify-result-to-string (context)
   (let ((result (epg-context-result-for context 'verify)))
@@ -162,11 +195,12 @@
 	       'CMS))))
       (if (null context)
 	  (format "Unknown protocol: %s." protocol)
-	(epg-verify-string context
-			   (mime-entity-content entity)
-			   (let (inhibit-eol-conversion)
-			     (encode-coding-string (mime-pgp-entity-string orig-entity)
-						   'raw-text-dos)))
+	(let ((signature (mime-entity-content entity))
+	      (text (let (inhibit-eol-conversion)
+		      (encode-coding-string
+		       (mime-pgp-entity-string orig-entity) 'raw-text-dos))))
+	  (mime-pgp-with-mutex mime-pgp-mutex
+	    (epg-verify-string context signature text)))
 	(epg-context-result-for context 'verify)))))
 
 (defun mime-verify-application/*-signature (entity situation)
@@ -184,19 +218,48 @@
 		   (setq window (get-buffer-window epa-info-buffer)))
 	  (select-window window))))))
 
-(defun mime-preview-application/*-signature (entity situation)
-  (let ((verify-result
-	 (condition-case error
-	     (mime-verify-application/*-signature-internal entity situation)
-	   (error (format "Verification failed, %s" error))))
-	string)
-    (if (stringp verify-result)
-	(insert verify-result)
-      (setq string (epg-verify-result-to-string verify-result))
-      (when (> (length string) 0)
-	(unless (string-equal (substring string -1) "\n")
-	  (setq string (concat string "\n")))
-	(insert string)))))
+(defun mime-preview-application/*-signature(entity situation)
+  (let ((string "Verifying...\n")
+	(unique (concat (number-to-string (point))
+			"-" (number-to-string (random)))))
+    (set-text-properties 0 (length string) `(mime-pgp-entity ,unique) string)
+    (insert string)
+    (let ((fn
+	   `(lambda ()
+	      (let ((verify-result
+		     (condition-case error
+			 (mime-verify-application/*-signature-internal
+			  ',entity ',situation)
+		       (error (format "Verification failed, %s" error))
+		       (quit (format "Verification quitted")))))
+		(unless (stringp verify-result)
+		  (setq verify-result
+			(epg-verify-result-to-string verify-result)))
+		(when (> (length verify-result) 0)
+		  (unless (string-equal (substring verify-result -1) "\n")
+		    (setq verify-result (concat verify-result "\n")))
+		  (let ((point (point-min))
+			props)
+		    (while (and point
+				(setq point (next-single-property-change
+					     point 'mime-pgp-entity)))
+		      (setq props (text-properties-at point))
+		      (when (eq (plist-get props 'mime-pgp-entity) ,unique)
+			(set-text-properties
+			 0 (length verify-result) props verify-result)
+			(save-excursion
+			  (goto-char point)
+			  (let ((inhibit-read-only t))
+			    (delete-region
+			     point (or (next-single-property-change
+					point 'mime-pgp-entity)
+				       (point-max)))
+			    (insert verify-result)))
+			(setq point nil)))))))))
+      (if (and mime-pgp-use-concurrency
+	       (mime-pgp-concurrency-available-p))
+	  (make-thread fn)
+	(funcall fn)))))
 
 ;;; @ Internal method for application/pgp-encrypted
 
