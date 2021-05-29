@@ -146,7 +146,8 @@ displayed for multipart/multilingual entity."
 		    '(shr mime-shr-preview-text/html mime-shr))
 	      (w3 mime-preview-text/html mime-w3)))
   "Alist for text/html entity previewer.
-Each element is a list consists of required module, previewer function and required feature for previewer function."
+Each element is a list consists of required module, previewer
+function and required feature for previewer function."
   :group 'mime-view
   :type '(repeat (list (symbol :tag "Module")
 		       (symbol :tag "Function")
@@ -157,7 +158,10 @@ Each element is a list consists of required module, previewer function and requi
     (while (and alist (null (module-installed-p (caar alist))))
       (setq alist (cdr alist)))
     (caar alist))
-  "Indicate text/html entity previewer.  Possible vaules are each car of `mime-view-text/html-previewer-alist' element or nil.  When this value is nil or preview is not available, text/html entity is displayed as if text/plain part."
+  "Indicate text/html entity previewer.  Possible vaules are each
+car of `mime-view-text/html-previewer-alist' element or nil.
+When this value is nil or previewer is not available, text/html
+entity is displayed as if text/plain part."
   :group 'mime-view
   :type `(choice ,@(mapcar (lambda (elt) (list 'const (car elt)))
 			   mime-view-text/html-previewer-alist)
@@ -1050,8 +1054,11 @@ Each elements are regexp of field-name.")
     (multipart . mime-view-multipart-entity-score))
   "Alist MEDIA-TYPE vs corresponding score.
 MEDIA-TYPE must be (TYPE . SUBTYPE), TYPE or t.  t means default.
-If MEDIA-TYPE does not have corresponding score, `mime-view-entity-lowest-score' is used.
-Score is integer or function or variable.  The function receives entity and returns integer."
+
+If MEDIA-TYPE does not have corresponding score,
+`mime-view-entity-lowest-score' is used.
+Score is integer or function or variable.  The function receives
+entity and returns integer."
   :group 'mime-view
   :type '(repeat (cons (choice :tag "Media-Type"
 			       (cons :tag "Type/Subtype"

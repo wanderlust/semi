@@ -30,7 +30,8 @@
 (require 'mime)
 
 (defcustom mime-shr-blocked-images "."
-  "Images of which URLs match this regexp are blocked.  Nil means the value of shr-blocked-images is used."
+  "Images of which URLs match this regexp are blocked.
+When nil, it means the value of shr-blocked-images is used."
   :group 'mime-view
   :type '(choice regexp (const nil)))
 
