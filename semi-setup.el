@@ -24,8 +24,9 @@
 
 ;;; Code:
 
-(require 'semi-def)
 (require 'path-util)
+(require 'alist)
+(require 'semi-def)
 
 (defun call-after-loaded (module func &optional hook-name)
   "If MODULE is provided, then FUNC is called.
