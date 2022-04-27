@@ -1370,7 +1370,8 @@ If optional argument SUBTYPE is not nil, text/SUBTYPE tag is inserted."
     (mime-edit-insert-binary-file file encoding)))
 
 (defun mime-edit-insert-file-as-text (file &optional verbose)
-  "Insert a text from a file.  This function decodes inserted file and does not define Content-Transfer-Encoding: header and charset parameter."
+  "Insert a text from a file.  This function decodes inserted file and
+does not define Content-Transfer-Encoding: header and charset parameter."
   (interactive "fInsert file as text: \nP")
   (let*  ((guess (mime-find-file-type file))
 	  (type "text")
@@ -1944,8 +1945,10 @@ Parameter must be '(PROMPT CHOICE1 (CHOICE2...))."
 	(delete-region (match-beginning 0) (match-end 0))))))
 
 (defun mime-edit-pgp-keys-valid-key (key-list usage)
-  "Return the first valid key for USAGE from KEY-LIST or nil if there is no valid key.
-KEY-LIST is a list of epg key object.  Secret key list couldn't be evaluated appropriately.
+  "Return the first valid key for USAGE from KEY-LIST or nil
+if there is no valid key.
+KEY-LIST is a list of epg key object.
+Secret key list couldn't be evaluated appropriately.
 USAGE is a symbol denoting the intended usage."
   (catch 'found
     (while key-list
@@ -2091,7 +2094,9 @@ Content-Description: OpenPGP Digital Signature
       (mime-charset-to-coding-system charset))))
 
 (defun mime-edit-sign-pgp-nonmime (start end signers mode)
-  "Sign the current region between START and END by SIGNERS keys selected.  Appropriate coding system is selected automatically.  When called interactively, current mime part is signed."
+  "Sign the current region between START and END by SIGNERS keys selected.
+Appropriate coding system is selected automatically.
+When called interactively, current mime part is signed."
   (interactive
    (progn
      (let ((mime-edit-pgp-verbose
@@ -2107,7 +2112,9 @@ Content-Description: OpenPGP Digital Signature
   (epa-sign-region start end signers mode))
 
 (defun mime-edit-encrypt-pgp-nonmime (start end recipients sign signers)
-  "Encrypt the current region between START and END for RECIPIENTS.  Appropriate coding system is selected automatically.  When called interactively, current mime part is encrypted.
+  "Encrypt the current region between START and END for RECIPIENTS.
+Appropriate coding system is selected automatically.
+When called interactively, current mime part is encrypted.
 When SIGN is non-nil, also sign by SIGNERS keys selected."
   (interactive
    (let ((mime-edit-pgp-verbose

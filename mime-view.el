@@ -1247,7 +1247,8 @@ entity and returns integer."
 
 (defun mime-display-multipart/multilingual (entity situation)
   "MIME-View mode preview method for multipart/multilingual entity.
-When `mime-display-multipart/multilingual-interactive' is nil, select child entity to display automatically.
+When `mime-display-multipart/multilingual-interactive' is nil,
+select child entity to display automatically.
 Automatic selection algorithm is below.
 
 1. Select highest score entity calculated from
