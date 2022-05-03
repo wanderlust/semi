@@ -20,6 +20,7 @@ PREFIX	= NONE
 LISPDIR = NONE
 PACKAGEDIR = NONE
 VERSION_SPECIFIC_LISPDIR = NONE
+PACKAGE_LISPDIR = package-user-dir
 
 GOMI	= *.elc
 
@@ -29,12 +30,12 @@ ARC_DIR = $(ARC_DIR_PREFIX)/semi/semi-$(API)-for-flim-$(FLIM_API)
 
 
 elc:
-	$(EMACS) $(FLAGS) -f compile-semi \
-		$(PREFIX) $(LISPDIR) $(VERSION_SPECIFIC_LISPDIR)
+	$(EMACS) $(FLAGS) -f compile-semi $(PREFIX) $(LISPDIR) \
+		$(VERSION_SPECIFIC_LISPDIR) $(PACKAGE_LISPDIR)
 
 install-elc:	elc
-	$(EMACS) $(FLAGS) -f install-semi \
-		$(PREFIX) $(LISPDIR) $(VERSION_SPECIFIC_LISPDIR)
+	$(EMACS) $(FLAGS) -f install-semi $(PREFIX) $(LISPDIR) \
+		$(VERSION_SPECIFIC_LISPDIR) $(PACKAGE_LISPDIR)
 
 install:	install-elc
 

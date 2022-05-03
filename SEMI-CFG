@@ -24,6 +24,10 @@
 (if VERSION_SPECIFIC_LISPDIR
     (add-to-list 'load-path VERSION_SPECIFIC_LISPDIR))
 
+(if (boundp 'PACKAGE_LISPDIR)
+    (let ((default-directory PACKAGE_LISPDIR))
+      (normal-top-level-add-subdirs-to-load-path)))
+
 (condition-case nil
     (require 'install)
   (error (error "Please install APEL 8.7 or later.")))
