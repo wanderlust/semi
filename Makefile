@@ -40,13 +40,6 @@ install-elc:	elc
 install:	install-elc
 
 
-package:
-	$(XEMACS) $(FLAGS) -f compile-semi-package $(PACKAGEDIR)
-
-install-package:	package
-	$(XEMACS) $(FLAGS) -f install-semi-package $(PACKAGEDIR)
-
-
 clean:
 	-$(RM) $(GOMI)
 

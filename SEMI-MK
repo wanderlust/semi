@@ -60,44 +60,4 @@ LISPDIR=%s\n" PREFIX LISPDIR))
   (install-elisp-modules '(mime-setup)	 "."	SETUP_FILE_DIR)
   )
 
-(defun config-semi-package ()
-  (let (package-dir)
-    (and (setq package-dir (car command-line-args-left))
-	 (or (string= "NONE" package-dir)
-	     (defvar PACKAGEDIR package-dir)
-	     ))
-    (setq command-line-args-left (cdr command-line-args-left))
-    (load-file "SEMI-CFG")
-    (load-file "SEMI-ELS")
-					  
-    (princ (format "PACKAGEDIR=%s\n" PACKAGEDIR))
-    ))
-
-(defun compile-semi-package ()
-  (config-semi-package)
-
-  (setq autoload-package-name "semi")
-  (add-to-list 'command-line-args-left ".")
-  (batch-update-directory)
-
-  (add-to-list 'command-line-args-left ".")
-  (Custom-make-dependencies)
-
-  (compile-elisp-modules (append semi-modules-to-compile
-				 '(mime-setup auto-autoloads custom-load))
-			 ".")
-  )
-
-(defun install-semi-package ()
-  (config-semi-package)
-  (install-elisp-modules (append semi-modules
-				 '(mime-setup auto-autoloads custom-load))
-			 "./"
-			 (expand-file-name SEMI_PREFIX
-					   (expand-file-name "lisp"
-							     PACKAGEDIR)))
-  (delete-file "./auto-autoloads.el")
-  (delete-file "./custom-load.el")
-  )
-
 ;;; SEMI-MK ends here

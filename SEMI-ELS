@@ -30,11 +30,8 @@
 	  (shr		mime-shr)
 	  ))
 
-(if (or (string-match "XEmacs" emacs-version)
-	(featurep 'mule))
-    (setq semi-modules-to-compile
-	  (nconc semi-modules-to-compile '(mime-image)))
-  )
+(setq semi-modules-to-compile
+      (nconc semi-modules-to-compile '(mime-image)))
 
 (when (eq system-type 'darwin)
   (setq semi-modules-to-compile
