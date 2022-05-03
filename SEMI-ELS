@@ -25,9 +25,9 @@
 		     (nconc semi-modules-not-to-compile i-modules))
 	       )
 	     )))
-	'((w3		mime-w3)
-	  (vcard	mime-vcard)
-	  (shr		mime-shr)
+	'((w3			mime-w3)
+	  (bbdb-vcard-vcard21	mime-vcard)
+	  (shr			mime-shr)
 	  ))
 
 (setq semi-modules-to-compile

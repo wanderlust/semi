@@ -28,7 +28,8 @@
 
 ;;; Code:
 
-(require 'vcard)
+;; bbdb-vcard-vcard21.el is available in MELPA's bbdb-vcard package.
+(require 'bbdb-vcard-vcard21)
 
 (defvar mime-display-text/vcard-hook nil)
 
