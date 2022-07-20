@@ -84,7 +84,7 @@ buttom. Nil means don't scroll at all."
   "Override `nobreak-char-display' in preview buffer.
 See `nobreak-char-display' for details."
   :type '(choice (const :tag "Use harcoded face" t)
-		 (const :tag "Use escape glyph" 'escape)
+		 (const :tag "Use escape glyph" escape)
 		 (const :tag "No special handling" nil))
   :group 'mime-view)
 
