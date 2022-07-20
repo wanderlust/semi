@@ -148,10 +148,10 @@
 
 (defun mime-add-condition (target-type condition &optional mode file)
   "Add CONDITION to database specified by TARGET-TYPE.
-TARGET-TYPE must be 'preview or 'action.  
-If optional argument MODE is 'strict or nil (omitted), CONDITION is
+TARGET-TYPE must be \\='preview or \\='action.  
+If optional argument MODE is \\='strict or nil (omitted), CONDITION is
 added strictly.
-If optional argument MODE is 'with-default, CONDITION is added with
+If optional argument MODE is \\='with-default, CONDITION is added with
 default rule.
 If optional argument FILE is specified, it is loaded when CONDITION is
 activate."
