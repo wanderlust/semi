@@ -381,8 +381,8 @@ tag には
 single-part tag は single part を表現するための tag で、@refill
 
 @example
-        --[[TYPE/SUBTYPE;PARAMETERS][ENCODING]
-        OPTIONAL-FIELDS]
+        --[[TYPE/SUBTYPE;PARAMETERS
+        OPTIONAL-FIELDS][ENCODING]]
 @end example
 
 @noindent

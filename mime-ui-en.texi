@@ -382,8 +382,8 @@ There are 2 kinds of tags:
 single-part tag represents single part, this form is following:@refill
 
 @example
-        --[[TYPE/SUBTYPE;PARAMETERS][ENCODING]
-        OPTIONAL-FIELDS]
+        --[[TYPE/SUBTYPE;PARAMETERS
+        OPTIONAL-FIELDS][ENCODING]]
 @end example
 
 TYPE/SUBTYPE and PARAMETERS indicates type/subtype and parameters of

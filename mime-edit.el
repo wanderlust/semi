@@ -87,7 +87,8 @@
 
 ;; The message tag looks like:
 ;;
-;;	--[[TYPE/SUBTYPE;PARAMETERS][ENCODING]]
+;;	--[[TYPE/SUBTYPE;PARAMETERS
+;;	OPTIONAL-FIELDS][ENCODING]]
 ;;
 ;; The tagged MIME message examples:
 ;;
