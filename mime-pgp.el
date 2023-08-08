@@ -219,11 +219,11 @@
 	  (select-window window))))))
 
 (defun mime-preview-application/*-signature(entity situation)
-  (let ((string "Verifying...\n")
-	(unique (concat (number-to-string (point))
-			"-" (number-to-string (random)))))
-    (set-text-properties 0 (length string) `(mime-pgp-entity ,unique) string)
-    (insert string)
+  (let ((unique (concat (number-to-string (point))
+			"-" (number-to-string (random))))
+	(point (point)))
+    (insert "Verifying...\n")
+    (set-text-properties point (point) `(mime-pgp-entity ,unique))
     (let ((fn
 	   `(lambda ()
 	      (let ((verify-result
