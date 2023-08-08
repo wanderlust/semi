@@ -29,12 +29,20 @@
 
 (require 'mime)
 
-(defcustom mime-shr-blocked-images "."
-  "Images of which URLs match this regexp are blocked.
-When nil, it means the value of shr-blocked-images is used."
+(defcustom mime-shr-allowed-images nil
+  "Images of which URLs match this regexp are displayed.
+When nil, it means the value of `shr-allowed-images' is used."
   :group 'mime-view
   :type '(choice regexp (const nil)))
 
+(defcustom mime-shr-blocked-images "."
+  "Images of which URLs match this regexp are blocked.
+When nil, it means the value of `shr-blocked-images' is used.
+This has higher piority than `mime-shr-allowed-images'."
+  :group 'mime-view
+  :type '(choice regexp (const nil)))
+
+(defvar shr-allowed-images)
 (defvar mime-shr-root-entity nil)
 (make-variable-buffer-local 'mime-shr-root-entity)
 
@@ -43,8 +51,11 @@ When nil, it means the value of shr-blocked-images is used."
 	       (mime-insert-text-content entity)
 	       (libxml-parse-html-region (point-min) (point-max))))
 	(shr-content-function 'mime-shr-cid-retrieve)
-	(shr-blocked-images (or mime-shr-blocked-images
-				shr-blocked-images)))
+	(shr-allowed-images (or mime-shr-allowed-images
+				            (when (boundp 'shr-allowed-images)
+                              shr-allowed-images)))
+    (shr-blocked-images (or mime-shr-blocked-images
+				            shr-blocked-images)))
     (setq mime-shr-root-entity (mime-find-root-entity entity))
     (save-restriction
       ;; shr-insert-document may insert document before current point.
