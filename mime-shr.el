@@ -31,7 +31,8 @@
 
 (defcustom mime-shr-allowed-images nil
   "Images of which URLs match this regexp are displayed.
-When nil, it means the value of `shr-allowed-images' is used."
+When nil, it means the value of `shr-allowed-images' is used.
+This variable doesn't take effect on Emacs 28 and earlier."
   :group 'mime-view
   :type '(choice regexp (const nil)))
 
@@ -42,7 +43,6 @@ This has higher piority than `mime-shr-allowed-images'."
   :group 'mime-view
   :type '(choice regexp (const nil)))
 
-(defvar shr-allowed-images)
 (defvar mime-shr-root-entity nil)
 (make-variable-buffer-local 'mime-shr-root-entity)
 
@@ -52,8 +52,8 @@ This has higher piority than `mime-shr-allowed-images'."
 	       (libxml-parse-html-region (point-min) (point-max))))
 	(shr-content-function 'mime-shr-cid-retrieve)
 	(shr-allowed-images (or mime-shr-allowed-images
-				            (when (boundp 'shr-allowed-images)
-                              shr-allowed-images)))
+				(when (boundp 'shr-allowed-images)
+				  shr-allowed-images)))
     (shr-blocked-images (or mime-shr-blocked-images
 				            shr-blocked-images)))
     (setq mime-shr-root-entity (mime-find-root-entity entity))
