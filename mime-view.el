@@ -743,63 +743,76 @@ Each elements are regexp of field-name.")
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . application)(subtype . octet-stream)
 			   (encoding . nil)
-			   (body . visible)))
+			   (body . visible)
+			   (major-mode . t)))
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . application)(subtype . octet-stream)
 			   (encoding . "7bit")
-			   (body . visible)))
+			   (body . visible)
+			   (major-mode . t)))
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . application)(subtype . octet-stream)
 			   (encoding . "8bit")
-			   (body . visible)))
+			   (body . visible)
+			   (major-mode . t)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . application)(subtype . pgp)
-			   (body . visible)))
+			   (body . visible)
+			   (major-mode . t)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . application)(subtype . x-latex)
-			   (body . visible)))
+			   (body . visible)
+			   (major-mode . t)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . application)(subtype . x-selection)
-			   (body . visible)))
+			   (body . visible)
+			   (major-mode . t)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . application)(subtype . x-comment)
-			   (body . visible)))
+			   (body . visible)
+			   (major-mode . t)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition '((type . message)(subtype . delivery-status)
-			   (body . visible)))
+			   (body . visible)
+			   (major-mode . t)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
  '((body . visible)
+   (major-mode . t)
    (body-presentation-method . mime-display-text/plain)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
  '((type . nil)
    (body . visible)
+   (major-mode . t)
    (body-presentation-method . mime-display-text/plain)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
  '((type . text)(subtype . enriched)
    (body . visible)
+   (major-mode . t)
    (body-presentation-method . mime-display-text/enriched)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
  '((type . text)(subtype . richtext)
    (body . visible)
+   (major-mode . t)
    (body-presentation-method . mime-display-text/richtext)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
  '((type . text)(subtype . html)
    (body . visible)
+   (major-mode . t)
    (body-presentation-method . mime-display-text/html)))
 
 (autoload 'mime-display-application/x-postpet "postpet")
@@ -808,48 +821,56 @@ Each elements are regexp of field-name.")
  'mime-preview-condition
  '((type . application)(subtype . x-postpet)
    (body . visible)
+   (major-mode . t)
    (body-presentation-method . mime-display-application/x-postpet)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
  '((type . text)(subtype . t)
    (body . visible)
+   (major-mode . t)
    (body-presentation-method . mime-display-text/plain)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
  '((type . multipart)(subtype . alternative)
    (body . visible)
+   (major-mode . t)
    (body-presentation-method . mime-display-multipart/alternative)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
  '((type . multipart)(subtype . related)
    (body . visible)
+   (major-mode . t)
    (body-presentation-method . mime-display-multipart/related)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
  '((type . multipart)(subtype . multilingual)
    (body . visible)
+   (major-mode . t)
    (body-presentation-method . mime-display-multipart/multilingual)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
  '((type . multipart)(subtype . t)
    (body . visible)
+   (major-mode . t)
    (body-presentation-method . mime-display-multipart/mixed)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
  '((type . message)(subtype . partial)
    (body . visible)
+   (major-mode . t)
    (body-presentation-method . mime-display-message/partial-button)))
 
 (ctree-set-calist-strictly
  'mime-preview-condition
  '((type . message)(subtype . rfc822)
    (body . visible)
+   (major-mode . t)
    (body-presentation-method . mime-display-message/rfc822)
    (childrens-situation (header . visible))))
 
@@ -857,6 +878,7 @@ Each elements are regexp of field-name.")
  'mime-preview-condition
  '((type . message)(subtype . news)
    (body . visible)
+   (major-mode . t)
    (body-presentation-method . mime-display-message/rfc822)
    (childrens-situation (header . visible))))
 
@@ -1340,46 +1362,55 @@ part (if exist) or the first language message part."
  'mime-acting-condition
  '((type . application)(subtype . octet-stream)
    (mode . "play")
+   (major-mode . t)
    (method . mime-detect-content)))
 
 (ctree-set-calist-with-default
  'mime-acting-condition
  '((mode . "extract")
+   (major-mode . t)
    (method . mime-save-content)))
 
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . text)(subtype . x-rot13-47)(mode . "play")
+   (major-mode . t)
    (method . mime-view-caesar)))
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . text)(subtype . x-rot13-47-48)(mode . "play")
+   (major-mode . t)
    (method . mime-view-caesar)))
 
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . message)(subtype . rfc822)(mode . "play")
+   (major-mode . t)
    (method . mime-view-message/rfc822)))
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . message)(subtype . partial)(mode . "play")
+   (major-mode . t)
    (method . mime-store-message/partial-piece)))
 
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . message)(subtype . external-body)
    ("access-type" . "anon-ftp")
+   (major-mode . t)
    (method . mime-view-message/external-anon-ftp)))
 
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . message)(subtype . external-body)
    ("access-type" . "url")
+   (major-mode . t)
    (method . mime-view-message/external-url)))
 
 (ctree-set-calist-strictly
  'mime-acting-condition
  '((type . application)(subtype . octet-stream)
+   (major-mode . t)
    (method . mime-save-content)))
 
 

@@ -164,6 +164,7 @@ Furthermore, image scaling for xbm image is disabled."
      'mime-preview-condition
      (list (cons 'type (car rule))(cons 'subtype (nth 1 rule))
 	   '(body . visible)
+	   '(major-mode . t)
 	   (cons 'body-presentation-method #'mime-display-image)
 	   (cons 'image-format (nth 2 rule))))))
     

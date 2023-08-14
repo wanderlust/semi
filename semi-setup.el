@@ -81,6 +81,7 @@ it is used as hook to set."
 	      'preview 
 	      `((type . text)(subtype . ,subtype)
 		(body . visible)
+		(major-mode . t)
 		(body-presentation-method . mime-display-text/vcard))
 	      'strict "mime-vcard")
 	     
@@ -96,52 +97,61 @@ it is used as hook to set."
   '(when mime-setup-enable-epg
      (mime-add-condition
       'preview '((type . application)(subtype . pgp)
+		 (major-mode . t)
 		 (message-button . visible)))
 	 
      (mime-add-condition
       'action '((type . multipart)(subtype . signed)
+		(major-mode . t)
 		(method . mime-verify-multipart/signed))
       'strict "mime-pgp")
 	 
      (mime-add-condition
       'action
       '((type . application)(subtype . pgp-signature)
+	(major-mode . t)
 	(method . mime-verify-application/*-signature))
       'strict "mime-pgp")
 	 
      (mime-add-condition
       'action
       '((type . application)(subtype . pgp-encrypted)
+	(major-mode . t)
 	(method . mime-decrypt-application/pgp-encrypted))
       'strict "mime-pgp")
 	 
      (mime-add-condition
       'action
       '((type . application)(subtype . pgp-keys)
+	(major-mode . t)
 	(method . mime-add-application/pgp-keys))
       'strict "mime-pgp")
 
      (mime-add-condition
       'action
       '((type . application)(subtype . pkcs7-signature)
+	(major-mode . t)
 	(method . mime-verify-application/*-signature))
       'strict "mime-pgp")
 
      (mime-add-condition
       'action
       '((type . application)(subtype . x-pkcs7-signature)
+	(major-mode . t)
 	(method . mime-verify-application/*-signature))
       'strict "mime-pgp")
 	 
      (mime-add-condition
       'action
       '((type . application)(subtype . pkcs7-mime)
+	(major-mode . t)
 	(method . mime-view-application/pkcs7-mime))
       'strict "mime-pgp")
 
      (mime-add-condition
       'action
       '((type . application)(subtype . x-pkcs7-mime)
+	(major-mode . t)
 	(method . mime-view-application/pkcs7-mime))
       'strict "mime-pgp")
 
@@ -159,6 +169,7 @@ it is used as hook to set."
 	(subtype . encrypted)
 	("protocol" . "application/pgp-encrypted")
 	(body . visible)
+	(major-mode . t)
 	(body-presentation-method . mime-display-multipart/pgp-encrypted))
       'strict "mime-pgp")
 
@@ -167,6 +178,7 @@ it is used as hook to set."
       '((type . application)
 	(subtype . pgp-signature)
 	(body . mime-pgp-verify-when-preview)
+	(major-mode . t)
 	(body-presentation-method . mime-preview-application/*-signature))
       'strict "mime-pgp")
 
@@ -175,6 +187,7 @@ it is used as hook to set."
       '((type . application)
 	(subtype . pgp-encrypted)
 	(body . mime-pgp-decrypt-when-preview)
+	(major-mode . t)
 	(body-presentation-method . mime-preview-application/pgp-encrypted))
       'strict "mime-pgp")
 
@@ -183,6 +196,7 @@ it is used as hook to set."
       '((type . application)
 	(subtype . pkcs7-signature)
 	(body . mime-pgp-verify-when-preview)
+	(major-mode . t)
 	(body-presentation-method . mime-preview-application/*-signature))
       'strict "mime-pgp")
 
@@ -191,6 +205,7 @@ it is used as hook to set."
       '((type . application)
 	(subtype . x-pkcs7-signature)
 	(body . mime-pgp-verify-when-preview)
+	(major-mode . t)
 	(body-presentation-method . mime-preview-application/*-signature))
       'strict "mime-pgp")))
 
@@ -202,6 +217,7 @@ it is used as hook to set."
       '((type . application)
 	(subtype . ms-tnef)
 	(body . visible)
+	(major-mode . t)
 	(body-presentation-method . mime-display-application/ms-tnef))
       'strict "mime-tnef")
      (mime-add-condition
@@ -209,6 +225,7 @@ it is used as hook to set."
       '((type . application)
 	(subtype . vnd.ms-tnef)
 	(body . visible)
+	(major-mode . t)
 	(body-presentation-method . mime-display-application/ms-tnef))
       'strict "mime-tnef")))
 
@@ -282,6 +299,7 @@ it is used as hook to set."
        (mime-add-condition
 	'action
 	'((type . application)
+	  (major-mode . t)
 	  (method . mime-mac-save-and-play-with-open))
 	'with-default
 	"mime-mac"))))
