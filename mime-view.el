@@ -173,7 +173,7 @@ entity is displayed as if text/plain part."
   :type '(choice (integer :tag "Fixed value")
 		 (number :tag "ratio to window's width")
 		 (sexp :tag "S-expression")
-		 (const nil :tag "Use fill-column's value")))
+		 (const :tag "Use fill-column's value" nil)))
 
 (defcustom mime-pgp-verify-when-preview t
   "When non-nil, verify signed part while viewing."

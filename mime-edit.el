@@ -811,7 +811,8 @@ Each elements are regexp of field-name.")
 If it is not specified for a major-mode,
 `mime-edit-message-default-max-lines' is used."
   :group 'mime-edit
-  :type 'list)
+  :type '(repeat (cons (symbol :tag "major-mode")
+		     (integer :tag "maximum lines"))))
 
 (defconst mime-edit-split-ignored-field-regexp
   "\\(^Content-\\|^Subject:\\|^Mime-Version:\\|^Message-Id:\\)")
@@ -854,7 +855,7 @@ If it is not specified for a major-mode,
   :group 'mime-edit-pgp
   :type
   '(choice
-    (const nil :tag "Any keys are used.")
+    (const :tag "Any keys are used." nil)
     (repeat (choice (const unknow)
 		    (const invalid)
 		    (const disabled)
