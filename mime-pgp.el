@@ -225,37 +225,37 @@
     (insert "Verifying...\n")
     (set-text-properties point (point) `(mime-pgp-entity ,unique))
     (let ((fn
-	   `(lambda ()
-	      (let ((verify-result
-		     (condition-case error
-			 (mime-verify-application/*-signature-internal
-			  ',entity ',situation)
-		       (error (format "Verification failed, %s" error))
-		       (quit (format "Verification quitted")))))
-		(unless (stringp verify-result)
-		  (setq verify-result
-			(epg-verify-result-to-string verify-result)))
-		(when (> (length verify-result) 0)
-		  (unless (string-equal (substring verify-result -1) "\n")
-		    (setq verify-result (concat verify-result "\n")))
-		  (let ((point (point-min))
-			props)
-		    (while (and point
-				(setq point (next-single-property-change
-					     point 'mime-pgp-entity)))
-		      (setq props (text-properties-at point))
-		      (when (eq (plist-get props 'mime-pgp-entity) ,unique)
-			(set-text-properties
-			 0 (length verify-result) props verify-result)
-			(save-excursion
-			  (goto-char point)
-			  (let ((inhibit-read-only t))
-			    (delete-region
-			     point (or (next-single-property-change
-					point 'mime-pgp-entity)
-				       (point-max)))
-			    (insert verify-result)))
-			(setq point nil)))))))))
+	   (lambda ()
+	     (let ((verify-result
+		    (condition-case error
+			(mime-verify-application/*-signature-internal
+			 entity situation)
+		      (error (format "Verification failed, %s" error))
+		      (quit (format "Verification quitted")))))
+	       (unless (stringp verify-result)
+		 (setq verify-result
+		       (epg-verify-result-to-string verify-result)))
+	       (when (> (length verify-result) 0)
+		 (unless (string-equal (substring verify-result -1) "\n")
+		   (setq verify-result (concat verify-result "\n")))
+		 (let ((point (point-min))
+		       props)
+		   (while (and point
+			       (setq point (next-single-property-change
+					    point 'mime-pgp-entity)))
+		     (setq props (text-properties-at point))
+		     (when (eq (plist-get props 'mime-pgp-entity) unique)
+		       (set-text-properties
+			0 (length verify-result) props verify-result)
+		       (save-excursion
+			 (goto-char point)
+			 (let ((inhibit-read-only t))
+			   (delete-region
+			    point (or (next-single-property-change
+				       point 'mime-pgp-entity)
+				      (point-max)))
+			   (insert verify-result)))
+		       (setq point nil)))))))))
       (if (and mime-pgp-use-concurrency
 	       (mime-pgp-concurrency-available-p))
 	  (make-thread fn)
