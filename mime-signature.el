@@ -166,44 +166,47 @@ be inserted."
   (let ((point (point))
 	(signature (mime-edit-signature-guess))
 	start end text-part-p plain-signature-p)
-    (setq plain-signature-p
-	  (or (null (stringp signature))
-	      (let ((file-type (mime-find-file-type signature)))
-		(and (equal "text" (car file-type))
-		     (equal "plain" (cadr file-type))))))
-    (when (eq mime-edit-signature-position 'message)
-      (goto-char (point-max)))
-    (re-search-backward mime-edit-tag-regexp nil 'move)
-    (setq start (point)
-	  end (if (re-search-forward mime-edit-tag-regexp nil t)
-		  (match-beginning 0)
-		(point-max)))
-    (when (> point end)
-      (setq start end
+    (if signature
+        (progn
+          (setq plain-signature-p
+	    (or (null (stringp signature))
+	        (let ((file-type (mime-find-file-type signature)))
+		  (and (equal "text" (car file-type))
+		       (equal "plain" (cadr file-type))))))
+      (when (eq mime-edit-signature-position 'message)
+        (goto-char (point-max)))
+      (re-search-backward mime-edit-tag-regexp nil 'move)
+      (setq start (point)
 	    end (if (re-search-forward mime-edit-tag-regexp nil t)
 		    (match-beginning 0)
-		  (point-max))))
-    (goto-char start)
-    (setq text-part-p
-	  (or (null (looking-at mime-edit-single-part-tag-regexp))
-	      (string-match "^text/plain" (match-string 1))))
-    (goto-char (cond ((eq mime-edit-signature-position 'message)
-		      (point-max))
-		     ((eq mime-edit-signature-position 'part)
-		      end)
-		     (t
-		      point)))
-    (unless (and text-part-p plain-signature-p)
-      (unless (eq (preceding-char) ?\n) (insert ?\n))
-      (mime-edit-insert-tag "text" "plain"))
-    (if plain-signature-p
-	(progn
-	  (unless (eq (preceding-char) ?\n) (insert ?\n))
-	  (when (or mime-edit-signature-position
-		    (eq end point))
-	    (insert mime-edit-signature-separator))
-	  (mime-edit-signature-insert-plain signature))
-      (mime-edit-insert-file signature))))
+		  (point-max)))
+      (when (> point end)
+        (setq start end
+	      end (if (re-search-forward mime-edit-tag-regexp nil t)
+		      (match-beginning 0)
+		    (point-max))))
+      (goto-char start)
+      (setq text-part-p
+	    (or (null (looking-at mime-edit-single-part-tag-regexp))
+	        (string-match "^text/plain" (match-string 1))))
+      (goto-char (cond ((eq mime-edit-signature-position 'message)
+		        (point-max))
+		       ((eq mime-edit-signature-position 'part)
+		        end)
+		       (t
+		        point)))
+      (unless (and text-part-p plain-signature-p)
+        (unless (eq (preceding-char) ?\n) (insert ?\n))
+        (mime-edit-insert-tag "text" "plain"))
+      (if plain-signature-p
+	  (progn
+	    (unless (eq (preceding-char) ?\n) (insert ?\n))
+	    (when (or mime-edit-signature-position
+		      (eq end point))
+	      (insert mime-edit-signature-separator))
+	    (mime-edit-signature-insert-plain signature))
+        (mime-edit-insert-file signature)))
+      (message "No signature defined."))))
 
 ;;; @ end
 ;;;
